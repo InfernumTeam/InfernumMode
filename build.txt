@@ -1,0 +1,8 @@
+author = Dominic Karma
+version = 0.0
+displayName = Infernum (Post-Deathmode thing)
+modReferences=CalamityMod
+sortAfter=CalamityMod
+hideCode=true
+hideResources=true
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*

@@ -60,21 +60,49 @@ namespace InfernumMode.FuckYouModeAIs.EoW
             // Release lingering cursed cinders everywhere.
             if (attackTimer % 480f > 270f && lifeRatio < 0.65f)
             {
-                DoMovement(npc, target);
-
                 Vector2 lookDirection = (npc.rotation - MathHelper.PiOver2).ToRotationVector2();
                 bool obstacleInWayOfMouth = !Collision.CanHit(npc.Center, 2, 2, npc.Center + lookDirection * 160f, 2, 2);
-                if (!npc.WithinRange(target.Center, 400f) && !obstacleInWayOfMouth && attackTimer % 60f == 59f)
-                {
-                    // Make a belch sound effect.
-                    Main.PlaySound(SoundID.NPCDeath13, npc.Center);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                // Do a special spin below a certain life percentage.
+                if (lifeRatio < 0.35f)
+                {
+                    npc.velocity = npc.velocity.ClampMagnitude(27f, 27f).RotatedBy(MathHelper.TwoPi * 2f / 210f);
+
+                    // Rise if in the ground.
+                    if (!Collision.CanHit(npc.Center, 4, 4, npc.Center - Vector2.UnitY * 300f, 4, 4))
+                        npc.position.Y -= 8f;
+
+                    if (!npc.WithinRange(target.Center, 300f) && !obstacleInWayOfMouth && attackTimer % 45f == 44f)
                     {
-                        for (int i = 0; i < 10; i++)
+                        // Make a belch sound effect.
+                        Main.PlaySound(SoundID.NPCDeath13, npc.Center);
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            Vector2 cinderVelocity = lookDirection.RotatedByRandom(0.4f) * Main.rand.NextFloat(9f, 15f);
-                            Utilities.NewProjectileBetter(npc.Center + cinderVelocity, cinderVelocity, ModContent.ProjectileType<CursedLingeringCinder>(), 65, 0f);
+                            for (int i = 0; i < 7; i++)
+                            {
+                                Vector2 cinderVelocity = lookDirection.RotatedByRandom(0.4f) * Main.rand.NextFloat(9f, 15f);
+                                Utilities.NewProjectileBetter(npc.Center + cinderVelocity, cinderVelocity, ModContent.ProjectileType<CursedLingeringCinder>(), 65, 0f);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    DoMovement(npc, target);
+
+                    if (!npc.WithinRange(target.Center, 400f) && !obstacleInWayOfMouth && attackTimer % 60f == 59f)
+                    {
+                        // Make a belch sound effect.
+                        Main.PlaySound(SoundID.NPCDeath13, npc.Center);
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            for (int i = 0; i < 10; i++)
+                            {
+                                Vector2 cinderVelocity = lookDirection.RotatedByRandom(0.4f) * Main.rand.NextFloat(9f, 15f);
+                                Utilities.NewProjectileBetter(npc.Center + cinderVelocity, cinderVelocity, ModContent.ProjectileType<CursedLingeringCinder>(), 65, 0f);
+                            }
                         }
                     }
                 }
@@ -107,7 +135,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
                 int shootRate = (int)MathHelper.Lerp(90f, 180f, lifeRatio);
 
                 // Shoot more quickly if looking at the target.
-                if (npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.47f && npc.WithinRange(target.Center, 600f))
+                if (npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.57f && npc.WithinRange(target.Center, 800f))
                     shootRate = (int)MathHelper.Lerp(shootRate, 35f, 0.65f);
 
                 if (bombShootCounter > shootRate)
@@ -118,6 +146,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
                 }
             }
 
+            npc.rotation = npc.rotation.AngleLerp(npc.velocity.ToRotation() + MathHelper.PiOver2, 0.05f);
             npc.rotation = npc.rotation.AngleTowards(npc.velocity.ToRotation() + MathHelper.PiOver2, 0.15f);
             attackTimer++;
 
@@ -146,7 +175,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
-                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.04f);
+                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.05f);
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;

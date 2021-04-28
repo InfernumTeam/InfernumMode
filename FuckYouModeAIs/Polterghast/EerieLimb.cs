@@ -138,17 +138,7 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
         {
             float horizontalTotalDistance = npc.Center.X - Limbs[0].StartingPoint.X;
             float verticalTotalDistance = npc.Center.Y - Limbs[0].StartingPoint.Y;
-            float horizontalTotalLengthSquared = (float)Math.Pow(horizontalTotalDistance, 2D);
-            float verticalTotalLengthSquared = (float)Math.Pow(verticalTotalDistance, 2D);
-            float firstLineLength = Vector2.Distance(Limbs[0].StartingPoint, Limbs[1].StartingPoint);
-            float secondLineLength = Vector2.Distance(Limbs[1].StartingPoint, npc.Center);
-            float firstLineLengthSquared = (float)Math.Pow(firstLineLength, 2D);
-            float secondLineLengthSquared = (float)Math.Pow(secondLineLength, 2D);
-
-            Limbs[1].Rotation = (float)Math.Acos((horizontalTotalLengthSquared + verticalTotalLengthSquared - firstLineLengthSquared - secondLineLengthSquared) / (firstLineLength * secondLineLength * 2f));
-
-            Limbs[0].Rotation = (float)Math.Atan(verticalTotalDistance / horizontalTotalDistance) * -Direction;
-            Limbs[0].Rotation -= (float)Math.Atan(secondLineLength * (float)Math.Sin(Limbs[1].Rotation) / (firstLineLength + secondLineLength * (float)Math.Cos(Limbs[1].Rotation)));
+            Limb.UpdateRotationOfDualSet(Limbs, Direction, npc.Center);
 
             Limbs[0].StartingPoint = Polterghast.Center;
 

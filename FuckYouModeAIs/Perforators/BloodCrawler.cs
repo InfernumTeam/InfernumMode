@@ -1,6 +1,5 @@
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.NPCs;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.InverseKinematics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -33,7 +32,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
         public Vector2[] IdealLegEndPositions = new Vector2[6];
         public Vector2[] LegEndPositions = new Vector2[6];
         public Limb[][] LegLimbs = new Limb[6][];
-        public bool InPhase2 => true;
+        public bool InPhase2 => Main.npc[CalamityGlobalNPC.perfHive].ai[2] == 2f;
         public Vector2 LegsStartingCenter => npc.Bottom + Vector2.UnitY * (npc.gfxOffY - 10f);
         public ref float StuckTimer => ref npc.ai[1];
         public ref float LungeDelay => ref npc.ai[2];
@@ -104,8 +103,8 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             npc.gfxOffY = -20;
 
             // Disappear if the main boss is not present.
-            if (false)
-			{
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.perfHive))
+            {
                 npc.active = false;
                 npc.netUpdate = true;
                 Utils.PoofOfSmoke(npc.Center);
@@ -113,7 +112,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 			}
 
             npc.TargetClosest();
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.025f, 0f, 1f);
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[0] == 0f)
 			{
                 InitializeLimbs();
@@ -305,6 +304,9 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             if (InPhase2)
                 PerforatorHiveAIClass.DrawEnragedEffectOnEnemy(spriteBatch, npc);
 
+            if (npc.Opacity < 0.75f)
+                return true;
+
             for (int i = 0; i < LegLimbs.Length; i++)
 			{
                 if (!npc.WithinRange(LegEndPositions[i], 300f))
@@ -315,7 +317,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                     Vector2 start = LegLimbs[i][j].StartingPoint;
                     Vector2 end = j == LegLimbs[i].Length - 1 ? LegEndPositions[i] : LegLimbs[i][j + 1].StartingPoint;
 
-                    spriteBatch.DrawLineBetter(start, end, Color.IndianRed, 1.8f);
+                    spriteBatch.DrawLineBetter(start, end, Color.IndianRed * npc.Opacity, 1.8f);
                 }
 			}
 
@@ -328,6 +330,23 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             target.AddBuff(ModContent.BuffType<BurningBlood>(), 90);
         }
 
-        public override bool CheckActive() => false;
+		public override void HitEffect(int hitDirection, double damage)
+        {
+            if (npc.life > 0)
+                return;
+
+            for (int i = 0; i < 10; i++)
+            {
+                Dust blood = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(30f, 30f), DustID.Blood);
+                blood.velocity = Main.rand.NextVector2Circular(4f, 4f);
+                blood.noGravity = Main.rand.NextBool(3);
+                blood.scale = Main.rand.NextFloat(1f, 1.35f);
+            }
+
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/BloodCrawler1"), npc.scale);
+            Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/BloodCrawler2"), npc.scale);
+        }
+
+		public override bool CheckActive() => false;
     }
 }

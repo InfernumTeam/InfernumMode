@@ -56,6 +56,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
 		public override void AI()
         {
+            // Disappear if the main boss is not present.
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.perfHive))
 			{
                 npc.active = false;
@@ -163,7 +164,23 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             return true;
         }
 
-		public override void FindFrame(int frameHeight)
+        public override void HitEffect(int hitDirection, double damage)
+        {
+            if (npc.life > 0)
+                return;
+
+            for (int i = 0; i < 10; i++)
+			{
+                Dust blood = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(30f, 30f), DustID.Blood);
+                blood.velocity = Main.rand.NextVector2Circular(4f, 4f);
+                blood.noGravity = Main.rand.NextBool(3);
+                blood.scale = Main.rand.NextFloat(1f, 1.35f);
+			}
+
+            Gore.NewGore(npc.position, npc.velocity, 237, npc.scale);
+        }
+
+        public override void FindFrame(int frameHeight)
 		{
             npc.frameCounter += MathHelper.Clamp(npc.velocity.X * 0.4f, 1f, 4.5f);
             if (npc.frameCounter >= 5f)

@@ -34,7 +34,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
         public Vector2[] LegEndPositions = new Vector2[6];
         public Limb[][] LegLimbs = new Limb[6][];
         public bool InPhase2 => true;
-        public Vector2 LegsStartingCenter => npc.Bottom + Vector2.UnitY * npc.gfxOffY;
+        public Vector2 LegsStartingCenter => npc.Bottom + Vector2.UnitY * (npc.gfxOffY - 10f);
         public ref float StuckTimer => ref npc.ai[1];
         public ref float LungeDelay => ref npc.ai[2];
         public ref float LungeCooldown => ref npc.ai[3];
@@ -63,6 +63,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             npc.value = 0f;
             npc.Opacity = 0f;
             npc.hide = true;
+            npc.noGravity = true;
             npc.buffImmune[BuffID.Poisoned] = true;
             npc.buffImmune[BuffID.Confused] = false;
         }
@@ -141,7 +142,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
                     float jumpSpeed = InPhase2 ? 12.5f : 10.5f;
                     npc.position.Y -= 2f;
-                    npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Top, Target.Center, Gravity + 0.3f, jumpSpeed, out _);
+                    npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Top, Target.Center, Gravity, jumpSpeed, out _);
                     LungeCooldown = 200f;
                     npc.netUpdate = true;
 				}
@@ -188,10 +189,10 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 npc.netUpdate = true;
             }
 
-            if (MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 0.04f)
+            if (MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 1f)
             {
                 StuckTimer++;
-                npc.position.Y -= 1.25f;
+                npc.position.Y -= 1.65f;
             }
             else
                 StuckTimer = 0f;
@@ -215,7 +216,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                     IdealLegEndPositions[i] = LegsStartingCenter + (IdealLegEndPositions[i] - LegsStartingCenter).ClampMagnitude(0f, 46f).RotatedBy(npc.rotation);
                     IdealLegEndPositions[i].X += npc.velocity.X * 2f;
 
-                    LegEndPositions[i].Y = MathHelper.Clamp(LegEndPositions[i].Y, npc.Top.Y - 10f, npc.Bottom.Y + 35f);
+                    LegEndPositions[i].Y = MathHelper.Clamp(LegEndPositions[i].Y, npc.Top.Y - 30f + npc.gfxOffY, npc.Bottom.Y + 65f - npc.gfxOffY);
                 }
                 else
                 {

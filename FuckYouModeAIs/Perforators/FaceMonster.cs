@@ -43,7 +43,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             npc.aiStyle = -1;
             npc.damage = 25;
             npc.defense = 10;
-            npc.lifeMax = 270;
+            npc.lifeMax = 140;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath2;
             npc.knockBackResist = 0.25f;
@@ -56,16 +56,17 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
 		public override void AI()
         {
+            npc.TargetClosest();
+
             // Disappear if the main boss is not present.
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.perfHive))
-			{
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.perfHive) || !npc.WithinRange(Target.Center, 1100f))
+            {
                 npc.active = false;
                 npc.netUpdate = true;
                 Utils.PoofOfSmoke(npc.Center);
                 return;
 			}
 
-            npc.TargetClosest();
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
             npc.noTileCollide = !HasRisenOutOfGroundCompletely;
             npc.noGravity = !HasRisenOutOfGroundCompletely;

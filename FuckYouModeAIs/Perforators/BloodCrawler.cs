@@ -53,9 +53,9 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             npc.width = 48;
             npc.height = 22;
             npc.aiStyle = -1;
-            npc.damage = 25;
-            npc.defense = 10;
-            npc.lifeMax = 190;
+            npc.damage = 32;
+            npc.defense = 4;
+            npc.lifeMax = 115;
             npc.HitSound = SoundID.NPCHit27;
             npc.DeathSound = SoundID.NPCDeath21;
             npc.knockBackResist = 0.25f;
@@ -102,8 +102,10 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
         {
             npc.gfxOffY = -20;
 
+            npc.TargetClosest();
+
             // Disappear if the main boss is not present.
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.perfHive))
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.perfHive) || !npc.WithinRange(Target.Center, 1100f))
             {
                 npc.active = false;
                 npc.netUpdate = true;
@@ -111,7 +113,6 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 return;
 			}
 
-            npc.TargetClosest();
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.025f, 0f, 1f);
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[0] == 0f)
 			{
@@ -188,7 +189,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 npc.netUpdate = true;
             }
 
-            if (MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 1f)
+            if (MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 2f)
             {
                 StuckTimer++;
                 npc.position.Y -= 1.65f;
@@ -317,7 +318,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                     Vector2 start = LegLimbs[i][j].StartingPoint;
                     Vector2 end = j == LegLimbs[i].Length - 1 ? LegEndPositions[i] : LegLimbs[i][j + 1].StartingPoint;
 
-                    spriteBatch.DrawLineBetter(start, end, Color.IndianRed * npc.Opacity, 1.8f);
+                    spriteBatch.DrawLineBetter(start, end, new Color(55, 14, 10) * npc.Opacity, 3f);
                 }
 			}
 

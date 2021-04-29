@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.Perforator;
 using InfernumMode.FuckYouModeAIs.BoC;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -274,6 +275,45 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
         #endregion Specific Attacks
         #endregion Main Boss
+
+        #region Worms
+
+        [OverrideAppliesTo("PerforatorHive", typeof(PerforatorHiveAIClass), "PerforatorHiveAI", EntityOverrideContext.NPCAI)]
+        public static bool PerforatorWormHeadSmallAI(NPC npc)
+		{
+            ref float hasSummonedSegments = ref npc.localAI[0];
+
+            // Create segments.
+            if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedSegments == 0f)
+			{
+                SpawnSegments(npc, 10, ModContent.NPCType<PerforatorBodySmall>(), ModContent.NPCType<PerforatorTailSmall>());
+                hasSummonedSegments = 1f;
+			}
+
+            return false;
+		}
+
+        public static void SpawnSegments(NPC npc, int segmentCount, int bodyType, int tailType)
+		{
+            int aheadSegment = npc.whoAmI;
+            for (int i = 0; i < segmentCount; i++)
+            {
+                int meme;
+                if (i >= 0 && i < segmentCount - 1)
+                    meme = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                else
+                    meme = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+
+                Main.npc[meme].realLife = npc.whoAmI;
+                Main.npc[meme].ai[3] = npc.whoAmI;
+                Main.npc[meme].ai[1] = aheadSegment;
+                Main.npc[aheadSegment].ai[0] = meme;
+
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, meme);
+                aheadSegment = meme;
+            }
+        }
+        #endregion Worms
 
         #endregion AI
 

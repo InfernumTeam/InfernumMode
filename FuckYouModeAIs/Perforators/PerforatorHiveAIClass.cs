@@ -179,10 +179,10 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             else
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 270f;
-                if (!npc.WithinRange(target.Center, 145f))
+                if (!npc.WithinRange(destination, 145f))
                     npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 15f, 0.055f);
                 else
-                    npc.velocity *= 0.94f;
+                    npc.velocity *= 0.95f;
             }
 
             gotoNextAttack = attackTimer >= 240f;
@@ -191,10 +191,10 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
         public static void DoAttack_ReleaseRegularBursts(NPC npc, Player target, ref float attackTimer, bool anyWorms, out bool gotoNextAttack)
         {
             Vector2 destination = target.Center - Vector2.UnitY * 270f;
-            if (!npc.WithinRange(target.Center, 145f))
+            if (!npc.WithinRange(destination, 145f))
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 15f, 0.07f);
             else
-                npc.velocity *= 0.94f;
+                npc.velocity *= 0.95f;
 
             int shootRate = anyWorms ? 100 : 60;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)

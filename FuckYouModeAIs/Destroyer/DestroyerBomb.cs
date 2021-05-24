@@ -22,7 +22,7 @@ namespace InfernumMode.FuckYouModeAIs.Destroyer
 			projectile.ignoreWater = true;
             projectile.tileCollide = true;
             projectile.penetrate = -1;
-            projectile.timeLeft = 420;
+            projectile.timeLeft = 660;
         }
 
         public override void AI()
@@ -38,10 +38,10 @@ namespace InfernumMode.FuckYouModeAIs.Destroyer
 
 			projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-            projectile.tileCollide = projectile.timeLeft < 350;
+            projectile.tileCollide = projectile.timeLeft < 520;
 
             Tile tileAtPosition = CalamityUtils.ParanoidTileRetrieval((int)projectile.Center.X / 16, (int)projectile.Center.Y / 16);
-            if (TileID.Sets.Platforms[tileAtPosition.type] && tileAtPosition.active())
+            if (TileID.Sets.Platforms[tileAtPosition.type] && tileAtPosition.active() && projectile.tileCollide)
                 projectile.Kill();
 
             Lighting.AddLight(projectile.Center, Vector3.One * 0.85f);

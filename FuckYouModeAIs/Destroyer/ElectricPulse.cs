@@ -33,7 +33,7 @@ namespace InfernumMode.FuckYouModeAIs.Destroyer
             projectile.frame = projectile.frameCounter / 4 % Main.projFrames[projectile.type];
 
             // Fade in.
-            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.05f, 0f, 1f);
+            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.02f, 0f, 1f);
             projectile.tileCollide = projectile.timeLeft < 100;
 
             // Accelerate over time.
@@ -43,12 +43,13 @@ namespace InfernumMode.FuckYouModeAIs.Destroyer
 
         public override void Kill(int timeLeft)
         {
+            Main.PlaySound(SoundID.Item122, projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 5; i++)
             {
-                Vector2 arcVelocity = Main.rand.NextVector2Circular(2.5f, 2.5f);
+                Vector2 arcVelocity = Main.rand.NextVector2Circular(2.2f, 2.6f);
 
                 int arc = Utilities.NewProjectileBetter(projectile.Center, arcVelocity, ModContent.ProjectileType<ElectricArc>(), 130, 0f);
                 Main.projectile[arc].scale = Main.rand.NextFloat(1f, 1.3f);

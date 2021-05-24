@@ -59,8 +59,8 @@ namespace InfernumMode.FuckYouModeAIs.Destroyer
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool phase2 = lifeRatio < 0.65f;
-            bool phase3 = lifeRatio < 0.35f;
+            bool phase2 = lifeRatio < 0.75f;
+            bool phase3 = lifeRatio < 0.4f;
 
             ref float attackTimer = ref npc.ai[2];
             ref float spawnedSegmentsFlag = ref npc.ai[3];
@@ -178,12 +178,16 @@ namespace InfernumMode.FuckYouModeAIs.Destroyer
                     {
                         Vector2 idealVelocity = Vector2.Lerp(Vector2.UnitY, -Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X), 0.3f) * -maxDiveAscendSpeed;
 
-                        npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.016f, true) * MathHelper.Lerp(npc.velocity.Length(), maxDiveAscendSpeed, 0.1f);
+                        if (attackTimer < diveTime + ascendTime - 30f)
+                            npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.016f, true) * MathHelper.Lerp(npc.velocity.Length(), maxDiveAscendSpeed, 0.1f);
                         
                         // Create shake effects for players.
                         Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.InverseLerp(diveTime + ascendTime / 2, diveTime + ascendTime, attackTimer, true);
                         Main.LocalPlayer.Infernum().CurrentScreenShakePower = MathHelper.Lerp(Main.LocalPlayer.Infernum().CurrentScreenShakePower, 2f, 7f);
                         Main.LocalPlayer.Infernum().CurrentScreenShakePower *= Utils.InverseLerp(2000f, 1100f, npc.Distance(Main.LocalPlayer.Center), true);
+
+                        if (attackTimer == diveTime + ascendTime - 15f)
+                            Main.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= diveTime + ascendTime - 30f)
                         {
@@ -194,7 +198,7 @@ namespace InfernumMode.FuckYouModeAIs.Destroyer
 
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
-                    if (attackTimer >= diveTime + ascendTime)
+                    if (attackTimer >= diveTime + ascendTime + 40f)
                         goToNextAIState();
                     break;
                 case DestroyerAttackType.LaserBarrage:
@@ -232,7 +236,7 @@ namespace InfernumMode.FuckYouModeAIs.Destroyer
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 60f == 59f)
                     {
-                        int probeCount = (int)MathHelper.Lerp(3f, 5f, 1f - lifeRatio);
+                        int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
                         for (int i = 0; i < probeCount; i++)
                         {
                             int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
@@ -261,7 +265,7 @@ namespace InfernumMode.FuckYouModeAIs.Destroyer
                         bool targetInLineOfSight = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) > 0.87f;
                         if (targetInLineOfSight)
                         {
-                            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 35f == 34f)
+                            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 45f == 44f)
                                 Utilities.NewProjectileBetter(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY) * 4f, ModContent.ProjectileType<ElectricPulse>(), 0, 0f);
                         }
                         else
@@ -392,6 +396,7 @@ namespace InfernumMode.FuckYouModeAIs.Destroyer
             {
                 if ((Collision.SolidCollision(npc.position, npc.width, npc.height) || npc.justHit) && !Main.dedServ)
                 {
+                    Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
                     for (int i = 0; i < 36; i++)
                     {
                         Dust energy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 182);

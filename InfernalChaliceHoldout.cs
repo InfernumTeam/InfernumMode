@@ -77,7 +77,7 @@ namespace InfernumMode
 
             if (Main.netMode != NetmodeID.Server)
             {
-                Main.NewText(infernumWasAlreadyActive ? "Very well, then." : "It begins.", Color.Crimson);
+                Main.NewText(infernumWasAlreadyActive ? "Very well, then." : "Good luck.", Color.Crimson);
 
                 // Create a lot of fire dust.
                 for (int i = 0; i < 80; i++)
@@ -133,12 +133,12 @@ namespace InfernumMode
             if (Main.dedServ)
                 return;
 
-            int dustCount = (int)Math.Round(MathHelper.SmoothStep(2f, 8f, Time / Lifetime));
-            float outwardness = 485f;
+            int dustCount = (int)Math.Round(MathHelper.SmoothStep(1f, 5f, Time / Lifetime));
+            float outwardness = 145f;
             float dustScale = MathHelper.Lerp(1.35f, 1.625f, Time / Lifetime);
             for (int i = 0; i < dustCount; i++)
             {
-                Vector2 spawnPosition = projectile.Center + Main.rand.NextVector2Unit() * outwardness * Main.rand.NextFloat(0.75f, 1.1f);
+                Vector2 spawnPosition = projectile.Center + Main.rand.NextVector2Unit() * outwardness * Main.rand.NextFloat(0.7f, 1.3f);
                 Vector2 dustVelocity = (projectile.Center - spawnPosition) * 0.095f + Owner.velocity;
 
                 Dust fire = Dust.NewDustPerfect(spawnPosition, 267);

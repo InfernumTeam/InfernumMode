@@ -40,26 +40,6 @@ namespace InfernumMode
 
         public override bool CanUseItem(Player player) => CalamityWorld.death && !BossRushEvent.BossRushActive;
 
-        public override bool UseItem(Player player)
-        {
-            if (!PoDWorld.InfernumMode)
-            {
-                PoDWorld.InfernumMode = true;
-                Color messageColor = Color.Crimson;
-                Main.NewText("Prepare for hell.", messageColor);
-            }
-            else
-            {
-                PoDWorld.InfernumMode = false;
-                Color messageColor = Color.Crimson;
-                Main.NewText("Very well then.", messageColor);
-            }
-
-            if (Main.netMode == NetmodeID.Server)
-                CalamityNetcode.SyncWorld();
-            return true;
-        }
-
         public override void ModifyTooltips(List<TooltipLine> tooltips) => tooltips.FirstOrDefault(x => x.Name == "Tooltip2" && x.mod == "Terraria").overrideColor = Color.DarkRed;
 
         public override void AddRecipes()

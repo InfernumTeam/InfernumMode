@@ -73,7 +73,6 @@ namespace InfernumMode.ILEditingStuff
         public static void ILEditingLoad()
         {
             On.Terraria.Gore.NewGore += RemoveCultistGore;
-			On.Terraria.NPC.ApplyTileCollision += MakeSpecialBloodCrawlersIgnoreTiles;
             IL.Terraria.Player.ItemCheck += ItemCheckChange;
             IL.Terraria.Main.DrawTiles += WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += WoFLavaColorChange2;
@@ -88,7 +87,6 @@ namespace InfernumMode.ILEditingStuff
 		public static void ILEditingUnload()
         {
             On.Terraria.Gore.NewGore -= RemoveCultistGore;
-            On.Terraria.NPC.ApplyTileCollision -= MakeSpecialBloodCrawlersIgnoreTiles;
             IL.Terraria.Player.ItemCheck -= ItemCheckChange;
             IL.Terraria.Main.DrawTiles -= WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw -= WoFLavaColorChange2;
@@ -106,18 +104,6 @@ namespace InfernumMode.ILEditingStuff
                 return Main.maxDust;
 
             return orig(Position, Velocity, Type, Scale);
-        }
-
-        internal static void MakeSpecialBloodCrawlersIgnoreTiles(On.Terraria.NPC.orig_ApplyTileCollision orig, NPC self, bool fall, Vector2 cPosition, int cWidth, int cHeight)
-        {
-            if (self.type == ModContent.NPCType<BloodCrawler>())
-            {
-                int checkArea = 12;
-                self.velocity = Collision.noSlopeCollision(self.Center - Vector2.One * checkArea * 0.5f, self.velocity, checkArea, checkArea, true, true);
-                return;
-            }
-
-            orig(self, fall, cPosition, cWidth, cHeight);
         }
 
         internal static Color BlendLavaColors(Color baseColor)

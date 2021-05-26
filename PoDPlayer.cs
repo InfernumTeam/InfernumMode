@@ -14,6 +14,9 @@ namespace InfernumMode
         public bool ShadowflameInferno = false;
         public float CurrentScreenShakePower;
 
+        public Vector2 ScreenFocusPosition;
+        public float ScreenFocusInterpolant = 0f;
+
         #region Skies
         public override void UpdateBiomeVisuals()
         {
@@ -32,6 +35,7 @@ namespace InfernumMode
         {
             RedElectrified = false;
             ShadowflameInferno = false;
+            ScreenFocusInterpolant = 0f;
         }
         #endregion
         #region Update Dead
@@ -106,6 +110,12 @@ namespace InfernumMode
 		#region Screen Shaking
 		public override void ModifyScreenPosition()
 		{
+            if (ScreenFocusInterpolant > 0f)
+			{
+                Vector2 idealScreenPosition = ScreenFocusPosition - new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
+                Main.screenPosition = Vector2.Lerp(Main.screenPosition, idealScreenPosition, ScreenFocusInterpolant);
+			}
+
             if (CurrentScreenShakePower > 0f)
                 CurrentScreenShakePower = Utils.Clamp(CurrentScreenShakePower - 0.2f, 0f, 50f);
             else

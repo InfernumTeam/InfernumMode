@@ -96,5 +96,14 @@ namespace InfernumMode
         /// <param name="min">The minimum magnitude.</param>
         /// <param name="max">The maximum magnitude.</param>
         public static Vector2 ClampMagnitude(this Vector2 v, float min, float max) => v.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(v.Length(), min, max);
+
+        public static Vector2 MoveTowards(this Vector2 currentPosition, Vector2 targetPosition, float maxAmountAllowedToMove)
+        {
+            Vector2 v = targetPosition - currentPosition;
+            if (v.Length() < maxAmountAllowedToMove)
+                return targetPosition;
+
+            return currentPosition + v.SafeNormalize(Vector2.Zero) * maxAmountAllowedToMove;
+        }
     }
 }

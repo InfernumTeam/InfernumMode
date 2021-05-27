@@ -1,6 +1,7 @@
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -38,7 +39,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
             projectile.velocity *= 1.026f;
             projectile.rotation = projectile.velocity.ToRotation();
-            projectile.spriteDirection = (System.Math.Cos(projectile.rotation) > 0f).ToDirectionInt();
+            projectile.spriteDirection = (Math.Cos(projectile.rotation) > 0f).ToDirectionInt();
             if (projectile.spriteDirection == -1)
                 projectile.rotation += MathHelper.Pi;
 

@@ -1,6 +1,8 @@
-﻿using InfernumMode.FuckYouModeAIs.Polterghast;
+﻿using InfernumMode.FuckYouModeAIs.Cultist;
+using InfernumMode.FuckYouModeAIs.Polterghast;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -59,6 +61,8 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                     DoTypicalAI(npc, target, ref attackTimer);
                 else if (lifeRatio > 0.45f)
                     DoPhase2AI(npc, target, ref attackTimer, ref attackState);
+                else if (lifeRatio > 0.15f)
+                    DoPhase3AI(npc, target, ref attackTimer, ref attackState);
 
                 // Do phase transition effects as needed.
                 if (phaseChangeCountdown > 0f)
@@ -94,6 +98,13 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 						{
                             phaseChangeCountdown = 90f;
                             phaseChangeState = 1f;
+                        }
+                        break;
+                    case 1:
+                        if (lifeRatio < 0.45f)
+                        {
+                            phaseChangeCountdown = 90f;
+                            phaseChangeState = 2f;
                         }
                         break;
 				}
@@ -490,25 +501,142 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
             }
 		}
 
+        public static void DoPhase3AI(NPC npc, Player target, ref float attackTimer, ref float attackState)
+        {
+            switch ((int)attackState)
+            {
+                case 0:
+                    attackState = 1f;
+                    break;
+
+                // Hover and swipe at the player.
+                case 1:
+                    Vector2 destination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, -270f);
+                    Vector2 acceleration = new Vector2(0.3f, 0.3f);
+                    DoHoverMovement(npc, destination, acceleration);
+                    npc.Center = npc.Center.MoveTowards(destination, 10f);
+
+                    npc.damage = 0;
+                    npc.rotation = npc.velocity.X * 0.05f;
+
+                    if (attackTimer % 160f == 85f)
+                        Main.PlaySound(SoundID.Roar, target.Center, 0);
+
+                    if (attackTimer >= 305f)
+                    {
+                        attackTimer = 0f;
+                        attackState = 2f;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Spin charge.
+                case 2:
+                    if (attackTimer < 50f)
+                    {
+                        npc.velocity *= 0.7f;
+                        npc.rotation *= 0.7f;
+                    }
+
+                    // Roar and charge after enough time has passed.
+                    if (attackTimer == 50f)
+                        Main.PlaySound(SoundID.Roar, target.Center, 0);
+
+                    if (attackTimer >= 50f && attackTimer % 45f == 0f)
+                    {
+                        Main.PlaySound(SoundID.Item8, target.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            for (int i = 0; i < 4; i++)
+                            {
+                                Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 4f) * 7f;
+                                Utilities.NewProjectileBetter(npc.Center, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 105, 0f);
+                            }
+                        }
+                    }
+
+                    if (attackTimer > 50f && attackTimer < 270f)
+                    {
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * 5.3f;
+
+                        npc.rotation += 0.2f;
+                        npc.rotation %= MathHelper.TwoPi;
+
+                        if (npc.WithinRange(target.Center, 50f))
+                            attackTimer += 10f;
+                    }
+
+                    if (attackTimer > 270f)
+                    {
+                        npc.velocity *= 0.94f;
+                        npc.rotation = npc.rotation.AngleLerp(0f, 0.07f);
+                    }
+
+                    if (attackTimer >= 290f)
+                    {
+                        attackState = 0f;
+                        attackTimer = 0f;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Teleport above target and summon minion skulls.
+                case 3:
+                    if (attackTimer < 25f)
+                    {
+                        npc.velocity *= 0.93f;
+                        npc.rotation = npc.velocity.X * 0.05f;
+                    }
+
+                    if (attackTimer == 25f)
+					{
+                        Vector2 teleportPosition = target.Center - Vector2.UnitY * 315f;
+                        CultistAIClass.CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
+
+                        npc.Center = teleportPosition;
+                        npc.velocity = Vector2.Zero;
+                        npc.netUpdate = true;
+                    }
+
+                    if (attackState > 25f && attackState < 105f)
+					{
+                        destination = target.Center + target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 280f, -280f);
+                        destination -= npc.velocity * 3f;
+
+                        npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 14f, 2f);
+                        npc.rotation = npc.velocity.X * 0.04f;
+                    }
+                    break;
+            }
+        }
+
         #endregion AI
 
         #region Drawing and Frames
 
-        [OverrideAppliesTo(NPCID.SkeletronHead, typeof(SkeletronAIClass), "SkeletronHeadFindFrame", EntityOverrideContext.NPCFindFrame)]
-        public static void SkeletronHeadFindFrame(NPC npc, int frameHeight)
+        [OverrideAppliesTo(NPCID.SkeletronHead, typeof(SkeletronAIClass), "SkeletronHeadPreDraw", EntityOverrideContext.NPCPreDraw)]
+        public static bool SkeletronHeadPreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
 		{
-            float summonAnimationTimer = npc.ai[2];
-            if (summonAnimationTimer < 80f)
-                npc.frame.Y = 0;
-            else
+            float phaseChangeTimer = 90f - npc.Infernum().ExtraAI[0];
+            bool canDrawBehindGlow = npc.Infernum().ExtraAI[1] >= 2f;
+            float backGlowFade = 0f;
+
+            if (canDrawBehindGlow)
+                backGlowFade = Utils.InverseLerp(10f, 65f, phaseChangeTimer, true);
+            if (npc.Infernum().ExtraAI[1] >= 3f)
+                backGlowFade = 1f;
+
+            Texture2D npcTexture = Main.npcTexture[npc.type];
+            for (int i = 0; i < 6; i++)
 			{
-                npc.frameCounter++;
-                if (npc.frameCounter % 5f == 4f)
-                    npc.frame.Y += frameHeight;
-                if (npc.frame.Y >= Main.npcFrameCount[npc.type] * frameHeight)
-                    npc.frame.Y = 0;
+                Vector2 drawOffset = (MathHelper.TwoPi * (i + 0.5f) / 6f).ToRotationVector2() * 4f;
+                Vector2 drawPosition = npc.Center + drawOffset - Main.screenPosition;
+                Color drawColor = Color.Lerp(Color.Transparent, Color.Fuchsia, backGlowFade) * backGlowFade;
+                spriteBatch.Draw(npcTexture, drawPosition, null, drawColor, npc.rotation, npcTexture.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
 			}
-        }
+
+            return true;
+		}
         #endregion
     }
 }

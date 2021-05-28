@@ -10,6 +10,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 {
     public class NonHomingSkull : ModProjectile
     {
+        public ref float AccelerationFactorReduction => ref projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Skull");
@@ -27,7 +28,6 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 300;
-            cooldownSlot = 1;
         }
         public override void AI()
         {
@@ -37,7 +37,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                 projectile.localAI[0] = 1f;
 			}
 
-            projectile.velocity *= 1.026f;
+            projectile.velocity *= 1.026f - AccelerationFactorReduction;
             projectile.rotation = projectile.velocity.ToRotation();
             projectile.spriteDirection = (Math.Cos(projectile.rotation) > 0f).ToDirectionInt();
             if (projectile.spriteDirection == -1)
@@ -53,7 +53,8 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                 magic.noGravity = true;
 			}
 
-            Lighting.AddLight(projectile.Center, Color.White.ToVector3());
+            if (projectile.timeLeft > 250f)
+                Lighting.AddLight(projectile.Center, Color.White.ToVector3() * 0.3f);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

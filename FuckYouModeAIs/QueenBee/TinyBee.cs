@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -9,13 +10,13 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
         public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()
 		{
-            DisplayName.SetDefault("Hive");
-            Main.projFrames[projectile.type] = 4;
+            DisplayName.SetDefault("Bee");
+            Main.projFrames[projectile.type] = 3;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 32;
+            projectile.width = projectile.height = 40;
             projectile.ignoreWater = true;
             projectile.timeLeft = 240;
             projectile.scale = 1f;
@@ -28,15 +29,11 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
         public override void AI()
 		{
             projectile.alpha = Utils.Clamp(projectile.alpha - 50, 0, 255);
-            projectile.rotation = projectile.velocity.X * 0.15f;
+            projectile.rotation = MathHelper.Clamp(projectile.velocity.X * 0.15f, -0.7f, 0.7f);
+            projectile.spriteDirection = (projectile.velocity.X < 0f).ToDirectionInt();
 
-            if (Time % 120f > 90f)
-                projectile.velocity *= 0.95f;
-            else if (Time % 120f < 30f)
-			{
-                Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-                projectile.velocity = (projectile.velocity * 22f + projectile.SafeDirectionTo(closestPlayer.Center) * 7f) / 23f;
-			}
+            if (Time < 80f)
+                projectile.velocity = Vector2.Lerp(projectile.velocity, Vector2.UnitX * (projectile.velocity.X > 0f).ToDirectionInt() * 10f, 0.02f);
 
             projectile.frame = projectile.timeLeft / 4 % Main.projFrames[projectile.type];
 
@@ -50,7 +47,7 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
 			Main.PlaySound(SoundID.NPCDeath1, projectile.Center);
 			for (int i = 0; i < 3; i++)
 			{
-				Dust honey = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 147, 0f, 0f, 0, default, 1f);
+				Dust honey = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 147, 0f, 0f, 0, default, 0.6f);
 				if (Main.rand.NextBool(2))
                     honey.scale *= 1.4f;
 			}

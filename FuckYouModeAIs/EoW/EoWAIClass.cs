@@ -198,7 +198,6 @@ namespace InfernumMode.FuckYouModeAIs.EoW
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 14f;
             idealVelocity.Y *= 1.7f;
             npc.SimpleFlyMovement(idealVelocity, 0.125f);
-            npc.velocity = npc.velocity.ClampMagnitude(6f, 25f);
         }
 
         public static void CreateSegments(NPC npc, int bodyType, int tailType)

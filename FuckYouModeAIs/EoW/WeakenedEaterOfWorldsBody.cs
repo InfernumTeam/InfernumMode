@@ -45,7 +45,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
 
         public override void AI()
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient && TotalDamageTaken > 500f && !npc.dontTakeDamage)
+            if (Main.netMode != NetmodeID.MultiplayerClient && TotalDamageTaken > 200f && !npc.dontTakeDamage)
             {
                 for (int i = 0; i < 3; i++)
                 {

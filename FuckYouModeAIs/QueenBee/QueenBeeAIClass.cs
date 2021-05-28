@@ -314,14 +314,15 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
 					}
 				}
 
-                if (attackTimer % 20f == 19f && attackTimer < 400f)
+                if (attackTimer % 20f == 19f && attackTimer < 600f)
 				{
-                    Vector2 beeSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-800f, 800f), 600f);
-                    Utilities.NewProjectileBetter(beeSpawnPosition, -Vector2.UnitY.RotatedByRandom(0.89f) * 3f, ModContent.ProjectileType<TinyBee>(), 65, 0f);
+                    Vector2 beeSpawnPosition = target.Center + new Vector2(Main.rand.NextBool(2).ToDirectionInt() * 1200f, Main.rand.NextFloat(-900f, 0f));
+                    Vector2 beeVelocity = (target.Center - beeSpawnPosition).SafeNormalize(Vector2.UnitY) * new Vector2(4f, 20f);
+                    Utilities.NewProjectileBetter(beeSpawnPosition, beeVelocity, ModContent.ProjectileType<TinyBee>(), 65, 0f);
 				}
 			}
 
-            if (attackTimer >= 575f)
+            if (attackTimer >= 775f)
                 GotoNextAttackState(npc);
 
             npc.spriteDirection = (target.Center.X - npc.Center.X > 0).ToDirectionInt();
@@ -382,7 +383,7 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
             }
 
             if (lifeRatio < 0.1f)
-                newAttackType = QueenBeeAttackState.HorizontalCharge;
+                newAttackType = oldAttackType == QueenBeeAttackState.HorizontalCharge ? QueenBeeAttackState.SummonBeesFromBelow : QueenBeeAttackState.HorizontalCharge;
 
             npc.ai[0] = (int)newAttackType;
             npc.ai[1] = 0f;

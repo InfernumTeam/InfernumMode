@@ -52,8 +52,6 @@ namespace InfernumMode
             damage = (int)(damage * 0.5);
             if (Main.expertMode)
                 damage = (int)(damage * 0.5);
-            if (CalamityWorld.revenge)
-                damage = (int)(damage * 0.8);
             return Projectile.NewProjectile(spawnX, spawnY, velocityX, velocityY, type, damage, knockback, owner, ai0, ai1);
         }
 

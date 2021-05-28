@@ -3,6 +3,7 @@ using InfernumMode.FuckYouModeAIs.Polterghast;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -59,9 +60,9 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                 // Do normal behavior at first.
                 if (lifeRatio > 0.75f)
                     DoTypicalAI(npc, target, ref attackTimer);
-                else if (lifeRatio > 0.45f)
+                else if (lifeRatio > 0.4f)
                     DoPhase2AI(npc, target, ref attackTimer, ref attackState);
-                else if (lifeRatio > 0.15f)
+                else
                     DoPhase3AI(npc, target, ref attackTimer, ref attackState);
 
                 // Do phase transition effects as needed.
@@ -127,6 +128,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                 return false;
 			}
 
+            npc.life = npc.lifeMax = 200;
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = true;
 
@@ -191,7 +193,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                         if (facingPlayer && adjustedTimer > 65f && adjustedTimer < 140f)
                         {
                             float swipeAngularOffset = MathHelper.Lerp(-0.6f, 1.22f, Utils.InverseLerp(90f, 140f, adjustedTimer, true));
-                            idealPosition = owner.Center + owner.SafeDirectionTo(target.Center).RotatedBy(swipeAngularOffset) * 290f;
+                            idealPosition = owner.Center + owner.SafeDirectionTo(target.Center).RotatedBy(swipeAngularOffset) * 250f;
                         }
 
                         npc.Center = Vector2.Lerp(npc.Center, idealPosition, 0.05f);
@@ -212,6 +214,28 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.035f);
                         npc.Center = npc.Center.MoveTowards(destination, 5f);
                         break;
+                    case 3:
+                        destination = owner.Center + new Vector2(armDirection * 460f, 360f);
+                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.05f);
+                        npc.Center = npc.Center.MoveTowards(destination, 5f);
+
+                        adjustedTimer = attackTimer % 180f;
+                        if (adjustedTimer > 50f && adjustedTimer < 170f && adjustedTimer % 40f == 39f)
+                        {
+                            Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
+
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                for (int i = 0; i < 4; i++)
+                                {
+                                    Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 12f;
+                                    if ((int)(adjustedTimer / 40) % 2 == 1)
+                                        flameShootVelocity = flameShootVelocity.RotatedBy(MathHelper.Pi / 8f);
+                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 95, 0f);
+                                }
+                            }
+                        }
+                        break;
                 }
 
                 if (npc.velocity.Length() < owner.velocity.Length() * 0.4f)
@@ -227,7 +251,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 		{
             npc.velocity *= 0.7f;
             npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
-            if (npc.Opacity < 0f)
+            if (npc.Opacity <= 0f)
 			{
                 npc.active = false;
                 npc.netUpdate = true;
@@ -389,7 +413,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                 // Hover over the target and release skulls directly at them.
                 case 0:
                     int totalShots = 10;
-                    Vector2 destination = target.Center - Vector2.UnitY * 320f;
+                    Vector2 destination = target.Center - Vector2.UnitY * 360f;
                     Vector2 acceleration = new Vector2(0.18f, 0.12f);
                     DoHoverMovement(npc, destination, acceleration);
 
@@ -413,7 +437,9 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                             for (int i = 0; i < skullCount; i++)
                             {
                                 Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
-                                Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                                int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                                if (Main.projectile.IndexInRange(skull))
+                                    Main.projectile[skull].ai[0] = 0.005f;
                             }
                         }
 					}
@@ -430,10 +456,16 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
                 // Hover and swipe at the player.
                 case 1:
-                    destination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 510f, -310f);
+                    destination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 520f, -330f);
                     acceleration = new Vector2(0.3f, 0.3f);
-                    DoHoverMovement(npc, destination, acceleration);
-                    npc.Center = npc.Center.MoveTowards(destination, 10f);
+
+                    if (attackTimer < 90f)
+                    {
+                        DoHoverMovement(npc, destination, acceleration);
+                        npc.Center = npc.Center.MoveTowards(destination, 10f);
+                    }
+                    else
+                        npc.velocity *= 0.94f;
 
                     npc.damage = 0;
                     npc.rotation = npc.velocity.X * 0.05f;
@@ -505,57 +537,78 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
         {
             switch ((int)attackState)
             {
+                // Hover over the target and release skulls directly at them.
                 case 0:
-                    attackState = 1f;
-                    break;
-
-                // Hover and swipe at the player.
-                case 1:
-                    Vector2 destination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, -270f);
-                    Vector2 acceleration = new Vector2(0.3f, 0.3f);
+                    int totalShots = 10;
+                    Vector2 destination = target.Center - Vector2.UnitY * 450f;
+                    Vector2 acceleration = new Vector2(0.18f, 0.12f);
                     DoHoverMovement(npc, destination, acceleration);
-                    npc.Center = npc.Center.MoveTowards(destination, 10f);
 
-                    npc.damage = 0;
                     npc.rotation = npc.velocity.X * 0.05f;
 
-                    if (attackTimer % 160f == 85f)
-                        Main.PlaySound(SoundID.Roar, target.Center, 0);
+                    if (!npc.WithinRange(target.Center, 85f) && attackTimer % 40f == 39f)
+                    {
+                        int currentShotCounter = (int)(attackTimer / 40f);
+                        Main.PlaySound(SoundID.Item8, target.Center);
 
-                    if (attackTimer >= 305f)
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            float skullSpeed = 6f;
+                            int skullCount = 4;
+                            if (currentShotCounter % 5 == 4)
+                            {
+                                skullSpeed *= 1.35f;
+                                skullCount = 7;
+                            }
+
+                            for (int i = 0; i < skullCount; i++)
+                            {
+                                Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
+                                int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                                if (Main.projectile.IndexInRange(skull))
+                                    Main.projectile[skull].ai[0] = 0.005f;
+                            }
+                        }
+                    }
+
+                    // Go to the next state after enough shots have been performed.
+                    if (attackTimer >= totalShots * 50f + 35f)
                     {
                         attackTimer = 0f;
                         attackState = 2f;
                         npc.netUpdate = true;
                     }
+
                     break;
 
                 // Spin charge.
                 case 2:
-                    if (attackTimer < 50f)
+                    if (attackTimer < 30f)
                     {
                         npc.velocity *= 0.7f;
                         npc.rotation *= 0.7f;
                     }
 
                     // Roar and charge after enough time has passed.
-                    if (attackTimer == 50f)
+                    if (attackTimer == 30f)
                         Main.PlaySound(SoundID.Roar, target.Center, 0);
 
-                    if (attackTimer >= 50f && attackTimer % 45f == 0f)
+                    if (attackTimer >= 30f && attackTimer % 45f == 0f)
                     {
                         Main.PlaySound(SoundID.Item8, target.Center);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        float skullSpeed = 5f;
+                        int skullCount = 4;
+
+                        for (int i = 0; i < skullCount; i++)
                         {
-                            for (int i = 0; i < 4; i++)
-                            {
-                                Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 4f) * 7f;
-                                Utilities.NewProjectileBetter(npc.Center, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 105, 0f);
-                            }
+                            Vector2 skullVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 95f).RotatedBy(MathHelper.Lerp(-0.44f, 0.44f, i / (skullCount - 1f))) * skullSpeed;
+                            int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                            if (Main.projectile.IndexInRange(skull))
+                                Main.projectile[skull].ai[0] = 0.005f;
                         }
                     }
 
-                    if (attackTimer > 50f && attackTimer < 270f)
+                    if (attackTimer > 30f && attackTimer < 300f)
                     {
                         npc.velocity = npc.SafeDirectionTo(target.Center) * 5.3f;
 
@@ -563,49 +616,44 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                         npc.rotation %= MathHelper.TwoPi;
 
                         if (npc.WithinRange(target.Center, 50f))
-                            attackTimer += 10f;
+                            attackTimer += 11f;
                     }
 
-                    if (attackTimer > 270f)
+                    if (attackTimer > 300f)
                     {
                         npc.velocity *= 0.94f;
                         npc.rotation = npc.rotation.AngleLerp(0f, 0.07f);
                     }
 
-                    if (attackTimer >= 290f)
+                    if (attackTimer >= 320f)
                     {
-                        attackState = 0f;
+                        attackState = 3f;
                         attackTimer = 0f;
                         npc.netUpdate = true;
                     }
                     break;
 
-                // Teleport above target and summon minion skulls.
+                // Hover above the target and release shadow flames from the hands.
                 case 3:
-                    if (attackTimer < 25f)
+                    float adjustedTimer = attackTimer % 180f;
+                    destination = target.Center - Vector2.UnitY * 400f;
+                    acceleration = new Vector2(0.22f, 0.19f);
+                    if (adjustedTimer > 45f)
                     {
-                        npc.velocity *= 0.93f;
-                        npc.rotation = npc.velocity.X * 0.05f;
+                        destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 100f;
+                        npc.Center = npc.Center.MoveTowards(destination, 10f);
                     }
 
-                    if (attackTimer == 25f)
-					{
-                        Vector2 teleportPosition = target.Center - Vector2.UnitY * 315f;
-                        CultistAIClass.CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
+                    DoHoverMovement(npc, destination, acceleration);
+                    npc.rotation = npc.velocity.X * 0.05f;
 
-                        npc.Center = teleportPosition;
-                        npc.velocity = Vector2.Zero;
+                    if (attackTimer >= 385f)
+                    {
+                        attackState = 0f;
+                        attackTimer = 0f;
                         npc.netUpdate = true;
                     }
 
-                    if (attackState > 25f && attackState < 105f)
-					{
-                        destination = target.Center + target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 280f, -280f);
-                        destination -= npc.velocity * 3f;
-
-                        npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 14f, 2f);
-                        npc.rotation = npc.velocity.X * 0.04f;
-                    }
                     break;
             }
         }
@@ -629,9 +677,11 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
             Texture2D npcTexture = Main.npcTexture[npc.type];
             for (int i = 0; i < 6; i++)
 			{
-                Vector2 drawOffset = (MathHelper.TwoPi * (i + 0.5f) / 6f).ToRotationVector2() * 4f;
+                Vector2 drawOffset = (MathHelper.TwoPi * (i + 0.5f) / 6f).ToRotationVector2() * 4f + Vector2.UnitY * 2f;
                 Vector2 drawPosition = npc.Center + drawOffset - Main.screenPosition;
-                Color drawColor = Color.Lerp(Color.Transparent, Color.Fuchsia, backGlowFade) * backGlowFade;
+                Color drawColor = Color.Lerp(Color.Transparent, Color.Fuchsia, backGlowFade) * backGlowFade * 0.24f;
+                drawColor.A = 0;
+
                 spriteBatch.Draw(npcTexture, drawPosition, null, drawColor, npc.rotation, npcTexture.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
 			}
 

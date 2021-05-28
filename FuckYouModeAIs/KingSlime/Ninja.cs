@@ -69,9 +69,9 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 3; i++)
+                        for (int i = 0; i < 2; i++)
                         {
-                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.45f, 0.45f, i / 2f)) * 5.8f;
+                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i)) * 4.8f;
                             Utilities.NewProjectileBetter(npc.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 45, 0f);
                         }
                     }
@@ -112,7 +112,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             }
 
             if (Time % 150f > 130f)
-                npc.velocity.X *= 0.96f;
+                npc.velocity.X *= 0.945f;
             else
                 DoRunEffects();
 
@@ -137,9 +137,9 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 
             if (Main.netMode != NetmodeID.MultiplayerClient && horizontalDistanceFromTarget > 320f && Time % 60f == 59f && npc.collideY)
             {
-                float jumpSpeed = (float)Math.Sqrt(horizontalDistanceFromTarget) * 0.7f;
-                if (jumpSpeed >= 13f)
-                    jumpSpeed = 13f;
+                float jumpSpeed = (float)Math.Sqrt(horizontalDistanceFromTarget) * 0.5f;
+                if (jumpSpeed >= 9f)
+                    jumpSpeed = 9f;
                 jumpSpeed *= Main.rand.NextFloat(1.15f, 1.4f);
                 DoJump(jumpSpeed);
 
@@ -168,8 +168,8 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 return;
 
             int idealDirection = (Target.Center.X - npc.Center.X > 0f).ToDirectionInt();
-            float runAcceleration = 0.18f;
-            float maxRunSpeed = 6f;
+            float runAcceleration = 0.11f;
+            float maxRunSpeed = 4.5f;
 
             // Accelerate much faster if decelerating to make the effect more smooth.
             if (idealDirection != Math.Sign(npc.velocity.X))
@@ -214,7 +214,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             // Do the teleport dash.
             if (TeleportCountdown > 35f)
             {
-                npc.velocity.X = MathHelper.SmoothStep(0f, npc.spriteDirection * 10f, Utils.InverseLerp(35f, 70f, TeleportCountdown, true));
+                npc.velocity.X = MathHelper.SmoothStep(0f, npc.spriteDirection * 6f, Utils.InverseLerp(35f, 70f, TeleportCountdown, true));
                 npc.Opacity = Utils.InverseLerp(35f, 45f, TeleportCountdown, true);
             }
             
@@ -273,7 +273,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             }
             else
             {
-                npc.velocity.X = MathHelper.SmoothStep(0f, npc.spriteDirection * 10f, Utils.InverseLerp(0f, 35f, TeleportCountdown, true));
+                npc.velocity.X = MathHelper.SmoothStep(0f, npc.spriteDirection * 6f, Utils.InverseLerp(0f, 35f, TeleportCountdown, true));
                 npc.Opacity = Utils.InverseLerp(35f, 25f, TeleportCountdown, true);
             }
 

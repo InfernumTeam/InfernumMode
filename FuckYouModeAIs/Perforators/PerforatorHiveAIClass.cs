@@ -171,7 +171,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                     Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 8.4f);
                     Vector2 spawnPosition = npc.Center - Vector2.UnitY * 45f + Main.rand.NextVector2Circular(30f, 30f);
 
-                    int ichor = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<IchorSpit>(), 65, 0f);
+                    int ichor = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<IchorSpit>(), 80, 0f);
                     if (Main.projectile.IndexInRange(ichor))
                         Main.projectile[ichor].ai[1] = 1f;
                 }
@@ -199,7 +199,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             int shootRate = anyWorms ? 100 : 60;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
             {
-                int totalProjectiles = anyWorms ? 10 : 16;
+                int totalProjectiles = anyWorms ? 7 : 13;
                 float blobSpeed = anyWorms ? 6f : 8f;
                 Vector2 blobSpawnPosition = new Vector2(npc.Center.X, npc.Center.Y + 30f);
                 Vector2 currentBlobVelocity = Vector2.UnitY * -blobSpeed + Vector2.UnitX * npc.velocity.SafeNormalize(Vector2.Zero).X;
@@ -209,7 +209,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 currentBlobVelocity.X -= blobSpeed * 0.5f;
                 for (int i = 0; i < totalProjectiles + 1; i++)
                 {
-                    Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), 65, 0f, Main.myPlayer, 0f, 0f);
+                    Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), 80, 0f, Main.myPlayer, 0f, 0f);
                     currentBlobVelocity.X += blobSpeed / totalProjectiles * npc.direction;
                 }
                 Main.PlaySound(SoundID.NPCHit20, npc.position);

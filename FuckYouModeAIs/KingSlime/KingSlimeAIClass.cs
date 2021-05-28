@@ -103,6 +103,38 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             if (npc.velocity.Y > 0f)
                 npc.velocity.Y += MathHelper.Lerp(0.05f, 0.25f, 1f - lifeRatio);
 
+            if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 2500f))
+            {
+                npc.TargetClosest();
+                if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 2500f))
+                {
+                    npc.velocity.X *= 0.8f;
+                    if (Math.Abs(npc.velocity.X) < 0.1f)
+                        npc.velocity.X = 0f;
+
+                    npc.noTileCollide = true;
+                    npc.dontTakeDamage = true;
+                    npc.damage = 0;
+
+                    // Release slime dust to accompany the teleport
+                    for (int i = 0; i < 30; i++)
+                    {
+                        Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
+                        slime.noGravity = true;
+                        slime.velocity *= 0.5f;
+                    }
+
+                    if (npc.timeLeft > 30)
+                        npc.timeLeft = 30;
+                    if (npc.scale < 0.9f)
+                    {
+                        npc.active = false;
+                        npc.netUpdate = true;
+                    }
+                    return false;
+                }
+            }
+
             switch ((KingSlimeAttackType)(int)npc.ai[1])
 			{
                 case KingSlimeAttackType.SmallJump:
@@ -116,7 +148,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                         {
                             npc.TargetClosest();
                             target = Main.player[npc.target];
-                            float jumpSpeed = MathHelper.Lerp(7f, 15.6f, Utils.InverseLerp(40f, 400f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                            float jumpSpeed = MathHelper.Lerp(7f, 11.6f, Utils.InverseLerp(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                             jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
                             npc.velocity = new Vector2(npc.direction * 6f, -jumpSpeed);
@@ -140,7 +172,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                         {
                             npc.TargetClosest();
                             target = Main.player[npc.target];
-                            float jumpSpeed = MathHelper.Lerp(11f, 18f, Utils.InverseLerp(40f, 400f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                            float jumpSpeed = MathHelper.Lerp(9f, 13f, Utils.InverseLerp(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                             jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
                             npc.velocity = new Vector2(npc.direction * 8f, -jumpSpeed);
@@ -298,7 +330,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             Vector2 kingSlimeDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
 
             // Draw the ninja, if it's still stuck.
-            if (npc.life > npc.lifeMax * 0.5f)
+            if (npc.life > npc.lifeMax * 0.6f)
             {
                 Vector2 drawOffset = Vector2.Zero;
                 float ninjaRotation = npc.velocity.X * 0.05f;

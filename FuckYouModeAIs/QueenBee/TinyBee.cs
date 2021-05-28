@@ -45,9 +45,9 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
         public override void Kill(int timeLeft)
 		{
 			Main.PlaySound(SoundID.NPCDeath1, projectile.Center);
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < 12; i++)
 			{
-				Dust honey = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 147, 0f, 0f, 0, default, 0.6f);
+				Dust honey = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 147, 0f, 0f, 0, default, 0.8f);
 				if (Main.rand.NextBool(2))
                     honey.scale *= 1.4f;
 			}

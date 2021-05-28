@@ -7,9 +7,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.QueenBee
 {
-	public class QueenBeeAIClass
+    public class QueenBeeAIClass
     {
-		#region Enumerations
+        #region Enumerations
         internal enum QueenBeeAttackState
         {
             HorizontalCharge,
@@ -17,7 +17,7 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
             HoneyBlast,
             CreateMinionsFromAbdomen,
             SummonBeesFromBelow
-		}
+        }
 
         internal enum QueenBeeFrameType
         {
@@ -36,12 +36,12 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
                 npc.TargetClosest();
 
             // If none was found or it was too far away, despawn.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || 
+            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead ||
                 !Main.player[npc.target].active || !npc.WithinRange(Main.player[npc.target].Center, 3400f))
-			{
+            {
                 DoDespawnEffects(npc);
                 return false;
-			}
+            }
 
             Player target = Main.player[npc.target];
 
@@ -54,13 +54,13 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
             ref float hasBegunFinalPhaseTransition = ref npc.localAI[1];
 
             if (npc.life < npc.lifeMax * 0.1f && Main.netMode != NetmodeID.MultiplayerClient && hasBegunFinalPhaseTransition == 0f)
-			{
+            {
                 hasBegunFinalPhaseTransition = 1f;
                 finalPhaseTransitionTimer = 150f;
             }
 
             if (finalPhaseTransitionTimer > 0f)
-			{
+            {
                 attackTimer = 0f;
                 npc.dontTakeDamage = true;
                 frameType = (int)QueenBeeFrameType.UpwardFly;
@@ -74,7 +74,7 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
             }
 
             switch ((QueenBeeAttackState)(int)attackType)
-			{
+            {
                 case QueenBeeAttackState.HorizontalCharge:
                     DoAttack_HorizontalCharge(npc, target, ref frameType);
                     break;
@@ -93,17 +93,17 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
             }
             attackTimer++;
             return false;
-		}
+        }
 
         #region Specific Attacks
         internal static void DoDespawnEffects(NPC npc)
-		{
+        {
             npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, 17f, 0.1f);
             npc.damage = 0;
             if (npc.timeLeft > 180)
                 npc.timeLeft = 180;
         }
-        
+
         internal static void DoAttack_HorizontalCharge(NPC npc, Player target, ref float frameType)
         {
             int chargesToDo = 2;
@@ -162,12 +162,12 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
         }
 
         internal static void DoAttack_StingerBurst(NPC npc, Player target, ref float frameType, ref float attackTimer)
-		{
+        {
             int shootRate = 50;
             int totalStingersToShoot = 5;
             float shootSpeed = 12f;
             if (npc.life < npc.lifeMax * 0.5)
-			{
+            {
                 shootRate = 28;
                 totalStingersToShoot = 8;
                 shootSpeed = 15f;
@@ -242,9 +242,9 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
             if (attackTimer >= shootRate * totalBlastsToShoot)
                 GotoNextAttackState(npc);
         }
-        
+
         internal static void DoAttack_CreateMinionsFromAbdomen(NPC npc, Player target, ref float frameType, ref float attackTimer)
-		{
+        {
             Vector2 destination = target.Center - Vector2.UnitY * 210f;
             DoHoverMovement(npc, destination, 0.1f);
 
@@ -270,13 +270,13 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
                 spawnPosition += Main.rand.NextVector2Circular(25f, 25f);
 
                 if (canShootHornetHives)
-				{
+                {
                     Vector2 hiveShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 11.5f;
                     spawnPosition += hiveShootVelocity * 2f;
                     Projectile.NewProjectile(spawnPosition, hiveShootVelocity, ModContent.ProjectileType<HornetHive>(), 55, 0f);
-				}
-				else
-				{
+                }
+                else
+                {
                     int bee = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, NPCID.Bee);
                     Main.npc[bee].velocity = Main.npc[bee].SafeDirectionTo(target.Center, Vector2.UnitY).RotatedByRandom(0.37f) * 4f;
                 }
@@ -296,31 +296,32 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
                 Vector2 flyDestination = target.Center - new Vector2((target.Center.X - npc.Center.X > 0).ToDirectionInt() * 270f, 240f);
                 DoHoverMovement(npc, flyDestination, 0.15f);
             }
-			else
-			{
+            else
+            {
                 npc.velocity *= 0.9785f;
 
                 // Roar and make a circle of honey dust as an indicator before release the bees.
                 if (attackTimer == hoverTime + 1f)
-				{
+                {
                     Main.PlaySound(SoundID.Roar, target.Center, 0);
                     for (int i = 0; i < 30; i++)
-					{
+                    {
                         Vector2 honeyDustVelocity = (MathHelper.TwoPi * i / 30f).ToRotationVector2() * 5f;
                         Dust honey = Dust.NewDustPerfect(npc.Center, 153);
                         honey.scale = Main.rand.NextFloat(1f, 1.85f);
                         honey.velocity = honeyDustVelocity;
                         honey.noGravity = true;
-					}
-				}
+                    }
+                }
 
-                if (attackTimer % 20f == 19f && attackTimer < 600f)
-				{
+                int shootRate = npc.life < npc.lifeMax * 0.1f ? 16 : 20;
+                if (attackTimer % shootRate == shootRate - 1f && attackTimer < 600f)
+                {
                     Vector2 beeSpawnPosition = target.Center + new Vector2(Main.rand.NextBool(2).ToDirectionInt() * 1200f, Main.rand.NextFloat(-900f, 0f));
                     Vector2 beeVelocity = (target.Center - beeSpawnPosition).SafeNormalize(Vector2.UnitY) * new Vector2(4f, 20f);
                     Utilities.NewProjectileBetter(beeSpawnPosition, beeVelocity, ModContent.ProjectileType<TinyBee>(), 65, 0f);
-				}
-			}
+                }
+            }
 
             if (attackTimer >= 775f)
                 GotoNextAttackState(npc);

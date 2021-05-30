@@ -76,5 +76,32 @@ namespace InfernumMode
 
             spriteBatch.Draw(line, start, null, color, rotation, line.Size() * Vector2.UnitY * 0.5f, scale, SpriteEffects.None, 0f);
         }
+
+        /// <summary>
+        /// Creates a generic dust explosion at a given position.
+        /// </summary>
+        /// <param name="spawnPosition">The place to spawn dust at.</param>
+        /// <param name="dustType">The dust ID to use.</param>
+        /// <param name="dustPerBurst">The amount of dust to spawn per burst.</param>
+        /// <param name="burstSpeed">The speed of the dust when exploding.</param>
+        /// <param name="baseScale">The scale of the dust</param>
+        public static void CreateGenericDustExplosion(Vector2 spawnPosition, int dustType, int dustPerBurst, float burstSpeed, float baseScale)
+        {
+            // Generate a dust explosion
+            float burstDirectionVariance = 3;
+            for (int j = 0; j < 10; j++)
+            {
+                burstDirectionVariance += j * 2;
+                for (int k = 0; k < dustPerBurst; k++)
+                {
+                    Dust burstDust = Dust.NewDustPerfect(spawnPosition, dustType);
+                    burstDust.scale = baseScale * Main.rand.NextFloat(0.8f, 1.2f);
+                    burstDust.position = spawnPosition + Main.rand.NextVector2Circular(10f, 10f);
+                    burstDust.velocity = Main.rand.NextVector2Square(-burstDirectionVariance, burstDirectionVariance).SafeNormalize(Vector2.UnitY) * burstSpeed;
+                    burstDust.noGravity = true;
+                }
+                burstSpeed += 3f;
+            }
+        }
     }
 }

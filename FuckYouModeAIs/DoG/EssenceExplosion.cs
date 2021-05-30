@@ -13,10 +13,11 @@ namespace InfernumMode.FuckYouModeAIs.DoG
 
         public override void SetDefaults()
         {
-            projectile.width = 220;
-            projectile.height = 220;
+            projectile.width = 260;
+            projectile.height = 260;
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
+            projectile.hostile = true;
             projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.timeLeft = 75;
@@ -25,9 +26,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
 
         public override void AI()
         {
-            if (projectile.frame >= 18)
-                projectile.Kill();
-            projectile.scale *= 1.035f;
+            projectile.scale *= 1.042f;
             projectile.Opacity = Utils.InverseLerp(5f, 36f, projectile.timeLeft, true);
         }
 

@@ -1,15 +1,11 @@
 ﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
-using CrimulanSGSmall = CalamityMod.NPCs.SlimeGod.SlimeGodRunSplit;
-using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
-using EbonianSGSmall = CalamityMod.NPCs.SlimeGod.SlimeGodSplit;
 
 namespace InfernumMode.FuckYouModeAIs.SlimeGod
 {
@@ -21,6 +17,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             IchorSlam = 0,
             ShortLeaps = 1,
             BigSlam = 2,
+            GelCloudSlam = 3
         }
         #endregion
 
@@ -33,22 +30,52 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             npc.TargetClosest();
             Player target = Main.player[npc.target];
 
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGod) || !Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodPurple))
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGod) /*|| !Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodPurple)*/)
             {
                 npc.active = false;
-                npc.netUpdate = true;
                 return false;
             }
 
             // This will affect the other gods as well in terms of behavior.
             ref float universalState = ref Main.npc[CalamityGlobalNPC.slimeGod].ai[0];
             ref float universalTimer = ref Main.npc[CalamityGlobalNPC.slimeGod].ai[1];
+            ref float stuckTimer = ref npc.Infernum().ExtraAI[5];
+            ref float stuckTeleportCountdown = ref npc.Infernum().ExtraAI[6];
+
+            if (stuckTeleportCountdown > 0f)
+			{
+                stuckTeleportCountdown--;
+
+                npc.velocity.X = 0f;
+                npc.velocity.Y += 0.3f;
+                npc.scale = 1f - stuckTeleportCountdown / 40f;
+                npc.damage = 0;
+                return false;
+			}
+
+            npc.damage = npc.defDamage;
+
+            if (!Collision.CanHit(target.Center, 1, 1, npc.Center, 1, 1))
+            {
+                stuckTimer++;
+                if (stuckTimer > 180f)
+				{
+                    stuckTimer = 0f;
+                    npc.Center = target.Center - Vector2.UnitY * 10f;
+                    stuckTeleportCountdown = 40f;
+                    npc.netUpdate = true;
+                }
+            }
+            else if (stuckTimer > 0f)
+                stuckTimer--;
 
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGodRed = npc.whoAmI;
+            /*
             npc.realLife = CalamityGlobalNPC.slimeGodPurple;
             npc.life = Main.npc[npc.realLife].life;
             npc.lifeMax = Main.npc[npc.realLife].lifeMax;
+            */
 
             switch ((CrimulanSlimeGodAttackType)(int)universalState)
             {
@@ -60,6 +87,9 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                     break;
                 case CrimulanSlimeGodAttackType.BigSlam:
                     DoAttack_BigSlam(npc, target, ref universalTimer);
+                    break;
+                case CrimulanSlimeGodAttackType.GelCloudSlam:
+                    DoAttack_GelCloud(npc, target, ref universalTimer);
                     break;
             }
 
@@ -80,7 +110,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 
                 if (attackTimer >= 100f)
                 {
-                    npc.velocity = Vector2.UnitY * 7f;
+                    npc.velocity = Vector2.UnitY * 14f;
                     attackSubstate = 1f;
                     npc.netUpdate = true;
                 }
@@ -176,7 +206,11 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
         public static void DoAttack_BigSlam(NPC npc, Player target, ref float attackTimer)
         {
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
-            if (attackSubstate == 0f)
+
+            if (attackSubstate == 0f && npc.velocity.Y == 0f)
+                attackSubstate = 1f;
+
+            if (attackSubstate == 1f)
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 12f, 0.04f);
                 npc.noGravity = true;
@@ -184,7 +218,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 if (attackTimer >= 60f)
                 {
                     npc.velocity = Vector2.UnitY * 7f;
-                    attackSubstate = 1f;
+                    attackSubstate = 2f;
                     npc.netUpdate = true;
                 }
             }
@@ -194,11 +228,12 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 if (npc.velocity.Y == 0f && attackTimer < 225f)
                 {
                     Main.PlaySound(SoundID.NPCHit1, npc.Center);
-                    attackSubstate = 2f;
+                    Main.PlaySound(SoundID.Item73, npc.Center);
+                    attackSubstate = 3f;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 13; i++)
+                        for (int i = 0; i < 7; i++)
                         {
                             Vector2 ballVelocity = Vector2.UnitX * Main.rand.NextBool(2).ToDirectionInt() * Main.rand.NextFloat(5f, 8f);
                             ballVelocity.Y -= Main.rand.NextFloat(3.5f, 8f);
@@ -217,6 +252,41 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 if (npc.velocity.Y < 14f)
                     npc.velocity.Y += 0.7f;
             }
+        }
+
+        public static void DoAttack_GelCloud(NPC npc, Player target, ref float attackTimer)
+		{
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 60f)
+                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CrimulanCloud>());
+
+            npc.scale = 1f - (float)System.Math.Sin(Utils.InverseLerp(220f, 260f, attackTimer, true) * MathHelper.Pi);
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 240f)
+			{
+                int cloud = NPC.FindFirstNPC(ModContent.NPCType<CrimulanCloud>());
+                if (Main.npc.IndexInRange(cloud))
+				{
+                    npc.Center = Main.npc[cloud].Center;
+                    Main.npc[cloud].active = false;
+                    Main.npc[cloud].netUpdate = true;
+                }
+
+                float jumpSpeed = 22f;
+                npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, target.Center, 0.35f, jumpSpeed, out _);
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Vector2 abyssBallSpwanPosition = npc.Bottom + Main.rand.NextVector2Circular(50f, 10f);
+                    Utilities.NewProjectileBetter(abyssBallSpwanPosition, Main.rand.NextVector2Circular(7f, 7f), ModContent.ProjectileType<AbyssMine2>(), 90, 0f);
+                }
+
+                npc.netUpdate = true;
+			}
+
+            if (attackTimer < 240f)
+                npc.velocity.X *= 0.92f;
+
+            if (npc.velocity.Y < 14f)
+                npc.velocity.Y += 0.35f;
         }
         #endregion AI
     }

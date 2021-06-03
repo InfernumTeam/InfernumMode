@@ -26,6 +26,9 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
             projectile.Opacity = Utils.InverseLerp(300f, 290f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * 0.6f;
 
+            if (projectile.velocity.Length() < 29f)
+                projectile.velocity *= 1.0215f;
+
             if (projectile.timeLeft < 50)
                 projectile.velocity *= 0.98f;
         }

@@ -125,8 +125,10 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitX) * 18.5f;
                     if (npc.life < npc.lifeMax * 0.1)
-                        npc.velocity *= 1.2f;
-                    npc.velocity.Y *= 0.5f;
+                        npc.velocity *= 1.3f;
+
+                    if (npc.life < npc.lifeMax * 0.1 && Math.Abs(target.velocity.Y) > 3f)
+                        npc.velocity.Y += target.velocity.Y * 0.5f;
                     attackState = 1f;
                     frameType = (int)QueenBeeFrameType.HorizontalCharge;
 
@@ -144,7 +146,7 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitX) * (npc.velocity.Length() + speedBoost);
 
                 frameType = (int)QueenBeeFrameType.HorizontalCharge;
-                float destinationOffset = MathHelper.Lerp(540f, 470f, 1f - npc.life / (float)npc.lifeMax);
+                float destinationOffset = MathHelper.Lerp(540f, 450f, 1f - npc.life / (float)npc.lifeMax);
 
                 if ((npc.spriteDirection == 1 && (npc.Center.X - target.Center.X) > destinationOffset) ||
                     (npc.spriteDirection == -1 && (npc.Center.X - target.Center.X) < -destinationOffset))
@@ -163,6 +165,19 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
 
         internal static void DoAttack_StingerBurst(NPC npc, Player target, ref float frameType, ref float attackTimer)
         {
+            ref float flyDestinationX = ref npc.Infernum().ExtraAI[0];
+            ref float flyDestinationY = ref npc.Infernum().ExtraAI[1];
+            Vector2 currentFlyDestination = new Vector2(flyDestinationX, flyDestinationY);
+
+            if (flyDestinationX == 0f || flyDestinationY == 0f || flyDestinationY > target.Center.Y - 40f)
+                currentFlyDestination = target.Center - Vector2.UnitY * 270f;
+
+            if (!target.WithinRange(currentFlyDestination, 500f))
+			{
+                currentFlyDestination = target.Center - Vector2.UnitY * 200f;
+                npc.netUpdate = true;
+			}
+
             int shootRate = 50;
             int totalStingersToShoot = 5;
             float shootSpeed = 12f;
@@ -177,7 +192,6 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
             Vector2 baseStingerSpawnPosition = new Vector2(npc.Center.X + Main.rand.Next(20) * npc.spriteDirection, npc.Center.Y + npc.height * 0.3f);
 
             frameType = (int)QueenBeeFrameType.UpwardFly;
-            npc.spriteDirection = Math.Sign(npc.velocity.X);
 
             if (attackTimer % shootRate == shootRate - 1f && canShoot && Collision.CanHit(baseStingerSpawnPosition, 1, 1, target.Center, 1, 1))
             {
@@ -188,23 +202,48 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
                 {
                     for (int i = 0; i < 12; i++)
                     {
-                        float offsetAngle = (MathHelper.TwoPi * 1.61808f * i / 12f);
+                        float offsetAngle = MathHelper.TwoPi * 1.61808f * i / 12f;
                         Vector2 stingerSpawnPosition = baseStingerSpawnPosition + offsetAngle.ToRotationVector2() * MathHelper.Lerp(4f, 28f, i / 12f);
                         Vector2 stingerShootVelocity = (target.Center - baseStingerSpawnPosition).SafeNormalize(Vector2.UnitY) * shootSpeed;
+                        float burstOutwardness = MathHelper.Lerp(0.04f, 0.12f, 1f - npc.life / (float)npc.lifeMax);
+                        stingerShootVelocity = stingerShootVelocity.RotatedBy(MathHelper.Lerp(-burstOutwardness, burstOutwardness, i / 11f));
 
                         int stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, 75, 0f);
                         if (Main.projectile.IndexInRange(stinger))
                             Main.projectile[stinger].tileCollide = false;
                     }
 
-                    npc.velocity *= 0.5f;
+                    // Determine a new position to fly at.
+                    Matrix offsetRotationMatrix = Matrix.CreateRotationX(attackTimer / shootRate * 2.8f + 0.56f);
+                    offsetRotationMatrix *= Matrix.CreateRotationY((attackTimer / shootRate * 5.3f + 0.66f) * 0.41f);
+                    offsetRotationMatrix *= Matrix.CreateRotationZ(attackTimer / shootRate * MathHelper.Pi * 0.33f);
+
+                    Vector3 tansformedRotationData = Vector3.Transform(Vector3.UnitY, offsetRotationMatrix);
+                    Vector2 flyDestinationOffset = new Vector2(tansformedRotationData.X, tansformedRotationData.Y) * new Vector2(210f, 125f);
+                    currentFlyDestination = target.Center - Vector2.UnitY * 260f + flyDestinationOffset;
+                    flyDestinationOffset.X += target.velocity.X * 30f;
+                    if (target.WithinRange(currentFlyDestination, 400f))
+                        currentFlyDestination = target.Center + target.SafeDirectionTo(currentFlyDestination) * 400f;
+
                     npc.netUpdate = true;
                 }
             }
 
             // Fly above the target.
-            Vector2 flyDestination = target.Center - Vector2.UnitY * 270f;
-            DoHoverMovement(npc, flyDestination, 0.09f);
+            if (npc.WithinRange(currentFlyDestination, 35f))
+            {
+                npc.velocity *= 0.85f;
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+            }
+            else
+            {
+                DoHoverMovement(npc, currentFlyDestination, 0.25f);
+                if (Math.Abs(npc.velocity.X) > 2f)
+                    npc.spriteDirection = Math.Sign(npc.velocity.X);
+            }
+
+            flyDestinationX = currentFlyDestination.X;
+            flyDestinationY = currentFlyDestination.Y;
 
             if (attackTimer >= totalStingersToShoot * shootRate)
                 GotoNextAttackState(npc);
@@ -214,7 +253,7 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
         {
             // Fly above the target.
             Vector2 flyDestination = target.Center - new Vector2((target.Center.X - npc.Center.X > 0).ToDirectionInt() * 270f, 240f);
-            DoHoverMovement(npc, flyDestination, 0.09f);
+            DoHoverMovement(npc, flyDestination, 0.14f);
 
             frameType = (int)QueenBeeFrameType.UpwardFly;
             npc.spriteDirection = (target.Center.X - npc.Center.X > 0).ToDirectionInt();

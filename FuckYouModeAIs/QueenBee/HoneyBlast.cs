@@ -10,6 +10,7 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
     public class HoneyBlast : ModProjectile
     {
         public bool Poisonous => projectile.ai[0] == 1f;
+        public ref float TotalBounces => ref projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Honey Blast");
@@ -21,14 +22,18 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
         {
             projectile.width = projectile.height = 16;
             projectile.ignoreWater = true;
-            projectile.timeLeft = 300;
+            projectile.timeLeft = 420;
             projectile.scale = 1f;
             projectile.tileCollide = true;
             projectile.friendly = false;
             projectile.hostile = true;
         }
 
-        public override void AI() => projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+        public override void AI()
+		{
+            if (projectile.velocity != Vector2.Zero)
+                projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+        }
 
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{
@@ -45,6 +50,23 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
                 ichor.scale = 0.7f;
                 ichor.fadeIn = 0.7f;
 			}
+		}
+
+		public override bool OnTileCollide(Vector2 oldVelocity)
+		{
+            if (TotalBounces == 0f)
+            {
+                projectile.velocity.Y = -oldVelocity.Y * 0.6f;
+                if (projectile.velocity.Y < 3f && projectile.velocity.Y > -3f)
+                    projectile.velocity = Vector2.Zero;
+            }
+            else
+                projectile.velocity = Vector2.Zero;
+
+            TotalBounces++;
+            if (TotalBounces <= 2f)
+                projectile.netUpdate = true;
+            return false;
 		}
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

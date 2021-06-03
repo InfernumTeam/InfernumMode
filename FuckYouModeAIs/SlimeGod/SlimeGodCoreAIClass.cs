@@ -52,6 +52,12 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             ref float localState = ref npc.ai[2];
             ref float localTimer = ref npc.ai[3];
 
+            if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[3] == 0f)
+			{
+                NPC.SpawnOnPlayer(npc.target, ModContent.NPCType<CrimulanSGBig>());
+                npc.localAI[3] = 1f;
+			}
+
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGod = npc.whoAmI;
 
@@ -61,10 +67,17 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 attackLength = 270;
             if (universalState == (int)CrimulanSlimeGodAIClass.CrimulanSlimeGodAttackType.BigSlam)
                 attackLength = 270;
+            if (universalState == (int)CrimulanSlimeGodAIClass.CrimulanSlimeGodAttackType.GelCloudSlam)
+                attackLength = 440;
             if (universalTimer > attackLength)
             {
                 universalTimer = 0f;
-                universalState = (universalState + 1f) % 3f;
+
+                int attackCycleCount = 3;
+                if (Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodRed) && Main.npc[CalamityGlobalNPC.slimeGodRed].life < Main.npc[CalamityGlobalNPC.slimeGodRed].lifeMax * 0.5f)
+                    attackCycleCount = 4;
+
+                universalState = (universalState + 1f) % attackCycleCount;
                 UpdateOtherSlimeAIValues();
                 npc.netUpdate = true;
             }

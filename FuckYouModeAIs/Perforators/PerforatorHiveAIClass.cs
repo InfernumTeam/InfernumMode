@@ -155,7 +155,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 if (gotoNextAttack)
                 {
                     attackTimer = 0f;
-                    attackState = 1f;
+                    attackState = npc.WithinRange(target.Center, 880f) ? 1f : 2f;
                     npc.netUpdate = true;
                 }
             }
@@ -270,33 +270,38 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
         {
             Vector2 destination = target.Center - Vector2.UnitY * 270f;
             if (!npc.WithinRange(destination, 145f))
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 15f, 0.07f);
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 15f, 0.15f);
+
+                if (!npc.WithinRange(destination, 200f))
+                    npc.Center = Vector2.Lerp(npc.Center, destination, 0.02f);
+            }
             else
                 npc.velocity *= 0.95f;
 
             int shootRate = anyWorms ? 100 : 60;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
             {
-                int totalProjectiles = anyWorms ? 7 : 13;
+                int totalProjectiles = anyWorms ? 7 : 17;
                 float blobSpeed = anyWorms ? 6f : 8f;
                 Vector2 blobSpawnPosition = new Vector2(npc.Center.X, npc.Center.Y + 30f);
-                Vector2 currentBlobVelocity = Vector2.UnitY * -blobSpeed + Vector2.UnitX * npc.velocity.SafeNormalize(Vector2.Zero).X;
+                Vector2 currentBlobVelocity = Vector2.UnitY * -blobSpeed + Vector2.UnitX * npc.velocity.SafeNormalize(Vector2.Zero).X * 0.2f;
 
                 npc.TargetClosest();
 
-                currentBlobVelocity.X -= blobSpeed * 0.5f;
                 for (int i = 0; i < totalProjectiles + 1; i++)
                 {
                     Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), 80, 0f, Main.myPlayer, 0f, 0f);
-                    currentBlobVelocity.X += blobSpeed / totalProjectiles * npc.direction;
+                    currentBlobVelocity.X += blobSpeed / totalProjectiles * npc.direction * 0.88f;
                 }
                 Main.PlaySound(SoundID.NPCHit20, npc.position);
             }
 
-            gotoNextAttack = attackTimer >= 300f;
+            gotoNextAttack = attackTimer >= shootRate * 8f;
         }
 
         #endregion Specific Attacks
+
         #endregion Main Boss
 
         #region Worms

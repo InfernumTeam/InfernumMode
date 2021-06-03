@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -27,6 +28,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 			projectile.ignoreWater = true;
 			projectile.alpha = 255;
             projectile.penetrate = -1;
+            projectile.timeLeft = 240;
             projectile.tileCollide = false;
             cooldownSlot = 1;
         }
@@ -41,6 +43,32 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             projectile.velocity = (projectile.velocity * 20f + projectile.DirectionTo(target.Center) * 14f) / 21f;
+
+            float pushForce = 0.1f;
+            for (int k = 0; k < Main.maxProjectiles; k++)
+            {
+                Projectile otherProj = Main.projectile[k];
+
+                // Short circuits to make the loop as fast as possible
+                if (!otherProj.active || otherProj.type != projectile.type || k == projectile.whoAmI)
+                    continue;
+
+                // If the other projectile is too close, nudge them away.
+                bool sameProjType = otherProj.type == projectile.type;
+                float taxicabDist = Math.Abs(projectile.position.X - otherProj.position.X) + Math.Abs(projectile.position.Y - otherProj.position.Y);
+                if (sameProjType && taxicabDist < projectile.width)
+                {
+                    if (projectile.position.X < otherProj.position.X)
+                        projectile.velocity.X -= pushForce;
+                    else
+                        projectile.velocity.X += pushForce;
+
+                    if (projectile.position.Y < otherProj.position.Y)
+                        projectile.velocity.Y -= pushForce;
+                    else
+                        projectile.velocity.Y += pushForce;
+                }
+            }
 
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }

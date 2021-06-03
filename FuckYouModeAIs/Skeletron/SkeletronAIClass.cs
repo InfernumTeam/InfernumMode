@@ -1,9 +1,7 @@
-﻿using InfernumMode.FuckYouModeAIs.Cultist;
-using InfernumMode.FuckYouModeAIs.Polterghast;
+﻿using InfernumMode.FuckYouModeAIs.Polterghast;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

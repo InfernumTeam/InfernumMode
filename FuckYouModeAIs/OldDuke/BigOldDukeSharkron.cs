@@ -14,6 +14,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 	public class BigOldDukeSharkron : ModNPC
 	{
 		public ref float Time => ref npc.ai[0];
+		public bool Phase2Variant => npc.ai[1] == 1f;
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Sulphurous Sharkron");
@@ -61,11 +62,15 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 				npc.alpha = 0;
 
 			int totalCharges = 3;
+
 			Time++;
-			if (Time % 75f >= 45f)
+			float reelbackTime = Phase2Variant ? 35f : 45f;
+			float chargeDelay = Phase2Variant ? 14f : 30f;
+			float attackCycleTime = reelbackTime + chargeDelay;
+			if (Time % attackCycleTime >= reelbackTime)
 			{
 				// Reel back.
-				if (Time % 75f == 45f)
+				if (Time % attackCycleTime == reelbackTime)
 				{
 					npc.velocity = npc.DirectionTo(target.Center) * -7f;
 					npc.rotation = npc.AngleTo(target.Center);
@@ -74,9 +79,9 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 						npc.rotation += MathHelper.Pi;
 				}
 				// And charge.
-				if (Time % 75f == 74f)
+				if (Time % attackCycleTime == attackCycleTime - 1f)
 				{
-					npc.velocity = npc.DirectionTo(target.Center + target.velocity * 15f) * 34f;
+					npc.velocity = npc.DirectionTo(target.Center) * 26f;
 					npc.rotation = npc.velocity.ToRotation();
 					npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 					if (npc.spriteDirection == -1)
@@ -85,7 +90,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 			}
 
 			// Die after a certain amount of charges.
-			if (Time >= 75f * (totalCharges + 1))
+			if (Time >= attackCycleTime * (totalCharges + 1))
 			{
 				npc.life = 0;
 				npc.HitEffect();
@@ -183,7 +188,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 				for (int i = 0; i < 20; i++)
 				{
 					Projectile.NewProjectile(npc.Center.X + Main.rand.Next(-spawnX, spawnX), npc.Center.Y,
-						Main.rand.Next(-8, 9), Main.rand.Next(-15, -10), ModContent.ProjectileType<OldDukeGore>(), damage, 0f, Main.myPlayer, 0f, 0f);
+						Main.rand.Next(-5, 6), Main.rand.Next(-15, -10), ModContent.ProjectileType<OldDukeGore>(), damage, 0f, Main.myPlayer, 0f, 0f);
 				}
 			}
 

@@ -1170,7 +1170,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			else
 			{
 				bool canNoLongerHome = attackTimer >= swerveTime + 125f;
-				float newSpeed = MathHelper.Clamp(npc.velocity.Length() + (canNoLongerHome ? 0.05f : 0.016f), 10f, canNoLongerHome ? 30f : 23f);
+				float newSpeed = MathHelper.Clamp(npc.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 13f, canNoLongerHome ? 30f : 23f);
 				if (!target.dead && target.active && !npc.WithinRange(target.Center, 320f) && !canNoLongerHome)
 				{
 					float homingPower = phase2Variant ? 0.067f : 0.062f;
@@ -1247,7 +1247,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			switch ((int)attackState)
 			{
 				case 0:
-					Vector2 destination = target.Center + new Vector2(direction * 450f, -245f);
+					Vector2 destination = target.Center + new Vector2(direction * 320f, -215f);
 					npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center), 0.1f);
 					npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center), 0.1f);
 					npc.spriteDirection = -1;
@@ -1267,15 +1267,15 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
 					if (attackTimer < 20f)
 					{
-						npc.velocity = Vector2.Lerp(npc.velocity, npc.DirectionTo(target.Center) * -7f, 0.135f);
+						npc.velocity = Vector2.Lerp(npc.velocity, npc.DirectionTo(target.Center) * -7f, 0.08f);
 						npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center), 0.1f);
 						npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center), 0.1f);
 					}
 					else if (attackState < 125f)
 					{
 						if (!npc.WithinRange(target.Center, 160f))
-							npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.07f);
-						npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 17f;
+							npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.035f);
+						npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 13f;
 
 						npc.rotation = npc.velocity.ToRotation();
 						npc.spriteDirection = (Math.Cos(npc.rotation) > 0f).ToDirectionInt();
@@ -1283,7 +1283,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
 					if (attackTimer >= 125f)
 					{
-						npc.velocity *= 0.975f;
+						npc.velocity *= 0.95f;
 						if (attackTimer >= 185f)
 						{
 							attackState = 0f;

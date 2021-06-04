@@ -67,10 +67,10 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
             if (ActionCountdown > 0f)
                 return false;
 
-            float radius = projectile.scale * 92f;
-            if (Utilities.CircularCollision(projectile.Center + Vector2.UnitY * projectile.scale * 46f, targetHitbox, radius))
+            float radius = projectile.scale * 75f;
+            if (Utilities.CircularCollision(projectile.Center + Vector2.UnitY * radius * 0.5f, targetHitbox, radius))
                 return true;
-            if (Utilities.CircularCollision(projectile.Center - Vector2.UnitY * projectile.scale * 46f, targetHitbox, radius))
+            if (Utilities.CircularCollision(projectile.Center - Vector2.UnitY * radius * 0.5f, targetHitbox, radius))
                 return true;
 
             return false;

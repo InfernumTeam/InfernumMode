@@ -30,9 +30,12 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             npc.TargetClosest();
             Player target = Main.player[npc.target];
 
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGod) /*|| !Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodPurple)*/)
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGod) || !NPC.AnyNPCs(ModContent.NPCType<CalamityMod.NPCs.SlimeGod.SlimeGod>()))
             {
-                npc.active = false;
+                npc.life = 0;
+                npc.StrikeNPCNoInteraction(9999, 0f, 0);
+                npc.HitEffect();
+                Main.PlaySound(SoundID.NPCDeath1, npc.Center);
                 return false;
             }
 
@@ -71,11 +74,11 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGodRed = npc.whoAmI;
-            /*
             npc.realLife = CalamityGlobalNPC.slimeGodPurple;
+            if (npc.realLife == -1)
+                return false;
             npc.life = Main.npc[npc.realLife].life;
             npc.lifeMax = Main.npc[npc.realLife].lifeMax;
-            */
 
             switch ((CrimulanSlimeGodAttackType)(int)universalState)
             {
@@ -127,7 +130,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                     {
                         for (int i = -1; i <= 1; i += 2)
                         {
-                            Vector2 shootVelocity = Vector2.UnitX * i * 9f;
+                            Vector2 shootVelocity = Vector2.UnitX * i * 5f;
                             Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ModContent.ProjectileType<IchorGelWave>(), 95, 0f);
                             Utilities.NewProjectileBetter(npc.Bottom - Vector2.UnitY * 30f, shootVelocity, ModContent.ProjectileType<IchorGelWave>(), 95, 0f);
                         }
@@ -149,8 +152,10 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
         public static void DoAttack_ShortLeaps(NPC npc, Player target, ref float attackTimer)
         {
             int maxJumps = 5;
-            ref float jumpCount = ref npc.Infernum().ExtraAI[0];
             npc.noGravity = false;
+            npc.noTileCollide = npc.Bottom.Y < target.Top.Y - 36f;
+
+            ref float jumpCount = ref npc.Infernum().ExtraAI[0];
 
             if (npc.velocity.Y == 0f)
             {
@@ -170,7 +175,10 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                     if (Main.netMode != NetmodeID.MultiplayerClient && jumpCount % 2 == 1)
                     {
                         int slimeType = Main.rand.NextBool(3) ? ModContent.NPCType<SlimeSpawnCrimson2>() : ModContent.NPCType<SlimeSpawnCrimson>();
-                        NPC.NewNPC((int)npc.Center.X, (int)npc.Bottom.Y - 10, slimeType);
+                        int spawnCount = NPC.CountNPCS(ModContent.NPCType<SlimeSpawnCrimson>()) + NPC.CountNPCS(ModContent.NPCType<SlimeSpawnCrimson2>());
+
+                        if (spawnCount < 3)
+                            NPC.NewNPC((int)npc.Center.X, (int)npc.Bottom.Y - 10, slimeType);
                     }
 
                     if (jumpCount == 2f || jumpCount == 4f)
@@ -188,9 +196,6 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             }
             else
             {
-                if (jumpCount < maxJumps)
-                    attackTimer = 0f;
-
                 npc.velocity.X *= 0.99f;
                 if (npc.direction < 0 && npc.velocity.X > -1f)
                     npc.velocity.X = -1f;
@@ -215,6 +220,9 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 12f, 0.04f);
                 npc.noGravity = true;
 
+                if (npc.velocity.Y < -11.83f)
+                    attackTimer = 60f;
+
                 if (attackTimer >= 60f)
                 {
                     npc.velocity = Vector2.UnitY * 7f;
@@ -223,7 +231,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 }
             }
 
-            else
+            if (attackSubstate == 2f)
             {
                 if (npc.velocity.Y == 0f && attackTimer < 225f)
                 {
@@ -235,8 +243,8 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                     {
                         for (int i = 0; i < 7; i++)
                         {
-                            Vector2 ballVelocity = Vector2.UnitX * Main.rand.NextBool(2).ToDirectionInt() * Main.rand.NextFloat(5f, 8f);
-                            ballVelocity.Y -= Main.rand.NextFloat(3.5f, 8f);
+                            Vector2 ballVelocity = Vector2.UnitX * Main.rand.NextBool(2).ToDirectionInt() * Main.rand.NextFloat(3f, 4f);
+                            ballVelocity.Y -= Main.rand.NextFloat(3f, 6f);
                             Utilities.NewProjectileBetter(npc.Bottom - Vector2.UnitY * 30f, ballVelocity, ModContent.ProjectileType<RedirectingIchorBall>(), 100, 0f);
                         }
                     }
@@ -245,7 +253,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                     Collision.HitTiles(npc.BottomLeft, Vector2.UnitY * 10f, npc.width, 20);
 
                     npc.velocity.X = 0f;
-                    attackTimer = 225f;
+                    attackTimer = 230f;
                     npc.netUpdate = true;
                 }
 
@@ -282,7 +290,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 npc.netUpdate = true;
 			}
 
-            if (attackTimer < 240f)
+            if (attackTimer < 240f || npc.velocity.Y == 0f)
                 npc.velocity.X *= 0.92f;
 
             if (npc.velocity.Y < 14f)

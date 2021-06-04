@@ -1,4 +1,3 @@
-using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -8,6 +7,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 {
     public class SlimeSpawnCorrupt2 : ModNPC
     {
+        public Player Target => Main.player[npc.target];
         public ref float Time => ref npc.ai[1];
         public override void SetStaticDefaults()
         {
@@ -28,7 +28,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             npc.alpha = 55;
             npc.lavaImmune = false;
             npc.noGravity = false;
-            npc.noTileCollide = false;
+            npc.noTileCollide = true;
             npc.canGhostHeal = false;
             npc.dontTakeDamage = true;
             npc.HitSound = SoundID.NPCHit1;
@@ -38,7 +38,27 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 
 		public override void AI()
 		{
-			base.AI();
+            npc.TargetClosest();
+
+            if (Time < 100f)
+                npc.velocity = -Vector2.UnitY * MathHelper.Lerp(1f, 6f, Time / 100f);
+            else if (Time < 135f)
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(Target.Center) * -4.5f, 0.2f);
+            else if (Time == 135f)
+			{
+                npc.velocity = npc.SafeDirectionTo(Target.Center) * 10f;
+                npc.netUpdate = true;
+			}
+
+            if (Time > 135)
+			{
+                if (npc.velocity.Length() < 16f)
+                    npc.velocity *= 1.02f;
+
+                if (Time > 360f || Collision.SolidCollision(npc.position, npc.width, npc.height))
+                    npc.StrikeNPCNoInteraction(9999, 0f, 0);
+			}
+            Time++;
 		}
 
 		public override bool PreNPCLoot() => false;

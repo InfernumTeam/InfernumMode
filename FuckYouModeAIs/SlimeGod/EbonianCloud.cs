@@ -5,11 +5,11 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.SlimeGod
 {
-    public class CrimulanCloud : ModNPC
+    public class EbonianCloud : ModNPC
     {
         public ref float Time => ref npc.ai[0];
         public Player Target => Main.player[npc.target];
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Crimulan Cloud");
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Ebonian Cloud");
 
         public override void SetDefaults()
         {
@@ -27,17 +27,17 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
         }
 
         public override void AI()
-        {
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodRed))
-            {
+		{
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodPurple))
+			{
                 npc.active = false;
                 npc.netUpdate = true;
                 return;
-            }
+			}
 
             npc.TargetClosest();
 
-            Vector2 destination = Target.Center + Vector2.UnitX * 450f;
+            Vector2 destination = Target.Center - Vector2.UnitX * 450f;
             npc.Center = npc.Center.MoveTowards(destination, 5f);
             if (npc.Center != destination)
                 npc.velocity = (npc.velocity * 15f + npc.SafeDirectionTo(destination) * 13f) / 16f;
@@ -47,7 +47,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             for (int i = 0; i < 4; i++)
 			{
                 Dust gel = Dust.NewDustDirect(npc.position, npc.width, npc.height, Main.rand.NextBool(2) ? 4 : 267);
-                gel.color = Color.Red;
+                gel.color = gel.type == 267 ? Color.Green : Color.Purple;
                 gel.velocity = Main.rand.NextVector2Circular(3f, 3f);
                 gel.noGravity = true;
             }

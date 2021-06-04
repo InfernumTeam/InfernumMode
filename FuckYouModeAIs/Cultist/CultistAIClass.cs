@@ -552,17 +552,17 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 					npc.velocity = Vector2.Zero;
 					for (int i = 0; i < 2; i++)
 					{
-						for (int k = 0; k < (phase2 ? 2 : 1); k++)
+						for (int j = 0; j < (phase2 ? 2 : 1); j++)
 						{
 							Vector2 orbSummonPosition = npc.Center - Vector2.UnitY * 450f;
-							orbSummonPosition.X -= (i == 0).ToDirectionInt() * (350f + k * 100f);
+							orbSummonPosition.X -= (i == 0).ToDirectionInt() * (350f + j * 100f);
 
 							if (adjustedTime == 30f)
 							{
 								// Release a line of electricity towards the orb.
-								for (int j = 0; j < 200; j++)
+								for (int k = 0; k < 200; k++)
 								{
-									Vector2 dustPosition = Vector2.Lerp(handPositions[i], orbSummonPosition, j / 200f);
+									Vector2 dustPosition = Vector2.Lerp(handPositions[i], orbSummonPosition, k / 200f);
 									Dust electricity = Dust.NewDustPerfect(dustPosition, 229);
 									electricity.velocity = Main.rand.NextVector2Circular(0.15f, 0.15f);
 									electricity.scale = Main.rand.NextFloat(0.8f, 0.85f);
@@ -572,13 +572,18 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
 							else if (Main.netMode != NetmodeID.MultiplayerClient)
 							{
-								Vector2 lightningVelocity = (target.Center - orbSummonPosition).SafeNormalize(Vector2.UnitY) * 6.3f;
-								if (phase2)
-									lightningVelocity *= 1.2f;
-								int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 110, 0f);
-								Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();
-								Main.projectile[lightning].ai[1] = Main.rand.Next(100);
-								Main.projectile[lightning].tileCollide = false;
+								int lightningCircleCount = phase2 ? 6 : 1;
+								for (int k = 0; k < lightningCircleCount; k++)
+								{
+									Vector2 lightningVelocity = (target.Center - orbSummonPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * k / lightningCircleCount) * 6.3f;
+									if (phase2)
+										lightningVelocity *= 1.2f;
+
+									int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 110, 0f);
+									Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();
+									Main.projectile[lightning].ai[1] = Main.rand.Next(100);
+									Main.projectile[lightning].tileCollide = false;
+								}
 							}
 						}
 					}

@@ -63,7 +63,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
             int beam = Utilities.NewProjectileBetter(projectile.Center, beamDirection, ModContent.ProjectileType<FireBeam>(), 175, 0f);
             if (Main.projectile.IndexInRange(beam))
-                Main.projectile[beam].ai[1] = aimDirection * 0.019f;
+                Main.projectile[beam].ai[1] = aimDirection * 0.023f;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;

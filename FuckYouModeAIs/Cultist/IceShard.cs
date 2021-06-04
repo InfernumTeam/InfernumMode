@@ -23,6 +23,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
             projectile.width = projectile.height = 18;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
+            projectile.hostile = true;
             projectile.timeLeft = 600;
             projectile.Opacity = 0f;
             projectile.extraUpdates = 1;

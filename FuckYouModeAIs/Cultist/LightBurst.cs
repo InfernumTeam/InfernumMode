@@ -67,13 +67,8 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
             if (ActionCountdown > 0f)
                 return false;
 
-            float radius = projectile.scale * 75f;
-            if (Utilities.CircularCollision(projectile.Center + Vector2.UnitY * radius * 0.5f, targetHitbox, radius))
-                return true;
-            if (Utilities.CircularCollision(projectile.Center - Vector2.UnitY * radius * 0.5f, targetHitbox, radius))
-                return true;
-
-            return false;
+            Rectangle hitbox = Utils.CenteredRectangle(projectile.Center, new Vector2(0.6f, 1f) * projectile.scale * 66f);
+            return targetHitbox.Intersects(hitbox);
         }
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

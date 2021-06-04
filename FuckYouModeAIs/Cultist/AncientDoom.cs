@@ -25,6 +25,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.netImportant = true;
+            projectile.hostile = true;
             projectile.timeLeft = 90;
             projectile.Opacity = 0f;
             projectile.penetrate = -1;

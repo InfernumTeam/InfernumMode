@@ -90,22 +90,22 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			target.Center = Vector2.Clamp(target.Center, new Vector2(left, -100f), new Vector2(right, Main.maxTilesY * 16f + 100f));
 			if (target.Center.X < left + 160f)
             {
-				Dust magic = Dust.NewDustPerfect(new Vector2(left - 12f, target.Center.Y), 267);
+				Dust magic = Dust.NewDustPerfect(new Vector2(left - 12f, target.Center.Y), 261);
 				magic.velocity = Main.rand.NextVector2Circular(10f, 5f);
 				magic.velocity.X = Math.Abs(magic.velocity.X);
 				magic.color = Color.Lerp(Color.Blue, Color.MediumSeaGreen, Main.rand.NextFloat(0.25f, 1f));
-				magic.scale = 1.5f;
-				magic.fadeIn = 2f;
+				magic.scale = 1.1f;
+				magic.fadeIn = 1.4f;
 				magic.noGravity = true;
 			}
 			if (target.Center.X > right - 160f)
 			{
-				Dust magic = Dust.NewDustPerfect(new Vector2(right + 12f, target.Center.Y), 267);
+				Dust magic = Dust.NewDustPerfect(new Vector2(right + 12f, target.Center.Y), 261);
 				magic.velocity = Main.rand.NextVector2Circular(10f, 5f);
 				magic.velocity.X = -Math.Abs(magic.velocity.X);
 				magic.color = Color.Lerp(Color.Blue, Color.MediumSeaGreen, Main.rand.NextFloat(0.25f, 1f));
-				magic.scale = 1.5f;
-				magic.fadeIn = 2f;
+				magic.scale = 1.1f;
+				magic.fadeIn = 1.4f;
 				magic.noGravity = true;
 			}
 
@@ -448,10 +448,12 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			{
 				Vector2 fireballSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 24f, 6f);
 				if (aimRotation == 0f)
-					aimRotation = (target.Center - fireballSpawnPosition + (!phase2 ? Vector2.Zero : target.velocity * 10f)).ToRotation();
+					aimRotation = (target.Center - fireballSpawnPosition + (!phase2 ? Vector2.Zero : target.velocity * 30f)).ToRotation();
 
 				Vector2 fireballVelocity = aimRotation.ToRotationVector2() * Main.rand.NextFloat(10f, 11.5f);
 				fireballVelocity = fireballVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
+				if (phase2)
+					fireballVelocity *= 1.2f;
 
 				int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 105, 0f);
 				if (Main.projectile.IndexInRange(fireball) && phase2)
@@ -509,6 +511,18 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 						Vector2 aimDirection = (target.Center - beamShootPosition).SafeNormalize(-Vector2.UnitY);
 						Utilities.NewProjectileBetter(beamShootPosition, aimDirection, ModContent.ProjectileType<CultistFireBeamTelegraph>(), 0, 0f);
 					}
+				}
+			}
+
+			if (Main.netMode != NetmodeID.MultiplayerClient && phase2 && attackTimer < 105 + fireballShootRate * fireballCount && attackTimer > 105f && attackTimer % 25f == 24f)
+			{
+				for (int i = 0; i < 6; i++)
+				{
+					Vector2 fireballSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 24f, 6f);
+					Vector2 fireballVelocity = ((target.Center - fireballSpawnPosition + target.velocity * 20f).ToRotation() + MathHelper.Lerp(-0.8f, 0.8f, i / 5f)).ToRotationVector2() * 10f;
+					int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 115, 0f);
+					if (Main.projectile.IndexInRange(fireball))
+						Main.projectile[fireball].tileCollide = false;
 				}
 			}
 

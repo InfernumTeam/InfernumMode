@@ -135,7 +135,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             Vector2 destination = target.Center - Vector2.UnitY * 300f;
             if (!npc.WithinRange(destination, 200f))
             {
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 10f, 0.4f);
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 20f, 0.4f);
                 npc.rotation = npc.velocity.X * 0.15f;
             }
             else

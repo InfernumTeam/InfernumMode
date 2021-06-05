@@ -417,7 +417,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 		public static void DoAttack_FireballBarrage(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
 		{
 			int fireballShootRate = 5;
-			int fireballCount = phase2 ? 10 : 7;
+			int fireballCount = phase2 ? 10 : 32;
 			int attackLength = 105 + fireballShootRate * fireballCount;
 			if (phase2)
 				attackLength += 270;
@@ -449,11 +449,11 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				Vector2 fireballSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 24f, 6f);
 				if (aimRotation == 0f)
 					aimRotation = (target.Center - fireballSpawnPosition + (!phase2 ? Vector2.Zero : target.velocity * 30f)).ToRotation();
+				else if (!phase2)
+					aimRotation = aimRotation.AngleTowards(npc.AngleTo(target.Center), 0.1f);
 
-				Vector2 fireballVelocity = aimRotation.ToRotationVector2() * Main.rand.NextFloat(10f, 11.5f);
+				Vector2 fireballVelocity = aimRotation.ToRotationVector2() * Main.rand.NextFloat(12f, 14f);
 				fireballVelocity = fireballVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
-				if (phase2)
-					fireballVelocity *= 1.2f;
 
 				int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 105, 0f);
 				if (Main.projectile.IndexInRange(fireball) && phase2)
@@ -516,10 +516,10 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
 			if (Main.netMode != NetmodeID.MultiplayerClient && phase2 && attackTimer < 105 + fireballShootRate * fireballCount && attackTimer > 105f && attackTimer % 25f == 24f)
 			{
-				for (int i = 0; i < 6; i++)
+				for (int i = 0; i < 4; i++)
 				{
 					Vector2 fireballSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 24f, 6f);
-					Vector2 fireballVelocity = ((target.Center - fireballSpawnPosition + target.velocity * 20f).ToRotation() + MathHelper.Lerp(-0.8f, 0.8f, i / 5f)).ToRotationVector2() * 10f;
+					Vector2 fireballVelocity = ((target.Center - fireballSpawnPosition + target.velocity * 20f).ToRotation() + MathHelper.Lerp(-0.8f, 0.8f, i / 3f)).ToRotationVector2() * 7.5f;
 					int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 115, 0f);
 					if (Main.projectile.IndexInRange(fireball))
 						Main.projectile[fireball].tileCollide = false;
@@ -547,7 +547,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			// Hover and fly above the player.
 			if (attackTimer % (hoverTime + summonLightningTime) < hoverTime)
 			{
-				Vector2 destination = target.Center - Vector2.UnitY * 325f;
+				Vector2 destination = target.Center - Vector2.UnitY * 375f;
 				Vector2 idealVelocity = npc.DirectionTo(destination) * MathHelper.Max(10f, npc.Distance(destination) * 0.05f);
 
 				if (!npc.WithinRange(destination, 185f))
@@ -625,9 +625,9 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 								int lightningCircleCount = phase2 ? 6 : 1;
 								for (int k = 0; k < lightningCircleCount; k++)
 								{
-									Vector2 lightningVelocity = (target.Center - orbSummonPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * k / lightningCircleCount) * 6.3f;
-									if (phase2)
-										lightningVelocity *= 1.2f;
+									Vector2 lightningVelocity = (target.Center - orbSummonPosition + (phase2 ? Vector2.Zero : target.velocity * new Vector2(40f, 20f))).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * k / lightningCircleCount) * 7.6f;
+									if (!phase2)
+										lightningVelocity *= 1.15f;
 
 									int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 110, 0f);
 									Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();
@@ -666,7 +666,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				if (attackTimer % 4f == 3f)
 				{
 					lightningSpawnPosition += Main.rand.NextVector2Circular(18f, 18f);
-					Vector2 lightningVelocity = (target.Center - lightningSpawnPosition).SafeNormalize(Vector2.UnitY) * 1.275f;
+					Vector2 lightningVelocity = (target.Center - lightningSpawnPosition + target.velocity * 13f).SafeNormalize(Vector2.UnitY) * 0.99f;
 					lightningVelocity += Main.rand.NextVector2Circular(0.125f, 0.125f);
 
 					npc.spriteDirection = (lightningVelocity.X > 0f).ToDirectionInt();
@@ -690,8 +690,8 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
 		public static void DoAttack_ConjureLightBlasts(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
 		{
-			int lightBurstCount = phase2 ? 16 : 9;
-			int lightBurstShootRate = phase2 ? 3 : 4;
+			int lightBurstCount = phase2 ? 24 : 14;
+			int lightBurstShootRate = phase2 ? 2 : 3;
 			int lightBurstAttackDelay = phase2 ? 185 : 225;
 			int attackLength = 20 + lightBurstCount * lightBurstShootRate + lightBurstAttackDelay;
 			if (phase2)
@@ -747,9 +747,9 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 					CreateTeleportTelegraph(npc.Center, npc.Center, 0);
 				}
 
-				if (adjustedTime > 80f && adjustedTime < 180f && adjustedTime % 8f == 7f)
+				if (adjustedTime > 80f && adjustedTime < 180f && adjustedTime % 5f == 4f)
 				{
-					Vector2 lightSpawnPosition = target.Center + Main.rand.NextVector2Circular(920f, 920f);
+					Vector2 lightSpawnPosition = target.Center + target.velocity * 15f + Main.rand.NextVector2Circular(920f, 920f);
 					lightSpawnPosition += target.velocity * Main.rand.NextFloat(5f, 32f);
 					CreateTeleportTelegraph(npc.Center, lightSpawnPosition, 150, true, 1);
 					int light = Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 130, 0f);
@@ -977,7 +977,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				frameType = (int)CultistFrameState.RaiseArmsUp;
 			}
 
-			if (attackTimer == 50f || attackTimer == 230f)
+			if (attackTimer == 50f || attackTimer == 210f || attackTimer == 330f)
 			{
 				Vector2 teleportPosition = target.Center - Vector2.UnitY * 300f;
 				CreateTeleportTelegraph(npc.Center, teleportPosition, 200);
@@ -999,7 +999,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				}
 			}
 
-			if (attackTimer >= 460f)
+			if (attackTimer >= 510f)
 				GotoNextAttackState(npc);
 		}
 
@@ -1224,18 +1224,23 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			}
 			else
 			{
-				bool canNoLongerHome = attackTimer >= swerveTime + 125f;
-				float newSpeed = MathHelper.Clamp(npc.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 13f, canNoLongerHome ? 30f : 23f);
-				if (!target.dead && target.active && !npc.WithinRange(target.Center, 320f) && !canNoLongerHome)
+				if (npc.WithinRange(target.Center, 700f))
 				{
-					float homingPower = phase2Variant ? 0.067f : 0.062f;
-					npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), homingPower);
+					bool canNoLongerHome = attackTimer >= swerveTime + 125f;
+					float newSpeed = MathHelper.Clamp(npc.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 13f, canNoLongerHome ? 30f : 23f);
+					if (!target.dead && target.active && !npc.WithinRange(target.Center, 320f) && !canNoLongerHome)
+					{
+						float homingPower = phase2Variant ? 0.067f : 0.062f;
+						npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), homingPower);
+					}
+					npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * newSpeed;
 				}
-				npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * newSpeed;
+				else
+					npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.2f).SafeNormalize(Vector2.UnitY) * 17f;
 
 				// Die on tile collision or after enough time.
 				bool shouldDie = (Collision.SolidCollision(npc.position, npc.width, npc.height) && attackTimer >= swerveTime + 95f) || attackTimer >= swerveTime + 240f;
-				if (attackTimer >= swerveTime + 45f && shouldDie)
+				if (attackTimer >= swerveTime + 90f && shouldDie)
 				{
 					npc.HitEffect(0, 9999.0);
 					npc.active = false;
@@ -1410,7 +1415,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				// Release bursts of shadow fireballs at the target.
 				if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 38f == 37f)
 				{
-					Vector2 fireballVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 10f;
+					Vector2 fireballVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 7.8f;
 					fireballVelocity = fireballVelocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi / 5f).RotatedByRandom(0.16f);
 
 					int fireball = Utilities.NewProjectileBetter(npc.Center + fireballVelocity, fireballVelocity, ProjectileID.CultistBossFireBallClone, 110, 0f);

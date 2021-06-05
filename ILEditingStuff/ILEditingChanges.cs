@@ -70,6 +70,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(ModeIndicatorUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator CalamityWorldPostUpdate
+        {
+            add => HookEndpointManager.Modify(typeof(CalamityWorld).GetMethod("PostUpdate", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CalamityWorld).GetMethod("PostUpdate", Utilities.UniversalBindingFlags), value);
+        }
+
         public static void ILEditingLoad()
         {
             On.Terraria.Gore.NewGore += RemoveCultistGore;
@@ -82,6 +88,7 @@ namespace InfernumMode.ILEditingStuff
 			ModifyCheckDead += NPCCheckDeadChange;
             ModifyPreAIProjectile += ProjectilePreAIChange;
 			ModeIndicatorUIDraw += DrawInfernumIcon;
+            CalamityWorldPostUpdate += PermitODRain;
         }
 
 		public static void ILEditingUnload()
@@ -96,6 +103,7 @@ namespace InfernumMode.ILEditingStuff
             ModifyCheckDead -= NPCCheckDeadChange;
             ModifyPreAIProjectile -= ProjectilePreAIChange;
             ModeIndicatorUIDraw -= DrawInfernumIcon;
+            CalamityWorldPostUpdate -= PermitODRain;
         }
 
         internal static int RemoveCultistGore(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
@@ -382,6 +390,24 @@ namespace InfernumMode.ILEditingStuff
 
             cursor.Emit(OpCodes.Ldsfld, typeof(PoDWorld).GetField("InfernumMode"));
             cursor.Emit(OpCodes.Brtrue, endOfMethod);
+        }
+
+        private static void PermitODRain(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchStsfld<Main>("raining")))
+                return;
+
+            int start = cursor.Index - 1;
+
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<CalamityNetcode>("SyncWorld")))
+                return;
+
+            int end = cursor.Index;
+            cursor.Goto(start);
+            cursor.RemoveRange(end - start);
+            cursor.Emit(OpCodes.Nop);
         }
     }
 }

@@ -16,6 +16,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             get => projectile.ai[0] == 1f;
             set => projectile.ai[0] = value.ToInt();
         }
+        public ref float IdealSpeed => ref projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Acid");
@@ -41,8 +42,11 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                 projectile.localAI[0] = 1f;
             }
 
+            if (IdealSpeed == 0f)
+                IdealSpeed = 14f;
+
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            projectile.velocity = (projectile.velocity * 20f + projectile.DirectionTo(target.Center) * 14f) / 21f;
+            projectile.velocity = (projectile.velocity * 20f + projectile.DirectionTo(target.Center) * IdealSpeed) / 21f;
 
             float pushForce = 0.1f;
             for (int k = 0; k < Main.maxProjectiles; k++)

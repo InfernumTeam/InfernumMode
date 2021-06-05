@@ -26,7 +26,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
             projectile.penetrate = -1;
         }
 
-        public static int GetWaitTime(bool phase2) => phase2 ? 275 : 350;
+        public static int GetWaitTime(bool phase2) => phase2 ? 200 : 290;
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(projectile.timeLeft);
 

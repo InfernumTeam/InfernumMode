@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 
 using CrabulonBoss = CalamityMod.NPCs.Crabulon.CrabulonIdle;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
+using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
 
 namespace InfernumMode.FuckYouModeAIs.MainAI
 {
@@ -26,6 +27,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             [NPCID.Retinazer] = 33915,
             [ModContent.NPCType<Bumblefuck>()] = 227550,
             [ModContent.NPCType<ProvidenceBoss>()] = 900000,
+            [ModContent.NPCType<OldDukeBoss>()] = 872444,
             [ModContent.NPCType<DevourerofGodsHead>()] = 1400000,
             [ModContent.NPCType<DevourerofGodsHeadS>()] = 4180000
         };

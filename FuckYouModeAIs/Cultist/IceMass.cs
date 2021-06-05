@@ -22,7 +22,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
             projectile.ignoreWater = true;
             projectile.netImportant = true;
             projectile.hostile = true;
-            projectile.timeLeft = 320;
+            projectile.timeLeft = 180;
             projectile.Opacity = 0f;
             projectile.extraUpdates = 1;
             projectile.penetrate = -1;
@@ -33,7 +33,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
             projectile.Opacity = Utils.InverseLerp(0f, 40f, Time, true);
             projectile.rotation += MathHelper.Pi / 30f;
 
-            if (Time >= 150)
+            if (Time >= 110)
                 projectile.velocity *= 0.975f;
             Time++;
         }
@@ -44,9 +44,9 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
         {
             // Draw telegraph lines.
             // The amount of these will create a somewhat geometric pattern.
-            if (Time > 150f && Time < 290f)
+            if (Time > 60f && Time < 170f)
             {
-                float lineWidth = Utils.InverseLerp(145f, 230f, Time, true) * Utils.InverseLerp(290f, 255f, Time, true) * 2.5f + 0.2f;
+                float lineWidth = Utils.InverseLerp(60f, 90f, Time, true) * Utils.InverseLerp(170f, 140f, Time, true) * 2.5f + 0.2f;
 
                 if (lineWidth > 1f)
                     lineWidth += (float)Math.Sin(Main.GlobalTime * 5f) * 0.15f;

@@ -67,7 +67,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
             if (ActionCountdown > 0f)
                 return false;
 
-            Rectangle hitbox = Utils.CenteredRectangle(projectile.Center, new Vector2(0.6f, 1f) * projectile.scale * 66f);
+            Rectangle hitbox = Utils.CenteredRectangle(projectile.Center, new Vector2(0.6f, 1f) * projectile.scale * 80f);
             return targetHitbox.Intersects(hitbox);
         }
 

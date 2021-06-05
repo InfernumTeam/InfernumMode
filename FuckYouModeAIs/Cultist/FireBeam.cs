@@ -14,7 +14,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
         internal PrimitiveTrailCopy BeamDrawer;
         public ref float Time => ref projectile.ai[0];
         public ref float AngularVelocity => ref projectile.ai[1];
-        public const float LaserLength = 2400f;
+        public const float LaserLength = 4800f;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults() => DisplayName.SetDefault("Flame Beam");
 

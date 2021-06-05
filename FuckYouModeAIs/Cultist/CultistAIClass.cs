@@ -62,10 +62,18 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			ref float transitionTimer = ref npc.ai[3];
 			ref float frameType = ref npc.localAI[0];
 			ref float deathTimer = ref npc.Infernum().ExtraAI[7];
+			ref float initialXPosition = ref npc.Infernum().ExtraAI[8];
+			ref float borderDustCounter = ref npc.Infernum().ExtraAI[9];
 
 			bool shouldBeInPhase2 = npc.life < npc.lifeMax * 0.55f;
 			bool inPhase2 = phaseState == 2f;
 			bool dying = npc.Infernum().ExtraAI[6] == 1f;
+
+			if (initialXPosition == 0f)
+			{
+				initialXPosition = npc.Center.X;
+				npc.netUpdate = true;
+			}
 
 			if (dying)
 			{
@@ -73,6 +81,32 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				npc.dontTakeDamage = true;
 				frameType = (int)CultistFrameState.Laugh;
 				return false;
+			}
+
+			float left = initialXPosition - 2700f;
+			float right = initialXPosition + 2700f;
+
+			// Restrict the player's position.
+			target.Center = Vector2.Clamp(target.Center, new Vector2(left, -100f), new Vector2(right, Main.maxTilesY * 16f + 100f));
+			if (target.Center.X < left + 160f)
+            {
+				Dust magic = Dust.NewDustPerfect(new Vector2(left - 12f, target.Center.Y), 267);
+				magic.velocity = Main.rand.NextVector2Circular(10f, 5f);
+				magic.velocity.X = Math.Abs(magic.velocity.X);
+				magic.color = Color.Lerp(Color.Blue, Color.MediumSeaGreen, Main.rand.NextFloat(0.25f, 1f));
+				magic.scale = 1.5f;
+				magic.fadeIn = 2f;
+				magic.noGravity = true;
+			}
+			if (target.Center.X > right - 160f)
+			{
+				Dust magic = Dust.NewDustPerfect(new Vector2(right + 12f, target.Center.Y), 267);
+				magic.velocity = Main.rand.NextVector2Circular(10f, 5f);
+				magic.velocity.X = -Math.Abs(magic.velocity.X);
+				magic.color = Color.Lerp(Color.Blue, Color.MediumSeaGreen, Main.rand.NextFloat(0.25f, 1f));
+				magic.scale = 1.5f;
+				magic.fadeIn = 2f;
+				magic.noGravity = true;
 			}
 
 			// Create an eye effect, sans-style.
@@ -414,12 +448,14 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			{
 				Vector2 fireballSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 24f, 6f);
 				if (aimRotation == 0f)
-					aimRotation = (target.Center - fireballSpawnPosition).ToRotation();
+					aimRotation = (target.Center - fireballSpawnPosition + (!phase2 ? Vector2.Zero : target.velocity * 10f)).ToRotation();
 
 				Vector2 fireballVelocity = aimRotation.ToRotationVector2() * Main.rand.NextFloat(10f, 11.5f);
 				fireballVelocity = fireballVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
 
-				Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 105, 0f);
+				int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 105, 0f);
+				if (Main.projectile.IndexInRange(fireball) && phase2)
+					Main.projectile[fireball].tileCollide = false;
 				frameType = (int)CultistFrameState.HoldArmsOut;
 			}
 
@@ -1518,7 +1554,48 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 		[OverrideAppliesTo(NPCID.CultistBoss, typeof(CultistAIClass), "CultistPreDraw", EntityOverrideContext.NPCPreDraw)]
 		public static bool CultistPreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
 		{
+			// Draw borders.
 			bool dying = npc.Infernum().ExtraAI[6] == 1f;
+			Texture2D borderTexture = ModContent.GetTexture("InfernumMode/FuckYouModeAIs/Cultist/Border");
+			float initialXPosition = npc.Infernum().ExtraAI[8];
+			float left = initialXPosition - 2736f;
+			float right = initialXPosition + 2736f;
+			float leftBorderOpacity = Utils.InverseLerp(left + 850f, left + 300f, Main.LocalPlayer.Center.X, true);
+			float rightBorderOpacity = Utils.InverseLerp(right - 850f, right - 300f, Main.LocalPlayer.Center.X, true);
+
+			spriteBatch.SetBlendState(BlendState.Additive);
+			if (leftBorderOpacity > 0f && !dying)
+            {
+				Vector2 baseDrawPosition = new Vector2(left, Main.LocalPlayer.Center.Y) - Main.screenPosition;
+				float borderOutwardness = Utils.InverseLerp(0f, 0.9f, leftBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTime * 4.4f) * 0.5f + 0.5f);
+				Color borderColor = Color.Lerp(Color.Transparent, Color.DeepSkyBlue, leftBorderOpacity);
+
+				for (int i = 0; i < 80; i++)
+				{
+					float fade = (1f - Math.Abs(i - 40f) / 40f);
+					Vector2 drawPosition = baseDrawPosition + Vector2.UnitY * (i - 40f) / 40f * borderOutwardness;
+					spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Purple, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
+				}
+				spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, Color.Purple, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
+			}
+
+			if (rightBorderOpacity > 0f && !dying)
+			{
+				Vector2 baseDrawPosition = new Vector2(right, Main.LocalPlayer.Center.Y) - Main.screenPosition;
+				float borderOutwardness = Utils.InverseLerp(0f, 0.9f, rightBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTime * 4.4f) * 0.5f + 0.5f);
+				Color borderColor = Color.Lerp(Color.Transparent, Color.DeepSkyBlue, rightBorderOpacity);
+
+				for (int i = 0; i < 80; i++)
+				{
+					float fade = (1f - Math.Abs(i - 40f) / 40f);
+					Vector2 drawPosition = baseDrawPosition + Vector2.UnitY * (i - 40f) / 40f * borderOutwardness;
+					spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Purple, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
+				}
+				spriteBatch.Draw(borderTexture, baseDrawPosition, null, Color.Lerp(borderColor, Color.Purple, 0.5f), 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
+			}
+
+			spriteBatch.SetBlendState(BlendState.AlphaBlend);
+
 			float deathTimer = npc.Infernum().ExtraAI[7];
 			if (!dying)
 				ExtraDrawcode(npc, spriteBatch);

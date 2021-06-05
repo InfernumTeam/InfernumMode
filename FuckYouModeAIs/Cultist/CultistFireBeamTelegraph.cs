@@ -45,7 +45,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
         {
             spriteBatch.SetBlendState(BlendState.Additive);
             Vector2 aimDirection = projectile.velocity.SafeNormalize(Vector2.UnitY);
-            Utils.DrawLine(spriteBatch, projectile.Center, projectile.Center + aimDirection * 2050f, Color.Orange, Color.OrangeRed, projectile.scale);
+            Utils.DrawLine(spriteBatch, projectile.Center, projectile.Center + aimDirection * FireBeam.LaserLength, Color.Orange, Color.OrangeRed, projectile.scale);
             spriteBatch.ResetBlendState();
             return false;
         }

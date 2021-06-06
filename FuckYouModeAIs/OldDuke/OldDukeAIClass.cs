@@ -124,7 +124,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
         #endregion
 
         #region AI
-        [OverrideAppliesTo("OldDuke", typeof(OldDukeAIClass), "OldDukeAI", EntityOverrideContext.NPCAI, true)]
+        [OverrideAppliesTo("OldDuke", typeof(OldDukeAIClass), "OldDukeAI", EntityOverrideContext.NPCAI)]
         public static bool OldDukeAI(NPC npc)
         {
             Player target = Main.player[npc.target];
@@ -188,10 +188,10 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
                 // Going to the next AI state.
                 npc.ai[0] = (int)nextAttackType;
-                npc.ai[0] = (int)OldDukeAttackType.Charge;
 
                 // Resetting the attack timer.
                 npc.ai[2] = 0f;
+                npc.Opacity = 1f;
 
                 // And the misc ai slots.
                 for (int i = 0; i < 5; i++)
@@ -370,23 +370,23 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                     break;
 
                 case OldDukeAttackType.Charge:
-                    int reelbackDelay = 24;
-                    int chargeTime = enraged ? 26 : 43;
+                    int reelbackDelay = 34;
+                    int chargeTime = enraged ? 32 : 48;
                     float reelbackSpeed = enraged ? 12f : 7f;
-                    float chargeSpeed = enraged ? 34f : 23f;
+                    float chargeSpeed = enraged ? 34f : 25.5f;
                     float chargeAcceleration = enraged ? 1.015f : 1.01f;
                     if (inPhase2)
                     {
                         chargeSpeed *= 1.2f;
 						reelbackSpeed *= 1.1f;
-                        reelbackDelay -= 4;
+                        reelbackDelay -= 10;
                     }
 
                     if (inPhase3)
                     {
                         chargeSpeed *= 1.15f;
                         reelbackSpeed *= 1.1f;
-                        reelbackDelay -= 3;
+                        reelbackDelay -= 5;
                     }
 
                     // Reel back for a bit.
@@ -598,7 +598,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                     // Teleport,
                     if (attackTimer == teleportDelay)
                     {
-                        npc.Center = target.Center + new Vector2(-target.direction * 620f, 270f);
+                        npc.Center = target.Center + new Vector2(-target.direction * 620f, 410f);
                         npc.rotation = npc.AngleTo(target.Center);
                         npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                         if (npc.spriteDirection == 1)
@@ -699,12 +699,12 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                     int rotationRedirectTime = 25;
                     int attackDelay = 90;
                     float idealRotation = MathHelper.Pi / 4f * npc.spriteDirection;
-                    int toothBallCount = 7;
+                    int toothBallCount = 3;
                     int goreCount = 16;
 
                     if (inPhase3)
                     {
-                        toothBallCount = 15;
+                        toothBallCount = 5;
                         goreCount = 30;
                     }
 
@@ -821,8 +821,8 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                     }
                     break;
                 case OldDukeAttackType.TeleportCharge:
-                    int teleportFadeinTime = 12;
-                    int teleportFadeoutTime = 16;
+                    int teleportFadeinTime = 20;
+                    int teleportFadeoutTime = 24;
                     chargeSpeed = enraged ? 39f : 29f;
                     chargeTime = 32;
                     slowdownTime = 12;
@@ -832,7 +832,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                         chargeSpeed *= 1.2f;
                         chargeTime -= 6;
                         teleportFadeinTime -= 4;
-                        teleportFadeoutTime -= 8;
+                        teleportFadeoutTime -= 2;
                     }
 
                     frameDrawType = (int)OldDukeFrameDrawingType.FinFlapping;
@@ -875,7 +875,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                     }
 
                     if (attackTimer > teleportFadeinTime + teleportFadeoutTime && attackTimer < teleportFadeinTime + teleportFadeoutTime + chargeTime)
-                        npc.velocity *= 1.0125f;
+                        npc.velocity *= 1.018f;
 
                     if (attackTimer > teleportFadeinTime + teleportFadeoutTime + chargeTime)
                     {

@@ -15,6 +15,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 	{
 		public ref float Time => ref npc.ai[0];
 		public bool Phase2Variant => npc.ai[1] == 1f;
+		public ref float DeathFade => ref npc.ai[2];
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Sulphurous Sharkron");
@@ -28,7 +29,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 			npc.scale = 1.5f;
 			npc.width = (int)(46 * npc.scale);
 			npc.height = (int)(46 * npc.scale);
-			npc.damage = 300;
+			npc.damage = 220;
 			npc.defense = 100;
 			npc.lifeMax = 22000;
 			if (BossRushEvent.BossRushActive)
@@ -97,6 +98,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 				npc.checkDead();
 				npc.netUpdate = true;
 			}
+			DeathFade = Utils.InverseLerp(attackCycleTime * (totalCharges + 1) - 90f, attackCycleTime * (totalCharges + 1), Time, true);
 		}
 
 		public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
@@ -106,6 +108,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
 		{
+			lightColor = Color.Lerp(lightColor, Color.Lime, DeathFade * 0.7f);
 			SpriteEffects spriteEffects = SpriteEffects.FlipHorizontally;
 			if (npc.spriteDirection == -1)
 				spriteEffects = SpriteEffects.None;
@@ -187,8 +190,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 				int damage = Main.expertMode ? 55 : 70;
 				for (int i = 0; i < 20; i++)
 				{
-					Projectile.NewProjectile(npc.Center.X + Main.rand.Next(-spawnX, spawnX), npc.Center.Y,
-						Main.rand.Next(-5, 6), Main.rand.Next(-15, -10), ModContent.ProjectileType<OldDukeGore>(), damage, 0f, Main.myPlayer, 0f, 0f);
+					Projectile.NewProjectile(npc.Center + Vector2.UnitX * Main.rand.Next(-spawnX, spawnX), new Vector2(Main.rand.NextFloat(-5f, 5f), Main.rand.Next(-15, -10)), ModContent.ProjectileType<OldDukeGore>(), damage, 0f, Main.myPlayer, 0f, 0f);
 				}
 			}
 

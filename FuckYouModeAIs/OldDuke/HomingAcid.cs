@@ -24,7 +24,8 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 16;
+            projectile.scale = 1.7f;
+            projectile.width = projectile.height = 28;
             projectile.hostile = true;
 			projectile.ignoreWater = true;
 			projectile.alpha = 255;

@@ -229,9 +229,8 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
 			if (deathTimer > 300f)
 			{
-				npc.life = 0;
-				npc.StrikeNPC(9999, 0f, 1);
 				npc.NPCLoot();
+				npc.active = false;
 				npc.netUpdate = true;
 
 				// Create a rumble effect to go with the summoning of the pillars.

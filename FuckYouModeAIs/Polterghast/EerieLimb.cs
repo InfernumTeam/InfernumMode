@@ -22,7 +22,7 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
         public Player Target => Main.player[npc.target];
         public int Direction => (npc.ai[0] >= 2f).ToDirectionInt();
         public ref float IdealPositionTimer => ref npc.ai[1];
-        public PolterghastAIClass.PolterghastAttackType CurrentAttack => (PolterghastAIClass.PolterghastAttackType)(int)Polterghast.ai[0];
+        public PolterghastBehaviorOverride.PolterghastAttackType CurrentAttack => (PolterghastBehaviorOverride.PolterghastAttackType)(int)Polterghast.ai[0];
         public float AttackTimer => Polterghast.ai[1];
         public bool Enraged => Polterghast.ai[3] == 1f;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
@@ -70,7 +70,7 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
 
             UpdateLimbs();
 
-            if (CurrentAttack == PolterghastAIClass.PolterghastAttackType.Impale)
+            if (CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.Impale)
             {
                 if (AttackTimer % 150f == 60f && (npc.ai[0] == 1f || npc.ai[0] == 3f))
                 {
@@ -106,7 +106,7 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
             }
 
             // Make spider patterns during the bestial explosion.
-            if (AttackTimer >= 90f && AttackTimer < 315f && CurrentAttack == PolterghastAIClass.PolterghastAttackType.BeastialExplosion)
+            if (AttackTimer >= 90f && AttackTimer < 315f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer == 90f)
                 {
@@ -117,7 +117,7 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
                 return;
             }
 
-            if (CurrentAttack == PolterghastAIClass.PolterghastAttackType.CloneSplit && AttackTimer % 180f == 30f)
+            if (CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.CloneSplit && AttackTimer % 180f == 30f)
                 IdealPositionTimer = 40f;
 
             if (!npc.WithinRange(Polterghast.Center, 650f))
@@ -223,14 +223,14 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
 
         internal Color PrimitiveColorFunction(float completionRatio)
         {
-            bool actsAsBorder = AttackTimer >= 140f && AttackTimer < 310f && CurrentAttack == PolterghastAIClass.PolterghastAttackType.BeastialExplosion;
+            bool actsAsBorder = AttackTimer >= 140f && AttackTimer < 310f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion;
             float redFade = 0.35f;
 
             // Have the legs turn red to signal that they do damage.
-            if (AttackTimer >= 90f && CurrentAttack == PolterghastAIClass.PolterghastAttackType.BeastialExplosion)
+            if (AttackTimer >= 90f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion)
                 redFade += Utils.InverseLerp(90f, 130f, AttackTimer, true) * Utils.InverseLerp(310f, 290f, AttackTimer, true) * 0.32f;
 
-            if (CurrentAttack == PolterghastAIClass.PolterghastAttackType.Impale && npc.ai[0] % 2f == 1f)
+            if (CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.Impale && npc.ai[0] % 2f == 1f)
                 redFade += Utils.InverseLerp(45f, 100f, AttackTimer % 150f, true) * 0.32f;
 
             Color baseColor = Color.Lerp(Color.Cyan, Color.Red, redFade);
@@ -244,8 +244,8 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
             if (Polterghast.ai[2] > 48f)
                 return false;
 
-            bool actsAsBorder = AttackTimer >= 140f && AttackTimer < 310f && CurrentAttack == PolterghastAIClass.PolterghastAttackType.BeastialExplosion;
-            bool impaling = AttackTimer % 150f > 105f && CurrentAttack == PolterghastAIClass.PolterghastAttackType.Impale;
+            bool actsAsBorder = AttackTimer >= 140f && AttackTimer < 310f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion;
+            bool impaling = AttackTimer % 150f > 105f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.Impale;
             if (actsAsBorder || impaling)
 			{
                 float _ = 0f;

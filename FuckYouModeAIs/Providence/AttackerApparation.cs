@@ -44,7 +44,7 @@ namespace InfernumMode.FuckYouModeAIs.Providence
             projectile.alpha = 255;
             projectile.penetrate = 1;
             projectile.tileCollide = false;
-            projectile.timeLeft = ProvidenceAIClass.GuardianApparationTime;
+            projectile.timeLeft = ProvidenceBehaviorOverride.GuardianApparationTime;
             cooldownSlot = 1;
         }
 

@@ -21,6 +21,9 @@ namespace InfernumMode
         internal static Mod CalamityMod = null;
 
         internal static readonly Color HiveMindSkyColor = new Color(53, 42, 81);
+
+        public object CryogenAIClass { get; private set; }
+
         public override void Load()
         {
             OverridingListManager.Load();
@@ -46,7 +49,7 @@ namespace InfernumMode
 
             if (Main.netMode != NetmodeID.Server)
 			{
-                CryogenAIClass.SetupCustomBossIcon();
+                CryogenBehaviorOverride.SetupCustomBossIcon();
 
                 Ref<Effect> distortionShader = new Ref<Effect>(GetEffect("Effects/DistortionEffect"));
                 Filters.Scene["Infernum:DistortionShader"] = new Filter(new ScreenShaderData(distortionShader, "DistortionPass"), EffectPriority.High);

@@ -23,7 +23,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
             npc.netAlways = true;
             npc.damage = 11;
             npc.defense = -20;
-            npc.lifeMax = EoWAIClass.TotalLifeAcrossWorm;
+            npc.lifeMax = EoWHeadBehaviorOverride.TotalLifeAcrossWorm;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.noGravity = true;
@@ -63,7 +63,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
                 npc.netUpdate = true;
             }
 
-            EoWAIClass.EoWSegmentAI(npc);
+            EoWBodyBehaviorOverride.SegmentAI(npc);
             npc.takenDamageMultiplier = 2f;
         }
 

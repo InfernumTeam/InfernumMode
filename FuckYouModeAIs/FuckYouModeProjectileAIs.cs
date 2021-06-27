@@ -23,7 +23,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
                 ExtraAI[i] = 0f;
             }
             if (PoDWorld.InfernumMode && projectile.type == ModContent.ProjectileType<HolyAura>())
-                projectile.timeLeft = ProvidenceAIClass.AuraTime;
+                projectile.timeLeft = ProvidenceBehaviorOverride.AuraTime;
         }
 
         public override bool PreAI(Projectile projectile)

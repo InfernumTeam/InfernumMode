@@ -26,7 +26,6 @@ using CalamityMod.Tiles.Ores;
 using CalamityMod.World;
 using InfernumMode.Buffs;
 using InfernumMode.FuckYouModeAIs.Cultist;
-using InfernumMode.FuckYouModeAIs.Signus;
 using InfernumMode.FuckYouModeAIs.WallOfFlesh;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -351,14 +350,6 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
                 if (npc.life / (float)npc.lifeMax <= 0.05f && npc.Infernum().ExtraAI[2] == 1f)
                     rotation = float.NaN;
             }
-
-            if (npc.type == ModContent.NPCType<SignusNPC>())
-            {
-                float aiTimer = npc.ai[2];
-                SignusAIClass.DoGSignusAIState aiState = (SignusAIClass.DoGSignusAIState)(int)npc.ai[1];
-                if (aiState == SignusAIClass.DoGSignusAIState.CloneKnives && aiTimer > 5 && aiTimer <= SignusAIClass.CloneAppearTime + 5f)
-                    rotation = float.NaN;
-            }
         }
 
         public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
@@ -366,13 +357,6 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             if (!PoDWorld.InfernumMode)
                 return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
 
-            if (npc.type == ModContent.NPCType<SignusNPC>())
-            {
-                float aiTimer = npc.ai[2];
-                SignusAIClass.DoGSignusAIState aiState = (SignusAIClass.DoGSignusAIState)(int)npc.ai[1];
-                if (aiState == SignusAIClass.DoGSignusAIState.CloneKnives && aiTimer > 5 && aiTimer <= SignusAIClass.CloneAppearTime + 5f)
-                    return false;
-            }
             return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
         }
 
@@ -400,7 +384,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
 
             if (npc.type == NPCID.CultistBoss)
             {
-                CultistAIClass.ClearAwayEntities();
+                CultistBehaviorOverride.ClearAwayEntities();
                 npc.Infernum().ExtraAI[6] = 1f;
                 npc.netUpdate = true;
                 npc.active = true;

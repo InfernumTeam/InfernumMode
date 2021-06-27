@@ -1,3 +1,4 @@
+using InfernumMode.FuckYouModeAIs.Cryogen;
 using InfernumMode.FuckYouModeAIs.Twins;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.OverridingSystem;
@@ -41,8 +42,12 @@ namespace InfernumMode
                     method.GetCustomAttributes(false);
             }
 
+            NPCBehaviorOverride.LoadAll();
+
             if (Main.netMode != NetmodeID.Server)
 			{
+                CryogenAIClass.SetupCustomBossIcon();
+
                 Ref<Effect> distortionShader = new Ref<Effect>(GetEffect("Effects/DistortionEffect"));
                 Filters.Scene["Infernum:DistortionShader"] = new Filter(new ScreenShaderData(distortionShader, "DistortionPass"), EffectPriority.High);
                 Filters.Scene["Infernum:DistortionShader"].Load();

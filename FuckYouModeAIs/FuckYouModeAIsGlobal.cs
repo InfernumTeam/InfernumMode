@@ -36,6 +36,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
+using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using SignusNPC = CalamityMod.NPCs.Signus.Signus;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
 
@@ -100,6 +101,15 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
         }
         #endregion
 
+        public override void BossHeadSlot(NPC npc, ref int index)
+        {
+            if (!PoDWorld.InfernumMode)
+                return;
+
+            if (npc.type == ModContent.NPCType<CryogenNPC>())
+                index = ModContent.GetModBossHeadSlot("InfernumMode/FuckYouModeAIs/Cryogen/CryogenMapIcon");
+        }
+
         public override void SetDefaults(NPC npc)
         {
             angleTarget = default;
@@ -109,16 +119,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             if (PoDWorld.InfernumMode && !BossRushEvent.BossRushActive)
             {
                 if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
-                {
-                    bool makeChanges = true;
-                    if (OverridingListManager.ExclusionList.ContainsKey(new OverrideExclusionContext(npc.type, EntityOverrideContext.NPCAI)) &&
-                        !OverridingListManager.ExclusionList[new OverrideExclusionContext(npc.type, EntityOverrideContext.NPCAI)].Invoke())
-                    {
-                        makeChanges = false;
-                    }
-                    if (makeChanges)
-                        OverridingListManager.InfernumSetDefaultsOverrideList[npc.type].DynamicInvoke(npc);
-                }
+                    OverridingListManager.InfernumSetDefaultsOverrideList[npc.type].DynamicInvoke(npc);
             }
         }
         public override bool PreAI(NPC npc)
@@ -134,14 +135,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
                 }
 
                 if (OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type))
-                {
-                    if (OverridingListManager.ExclusionList.ContainsKey(new OverrideExclusionContext(npc.type, EntityOverrideContext.NPCAI)) &&
-                        !OverridingListManager.ExclusionList[new OverrideExclusionContext(npc.type, EntityOverrideContext.NPCAI)].Invoke())
-                    {
-                        return base.PreAI(npc);
-                    }
                     return (bool)OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].DynamicInvoke(npc);
-                }
             }
             return base.PreAI(npc);
         }

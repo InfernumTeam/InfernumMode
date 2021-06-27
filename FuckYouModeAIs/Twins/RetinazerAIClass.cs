@@ -7,23 +7,15 @@ using Terraria.ID;
 
 namespace InfernumMode.FuckYouModeAIs.Twins
 {
-	public class RetinazerAIClass
-    {
-        [OverrideAppliesTo(NPCID.Retinazer, typeof(RetinazerAIClass), "RetinazerAI", EntityOverrideContext.NPCAI)]
-        public static bool RetinazerAI(NPC npc) => TwinsAttackSynchronizer.DoAI(npc);
+	public class RetinazerAIClass : NPCBehaviorOverride
+	{
+		public override int NPCOverrideType => NPCID.Retinazer;
 
-        [OverrideAppliesTo(NPCID.Retinazer, typeof(RetinazerAIClass), "RetinazerFindFrame", EntityOverrideContext.NPCFindFrame)]
-        public static void RetinazerFindFrame(NPC npc, int frameHeight)
-		{
-			npc.frameCounter++;
-            npc.frame.Y = (int)npc.frameCounter % 21 / 7 * frameHeight;
+		public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
-            if (TwinsAttackSynchronizer.PersonallyInPhase2(npc))
-				npc.frame.Y += frameHeight * 3;
-        }
+        public override bool PreAI(NPC npc) => TwinsAttackSynchronizer.DoAI(npc);
 
-		[OverrideAppliesTo(NPCID.Retinazer, typeof(RetinazerAIClass), "RetinazerPreDraw", EntityOverrideContext.NPCPreDraw)]
-		public static bool RetinazerPreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
 		{
 			Texture2D texture = Main.npcTexture[npc.type];
 			void drawInstance(Vector2 drawPosition, Color drawColor, float rotation)
@@ -54,6 +46,15 @@ namespace InfernumMode.FuckYouModeAIs.Twins
 				drawInstance(npc.Center + drawOffset, color, npc.rotation);
 			}
 			return false;
+		}
+
+		public override void FindFrame(NPC npc, int frameHeight)
+		{
+			npc.frameCounter++;
+			npc.frame.Y = (int)npc.frameCounter % 21 / 7 * frameHeight;
+
+			if (TwinsAttackSynchronizer.PersonallyInPhase2(npc))
+				npc.frame.Y += frameHeight * 3;
 		}
 	}
 }

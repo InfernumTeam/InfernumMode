@@ -14,11 +14,16 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.World.Generation;
 
+using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
+
 namespace InfernumMode.FuckYouModeAIs.Leviathan
 {
-	public class LeviathanAIClass
+	public class LeviathanAIClass : NPCBehaviorOverride
     {
-        #region Enumerations
+        public override int NPCOverrideType => ModContent.NPCType<LeviathanNPC>();
+
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+
         public enum LeviathanAttackType
         {
             LazilyHover,
@@ -27,9 +32,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             MeteorVomiting,
             Charge
         }
-        #endregion
 
-        #region AI
 
         internal static readonly LeviathanAttackType[] Phase1AttackPattern = new LeviathanAttackType[]
         {
@@ -53,8 +56,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             LeviathanAttackType.MeteorVomiting,
         };
 
-        [OverrideAppliesTo("Leviathan", typeof(LeviathanAIClass), "LeviathanAI", EntityOverrideContext.NPCAI)]
-        public static bool LeviathanAI(NPC npc)
+        public override bool PreAI(NPC npc)
         {
             Player target = Main.player[npc.target];
             npc.damage = npc.defDamage;
@@ -334,7 +336,6 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 
             attackTimer++;
             return false;
-		}
-        #endregion
+        }
     }
 }

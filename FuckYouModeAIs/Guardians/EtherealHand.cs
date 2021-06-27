@@ -24,7 +24,7 @@ namespace InfernumMode.FuckYouModeAIs.Guardians
         internal NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
         internal bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
         internal float AttackTime => AttackerGuardian.ai[1];
-        internal ProfanedGuardianAIClass.Phase2GuardianAttackState AttackerState => (ProfanedGuardianAIClass.Phase2GuardianAttackState)(int)AttackerGuardian.ai[0];
+        internal AttackerGuardianBehaviorOverride.Phase2GuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.Phase2GuardianAttackState)(int)AttackerGuardian.ai[0];
         internal Vector2 PointerFingerPosition => npc.Center + (npc.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
 
         internal const float HandSize = 56f;
@@ -71,20 +71,20 @@ namespace InfernumMode.FuckYouModeAIs.Guardians
             UsingPointerFinger = false;
             switch (AttackerState)
             {
-                case ProfanedGuardianAIClass.Phase2GuardianAttackState.ReelBackSpin:
+                case AttackerGuardianBehaviorOverride.Phase2GuardianAttackState.ReelBackSpin:
                     destination = AttackerGuardian.Center + new Vector2(110f * HandSide, MathHelper.Lerp(-1f, 1f, Utils.InverseLerp(-6f, 6f, AttackerGuardian.velocity.Y, true)) * 110f);
                     destination.Y -= MathHelper.Lerp(0f, 60f, Utils.InverseLerp(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y), true));
 
                     FingerOutwardness = MathHelper.Lerp(26f, 37f, (float)Math.Cos(Main.GlobalTime * 1.2f) * 0.5f + 0.5f);
                     FingerSpacingOffset = MathHelper.Lerp(MathHelper.ToRadians(7f), MathHelper.ToRadians(15f), Utils.InverseLerp(26f, 42f, FingerOutwardness, true));
                     break;
-                case ProfanedGuardianAIClass.Phase2GuardianAttackState.FireCast:
+                case AttackerGuardianBehaviorOverride.Phase2GuardianAttackState.FireCast:
                     destination = AttackerGuardian.Center + new Vector2(110f * HandSide, -120f + 30f * (float)Math.Sin(AttackTime / 16f + HandSide * 2.1f));
 
                     FingerOutwardness = 34f;
                     FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(9f), 0.25f);
                     break;
-                case ProfanedGuardianAIClass.Phase2GuardianAttackState.RayZap:
+                case AttackerGuardianBehaviorOverride.Phase2GuardianAttackState.RayZap:
                     FingerOutwardness = 36f;
                     FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(10f), 0.3f);
 
@@ -130,7 +130,7 @@ namespace InfernumMode.FuckYouModeAIs.Guardians
             int totalPoints = 20 + (int)(distanceFromAttacker / 40f);
 
             // Create a line telegraph a little bit before zapping a ray.
-            if (AttackerState == ProfanedGuardianAIClass.Phase2GuardianAttackState.RayZap && AttackTime % 90f > 60f && UsingPointerFinger)
+            if (AttackerState == AttackerGuardianBehaviorOverride.Phase2GuardianAttackState.RayZap && AttackTime % 90f > 60f && UsingPointerFinger)
             {
                 float width = (float)Math.Sin(Utils.InverseLerp(60f, 90f, AttackTime % 90f, true) * MathHelper.Pi) * 3f + 1f;
                 Vector2 endPosition = PointerFingerPosition + (Target.Center - PointerFingerPosition + Target.velocity * 30f).SafeNormalize(Vector2.UnitX * HandSide) * 2400f;

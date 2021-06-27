@@ -8,7 +8,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using InfernumMode.FuckYouModeAIs.MoonLord;
 using static InfernumMode.FuckYouModeAIs.MainAI.FuckYouModeAIsGlobal;
-using static InfernumMode.FuckYouModeAIs.MoonLord.MoonLordAIClass;
 
 namespace InfernumMode.FuckYouModeAIs.NPCs
 {
@@ -70,7 +69,7 @@ namespace InfernumMode.FuckYouModeAIs.NPCs
                     }
                     if (npc.ai[1] % modulo == modulo - 30f)
                     {
-                        Utilities.NewProjectileBetter(npc.Center, npc.DirectionTo(targetPosition) * 2.8f, ProjectileID.PhantasmalBolt, BoltDamage, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.DirectionTo(targetPosition) * 2.8f, ProjectileID.PhantasmalBolt, 185, 0f);
                         targetPosition = default;
                     }
                     break;
@@ -82,7 +81,7 @@ namespace InfernumMode.FuckYouModeAIs.NPCs
                         for (int i = -3; i <= 3; i++)
                         {
                             float angle = MathHelper.Pi / 3f * i;
-                            Utilities.NewProjectileBetter(npc.Center, (npc.DirectionTo(targetPosition) * 1.4f).RotatedBy(angle), ProjectileID.PhantasmalBolt, BoltDamage, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, (npc.DirectionTo(targetPosition) * 1.4f).RotatedBy(angle), ProjectileID.PhantasmalBolt, 185, 0f);
                         }
                     }
                     break;
@@ -106,7 +105,7 @@ namespace InfernumMode.FuckYouModeAIs.NPCs
                                 default, 1f);
                             Main.dust[idx].noGravity = true;
                         }
-                        Utilities.NewProjectileBetter(npc.Center, npc.DirectionTo(targetPosition) * 1.4f, ModContent.ProjectileType<PhantasmalBlast>(), BlastDamage, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.DirectionTo(targetPosition) * 1.4f, ModContent.ProjectileType<PhantasmalBlast>(), 185, 0f);
                         targetPosition = default;
                     }
                     break;
@@ -152,7 +151,7 @@ namespace InfernumMode.FuckYouModeAIs.NPCs
                         if (npc.ai[2] == 1f)
                         {
                             npc.velocity = Vector2.Zero;
-                            int idx = Utilities.NewProjectileBetter(npc.Center, npc.DirectionTo(targetPosition), ModContent.ProjectileType<MoonlordPendulum>(), LaserDamage, 0f, 255, 0f, npc.whoAmI);
+                            int idx = Utilities.NewProjectileBetter(npc.Center, npc.DirectionTo(targetPosition), ModContent.ProjectileType<MoonlordPendulum>(), 350, 0f, 255, 0f, npc.whoAmI);
                             Main.projectile[idx].ai[0] = 0f;
                             Main.projectile[idx].ai[1] = npc.whoAmI;
                             targetPosition = default;
@@ -195,7 +194,7 @@ namespace InfernumMode.FuckYouModeAIs.NPCs
                     if (npc.velocity.Y < -6f)
                         npc.velocity.Y = -6f;
                     if (npc.ai[1] % 80f == 60f)
-                        Utilities.NewProjectileBetter(npc.Center, new Vector2(0f, -8f).RotatedByRandom(MathHelper.ToRadians(26f)), ProjectileID.PhantasmalEye, EyeDamage, 1f);
+                        Utilities.NewProjectileBetter(npc.Center, new Vector2(0f, -8f).RotatedByRandom(MathHelper.ToRadians(26f)), ProjectileID.PhantasmalEye, 205, 1f);
                 }
                 npc.dontTakeDamage = anyNonSpecialSeals;
             }

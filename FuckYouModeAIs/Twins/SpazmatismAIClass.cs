@@ -7,23 +7,15 @@ using Terraria.ID;
 
 namespace InfernumMode.FuckYouModeAIs.Twins
 {
-	public class SpazmatismAIClass
-    {
-        [OverrideAppliesTo(NPCID.Spazmatism, typeof(SpazmatismAIClass), "SpazmatismAI", EntityOverrideContext.NPCAI)]
-        public static bool SpazmatismAI(NPC npc) => TwinsAttackSynchronizer.DoAI(npc);
+	public class SpazmatismAIClass : NPCBehaviorOverride
+	{
+		public override int NPCOverrideType => NPCID.Spazmatism;
 
-        [OverrideAppliesTo(NPCID.Spazmatism, typeof(SpazmatismAIClass), "SpazmatismFindFrame", EntityOverrideContext.NPCFindFrame)]
-        public static void SpazmatismFindFrame(NPC npc, int frameHeight)
-		{
-			npc.frameCounter++;
-			npc.frame.Y = (int)npc.frameCounter % 21 / 7 * frameHeight;
+		public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
-			if (TwinsAttackSynchronizer.PersonallyInPhase2(npc))
-				npc.frame.Y += frameHeight * 3;
-        }
+        public override bool PreAI(NPC npc) => TwinsAttackSynchronizer.DoAI(npc);
 
-		[OverrideAppliesTo(NPCID.Spazmatism, typeof(SpazmatismAIClass), "SpazmatismPreDraw", EntityOverrideContext.NPCPreDraw)]
-		public static bool SpazmatismPreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
 		{
 			for (int i = 0; i < Main.maxNPCs; i++)
 			{
@@ -58,7 +50,7 @@ namespace InfernumMode.FuckYouModeAIs.Twins
 			int totalInstancesToDraw = 1;
 			Color color = lightColor;
 			float overdriveTimer = npc.Infernum().ExtraAI[4];
-			if (TwinsAttackSynchronizer.CurrentAttackState == TwinsAttackSynchronizer.TwinsAttackState.SuperAttack || overdriveTimer > 0f) 
+			if (TwinsAttackSynchronizer.CurrentAttackState == TwinsAttackSynchronizer.TwinsAttackState.SuperAttack || overdriveTimer > 0f)
 			{
 				float fadeCompletion = Utils.InverseLerp(0f, 60f, TwinsAttackSynchronizer.UniversalAttackTimer, true);
 				if (overdriveTimer > 0f)
@@ -87,5 +79,14 @@ namespace InfernumMode.FuckYouModeAIs.Twins
 			}
 			return false;
 		}
-	}
+
+        public override void FindFrame(NPC npc, int frameHeight)
+		{
+			npc.frameCounter++;
+			npc.frame.Y = (int)npc.frameCounter % 21 / 7 * frameHeight;
+
+			if (TwinsAttackSynchronizer.PersonallyInPhase2(npc))
+				npc.frame.Y += frameHeight * 3;
+		}
+    }
 }

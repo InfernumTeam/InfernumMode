@@ -2,6 +2,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static InfernumMode.FuckYouModeAIs.BoC.BoCBehaviorOverride;
 
 namespace InfernumMode.FuckYouModeAIs.BoC
 {
@@ -38,7 +39,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
 		public override void AI()
         {
             // Disappear if the main boss is not present.
-            if (!Main.npc.IndexInRange(NPC.crimsonBoss) || !Owner.active || (BoCAIClass.BoCAttackState)(int)Owner.ai[0] != BoCAIClass.BoCAttackState.ConvergingIllusions)
+            if (!Main.npc.IndexInRange(NPC.crimsonBoss) || !Owner.active || (BoCAttackState)(int)Owner.ai[0] != BoCAttackState.ConvergingIllusions)
 			{
 				npc.active = false;
 				npc.netUpdate = true;

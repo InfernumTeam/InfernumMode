@@ -59,14 +59,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
                 }
 
                 if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type))
-                {
-                    if (OverridingListManager.ExclusionList.ContainsKey(new OverrideExclusionContext(npc.type, EntityOverrideContext.NPCPreDraw)) &&
-                        !OverridingListManager.ExclusionList[new OverrideExclusionContext(npc.type, EntityOverrideContext.NPCPreDraw)].Invoke())
-					{
-                        base.PreDraw(npc, spriteBatch, drawColor);
-                    }
                     return (bool)OverridingListManager.InfernumPreDrawOverrideList[npc.type].DynamicInvoke(npc, spriteBatch, drawColor);
-                }
             }
             return base.PreDraw(npc, spriteBatch, drawColor);
         }
@@ -100,16 +93,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
         public override void FindFrame(NPC npc, int frameHeight)
         {
             if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(npc.type) && PoDWorld.InfernumMode)
-            {
-                bool doOverride = true;
-                if (OverridingListManager.ExclusionList.ContainsKey(new OverrideExclusionContext(npc.type, EntityOverrideContext.NPCFindFrame)) &&
-                    !OverridingListManager.ExclusionList[new OverrideExclusionContext(npc.type, EntityOverrideContext.NPCFindFrame)].Invoke())
-				{
-                    doOverride = false;
-                }
-                if (doOverride)
-                    OverridingListManager.InfernumFrameOverrideList[npc.type].DynamicInvoke(npc, frameHeight);
-            }
+                OverridingListManager.InfernumFrameOverrideList[npc.type].DynamicInvoke(npc, frameHeight);
         }
         #endregion
     }

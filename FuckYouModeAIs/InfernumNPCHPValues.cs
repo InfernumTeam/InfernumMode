@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using CrabulonBoss = CalamityMod.NPCs.Crabulon.CrabulonIdle;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
+using CalamityMod.NPCs.Perforator;
 
 namespace InfernumMode.FuckYouModeAIs.MainAI
 {
@@ -17,11 +18,13 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
         public static Dictionary<int, int> HPValues = new Dictionary<int, int>()
         {
             [ModContent.NPCType<DesertScourgeHead>()] = 5550,
+            [NPCID.KingSlime] = 4200,
             [NPCID.EyeofCthulhu] = 3560,
             [ModContent.NPCType<CrabulonBoss>()] = 8750,
             [NPCID.EaterofWorldsHead] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsBody] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsTail] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
+            [ModContent.NPCType<PerforatorHive>()] = 6132,
             [NPCID.WallofFleshEye] = 4776,
             [NPCID.Spazmatism] = 36260,
             [NPCID.Retinazer] = 33915,

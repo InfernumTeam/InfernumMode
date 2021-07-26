@@ -56,7 +56,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
             if (fallCountdown > 0f)
             {
-                if (npc.Center.Y < target.Center.Y + 670f)
+                if (npc.Center.Y < target.Center.Y + 470f)
                     npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + moveSpeed * 1.5f, -17f, 17f);
                 else
                     npc.velocity.Y *= 0.93f;
@@ -65,14 +65,14 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             else
             {
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed, -17f, 17f);
-                npc.velocity.X = (npc.velocity.X * 5f + npc.SafeDirectionTo(target.Center).X * 8.5f) / 6f;
+                npc.velocity.X = (npc.velocity.X * 3f + npc.SafeDirectionTo(target.Center).X * 8.5f) / 4f;
 
                 if (totalSegmentsInAir >= 7)
                 {
-                    fallCountdown = 90f;
-                    for (int i = 0; i < 12; i++)
+                    fallCountdown = 45f;
+                    for (int i = 0; i < 10; i++)
                     {
-                        Vector2 ichorVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 6f;
+                        Vector2 ichorVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 8f;
                         Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorSpit>(), 80, 0f);
                     }
                 }

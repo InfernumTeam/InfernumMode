@@ -50,6 +50,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float summonAnimationCountdown = ref npc.ai[2];
+            ref float outOfBiomeTimer = ref npc.ai[3];
             ref float animationState = ref npc.localAI[0];
             ref float wormSpawnState = ref npc.localAI[1];
 
@@ -92,7 +93,12 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 }
             }
 
-            npc.dontTakeDamage = anyWorms || (!target.ZoneCorrupt && !target.ZoneCrimson) || summonAnimationCountdown > 0f;
+            if (!target.ZoneCorrupt && !target.ZoneCrimson)
+                outOfBiomeTimer++;
+            else
+                outOfBiomeTimer = 0f;
+
+            npc.dontTakeDamage = anyWorms || outOfBiomeTimer > 240f || summonAnimationCountdown > 0f;
 
             if (summonAnimationCountdown > 0f)
             {
@@ -167,6 +173,8 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                     npc.position.Y += 5f;
                 npc.velocity *= 0.8f;
                 npc.rotation *= 0.8f;
+                if (npc.timeLeft < 1800)
+                    npc.timeLeft = 1800;
                 return false;
             }
 
@@ -223,7 +231,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 270f;
                 destination.X += (target.Center.X - npc.Center.X < 0f).ToDirectionInt() * 360f;
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 14f, anyWorms ? 0.054f : 0.07f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 19f, anyWorms ? 0.054f : 0.07f);
 
                 if (npc.WithinRange(destination, 35f))
 				{
@@ -278,10 +286,9 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             else
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 270f;
-                if (!npc.WithinRange(destination, 145f))
-                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 15f, 0.055f);
-                else
-                    npc.velocity *= 0.95f;
+                float distanceFromDestination = npc.Distance(destination);
+                float movementInterpolant = MathHelper.Lerp(0.055f, 0.16f, Utils.InverseLerp(100f, 30f, distanceFromDestination, true));
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * MathHelper.Min(distanceFromDestination, 15f), movementInterpolant);
             }
 
             gotoNextAttack = attackTimer >= 240f;
@@ -290,23 +297,17 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
         public static void DoAttack_ReleaseRegularBursts(NPC npc, Player target, ref float attackTimer, bool anyWorms, out bool gotoNextAttack)
         {
             Vector2 destination = target.Center - Vector2.UnitY * 270f;
-            if (!npc.WithinRange(destination, 145f))
-            {
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 15f, 0.15f);
+            float distanceFromDestination = npc.Distance(destination);
+            float movementInterpolant = MathHelper.Lerp(0.055f, 0.16f, Utils.InverseLerp(100f, 30f, distanceFromDestination, true));
+            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * MathHelper.Min(distanceFromDestination, 15f), movementInterpolant);
 
-                if (!npc.WithinRange(destination, 200f))
-                    npc.Center = Vector2.Lerp(npc.Center, destination, 0.02f);
-            }
-            else
-                npc.velocity *= 0.95f;
-
-            int shootRate = anyWorms ? 100 : 60;
+            int shootRate = anyWorms ? 100 : 62;
+            Vector2 blobSpawnPosition = new Vector2(npc.Center.X + Main.rand.NextFloat(-12f, 12f), npc.Center.Y + 30f);
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
             {
-                int totalProjectiles = anyWorms ? 7 : 17;
+                int totalProjectiles = anyWorms ? 7 : (int)MathHelper.Lerp(12f, 17f, 1f - npc.life / (float)npc.lifeMax); ;
                 float blobSpeed = anyWorms ? 6f : 8f;
-                Vector2 blobSpawnPosition = new Vector2(npc.Center.X, npc.Center.Y + 30f);
-                Vector2 currentBlobVelocity = Vector2.UnitY * -blobSpeed + Vector2.UnitX * npc.velocity.SafeNormalize(Vector2.Zero).X * 0.2f;
+                Vector2 currentBlobVelocity = Vector2.UnitY * -blobSpeed + Vector2.UnitX * (npc.velocity.SafeNormalize(Vector2.Zero).X * 0.2f + target.velocity.X * 0.3f);
 
                 npc.TargetClosest();
 
@@ -318,7 +319,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 Main.PlaySound(SoundID.NPCHit20, npc.position);
             }
 
-            gotoNextAttack = attackTimer >= shootRate * 8f;
+            gotoNextAttack = attackTimer >= shootRate * 8f + shootRate * 0.5f;
         }
 
         #endregion Specific Attacks

@@ -54,16 +54,16 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             float oldScale = npc.scale;
-            float idealScale = MathHelper.Lerp(1f, 1.7f, lifeRatio);
+            float idealScale = MathHelper.Lerp(1.85f, 3f, lifeRatio);
             npc.scale = idealScale;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * 0.6f && hasSummonedNinjaFlag == 0f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * 0.4f && hasSummonedNinjaFlag == 0f)
             {
                 NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
                 hasSummonedNinjaFlag = 1f;
             }
 
-            if (npc.life < npc.lifeMax * 0.35f && hasSummonedJewelFlag == 0f && npc.scale >= 0.8f)
+            if (npc.life < npc.lifeMax * 0.75f && hasSummonedJewelFlag == 0f && npc.scale >= 0.8f)
             {
                 Vector2 jewelSpawnPosition = target.Center - Vector2.UnitY * 350f;
                 Main.PlaySound(SoundID.Item67, target.Center);
@@ -201,7 +201,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                             npc.velocity.X = 0f;
 
                         npc.scale = MathHelper.Lerp(idealScale, 0.2f, MathHelper.Clamp((float)Math.Pow(attackTimer / digTime, 3D), 0f, 1f));
-                        npc.Opacity = Utils.InverseLerp(0.2f, 0.3f, npc.scale, true) * 0.7f;
+                        npc.Opacity = Utils.InverseLerp(0.7f, 1f, npc.scale, true) * 0.7f;
                         npc.dontTakeDamage = true;
                         shouldNotChangeScale = true;
                         npc.damage = 0;
@@ -267,7 +267,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             if (npc.Opacity > 0.7f)
                 npc.Opacity = 0.7f;
 
-            npc.gfxOffY = -6;
+            npc.gfxOffY = (int)(-42 * npc.scale / 3f);
 
             attackTimer++;
             return false;
@@ -275,7 +275,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 
         #endregion AI
 
-        #region Drawcode
+        #region Draw Code
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
@@ -283,7 +283,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             Vector2 kingSlimeDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
 
             // Draw the ninja, if it's still stuck.
-            if (npc.life > npc.lifeMax * 0.6f)
+            if (npc.life > npc.lifeMax * 0.4f)
             {
                 Vector2 drawOffset = Vector2.Zero;
                 float ninjaRotation = npc.velocity.X * 0.05f;
@@ -325,7 +325,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                     break;
             }
             Texture2D crownTexture = Main.extraTexture[39];
-            Vector2 crownDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * (npc.gfxOffY - (60f - verticalCrownOffset) * npc.scale);
+            Vector2 crownDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * (npc.gfxOffY - (56f - verticalCrownOffset) * npc.scale);
             spriteBatch.Draw(crownTexture, crownDrawPosition, null, lightColor, 0f, crownTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             return false;
         }

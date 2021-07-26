@@ -307,8 +307,19 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             isDesertScourge |= npc.type == ModContent.NPCType<DesertScourgeTail>() || npc.type == ModContent.NPCType<DesertScourgeHeadSmall>();
             isDesertScourge |= npc.type == ModContent.NPCType<DesertScourgeBodySmall>() || npc.type == ModContent.NPCType<DesertScourgeTailSmall>();
 
-            if (isDesertScourge && projectile.type == ProjectileID.JestersArrow)
+            if (isDesertScourge && (projectile.type == ProjectileID.JestersArrow || projectile.type == ProjectileID.UnholyArrow || projectile.type == ProjectileID.WaterBolt))
                 damage = (int)(damage * 0.45);
+            if (isDesertScourge && (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare))
+                damage = (int)(damage * 0.7);
+
+            if (npc.type == NPCID.KingSlime && projectile.penetrate == -1 || projectile.penetrate > 1)
+                damage = (int)(damage * 0.67);
+
+            if ((npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyMedium>() ||
+                npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyLarge>()) && (projectile.penetrate >= 2 || projectile.penetrate == -1))
+            {
+                damage = (int)(damage * 0.4);
+            }
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHeadS>() || npc.type == ModContent.NPCType<DevourerofGodsTailS>() &&
                 (projectile.type == ModContent.ProjectileType<PhantasmalRuinGhost>() || projectile.type == ModContent.ProjectileType<PhantasmalRuinProj>()) || projectile.type == ProjectileID.LostSoulFriendly)

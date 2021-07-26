@@ -40,8 +40,7 @@ VertexShaderOutput VertexShaderFunction(in VertexShaderInput input)
     return output;
 }
 
-// The X coordinate is the trail completion, the Y coordinate is the same as any other.
-// This is simply how the primitive TextCoord is layed out in the C# code.
+// The X coordinate is the trail completion, the Y coordinate is the elevation on the point of the trail.
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     float4 color = input.Color;

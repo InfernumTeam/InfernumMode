@@ -12,6 +12,7 @@ using CryogenBoss = CalamityMod.NPCs.Cryogen.Cryogen;
 
 namespace InfernumMode.FuckYouModeAIs.Cryogen
 {
+    /*
     public class CryogenBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<CryogenBoss>();
@@ -23,16 +24,13 @@ namespace InfernumMode.FuckYouModeAIs.Cryogen
         {
             IcicleCircleBurst,
             PredictiveIcicles,
-            Charge,
             TeleportAndReleaseIceBombs,
-            SummonAuroraSpirits
 		}
         #endregion
 
         #region AI
 
         public override bool PreAI(NPC npc)
-
         {
             npc.TargetClosest();
 
@@ -74,11 +72,11 @@ namespace InfernumMode.FuckYouModeAIs.Cryogen
 
             npc.damage = npc.defDamage;
             if (subphaseState == 0f)
-                DoWeakSubphase1Behavior(npc, target, ref attackTimer);
+                DoWeakSubphase1Behavior(npc, target, ref attackTimer, ref attackState);
             else if (subphaseState == 1f)
-                DoSubphase2Behavior(npc, target, ref attackTimer, ref attackState);
-            else if (subphaseState == 2f)
-                DoSubphase3Behavior(npc, target, ref attackTimer, ref attackState);
+            {
+
+            }
 
             if (npc.damage == 0)
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.55f, 0.1f);
@@ -88,33 +86,14 @@ namespace InfernumMode.FuckYouModeAIs.Cryogen
             return false;
         }
 
-        public static void DoWeakSubphase1Behavior(NPC npc, Player target, ref float attackTimer)
-        {
-            Vector2 destination = target.Center - Vector2.UnitY * 375f;
-
-            if (!npc.WithinRange(destination, 90f))
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 11f, 0.8f);
-
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 55f == 54f)
-            {
-                for (int i = 0; i < 6; i++)
-                {
-                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 30f).RotatedBy(MathHelper.Lerp(-0.6f, 0.6f, (i + 0.5f) / 5f)) * 9f;
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<IceBlast>(), 120, 0f);
-                }
-            }
-
-            npc.rotation = npc.velocity.X * 0.04f;
-            attackTimer++;
-        }
-
-        public static void DoSubphase2Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
+        public static void DoWeakSubphase1Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
         {
             CryogenAttackState[] attackCycle = new CryogenAttackState[]
             {
                 CryogenAttackState.IcicleCircleBurst,
                 CryogenAttackState.PredictiveIcicles,
-                CryogenAttackState.Charge,
+                CryogenAttackState.IcicleCircleBurst,
+                CryogenAttackState.TeleportAndReleaseIceBombs,
             };
 
             switch (attackCycle[(int)attackState % attackCycle.Length])
@@ -125,45 +104,8 @@ namespace InfernumMode.FuckYouModeAIs.Cryogen
                 case CryogenAttackState.PredictiveIcicles:
                     DoAttack_PredictiveIcicles(npc, target, ref attackTimer, ref attackState, 1f);
                     break;
-                case CryogenAttackState.Charge:
-                    DoAttack_Charge(npc, target, ref attackTimer, ref attackState, 1f);
-                    break;
-            }
-            attackTimer++;
-        }
-
-        public static void DoSubphase3Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
-        {
-            CryogenAttackState[] attackCycle = new CryogenAttackState[]
-            {
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.TeleportAndReleaseIceBombs,
-                CryogenAttackState.SummonAuroraSpirits,
-                CryogenAttackState.IcicleCircleBurst,
-                CryogenAttackState.PredictiveIcicles,
-                CryogenAttackState.Charge,
-                CryogenAttackState.TeleportAndReleaseIceBombs,
-                CryogenAttackState.SummonAuroraSpirits,
-                CryogenAttackState.PredictiveIcicles,
-                CryogenAttackState.Charge,
-            };
-
-            switch (attackCycle[(int)attackState % attackCycle.Length])
-            {
-                case CryogenAttackState.IcicleCircleBurst:
-                    DoAttack_IcicleCircleBurst(npc, target, ref attackTimer, ref attackState, 1.35f);
-                    break;
-                case CryogenAttackState.PredictiveIcicles:
-                    DoAttack_PredictiveIcicles(npc, target, ref attackTimer, ref attackState, 1.35f);
-                    break;
-                case CryogenAttackState.Charge:
-                    DoAttack_Charge(npc, target, ref attackTimer, ref attackState, 1.35f);
-                    break;
                 case CryogenAttackState.TeleportAndReleaseIceBombs:
                     DoAttack_TeleportAndReleaseIceBombs(npc, target, ref attackTimer, ref attackState, 1f);
-                    break;
-                case CryogenAttackState.SummonAuroraSpirits:
-                    DoAttack_SummonAuroraSpirits(npc, target, ref attackTimer, ref attackState, 3);
                     break;
             }
             attackTimer++;
@@ -261,49 +203,6 @@ namespace InfernumMode.FuckYouModeAIs.Cryogen
             }
         }
 
-        public static void DoAttack_Charge(NPC npc, Player target, ref float attackTimer, ref float attackState, float attackPower)
-        {
-            float zeroBasedAttackPower = attackPower - 1f;
-            int chargeCount = 6;
-            int chargeHoverDelay = 45 - (int)(zeroBasedAttackPower * 15f);
-            int chargeTime = 80 - (int)(zeroBasedAttackPower * 20f);
-            float chargeSpeed = 17.5f + zeroBasedAttackPower * 4f;
-            int attackCycleLength = chargeHoverDelay + chargeTime;
-            if (attackTimer % attackCycleLength < chargeHoverDelay - 30f)
-            {
-                Vector2 destination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 200f, -295f);
-                npc.Center = npc.Center.MoveTowards(destination, 6f);
-            }
-
-            if (attackTimer % attackCycleLength >= chargeHoverDelay - 30f && attackTimer % attackCycleLength < chargeHoverDelay)
-                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 7f, 0.05f);
-
-            if (attackTimer % attackCycleLength == chargeHoverDelay)
-            {
-                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f) * chargeSpeed;
-                npc.netUpdate = true;
-            }
-
-            if (attackTimer % attackCycleLength > chargeHoverDelay)
-            {
-                if (attackTimer % attackCycleLength > chargeHoverDelay + chargeTime - 35)
-                {
-                    npc.velocity.X *= 0.98f;
-                    npc.velocity.Y -= 0.7f;
-                    npc.rotation = npc.rotation.AngleTowards(0f, 0.11f);
-                }
-                else
-                    npc.rotation += npc.velocity.X * 0.03f;
-            }
-
-            if (attackTimer >= attackCycleLength * chargeCount)
-            {
-                attackTimer = 0f;
-                attackState++;
-                npc.netUpdate = true;
-            }
-        }
-
         public static void DoAttack_TeleportAndReleaseIceBombs(NPC npc, Player target, ref float attackTimer, ref float attackState, float attackPower)
         {
             float zeroBasedAttackPower = attackPower - 1f;
@@ -359,43 +258,6 @@ namespace InfernumMode.FuckYouModeAIs.Cryogen
             npc.rotation = npc.velocity.X * 0.03f;
 
             if (attackTimer >= teleportWaitTime + 95f)
-            {
-                attackTimer = 0f;
-                attackState++;
-                npc.netUpdate = true;
-            }
-        }
-
-        public static void DoAttack_SummonAuroraSpirits(NPC npc, Player target, ref float attackTimer, ref float attackState, int spiritCountOnEachSide)
-        {
-            Vector2 destination = target.Center - Vector2.UnitY * 300f;
-            if (attackTimer < 80f)
-                npc.Center = npc.Center.MoveTowards(destination, 9f);
-
-            npc.rotation = npc.rotation.AngleTowards(0f, 0.04f);
-
-            int spiritCount = NPC.CountNPCS(ModContent.NPCType<IceMass>());
-            if (attackTimer == 80f)
-            {
-                for (int i = 0; i < spiritCountOnEachSide; i++)
-                {
-                    if (spiritCount > 8)
-                        break;
-
-                    Vector2 spawnPosition = target.Center + new Vector2(940f, MathHelper.Lerp(-450f, 450f, i / (float)spiritCountOnEachSide));
-                    int spirit = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<IceMass>());
-                    if (Main.npc.IndexInRange(spirit))
-                        Main.npc[spirit].velocity = -Vector2.UnitX * 8f;
-
-                    spawnPosition = target.Center + new Vector2(-940f, MathHelper.Lerp(-450f, 450f, i / (float)spiritCountOnEachSide));
-                    spirit = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<IceMass>());
-                    if (Main.npc.IndexInRange(spirit))
-                        Main.npc[spirit].velocity = Vector2.UnitX * 8f;
-                    spiritCount += 2;
-                }
-            }
-
-            if (attackTimer >= 165f)
             {
                 attackTimer = 0f;
                 attackState++;
@@ -496,4 +358,5 @@ namespace InfernumMode.FuckYouModeAIs.Cryogen
 
         #endregion
     }
+    */
 }

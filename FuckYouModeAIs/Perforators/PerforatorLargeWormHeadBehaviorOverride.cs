@@ -70,7 +70,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
                 if (totalSegmentsInAir >= 13)
                 {
-                    fallCountdown = 90f;
+                    fallCountdown = 65f;
                     for (int i = 0; i < 8; i++)
                     {
                         Vector2 ichorVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 6f;
@@ -79,7 +79,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
                     for (int i = 0; i < 4; i++)
                     {
-                        Vector2 ichorVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Lerp(-0.46f, 0.46f, i / 3f)) * 6f;
+                        Vector2 ichorVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Lerp(-0.46f, 0.46f, i / 3f)) * 10f;
                         Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<SittingBlood>(), 75, 0f);
                     }
                 }

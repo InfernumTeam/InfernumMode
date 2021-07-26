@@ -45,7 +45,7 @@ namespace InfernumMode
             ShadowflameInferno = false;
 
             if (PoDWorld.InfernumMode)
-                player.respawnTimer = Utils.Clamp(player.respawnTimer - 8, 0, 3600);
+                player.respawnTimer = Utils.Clamp(player.respawnTimer - 3, 0, 3600);
         }
         #endregion
         #region Pre Kill

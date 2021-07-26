@@ -50,7 +50,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 gleamingRed = Dust.NewDustPerfect(projectile.Center, 182);
                 gleamingRed.velocity = -projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Pi + direction * 0.53f).RotatedByRandom(0.06f) * Main.rand.NextFloat(0.9f, 1.1f) * 3f;
                 gleamingRed.noGravity = true;
-                gleamingRed.scale = Main.rand.NextFloat(0.8f, 0.9f);
+                gleamingRed.scale = Main.rand.NextFloat(1.3f, 1.45f);
             }
         }
     }

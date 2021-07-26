@@ -1,9 +1,7 @@
 using CalamityMod.Projectiles;
-using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -38,6 +36,15 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            Texture2D shurikenTexture = Main.projectileTexture[projectile.type];
+            float pulseOutwardness = MathHelper.Lerp(4f, 8f, (float)Math.Cos(Main.GlobalTime * 2.5f) * 0.5f + 0.5f);
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * pulseOutwardness;
+                Vector2 drawPosition = projectile.Center - Main.screenPosition + drawOffset;
+                Color afterimageColor = Color.Lerp(Color.DarkGray, Color.Black, 0.66f) * projectile.Opacity * 0.5f;
+                spriteBatch.Draw(shurikenTexture, drawPosition, null, afterimageColor, projectile.rotation, shurikenTexture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+            }
             CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
             return false;
         }

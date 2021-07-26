@@ -49,7 +49,7 @@ namespace InfernumMode
 
             if (Main.netMode != NetmodeID.Server)
 			{
-                CryogenBehaviorOverride.SetupCustomBossIcon();
+                //CryogenBehaviorOverride.SetupCustomBossIcon();
 
                 Ref<Effect> distortionShader = new Ref<Effect>(GetEffect("Effects/DistortionEffect"));
                 Filters.Scene["Infernum:DistortionShader"] = new Filter(new ScreenShaderData(distortionShader, "DistortionPass"), EffectPriority.High);

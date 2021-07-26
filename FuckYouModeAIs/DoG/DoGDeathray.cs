@@ -2,11 +2,8 @@
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.IO;
 using Terraria;
-using Terraria.Enums;
-using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.DoG
 {

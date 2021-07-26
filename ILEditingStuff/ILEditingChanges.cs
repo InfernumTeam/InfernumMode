@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using MonoMod.RuntimeDetour;
 using MonoMod.RuntimeDetour.HookGen;
 using System;
 using System.Linq;
@@ -38,6 +39,12 @@ namespace InfernumMode.ILEditingStuff
         {
             add => HookEndpointManager.Modify(typeof(NPCLoader).GetMethod("CheckDead", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(NPCLoader).GetMethod("CheckDead", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator ModifyPreDrawNPC
+        {
+            add => HookEndpointManager.Modify(typeof(NPCLoader).GetMethod("PreDraw", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(NPCLoader).GetMethod("PreDraw", Utilities.UniversalBindingFlags), value);
         }
 
         public static event ILContext.Manipulator ModifyFindFrameNPC
@@ -85,13 +92,14 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreAINPC += NPCPreAIChange;
             ModifySetDefaultsNPC += NPCSetDefaultsChange;
             ModifyFindFrameNPC += NPCFindFrameChange;
-			ModifyCheckDead += NPCCheckDeadChange;
+            ModifyPreDrawNPC += NPCPreDrawChange;
+            ModifyCheckDead += NPCCheckDeadChange;
             ModifyPreAIProjectile += ProjectilePreAIChange;
 			ModeIndicatorUIDraw += DrawInfernumIcon;
             CalamityWorldPostUpdate += PermitODRain;
         }
 
-		public static void ILEditingUnload()
+        public static void ILEditingUnload()
         {
             On.Terraria.Gore.NewGore -= RemoveCultistGore;
             IL.Terraria.Player.ItemCheck -= ItemCheckChange;
@@ -100,6 +108,7 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreAINPC -= NPCPreAIChange;
             ModifySetDefaultsNPC -= NPCSetDefaultsChange;
             ModifyFindFrameNPC -= NPCFindFrameChange;
+            ModifyPreDrawNPC -= NPCPreDrawChange;
             ModifyCheckDead -= NPCCheckDeadChange;
             ModifyPreAIProjectile -= ProjectilePreAIChange;
             ModeIndicatorUIDraw -= DrawInfernumIcon;
@@ -254,6 +263,33 @@ namespace InfernumMode.ILEditingStuff
             }));
             cursor.Emit(OpCodes.Ret);
         }
+
+
+        private static void NPCPreDrawChange(ILContext context)
+        {
+            ILCursor cursor = new ILCursor(context);
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.Emit(OpCodes.Ldarg_2);
+            cursor.EmitDelegate(new Func<NPC, SpriteBatch, Color, bool>((npc, spriteBatch, drawColor) =>
+            {
+                object instance = typeof(NPCLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
+                GlobalNPC[] arr = typeof(NPCLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags).GetValue(instance) as GlobalNPC[];
+
+                if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && PoDWorld.InfernumMode)
+                    return npc.GetGlobalNPC<FuckYouModeDrawEffects>().PreDraw(npc, spriteBatch, drawColor);
+
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    GlobalNPC globalNPC = arr[i];
+                    if (!globalNPC.Instance(npc).PreDraw(npc, spriteBatch, drawColor))
+                        return false;
+                }
+                return npc.modNPC == null || npc.modNPC.PreDraw(spriteBatch, drawColor);
+            }));
+            cursor.Emit(OpCodes.Ret);
+        }
+
         private static void NPCFindFrameChange(ILContext context)
         {
             ILCursor cursor = new ILCursor(context);

@@ -1,10 +1,7 @@
-﻿using CalamityMod.NPCs;
-using CalamityMod.NPCs.Perforator;
-using CalamityMod.Projectiles.Boss;
+﻿using CalamityMod.NPCs.Perforator;
 using InfernumMode.FuckYouModeAIs.BoC;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -27,7 +24,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    Vector2 ichorVelocity = (npc.velocity.ToRotation() + MathHelper.Lerp(-0.43f, 0.43f, i / 3f)).ToRotationVector2() * 12f;
+                    Vector2 ichorVelocity = (npc.velocity.ToRotation() + MathHelper.Lerp(-0.53f, 0.53f, i / 4f)).ToRotationVector2() * 10f;
                     Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorSpit>(), 80, 0f);
                 }
                 shootTimer = 0f;

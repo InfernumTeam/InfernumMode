@@ -164,7 +164,7 @@ namespace InfernumMode.FuckYouModeAIs.Providence
 						for (int i = 0; i < 3; i++)
 						{
 							int shootType = ModContent.ProjectileType<SwirlingFire>();
-							if ((Main.rand.NextBool(45) && deathEffectTimer >= 110f) || deathEffectTimer == 92f)
+							if ((Main.rand.NextBool(50) && deathEffectTimer >= 110f) || deathEffectTimer == 92f)
 							{
 								if (deathEffectTimer >= 320f)
 								{
@@ -203,6 +203,12 @@ namespace InfernumMode.FuckYouModeAIs.Providence
 
 				if (deathEffectTimer >= 370f)
 					npc.Opacity *= 0.97f;
+
+				if (Main.netMode != NetmodeID.MultiplayerClient && deathEffectTimer == 400f)
+				{
+					ReleaseSparkles(npc.Center, 80, 22f);
+					Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DyingSun>(), 0, 0f, 255);
+				}
 
 				if (deathEffectTimer >= 435f)
 				{

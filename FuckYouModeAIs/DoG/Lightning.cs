@@ -8,8 +8,8 @@ namespace InfernumMode.FuckYouModeAIs.DoG
     public class Lightning : ModProjectile
     {
         public int telegraphTimer = 80;
-        public float angle = 0f;
         public Vector2 targetPosition;
+        public ref float SpeedMultiplier => ref projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lightning");
@@ -32,20 +32,11 @@ namespace InfernumMode.FuckYouModeAIs.DoG
         public override void AI()
         {
             if (telegraphTimer == 79)
-            {
-                targetPosition = Main.player[Player.FindClosest(projectile.Center, 1, 1)].Center;
-                angle = Main.rand.NextFloat(MathHelper.ToRadians(-15f), MathHelper.ToRadians(15f));
-            }
+                targetPosition = Main.player[Player.FindClosest(projectile.Center, 1, 1)].Center + Main.rand.NextVector2Circular(80f, 80f);
+
             if (telegraphTimer == 1)
             {
-                if (projectile.ai[0] == 0f)
-                {
-                    projectile.velocity = projectile.DirectionTo(targetPosition) * 9f;
-                }
-                else
-                {
-                    projectile.velocity = (projectile.DirectionTo(targetPosition) * 9f).RotatedBy(angle);
-                }
+                projectile.velocity = projectile.SafeDirectionTo(targetPosition) * SpeedMultiplier * 9f;
                 Main.projectile[Projectile.NewProjectile(projectile.Center, projectile.velocity, ProjectileID.CultistBossLightningOrbArc, 85, 0f, projectile.owner,
                     projectile.velocity.ToRotation(), Main.rand.Next(100))].tileCollide = false;
                 projectile.Kill();
@@ -66,7 +57,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (telegraphTimer < 79)
-                spriteBatch.DrawLineBetter(projectile.Center, projectile.Center + (projectile.AngleTo(targetPosition) + angle).ToRotationVector2() * 5000f, Color.Cyan, 3f);
+                spriteBatch.DrawLineBetter(projectile.Center, projectile.Center + projectile.AngleTo(targetPosition).ToRotationVector2() * 5000f, Color.Cyan, 3f);
         }
     }
 }

@@ -275,11 +275,13 @@ namespace InfernumMode.FuckYouModeAIs.DoG
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        Projectile.NewProjectile(target.Center +
+                        int fuck = Projectile.NewProjectile(target.Center +
                             new Vector2(Main.rand.NextFloat(-290f, 290f), -1200f),
                             Vector2.Zero,
                             ModContent.ProjectileType<Lightning>(),
-                            85, 0f, npc.target, i % 2);
+                            85, 0f, npc.target);
+                        if (Main.projectile.IndexInRange(fuck))
+                            Main.projectile[fuck].ai[0] = 1.4f;
                     }
                 }
                 if (sentinelAttackTimer == 900f * 2f - 1f)
@@ -440,8 +442,8 @@ namespace InfernumMode.FuckYouModeAIs.DoG
         public static void DoAggressiveFlyMovement(NPC npc, Player target, bool chomping, ref float jawAngle, ref float chompTime, ref float time, ref float flyAcceleration)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlyAcceleration = MathHelper.Lerp(0.024f, 0.017f, lifeRatio);
-            float idealFlySpeed = MathHelper.Lerp(14.4f, 12.1f, lifeRatio);
+            float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.03f, lifeRatio);
+            float idealFlySpeed = MathHelper.Lerp(13.4f, 10.1f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(32f);
 
             Vector2 destination = target.Center;
@@ -453,6 +455,8 @@ namespace InfernumMode.FuckYouModeAIs.DoG
                 distanceFromDestination = npc.Distance(destination);
                 idealFlyAcceleration *= 1.45f;
             }
+
+            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.InverseLerp(400f, 540f, distanceFromDestination, true) * 0.41f;
 
             // Charge if the player is far away.
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
@@ -486,7 +490,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
 
                 speed = MathHelper.Clamp(speed, 10f, 23f);
 
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * speed;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
             }
 
             // Jaw opening when near player.
@@ -621,7 +625,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
                             float laserWallSpeed = 12f;
                             if (specialAttackTimer % 105 == 0 && specialAttackTimer <= 520f)
                             {
-                                Main.PlaySound(SoundID.Item, (int)target.position.X, (int)target.position.Y, 12);
+                                Main.PlaySound(SoundID.Item12, (int)target.position.X, (int)target.position.Y);
 
                                 float targetPosY = target.position.Y + (Main.rand.NextBool(2) ? 50f : 0f);
 

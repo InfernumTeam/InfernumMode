@@ -31,7 +31,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
 
 			if (projectile.localAI[0] == 0f)
 			{
-				projectile.oldPos = new Vector2[70];
+				projectile.oldPos = new Vector2[7];
 				for (int i = 0; i < projectile.oldPos.Length; i++)
 				{
 					projectile.oldPos[i] = projectile.Center + Vector2.UnitY * MathHelper.Lerp(-3400f, 3400f, i / (float)projectile.oldPos.Length);

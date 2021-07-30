@@ -244,25 +244,28 @@ namespace InfernumMode.FuckYouModeAIs.DoG
             {
                 if (npc.Infernum().ExtraAI[4] <= 900 + 60 * 4)
                 {
-                    // Aimed at player
                     if (npc.Infernum().ExtraAI[4] % 60 == 0f &&
                         npc.Infernum().ExtraAI[4] < 900 + 60 * 2)
                     {
-                        Projectile.NewProjectile(Main.player[npc.target].Center +
+                        int fuck = Projectile.NewProjectile(Main.player[npc.target].Center +
                             new Vector2(Main.rand.NextFloat(-290f, 290f), -1200f),
                             Vector2.Zero,
                             ModContent.ProjectileType<Lightning>(),
                             85, 0f, npc.target);
+                        if (Main.projectile.IndexInRange(fuck))
+                            Main.projectile[fuck].ai[0] = 1f;
                     }
-                    // Random arcs
+
                     else if (npc.Infernum().ExtraAI[4] % 60 == 0f &&
                              npc.Infernum().ExtraAI[4] > 900 + 60 * 2)
                     {
-                        Projectile.NewProjectile(Main.player[npc.target].Center +
+                        int fuck = Projectile.NewProjectile(Main.player[npc.target].Center +
                             new Vector2(Main.rand.NextFloat(-290f, 290f), -1200f),
                             Vector2.Zero,
                             ModContent.ProjectileType<Lightning>(),
-                            85, 0f, npc.target, 1f);
+                            85, 0f, npc.target);
+                        if (Main.projectile.IndexInRange(fuck))
+                            Main.projectile[fuck].ai[0] = 1f;
                     }
                 }
             }
@@ -315,7 +318,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
         public static void DoAggressiveFlyMovement(NPC npc, bool chomping, ref float jawAngle, ref float chompTime, ref float time, ref float flyAcceleration)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlyAcceleration = MathHelper.Lerp(0.028f, 0.016f, lifeRatio);
+            float idealFlyAcceleration = MathHelper.Lerp(0.036f, 0.024f, lifeRatio);
             float idealFlySpeed = MathHelper.Lerp(12.9f, 7f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(34f);
             Vector2 destination = Main.player[npc.target].Center;
@@ -327,6 +330,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
                 distanceFromDestination = npc.Distance(destination);
                 idealFlyAcceleration *= 2.5f;
             }
+            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.InverseLerp(460f, 600f, distanceFromDestination, true) * 0.41f;
 
             // Charge if the player is far away.
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
@@ -337,7 +341,6 @@ namespace InfernumMode.FuckYouModeAIs.DoG
                 idealFlySpeed = 37f;
             }
 
-            idealFlyAcceleration = MathHelper.SmoothStep(idealFlyAcceleration, 1.85f, Utils.InverseLerp(600f, 200f, distanceFromDestination, true));
             flyAcceleration = MathHelper.Lerp(flyAcceleration, idealFlyAcceleration, 0.3f);
 
             float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.DirectionTo(destination));
@@ -358,14 +361,14 @@ namespace InfernumMode.FuckYouModeAIs.DoG
 
                 speed = MathHelper.Clamp(speed, 10f, 27f);
 
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * speed;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
             }
 
             // Jaw opening when near player.
             if (!chomping)
             {
-                if ((npc.Distance(Main.player[npc.target].Center) < 230f && directionToPlayerOrthogonality > 0.67f) ||
-                    (npc.Distance(Main.player[npc.target].Center) < 450f && directionToPlayerOrthogonality > 0.92f))
+                if ((npc.Distance(Main.player[npc.target].Center) < 310f && directionToPlayerOrthogonality > 0.67f) ||
+                    (npc.Distance(Main.player[npc.target].Center) < 490f && directionToPlayerOrthogonality > 0.92f))
                 {
                     jawAngle = jawAngle.AngleTowards(idealMouthOpeningAngle, 0.028f);
                     if (distanceFromDestination * 0.5f < 56f)
@@ -394,31 +397,6 @@ namespace InfernumMode.FuckYouModeAIs.DoG
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
                 }
             }
-        }
-
-        public static void DoAggressiveTargetWrapping(NPC npc, bool chomping, ref float jawAngle, ref float chompTime, ref float time, ref float flyAcceleration)
-        {
-            float radius = 800f + (float)Math.Cos(time % 30f / 30f * MathHelper.TwoPi) * 100f;
-
-            // Define the destination as a circle around the player, in hopes of wrapping around them.
-            Vector2 destination = Main.player[npc.target].Center + (time % 90f / 90f * MathHelper.TwoPi).ToRotationVector2() * radius;
-            float distanceFromDestination = npc.Distance(destination);
-
-            // Move more quickly the farther away the worm is from its destination.
-            float flySpeed = MathHelper.Lerp(23f, 37f, Utils.InverseLerp(30f, 1700f, distanceFromDestination, true));
-
-            // Move less quickly at the end of the wrap to prevent DoG from
-            // having a lot of built up momentum when going to the charge attack.
-            float momentumLoss = Utils.InverseLerp(TotalTimeSpentInPhase * 2f - 60f, TotalTimeSpentInPhase * 2f, time % (TotalTimeSpentInPhase * 2f), true);
-            flySpeed *= MathHelper.Lerp(momentumLoss, 1f, 0.45f);
-
-            // If close to the player, cease typical movement and try to eat them.
-            if (npc.DistanceSQ(Main.player[npc.target].Center) < 160f * 160f)
-                DoAggressiveFlyMovement(npc, chomping, ref jawAngle, ref chompTime, ref time, ref flyAcceleration);
-
-            // Otherwise, fly smoothly towards the destination.
-            else if (npc.DistanceSQ(destination) > 180f * 180f)
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * flySpeed;
         }
 
         #endregion AI

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.DoG
@@ -26,11 +27,16 @@ namespace InfernumMode.FuckYouModeAIs.DoG
             projectile.rotation += 0.325f;
 
             Time++;
-            if (Main.netMode != 2 && Time == 35f)
+            if (Time == 35f)
             {
-                Player closest = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-                for (int i = 0; i < 4; i++)
-                    Projectile.NewProjectile(projectile.Center, (projectile.DirectionTo(closest.Center) * 10f).RotatedBy(MathHelper.TwoPi / 4f * i), InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 85, 0f, projectile.owner);
+                Main.PlaySound(SoundID.Item12, projectile.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Player closest = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+                    for (int i = 0; i < 4; i++)
+                        Projectile.NewProjectile(projectile.Center, (projectile.DirectionTo(closest.Center) * 10f).RotatedBy(MathHelper.TwoPi / 4f * i), InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 85, 0f, projectile.owner);
+                }
             }
 
             projectile.Opacity = Utils.InverseLerp(0f, 30f, Time, true) * Utils.InverseLerp(0f, 30f, projectile.timeLeft, true);

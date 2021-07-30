@@ -24,10 +24,14 @@ namespace InfernumMode.FuckYouModeAIs.DoG
         public override void AI()
         {
             projectile.ai[0] += 1f;
-            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.ai[0] == 60f)
+            if (projectile.ai[0] == 60f)
             {
-                Vector2 rayDirection = projectile.DirectionTo(AimDestination);
-                Utilities.NewProjectileBetter(projectile.Center, rayDirection, ModContent.ProjectileType<DoGDeathray>(), 440, 0f, Main.myPlayer, 0f, projectile.whoAmI);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), projectile.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 rayDirection = projectile.DirectionTo(AimDestination);
+                    Utilities.NewProjectileBetter(projectile.Center, rayDirection, ModContent.ProjectileType<DoGDeathray>(), 440, 0f, Main.myPlayer, 0f, projectile.whoAmI);
+                }
             }
             else if (projectile.ai[0] <= 45f)
             {

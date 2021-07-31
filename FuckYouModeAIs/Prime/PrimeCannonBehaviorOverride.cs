@@ -40,7 +40,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
             if (shouldBeInactive)
                 hoverDestination += owner.velocity * 4f;
             if (!npc.WithinRange(hoverDestination, 40f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, shouldBeInactive ? (owner.velocity.Length() * 0.05f + 0.7f) : 0.18f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, shouldBeInactive ? 0.07f : 0.18f);
 
             if (shouldBeInactive)
             {

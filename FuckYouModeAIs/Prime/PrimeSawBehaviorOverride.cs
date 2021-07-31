@@ -32,20 +32,19 @@ namespace InfernumMode.FuckYouModeAIs.Prime
 
             Player target = Main.player[npc.target];
 
-            // Disable contact damage.
-            npc.damage = 0;
-
             bool shouldBeInactive = PrimeHeadBehaviorOverride.ShouldBeInactive(npc.type, owner.ai[2]);
 
+            npc.damage = 0;
             if (shouldBeInactive)
             {
                 attackTimer = 0f;
-                Vector2 hoverDestination = owner.Center + new Vector2(hoverDirection * -200f, 320f) + owner.velocity * 4f;
+                Vector2 hoverDestination = owner.Center + new Vector2(hoverDirection * -240f, 380f) + owner.velocity * 4f;
                 if (!npc.WithinRange(hoverDestination, 40f))
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, shouldBeInactive ? (owner.velocity.Length() * 0.05f + 0.7f) : 0.18f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, shouldBeInactive ? 0.07f : 0.18f);
                 PrimeHeadBehaviorOverride.ArmHoverAI(npc);
                 return false;
             }
+            npc.damage = npc.defDamage;
 
             attackTimer++;
 

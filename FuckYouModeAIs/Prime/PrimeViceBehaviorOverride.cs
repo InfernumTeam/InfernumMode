@@ -32,25 +32,24 @@ namespace InfernumMode.FuckYouModeAIs.Prime
 
             Player target = Main.player[npc.target];
 
-            // Disable contact damage.
-            npc.damage = 0;
-
             bool shouldBeInactive = PrimeHeadBehaviorOverride.ShouldBeInactive(npc.type, owner.ai[2]);
 
+            npc.damage = 0;
             if (shouldBeInactive)
             {
                 attackTimer = 0f;
-                Vector2 hoverDestination = owner.Center + new Vector2(hoverDirection * -200f, 320f) + owner.velocity * 4f;
+                Vector2 hoverDestination = owner.Center + new Vector2(hoverDirection * -240f, 380f) + owner.velocity * 4f;
 
                 if (!npc.WithinRange(hoverDestination, 50f))
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, shouldBeInactive ? (owner.velocity.Length() * 0.05f + 0.7f) : 0.18f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, shouldBeInactive ? 0.07f : 0.18f);
                 PrimeHeadBehaviorOverride.ArmHoverAI(npc);
                 return false;
             }
+            npc.damage = npc.defDamage;
 
             attackTimer++;
 
-            float chargeCycleTime = PrimeHeadBehaviorOverride.RemainingArms == 1 ? 110f : 180f;
+            float chargeCycleTime = PrimeHeadBehaviorOverride.RemainingArms == 1 ? 95f : 160f;
             float wrappedTime = attackTimer % chargeCycleTime;
             bool canCharge = lifeRatio < 0.5f || PrimeHeadBehaviorOverride.RemainingArms <= 2;
             bool willCharge = canCharge && wrappedTime > chargeCycleTime - 65f;
@@ -59,12 +58,9 @@ namespace InfernumMode.FuckYouModeAIs.Prime
             {
                 if (wrappedTime > chargeCycleTime - 45f)
                 {
-                    if (wrappedTime % 5f == 4f)
-                        Main.PlaySound(SoundID.Item22, npc.Center);
-
                     if (wrappedTime == chargeCycleTime - 44f)
                     {
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * 25f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * 22.5f;
                         npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                         npc.netUpdate = true;
                     }
@@ -81,7 +77,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
             else
             {
                 float rotationalOffset = (float)Math.Sin(attackTimer / 37f) * 0.64f;
-                float outwardness = MathHelper.Clamp(owner.Distance(target.Center), 120f, 460f);
+                float outwardness = MathHelper.Clamp(owner.Distance(target.Center), 120f, 460f) + MathHelper.Lerp(0f, 70f, (float)Math.Sin(attackTimer / 26f) * 0.5f + 0.5f);
                 float idealRotation = owner.AngleTo(npc.Center) + rotationalOffset - MathHelper.PiOver2;
                 Vector2 hoverDestination = owner.Center + owner.SafeDirectionTo(target.Center).RotatedBy(rotationalOffset) * outwardness;
                 if (npc.WithinRange(target.Center, 240f))
@@ -90,7 +86,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
                 npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f);
 
                 if (!npc.WithinRange(hoverDestination, 80f))
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, 0.25f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, 0.27f);
             }
 
             return false;

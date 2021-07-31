@@ -143,6 +143,12 @@ namespace InfernumMode.FuckYouModeAIs.Prime
                         Main.npc[arm].target = npc.target;
                         Main.npc[arm].netUpdate = true;
 
+                        arm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeLaser, npc.whoAmI);
+                        Main.npc[arm].ai[0] = 1f;
+                        Main.npc[arm].ai[1] = npc.whoAmI;
+                        Main.npc[arm].target = npc.target;
+                        Main.npc[arm].netUpdate = true;
+
                         arm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeSaw, npc.whoAmI);
                         Main.npc[arm].ai[0] = 1f;
                         Main.npc[arm].ai[1] = npc.whoAmI;
@@ -153,15 +159,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
                         Main.npc[arm].ai[0] = -1f;
                         Main.npc[arm].ai[1] = npc.whoAmI;
                         Main.npc[arm].target = npc.target;
-                        Main.npc[arm].ai[3] = 150f;
                         Main.npc[arm].netUpdate = true;
-
-                        arm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeLaser, npc.whoAmI);
-                        Main.npc[arm].ai[0] = 1f;
-                        Main.npc[arm].ai[1] = npc.whoAmI;
-                        Main.npc[arm].target = npc.target;
-                        Main.npc[arm].netUpdate = true;
-                        Main.npc[arm].ai[3] = 150f;
                     }
 
                     GotoNextAttackState(npc);
@@ -235,10 +233,10 @@ namespace InfernumMode.FuckYouModeAIs.Prime
         public static void DoAttack_HoverCharge(NPC npc, Player target, float attackTimer, ref float frameType)
         {
             int chargeCount = 7;
-            int hoverTime = AnyArms ? 100 : 60;
-            int chargeTime = 45;
+            int hoverTime = AnyArms ? 120 : 60;
+            int chargeTime = AnyArms ? 72 : 45;
             float hoverSpeed = AnyArms ? 14f : 33f;
-            float chargeSpeed = AnyArms ? 17f : 22.5f;
+            float chargeSpeed = AnyArms ? 15f : 22.5f;
             float wrappedTime = attackTimer % (hoverTime + chargeTime);
 
             if (wrappedTime < hoverTime - 15f)
@@ -479,7 +477,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
             else
             {
                 do
-                    nextAttack = Utils.SelectRandom(Main.rand, PrimeAttackType.MetalBurst, PrimeAttackType.RocketRelease, PrimeAttackType.HoverCharge);
+                    nextAttack = Utils.SelectRandom(Main.rand, PrimeAttackType.MetalBurst, PrimeAttackType.RocketRelease);
                 while (nextAttack == currentAttack);
             }
 

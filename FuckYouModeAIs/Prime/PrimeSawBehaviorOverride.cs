@@ -81,14 +81,18 @@ namespace InfernumMode.FuckYouModeAIs.Prime
                 float rotationalOffset = (float)Math.Sin(attackTimer / 37f) * 0.64f;
                 float outwardness = MathHelper.Clamp(owner.Distance(target.Center), 120f, 460f);
                 float idealRotation = owner.AngleTo(npc.Center) + rotationalOffset - MathHelper.PiOver2;
+                float acceleration = 0.23f;
                 Vector2 hoverDestination = owner.Center + owner.SafeDirectionTo(target.Center).RotatedBy(rotationalOffset) * outwardness;
                 if (npc.WithinRange(target.Center, 240f))
+                {
+                    acceleration = 0.156f;
                     hoverDestination = target.Center;
+                }
 
                 npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f);
 
-                if (!npc.WithinRange(hoverDestination, 80f))
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, 0.25f);
+                if (!npc.WithinRange(hoverDestination, 90f))
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 13f, acceleration);
             }
 
             return false;

@@ -76,8 +76,8 @@ namespace InfernumMode.FuckYouModeAIs.Prime
             // Continuously reset defense.
             npc.defense = npc.defDefense;
 
-            // Don't allow further damage to happen when below 70% life if any arms remain.
-            npc.dontTakeDamage = lifeRatio < 0.7f && AnyArms;
+            // Don't allow further damage to happen when below 55% life if any arms remain.
+            npc.dontTakeDamage = lifeRatio < 0.55f && AnyArms;
 
             switch ((PrimeAttackType)(int)attackType)
             {
@@ -112,15 +112,20 @@ namespace InfernumMode.FuckYouModeAIs.Prime
         #region Specific Attacks
         public static void DoAttack_SpawnEffects(NPC npc, Player target, float attackTimer, ref float frameType)
         {
-            bool canHover = attackTimer < 180f;
+            bool canHover = attackTimer < 90f;
 
             if (canHover)
             {
-                Vector2 hoverDestination = target.Center - Vector2.UnitY.RotatedBy(MathHelper.TwoPi * 3f * attackTimer / 180f - MathHelper.PiOver2) * 625f;
-                hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 50f;
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 400f;
+                hoverDestination.Y += MathHelper.Lerp(-600f, 600f, attackTimer / 90f);
+                hoverDestination.X += MathHelper.Lerp(-700f, 700f, attackTimer / 90f);
 
-                npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 33f);
+                npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 32f);
                 npc.rotation = npc.rotation.AngleLerp(npc.velocity.X * 0.04f, 0.1f);
+
+                if (npc.WithinRange(target.Center, 90f))
+                    npc.Center = target.Center - npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 90f;
+
                 frameType = (int)PrimeFrameType.ClosedMouth;
             }
             else
@@ -175,7 +180,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
             float hoverSpeed = AnyArms ? 15f : 36f;
             float wrappedTime = attackTimer % shootRate;
 
-            Vector2 destination = target.Center - Vector2.UnitY * 380f;
+            Vector2 destination = target.Center - Vector2.UnitY * (AnyArms ? 510f : 380f);
             npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, 0.4f);
             npc.rotation = npc.velocity.X * 0.04f;
 
@@ -214,6 +219,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
                 frameType = (int)PrimeFrameType.OpenMouth;
                 npc.velocity *= 0.87f;
 
+                Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 3f == 2f)
                 {
                     float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.6f : 1f);
@@ -332,6 +338,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
             // Release a few rockets after creating the laser to create pressure.
             if (attackTimer > 125f && attackTimer % 20f == 19f)
             {
+                Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float rocketAngularOffset = Utils.InverseLerp(125f, 225f, attackTimer, true) * MathHelper.TwoPi;
@@ -442,10 +449,14 @@ namespace InfernumMode.FuckYouModeAIs.Prime
                         }
                     }
                 }
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 180f && attackTimer < 435f && attackTimer % 30f == 29f)
+                if (attackTimer > 180f && attackTimer < 435f && attackTimer % 30f == 29f)
                 {
-                    Vector2 rocketVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.47f) * (shootSpeedAdditive + 6.75f);
-                    Utilities.NewProjectileBetter(mouthPosition, rocketVelocity, ProjectileID.SaucerMissile, 115, 0f);
+                    Main.PlaySound(SoundID.Item42, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 rocketVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.47f) * (shootSpeedAdditive + 6.75f);
+                        Utilities.NewProjectileBetter(mouthPosition, rocketVelocity, ProjectileID.SaucerMissile, 115, 0f);
+                    }
                 }
             }
 

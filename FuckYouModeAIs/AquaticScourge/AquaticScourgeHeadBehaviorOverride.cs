@@ -1,6 +1,7 @@
 ﻿using CalamityMod.Events;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Projectiles.Enemy;
 using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -50,7 +51,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
-                CreateSegments(npc, 48, ModContent.NPCType<AquaticScourgeBody>(), ModContent.NPCType<AquaticScourgeTail>());
+                CreateSegments(npc, 42, ModContent.NPCType<AquaticScourgeBody>(), ModContent.NPCType<AquaticScourgeTail>());
                 initializedFlag = 1f;
                 npc.netUpdate = true;
             }
@@ -77,10 +78,10 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             }
 
             Player target = Main.player[npc.target];
-            float movementFactor = 1f;
+            float speedFactor = 1f;
             float enrageFactor = 1f - lifeRatio;
             if (lifeRatio < 0.33f)
-                movementFactor *= 1.15f;
+                speedFactor *= 1.15f;
 
             // Enrage if the target leaves the ocean.
             if (target.position.Y < 800f || target.position.Y > Main.worldSurface * 16.0 || (target.position.X > 6400f && target.position.X < (Main.maxTilesX * 16 - 6400)))
@@ -91,10 +92,10 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
                 DoMovement_IdleHoverMovement(npc, target);
             else
             {
-                float wrappedTime = generalTimer % 840f;
-                if (wrappedTime < 420f)
+                float wrappedTime = generalTimer % 1040f;
+                if (wrappedTime < 360f)
                 {
-                    DoMovement_AggressiveSnakeMovement(npc, target, generalTimer, movementFactor);
+                    DoMovement_AggressiveSnakeMovement(npc, target, generalTimer, speedFactor);
                     if (attackDelay > 50f)
                         attackDelay = 50f;
                 }
@@ -120,19 +121,19 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
                                 DoAttack_ReleaseCircleOfSand(npc, target, attackTimer, enrageFactor);
                                 break;
                             case AquaticScourgeAttackType.BelchParasites:
-                                DoAttack_BelchParasites(npc, attackTimer, ref movementFactor);
+                                DoAttack_BelchParasites(npc, attackTimer, ref speedFactor);
                                 break;
                             case AquaticScourgeAttackType.BubbleSummon:
-                                DoAttack_BubbleSummon(npc, target, attackTimer, enrageFactor, ref movementFactor);
+                                DoAttack_BubbleSummon(npc, target, attackTimer, enrageFactor, ref speedFactor);
                                 break;
                             case AquaticScourgeAttackType.CallForSeekers:
-                                DoAttack_CallForSeekers(npc, target, attackTimer);
+                                DoAttack_CallForSeekers(npc, target, attackTimer, ref speedFactor);
                                 break;
                         }
                         attackTimer++;
                     }
 
-                    DoMovement_GeneralMovement(npc, target, movementFactor);
+                    DoMovement_GeneralMovement(npc, target, speedFactor);
                 }
             }
 
@@ -157,9 +158,9 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
         public static void DoAttack_BelchAcid(NPC npc, Player target, float attackTimer, float enrageFactor)
         {
             int shootRate = 55;
-            int shootCount = 6;
+            int shootCount = 4;
 
-            if (!npc.WithinRange(target.Center, 250f) && attackTimer % shootRate == shootRate - 1f)
+            if (!npc.WithinRange(target.Center, 380f) && attackTimer % shootRate == shootRate - 1f)
             {
                 Main.PlaySound(SoundID.DD2_SkyDragonsFuryShot, npc.Center);
                 Main.PlaySound(SoundID.NPCDeath13, npc.Center);
@@ -170,6 +171,12 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
                         Vector2 acidVelocity = Vector2.Lerp((npc.rotation - MathHelper.PiOver2).ToRotationVector2(), npc.SafeDirectionTo(target.Center), 0.5f);
                         acidVelocity = acidVelocity.RotatedByRandom(0.35f) * Main.rand.NextFloat(11f, 15f) * (1f + enrageFactor * 0.2f);
                         Utilities.NewProjectileBetter(npc.Center + acidVelocity * 3f, acidVelocity, ModContent.ProjectileType<OldDukeSummonDrop>(), 110, 0f);
+                    }
+
+                    for (int i = 0; i < 6; i++)
+                    {
+                        Vector2 cloudVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(7f, 9f) + enrageFactor * 2f);
+                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SulphurousPoisonCloud>(), 115, 0f);
                     }
                 }
             }
@@ -188,17 +195,20 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
                 Main.PlaySound(SoundID.NPCDeath13, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < 3; i++)
                     {
-                        Vector2 toothVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Lerp(-0.48f, 0.48f, i / 5f)) * 10f;
-                        toothVelocity *= 1f + (float)Math.Sin(MathHelper.Pi * i / 5f) * 0.3f + enrageFactor * 0.2f;
-                        Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SandTooth>(), 115, 0f);
+                        Vector2 toothVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Lerp(-0.48f, 0.48f, i / 2f)) * 7.2f;
+                        toothVelocity *= 1f + (float)Math.Sin(MathHelper.Pi * i / 3f) * 0.2f + enrageFactor * 0.135f;
+                        Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SlowerSandTooth>(), 115, 0f);
                     }
 
                     for (int i = 0; i < 9; i++)
                     {
-                        Vector2 sandVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(6f, 8f) + enrageFactor * 2f);
-                        Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 115, 0f);
+                        Vector2 cloudVelocity;
+                        do
+                            cloudVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(6f, 8f) + enrageFactor * 2f);
+                        while (cloudVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) > MathHelper.Pi * 0.67f);
+                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 115, 0f);
                     }
                 }
             }
@@ -225,8 +235,11 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
 
                     for (int i = 0; i < 9; i++)
                     {
-                        Vector2 sandVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(6f, 8f) + enrageFactor * 2f);
-                        Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 115, 0f);
+                        Vector2 cloudVelocity;
+                        do
+                            cloudVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(6f, 8f) + enrageFactor * 2f);
+                        while (cloudVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) > MathHelper.Pi * 0.67f);
+                        Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SandPoisonCloud>(), 115, 0f);
                     }
                 }
             }
@@ -243,7 +256,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
                 Main.PlaySound(SoundID.NPCDeath13, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < 4; i++)
                     {
                         Vector2 parasiteVelocity = (npc.rotation - MathHelper.PiOver2).ToRotationVector2().RotatedByRandom(0.37f) * Main.rand.NextFloat(8.5f, 12f);
                         int parasite = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AquaticParasite2>());
@@ -273,17 +286,26 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
                         potentialSpawnPoints.Add(updatedWaterPosition.ToWorldCoordinates());
                 }
 
-                Utilities.NewProjectileBetter(Main.rand.Next(potentialSpawnPoints), -Vector2.UnitY * (11.5f + enrageFactor * 1.8f), ModContent.ProjectileType<SandBlast>(), 110, 0f);
+                Vector2 spawnPoint;
+                do
+                    spawnPoint = Main.rand.Next(potentialSpawnPoints);
+                while (MathHelper.Distance(spawnPoint.X, target.Center.X) < 180f);
+                Utilities.NewProjectileBetter(Main.rand.Next(potentialSpawnPoints), -Vector2.UnitY * (13.5f + enrageFactor * 1.8f), ModContent.ProjectileType<SulphuricAcidBubble>(), 110, 0f);
             }
 
             if (attackTimer >= 385f)
                 GotoNextAttack(npc);
         }
         
-        public static void DoAttack_CallForSeekers(NPC npc, Player target, float attackTimer)
+        public static void DoAttack_CallForSeekers(NPC npc, Player target, float attackTimer, ref float speedFactor)
         {
-            int summonRate = 60;
-            int summonCount = 5;
+            int summonRate = 90;
+            int summonCount = 3;
+
+            speedFactor *= MathHelper.Lerp(1f, 0.5f, Utils.InverseLerp(10f, 50f, attackTimer, true));
+
+            if (attackTimer == 75f)
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/MaulerRoar"), npc.Center);
 
             if (attackTimer % summonRate == summonRate - 1f)
             {
@@ -336,7 +358,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(flyDestination), movementSpeed / 300f, true) * movementSpeed;
         }
 
-        public static void DoMovement_AggressiveSnakeMovement(NPC npc, Player target, float generalTimer, float movementFactor)
+        public static void DoMovement_AggressiveSnakeMovement(NPC npc, Player target, float generalTimer, float speedFactor)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealRotation = npc.AngleTo(target.Center);
@@ -344,7 +366,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             float movementSpeed = MathHelper.Lerp(10.5f, 14f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
             movementSpeed += MathHelper.Lerp(0f, 15f, Utils.InverseLerp(420f, 3000f, npc.Distance(target.Center), true));
             idealRotation += (float)Math.Sin(generalTimer / 43f) * Utils.InverseLerp(360f, 425f, npc.Distance(target.Center), true) * 0.74f;
-            movementSpeed *= movementFactor;
+            movementSpeed *= speedFactor;
 
             ref float roarSoundCountdown = ref npc.localAI[0];
 
@@ -369,14 +391,14 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             }
         }
 
-        public static void DoMovement_GeneralMovement(NPC npc, Player target, float movementFactor)
+        public static void DoMovement_GeneralMovement(NPC npc, Player target, float speedFactor)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealRotation = npc.AngleTo(target.Center);
             float acceleration = MathHelper.Lerp(0.019f, 0.0265f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
             float movementSpeed = MathHelper.Lerp(12.25f, 14.25f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
             movementSpeed += MathHelper.Lerp(0f, 15f, Utils.InverseLerp(420f, 3000f, npc.Distance(target.Center), true));
-            movementSpeed *= movementFactor;
+            movementSpeed *= speedFactor;
 
             if (!npc.WithinRange(target.Center, 320f))
             {
@@ -421,11 +443,11 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
 
             WeightedRandom<AquaticScourgeAttackType> attackSelector = new WeightedRandom<AquaticScourgeAttackType>();
             attackSelector.Add(AquaticScourgeAttackType.BelchAcid, 1f);
-            attackSelector.Add(AquaticScourgeAttackType.SpitTeeth, 1f);
-            attackSelector.Add(AquaticScourgeAttackType.ReleaseCircleOfSand, 1f);
-            attackSelector.Add(AquaticScourgeAttackType.BelchParasites, lifeRatio < 0.7f && NPC.CountNPCS(ModContent.NPCType<AquaticParasite2>()) < 6 ? 1.35f : 0f);
-            attackSelector.Add(AquaticScourgeAttackType.BubbleSummon, lifeRatio < 0.4f ? 1.35f : 0f);
-            attackSelector.Add(AquaticScourgeAttackType.CallForSeekers, lifeRatio < 0.15f && NPC.CountNPCS(ModContent.NPCType<AquaticSeekerHead2>()) < 4 ? 1.2f : 0f);
+            attackSelector.Add(AquaticScourgeAttackType.SpitTeeth, 1.1f);
+            attackSelector.Add(AquaticScourgeAttackType.ReleaseCircleOfSand, 0.9);
+            attackSelector.Add(AquaticScourgeAttackType.BelchParasites, lifeRatio < 0.7f && NPC.CountNPCS(ModContent.NPCType<AquaticParasite2>()) < 6 ? 1.2f : 0f);
+            attackSelector.Add(AquaticScourgeAttackType.BubbleSummon, lifeRatio < 0.4f ? 1.4f : 0f);
+            attackSelector.Add(AquaticScourgeAttackType.CallForSeekers, lifeRatio < 0.2f && NPC.CountNPCS(ModContent.NPCType<AquaticSeekerHead2>()) < 4 ? 1.6f : 0f);
 
             do
                 nextAttack = attackSelector.Get();
@@ -434,8 +456,8 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             npc.ai[2] = (int)nextAttack;
             npc.ai[3] = 0f;
 
-            // Set an 3 second delay up after the attack.
-            npc.Infernum().ExtraAI[5] = 180f;
+            // Set an 2 second delay up after the attack.
+            npc.Infernum().ExtraAI[5] = 120f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
             npc.noTileCollide = true;

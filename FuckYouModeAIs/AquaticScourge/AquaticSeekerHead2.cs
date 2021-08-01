@@ -17,7 +17,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
 
         public override void SetDefaults()
         {
-            npc.damage = 125;
+            npc.damage = 95;
             npc.width = 22;
             npc.height = 28;
             npc.defense = 5;
@@ -77,7 +77,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
                 npc.netUpdate = true;
             }
 
-            if (npc.WithinRange(Main.player[npc.target].Center, 250f))
+            if (npc.WithinRange(Main.player[npc.target].Center, 280f))
             {
                 if (npc.velocity.Length() < 18f)
                     npc.velocity *= 1.024f;

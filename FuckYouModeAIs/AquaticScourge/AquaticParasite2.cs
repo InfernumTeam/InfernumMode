@@ -23,14 +23,14 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             npc.width = 28;
             npc.height = 28;
             npc.defense = 5;
-            npc.lifeMax = 1600;
+            npc.lifeMax = 900;
             npc.aiStyle = aiType = -1;
             npc.value = 0;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => npc.lifeMax = 1600;
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => npc.lifeMax = 900;
 
         public override void AI()
         {

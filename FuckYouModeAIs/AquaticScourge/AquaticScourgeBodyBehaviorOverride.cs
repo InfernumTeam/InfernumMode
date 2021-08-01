@@ -1,5 +1,4 @@
 ﻿using CalamityMod.NPCs.AquaticScourge;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System.Linq;
@@ -47,13 +46,13 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             attackTimer++;
             float lifeRatio = headSegment.life / (float)headSegment.lifeMax;
             bool canShoot = !npc.WithinRange(Main.player[npc.target].Center, 380f) && lifeRatio < 0.25f;
-            if (canShoot && attackTimer > Main.rand.NextFloat(320f, 415f) && Utilities.AllProjectilesByID(ModContent.ProjectileType<SandTooth>()).Count() < 6)
+            if (canShoot && attackTimer > Main.rand.NextFloat(320f, 415f) && Utilities.AllProjectilesByID(ModContent.ProjectileType<SlowerSandTooth>()).Count() < 5)
             {
                 Main.PlaySound(SoundID.Item17, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 toothVelocity = Main.rand.NextVector2CircularEdge(6.5f, 6.5f);
-                    Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SandTooth>(), 115, 0f);
+                    Vector2 toothVelocity = Main.rand.NextVector2CircularEdge(7.2f, 7.2f);
+                    Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SlowerSandTooth>(), 115, 0f);
                     attackTimer = 0f;
                 }
             }

@@ -11,7 +11,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
 
         public override void SetDefaults()
         {
-            npc.damage = 85;
+            npc.damage = 60;
             npc.width = 16;
             npc.height = 16;
             npc.defense = 10;

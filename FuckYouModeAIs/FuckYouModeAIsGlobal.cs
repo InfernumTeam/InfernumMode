@@ -143,73 +143,15 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
         {
             if (PoDWorld.InfernumMode && npc.type == InfernumMode.CalamityMod.NPCType("Providence"))
             {
-                DropHelper.DropBags(npc);
-                DropHelper.DropItemChance(npc, ModContent.ItemType<ProvidenceTrophy>(), 10);
-                DropHelper.DropItemCondition(npc, ModContent.ItemType<KnowledgeProvidence>(), true, !CalamityWorld.downedProvidence);
-
-                DropHelper.DropItemCondition(npc, ModContent.ItemType<RuneofCos>(), true, !CalamityWorld.downedProvidence);
-
-                CalamityGlobalTownNPC.SetNewShopVariable(new int[] { ModContent.NPCType<THIEF>() }, CalamityWorld.downedProvidence);
-
-                // Accessories clientside only in Expert. Both drop if she is defeated at night.
-                DropHelper.DropItemCondition(npc, ModContent.ItemType<ElysianWings>(), Main.expertMode, true);
-                DropHelper.DropItemCondition(npc, ModContent.ItemType<ElysianAegis>(), Main.expertMode, true);
-
                 // Drops pre-scal, cannot be sold, does nothing aka purely vanity. Requires at least expert for consistency with other post scal dev items.
                 DropHelper.DropItemCondition(npc, ModContent.ItemType<ProfanedSoulCrystal>(), true, true);
 
                 // Special drop for defeating her at night
                 DropHelper.DropItemCondition(npc, ModContent.ItemType<ProfanedMoonlightDye>(), true, true, 3, 4);
 
-                // All other drops are contained in the bag, so they only drop directly on Normal
-                if (!Main.expertMode)
-                {
-                    // Materials
-                    DropHelper.DropItemSpray(npc, ModContent.ItemType<UnholyEssence>(), 20, 30);
-                    DropHelper.DropItemSpray(npc, ModContent.ItemType<DivineGeode>(), 15, 20);
+                Main.NewText(Language.GetTextValue("Mods.CalamityMod.ProfanedBossText4"), Color.DarkOrange);
 
-                    // Weapons
-                    float w = 0.25f;
-                    DropHelper.DropEntireWeightedSet(npc,
-                        DropHelper.WeightStack<HolyCollider>(w),
-                        DropHelper.WeightStack<SolarFlare>(w),
-                        DropHelper.WeightStack<TelluricGlare>(w),
-                        DropHelper.WeightStack<BlissfulBombardier>(w),
-                        DropHelper.WeightStack<PurgeGuzzler>(w),
-                        DropHelper.WeightStack<DazzlingStabberStaff>(w),
-                        DropHelper.WeightStack<MoltenAmputator>(w)
-                    );
-
-                    // Equipment
-                    DropHelper.DropItemChance(npc, ModContent.ItemType<SamuraiBadge>(), 40);
-
-                    // Vanity
-                    DropHelper.DropItemChance(npc, ModContent.ItemType<ProvidenceMask>(), 7);
-                }
-
-                // If Providence has not been killed, notify players of Uelibloom Ore
-                if (!CalamityWorld.downedProvidence)
-                {
-                    string key2 = "Mods.CalamityMod.ProfanedBossText3";
-                    Color messageColor2 = Color.Orange;
-                    string key3 = "Mods.CalamityMod.TreeOreText";
-                    Color messageColor3 = Color.LightGreen;
-
-                    WorldGenerationMethods.SpawnOre(ModContent.TileType<UelibloomOre>(), 15E-05, .4f, .8f);
-
-                    CalamityUtils.DisplayLocalizedText(key2, messageColor2);
-                    CalamityUtils.DisplayLocalizedText(key3, messageColor3);
-                }
-
-                if (Main.netMode == NetmodeID.SinglePlayer)
-                {
-                    Main.NewText(Language.GetTextValue("Mods.CalamityMod.ProfanedBossText4"), Color.DarkOrange);
-                }
-
-                // Mark Providence as dead
-                CalamityWorld.downedProvidence = true;
-                CalamityNetcode.SyncWorld();
-                return false;
+                return true;
             }
             return base.PreNPCLoot(npc);
         }

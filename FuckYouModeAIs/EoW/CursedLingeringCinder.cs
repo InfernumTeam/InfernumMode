@@ -68,7 +68,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, Color.White, ProjectileID.Sets.TrailingMode[projectile.type], 2);
+            Utilities.DrawAfterimagesCentered(projectile, Color.White, ProjectileID.Sets.TrailingMode[projectile.type], 2);
             return false;
         }
     }

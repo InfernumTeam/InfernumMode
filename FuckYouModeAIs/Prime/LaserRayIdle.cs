@@ -20,6 +20,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
         public override Texture2D LaserEndTexture => ModContent.GetTexture("InfernumMode/ExtraTextures/PrimeBeamEnd");
         public override string Texture => "InfernumMode/ExtraTextures/PrimeBeamBegin";
         public override float MaxLaserLength => 3100f;
+        public override float MaxScale => 1f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Deathray");
 
         public override void SetDefaults()

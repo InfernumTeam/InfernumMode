@@ -82,7 +82,7 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
             if (projectile.whoAmI % 2 == 0)
                 texture = ModContent.GetTexture("InfernumMode/FuckYouModeAIs/Polterghast/SoulMedium" + (Cyan ? "Cyan" : ""));
 
-            CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 2, texture);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 2, texture);
             return false;
         }
 

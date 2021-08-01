@@ -45,7 +45,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 Color afterimageColor = Color.Lerp(Color.DarkGray, Color.Black, 0.66f) * projectile.Opacity * 0.5f;
                 spriteBatch.Draw(shurikenTexture, drawPosition, null, afterimageColor, projectile.rotation, shurikenTexture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
             }
-            CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
             return false;
         }
 

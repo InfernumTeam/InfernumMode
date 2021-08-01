@@ -74,7 +74,7 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
             Color drawColor = Poisonous ? Color.Green : Color.White;
             drawColor.A = 0;
 
-            CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, drawColor, ProjectileID.Sets.TrailingMode[projectile.type], 3);
+            Utilities.DrawAfterimagesCentered(projectile, drawColor, ProjectileID.Sets.TrailingMode[projectile.type], 3);
             return true;
         }
     }

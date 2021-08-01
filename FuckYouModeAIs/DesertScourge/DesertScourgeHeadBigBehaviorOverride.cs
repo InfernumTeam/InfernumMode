@@ -128,7 +128,7 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
             return false;
         }
 
-        #region Specific Attacks
+        #region Specific Behaviors
 
         public static void DoAttack_Despawn(NPC npc)
 		{
@@ -239,10 +239,10 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
             }
         }
 
-		#endregion Specific Attacks
+        #endregion Specific Behaviors
 
-		#region AI Utility Methods
-		public static void CreateSegments(NPC npc, int wormLength, int bodyType, int tailType)
+        #region AI Utility Methods
+        public static void CreateSegments(NPC npc, int wormLength, int bodyType, int tailType)
 		{
             int previousIndex = npc.whoAmI;
             for (int i = 0; i < wormLength; i++)

@@ -38,7 +38,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             if (projectile.timeLeft > 295)
                 return false;
 
-            CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 2);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 2);
             return false;
         }
 

@@ -62,7 +62,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
             Color drawColor = Color.Purple;
             drawColor.A = 0;
 
-            CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, drawColor, ProjectileID.Sets.TrailingMode[projectile.type], 2);
+            Utilities.DrawAfterimagesCentered(projectile, drawColor, ProjectileID.Sets.TrailingMode[projectile.type], 2);
             return true;
         }
     }

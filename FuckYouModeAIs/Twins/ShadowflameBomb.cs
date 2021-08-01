@@ -47,7 +47,7 @@ namespace InfernumMode.FuckYouModeAIs.Twins
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, lightColor, 0);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, 0);
             return false;
         }
     }

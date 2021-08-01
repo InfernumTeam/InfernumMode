@@ -36,7 +36,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             drawColor.A = 0;
             drawColor *= 0.5f;
 
-            CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, drawColor, ProjectileID.Sets.TrailingMode[projectile.type], 3);
+            Utilities.DrawAfterimagesCentered(projectile, drawColor, ProjectileID.Sets.TrailingMode[projectile.type], 3);
             return true;
         }
     }

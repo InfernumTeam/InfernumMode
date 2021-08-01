@@ -45,7 +45,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
         {
             lightColor = Color.Lerp(lightColor, Color.Red, 0.7f);
             lightColor.A = 128;
-            CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
             return false;
         }
 

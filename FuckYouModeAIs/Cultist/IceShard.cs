@@ -44,7 +44,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             lightColor = Color.Lerp(lightColor, Color.Cyan, 0.5f);
-            CalamityGlobalProjectile.DrawCenteredAndAfterimage(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
             return false;
         }
     }

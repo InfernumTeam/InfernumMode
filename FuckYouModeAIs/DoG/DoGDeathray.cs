@@ -16,6 +16,8 @@ namespace InfernumMode.FuckYouModeAIs.DoG
         public override Texture2D LaserBeginTexture => Main.projectileTexture[projectile.type];
         public override Texture2D LaserMiddleTexture => Main.extraTexture[21];
         public override Texture2D LaserEndTexture => Main.extraTexture[22];
+        public override float MaxLaserLength => 2400f;
+        public override float MaxScale => 1f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Deathray");
 
         public override void SetDefaults()

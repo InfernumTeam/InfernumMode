@@ -174,7 +174,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                         {
                             npc.TargetClosest();
                             target = Main.player[npc.target];
-                            float jumpSpeed = MathHelper.Lerp(9f, 13f, Utils.InverseLerp(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                            float jumpSpeed = MathHelper.Lerp(9f, 18.5f, Utils.InverseLerp(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                             jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
                             npc.velocity = new Vector2(npc.direction * 8f, -jumpSpeed);

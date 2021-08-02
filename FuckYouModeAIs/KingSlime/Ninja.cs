@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
@@ -17,6 +18,9 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
         public ref float ShurikenShootCountdown => ref npc.ai[1];
         public ref float TimeOfFlightCountdown => ref npc.ai[2];
         public ref float TeleportCountdown => ref npc.ai[3];
+        public ref float KatanaUseTimer => ref npc.Infernum().ExtraAI[0];
+        public ref float KatanaUseLength => ref npc.Infernum().ExtraAI[1];
+        public ref float KatanaRotation => ref npc.Infernum().ExtraAI[2];
         public ref float StuckTimer => ref npc.localAI[0];
         public override void SetStaticDefaults()
         {
@@ -55,6 +59,8 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 				return;
 			}
 
+            npc.damage = npc.defDamage;
+
             if (MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 2f)
                 StuckTimer += 2f;
 
@@ -71,7 +77,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i)) * 4.8f;
+                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i)) * 7f;
                             Utilities.NewProjectileBetter(npc.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 45, 0f);
                         }
                     }
@@ -86,15 +92,25 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             {
                 if (npc.velocity.X != 0f)
                 {
-                    npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
+                    if (KatanaUseTimer > 0f)
+                    {
+                        npc.damage = 30;
+                        npc.rotation = KatanaRotation - MathHelper.PiOver2;
+                        KatanaRotation += MathHelper.ToRadians(22f) * npc.spriteDirection;
+                        KatanaUseTimer--;
+                    }
+                    else
+                    {
+                        npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 
-                    // Spin when going upward.
-                    if (npc.velocity.Y < 0f)
-                        npc.rotation += npc.spriteDirection * 0.3f;
-                    // And aim footfirst when going downward.
-                    // Unless it's April 1st. In which case he becomes a goddamn bouncy ball lmao
-                    else if (!Utilities.IsAprilFirst())
-                        npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                        // Spin when going upward.
+                        if (npc.velocity.Y < 0f)
+                            npc.rotation += npc.spriteDirection * 0.3f;
+                        // And aim footfirst when going downward.
+                        // Unless it's April 1st. In which case he becomes a goddamn bouncy ball lmao
+                        else if (!Utilities.IsAprilFirst())
+                            npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                    }
                 }
                 else
                     npc.rotation = 0f;
@@ -124,13 +140,27 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             if (TeleportCountdown > 0f)
             {
                 DoTeleportEffects();
+                KatanaUseTimer = 0f;
                 TeleportCountdown--;
                 return;
+            }
+
+            if (npc.WithinRange(Target.Center, 220f) && KatanaUseTimer <= 0f)
+            {
+                DoJump((float)Math.Sqrt(MathHelper.Clamp(npc.Distance(Target.Center), 14f, 220f)));
+                KatanaUseTimer = KatanaUseLength = TimeOfFlightCountdown + 4f;
+                KatanaRotation = npc.rotation + MathHelper.PiOver2;
+                ShurikenShootCountdown = 0f;
+                npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
+                npc.netUpdate = true;
+
+                Main.PlaySound(SoundID.Item1, npc.Center);
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && canDashTeleport)
             {
                 StuckTimer = 0f;
+                DoJump(10f);
                 TeleportCountdown = 70f;
                 npc.netUpdate = true;
             }
@@ -299,12 +329,36 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             }
         }
 
+        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+            if (KatanaUseTimer > 0f)
+            {
+                Texture2D katanaTexture = ModContent.GetTexture("InfernumMode/FuckYouModeAIs/KingSlime/Katana");
+                Vector2 drawPosition = npc.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(npc.rotation) * 5f;
+                drawPosition -= npc.rotation.ToRotationVector2() * npc.spriteDirection * 22f;
+                SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                float rotation = KatanaRotation + MathHelper.Pi - MathHelper.PiOver4;
+                if (npc.spriteDirection == -1)
+                    rotation -= MathHelper.PiOver2;
+                else
+                {
+                    direction |= SpriteEffects.FlipHorizontally;
+                    rotation += MathHelper.PiOver2;
+                }
+                spriteBatch.Draw(katanaTexture, drawPosition, null, npc.GetAlpha(drawColor), rotation, katanaTexture.Size() * 0.5f, 1f, direction, 0f);
+            }
+            return true;
+        }
+
         public override void FindFrame(int frameHeight)
         {
             frameHeight = 48;
             if (TimeOfFlightCountdown > 0f || !npc.collideY)
             {
-                npc.frame.Y = frameHeight * 8;
+                if (KatanaUseTimer > 0f)
+                    npc.frame.Y = frameHeight * 3;
+                else
+                    npc.frame.Y = frameHeight * 8;
                 return;
             }
 

@@ -32,6 +32,9 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             projectile.alpha = Utils.Clamp(projectile.alpha - 25, 0, 255);
             projectile.rotation += (projectile.velocity.X > 0f).ToDirectionInt() * 0.4f;
             projectile.tileCollide = projectile.timeLeft < 90;
+
+            if (projectile.velocity.Length() < 14f)
+                projectile.velocity *= 1.0145f;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

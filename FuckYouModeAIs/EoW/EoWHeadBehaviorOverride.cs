@@ -9,7 +9,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
 {
 	public class EoWHeadBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => NPCID.DukeFishron;
+        public override int NPCOverrideType => NPCID.EaterofWorldsHead;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 

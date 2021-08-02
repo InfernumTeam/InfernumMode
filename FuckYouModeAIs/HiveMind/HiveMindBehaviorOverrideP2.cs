@@ -167,12 +167,13 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 
             // Fly off if hit and accelerate.
             ref float hasBeenHitFlag = ref npc.Infernum().ExtraAI[13];
-            if (npc.justHit && attackTimer < driftTime - 24f)
+            if (npc.justHit)
             {
-                DoRoar(npc, true);
                 hasBeenHitFlag = 1f;
-                attackTimer = driftTime - 20f;
                 npc.velocity = npc.SafeDirectionTo(target.Center) * -8.5f;
+                DoRoar(npc, true);
+                if (attackTimer < driftTime - 24f)
+                    attackTimer = driftTime - 24f;
 
                 npc.netUpdate = true;
             }
@@ -464,7 +465,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             // And release the Eater of Souls wall.
             else
             {
-                verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < 0.2f ? 3.4f : 4.15f);
+                verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < 0.2f ? 3.6f : 4.15f);
 
                 Vector2 wallSpawnOffset = new Vector2(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
                 Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < 0.2f ? MathHelper.ToRadians(10f) : 0f) * 10f;

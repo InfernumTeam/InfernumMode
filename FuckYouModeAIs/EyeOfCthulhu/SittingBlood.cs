@@ -66,7 +66,7 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
 
             for (int i = 0; i < 2; i++)
             {
-                Utilities.NewProjectileBetter(projectile.Center, -Vector2.UnitY.RotatedByRandom(0.43f) * Main.rand.NextFloat(21f, 31f), ModContent.ProjectileType<EoCTooth2>(), 56, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, -Vector2.UnitY.RotatedByRandom(0.79f) * Main.rand.NextFloat(21f, 31f), ModContent.ProjectileType<EoCTooth2>(), 56, 0f);
             }
         }
     }

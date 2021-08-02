@@ -66,6 +66,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 
             npc.TargetClosest();
 
+            bool onSolidGround = WorldGen.SolidTile(Framing.GetTileSafely(npc.Bottom + Vector2.UnitY * 16f));
             float horizontalDistanceFromTarget = MathHelper.Distance(Target.Center.X, npc.Center.X);
 
             if (ShurikenShootCountdown > 0f)
@@ -75,9 +76,10 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 2; i++)
+                        int shurikenCount = (int)MathHelper.Lerp(2f, 7f, Utils.InverseLerp(300f, 720f, npc.Distance(Target.Center), true));
+                        for (int i = 0; i < shurikenCount; i++)
                         {
-                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i)) * 7f;
+                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i / (float)(shurikenCount - 1f))) * 7f;
                             Utilities.NewProjectileBetter(npc.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 45, 0f);
                         }
                     }
@@ -116,7 +118,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                     npc.rotation = 0f;
 
                 TimeOfFlightCountdown--;
-                if (npc.collideY && TimeOfFlightCountdown < 35f)
+                if (onSolidGround && TimeOfFlightCountdown < 35f)
                     TimeOfFlightCountdown = 0f;
 
                 return;
@@ -134,24 +136,27 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 
             // Teleport if far from the target or it is typically possible to do so.
             bool canDashTeleport = Time % 360f == 359f && Collision.CanHit(npc.Center, 2, 2, npc.Center + Vector2.UnitX * npc.spriteDirection * 80f, 2, 2);
-            canDashTeleport |= !npc.WithinRange(Target.Center, 820f) || StuckTimer >= 150f;
-            canDashTeleport &= npc.collideY || StuckTimer >= 150f;
+            canDashTeleport |= !npc.WithinRange(Target.Center, 540f) || StuckTimer >= 150f;
+            canDashTeleport &= onSolidGround || StuckTimer >= 150f;
 
             if (TeleportCountdown > 0f)
             {
                 DoTeleportEffects();
-                KatanaUseTimer = 0f;
                 TeleportCountdown--;
                 return;
             }
 
-            if (npc.WithinRange(Target.Center, 220f) && KatanaUseTimer <= 0f)
+            if (KatanaUseTimer < 50f && onSolidGround)
+                KatanaUseTimer = 0f;
+
+            if (npc.WithinRange(Target.Center, 220f) && KatanaUseTimer <= 0f && onSolidGround)
             {
-                DoJump((float)Math.Sqrt(MathHelper.Clamp(npc.Distance(Target.Center), 14f, 220f)));
-                KatanaUseTimer = KatanaUseLength = TimeOfFlightCountdown + 4f;
+                npc.spriteDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
+                npc.velocity = npc.SafeDirectionTo(Target.Center) * 8f;
+                npc.velocity.Y -= 4f;
                 KatanaRotation = npc.rotation + MathHelper.PiOver2;
+                KatanaUseTimer = KatanaUseLength = 54f;
                 ShurikenShootCountdown = 0f;
-                npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
                 npc.netUpdate = true;
 
                 Main.PlaySound(SoundID.Item1, npc.Center);
@@ -165,7 +170,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 npc.netUpdate = true;
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && horizontalDistanceFromTarget > 320f && Time % 60f == 59f && npc.collideY)
+            if (Main.netMode != NetmodeID.MultiplayerClient && horizontalDistanceFromTarget > 320f && Time % 60f == 59f && onSolidGround)
             {
                 float jumpSpeed = (float)Math.Sqrt(horizontalDistanceFromTarget) * 0.5f;
                 if (jumpSpeed >= 9f)
@@ -179,10 +184,13 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             Time++;
         }
 
-        public void DoJump(float jumpSpeed)
+        public void DoJump(float jumpSpeed, Vector2? destination = null)
         {
+            if (destination is null)
+                destination = Target.Center;
+
             float gravity = 0.3f;
-            npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, Target.Center, gravity, jumpSpeed, out _);
+            npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, destination.Value, gravity, jumpSpeed, out _);
             ShurikenShootCountdown = 24f;
 
             // Use the Time of Flight formula to determine how long the jump will last.
@@ -230,7 +238,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             }
 
             // Jump if is stuck somewhat on the X axis.
-            if (MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 2f)
+            if (onSolidGround && MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 2f)
             {
                 DoJump(13f);
                 npc.netUpdate = true;

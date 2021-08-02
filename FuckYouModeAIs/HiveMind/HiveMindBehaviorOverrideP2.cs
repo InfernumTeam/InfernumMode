@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -14,539 +15,669 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 {
 	public class HiveMindBehaviorOverrideP2 : NPCBehaviorOverride
     {
+        public enum HiveMindP2AttackState
+        {
+            SuspensionStateDrift = -1,
+            Reset,
+            NPCSpawnArc,
+            SpinLunge,
+            CloudDash,
+            EaterOfSoulsWall,
+            UndergroundFlameDash,
+            CursedRain,
+            SlowDown,
+            BlobSniping
+        }
+
         internal const float HiveMindFadeoutTime = 25f;
         public override int NPCOverrideType => ModContent.NPCType<HiveMindP2>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         // TODO: Refactor this.
+        public const float SpinRadius = 300f;
+        public const float NPCSpawnArcSpinTime = 25f;
+        public const float NPCSpawnArcRotationalOffset = MathHelper.Pi / NPCSpawnArcSpinTime;
+        public const float LungeSpinTime = 90f;
+        public const float LungeSpinTotalRotations = 2f;
+        public const float LungeSpinChargeDelay = 15f;
+        public const float LungeSpinChargeTime = 20f;
+        public const float RainDashOffset = 300f;
+        public const float EaterWallSlowdownTime = 40f;
+        public const float EaterWallSummoningTime = 60f;
+        public const float EaterWallTotalHeight = 1900f;
+        public const float MaxSlowdownTime = 60f;
         public override bool PreAI(NPC npc)
         {
-            //npc.Infernum().angleTarget = player Center
-            //npc.Infernum().ExtraAI[0] = current AI state
-            //npc.Infernum().ExtraAI[1-3] = varies by AI state
-            //npc.Infernum().ExtraAI[4] = slowdown time
-            //npc.Infernum().ExtraAI[5] = new AI state
-            //npc.Infernum().ExtraAI[6] = fade out timer
-            //npc.Infernum().ExtraAI[7] = fade out incrementer
-            //npc.Infernum().ExtraAI[8] = fade out incrementer
-            //npc.Infernum().ExtraAI[9] = old AI when used in the suspension state
-            //npc.Infernum().ExtraAI[10] = <20% invincibility flag
-            //npc.Infernum().ExtraAI[11] = <20% invincibility time
-            //npc.Infernum().ExtraAI[12] = fire column shoot countdown
-            const int spinRadius = 300;
-            const int dashDistance = 300;
-            const int slowdownTime = 60;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool below20 = lifeRatio < 0.2f || npc.Infernum().ExtraAI[10] == 1f;
+            ref float attackTimer = ref npc.ai[3];
+            ref float slowdownCountdown = ref npc.Infernum().ExtraAI[4];
+            ref float fadeoutCountdown = ref npc.Infernum().ExtraAI[6];
+            ref float afterimagePulse = ref npc.Infernum().ExtraAI[7];
+            ref float finalPhaseInvinciblityTime = ref npc.Infernum().ExtraAI[11];
+            ref float flameColumnCountdown = ref npc.Infernum().ExtraAI[12];
+
+            // Act as though the boss is at 20% life if that amount of life has already been reached.
+            // This is done to ensure that the regeneration doesn't weaken attacks.
+            if (below20 && lifeRatio > 0.2f)
+                lifeRatio = 0.1995f;
+
             Player player = Main.player[npc.target];
             npc.defense = player.ZoneCorrupt ? 4 : 9999;
             CalamityGlobalNPC.hiveMind = npc.whoAmI;
-            if (npc.Infernum().angleTarget == null)
-            {
-                npc.Infernum().angleTarget = default;
-            }
+
             if (below20 && npc.Infernum().ExtraAI[10] == 0f)
             {
                 npc.Infernum().ExtraAI[10] = 1f;
-                npc.Infernum().ExtraAI[11] = 300f;
+                finalPhaseInvinciblityTime = 300f;
+                npc.netUpdate = true;
             }
-            if (npc.Infernum().ExtraAI[11] == 60f)
+            
+            // Rise after entering the invincibility phase.
+            if (finalPhaseInvinciblityTime == 60f)
             {
                 npc.velocity = Vector2.UnitY * -12f;
+                npc.netUpdate = true;
             }
+
             if (below20)
+                player.Calamity().rage = player.Calamity().adrenaline = 0;
+
+            if (fadeoutCountdown > 0f)
+                fadeoutCountdown--;
+
+            if (finalPhaseInvinciblityTime > 0f)
             {
-                player.GetModPlayer<CalamityMod.CalPlayer.CalamityPlayer>().rage =
-                player.GetModPlayer<CalamityMod.CalPlayer.CalamityPlayer>().adrenaline = 0;
-            }
-            if (npc.Infernum().ExtraAI[6] > 0f)
-            {
-                npc.Infernum().ExtraAI[6] -= 1f;
-            }
-            if (npc.Infernum().ExtraAI[11] > 0f)
-            {
-                if (npc.Infernum().ExtraAI[11] % 20 == 0f)
-                {
-                    npc.ai[1] = 1f;
-                }
-                npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - npc.Infernum().ExtraAI[11] / 300f);
-                npc.Infernum().ExtraAI[11] -= 1f;
+                npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - finalPhaseInvinciblityTime / 300f);
                 npc.velocity *= 0.94f;
                 npc.defense = 9999;
-                npc.Infernum().ExtraAI[7] += 0.24f;
+                afterimagePulse += 0.24f;
+                finalPhaseInvinciblityTime--;
                 return false;
             }
 
-            if (npc.Infernum().ExtraAI[12] > 0f)
+            // Idly release fire columns.
+            if (flameColumnCountdown > 0f)
             {
-                if (npc.Infernum().ExtraAI[12] % 60f == 30f - 1f)
+                if (flameColumnCountdown % 60f == 30f - 1f)
                 {
                     WorldUtils.Find((player.Top - Vector2.UnitY * 320f).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new Conditions.IsSolid()), out Point result);
                     if (Math.Abs(result.X) > 10000)
                         result = (player.Bottom + Vector2.UnitY * 120f).ToTileCoordinates();
-                    Utilities.NewProjectileBetter(result.ToWorldCoordinates(), Vector2.Zero, ModContent.ProjectileType<ShadeFireColumn>(), 50, 0f);
+                    Utilities.NewProjectileBetter(result.ToWorldCoordinates(), Vector2.Zero, ModContent.ProjectileType<ShadeFireColumn>(), 65, 0f);
                 }
-                npc.Infernum().ExtraAI[12]--;
+                flameColumnCountdown--;
             }
 
-            npc.defense = below20 ? 12 : 7;
-            // Suspension state drift
-            if (npc.Infernum().ExtraAI[0] == -1f)
+            npc.defense = below20 ? 9 : 7;
+
+            switch ((HiveMindP2AttackState)(int)npc.Infernum().ExtraAI[0])
             {
-                npc.ai[0] += 1f;
-                float driftTime = lifeRatio < 0.2 ? 30f : 90f;
-                npc.alpha = Utils.Clamp(npc.alpha + (npc.Infernum().ExtraAI[13] == 1f).ToInt() * 11, 0, 255);
-                if (npc.Infernum().ExtraAI[13] == 1f)
-                    npc.velocity *= 1.04f;
-                if (npc.ai[0] == 1f)
-                {
-                    npc.velocity = npc.DirectionTo(player.Center) * 7f;
-                }
-                if (npc.knockBackResist == 0f)
-                {
-                    npc.knockBackResist = 1f;
-                }
-                if (npc.justHit && npc.ai[0] < driftTime - 15f)
-                {
-                    npc.ai[0] = driftTime - 20f;
-                    npc.ai[2] = 1f;
-                    npc.velocity = npc.SafeDirectionTo(player.Center) * -4f;
-                    npc.Infernum().ExtraAI[13] = 1f;
-                }
-                if (npc.ai[0] > driftTime)
-                {
-                    npc.knockBackResist = 0f;
-                    if (npc.Infernum().ExtraAI[5] == 3f ||
-                        npc.Infernum().ExtraAI[5] == 4f ||
-                        npc.Infernum().ExtraAI[5] == 6f)
-                    {
-                        if (npc.Infernum().ExtraAI[5] == 6f)
-                        {
-                            npc.Center = player.Center - Vector2.UnitY * 350f;
-                        }
-                        npc.alpha = 255;
-                    }
-                    else
-                        npc.alpha = 0;
-                    npc.Infernum().ExtraAI[0] = npc.Infernum().ExtraAI[5];
-                    npc.Infernum().ExtraAI[13] = 0f;
-                }
+                case HiveMindP2AttackState.SuspensionStateDrift:
+                    DoBehavior_SuspensionStateDrift(npc, player, lifeRatio, ref npc.ai[0]);
+                    break;
+                case HiveMindP2AttackState.Reset:
+                    DoBehavior_ResetAI(npc, lifeRatio);
+                    break;
+                case HiveMindP2AttackState.NPCSpawnArc:
+                    DoBehavior_NPCSpawnArc(npc, player, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
+                    break;
+                case HiveMindP2AttackState.SpinLunge:
+                    DoBehavior_SpinLunge(npc, player, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
+                    break;
+                case HiveMindP2AttackState.CloudDash:
+                    DoBehavior_CloudDash(npc, player, lifeRatio, ref slowdownCountdown, ref attackTimer);
+                    break;
+                case HiveMindP2AttackState.EaterOfSoulsWall:
+                    DoBehavior_EaterWall(npc, player, lifeRatio, ref slowdownCountdown, ref attackTimer);
+                    break;
+                case HiveMindP2AttackState.UndergroundFlameDash:
+                    DoBehavior_UndergroundFlameDash(npc, player, lifeRatio, ref attackTimer);
+                    break;
+                case HiveMindP2AttackState.CursedRain:
+                    DoBehavior_CursedRain(npc, player, lifeRatio, ref flameColumnCountdown, ref attackTimer);
+                    break;
+                case HiveMindP2AttackState.SlowDown:
+                    DoBehavior_SlowDown(npc, ref slowdownCountdown);
+                    break;
+                case HiveMindP2AttackState.BlobSniping:
+                    DoBehavior_BlobSniping(npc, player, lifeRatio, ref slowdownCountdown, ref attackTimer);
+                    break;
             }
 
-            // Reset AI
-            if (npc.Infernum().ExtraAI[0] == 0f)
-            {
-                npc.TargetClosest(false);
-                float oldAI = npc.Infernum().ExtraAI[9];
-                bool initialCheck = false;
-                while (npc.Infernum().ExtraAI[5] == oldAI || !initialCheck)
-                {
-                    npc.Infernum().ExtraAI[5] = Main.rand.Next(1, 4);
-                    if ((npc.Infernum().ExtraAI[5] == 1f && lifeRatio < 0.8f) ||
-                        (npc.Infernum().ExtraAI[5] == 2f && lifeRatio < 0.6f) ||
-                        (npc.Infernum().ExtraAI[5] == 3f && lifeRatio < 0.4f))
-                    {
-                        // Shift to the special/new attacks
-                        npc.Infernum().ExtraAI[5] += 3f;
-                    }
-                    initialCheck = true;
-                }
+            // Update the afterimage pulse.
+            if (npc.Infernum().ExtraAI[6] <= 0f || (npc.Infernum().ExtraAI[0] >= 4 && npc.Infernum().ExtraAI[0] <= 7) || below20 || npc.Infernum().ExtraAI[6] > 0f)
+                afterimagePulse += 0.14f;
 
-                if (below20 && Main.rand.NextBool(4) && oldAI != 8f)
-                {
-                    npc.Infernum().ExtraAI[5] = 8f;
-                }
-
-                npc.ai = new float[] { 0f, 0f, 0f, 0f };
-                npc.Infernum().ExtraAI[1] =
-                    npc.Infernum().ExtraAI[2] =
-                    npc.Infernum().ExtraAI[3] = 0f;
-                npc.Infernum().ExtraAI[0] = -1f;
-            }
-            // Spawn npcs
-            if (npc.Infernum().ExtraAI[0] == 1f)
-            {
-                npc.Infernum().ExtraAI[9] = 1f;
-                const float spinTime = 45f;
-                const float initialVelocity = MathHelper.Pi / spinTime;
-                npc.ai[0] += 1f;
-                if (npc.alpha >= 0 && npc.ai[3] == 0f)
-                {
-                    npc.alpha -= 7;
-                    npc.Center = player.Center + Vector2.UnitY * spinRadius;
-                    npc.velocity = Vector2.Zero;
-                    if (npc.alpha <= 0f)
-                    {
-                        // Weird roar
-                        npc.ai[2] = 1f;
-                        npc.Infernum().ExtraAI[6] = HiveMindFadeoutTime;
-                        npc.Infernum().ExtraAI[1] = Main.rand.NextBool(2).ToDirectionInt();
-                        npc.velocity = Vector2.UnitX * MathHelper.Pi * spinRadius / spinTime
-                            * npc.Infernum().ExtraAI[1];
-                        npc.alpha = 0;
-                        npc.ai[3] = 1f;
-                    }
-                }
-                // Spin
-                if (npc.ai[3] == 1f)
-                {
-                    npc.velocity = npc.velocity.RotatedBy(initialVelocity * -npc.Infernum().ExtraAI[1]);
-                    if (npc.ai[0] % (int)Math.Ceiling(spinTime / 6) == (int)Math.Ceiling(spinTime / 6) - 1)
-                    {
-                        npc.Infernum().ExtraAI[2]++;
-                        if (Main.netMode != NetmodeID.MultiplayerClient && Collision.CanHit(npc.Center, 1, 1, player.position, player.width, player.height)) // draw line of sight
-                        {
-                            if (npc.Infernum().ExtraAI[2] == 2 || npc.Infernum().ExtraAI[2] == 4)
-                            {
-                                if (!NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DarkHeart")))
-                                {
-                                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.NPCType("DarkHeart"));
-                                }
-                            }
-                            else if (NPC.CountNPCS(NPCID.EaterofSouls) < 2)
-                            {
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofSouls);
-                            }
-                        }
-                        if (npc.Infernum().ExtraAI[2] >= 6)
-                        {
-                            // Reset
-                            npc.Infernum().ExtraAI[4] = slowdownTime;
-                            npc.Infernum().ExtraAI[0] = 7f;
-                        }
-                    }
-                }
-            }
-            // Spin around player and lunge inward
-            if (npc.Infernum().ExtraAI[0] == 2f)
-            {
-                npc.Infernum().ExtraAI[9] = 2f;
-                const float spinTime = 130f;
-                const float lungeTime = 20f;
-                const float waitTime = 20f;
-                if (npc.ai[0] == 0f)
-                {
-                    npc.velocity = Vector2.Zero;
-                    npc.alpha = 255;
-                    npc.Infernum().ExtraAI[6] = HiveMindFadeoutTime;
-                    npc.Center = player.Center + new Vector2(0f, spinRadius);
-                    npc.ai[0] = 1f;
-                }
-                if (npc.alpha > 0)
-                {
-                    npc.alpha -= 7;
-                    if (npc.alpha <= 0f)
-                    {
-                        npc.alpha = 0;
-                    }
-                }
-                npc.ai[3] += 1f;
-                npc.Infernum().ExtraAI[3] += npc.ai[3] > spinTime ? 0.97f / (npc.ai[3] - spinTime + 2f) : 1f;
-                while (npc.Infernum().ExtraAI[1] == 0f)
-                {
-                    npc.Infernum().ExtraAI[1] = Main.rand.NextBool(2).ToDirectionInt();
-                }
-                if (npc.ai[3] == spinTime + waitTime)
-                {
-                    npc.velocity = npc.DirectionTo(player.Center) * spinRadius / slowdownTime * 4f;
-                    npc.Infernum().ExtraAI[6] = HiveMindFadeoutTime;
-                    // Roar
-                    npc.ai[1] = 1f;
-                }
-                else if (npc.ai[3] < spinTime + waitTime)
-                {
-                    float angle = 0.0739198272f * npc.Infernum().ExtraAI[3] * 1.5f * npc.Infernum().ExtraAI[1];
-                    npc.velocity = Vector2.Zero;
-                    npc.Center = player.Center + new Vector2(0f, spinRadius).RotatedBy(angle);
-                }
-                if (npc.ai[3] > spinTime + lungeTime + waitTime * 0.44f)
-                {
-                    npc.Infernum().ExtraAI[4] = slowdownTime;
-                    npc.Infernum().ExtraAI[0] = 7f;
-                }
-            }
-            // Cloud dash
-            if (npc.Infernum().ExtraAI[0] == 3f)
-            {
-                if (lifeRatio < 0.4f || below20)
-                {
-                    npc.Infernum().ExtraAI[0] = 6f;
-                    return false;
-                }
-                npc.Infernum().ExtraAI[9] = 3f;
-                if (npc.ai[0] == 0f)
-                {
-                    npc.alpha = 255;
-
-                    npc.ai[0] = 1f;
-                }
-                npc.ai[3] += 1f;
-                if (npc.alpha > 0)
-                {
-                    npc.alpha -= 5;
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        npc.Center = player.Center;
-                        while (npc.Infernum().ExtraAI[78] == 0f)
-                        {
-                            npc.Infernum().ExtraAI[78] = Main.rand.NextBool(2).ToDirectionInt();
-                        }
-                        npc.position.Y -= dashDistance;
-                        npc.position.X += dashDistance * npc.Infernum().ExtraAI[78];
-                    }
-                    if (npc.alpha <= 0)
-                    {
-                        npc.velocity = Vector2.UnitX * -11f * npc.Infernum().ExtraAI[78];
-                        npc.ai[2] = 1f;
-                    }
-                    npc.netUpdate = true;
-                }
-                else if (npc.ai[3] % 2 == 0f)
-                {
-                    const int damage = 16;
-                    Projectile.NewProjectile(npc.position.X + Main.rand.Next(npc.width), npc.position.Y + Main.rand.Next(npc.height), 0, 0,
-                        InfernumMode.CalamityMod.ProjectileType("ShadeNimbusHostile"), damage, 0, Main.myPlayer, 11, 0);
-                    npc.Infernum().ExtraAI[1] += 1f;
-                }
-                if (npc.Infernum().ExtraAI[1] >= 10f)
-                {
-                    // Slow down
-                    npc.alpha = 255;
-                    npc.Infernum().ExtraAI[78] *= -1f;
-                    npc.Infernum().ExtraAI[4] = slowdownTime / 2;
-                    npc.Infernum().ExtraAI[0] = 7f;
-                }
-                int num414 = (int)(npc.position.X + 14f + Main.rand.Next(npc.width - 28));
-                int num415 = (int)(npc.position.Y + npc.height + 4f);
-                Projectile.NewProjectile(num414, num415, 0f, 5f, InfernumMode.CalamityMod.ProjectileType("ShaderainHostile"), 18, 0f, Main.myPlayer, 0f, 0f);
-            }
-            // Eater Wall
-            if (npc.Infernum().ExtraAI[0] == 4f)
-            {
-                npc.Infernum().ExtraAI[9] = 4f;
-                const float upwardMovementTime = 40;
-                const float wallCreationTime = 40f;
-                const float wallHeight = 1900f;
-                if (npc.ai[0] == 0f)
-                {
-                    npc.velocity = Vector2.UnitY * -12f;
-                    npc.ai[0] = 1f;
-                }
-                npc.ai[3] += 1f;
-                if (npc.ai[3] < upwardMovementTime)
-                {
-                    npc.velocity *= 0.95f;
-                }
-                else if (npc.ai[3] == upwardMovementTime)
-                {
-                    npc.velocity = Vector2.Zero;
-                    // Roar
-                    npc.ai[1] = 1f;
-                    npc.Infernum().ExtraAI[2] = Main.rand.Next(0, 35);
-                }
-                else
-                {
-                    npc.Infernum().ExtraAI[1] += wallHeight / wallCreationTime * (below20 ? 2.8f : 3.1f);
-                    Projectile.NewProjectile(player.Center + new Vector2(-1200f, npc.Infernum().ExtraAI[1] - wallHeight / 2f + npc.Infernum().ExtraAI[2]),
-                        new Vector2(10f, 0f).RotatedBy(below20 ? MathHelper.ToRadians(10f) : 0f), ModContent.ProjectileType<EaterOfSouls>(),
-                        17, 1f);
-                    Projectile.NewProjectile(player.Center + new Vector2(1200f, npc.Infernum().ExtraAI[1] - wallHeight / 2f + npc.Infernum().ExtraAI[2]),
-                        new Vector2(-10f, 0f).RotatedBy(below20 ? MathHelper.ToRadians(-10f) : 0f), ModContent.ProjectileType<EaterOfSouls>(),
-                        17, 1f);
-                    if (npc.ai[3] > upwardMovementTime + wallCreationTime)
-                    {
-                        npc.alpha = 255;
-                        npc.Infernum().ExtraAI[4] = slowdownTime / 2;
-                        npc.Infernum().ExtraAI[0] = 7f;
-                    }
-                }
-            }
-            // Fire dash underground
-            if (npc.Infernum().ExtraAI[0] == 5f)
-            {
-                npc.Infernum().ExtraAI[9] = 5f;
-                if (npc.Infernum().ExtraAI[77] == 0f)
-                {
-                    npc.velocity = Vector2.Zero;
-                    npc.Infernum().ExtraAI[1] = Main.rand.NextBool(2).ToDirectionInt();
-
-                    float xOffset = 600f - 160f * (1f - lifeRatio);
-                    if (below20)
-                        xOffset -= 100f;
-
-                    npc.position = player.Center + new Vector2(xOffset * npc.Infernum().ExtraAI[1], 350f);
-                    npc.Infernum().ExtraAI[77] = 1f;
-                }
-                float waitTime = below20 ? 96f : 75f;
-                float moveTime = below20 ? 50f : 90f;
-                Projectile.NewProjectile(npc.Center, Vector2.UnitY * -7.4f, ModContent.ProjectileType<ShadeFire>(), 17, 0f);
-                npc.ai[3] += 1f;
-                if (npc.ai[3] == waitTime)
-                {
-                    // Roar
-                    npc.ai[1] = 1f;
-                    npc.velocity = Vector2.UnitX * npc.Infernum().ExtraAI[1] * (below20 ? -21f : -19f);
-                }
-                if (npc.ai[3] > waitTime && below20 && npc.ai[3] % 10f == 9f)
-                {
-                    int vileClot = Projectile.NewProjectile(npc.Center, Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(-7f, -5.25f), ModContent.ProjectileType<VileClot>(), 17, 0f);
-                    Main.projectile[vileClot].tileCollide = false;
-                }
-
-                if (npc.ai[3] == waitTime + moveTime)
-                {
-                    npc.alpha = 255;
-                    npc.Infernum().ExtraAI[77] = 0f;
-                    npc.Infernum().ExtraAI[0] = 7f;
-                }
-            }
-            // Rain, cursed fire, and fire from the ground
-            if (npc.Infernum().ExtraAI[0] == 6f)
-            {
-                npc.Infernum().ExtraAI[9] = 6f;
-                npc.velocity = Vector2.Zero;
-                if (npc.ai[0] == 0f)
-                {
-                    npc.alpha = 255;
-                    npc.ai[0] = 1f;
-                }
-                if (npc.alpha > 0)
-                {
-                    npc.alpha -= 9;
-                    if (npc.alpha <= 0)
-                    {
-                        // Roar
-                        npc.ai[1] = 1f;
-                        npc.alpha = 0;
-                    }
-                    npc.netUpdate = true;
-                }
-                else
-                {
-                    npc.ai[3] += 1f;
-                    if ((npc.ai[3] % 15 == 14f && !below20) ||
-                        (npc.ai[3] % 12 == 11f && below20))
-                    {
-                        Projectile.NewProjectile(player.Center + new Vector2(Main.rand.NextFloat(-400f, 400f), -570f + Main.rand.NextFloat(-35f, 35f)),
-                            Vector2.UnitY.RotatedByRandom(MathHelper.ToRadians(36f)) * 10f, InfernumMode.CalamityMod.ProjectileType("VileClot"),
-                            16, 1f);
-                    }
-                    if ((npc.ai[3] % 45 == 44f && !below20) ||
-                        (npc.ai[3] % 35 == 34f && below20))
-                    {
-                        Projectile.NewProjectile(player.Center + new Vector2(Main.rand.NextFloat(-400f, 400f), -570f + Main.rand.NextFloat(-35f, 35f)),
-                            Vector2.Zero, InfernumMode.CalamityMod.ProjectileType("ShadeNimbusHostile"),
-                            16, 1f);
-                    }
-
-                    if ((int)npc.ai[3] == 160f)
-                        npc.Infernum().ExtraAI[12] = (below20 ? 4f : 3f) * 60f;
-                    if (npc.ai[3] >= 210f - (below20 ? 30f : 0f))
-                    {
-                        npc.Infernum().ExtraAI[0] = 0f;
-                    }
-                }
-            }
-            // Slow down
-            if (npc.Infernum().ExtraAI[0] == 7f)
-            {
-                npc.Infernum().ExtraAI[9] = 7f;
-                if (npc.alpha > 0)
-                {
-                    npc.alpha -= 17;
-                    if (npc.alpha < 0)
-                    {
-                        npc.alpha = 0;
-                    }
-                }
-                if (npc.Infernum().ExtraAI[4] > 0f)
-                {
-                    npc.velocity *= 0.92f;
-                    npc.Infernum().ExtraAI[4] -= 1f;
-                }
-                else
-                {
-                    // Go back to picking a new AI
-                    npc.Infernum().ExtraAI[0] = 0f;
-                }
-            }
-            // Blob sniping
-            if (npc.Infernum().ExtraAI[0] == 8f)
-            {
-                npc.Infernum().ExtraAI[9] = 8f;
-                npc.ai[0] += 1f;
-                npc.ai[3] += MathHelper.ToRadians(5f);
-                if ((int)npc.ai[0] == 120f)
-                {
-                    Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
-                    Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
-                    var explosionSound = Main.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
-                    if (explosionSound != null)
-                    {
-                        explosionSound.Volume = 0.2f;
-                        explosionSound.Pitch = -0.4f;
-                    }
-                }
-
-                if (npc.ai[0] > 120f && npc.ai[0] % 60f > 30f)
-                {
-                    npc.velocity *= 0.95f;
-                    if (npc.ai[0] % 60f == 55f)
-                    {
-                        for (int i = 0; i < 6; i++)
-                        {
-                            float offsetAngle = i == 0 ? 0f : Main.rand.NextFloat(-0.53f, 0.53f);
-                            float shootSpeed = i == 0f ? 14f : Main.rand.NextFloat(7.75f, 11f);
-                            if (lifeRatio < 0.25f)
-                                shootSpeed *= 1.35f;
-                            Projectile.NewProjectile(npc.Center, npc.DirectionTo(player.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 16, 0f);
-                        }
-                        Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
-                    }
-                }
-                else
-                {
-                    npc.SimpleFlyMovement((npc.velocity * 7f + npc.DirectionTo(player.Center + npc.ai[3].ToRotationVector2() * 300f) * 15f) / 8f, 0.1f);
-                }
-                if (npc.ai[0] > 120f + 60f * 4f)
-                {
-                    // Go back to picking a new AI
-                    npc.Infernum().ExtraAI[4] = slowdownTime;
-                    npc.Infernum().ExtraAI[0] = 7f;
-                }
-            }
-
-            // Roar
-            if (npc.ai[1] == 1f)
-            {
-                for (int i = 0; i < 72; i++)
-                {
-                    float angle = MathHelper.TwoPi / 72f * i;
-                    int idx = Dust.NewDust(npc.Center, 1, 1, 157, (float)Math.Cos(angle) * 15f, (float)Math.Sin(angle) * 15f);
-                    Main.dust[idx].noGravity = true;
-                }
-                Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
-                npc.ai[1] = 0f;
-            }
-
-            // Weird roar
-            if (npc.ai[2] == 1f)
-            {
-                Main.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
-                npc.ai[2] = 0f;
-            }
-
-            // For afterimage
-            if (npc.Infernum().ExtraAI[6] <= 0f ||
-                (npc.Infernum().ExtraAI[0] >= 4 &&
-                npc.Infernum().ExtraAI[0] <= 7) ||
-                below20 ||
-                npc.Infernum().ExtraAI[6] > 0f)
-            {
-                npc.Infernum().ExtraAI[7] += 0.14f;
-            }
             return false;
+        }
+
+        public static void DoBehavior_SuspensionStateDrift(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            float driftTime = lifeRatio < 0.2 ? 75f : 150f;
+            bool fadingAway = attackTimer > driftTime - 24f;
+
+            npc.alpha = Utils.Clamp(npc.alpha + fadingAway.ToInt() * 9, 0, 255);
+            npc.dontTakeDamage = fadingAway;
+
+            // Reset knockback resistance.
+            if (npc.knockBackResist == 0f)
+                npc.knockBackResist = 1f;
+
+            // Fly off if hit and accelerate.
+            ref float hasBeenHitFlag = ref npc.Infernum().ExtraAI[13];
+            if (npc.justHit && attackTimer < driftTime - 24f)
+            {
+                DoRoar(npc, true);
+                hasBeenHitFlag = 1f;
+                attackTimer = driftTime - 20f;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * -8.5f;
+
+                npc.netUpdate = true;
+            }
+            if (hasBeenHitFlag == 1f)
+                npc.velocity *= 1.06f;
+            else
+            {
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 7f;
+                if (npc.WithinRange(target.Center, 15f))
+                {
+                    npc.velocity = Vector2.Zero;
+                    npc.Center = target.Center;
+                }
+            }
+
+            if (attackTimer >= driftTime)
+            {
+                // Remove knockback again after going back to the attacking.
+                npc.knockBackResist = 0f;
+
+                HiveMindP2AttackState nextAttack = (HiveMindP2AttackState)(int)npc.Infernum().ExtraAI[5];
+                bool shouldBecomeInvisible =
+                    nextAttack == HiveMindP2AttackState.NPCSpawnArc ||
+                    nextAttack == HiveMindP2AttackState.SpinLunge ||
+                    nextAttack == HiveMindP2AttackState.CloudDash ||
+                    nextAttack == HiveMindP2AttackState.UndergroundFlameDash ||
+                    nextAttack == HiveMindP2AttackState.EaterOfSoulsWall || 
+                    nextAttack == HiveMindP2AttackState.CursedRain;
+                if (shouldBecomeInvisible)
+                {
+                    if (nextAttack == HiveMindP2AttackState.EaterOfSoulsWall || nextAttack == HiveMindP2AttackState.CursedRain)
+                        npc.Center = target.Center - Vector2.UnitY * 350f;
+
+                    npc.alpha = 255;
+                }
+                else
+                    npc.alpha = 0;
+
+                npc.Infernum().ExtraAI[0] = (int)nextAttack;
+                hasBeenHitFlag = 0f;
+                npc.dontTakeDamage = false;
+                npc.velocity *= 0.05f;
+                npc.netUpdate = true;
+            }
+            attackTimer++;
+        }
+        
+        public static void DoBehavior_ResetAI(NPC npc, float lifeRatio)
+        {
+            npc.TargetClosest(false);
+
+            HiveMindP2AttackState nextAttack;
+            HiveMindP2AttackState previousAttack = (HiveMindP2AttackState)(int)npc.Infernum().ExtraAI[9];
+            do
+            {
+                nextAttack = Utils.SelectRandom(Main.rand,
+                    lifeRatio < 0.8f ? HiveMindP2AttackState.EaterOfSoulsWall : HiveMindP2AttackState.NPCSpawnArc,
+                    lifeRatio < 0.6f ? HiveMindP2AttackState.UndergroundFlameDash : HiveMindP2AttackState.SpinLunge,
+                    lifeRatio < 0.4f ? HiveMindP2AttackState.CursedRain : HiveMindP2AttackState.CloudDash);
+            }
+            while (nextAttack == previousAttack);
+
+            if (lifeRatio < 0.2f && Main.rand.NextBool(4) && previousAttack != HiveMindP2AttackState.BlobSniping)
+                nextAttack = HiveMindP2AttackState.BlobSniping;
+
+            // Reset things.
+            npc.ai = new float[] { 0f, 0f, 0f, 0f };
+            npc.Infernum().ExtraAI[0] = -1f;
+            npc.Infernum().ExtraAI[1] = npc.Infernum().ExtraAI[2] = npc.Infernum().ExtraAI[3] = 0f;
+            npc.Infernum().ExtraAI[5] = (int)nextAttack;
+            npc.netUpdate = true;
+        }
+
+        public static void DoBehavior_NPCSpawnArc(NPC npc, Player target, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
+        {
+            int spawnCount = 6;
+            ref float hasFadedInFlag = ref npc.ai[1];
+            ref float spinDirection = ref npc.Infernum().ExtraAI[1];
+            ref float spawnedEnemyCount = ref npc.Infernum().ExtraAI[2];
+
+            // Delare the previous attack for later.
+            npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
+
+            if (npc.alpha >= 0 && hasFadedInFlag == 0f)
+            {
+                npc.alpha -= 7;
+                npc.Center = target.Center + Vector2.UnitY * SpinRadius;
+                npc.velocity = Vector2.Zero;
+                if (npc.alpha <= 0f)
+                {
+                    DoRoar(npc, false);
+                    fadeoutCountdown = HiveMindFadeoutTime;
+                    spinDirection = Main.rand.NextBool(2).ToDirectionInt();
+                    npc.velocity = Vector2.UnitX * MathHelper.Pi * SpinRadius / NPCSpawnArcSpinTime * spinDirection;
+                    npc.alpha = 0;
+                    hasFadedInFlag = 1f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Do the spin.
+            if (hasFadedInFlag == 1f)
+            {
+                npc.velocity = npc.velocity.RotatedBy(NPCSpawnArcRotationalOffset * -spinDirection);
+                if (attackTimer % (int)Math.Ceiling(NPCSpawnArcSpinTime / spawnCount) == (int)Math.Ceiling(NPCSpawnArcSpinTime / spawnCount) - 1)
+                {
+                    spawnedEnemyCount++;
+
+                    // Spawn things if nothing is in the way of the target.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && Collision.CanHit(npc.Center, 1, 1, target.position, target.width, target.height))
+                    {
+                        if (spawnedEnemyCount == 2 || spawnedEnemyCount == 4)
+                        {
+                            if (!NPC.AnyNPCs(ModContent.NPCType<DarkHeart>()))
+                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkHeart>());
+                        }
+                        else if (NPC.CountNPCS(NPCID.EaterofSouls) < 2)
+                            NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofSouls);
+                    }
+
+                    // Reset to the slowdown state in preparation for the next attack.
+                    if (spawnedEnemyCount >= spawnCount)
+                    {
+                        slowdownCountdown = MaxSlowdownTime;
+                        npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SlowDown;
+                        npc.netUpdate = true;
+                    }
+                }
+            }
+            attackTimer++;
+        }
+
+        public static void DoBehavior_SpinLunge(NPC npc, Player target, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
+        {
+            ref float spinDirection = ref npc.Infernum().ExtraAI[1];
+            ref float spinIncrement = ref npc.Infernum().ExtraAI[2];
+
+            // Delare the previous attack for later.
+            npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
+
+            if (npc.ai[0] == 0f)
+            {
+                fadeoutCountdown = HiveMindFadeoutTime;
+
+                npc.velocity = Vector2.Zero;
+                npc.alpha = 255;
+                npc.Center = target.Center + Vector2.UnitY * SpinRadius;
+                npc.ai[0] = 1f;
+            }
+
+            attackTimer++;
+            npc.alpha = Utils.Clamp(npc.alpha - 24, 0, 255);
+            spinIncrement += (float)Math.Pow(Utils.InverseLerp(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer, true), 2D);
+
+            // Decide the spin direction if it has yet to be.
+            while (spinDirection == 0f)
+                spinDirection = Main.rand.NextBool(2).ToDirectionInt();
+
+            // Lunge.
+            if (attackTimer == LungeSpinTime + LungeSpinChargeDelay)
+            {
+                DoRoar(npc, false);
+                npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 4f;
+                fadeoutCountdown = HiveMindFadeoutTime;
+                npc.netUpdate = true;
+            }
+
+            // Do the spin.
+            else if (attackTimer < LungeSpinTime + LungeSpinChargeDelay)
+            {
+                npc.velocity = Vector2.Zero;
+                npc.Center = target.Center + Vector2.UnitY.RotatedBy(MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / LungeSpinTime) * SpinRadius;
+            }
+
+            // Reset to the slowdown state in preparation for the next attack.
+            if (attackTimer > LungeSpinTime + LungeSpinChargeTime + LungeSpinChargeDelay * 0.45f)
+            {
+                slowdownCountdown = MaxSlowdownTime;
+                npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SlowDown;
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_CloudDash(NPC npc, Player target, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
+        {
+            if (lifeRatio < 0.4f)
+            {
+                npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.CursedRain;
+                npc.netUpdate = true;
+                return;
+            }
+
+            ref float cloudSummonCounter = ref npc.Infernum().ExtraAI[1];
+            ref float dashDirection = ref npc.Infernum().ExtraAI[2];
+
+            // Delare the previous attack for later.
+            npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
+
+            // Initialize by becoming invisible initially.
+            if (npc.ai[0] == 0f)
+            {
+                npc.alpha = 255;
+                npc.ai[0] = 1f;
+            }
+
+            attackTimer++;
+
+            if (npc.alpha > 0)
+            {
+                npc.alpha -= 5;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    npc.Center = target.Center;
+                    while (dashDirection == 0f)
+                        dashDirection = Main.rand.NextBool(2).ToDirectionInt();
+
+                    npc.position.Y -= RainDashOffset;
+                    npc.position.X += RainDashOffset * dashDirection;
+                }
+                if (npc.alpha <= 0)
+                {
+                    DoRoar(npc, true);
+                    npc.velocity = Vector2.UnitX * dashDirection * -11f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Release various clouds.
+            else if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 2 == 0f)
+            {
+                Vector2 cloudSpawnPosition = npc.Center + new Vector2(Main.rand.NextFloatDirection(), Main.rand.NextFloatDirection()) * npc.Size * 0.5f;
+                int cloud = Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 64, 0, Main.myPlayer, 11, 0);
+                if (!Main.projectile.IndexInRange(cloud))
+                {
+                    Main.projectile[cloud].ai[0] = 11f;
+                    Main.projectile[cloud].netUpdate = true;
+                }
+                cloudSummonCounter++;
+            }
+
+            // Reset to the slowdown state in preparation for the next attack.
+            if (cloudSummonCounter >= 10f)
+            {
+                npc.alpha = 255;
+                dashDirection *= -1f;
+                slowdownCountdown = MaxSlowdownTime / 2;
+                npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SlowDown;
+                npc.netUpdate = true;
+            }
+
+            // Release rain.
+            Vector2 rainSpawnPosition = npc.position + new Vector2(Main.rand.NextFloat(14f, npc.width - 14f), npc.height + 4f);
+            Utilities.NewProjectileBetter(rainSpawnPosition, Vector2.UnitY * 6f, ModContent.ProjectileType<ShaderainHostile>(), 72, 0f, Main.myPlayer, 0f, 0f);
+        }
+
+        public static void DoBehavior_EaterWall(NPC npc, Player target, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
+        {
+            ref float verticalSpawnOffset = ref npc.Infernum().ExtraAI[1];
+
+            // Delare the previous attack for later.
+            npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
+
+            // Fade in.
+            npc.alpha = Utils.Clamp(npc.alpha - 24, 0, 255);
+
+            // Initialize by rising upward.
+            if (npc.ai[0] == 0f)
+            {
+                npc.velocity = Vector2.UnitY * -12f;
+                npc.ai[0] = 1f;
+                npc.netUpdate = true;
+            }
+
+            attackTimer++;
+
+            // Slow down after the initial rise.
+            if (npc.ai[3] < EaterWallSlowdownTime)
+                npc.velocity *= 0.95f;
+
+            // Roar and prepare for the wall.
+            else if (npc.ai[3] == EaterWallSlowdownTime)
+            {
+                DoRoar(npc, false);
+                npc.velocity = Vector2.Zero;
+                verticalSpawnOffset = Main.rand.NextFloat(35f);
+                npc.netUpdate = true;
+            }
+
+            // And release the Eater of Souls wall.
+            else
+            {
+                verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < 0.2f ? 3.4f : 4.15f);
+
+                Vector2 wallSpawnOffset = new Vector2(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
+                Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < 0.2f ? MathHelper.ToRadians(10f) : 0f) * 10f;
+                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<EaterOfSouls>(), 70, 1f);
+                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(-1f, 1f), wallVelocity * new Vector2(-1f, 1f), ModContent.ProjectileType<EaterOfSouls>(), 70, 1f);
+
+                // Reset to the slowdown state in preparation for the next attack.
+                if (npc.ai[3] > EaterWallSlowdownTime + EaterWallSummoningTime)
+                {
+                    npc.alpha = 255;
+                    slowdownCountdown = MaxSlowdownTime / 2;
+                    npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SlowDown;
+                    npc.netUpdate = true;
+                }
+            }
+        }
+
+        public static void DoBehavior_UndergroundFlameDash(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            ref float dashDirection = ref npc.Infernum().ExtraAI[1];
+            ref float initializedFlag = ref npc.Infernum().ExtraAI[2];
+
+            // Delare the previous attack for later.
+            npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
+
+            if (initializedFlag == 0f)
+            {
+                npc.velocity = Vector2.Zero;
+                dashDirection = Main.rand.NextBool(2).ToDirectionInt();
+
+                float horizontalTeleportOffset = MathHelper.Lerp(600f, 440f, 1f - lifeRatio);
+                if (lifeRatio < 0.2f)
+                    horizontalTeleportOffset -= 100f;
+
+                npc.position = target.Center + new Vector2(horizontalTeleportOffset * -dashDirection, 350f);
+                initializedFlag = 1f;
+                npc.netUpdate = true;
+            }
+
+            float waitTime = lifeRatio < 0.2f ? 96f : 75f;
+            float moveTime = lifeRatio < 0.2f ? 50f : 90f;
+            float dashSpeed = lifeRatio < 0.2f ? 21f : 19f;
+
+            npc.alpha = Utils.Clamp(npc.alpha - 36, 0, 255);
+
+            // Constantly shoot shade flames upward.
+            if (npc.alpha <= 0)
+                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -7.4f, ModContent.ProjectileType<ShadeFire>(), 68, 0f);
+
+            attackTimer++;
+
+            // Roar and dash.
+            if (attackTimer == waitTime)
+            {
+                DoRoar(npc, false);
+                npc.velocity = Vector2.UnitX * dashDirection * dashSpeed;
+                npc.netUpdate = true;
+            }
+
+            // Release clots upward if below the necessary phase threshold.
+            if (attackTimer > waitTime && lifeRatio < 0.2f && attackTimer % 10f == 9f)
+            {
+                int vileClot = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(7f, 5.25f), ModContent.ProjectileType<VileClot>(), 68, 0f);
+                Main.projectile[vileClot].tileCollide = false;
+            }
+
+            // Reset to the slowdown state in preparation for the next attack.
+            if (attackTimer == waitTime + moveTime)
+                npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SlowDown;
+        }
+
+        public static void DoBehavior_CursedRain(NPC npc, Player target, float lifeRatio, ref float flameColumnCountdown, ref float attackTimer)
+        {
+            ref float initializedFlag = ref npc.Infernum().ExtraAI[2];
+
+            // Delare the previous attack for later.
+            npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
+
+            npc.velocity = Vector2.Zero;
+
+            // Initialize by becoming invisible.
+            if (initializedFlag == 0f)
+            {
+                npc.alpha = 255;
+                initializedFlag = 1f;
+            }
+
+            if (npc.alpha > 0)
+            {
+                npc.alpha -= 9;
+                if (npc.alpha <= 0)
+                {
+                    DoRoar(npc, false);
+                    npc.alpha = 0;
+                }
+                npc.netUpdate = true;
+            }
+            else
+            {
+                attackTimer++;
+
+                int clotSpawnRate = lifeRatio < 0.2f ? 12 : 15;
+                int cloudSpawnRate = lifeRatio < 0.2f ? 35 : 45;
+                int attackTime = lifeRatio < 0.2f ? 180 : 210;
+
+                // Release clouds and clots.
+                if (npc.ai[3] % clotSpawnRate == clotSpawnRate - 1f)
+                {
+                    Vector2 clotSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 400f, Main.rand.NextFloat(-605f, -545f));
+                    Vector2 clotVelocity = Vector2.UnitY.RotatedByRandom(MathHelper.ToRadians(36f)) * 10f;
+                    Utilities.NewProjectileBetter(clotSpawnPosition, clotVelocity, ModContent.ProjectileType<VileClot>(), 64, 1f);
+                }
+                if (npc.ai[3] % cloudSpawnRate == cloudSpawnRate - 1f)
+                {
+                    Vector2 cloudSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 400f, Main.rand.NextFloat(-605f, -545f));
+                    Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 64, 1f);
+                }
+
+                // Make flame columns appear.
+                if ((int)attackTimer == 160f)
+                {
+                    flameColumnCountdown = (lifeRatio < 0.2f ? 4f : 3f) * 60f;
+                    npc.netUpdate = true;
+                }
+
+                if (attackTimer >= attackTime)
+                    npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.Reset;
+            }
+        }
+
+        public static void DoBehavior_SlowDown(NPC npc, ref float slowdownCountdown)
+        {
+            // Fade in and decelerate.
+            npc.alpha = Utils.Clamp(npc.alpha - 17, 0, 255);
+            if (slowdownCountdown > 0f)
+            {
+                npc.velocity *= 0.92f;
+                slowdownCountdown--;
+            }
+            else
+            {
+                // Go pick a new attack.
+                npc.Infernum().ExtraAI[0] = 0f;
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_BlobSniping(NPC npc, Player target, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
+        {
+            int blobShootRate = 60;
+            int blobShotCount = 4;
+            ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
+
+            // Delare the previous attack for later.
+            npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
+
+            attackTimer++;
+            hoverOffsetAngle += MathHelper.ToRadians(5f);
+            if ((int)attackTimer == 120f)
+            {
+                Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
+                Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
+                var explosionSound = Main.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
+                if (explosionSound != null)
+                {
+                    explosionSound.Volume = 0.2f;
+                    explosionSound.Pitch = -0.4f;
+                }
+            }
+
+            // Release a bunch of blobs.
+            if (attackTimer > 120f && attackTimer % blobShootRate > blobShootRate / 2)
+            {
+                npc.velocity *= 0.95f;
+                if (attackTimer % blobShootRate == blobShootRate - 5f)
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        float offsetAngle = i == 0 ? 0f : Main.rand.NextFloat(-0.53f, 0.53f);
+                        float shootSpeed = i == 0f ? 14f : Main.rand.NextFloat(7.75f, 11f);
+                        if (lifeRatio < 0.25f)
+                            shootSpeed *= 1.35f;
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 72, 0f);
+                    }
+                    Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
+                }
+            }
+            else
+                npc.SimpleFlyMovement((npc.velocity * 7f + npc.SafeDirectionTo(target.Center + hoverOffsetAngle.ToRotationVector2() * 300f) * 15f) / 8f, 0.1f);
+
+            if (attackTimer > 120f + blobShootRate * blobShotCount)
+            {
+                // Go back to picking a new AI
+                slowdownCountdown = MaxSlowdownTime;
+                npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SlowDown;
+            }
+        }
+
+        public static void DoRoar(NPC npc, bool highPitched)
+        {
+            if (highPitched)
+            {
+                Main.PlaySound(SoundID.ForceRoar, npc.Center, -1);
+                return;
+            }
+
+            for (int i = 0; i < 72; i++)
+            {
+                float angle = MathHelper.TwoPi / 72f * i;
+                Dust fire = Dust.NewDustDirect(npc.Center, 1, 1, 157, (float)Math.Cos(angle) * 15f, (float)Math.Sin(angle) * 15f);
+                fire.noGravity = true;
+            }
+            Main.PlaySound(SoundID.Roar, npc.Center, 0);
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -573,30 +704,32 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                     npc.frame, drawColor, npc.rotation, npc.frame.Size() / 2f, scale, SpriteEffects.None, 0f);
             }
 
+            Vector2 baseDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
+
             // If performing the blob snipe attack
             if (npc.Infernum().ExtraAI[0] == 8f)
             {
                 spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY),
                     npc.frame, Color.White, npc.rotation, npc.frame.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
             }
+
             // If in the middle of a special attack (such as the Eater of Soul wall), or in the middle of its invincibility period after
-            // going below 20% life
-            if (npc.Infernum().ExtraAI[0] >= 4f ||
-                npc.Infernum().ExtraAI[11] > 0f)
+            // going below 20% life.
+            if (npc.Infernum().ExtraAI[0] >= 4f || npc.Infernum().ExtraAI[11] > 0f)
             {
-                spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY),
-                    npc.frame, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity), npc.rotation, npc.frame.Size() / 2f, Utilities.AngularSmoothstep(npc.Infernum().ExtraAI[7], 1f, 1.5f), SpriteEffects.None, 0f);
+                spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), baseDrawPosition, npc.frame, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, npc.frame.Size() / 2f, Utilities.AngularSmoothstep(npc.Infernum().ExtraAI[7], 1f, 1.5f), SpriteEffects.None, 0f);
                 npc.Infernum().ExtraAI[6] = HiveMindFadeoutTime;
             }
+
             // If fadeout timer is greater than 0
             else if (npc.Infernum().ExtraAI[6] > 0f)
             {
                 float scale = npc.Infernum().ExtraAI[6] / HiveMindFadeoutTime / Utilities.AngularSmoothstep(npc.Infernum().ExtraAI[7], 1f, 1.5f);
-                spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY), npc.frame, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity), npc.rotation, npc.frame.Size() / 2f, MathHelper.Clamp(scale, 1f, 1000f), SpriteEffects.None, 0f);
+                spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), baseDrawPosition, npc.frame, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, npc.frame.Size() / 2f, MathHelper.Clamp(scale, 1f, 1000f), SpriteEffects.None, 0f);
                 npc.Infernum().ExtraAI[6] -= 1f;
             }
 
-            spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY), npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), baseDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
 
             return false;
         }

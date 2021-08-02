@@ -19,7 +19,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
         public override void SetDefaults()
         {
             projectile.width = 36;
-            projectile.height = 54;
+            projectile.height = 44;
             projectile.ignoreWater = true;
             projectile.timeLeft = 490;
             projectile.scale = 1f;

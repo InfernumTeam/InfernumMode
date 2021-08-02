@@ -30,6 +30,8 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 
         #region AI
 
+        public const float Phase2LifeRatio = 0.75f;
+
         public override bool PreAI(NPC npc)
         {
             // Give a visual offset to the boss.
@@ -60,7 +62,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             ref float attackTimer = ref npc.ai[1];
             ref float hasSummonedClumpFlag = ref npc.ai[3];
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedClumpFlag == 0f && lifeRatio < 0.65f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedClumpFlag == 0f && lifeRatio < Phase2LifeRatio)
             {
                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(25f, 25f);
                 NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
@@ -130,17 +132,17 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float jumpSpeed = MathHelper.Lerp(12f, 17.25f, 1f - lifeRatio);
-            float extraGravity = MathHelper.Lerp(0f, 0.325f, 1f - lifeRatio);
+            float jumpSpeed = MathHelper.Lerp(13.5f, 18.75f, 1f - lifeRatio);
+            float extraGravity = MathHelper.Lerp(0f, 0.375f, 1f - lifeRatio);
             float jumpAngularImprecision = MathHelper.Lerp(0.15f, 0f, Utils.InverseLerp(0f, 0.7f, 1f - lifeRatio));
 
             jumpSpeed += MathHelper.Clamp((npc.Top.Y - target.Top.Y) * 0.02f, 0f, 12f);
 
             if (enraged)
             {
-                extraGravity += 0.1f;
+                extraGravity += 0.125f;
                 jumpSpeed += 2.5f;
-                jumpAngularImprecision *= 0.33f;
+                jumpAngularImprecision *= 0.25f;
             }
 
             ref float hasJumpedFlag = ref npc.Infernum().ExtraAI[0];
@@ -148,7 +150,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.velocity.Y == 0f && hasJumpedFlag == 0f)
             {
                 npc.position.Y -= 16f;
-                npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, target.Center, extraGravity + 0.3f, jumpSpeed, out _);
+                npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, target.Center + target.velocity * 10f, extraGravity + 0.3f, jumpSpeed, out _);
                 npc.velocity = npc.velocity.RotatedByRandom(jumpAngularImprecision);
                 hasJumpedFlag = 1f;
 
@@ -184,7 +186,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 
                         // Optionally, if below a certain life ratio or enraged, release mushrooms into the air.
                         bool tooManyShrooms = NPC.CountNPCS(ModContent.NPCType<CrabShroom>()) > 10;
-                        if (Main.netMode != NetmodeID.MultiplayerClient && (lifeRatio < 0.65f || enraged))
+                        if (Main.netMode != NetmodeID.MultiplayerClient && (lifeRatio < Phase2LifeRatio || enraged))
                         {
                             for (int i = 0; i < 2; i++)
                             {
@@ -216,14 +218,14 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float walkSpeed = MathHelper.Lerp(1.4f, 2.8f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(1.9f, 3f, 1f - lifeRatio);
             if (enraged)
-                walkSpeed += 0.45f;
+                walkSpeed += 1.05f;
             walkSpeed += horizontalDistanceFromTarget * 0.004f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 
             // Release spores into the air after a specific life ratio is passed.
-            if (lifeRatio < 0.65f)
+            if (lifeRatio < Phase2LifeRatio)
 			{
                 bool canShoot = attackTimer % 120f >= 80f && attackTimer % 8f == 7f;
                 shouldSlowDown = attackTimer % 120f >= 60f;
@@ -274,7 +276,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 75f)
 			{
-                for (float dx = -1000f; dx < 1000f; dx += enraged ? 300f : 400f)
+                for (float dx = -1000f; dx < 1000f; dx += enraged ? 250f : 360f)
                 {
                     Vector2 spawnPosition = target.Bottom + Vector2.UnitX * dx;
                     Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), 50, 0f);
@@ -300,7 +302,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                     break;
                 case CrabulonAttackState.WalkToTarget:
                     newAttackState = CrabulonAttackState.JumpToTarget;
-                    if (lifeRatio < 0.65f && Main.rand.NextFloat() < 0.45f)
+                    if (lifeRatio < Phase2LifeRatio && Main.rand.NextFloat() < 0.45f)
                         newAttackState = CrabulonAttackState.CreateGroundMushrooms;
                     break;
                 case CrabulonAttackState.CreateGroundMushrooms:

@@ -21,6 +21,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
         public ref float KatanaUseTimer => ref npc.Infernum().ExtraAI[0];
         public ref float KatanaUseLength => ref npc.Infernum().ExtraAI[1];
         public ref float KatanaRotation => ref npc.Infernum().ExtraAI[2];
+        public ref float AttackDelayFuckYou => ref npc.Infernum().ExtraAI[3];
         public ref float StuckTimer => ref npc.localAI[0];
         public override void SetStaticDefaults()
         {
@@ -60,6 +61,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 			}
 
             npc.damage = npc.defDamage;
+            AttackDelayFuckYou++;
 
             if (MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 2f)
                 StuckTimer += 2f;
@@ -135,9 +137,8 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 DoRunEffects();
 
             // Teleport if far from the target or it is typically possible to do so.
-            bool canDashTeleport = Time % 360f == 359f && Collision.CanHit(npc.Center, 2, 2, npc.Center + Vector2.UnitX * npc.spriteDirection * 80f, 2, 2);
-            canDashTeleport |= !npc.WithinRange(Target.Center, 540f) || StuckTimer >= 150f;
-            canDashTeleport &= onSolidGround || StuckTimer >= 150f;
+            bool anythingInWay = Collision.CanHit(npc.Center, 2, 2, npc.Center + Vector2.UnitX * npc.spriteDirection * 80f, 2, 2);
+            bool canDashTeleport = ((Time % 360f == 359f && anythingInWay) || !npc.WithinRange(Target.Center, 540f) || StuckTimer >= 150f) && AttackDelayFuckYou > 300f;
 
             if (TeleportCountdown > 0f)
             {
@@ -149,7 +150,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             if (KatanaUseTimer < 50f && onSolidGround)
                 KatanaUseTimer = 0f;
 
-            if (npc.WithinRange(Target.Center, 220f) && KatanaUseTimer <= 0f && onSolidGround)
+            if (npc.WithinRange(Target.Center, 220f) && KatanaUseTimer <= 0f && AttackDelayFuckYou > 300f && onSolidGround)
             {
                 npc.spriteDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * 8f;
@@ -261,15 +262,29 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             {
                 Vector2 teleportPoint = Vector2.Zero;
 
-                Vector2 top = Target.Center - Vector2.UnitY * 800f;
+                Vector2 top = Target.Center - Vector2.UnitY * 400f;
                 if (top.Y < 100f)
                     top.Y = 100f;
 
                 CurrentTeleportDirection *= -1f;
                 npc.spriteDirection = (int)CurrentTeleportDirection;
 
-                WorldUtils.Find(top.ToTileCoordinates(), Searches.Chain(new Searches.Down(400), new Conditions.IsSolid()), out Point ground);
-                Vector2 groundedTargetPosition = ground.ToWorldCoordinates();
+                int downwardMove = 0;
+                while (true)
+                {
+                    downwardMove++;
+                    if (WorldGen.SolidTile((int)top.X / 16, (int)top.Y / 16))
+                        break;
+                    if (Framing.GetTileSafely((int)top.X / 16, (int)top.Y / 16).active() && Main.tileSolidTop[Framing.GetTileSafely((int)top.X / 16, (int)top.Y / 16).type])
+                        break;
+
+                    top.Y += 16f;
+                    downwardMove++;
+                    if (downwardMove > 600)
+                        break;
+                }
+
+                Vector2 groundedTargetPosition = top - Vector2.UnitY * 8f;
 
                 for (int tries = 0; tries < 10000; tries++)
                 {
@@ -298,10 +313,11 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 
                     // Or if there's no ground near the position.
                     Point teleportPointTileBottom = potentialSpawnPoint.ToTileCoordinates();
-                    if (!WorldGen.SolidTile(teleportPointTileBottom.X, teleportPointTileBottom.Y + 1))
+                    bool activeSolidTop = Main.tileSolidTop[Framing.GetTileSafely(teleportPointTileBottom.X, teleportPointTileBottom.Y).type] && Framing.GetTileSafely(teleportPointTileBottom.X, teleportPointTileBottom.Y).active();
+                    if (!WorldGen.SolidTile(teleportPointTileBottom.X, teleportPointTileBottom.Y + 1) && !activeSolidTop)
                         continue;
 
-                    teleportPoint = potentialSpawnPoint.ToTileCoordinates().ToWorldCoordinates(8, -8);
+                    teleportPoint = potentialSpawnPoint.ToTileCoordinates().ToWorldCoordinates(8f, -20f);
                     break;
                 }
 

@@ -22,7 +22,7 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
             npc.damage = 40;
             npc.height = npc.width = 28;
             npc.defense = 2;
-            npc.lifeMax = 8;
+            npc.lifeMax = 40;
             npc.aiStyle = -1;
             aiType = -1;
             npc.alpha = 255;

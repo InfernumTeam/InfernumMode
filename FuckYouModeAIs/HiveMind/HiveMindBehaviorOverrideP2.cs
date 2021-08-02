@@ -40,7 +40,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool below20 = lifeRatio < 0.2f || npc.Infernum().ExtraAI[10] == 1f;
             Player player = Main.player[npc.target];
-            npc.defense = player.ZoneCorrupt ? 5 : 9999;
+            npc.defense = player.ZoneCorrupt ? 4 : 9999;
             CalamityGlobalNPC.hiveMind = npc.whoAmI;
             if (npc.Infernum().angleTarget == null)
             {
@@ -70,7 +70,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 {
                     npc.ai[1] = 1f;
                 }
-                npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.5f, 1f - npc.Infernum().ExtraAI[11] / 300f);
+                npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - npc.Infernum().ExtraAI[11] / 300f);
                 npc.Infernum().ExtraAI[11] -= 1f;
                 npc.velocity *= 0.94f;
                 npc.defense = 9999;
@@ -96,17 +96,12 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             {
                 npc.ai[0] += 1f;
                 float driftTime = lifeRatio < 0.2 ? 30f : 90f;
-                if (npc.alpha > 0)
-                {
-                    npc.alpha -= 9;
-                    if (npc.alpha <= 0f)
-                    {
-                        npc.alpha = 0;
-                    }
-                }
+                npc.alpha = Utils.Clamp(npc.alpha + (npc.Infernum().ExtraAI[13] == 1f).ToInt() * 11, 0, 255);
+                if (npc.Infernum().ExtraAI[13] == 1f)
+                    npc.velocity *= 1.04f;
                 if (npc.ai[0] == 1f)
                 {
-                    npc.velocity = npc.DirectionTo(player.Center) * 4f;
+                    npc.velocity = npc.DirectionTo(player.Center) * 7f;
                 }
                 if (npc.knockBackResist == 0f)
                 {
@@ -114,8 +109,10 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 }
                 if (npc.justHit && npc.ai[0] < driftTime - 15f)
                 {
-                    npc.ai[0] = driftTime - 15f;
+                    npc.ai[0] = driftTime - 20f;
                     npc.ai[2] = 1f;
+                    npc.velocity = npc.SafeDirectionTo(player.Center) * -4f;
+                    npc.Infernum().ExtraAI[13] = 1f;
                 }
                 if (npc.ai[0] > driftTime)
                 {
@@ -130,7 +127,10 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                         }
                         npc.alpha = 255;
                     }
+                    else
+                        npc.alpha = 0;
                     npc.Infernum().ExtraAI[0] = npc.Infernum().ExtraAI[5];
+                    npc.Infernum().ExtraAI[13] = 0f;
                 }
             }
 
@@ -596,7 +596,9 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 npc.Infernum().ExtraAI[6] -= 1f;
             }
 
-            return true;
+            spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY), npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
+
+            return false;
         }
     }
 }

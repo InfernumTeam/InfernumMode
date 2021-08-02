@@ -100,8 +100,11 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             npc.Calamity().newAI[3] = spawnAnimationTime;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool phase2 = lifeRatio < 0.6f;
+            bool anahitaFightingToo = lifeRatio < 0.6f;
             bool sirenAlive = Main.npc.IndexInRange(CalamityGlobalNPC.siren) && Main.npc[CalamityGlobalNPC.siren].active;
+            bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400);
+
+            npc.dontTakeDamage = outOfOcean;
 
             if (spawnAnimationTime < 180f)
             {
@@ -137,7 +140,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 
                 npc.ai[3]++;
 
-                LeviathanAttackType[] patternToUse = phase2 ? Phase2AttackPattern : Phase1AttackPattern;
+                LeviathanAttackType[] patternToUse = (anahitaFightingToo || outOfOcean) ? Phase2AttackPattern : Phase1AttackPattern;
                 LeviathanAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
 
                 // Going to the next AI state.
@@ -151,6 +154,12 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                 {
                     npc.Infernum().ExtraAI[i] = 0f;
                 }
+            }
+
+            if (outOfOcean && (LeviathanAttackType)(int)npc.ai[1] != LeviathanAttackType.Charge)
+            {
+                goToNextAIState();
+                return false;
             }
 
             bool usingBelchFrames = npc.frame.X > 0 && npc.frame.Y <= 0;
@@ -183,17 +192,19 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                     npc.TargetClosest();
                     npc.spriteDirection = npc.direction;
 
+                    int shootDelay = sirenAlive ? 60 : 35;
+
                     destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 960f;
                     npc.SimpleFlyMovement(npc.DirectionTo(destination) * 10f, 0.2f);
 
-                    if (attackTimer >= 60f && attackTimer <= 95f && usingBelchFrames)
+                    if (attackTimer >= shootDelay && attackTimer <= shootDelay + 35f && usingBelchFrames)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             for (int i = 0; i < 20; i++)
                             {
                                 Vector2 bubbleVelocity = Vector2.UnitX.RotatedByRandom(0.3f) * npc.spriteDirection * Main.rand.NextFloat(7f, 11f);
-                                if (!sirenAlive)
+                                if (!sirenAlive || !anahitaFightingToo)
                                     bubbleVelocity *= 1.33f;
 
                                 int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, Main.rand.NextBool(2) ? ModContent.NPCType<RedirectingBubble>() : NPCID.DetonatingBubble);
@@ -207,10 +218,10 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                         }
 
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarMeteor"), npc.Center);
-                        attackTimer = 95f;
+                        attackTimer = shootDelay + 35f;
                     }
 
-                    if (attackTimer >= 95f && attackTimer <= 115f)
+                    if (attackTimer >= shootDelay + 35f && attackTimer <= shootDelay + 55f)
                         npc.frameCounter--;
 
                     if (attackTimer >= 130f)
@@ -220,6 +231,11 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                     int countedMinions = NPC.CountNPCS(ModContent.NPCType<Parasea>()) + NPC.CountNPCS(ModContent.NPCType<AquaticAberration>()) * 2;
                     int hoverTime = sirenAlive ? 90 : 45;
                     int slowdownTime = sirenAlive ? 60 : 30;
+                    if (!anahitaFightingToo)
+                    {
+                        hoverTime -= 8;
+                        slowdownTime -= 8;
+                    }
 
                     if (attackTimer < hoverTime)
                     {
@@ -282,11 +298,11 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                     npc.TargetClosest();
                     npc.spriteDirection = npc.direction;
 
-                    destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 1110f;
+                    destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * (anahitaFightingToo ? 1360f : 1110f);
                     npc.SimpleFlyMovement(npc.DirectionTo(destination) * 19f, 0.3f);
 
                     int vomitCount = 9;
-                    int vomitTime = 75;
+                    int vomitTime = anahitaFightingToo ? 65 : 75;
 
                     if (attackTimer % vomitTime >= 15f && attackTimer % vomitTime <= 50f && usingBelchFrames)
                     {
@@ -296,6 +312,8 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                             for (int i = 0; i < 3; i++)
                             {
                                 Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitX * npc.direction).RotatedBy(MathHelper.Lerp(-0.4f, 0.4f, i / 3f)) * 9f;
+                                if (!anahitaFightingToo)
+                                    shootVelocity *= 1.3f;
                                 Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanBomb>(), 150, 0f);
                             }
                         }
@@ -313,19 +331,32 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                 case LeviathanAttackType.Charge:
                     npc.TargetClosest();
 
-                    int redirectTime = 60;
-                    int chargeTime = 60;
+                    int redirectTime = sirenAlive ? 60 : 45;
+                    int chargeTime = sirenAlive ? 60 : 50;
+                    ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
+                    if (outOfOcean)
+                    {
+                        redirectTime = 50;
+                        chargeTime = 24;
+                        if (hoverOffsetAngle == 0f)
+                            hoverOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    }
+
                     if (attackTimer < redirectTime)
                     {
-                        destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 1000f;
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * 10f, 0.2f);
+                        destination = target.Center - Vector2.UnitX.RotatedBy(hoverOffsetAngle) * Math.Sign(target.Center.X - npc.Center.X) * 1000f;
+                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * (outOfOcean ? 23f : 10f), outOfOcean ? 0.55f : 0.2f);
                         npc.spriteDirection = npc.direction;
                     }
 
                     if (attackTimer == redirectTime)
                     {
-                        float chargeSpeed = sirenAlive ? 22f : 27f;
+                        float chargeSpeed = sirenAlive ? 23.5f : 32f;
+                        if (outOfOcean)
+                            chargeSpeed = 37f;
                         npc.velocity = Vector2.UnitX * npc.direction * chargeSpeed;
+                        if (outOfOcean)
+                            npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarCharge"), target.Center);
                     }
 

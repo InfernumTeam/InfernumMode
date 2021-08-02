@@ -24,12 +24,13 @@ namespace InfernumMode.FuckYouModeAIs.DukeFishron
             npc.aiStyle = aiType = -1;
             npc.damage = 70;
 			npc.width = npc.height = 36;
-            npc.dontTakeDamage = true;
-            npc.lifeMax = 5;
+            npc.lifeMax = 1300;
             npc.knockBackResist = 0f;
             npc.noGravity = true;
             npc.noTileCollide = true;
         }
+
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => npc.life = 1300;
 
         public override void AI()
         {

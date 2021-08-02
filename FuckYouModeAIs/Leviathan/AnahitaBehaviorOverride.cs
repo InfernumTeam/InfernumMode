@@ -35,6 +35,8 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             AnahitaAttackType.Singing,
             AnahitaAttackType.FloatTowardsPlayer,
             AnahitaAttackType.MistBubble,
+            AnahitaAttackType.FloatTowardsPlayer,
+            AnahitaAttackType.AtlantisCharge,
         };
 
         internal static readonly AnahitaAttackType[] Phase2AttackPattern = new AnahitaAttackType[]
@@ -43,12 +45,14 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             AnahitaAttackType.BubbleBurst,
             AnahitaAttackType.FloatTowardsPlayer,
             AnahitaAttackType.Singing,
+            AnahitaAttackType.AtlantisCharge,
             AnahitaAttackType.FloatTowardsPlayer,
             AnahitaAttackType.AtlantisCharge,
             AnahitaAttackType.FloatTowardsPlayer,
             AnahitaAttackType.MistBubble,
             AnahitaAttackType.FloatTowardsPlayer,
             AnahitaAttackType.BubbleBurst,
+            AnahitaAttackType.AtlantisCharge,
             AnahitaAttackType.FloatTowardsPlayer,
             AnahitaAttackType.AtlantisCharge,
         };
@@ -77,9 +81,11 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                     npc.rotation = npc.velocity.X * 0.014f;
 
                     // Descend back into the ocean.
-                    npc.direction = (npc.Center.X > Main.maxTilesX * 8f).ToDirectionInt();
-                    npc.spriteDirection = npc.direction;
-                    npc.velocity.X = MathHelper.Clamp(npc.velocity.Y + 0.2f * npc.direction, -14f, 14f);
+                    float moveDirection = 1f;
+                    if (Math.Abs(npc.Center.X - Main.maxTilesX * 16f) > Math.Abs(npc.Center.X))
+                        moveDirection = -1f;
+                    npc.velocity.X = moveDirection * 6f;
+                    npc.spriteDirection = (int)-moveDirection;
                     npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.2f, -3f, 16f);
 
                     if (npc.position.Y > Main.worldSurface * 16.0)
@@ -107,6 +113,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             bool shouldSummonLeviathan = lifeRatio < 0.5f;
             bool leviathanAlive = Main.npc.IndexInRange(CalamityGlobalNPC.leviathan) && Main.npc[CalamityGlobalNPC.leviathan].active;
             bool enraged = !leviathanAlive && shouldSummonLeviathan;
+            bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400);
             float? leviathanLifeRatio = !leviathanAlive ? null : new float?(Main.npc[CalamityGlobalNPC.leviathan].life / (float)Main.npc[CalamityGlobalNPC.leviathan].lifeMax);
             bool shouldWaitForLeviathan = (leviathanLifeRatio.HasValue && leviathanLifeRatio.Value >= 0.6f) || Utilities.AnyProjectiles(ModContent.ProjectileType<LeviathanSpawner>());
 
@@ -192,12 +199,15 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                 npc.rotation = npc.velocity.X * 0.014f;
 
                 // Descend back into the ocean.
-                npc.direction = (npc.Center.X > Main.maxTilesX * 8f).ToDirectionInt();
-                npc.spriteDirection = -npc.direction;
+                npc.direction = (npc.Center.X < Main.maxTilesX * 8f).ToDirectionInt();
 
                 if (npc.alpha <= 0)
                 {
-                    npc.velocity.X = MathHelper.Clamp(npc.velocity.Y + 0.1f * npc.direction, -14f, 14f);
+                    float moveDirection = 1f;
+                    if (Math.Abs(npc.Center.X - Main.maxTilesX * 16f) > Math.Abs(npc.Center.X))
+                        moveDirection = -1f;
+                    npc.velocity.X = moveDirection * 6f;
+                    npc.spriteDirection = (int)-moveDirection;
                     npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.2f, -3f, 16f);
                 }
 
@@ -226,6 +236,14 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             // If the above checks of no activity are passed, fade back in again.
             npc.alpha = Utils.Clamp(npc.alpha - 14, 0, 255);
 
+            npc.dontTakeDamage = outOfOcean;
+
+            if (outOfOcean && (AnahitaAttackType)(int)npc.ai[1] != AnahitaAttackType.AtlantisCharge)
+            {
+                goToNextAIState();
+                return false;
+            }
+
             switch ((AnahitaAttackType)(int)npc.ai[1])
             {
                 case AnahitaAttackType.FloatTowardsPlayer:
@@ -235,7 +253,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 
                     doSkeletronHeadMovementTo(target.Center - Vector2.UnitY * 400f, Vector2.One * 7f, 0.14f);
 
-                    if (attackTimer >= (enraged ? 120f : 180f))
+                    if (attackTimer >= (leviathanAlive ? (enraged ? 0f : 15f) : 5f))
                         goToNextAIState();
                     break;
                 case AnahitaAttackType.BubbleBurst:
@@ -245,8 +263,13 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                     target = Main.player[npc.target];
 
                     int totalBubbles = enraged ? 11 : 8;
-                    int bubbleShootRate = enraged ? 36 : 45;
-                    float bubbleShootSpeed = 8f;
+                    int bubbleShootRate = leviathanAlive ? 45 : 22;
+                    float bubbleShootSpeed = 10f;
+                    if (enraged)
+                    {
+                        bubbleShootRate -= 6;
+                        bubbleShootSpeed += 3f;
+                    }
 
                     Vector2 destination = target.Center - Vector2.UnitY * 400f;
                     destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 260f;
@@ -269,9 +292,14 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                     target = Main.player[npc.target];
 
                     int singDelay = 90;
-                    int singClefFireRate = 11;
-                    int singClefCount = 15;
-                    float clefShootSpeed = 13f;
+                    int singClefFireRate = leviathanAlive ? 8 : 11;
+                    int singClefCount = leviathanAlive ? 25 : 15;
+                    float clefShootSpeed = leviathanAlive ? 13f : 15.5f;
+                    if (enraged)
+                    {
+                        singClefFireRate -= 2;
+                        clefShootSpeed += 2f;
+                    }
 
                     destination = target.Center;
                     if (attackTimer < singDelay)
@@ -323,18 +351,26 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 
                     int hoverTime = 50;
                     int spinTime = 250;
+                    int chargeTime = 50;
                     float chargeSpeed = MathHelper.Lerp(23f, 31f, 1f - lifeRatio);
-                    float totalSpins = 2f;
+                    float totalSpins = 3f;
                     if (enraged)
                     {
                         hoverTime = 40;
                         spinTime = 300;
                         chargeSpeed += 4f;
                     }
+                    if (outOfOcean)
+                    {
+                        hoverTime = 30;
+                        chargeTime = 20;
+                        chargeSpeed = 37f;
+                        totalSpins = 3f;
+                    }
 
                     float spinAngularVelocity = MathHelper.TwoPi * totalSpins / spinTime;
 
-                    bool shouldJustCharge = (attackTimer >= hoverTime + spinTime / 2 && attackTimer <= hoverTime + spinTime / 2 + 50) || attackTimer <= hoverTime + 45;
+                    bool shouldJustCharge = (attackTimer >= hoverTime + spinTime / 2 && attackTimer <= hoverTime + spinTime / 2 + chargeTime) || attackTimer <= hoverTime + 45;
 
                     if (attackTimer < hoverTime)
                     {

@@ -85,7 +85,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             npc.defense += num568 * 25;
             if (!flag100)
             {
-                npc.defense = 10;
+                npc.defense = 5;
             }
             if (npc.ai[3] == 0f && npc.life > 0)
             {

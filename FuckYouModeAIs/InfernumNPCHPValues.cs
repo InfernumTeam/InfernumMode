@@ -1,15 +1,17 @@
 ﻿using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.Perforator;
+using CalamityMod.NPCs.HiveMind;
 using InfernumMode.FuckYouModeAIs.EoW;
 using System.Collections.Generic;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 using CrabulonBoss = CalamityMod.NPCs.Crabulon.CrabulonIdle;
+using HiveMindP1Boss = CalamityMod.NPCs.HiveMind.HiveMind;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
-using CalamityMod.NPCs.Perforator;
 
 namespace InfernumMode.FuckYouModeAIs.MainAI
 {
@@ -24,6 +26,8 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             [NPCID.EaterofWorldsHead] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsBody] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsTail] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
+            [ModContent.NPCType<HiveMindP1Boss>()] = 1670,
+            [ModContent.NPCType<HiveMindP2>()] = 6868,
             [ModContent.NPCType<PerforatorHive>()] = 6132,
             [NPCID.WallofFleshEye] = 4776,
             [NPCID.Spazmatism] = 36260,

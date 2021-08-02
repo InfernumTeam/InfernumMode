@@ -266,6 +266,9 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
                 damage = (int)(damage * 0.4);
             }
 
+            if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
+                damage = (int)(damage * 0.55);
+
             if (npc.type == ModContent.NPCType<DevourerofGodsHeadS>() || npc.type == ModContent.NPCType<DevourerofGodsTailS>() &&
                 (projectile.type == ModContent.ProjectileType<PhantasmalRuinGhost>() || projectile.type == ModContent.ProjectileType<PhantasmalRuinProj>()) || projectile.type == ProjectileID.LostSoulFriendly)
             {

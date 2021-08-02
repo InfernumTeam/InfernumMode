@@ -251,10 +251,13 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
 
             if (isDesertScourge && (projectile.type == ProjectileID.JestersArrow || projectile.type == ProjectileID.UnholyArrow || projectile.type == ProjectileID.WaterBolt))
                 damage = (int)(damage * 0.45);
-            if (isDesertScourge && (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare))
-                damage = (int)(damage * 0.7);
 
-            if (npc.type == NPCID.KingSlime && projectile.penetrate == -1 || projectile.penetrate > 1)
+            if (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare)
+                damage = (int)(damage * 0.8);
+            if (isDesertScourge && (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare))
+                damage = (int)(damage * 0.75);
+
+            if (npc.type == NPCID.KingSlime && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.67);
 
             if ((npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyMedium>() ||

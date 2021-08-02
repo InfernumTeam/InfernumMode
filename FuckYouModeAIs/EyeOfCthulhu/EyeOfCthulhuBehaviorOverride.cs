@@ -288,7 +288,7 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Vector2 spawnPosition = npc.Center - Vector2.UnitY * 14f;
+                                Vector2 spawnPosition = npc.Center - Vector2.UnitY * 26f;
                                 for (int i = 0; i < teethPerShot; i++)
                                 {
                                     float offsetAngle = MathHelper.Lerp(-0.56f, 0.56f, i / (float)teethPerShot) + Main.rand.NextFloat(-0.07f, 0.07f);
@@ -308,7 +308,8 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
                 case EoCAttackType.SpinDash:
                     int spinCycles = 2;
                     int spinTime = 120;
-                    int chargeDelay = 35;
+                    int chargeDelay = 25;
+                    int chargeChainCount = 3;
                     chargeTime = 60;
                     chargeSpeed = 14f;
                     float chargeAcceleration = 1.006f;
@@ -317,6 +318,7 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
                     subState = ref npc.Infernum().ExtraAI[0];
                     ref float spinAngle = ref npc.Infernum().ExtraAI[1];
                     ref float redirectSpeed = ref npc.Infernum().ExtraAI[2];
+                    ref float chainChargeCounter = ref npc.Infernum().ExtraAI[3];
 
                     // Redirect.
                     if (subState == 0f)
@@ -385,7 +387,44 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
                     {
                         npc.velocity *= chargeAcceleration;
                         if (attackTimer >= chargeTime)
+                        {
+                            npc.velocity *= 0.25f;
+                            attackTimer = 0f;
+                            subState = 4f;
+                            npc.netUpdate = true;
+                        }
+                    }
+
+                    // Do a chain of multiple charges that become slower and slower.
+                    if (subState == 4f)
+                    {
+                        if (chainChargeCounter > chargeChainCount)
                             goToNextAIState();
+
+                        if (npc.velocity.Length() < 8f)
+                        {
+                            float idealAngle = npc.AngleTo(target.Center);
+                            npc.rotation = npc.rotation.AngleTowards(idealAngle - MathHelper.PiOver2, MathHelper.Pi * 0.08f);
+                            npc.velocity *= 0.985f;
+
+                            attackTimer++;
+                            if (attackTimer >= chargeDelay)
+                            {
+                                attackTimer = 0f;
+                                chainChargeCounter++;
+                                npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed * 1.635f;
+                                npc.velocity *= MathHelper.Lerp(1f, 0.67f, chainChargeCounter / chargeChainCount);
+                                npc.netUpdate = true;
+
+                                // High pitched boss roar.
+                                Main.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                            }
+                        }
+                        else
+                        {
+                            attackTimer = 0f;
+                            npc.velocity *= 0.9785f;
+                        }
                     }
 
                     break;

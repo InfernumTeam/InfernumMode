@@ -2,6 +2,7 @@
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -203,6 +204,9 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
         
         public static void DoAttack_FlyTowardsTarget(NPC npc, Player target, float lifeRatio, bool inTiles, ref float inAirTime, ref float fallTime)
         {
+            ref float fuck = ref npc.Infernum().ExtraAI[9];
+            fuck++;
+
             Vector2 destination = target.Center;
 
             // If close to the target, determine the destination based on the current direction of the worm.
@@ -213,7 +217,8 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
             float turnSpeed = MathHelper.Lerp(0.007f, 0.065f, Utils.InverseLerp(175f, 475f, distanceFromDestination, true));
 
             float newSpeed = npc.velocity.Length();
-            float idealSpeed = MathHelper.Lerp(5f, 10.5f, 1f - lifeRatio);
+            float idealSpeed = MathHelper.Lerp(4.5f, 9.25f, 1f - lifeRatio);
+            idealSpeed += MathHelper.Lerp(0f, 2.4f, (float)Math.Sin(fuck * MathHelper.TwoPi / 300f) * 0.5f + 0.5f);
 
             // Accelerate quickly if relatively far from the destination.
             if (distanceFromDestination > 1250f)

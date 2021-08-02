@@ -31,12 +31,8 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 if (npc.timeLeft > 60)
                     npc.timeLeft = 60;
                 if (npc.localAI[3] < 120f)
-                {
-                    float[] aidistances = npc.localAI;
-                    int number = 3;
-                    float num244 = aidistances[number];
-                    aidistances[number] = num244 + 1f;
-                }
+                    npc.localAI[3]++;
+
                 if (npc.localAI[3] > 60f)
                 {
                     npc.velocity.Y += (npc.localAI[3] - 60f) * 0.5f;

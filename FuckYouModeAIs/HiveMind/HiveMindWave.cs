@@ -1,89 +1,29 @@
-using CalamityMod.Projectiles;
-using CalamityMod.Projectiles.DraedonsArsenal;
-using CalamityMod.World;
+using InfernumMode.BaseEntities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.Graphics.Shaders;
-using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.HiveMind
 {
-    public class HiveMindWave : ModProjectile
+    public class HiveMindWave : BaseWaveExplosionProjectile
 	{
-		public ScreenShakeSpot CurrentSpot;
-		public float Radius
+		public override int Lifetime => 80;
+		public override float MaxRadius => 1750f;
+		public override float RadiusExpandRateInterpolant => 0.15f;
+		public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
 		{
-			get => projectile.ai[0];
-			set => projectile.ai[0] = value;
+			float baseShakePower = MathHelper.Lerp(1f, 5f, (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio));
+			return baseShakePower * Utils.InverseLerp(2200f, 1050f, distanceFromPlayer, true);
 		}
-		public float MaxRadius
+
+		public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
 		{
-			get => projectile.ai[1];
-			set => projectile.ai[1] = value;
+			return Color.Lerp(Color.Purple, Color.Gray, MathHelper.Clamp(lifetimeCompletionRatio * 1.75f, 0f, 1f))
 		}
-		public const int Lifetime = 80;
 
-		public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Boom");
-        }
+		public override void SendExtraAI(BinaryWriter writer) => writer.Write((int)projectile.localAI[1]);
 
-        public override void SetDefaults()
-        {
-            projectile.width = 72;
-            projectile.height = 72;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = Lifetime;
-            projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 10;
-            projectile.scale = 0.001f;
-        }
-
-		public override void AI()
-		{
-			if (projectile.localAI[0] == 0f)
-			{
-				CurrentSpot = new ScreenShakeSpot(0, projectile.Center);
-				MaxRadius = Main.rand.NextFloat(1600f, 2100f);
-				projectile.localAI[0] = 1f;
-			}
-			CurrentSpot.ScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 7f + 2f;
-			CalamityWorld.ScreenShakeSpots[projectile.whoAmI] = CurrentSpot;
-
-			Radius = MathHelper.Lerp(Radius, MaxRadius, 0.15f);
-			projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.InverseLerp(Lifetime, 0f, projectile.timeLeft, true));
-			CalamityGlobalProjectile.ExpandHitboxBy(projectile, (int)(Radius * projectile.scale), (int)(Radius * projectile.scale));
-		}
-		public override void Kill(int timeLeft)
-		{
-			CalamityWorld.ScreenShakeSpots.Remove(Projectile.GetByUUID(projectile.owner, projectile.whoAmI)); // Remove the explosion associated with this projectile's UUID.
-		}
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
-		{
-			spriteBatch.EnterShaderRegion();
-
-			float pulseCompletionRatio = Utils.InverseLerp(Lifetime, 0f, projectile.timeLeft, true);
-			Vector2 scale = new Vector2(1.5f, 1f);
-			DrawData drawData = new DrawData(ModContent.GetTexture("Terraria/Misc/Perlin"),
-				projectile.Center - Main.screenPosition + projectile.Size * scale * 0.5f,
-				new Rectangle(0, 0, projectile.width, projectile.height),
-				new Color(new Vector4(1f - (float)Math.Sqrt(pulseCompletionRatio))) * 0.7f * projectile.Opacity,
-				projectile.rotation,
-				projectile.Size,
-				scale,
-				SpriteEffects.None, 0);
-
-			Color pulseColor = Color.Lerp(Color.Purple, Color.Gray, MathHelper.Clamp(pulseCompletionRatio * 1.75f, 0f, 1f));
-			GameShaders.Misc["ForceField"].UseColor(pulseColor);
-			GameShaders.Misc["ForceField"].Apply(drawData);
-			drawData.Draw(spriteBatch);
-
-			spriteBatch.ExitShaderRegion();
-			return false;
-		}
+		public override void ReceiveExtraAI(BinaryReader reader) => projectile.localAI[1] = reader.ReadInt32();
 	}
 }

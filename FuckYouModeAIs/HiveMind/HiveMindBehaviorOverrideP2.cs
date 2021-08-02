@@ -34,7 +34,6 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        // TODO: Refactor this.
         public const float SpinRadius = 300f;
         public const float NPCSpawnArcSpinTime = 25f;
         public const float NPCSpawnArcRotationalOffset = MathHelper.Pi / NPCSpawnArcSpinTime;

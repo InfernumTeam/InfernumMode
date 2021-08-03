@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.AquaticScourge;
+﻿using CalamityMod;
+using CalamityMod.NPCs.AquaticScourge;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System.Linq;
@@ -34,6 +35,8 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
 
             npc.defense = aheadSegment.defense;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
+
+            npc.Calamity().DR = MathHelper.Max(npc.Calamity().DR, 0.55f);
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

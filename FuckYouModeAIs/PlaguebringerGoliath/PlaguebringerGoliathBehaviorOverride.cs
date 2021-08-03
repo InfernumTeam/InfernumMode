@@ -98,7 +98,7 @@ namespace InfernumMode.FuckYouModeAIs.PlaguebringerGoliath
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 105f))
+                if (npc.WithinRange(hoverDestination, 115f))
                 {
                     npc.velocity *= 0.97f;
 
@@ -116,6 +116,7 @@ namespace InfernumMode.FuckYouModeAIs.PlaguebringerGoliath
                 }
                 else
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 27f, 1.35f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 15f);
                 npc.rotation = npc.velocity.X * 0.0125f;
                 hoverTimer++;
             }

@@ -122,6 +122,9 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             if (Main.rand.NextBool(180))
                 Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
 
+            if (leviathanAlive)
+                npc.modNPC.music = Main.npc[CalamityGlobalNPC.leviathan].modNPC.music;
+
             void goToNextAIState()
             {
                 // You cannot use ref locals inside of a delegate context.

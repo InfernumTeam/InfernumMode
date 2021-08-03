@@ -88,7 +88,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                     npc.spriteDirection = (int)-moveDirection;
                     npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.2f, -3f, 16f);
 
-                    if (npc.position.Y > Main.worldSurface * 16.0)
+                    if (npc.position.Y > (Main.worldSurface - 90f) * 16.0)
                     {
                         for (int x = 0; x < Main.maxNPCs; x++)
                         {

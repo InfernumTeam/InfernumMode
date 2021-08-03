@@ -71,6 +71,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             Vector2 headPosition = npc.Center + new Vector2(npc.direction * 16f, -42f);
 
             ref float summonedLeviathanFlag = ref npc.Infernum().ExtraAI[6];
+            ref float leviathanMusicFade = ref npc.Infernum().ExtraAI[7];
 
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 5600f))
             {
@@ -189,6 +190,9 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                 npc.velocity = Vector2.Zero;
                 npc.dontTakeDamage = true;
                 npc.ai[0] = 0f;
+                leviathanMusicFade++;
+                if (!NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()))
+                    target.Infernum().MusicMuffleFactor = 1f;
                 return false;
             }
             if (summonedLeviathanFlag == 0f && shouldSummonLeviathan)
@@ -200,6 +204,8 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 
                 // Descend back into the ocean.
                 npc.direction = (npc.Center.X < Main.maxTilesX * 8f).ToDirectionInt();
+                target.Infernum().MusicMuffleFactor = Utils.InverseLerp(10f, 90f, leviathanMusicFade, true);
+                leviathanMusicFade++;
 
                 if (npc.alpha <= 0)
                 {

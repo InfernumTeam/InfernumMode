@@ -13,6 +13,7 @@ namespace InfernumMode
         public bool RedElectrified = false;
         public bool ShadowflameInferno = false;
         public float CurrentScreenShakePower;
+        public float MusicMuffleFactor;
 
         public Vector2 ScreenFocusPosition;
         public float ScreenFocusInterpolant = 0f;
@@ -36,6 +37,7 @@ namespace InfernumMode
             RedElectrified = false;
             ShadowflameInferno = false;
             ScreenFocusInterpolant = 0f;
+            MusicMuffleFactor = 0f;
         }
         #endregion
         #region Update Dead

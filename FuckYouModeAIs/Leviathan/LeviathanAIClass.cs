@@ -291,6 +291,8 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 
                     int vomitCount = 9;
                     int vomitTime = anahitaFightingToo ? 65 : 75;
+                    if (!sirenAlive)
+                        vomitTime = 52;
 
                     if (attackTimer % vomitTime >= 15f && attackTimer % vomitTime <= 50f && usingBelchFrames)
                     {

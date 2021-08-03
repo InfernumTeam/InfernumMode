@@ -7,6 +7,7 @@ using InfernumMode.FuckYouModeAIs.MainAI;
 using InfernumMode.FuckYouModeAIs.Perforators;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -89,6 +90,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.Player.ItemCheck += ItemCheckChange;
             IL.Terraria.Main.DrawTiles += WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += WoFLavaColorChange2;
+            IL.Terraria.Main.UpdateAudio += ManipulateSoundMuffleFactor;
             ModifyPreAINPC += NPCPreAIChange;
             ModifySetDefaultsNPC += NPCSetDefaultsChange;
             ModifyFindFrameNPC += NPCFindFrameChange;
@@ -105,6 +107,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.Player.ItemCheck -= ItemCheckChange;
             IL.Terraria.Main.DrawTiles -= WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw -= WoFLavaColorChange2;
+            IL.Terraria.Main.UpdateAudio += ManipulateSoundMuffleFactor;
             ModifyPreAINPC -= NPCPreAIChange;
             ModifySetDefaultsNPC -= NPCSetDefaultsChange;
             ModifyFindFrameNPC -= NPCFindFrameChange;
@@ -134,6 +137,31 @@ namespace InfernumMode.ILEditingStuff
                 return Color.Lerp(baseColor, endColor, fade);
             }
             return baseColor;
+        }
+
+        internal static void ManipulateSoundMuffleFactor(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            cursor.GotoNext(MoveType.After, i => i.MatchStloc(20));
+
+            cursor.Emit(OpCodes.Ldloc, 20);
+            cursor.EmitDelegate<Func<float, float>>(originalMuffleFactor =>
+            {
+                if (Main.gameMenu)
+                    return originalMuffleFactor;
+                float playerMuffleFactor = 1f - Main.LocalPlayer.Infernum().MusicMuffleFactor;
+                float result = MathHelper.Clamp(originalMuffleFactor * playerMuffleFactor, -1f, 1f);
+                if (result <= 0)
+                {
+                    for (int i = 0; i < Main.music.Length; i++)
+                    {
+                        if (Main.music[i]?.IsPlaying ?? false)
+                            Main.music[i]?.Stop(AudioStopOptions.Immediate);
+                    }
+                }
+                return result;
+            });
+            cursor.Emit(OpCodes.Stloc, 20);
         }
 
         private static void WoFLavaColorChange(ILContext il)

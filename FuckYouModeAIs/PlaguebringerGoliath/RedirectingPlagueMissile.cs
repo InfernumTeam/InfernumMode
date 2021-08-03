@@ -24,18 +24,20 @@ namespace InfernumMode.FuckYouModeAIs.PlaguebringerGoliath
         public override void AI()
         {
             projectile.Opacity = Utils.InverseLerp(0f, 12f, Time, true);
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
             if (projectile.Hitbox.Intersects(Target.Hitbox))
                 projectile.Kill();
 
-            if (Time < 60f)
-                projectile.velocity *= 1.015f;
-            if (Time >= 60f)
+            if (Time < 30f)
+                projectile.velocity *= 1.01f;
+            if (Time >= 30f)
             {
-                float newSpeed = projectile.velocity.Length() * 1.01f;
+                float newSpeed = projectile.velocity.Length() * 1.0045f;
+                if (newSpeed < 12f)
+                    newSpeed = 12f;
                 if (newSpeed > 25f)
                     newSpeed = 25f;
-                projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(Target.Center) * newSpeed, 0.06f);
-                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * newSpeed;
+                projectile.velocity = (projectile.velocity * 19f + projectile.SafeDirectionTo(Target.Center) * newSpeed) / 20f;
             }
 
             projectile.tileCollide = Time > 105f;

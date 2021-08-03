@@ -21,7 +21,7 @@ namespace InfernumMode.FuckYouModeAIs.PlaguebringerGoliath
 
 		public override void AI()
 		{
-			for (int i = 0; i < 6; i++)
+			for (int i = 0; i < 3; i++)
             {
 				Dust dust = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(35f, 35f), 89);
 				dust.velocity = Main.rand.NextVector2Circular(6f, 6f);

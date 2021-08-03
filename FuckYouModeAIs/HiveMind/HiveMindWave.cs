@@ -19,7 +19,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 
 		public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
 		{
-			return Color.Lerp(Color.Purple, Color.Gray, MathHelper.Clamp(lifetimeCompletionRatio * 1.75f, 0f, 1f))
+			return Color.Lerp(Color.Purple, Color.Gray, MathHelper.Clamp(lifetimeCompletionRatio * 1.75f, 0f, 1f));
 		}
 
 		public override void SendExtraAI(BinaryWriter writer) => writer.Write((int)projectile.localAI[1]);

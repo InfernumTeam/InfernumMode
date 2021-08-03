@@ -304,7 +304,9 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                                 Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitX * npc.direction).RotatedBy(MathHelper.Lerp(-0.4f, 0.4f, i / 3f)) * 9f;
                                 if (!anahitaFightingToo)
                                     shootVelocity *= 1.3f;
-                                Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanBomb>(), 150, 0f);
+                                int meteor = Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanBomb>(), 150, 0f);
+                                if (Main.projectile.IndexInRange(meteor))
+                                    Main.projectile[meteor].timeLeft += 180;
                             }
                         }
 

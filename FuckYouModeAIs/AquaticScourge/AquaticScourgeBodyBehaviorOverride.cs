@@ -36,7 +36,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             npc.defense = aheadSegment.defense;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
 
-            npc.Calamity().DR = MathHelper.Max(npc.Calamity().DR, 0.55f);
+            npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.55f);
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

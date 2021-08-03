@@ -192,7 +192,10 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                 npc.ai[0] = 0f;
                 leviathanMusicFade++;
                 if (!NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()))
-                    target.Infernum().MusicMuffleFactor = 1f;
+                {
+                    target.Infernum().MusicMuffleFactor = Utils.InverseLerp(10f, 180f, leviathanMusicFade, true);
+                    leviathanMusicFade++;
+                }
                 return false;
             }
             if (summonedLeviathanFlag == 0f && shouldSummonLeviathan)
@@ -204,7 +207,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 
                 // Descend back into the ocean.
                 npc.direction = (npc.Center.X < Main.maxTilesX * 8f).ToDirectionInt();
-                target.Infernum().MusicMuffleFactor = Utils.InverseLerp(10f, 90f, leviathanMusicFade, true);
+                target.Infernum().MusicMuffleFactor = Utils.InverseLerp(10f, 180f, leviathanMusicFade, true);
                 leviathanMusicFade++;
 
                 if (npc.alpha <= 0)

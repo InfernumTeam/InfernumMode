@@ -1,13 +1,11 @@
 ﻿using CalamityMod.NPCs;
+using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
 
 using HiveMindBoss = CalamityMod.NPCs.HiveMind.HiveMind;
 
@@ -19,165 +17,162 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
-        // TODO: Refactor this.
         public override bool PreAI(NPC npc)
         {
-            // npc.Infernum().ExtraAI[0] = Countdown variable (for teleporting, shooting blobs, ect.)
             npc.TargetClosest(true);
-            Player player = Main.player[npc.target];
+            Player target = Main.player[npc.target];
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            if (!player.active || player.dead)
+
+            ref float summonThresholdByLife = ref npc.ai[3];
+            ref float hasSummonedInitialBlobsFlag = ref npc.localAI[0];
+            ref float hiveBlobSummonTimer = ref npc.localAI[1];
+            ref float digTime = ref npc.localAI[3];
+            ref float shootTimer = ref npc.Infernum().ExtraAI[0];
+
+            // Despawn if the target is dead or gone.
+            if (!target.active || target.dead)
             {
                 if (npc.timeLeft > 60)
                     npc.timeLeft = 60;
-                if (npc.localAI[3] < 120f)
-                    npc.localAI[3]++;
+                if (digTime < 120f)
+                    digTime++;
 
-                if (npc.localAI[3] > 60f)
+                if (digTime > 60f)
                 {
-                    npc.velocity.Y += (npc.localAI[3] - 60f) * 0.5f;
+                    npc.velocity.Y += (digTime - 60f) * 0.5f;
                     npc.noGravity = true;
                     npc.noTileCollide = true;
-                    if (npc.Infernum().ExtraAI[0] > 30)
-                        npc.Infernum().ExtraAI[0] = 30;
+                    if (shootTimer > 30)
+                        shootTimer = 30;
                 }
                 return false;
             }
-            if (npc.localAI[3] > 0f)
+
+            CalamityGlobalNPC.hiveMind = npc.whoAmI;
+
+            // Don't do anything beyond this point if busy digging.
+            if (digTime > 0f)
             {
-                npc.localAI[3] -= 1f;
+                digTime--;
                 return false;
             }
             npc.noGravity = false;
             npc.noTileCollide = false;
-            CalamityGlobalNPC.hiveMind = npc.whoAmI;
+
+            // Idly summon blobs.
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                npc.localAI[1] += 1f;
-                if (npc.localAI[1] >= 600f)
+                hiveBlobSummonTimer++;
+                if (hiveBlobSummonTimer >= 600f)
                 {
-                    npc.localAI[1] = 0f;
+                    hiveBlobSummonTimer = 0f;
                     NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.NPCType("HiveBlob"), npc.whoAmI, 0f, 0f, 0f, 0f, 255);
                 }
-                if (npc.localAI[0] == 0f)
+                if (hasSummonedInitialBlobsFlag == 0f)
                 {
-                    npc.localAI[0] = 1f;
-                    for (int num723 = 0; num723 < 5; num723++)
-                    {
+                    hasSummonedInitialBlobsFlag = 1f;
+                    for (int i = 0; i < 7; i++)
                         NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.NPCType("HiveBlob"), npc.whoAmI, 0f, 0f, 0f, 0f, 255);
-                    }
                 }
             }
-            bool flag100 = false;
-            int num568 = 0;
-            for (int num569 = 0; num569 < Main.maxNPCs; num569++)
-            {
-                if (Main.npc[num569].active && Main.npc[num569].type == InfernumMode.CalamityMod.NPCType("DankCreeper"))
-                {
-                    flag100 = true;
-                    num568++;
-                }
-            }
-            npc.defense += num568 * 25;
-            if (!flag100)
-            {
-                npc.defense = 5;
-            }
-            if (npc.ai[3] == 0f && npc.life > 0)
-            {
-                npc.ai[3] = npc.lifeMax;
-            }
+
+            // Gain a massive defense boost if a dank meme is alive.
+            npc.defense = NPC.AnyNPCs(ModContent.NPCType<DankCreeper>()) ? 45 : 5;
+
+            if (summonThresholdByLife == 0f && npc.life > 0)
+                summonThresholdByLife = npc.lifeMax;
+
             if (npc.life > 0)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int num660 = (int)(npc.lifeMax * 0.25);
-                    if (npc.life + num660 < npc.ai[3])
+                    if (npc.life + (int)(npc.lifeMax * 0.2) < summonThresholdByLife)
                     {
-                        npc.ai[3] = npc.life;
-                        int num661 = Main.rand.Next(3, 6);
-                        for (int num662 = 0; num662 < num661; num662++)
+                        summonThresholdByLife = npc.life;
+                        int enemySummonCount = Main.rand.Next(3, 6);
+                        for (int i = 0; i < enemySummonCount; i++)
                         {
                             int x = (int)(npc.position.X + Main.rand.Next(npc.width - 32));
                             int y = (int)(npc.position.Y + Main.rand.Next(npc.height - 32));
-                            int num663 = InfernumMode.CalamityMod.NPCType("HiveBlob");
+                            int thingToSummon = ModContent.NPCType<HiveBlob>();
                             if (Main.rand.NextBool(3))
-                            {
-                                num663 = InfernumMode.CalamityMod.NPCType("DankCreeper");
-                            }
-                            int num664 = NPC.NewNPC(x, y, num663, 0, 0f, 0f, 0f, 0f, 255);
-                            Main.npc[num664].SetDefaults(num663, -1f);
-                            Main.npc[num664].velocity.X = Main.rand.Next(-15, 16) * 0.1f;
-                            Main.npc[num664].velocity.Y = Main.rand.Next(-30, 1) * 0.1f;
-                            if (Main.netMode == NetmodeID.Server && num664 < Main.maxNPCs)
-                            {
-                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, num664, 0f, 0f, 0f, 0, 0, 0);
-                            }
+                                thingToSummon = ModContent.NPCType<DankCreeper>();
+
+                            int summonedThing = NPC.NewNPC(x, y, thingToSummon, 0, 0f, 0f, 0f, 0f, 255);
+                            Main.npc[summonedThing].SetDefaults(thingToSummon, -1f);
+                            Main.npc[summonedThing].velocity = -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * 3f;
+                            if (Main.netMode == NetmodeID.Server && summonedThing < Main.maxNPCs)
+                                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, summonedThing, 0f, 0f, 0f, 0, 0, 0);
                         }
+                        npc.netUpdate = true;
                         return false;
                     }
                 }
             }
-            npc.Infernum().ExtraAI[0]--;
-            float spitFrames = 260f;
-            float spawnMirageFrames = 300f;
-            if (lifeRatio < 0.25f)
-            {
-                spitFrames = 240f;
-            }
+
+            shootTimer--;
+
+            float clotShootRate = 260f;
+            float mirageSummonRate = 300f;
+
             if (lifeRatio < 0.5f)
+                mirageSummonRate = 180f;
+            if (lifeRatio < 0.25f)
+                clotShootRate = 145f;
+
+            if (shootTimer > 100 && shootTimer % clotShootRate == 0f)
             {
-                spawnMirageFrames = 180f;
-            }
-            if (npc.Infernum().ExtraAI[0] > 100 &&
-                npc.Infernum().ExtraAI[0] % spitFrames == 0f)
-            {
-                for (int i = 0; i < Main.rand.Next(4, 6); i++)
+                int clotCount = Main.rand.Next(4, 6);
+                for (int i = 0; i < clotCount; i++)
                 {
-                    Projectile.NewProjectile(npc.Center, npc.DirectionTo(player.Center).RotatedByRandom(MathHelper.ToRadians(15f)) * 8f, InfernumMode.CalamityMod.ProjectileType("VileClot"), 16, 1f);
+                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(MathHelper.ToRadians(15f)) * 8f;
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<VileClot>(), 65, 1f);
                 }
             }
-            if (npc.Infernum().ExtraAI[0] > 50 &&
-                npc.Infernum().ExtraAI[0] % spawnMirageFrames == 0f &&
-                lifeRatio < 0.75f)
+            if (shootTimer > 50 && shootTimer % mirageSummonRate == 0f && lifeRatio < 0.75f)
             {
-                Projectile.NewProjectile(player.Center - new Vector2(0f, 2300f), Vector2.Zero, ModContent.ProjectileType<HiveMindMirage>(), 20, 3f, player.whoAmI, 1f);
+                Vector2 mirageSummonPosition = target.Center - Vector2.UnitY * 2300f;
+                Utilities.NewProjectileBetter(mirageSummonPosition, Vector2.Zero, ModContent.ProjectileType<HiveMindMirage>(), 28, 3f, target.whoAmI, 1f);
             }
-            if (npc.Infernum().ExtraAI[0] < -120)
+            if (shootTimer < -120)
             {
-                npc.Infernum().ExtraAI[0] = 600;
+                shootTimer = 600;
                 npc.scale = 1f;
                 npc.alpha = 0;
                 npc.dontTakeDamage = false;
                 npc.damage = npc.defDamage;
             }
-            else if (npc.Infernum().ExtraAI[0] < -60)
+
+            // Fade out and do dig effects.
+            else if (shootTimer < -60)
             {
                 npc.scale += 0.0165f;
                 npc.alpha -= 4;
-                int num622 = Dust.NewDust(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 2.5f * npc.scale);
-                Main.dust[num622].velocity *= 2f;
+                Dust digDust = Dust.NewDustDirect(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 2.5f * npc.scale);
+                digDust.velocity *= 2f;
                 if (Main.rand.NextBool(2))
                 {
-                    Main.dust[num622].scale = 0.5f;
-                    Main.dust[num622].fadeIn = 1f + Main.rand.Next(10) * 0.1f;
+                    digDust.scale = 0.5f;
+                    digDust.fadeIn = 1f + Main.rand.Next(10) * 0.1f;
                 }
                 for (int i = 0; i < 2; i++)
                 {
-                    int num624 = Dust.NewDust(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 3.5f * npc.scale);
-                    Main.dust[num624].noGravity = true;
-                    Main.dust[num624].velocity *= 3.5f;
-                    num624 = Dust.NewDust(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 2.5f * npc.scale);
-                    Main.dust[num624].velocity *= 1f;
+                    digDust = Dust.NewDustDirect(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 3.5f * npc.scale);
+                    digDust.noGravity = true;
+                    digDust.velocity *= 3.5f;
+                    digDust = Dust.NewDustDirect(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 2.5f * npc.scale);
+                    digDust.velocity *= 1f;
                 }
             }
-            else if (npc.Infernum().ExtraAI[0] == -60)
+
+            // Do the dig teleport.
+            else if (shootTimer == -60)
             {
                 npc.scale = 0.01f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.Center = player.Center;
-                    npc.position.Y = player.position.Y - npc.height;
+                    npc.Center = target.Center;
+                    npc.position.Y = target.position.Y - npc.height;
                     int tilePosX = (int)npc.Center.X / 16;
                     int tilePosY = (int)(npc.position.Y + npc.height) / 16 + 1;
                     if (Main.tile[tilePosX, tilePosY] == null)
@@ -192,32 +187,31 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 }
                 npc.netUpdate = true;
             }
-            else if (npc.Infernum().ExtraAI[0] < 0)
+            else if (shootTimer < 0)
             {
                 npc.scale -= 0.0165f;
                 npc.alpha += 4;
-                int num622 = Dust.NewDust(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 2.5f * npc.scale);
-                Main.dust[num622].velocity *= 2f;
+                Dust digDust = Dust.NewDustDirect(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 2.5f * npc.scale);
+                digDust.velocity *= 2f;
                 if (Main.rand.NextBool(2))
                 {
-                    Main.dust[num622].scale = 0.5f;
-                    Main.dust[num622].fadeIn = 1f + Main.rand.Next(10) * 0.1f;
+                    digDust.scale = 0.5f;
+                    digDust.fadeIn = 1f + Main.rand.Next(10) * 0.1f;
                 }
                 for (int i = 0; i < 2; i++)
                 {
-                    int num624 = Dust.NewDust(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 3.5f * npc.scale);
-                    Main.dust[num624].noGravity = true;
-                    Main.dust[num624].velocity *= 3.5f;
-                    num624 = Dust.NewDust(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 2.5f * npc.scale);
-                    Main.dust[num624].velocity *= 1f;
+                    digDust = Dust.NewDustDirect(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 3.5f * npc.scale);
+                    digDust.noGravity = true;
+                    digDust.velocity *= 3.5f;
+                    digDust = Dust.NewDustDirect(new Vector2(npc.position.X, npc.Center.Y), npc.width, npc.height / 2, 14, 0f, -3f, 100, default, 2.5f * npc.scale);
+                    digDust.velocity *= 1f;
                 }
             }
-            else if (npc.Infernum().ExtraAI[0] == 0)
+            else if (shootTimer == 0)
             {
-                if (!player.active || player.dead)
-                {
-                    npc.Infernum().ExtraAI[0] = 30;
-                }
+                if (!target.active || target.dead)
+                    shootTimer = 30;
+
                 else
                 {
                     npc.dontTakeDamage = true;

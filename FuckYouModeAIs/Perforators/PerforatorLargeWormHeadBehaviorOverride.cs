@@ -77,10 +77,13 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                         Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorSpit>(), 80, 0f);
                     }
 
-                    for (int i = 0; i < 4; i++)
+                    if (!Collision.SolidCollision(npc.position, npc.width, npc.height))
                     {
-                        Vector2 ichorVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Lerp(-0.46f, 0.46f, i / 3f)) * 10f;
-                        Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<SittingBlood>(), 75, 0f);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            Vector2 ichorVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Lerp(-0.46f, 0.46f, i / 3f)) * 10f;
+                            Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<SittingBlood>(), 75, 0f);
+                        }
                     }
                 }
             }

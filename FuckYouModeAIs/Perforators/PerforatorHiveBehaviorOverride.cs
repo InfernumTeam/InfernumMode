@@ -56,10 +56,10 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
-            if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead)
+            if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 3400f))
             {
                 npc.TargetClosest(false);
-                if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead)
+                if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 3400f))
                 {
                     DoDespawnEffects(npc);
                     return false;
@@ -347,7 +347,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
             for (int i = 0; i < 6; i++)
             {
-                Vector2 drawPosition = npc.Center - Main.screenPosition + (MathHelper.TwoPi * i / 6f).ToRotationVector2() * glowOutwardness + Vector2.UnitY * glowOutwardness * 0.5f;
+                Vector2 drawPosition = npc.Center - Main.screenPosition + (MathHelper.TwoPi * i / 6f).ToRotationVector2() * glowOutwardness + Vector2.UnitY * (glowOutwardness * 0.5f - 22f);
                 spriteBatch.Draw(texture, drawPosition, npc.frame, glowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
             return true;

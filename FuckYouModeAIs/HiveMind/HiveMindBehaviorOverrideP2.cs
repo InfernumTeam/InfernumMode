@@ -62,8 +62,8 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             if (below20 && lifeRatio > 0.2f)
                 lifeRatio = 0.1995f;
 
-            Player player = Main.player[npc.target];
-            npc.defense = player.ZoneCorrupt ? 4 : 9999;
+            Player target = Main.player[npc.target];
+            npc.defense = target.ZoneCorrupt ? 4 : 9999;
             CalamityGlobalNPC.hiveMind = npc.whoAmI;
 
             if (below20 && npc.Infernum().ExtraAI[10] == 0f)
@@ -81,20 +81,20 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             }
 
             if (below20)
-                player.Calamity().rage = player.Calamity().adrenaline = 0;
+                target.Calamity().rage = target.Calamity().adrenaline = 0;
 
             if (fadeoutCountdown > 0f)
                 fadeoutCountdown--;
 
             // Fade away and despawn if the player dies.
-            if (!player.active || player.dead)
+            if (!target.active || target.dead)
             {
                 npc.TargetClosest();
-                player = Main.player[npc.target];
-                if (!player.active || player.dead)
+                target = Main.player[npc.target];
+                if (!target.active || target.dead)
                 {
                     npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 16f, 0.1f);
-                    if (!npc.WithinRange(player.Center, 600f))
+                    if (!npc.WithinRange(target.Center, 600f))
                     {
                         npc.life = 0;
                         npc.active = false;
@@ -122,9 +122,9 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             {
                 if (flameColumnCountdown % 60f == 30f - 1f)
                 {
-                    WorldUtils.Find((player.Top - Vector2.UnitY * 320f).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new Conditions.IsSolid()), out Point result);
+                    WorldUtils.Find((target.Top - Vector2.UnitY * 320f).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new Conditions.IsSolid()), out Point result);
                     if (Math.Abs(result.X) > 10000)
-                        result = (player.Bottom + Vector2.UnitY * 120f).ToTileCoordinates();
+                        result = (target.Bottom + Vector2.UnitY * 120f).ToTileCoordinates();
                     Utilities.NewProjectileBetter(result.ToWorldCoordinates(), Vector2.Zero, ModContent.ProjectileType<ShadeFireColumn>(), 65, 0f);
                 }
                 flameColumnCountdown--;
@@ -135,34 +135,34 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             switch ((HiveMindP2AttackState)(int)npc.Infernum().ExtraAI[0])
             {
                 case HiveMindP2AttackState.SuspensionStateDrift:
-                    DoBehavior_SuspensionStateDrift(npc, player, lifeRatio, ref npc.ai[0]);
+                    DoBehavior_SuspensionStateDrift(npc, target, lifeRatio, ref npc.ai[0]);
                     break;
                 case HiveMindP2AttackState.Reset:
                     DoBehavior_ResetAI(npc, lifeRatio);
                     break;
                 case HiveMindP2AttackState.NPCSpawnArc:
-                    DoBehavior_NPCSpawnArc(npc, player, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_NPCSpawnArc(npc, target, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.SpinLunge:
-                    DoBehavior_SpinLunge(npc, player, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_SpinLunge(npc, target, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.CloudDash:
-                    DoBehavior_CloudDash(npc, player, lifeRatio, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_CloudDash(npc, target, lifeRatio, ref slowdownCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.EaterOfSoulsWall:
-                    DoBehavior_EaterWall(npc, player, lifeRatio, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_EaterWall(npc, target, lifeRatio, ref slowdownCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.UndergroundFlameDash:
-                    DoBehavior_UndergroundFlameDash(npc, player, lifeRatio, ref attackTimer);
+                    DoBehavior_UndergroundFlameDash(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.CursedRain:
-                    DoBehavior_CursedRain(npc, player, lifeRatio, ref flameColumnCountdown, ref attackTimer);
+                    DoBehavior_CursedRain(npc, target, lifeRatio, ref flameColumnCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.SlowDown:
                     DoBehavior_SlowDown(npc, ref slowdownCountdown);
                     break;
                 case HiveMindP2AttackState.BlobSniping:
-                    DoBehavior_BlobSniping(npc, player, lifeRatio, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_BlobSniping(npc, target, lifeRatio, ref slowdownCountdown, ref attackTimer);
                     break;
             }
 

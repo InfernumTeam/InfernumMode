@@ -138,7 +138,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 
             // Teleport if far from the target or it is typically possible to do so.
             bool anythingInWay = Collision.CanHit(npc.Center, 2, 2, npc.Center + Vector2.UnitX * npc.spriteDirection * 80f, 2, 2);
-            bool canDashTeleport = ((Time % 360f == 359f && anythingInWay) || !npc.WithinRange(Target.Center, 540f) || StuckTimer >= 150f) && AttackDelayFuckYou > 300f;
+            bool canDashTeleport = ((Time % 360f == 359f && anythingInWay) || !npc.WithinRange(Target.Center, 540f) || StuckTimer >= 150f) && AttackDelayFuckYou > 150f;
 
             if (TeleportCountdown > 0f)
             {
@@ -150,7 +150,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
             if (KatanaUseTimer < 50f && onSolidGround)
                 KatanaUseTimer = 0f;
 
-            if (npc.WithinRange(Target.Center, 220f) && KatanaUseTimer <= 0f && AttackDelayFuckYou > 300f && onSolidGround)
+            if (npc.WithinRange(Target.Center, 260f) && KatanaUseTimer <= 0f && AttackDelayFuckYou > 150f)
             {
                 npc.spriteDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * 8f;

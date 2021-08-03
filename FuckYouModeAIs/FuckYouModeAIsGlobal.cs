@@ -260,6 +260,9 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             if (npc.type == NPCID.KingSlime && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.67);
 
+            if (projectile.type == ProjectileID.HolyArrow || projectile.type == ProjectileID.HallowStar)
+                damage = (int)(damage * 0.65);
+
             if ((npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyMedium>() ||
                 npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyLarge>()) && (projectile.penetrate >= 2 || projectile.penetrate == -1))
             {

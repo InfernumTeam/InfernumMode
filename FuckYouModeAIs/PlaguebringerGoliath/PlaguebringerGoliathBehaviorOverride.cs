@@ -1,7 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.NPCs;
-using CalamityMod.NPCs.Leviathan;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,7 +9,7 @@ using Terraria.ModLoader;
 
 using PlaguebringerBoss = CalamityMod.NPCs.PlaguebringerGoliath.PlaguebringerGoliath;
 
-namespace InfernumMode.FuckYouModeAIs.Leviathan
+namespace InfernumMode.FuckYouModeAIs.PlaguebringerGoliath
 {
 	public class PlaguebringerGoliathBehaviorOverride : NPCBehaviorOverride
     {
@@ -23,7 +20,8 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
         #region Enumerations
         public enum PBGAttackType
         {
-            Charge
+            Charge,
+            ReleaseMissilesUpward
         }
 
         public enum PBGFrameType
@@ -59,6 +57,9 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             {
                 case PBGAttackType.Charge:
                     DoBehavior_Charge(npc, target, attackTimer, enrageFactor, ref frameType);
+                    break;
+                case PBGAttackType.ReleaseMissilesUpward:
+                    DoBehavior_ReleaseMissilesUpward(npc, target, attackTimer, enrageFactor, ref frameType);
                     break;
             }
 
@@ -142,6 +143,33 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                     npc.netUpdate = true;
                 }
             }
+        }
+
+        public static void DoBehavior_ReleaseMissilesUpward(NPC npc, Player target, float attackTimer, float enrageFactor, ref float frameType)
+        {
+
+        }
+
+        public static void GotoNextAttackState(NPC npc)
+        {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            PBGAttackType currentAttackState = (PBGAttackType)(int)npc.ai[2];
+            PBGAttackType newAttackState = PBGAttackType.Charge;
+            switch (currentAttackState)
+            {
+                case PBGAttackType.Charge:
+                    newAttackState = PBGAttackType.ReleaseMissilesUpward;
+                    break;
+                case PBGAttackType.ReleaseMissilesUpward:
+                    newAttackState = PBGAttackType.Charge;
+                    break;
+            }
+
+            npc.ai[0] = (int)newAttackState;
+            npc.ai[1] = 0f;
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+            npc.netUpdate = true;
         }
         #endregion Specific Behaviors
 

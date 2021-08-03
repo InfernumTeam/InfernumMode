@@ -374,23 +374,27 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ret);
         }
 
+        public static float frameNumber = 0f;
         private static void DrawInfernumModeUI()
-		{
+        {
             // The mode indicator should only be displayed when the inventory is open, to prevent obstruction.
             if (!Main.playerInventory)
                 return;
+
+            //3 times the number of total frames, so that each frame gets displayed 3 times
+            if (frameNumber >= 186f)
+                frameNumber = 0f;
+            float row = (float)Math.Floor(frameNumber / 3);
+            if (row >= 27)
+                row = row - (((float)Math.Floor(row / 27)) * 27);
 
             // TODO - Replace this with Malice when it's added.
             bool defiledOn = false;
 
             Texture2D outerAreaTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumBG");
-            if (CalamityWorld.armageddon)
-                outerAreaTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumArmaBG");
+            Texture2D armaTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumArma");
 
-            float pulseRate = 11f;
-            if (CalamityPlayer.areThereAnyDamnBosses)
-                pulseRate = 25f;
-            Rectangle areaFrame = outerAreaTexture.Frame(1, 13, 0, (int)(Main.GlobalTime * pulseRate) % 13);
+            Rectangle areaFrame = outerAreaTexture.Frame(3, 27, (int)Math.Floor(frameNumber / 81), (int)row);
             Vector2 drawCenter = new Vector2(Main.screenWidth - 400f, 72f) + areaFrame.Size() * 0.5f;
 
             if (CalamityPlayer.areThereAnyDamnBosses)
@@ -404,6 +408,13 @@ namespace InfernumMode.ILEditingStuff
                 }
             }
             Main.spriteBatch.Draw(outerAreaTexture, drawCenter, areaFrame, Color.White, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            if (CalamityWorld.armageddon)
+                Main.spriteBatch.Draw(armaTexture, drawCenter, areaFrame, Color.White, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+
+            frameNumber++;
+            //Displays each frame for 2 ticks instead of 3 if there are any bosses by skipping the 3rd frame
+            if (CalamityPlayer.areThereAnyDamnBosses && (frameNumber + 4) % 3 == 0)
+                frameNumber++;
         }
 
         private static void DrawInfernumIcon(ILContext il)

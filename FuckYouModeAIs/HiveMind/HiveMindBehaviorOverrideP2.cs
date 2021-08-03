@@ -72,7 +72,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 finalPhaseInvinciblityTime = 300f;
                 npc.netUpdate = true;
             }
-            
+
             // Rise after entering the invincibility phase.
             if (finalPhaseInvinciblityTime == 60f)
             {
@@ -85,6 +85,20 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 
             if (fadeoutCountdown > 0f)
                 fadeoutCountdown--;
+
+            // Fade away and despawn if the player dies.
+            if (!player.active || player.dead)
+            {
+                npc.TargetClosest();
+                player = Main.player[npc.target];
+                if (!player.active || player.dead)
+                {
+                    npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 16f, 0.1f);
+                    if (npc.timeLeft > 240)
+                        npc.timeLeft = 240;
+                    return false;
+                }
+            }
 
             if (finalPhaseInvinciblityTime > 0f)
             {

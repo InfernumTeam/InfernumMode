@@ -94,6 +94,13 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 if (!player.active || player.dead)
                 {
                     npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 16f, 0.1f);
+                    if (!npc.WithinRange(player.Center, 600f))
+                    {
+                        npc.life = 0;
+                        npc.active = false;
+                        npc.netUpdate = true;
+                    }
+
                     if (npc.timeLeft > 240)
                         npc.timeLeft = 240;
                     return false;

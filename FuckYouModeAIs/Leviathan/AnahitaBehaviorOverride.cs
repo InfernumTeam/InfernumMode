@@ -59,6 +59,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 
         public override bool PreAI(NPC npc)
         {
+            npc.position.X = MathHelper.Clamp(npc.position.X, 360f, Main.maxTilesX * 16f - 360f);
             NPCID.Sets.TrailingMode[npc.type] = 1;
             NPCID.Sets.TrailCacheLength[npc.type] = 5;
 

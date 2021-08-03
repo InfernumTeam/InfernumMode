@@ -345,7 +345,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                     if (attackTimer < redirectTime)
                     {
                         destination = target.Center - Vector2.UnitX.RotatedBy(hoverOffsetAngle) * Math.Sign(target.Center.X - npc.Center.X) * 1000f;
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * (outOfOcean ? 23f : 10f), outOfOcean ? 0.55f : 0.2f);
+                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * (outOfOcean ? 23f : 12f), (outOfOcean || !sirenAlive) ? 0.55f : 0.25f);
                         npc.spriteDirection = npc.direction;
                     }
 

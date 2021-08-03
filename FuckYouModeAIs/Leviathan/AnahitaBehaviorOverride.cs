@@ -351,9 +351,9 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 
                     int hoverTime = 50;
                     int spinTime = 250;
-                    int chargeTime = 50;
-                    float chargeSpeed = MathHelper.Lerp(23f, 31f, 1f - lifeRatio);
-                    float totalSpins = 3f;
+                    int chargeTime = 40;
+                    float chargeSpeed = MathHelper.Lerp(25f, 31f, 1f - lifeRatio);
+                    float totalSpins = 2f;
                     if (enraged)
                     {
                         hoverTime = 40;
@@ -365,7 +365,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                         hoverTime = 30;
                         chargeTime = 20;
                         chargeSpeed = 37f;
-                        totalSpins = 3f;
+                        totalSpins = 2f;
                     }
 
                     float spinAngularVelocity = MathHelper.TwoPi * totalSpins / spinTime;
@@ -381,11 +381,11 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                         npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.04f);
 
                         destination = target.Center;
-                        destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 300f;
+                        destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 400f;
                         destination.Y -= 500f;
                         destination -= npc.velocity;
 
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * 15f, 0.85f);
+                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * 15f, 1.85f);
                         int idealDirection = Math.Sign(target.Center.X - npc.Center.X);
                         if (idealDirection != 0)
                         {
@@ -444,29 +444,17 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                         if (!shouldJustCharge)
                         {
                             npc.velocity = npc.velocity.RotatedBy(spinAngularVelocity * npc.direction);
-                            if (!npc.WithinRange(target.Center, 90f))
-                                npc.Center += npc.DirectionTo(target.Center) * chargeSpeed * 0.6f;
+                            npc.rotation += spinAngularVelocity * npc.direction;
+                            if (!npc.WithinRange(target.Center, 120f))
+                                npc.Center += npc.DirectionTo(target.Center) * chargeSpeed * 0.3f;
                         }
 
                         Vector2 currentDirection = (npc.position - npc.oldPos[1]).SafeNormalize(Vector2.Zero);
-                        Vector2 spearDirection = currentDirection.RotatedBy(npc.direction * MathHelper.Pi * -0.08f);
 
                         npc.rotation = currentDirection.ToRotation();
 
                         if (npc.spriteDirection == 1)
                             npc.rotation += MathHelper.Pi;
-
-                        bool aimingAtPlayer = Vector2.Dot(currentDirection, npc.SafeDirectionTo(target.Center)) > 0.6f;
-                        bool closeToPlayer = npc.WithinRange(target.Center, 180f);
-                        if (aimingAtPlayer && closeToPlayer && Main.netMode != NetmodeID.MultiplayerClient && atlantisCooldown <= 0f)
-                        {
-                            for (float offset = 0f; offset < 110f; offset += 10f)
-                                Utilities.NewProjectileBetter(npc.Center + spearDirection * (15f + offset), spearDirection * (70f + offset * 0.4f), ModContent.ProjectileType<AtlantisSpear>(), 120, 0f);
-                            atlantisCooldown = 30f;
-                        }
-
-                        if (atlantisCooldown > 0)
-                            atlantisCooldown--;
                     }
 
                     if (attackTimer >= hoverTime + spinTime)

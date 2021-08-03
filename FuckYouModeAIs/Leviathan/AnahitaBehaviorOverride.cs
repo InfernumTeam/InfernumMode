@@ -450,11 +450,24 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                         }
 
                         Vector2 currentDirection = (npc.position - npc.oldPos[1]).SafeNormalize(Vector2.Zero);
+                        Vector2 spearDirection = currentDirection.RotatedBy(npc.direction * MathHelper.Pi * -0.08f);
 
                         npc.rotation = currentDirection.ToRotation();
 
                         if (npc.spriteDirection == 1)
                             npc.rotation += MathHelper.Pi;
+
+                        bool aimingAtPlayer = Vector2.Dot(currentDirection, npc.SafeDirectionTo(target.Center)) > 0.6f;
+                        bool closeToPlayer = npc.WithinRange(target.Center, 180f);
+                        if (aimingAtPlayer && closeToPlayer && Main.netMode != NetmodeID.MultiplayerClient && atlantisCooldown <= 0f)
+                        {
+                            for (float offset = 0f; offset < 110f; offset += 10f)
+                                Utilities.NewProjectileBetter(npc.Center + spearDirection * (15f + offset), spearDirection * (70f + offset * 0.4f), ModContent.ProjectileType<AtlantisSpear>(), 120, 0f);
+                            atlantisCooldown = 30f;
+                        }
+
+                        if (atlantisCooldown > 0)
+                            atlantisCooldown--;
                     }
 
                     if (attackTimer >= hoverTime + spinTime)

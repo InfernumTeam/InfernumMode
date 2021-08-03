@@ -92,6 +92,11 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
                 DoMovement_IdleHoverMovement(npc, target);
             else
             {
+                Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
+                if (calamityModMusic != null)
+                    npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/AquaticScourge");
+                else
+                    npc.modNPC.music = MusicID.Boss2;
                 float wrappedTime = generalTimer % 1040f;
                 if (wrappedTime < 360f)
                 {

@@ -44,7 +44,7 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                 CurrentSpot = new ScreenShakeSpot(0, projectile.Center);
                 var sound = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanSummonBase"), projectile.Center);
                 if (sound != null)
-                    sound.Volume = MathHelper.Clamp(sound.Volume * 1.4f, 0f, 1f);
+                    sound.Volume = MathHelper.Clamp(sound.Volume * 1.5f, 0f, 1f);
                 projectile.localAI[0] = 1f;
             }
             CurrentSpot.ScreenShakePower = (float)Math.Pow(Utils.InverseLerp(180f, 290f, Time, true), 0.3D) * 20f;

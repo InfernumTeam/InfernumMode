@@ -9,9 +9,9 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
     public class AquaticSeekerHead2 : ModNPC
     {
         public bool TailSpawned = false;
-        public const int MinLength = 3;
-        public const int MaxLength = 4;
-        public const int Lifetime = 2670;
+        public const int MinLength = 11;
+        public const int MaxLength = 12;
+        public const int TotalLife = 2670;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Aquatic Seeker");
 
@@ -21,7 +21,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             npc.width = 22;
             npc.height = 28;
             npc.defense = 5;
-            npc.lifeMax = Lifetime;
+            npc.lifeMax = TotalLife;
             npc.aiStyle = aiType = -1;
             npc.knockBackResist = 0f;
             npc.value = 0;
@@ -83,12 +83,12 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
                     npc.velocity *= 1.024f;
             }
             else
-                npc.velocity = (npc.velocity * 31f + npc.SafeDirectionTo(Main.player[npc.target].Center) * 10f) / 32f;
+                npc.velocity = (npc.velocity * 31f + npc.SafeDirectionTo(Main.player[npc.target].Center) * 12f) / 32f;
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => npc.lifeMax = Lifetime;
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => npc.lifeMax = TotalLife;
 
         public override void HitEffect(int hitDirection, double damage)
         {

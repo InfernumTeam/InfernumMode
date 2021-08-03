@@ -15,7 +15,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             npc.width = 16;
             npc.height = 16;
             npc.defense = 10;
-            npc.lifeMax = AquaticSeekerHead2.Lifetime;
+            npc.lifeMax = AquaticSeekerHead2.TotalLife;
             npc.aiStyle = aiType = -1;
             npc.knockBackResist = 0f;
             npc.alpha = 255;
@@ -60,7 +60,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
 
         public override void AI() => DoSegmentBehavior(npc);
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => npc.lifeMax = AquaticSeekerHead2.Lifetime;
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => npc.lifeMax = AquaticSeekerHead2.TotalLife;
 
         public override bool CheckActive()
         {

@@ -164,18 +164,6 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 
             bool usingBelchFrames = npc.frame.X > 0 && npc.frame.Y <= 0;
 
-            // Don't attack alongside the Siren unless she or the Leviathan herself are close to death.
-            bool eitherBossIsCloseToDeath = lifeRatio < 0.2f || !sirenAlive || (sirenAlive && Main.npc[CalamityGlobalNPC.siren].life / (float)Main.npc[CalamityGlobalNPC.siren].lifeMax < 0.2f);
-            if (sirenAlive && Main.npc[CalamityGlobalNPC.siren].ai[1] != 0f && !Main.npc[CalamityGlobalNPC.siren].dontTakeDamage && !eitherBossIsCloseToDeath)
-            {
-                npc.TargetClosest();
-                npc.spriteDirection = npc.direction;
-
-                Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 900f;
-                npc.SimpleFlyMovement(npc.DirectionTo(destination) * 8f, 0.16f);
-                return false;
-            }
-
             switch ((LeviathanAttackType)(int)npc.ai[1])
             {
                 case LeviathanAttackType.LazilyHover:

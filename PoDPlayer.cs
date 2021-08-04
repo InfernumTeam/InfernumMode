@@ -29,6 +29,9 @@ namespace InfernumMode
 
             bool useFolly = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("Bumblefuck")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("Bumblefuck"))].Infernum().ExtraAI[8] > 0f);
             player.ManageSpecialBiomeVisuals("FuckYouMode:Dragonfolly", useFolly);
+
+            bool useDeus = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("AstrumDeusHeadSpectral"));
+            player.ManageSpecialBiomeVisuals("FuckYouMode:Deus", useDeus);
         }
         #endregion
         #region Reset Effects

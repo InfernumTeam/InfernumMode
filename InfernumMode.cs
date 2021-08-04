@@ -38,6 +38,9 @@ namespace InfernumMode
             Filters.Scene["FuckYouMode:Dragonfolly"] = new Filter(new DragonfollyScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.6f), EffectPriority.VeryHigh);
             SkyManager.Instance["FuckYouMode:Dragonfolly"] = new DragonfollySky();
 
+            Filters.Scene["FuckYouMode:Deus"] = new Filter(new DeusScreenShaderData("FilterMiniTower").UseColor(Color.Lerp(Color.Purple, Color.Black, 0.75f)).UseOpacity(0.24f), EffectPriority.VeryHigh);
+            SkyManager.Instance["FuckYouMode:Deus"] = new DeusSky();
+
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
             {

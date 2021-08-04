@@ -36,7 +36,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
-using SignusNPC = CalamityMod.NPCs.Signus.Signus;
+using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
 
 namespace InfernumMode.FuckYouModeAIs.MainAI
@@ -329,6 +329,18 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>())
                 return false;
+
+            if (npc.type == ModContent.NPCType<PolterghastNPC>())
+            {
+                if (npc.Infernum().ExtraAI[6] > 0f)
+                    return true;
+                npc.Infernum().ExtraAI[6] = 1f;
+                npc.life = 1;
+                npc.netUpdate = true;
+                npc.dontTakeDamage = true;
+
+                return npc.Infernum().ExtraAI[6] == 0f;
+            }
 
             if (npc.type == ModContent.NPCType<Bumblefuck2>())
             {

@@ -66,6 +66,9 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
             PolterghastAttackType attackState = (PolterghastAttackType)(int)npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float totalReleasedSouls = ref npc.ai[2];
+            ref float dyingTimer = ref npc.Infernum().ExtraAI[6];
+            ref float initialDeathPositionX = ref npc.Infernum().ExtraAI[7];
+            ref float initialDeathPositionY = ref npc.Infernum().ExtraAI[8];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase3 = lifeRatio < Phase3LifeRatio;
@@ -81,6 +84,121 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
                 totalReleasedSouls = 0f;
 
             npc.scale = MathHelper.Lerp(1.225f, 0.68f, MathHelper.Clamp(totalReleasedSouls / 60f, 0f, 1f));
+
+            if (dyingTimer > 0f)
+            {
+                npc.dontTakeDamage = true;
+                npc.DeathSound = InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PolterghastDeath");
+
+                // Clear away any clones and legs.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int cloneType = NPC.CountNPCS(ModContent.NPCType<PolterPhantom>());
+                    int legType = ModContent.NPCType<EerieLimb>();
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if ((Main.npc[i].type == cloneType || Main.npc[i].type == legType) && Main.npc[i].active)
+                        {
+                            Main.npc[i].life = 0;
+                            Main.npc[i].active = false;
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, i);
+                        }
+                    }
+                }
+
+                // Quickly slow down.
+                npc.velocity *= 0.955f;
+
+                dyingTimer++;
+
+                float turnSpeed = Utils.InverseLerp(240f, 45f, dyingTimer, true);
+                if (turnSpeed > 0f)
+                    npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) + MathHelper.PiOver2, turnSpeed);
+
+                // Begin releasing souls.
+                if (dyingTimer > 210f && dyingTimer % 2f == 0f && totalReleasedSouls < 60f)
+                {
+                    if (dyingTimer % 8f == 0f)
+                        Main.PlaySound(SoundID.NPCHit36, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 soulVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(7f, 13f);
+                        int soul = Utilities.NewProjectileBetter(npc.Center + soulVelocity * 5f, soulVelocity, ModContent.ProjectileType<DeathAnimationSoul>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(soul))
+                            Main.projectile[soul].ai[0] = Main.rand.NextBool(2).ToDirectionInt();
+
+                        totalReleasedSouls++;
+
+                        npc.netSpam = 0;
+                        npc.netUpdate = true;
+                    }
+                }
+
+                if (totalReleasedSouls >= 60f)
+                {
+                    // Focus on the boss as it jitters and explode.
+                    if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2700f))
+                    {
+                        Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
+                        Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(270f, 290f, dyingTimer, true);
+                        Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(370f, 362f, dyingTimer, true);
+                    }
+
+                    Vector2 jitter = Main.rand.NextVector2Unit() * MathHelper.SmoothStep(1f, 3.25f, Utils.InverseLerp(270f, 350f, dyingTimer, true));
+                    Main.LocalPlayer.Infernum().CurrentScreenShakePower = jitter.Length() * Utils.InverseLerp(1950f, 1100f, Main.LocalPlayer.Distance(npc.Center), true) * 4f;
+                    npc.Center = new Vector2(initialDeathPositionX, initialDeathPositionY) + jitter;
+
+                    // Make a flame-like sound effect right before dying.
+                    if (dyingTimer == 368f)
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), target.Center);
+
+                    // Release a bunch of other souls right before death.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && dyingTimer > 360f)
+                    {
+                        Vector2 soulVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 9f);
+                        int soul = Utilities.NewProjectileBetter(npc.Center + soulVelocity * 5f, soulVelocity, ModContent.ProjectileType<DeathAnimationSoul>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(soul))
+                        {
+                            Main.projectile[soul].ai[0] = Main.rand.NextBool(2).ToDirectionInt();
+                            Main.projectile[soul].ai[1] = 1f;
+                        }
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && dyingTimer == 370f)
+                    {
+                        for (int i = 0; i < 125; i++)
+                        {
+                            Vector2 soulVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 9f);
+                            int soul = Utilities.NewProjectileBetter(npc.Center + soulVelocity * 5f, soulVelocity, ModContent.ProjectileType<DeathAnimationSoul>(), 0, 0f);
+                            if (Main.projectile.IndexInRange(soul))
+                            {
+                                Main.projectile[soul].ai[0] = Main.rand.NextBool(2).ToDirectionInt();
+                                Main.projectile[soul].ai[1] = 1f;
+                            }
+                        }
+
+                        npc.life = 0;
+                        npc.HitEffect(0, 10.0);
+                        npc.checkDead();
+                    }
+                }
+                else if (dyingTimer > 270f)
+                {
+                    // Declare the death position for the sake of jittering later.
+                    if (initialDeathPositionX == 0f || initialDeathPositionY == 0f)
+                    {
+                        initialDeathPositionX = npc.Center.X;
+                        initialDeathPositionY = npc.Center.Y;
+                        npc.velocity = Vector2.Zero;
+                        npc.netUpdate = true;
+                    }
+                    dyingTimer = 260f;
+                }
+
+                return false;
+            }
+
             int totalClones = NPC.CountNPCS(ModContent.NPCType<PolterPhantom>());
             if (totalClones > 0)
                 npc.scale = MathHelper.Lerp(0.7f, 1.225f, 1f - totalClones / 2f);
@@ -730,7 +848,7 @@ namespace InfernumMode.FuckYouModeAIs.Polterghast
             if (npc.frame.Y < frameHeight * minFrame)
                 npc.frame.Y = frameHeight * minFrame;
             if (npc.frame.Y > frameHeight * maxFrame)
-                npc.frame.Y = frameHeight * maxFrame;
+                npc.frame.Y = frameHeight * minFrame;
         }
         #endregion Frames and Drawcode
     }

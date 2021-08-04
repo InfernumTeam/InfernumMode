@@ -82,12 +82,10 @@ namespace InfernumMode.FuckYouModeAIs.DukeFishron
         public static readonly DukeAttackType[] Subphase3Pattern = new DukeAttackType[]
         {
             DukeAttackType.TeleportCharge,
-            DukeAttackType.Charge,
-            DukeAttackType.Charge,
+            DukeAttackType.TeleportCharge,
             DukeAttackType.RazorbladeRazorstorm,
             DukeAttackType.TeleportCharge,
-            DukeAttackType.Charge,
-            DukeAttackType.Charge,
+            DukeAttackType.TeleportCharge,
             DukeAttackType.TeleportCharge,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
@@ -289,10 +287,9 @@ namespace InfernumMode.FuckYouModeAIs.DukeFishron
                         npc.netUpdate = true;
                     }
 
+                    frameDrawType = (int)DukeFrameDrawingType.FinFlapping;
                     if (attackTimer >= angularAimTime)
                     {
-                        frameDrawType = (int)DukeFrameDrawingType.IdleFins;
-
                         if (attackTimer < angularAimTime + chargeTime)
                             GenerateParticles(npc);
                     }
@@ -416,7 +413,7 @@ namespace InfernumMode.FuckYouModeAIs.DukeFishron
                         bubbleCount = 4;
                     }
 
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+                    frameDrawType = (int)DukeFrameDrawingType.FinFlapping;
 
                     // Fly a bit above the target.
                     if (attackSubstate == 0f)
@@ -658,7 +655,7 @@ namespace InfernumMode.FuckYouModeAIs.DukeFishron
                     chargeSpeed = enraged ? 35f : 30f;
 
                     // Fadeout effects, flying, and damage disabling.
-                    if (attackTimer < 35f)
+                    if (attackTimer < 45f)
                     {
                         npc.damage = 0;
 
@@ -672,7 +669,7 @@ namespace InfernumMode.FuckYouModeAIs.DukeFishron
                     npc.rotation = npc.rotation.AngleTowards(getAdjustedAngle(npc.AngleTo(target.Center)), 0.065f);
 
                     // Charge.
-                    if (attackTimer == 35f)
+                    if (attackTimer == 45f)
                     {
                         hoverDirection = ref npc.Infernum().ExtraAI[0];
 
@@ -693,8 +690,9 @@ namespace InfernumMode.FuckYouModeAIs.DukeFishron
                     }
 
                     // Fade-in effects and rotation.
-                    if (npc.alpha > 0 && attackTimer > 35f)
+                    if (npc.alpha > 0 && attackTimer > 45f)
                     {
+                        npc.velocity *= 0.98f;
                         npc.alpha -= 45;
                     }
 

@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.AstrumDeus;
+﻿using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -364,6 +365,10 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
 
         public static void DoBehavior_StarWeave(NPC npc, Player target, float beaconAngerFactor, ref float attackTimer)
         {
+            // Apply the extreme gravity debuff.
+            if (Main.netMode != NetmodeID.Server)
+                target.AddBuff(ModContent.BuffType<ExtremeGrav>(), 25);
+
             float spinSpeed = 34f;
             ref float cantKeepSpinningFlag = ref npc.Infernum().ExtraAI[0];
 

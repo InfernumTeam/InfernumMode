@@ -30,6 +30,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
 
             npc.defense = aheadSegment.defense;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
+            npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
 
             npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.65f);
 

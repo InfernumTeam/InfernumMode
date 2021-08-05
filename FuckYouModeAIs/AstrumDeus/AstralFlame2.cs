@@ -49,7 +49,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
 
             Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             if (Time > 85f && Time < 145f)
-                projectile.velocity = (projectile.velocity * 34f + projectile.SafeDirectionTo(closestPlayer.Center) * 18f) / 35f;
+                projectile.velocity = (projectile.velocity * 41f + projectile.SafeDirectionTo(closestPlayer.Center) * 15f) / 42f;
 
             if (Time > 150f && projectile.velocity.Length() < 20f)
                 projectile.velocity *= 1.01f; 

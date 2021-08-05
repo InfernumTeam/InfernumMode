@@ -49,6 +49,7 @@ namespace InfernumMode
             }
 
             NPCBehaviorOverride.LoadAll();
+            ProjectileBehaviorOverride.LoadAll();
 
             if (Main.netMode != NetmodeID.Server)
 			{

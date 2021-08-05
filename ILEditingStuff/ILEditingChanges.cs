@@ -48,6 +48,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(NPCLoader).GetMethod("PreDraw", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator ModifyPreDrawProjectile
+        {
+            add => HookEndpointManager.Modify(typeof(ProjectileLoader).GetMethod("PreDraw", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(ProjectileLoader).GetMethod("PreDraw", Utilities.UniversalBindingFlags), value);
+        }
+
         public static event ILContext.Manipulator ModifyFindFrameNPC
         {
             add => HookEndpointManager.Modify(typeof(NPCLoader).GetMethod("FindFrame", Utilities.UniversalBindingFlags), value);
@@ -97,7 +103,8 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreDrawNPC += NPCPreDrawChange;
             ModifyCheckDead += NPCCheckDeadChange;
             ModifyPreAIProjectile += ProjectilePreAIChange;
-			ModeIndicatorUIDraw += DrawInfernumIcon;
+            ModifyPreDrawProjectile += ProjectilePreDrawChange;
+            ModeIndicatorUIDraw += DrawInfernumIcon;
             CalamityWorldPostUpdate += PermitODRain;
         }
 
@@ -114,6 +121,7 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreDrawNPC -= NPCPreDrawChange;
             ModifyCheckDead -= NPCCheckDeadChange;
             ModifyPreAIProjectile -= ProjectilePreAIChange;
+            ModifyPreDrawProjectile -= ProjectilePreDrawChange;
             ModeIndicatorUIDraw -= DrawInfernumIcon;
             CalamityWorldPostUpdate -= PermitODRain;
         }
@@ -398,6 +406,36 @@ namespace InfernumMode.ILEditingStuff
                     }
                 }
                 return projectile.modProjectile == null || projectile.modProjectile.PreAI();
+            }));
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        private static void ProjectilePreDrawChange(ILContext context)
+        {
+            ILCursor cursor = new ILCursor(context);
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.Emit(OpCodes.Ldarg_2);
+            cursor.EmitDelegate(new Func<Projectile, SpriteBatch, Color, bool>((projectile, spriteBatch, lightColor) =>
+            {
+                object instance = typeof(ProjectileLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
+                GlobalProjectile[] arr = typeof(ProjectileLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags).GetValue(instance) as GlobalProjectile[];
+                if (OverridingListManager.InfernumProjectilePreDrawOverrideList.ContainsKey(projectile.type))
+                    return (bool)OverridingListManager.InfernumProjectilePreDrawOverrideList[projectile.type].DynamicInvoke(projectile, spriteBatch, lightColor);
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    GlobalProjectile globalNPC = arr[i];
+                    if (globalNPC != null &&
+                        globalNPC is CalamityMod.Projectiles.CalamityGlobalProjectile)
+                    {
+                        continue;
+                    }
+                    if (!globalNPC.Instance(projectile).PreDraw(projectile, spriteBatch, lightColor))
+                    {
+                        return false;
+                    }
+                }
+                return projectile.modProjectile == null || projectile.modProjectile.PreDraw(spriteBatch, lightColor);
             }));
             cursor.Emit(OpCodes.Ret);
         }

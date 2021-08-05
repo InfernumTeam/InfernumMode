@@ -6,5 +6,6 @@ namespace InfernumMode.OverridingSystem
     public enum ProjectileOverrideContext
     {
         ProjectileAI = 1,
+        ProjectilePreDraw = 2,
     }
 }

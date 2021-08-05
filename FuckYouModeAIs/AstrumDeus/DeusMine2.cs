@@ -16,6 +16,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             projectile.hostile = true;
             projectile.alpha = 100;
             projectile.penetrate = -1;
+            projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.timeLeft = 900;
         }
@@ -50,9 +51,6 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             return new Color(255, 255, 255, projectile.alpha);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
-        {
-            target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 240);
-        }
+        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 240);
     }
 }

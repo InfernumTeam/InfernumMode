@@ -9,8 +9,9 @@ namespace InfernumMode.OverridingSystem
         internal static Dictionary<int, Delegate> InfernumSetDefaultsOverrideList = new Dictionary<int, Delegate>();
         internal static Dictionary<int, Delegate> InfernumPreDrawOverrideList = new Dictionary<int, Delegate>();
         internal static Dictionary<int, Delegate> InfernumFrameOverrideList = new Dictionary<int, Delegate>();
-
+        
 		internal static Dictionary<int, Delegate> InfernumProjectilePreAIOverrideList = new Dictionary<int, Delegate>();
+        internal static Dictionary<int, Delegate> InfernumProjectilePreDrawOverrideList = new Dictionary<int, Delegate>();
 
         internal static void Load()
         {
@@ -19,6 +20,7 @@ namespace InfernumMode.OverridingSystem
             InfernumPreDrawOverrideList = new Dictionary<int, Delegate>();
             InfernumFrameOverrideList = new Dictionary<int, Delegate>();
             InfernumProjectilePreAIOverrideList = new Dictionary<int, Delegate>();
+            InfernumProjectilePreDrawOverrideList = new Dictionary<int, Delegate>();
         }
 
         internal static void Unload()
@@ -28,6 +30,7 @@ namespace InfernumMode.OverridingSystem
             InfernumPreDrawOverrideList = null;
             InfernumFrameOverrideList = null;
             InfernumProjectilePreAIOverrideList = null;
+            InfernumProjectilePreDrawOverrideList = null;
         }
     }
 }

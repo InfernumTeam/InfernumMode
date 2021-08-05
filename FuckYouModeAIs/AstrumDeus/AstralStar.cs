@@ -1,3 +1,4 @@
+using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -96,6 +97,8 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             color.A = 0;
             return color * projectile.Opacity;
         }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 180);
 
         public override bool CanDamage() => Time > 75f;
     }

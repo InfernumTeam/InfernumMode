@@ -71,6 +71,9 @@ namespace InfernumMode.Skies
                 Vector2 drawPosition = (Stars[j].Position - drawOffset) * baseScale + drawOffset - Main.screenPosition;
                 if (rectangle.Contains((int)drawPosition.X, (int)drawPosition.Y))
                 {
+                    if (!Main.BackgroundEnabled && j % 5 != 0)
+                        continue;
+
                     float scaleOscilation = (float)Math.Sin((Stars[j].AlphaFrequency * Main.GlobalTime + Stars[j].SinOffset) * Stars[j].AlphaAmplitude + Stars[j].AlphaAmplitude);
                     float fade = (float)Math.Sin(Stars[j].AlphaFrequency * Main.GlobalTime * 5f + Stars[j].SinOffset) * 0.1f - 0.1f;
                     fade = MathHelper.Clamp(fade, 0f, 1f);
@@ -80,6 +83,8 @@ namespace InfernumMode.Skies
                     if (j % 72 == 71)
                         drawColor = Stars[j].Blue ? Color.MediumPurple : Color.Goldenrod;
                     drawColor *= scaleOscilation * (1f - fade) * intensity * 0.8f;
+                    if (!Main.BackgroundEnabled)
+                        drawColor *= 0.5f;
                     drawColor.A = 0;
 
                     Vector2 starScaleBase = new Vector2((baseScale.X * 0.5f + 0.5f) * (scaleOscilation * 0.3f + 0.7f)) * 0.67f;

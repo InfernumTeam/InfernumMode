@@ -22,6 +22,9 @@ namespace InfernumMode.OverridingSystem
                     case ProjectileOverrideContext.ProjectileAI:
                         methodName = "PreAI";
                         break;
+                    case ProjectileOverrideContext.ProjectilePreDraw:
+                        methodName = "PreDraw";
+                        break;
                     default:
                         throw new ArgumentException("The given override context is invalid.");
                 }
@@ -39,6 +42,9 @@ namespace InfernumMode.OverridingSystem
                     case ProjectileOverrideContext.ProjectileAI:
                         OverridingListManager.InfernumProjectilePreAIOverrideList[instance.ProjectileOverrideType] = methodAsDelegate;
                         break;
+                    case ProjectileOverrideContext.ProjectilePreDraw:
+                        OverridingListManager.InfernumProjectilePreDrawOverrideList[instance.ProjectileOverrideType] = methodAsDelegate;
+                        break;
                 }
             }
 
@@ -47,14 +53,14 @@ namespace InfernumMode.OverridingSystem
                 ProjectileBehaviorOverride instance = (ProjectileBehaviorOverride)Activator.CreateInstance(type);
                 if (instance.ContentToOverride.HasFlag(ProjectileOverrideContext.ProjectileAI))
                     getMethodBasedOnContext(type, instance, ProjectileOverrideContext.ProjectileAI);
+                if (instance.ContentToOverride.HasFlag(ProjectileOverrideContext.ProjectilePreDraw))
+                    getMethodBasedOnContext(type, instance, ProjectileOverrideContext.ProjectilePreDraw);
             }
         }
 
         public abstract int ProjectileOverrideType { get; }
         public abstract ProjectileOverrideContext ContentToOverride { get; }
-        public virtual void SetDefaults(Projectile projectile) { }
         public virtual bool PreAI(Projectile projectile) => true;
         public virtual bool PreDraw(Projectile projectile, SpriteBatch spriteBatch, Color lightColor) => true;
-        public virtual void FindFrame(Projectile projectile, int frameHeight) { }
     }
 }

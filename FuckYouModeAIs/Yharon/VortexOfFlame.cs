@@ -35,9 +35,9 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                 Player player = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
                 if (projectile.timeLeft % 120 == 0)
                 {
-                    for (int i = 0; i < 3; i++)
+                    for (int i = 0; i < 4; i++)
                     {
-                        float offsetAngle = MathHelper.TwoPi * i / 3f;
+                        float offsetAngle = MathHelper.TwoPi * i / 4f;
                         Utilities.NewProjectileBetter(projectile.Center, projectile.DirectionTo(player.Center).RotatedBy(offsetAngle) * 7f, ProjectileID.CultistBossFireBall, 560, 0f, Main.myPlayer);
                     }
                 }

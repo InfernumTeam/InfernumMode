@@ -6,10 +6,9 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using InfernumMode.FuckYouModeAIs.MoonLord;
 using static InfernumMode.FuckYouModeAIs.MainAI.FuckYouModeAIsGlobal;
 
-namespace InfernumMode.FuckYouModeAIs.NPCs
+namespace InfernumMode.FuckYouModeAIs.MoonLord
 {
     public class EldritchSeal : ModNPC
     {

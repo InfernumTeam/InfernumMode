@@ -1,28 +1,17 @@
 ﻿using CalamityMod;
-using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
-using Terraria.GameContent.Shaders;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
-
-using static InfernumMode.Utilities;
-using static InfernumMode.FuckYouModeAIs.MainAI.FuckYouModeAIsGlobal;
 using CalamityMod.NPCs;
 using CalamityMod.Events;
 using Terraria.GameContent.Events;
-using InfernumMode.FuckYouModeAIs.NPCs;
 
 namespace InfernumMode.FuckYouModeAIs.MoonLord
 {
-	public class MoonLordCoreBehaviorOverride : NPCBehaviorOverride
+    public class MoonLordCoreBehaviorOverride : NPCBehaviorOverride
     {
         public const int CoreLifeMax = 99990;
         public override int NPCOverrideType => NPCID.MoonLordCore;

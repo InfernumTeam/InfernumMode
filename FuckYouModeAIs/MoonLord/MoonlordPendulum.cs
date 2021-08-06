@@ -6,7 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Enums;
 using Terraria.ModLoader;
-using InfernumMode.FuckYouModeAIs.NPCs;
+
 namespace InfernumMode.FuckYouModeAIs.MoonLord
 {
     public class MoonlordPendulum : ModProjectile

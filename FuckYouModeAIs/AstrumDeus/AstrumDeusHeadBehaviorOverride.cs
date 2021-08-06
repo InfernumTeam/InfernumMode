@@ -4,6 +4,7 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -22,10 +23,13 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             CelestialLights,
             WarpCharge,
             StarWeave,
-            InfectedPlasmaVomit
+            InfectedPlasmaVomit,
+            ConstellationSpawn,
+            FusionBurst
         }
 
         public const float Phase2LifeThreshold = 0.55f;
+        public const float Phase3LifeThreshold = 0.2f;
 
         public override int NPCOverrideType => ModContent.NPCType<AstrumDeusHeadSpectral>();
 
@@ -50,6 +54,8 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                 return false;
             }
 
+            // Set the whoAmI index.
+
             // Create a beacon if none exists.
             List<Projectile> beacons = Utilities.AllProjectilesByID(ModContent.ProjectileType<DeusRitualDrama>()).ToList();
             if (beacons.Count == 0)
@@ -61,7 +67,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             Player target = Main.player[npc.target];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float beaconAngerFactor = Utils.InverseLerp(2400f, 5600f, target.Distance(beacons.First().Center), true);
+            float beaconAngerFactor = Utils.InverseLerp(3600f, 5600f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float hasCreatedSegments = ref npc.localAI[0];
@@ -105,6 +111,12 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                 case DeusAttackType.InfectedPlasmaVomit:
                     DoBehavior_InfectedPlasmaVomit(npc, target, beaconAngerFactor, ref attackTimer);
                     break;
+                case DeusAttackType.ConstellationSpawn:
+                    DoBehavior_ConstellationSpawn(npc, target, beaconAngerFactor, ref attackTimer);
+                    break;
+                case DeusAttackType.FusionBurst:
+                    DoBehavior_FusionBurst(npc, target, beaconAngerFactor, ref attackTimer);
+                    break;
             }
             attackTimer++;
             return false;
@@ -133,7 +145,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
         public static void DoBehavior_AstralBombs(NPC npc, Player target, float beaconAngerFactor, float lifeRatio, float attackTimer)
         {
             int shootRate = (int)MathHelper.Lerp(10f, 7f, 1f - lifeRatio);
-            int totalBombsToShoot = lifeRatio < Phase2LifeThreshold ? 56 : 45;
+            int totalBombsToShoot = lifeRatio < Phase2LifeThreshold ? 38 : 45;
             float flySpeed = MathHelper.Lerp(12f, 16f, 1f - lifeRatio) + beaconAngerFactor * 10f;
             float flyAcceleration = MathHelper.Lerp(0.028f, 0.034f, 1f - lifeRatio) + beaconAngerFactor * 0.036f;
             int shootTime = shootRate * totalBombsToShoot;
@@ -144,7 +156,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                 npc.velocity = npc.velocity.SafeNormalize(-Vector2.UnitY) * 5.25f;
 
             // Drift towards the player. Contact damage is possible, but should be of little threat.
-            if (!npc.WithinRange(target.Center, 325f))
+            if (!npc.WithinRange(target.Center, 625f))
             {
                 float newSpeed = MathHelper.Lerp(npc.velocity.Length(), flySpeed, 0.075f);
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), flyAcceleration, true) * newSpeed;
@@ -154,6 +166,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             // They become faster/closer at specific life thresholds.
             if (attackTimer % shootRate == 0 && attackTimer < shootTime)
             {
+                Main.PlaySound(SoundID.Item11, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float bombShootOffset = lifeRatio < Phase2LifeThreshold ? 850f : 1050f;
@@ -175,26 +188,26 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
 
         public static void DoBehavior_StellarCrash(NPC npc, Player target, float beaconAngerFactor, float lifeRatio, ref float attackTimer)
         {
-            int totalCrashes = lifeRatio < Phase2LifeThreshold ? 4 : 3;
-            int crashRiseTime = lifeRatio < Phase2LifeThreshold ? 215 : 275;
+            int totalCrashes = lifeRatio < Phase2LifeThreshold ? 2 : 3;
+            int crashRiseTime = lifeRatio < Phase2LifeThreshold ? 315 : 375;
             int crashChargeTime = lifeRatio < Phase2LifeThreshold ? 100 : 95;
-            float crashSpeed = MathHelper.Lerp(32.5f, 37f, 1f - lifeRatio) + beaconAngerFactor * 22f;
+            float crashSpeed = MathHelper.Lerp(32.5f, 48f, 1f - lifeRatio) + beaconAngerFactor * 20f;
             float wrappedTime = attackTimer % (crashRiseTime + crashChargeTime);
 
             // Rise upward and release redirecting astral bombs.
             if (wrappedTime < crashRiseTime)
             {
-                Vector2 riseDestination = target.Center - Vector2.UnitY * 1250f;
-                if (!npc.WithinRange(riseDestination, 65f))
+                Vector2 riseDestination = target.Center + new Vector2(70f, MathHelper.Lerp(-1250f, -965f, 1f - lifeRatio));
+                if (!npc.WithinRange(riseDestination, 95f))
                 {
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(riseDestination), 0.035f);
-                    npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(riseDestination) * (27.25f + beaconAngerFactor * 14f), 0.6f);
+                    npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(riseDestination) * (33.5f + beaconAngerFactor * 13f), 0.6f);
                 }
                 else
                     attackTimer += crashRiseTime - wrappedTime;
 
-                if (npc.WithinRange(target.Center, 105f))
-                    npc.Center = target.Center + target.SafeDirectionTo(npc.Center, -Vector2.UnitY) * 105f;
+                if (npc.WithinRange(target.Center, 285f))
+                    npc.velocity = npc.velocity.RotatedBy(MathHelper.Pi * 0.025f) * 0.95f;
 
                 if (attackTimer % 90f == 89f)
                 {
@@ -236,7 +249,8 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
         {
             float flySpeed = MathHelper.Lerp(12.5f, 17f, 1f - lifeRatio);
             float flyAcceleration = MathHelper.Lerp(0.03f, 0.038f, 1f - lifeRatio);
-            int shootRate = lifeRatio < Phase2LifeThreshold ? 3 : 7;
+            int shootRate = lifeRatio < Phase2LifeThreshold ? 3 : 5;
+            shootRate = (int)MathHelper.Lerp(shootRate, 2f, beaconAngerFactor);
 
             ref float starCounter = ref npc.Infernum().ExtraAI[0];
 
@@ -245,7 +259,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                 npc.velocity = npc.velocity.SafeNormalize(-Vector2.UnitY) * 5.25f;
 
             // Drift towards the player. Contact damage is possible, but should be of little threat.
-            if (!npc.WithinRange(target.Center, 325f))
+            if (!npc.WithinRange(target.Center, 865f))
             {
                 float newSpeed = MathHelper.Lerp(npc.velocity.Length(), flySpeed, 0.08f);
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), flyAcceleration, true) * newSpeed;
@@ -270,7 +284,9 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                 {
                     Vector2 starVelocity = -Vector2.UnitY.RotatedByRandom(0.37f) * Main.rand.NextFloat(5f, 6f);
                     starVelocity *= MathHelper.Lerp(1f, 1.8f, beaconAngerFactor);
-                    Utilities.NewProjectileBetter(starSpawnPosition, starVelocity, ModContent.ProjectileType<AstralStar>(), 160, 0f);
+                    int star = Utilities.NewProjectileBetter(starSpawnPosition, starVelocity, ModContent.ProjectileType<AstralStar>(), 160, 0f);
+                    if (Main.projectile.IndexInRange(star))
+                        Main.projectile[star].ai[1] = beaconAngerFactor;
                 }
 
                 starCounter++;
@@ -288,9 +304,9 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             int fadeInTime = lifeRatio < Phase2LifeThreshold ? 67 : 85;
             int chargeTime = lifeRatio < Phase2LifeThreshold ? 38 : 45;
             int fadeOutTime = fadeInTime / 2 + 10;
-            int chargeCount = lifeRatio < Phase2LifeThreshold ? 5 : 4;
-            float teleportOutwardness = MathHelper.Lerp(1360f, 1175f, 1f - lifeRatio) - beaconAngerFactor * 400f;
-            float chargeSpeed = MathHelper.Lerp(35f, 40f, 1f - lifeRatio) + beaconAngerFactor * 10f;
+            int chargeCount = lifeRatio < Phase2LifeThreshold ? 3 : 4;
+            float teleportOutwardness = MathHelper.Lerp(1420f, 1095f, 1f - lifeRatio) - beaconAngerFactor * 240f;
+            float chargeSpeed = MathHelper.Lerp(33.5f, 45f, 1f - lifeRatio) + beaconAngerFactor * 15f;
             float wrappedTimer = attackTimer % (fadeInTime + chargeTime + fadeOutTime);
 
             if (wrappedTimer < fadeInTime)
@@ -310,16 +326,13 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.13f, 0f, 1f);
                 if (wrappedTimer == fadeInTime - 1f)
                 {
-                    Vector2 teleportOffsetDirection;
-                    do
-                        teleportOffsetDirection = Main.rand.NextVector2Unit();
-                    while (teleportOffsetDirection.AngleBetween(target.velocity.SafeNormalize(Vector2.UnitY)) > MathHelper.Pi * 0.35f);
+                    Vector2 teleportOffsetDirection = -target.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.456f);
 
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AstrumDeusSplit"), target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        npc.Center = target.Center + Main.rand.NextVector2CircularEdge(teleportOutwardness, teleportOutwardness);
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                        npc.Center = target.Center + teleportOffsetDirection * teleportOutwardness;
+                        npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * chargeSpeed;
                         npc.netUpdate = true;
 
                         for (int i = 0; i < 5; i++)
@@ -372,7 +385,15 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             float spinSpeed = 34f;
             ref float cantKeepSpinningFlag = ref npc.Infernum().ExtraAI[0];
 
-            if (attackTimer < 60f && !npc.WithinRange(target.Center, 1200f))
+            bool tooClose = npc.WithinRange(target.Center, 620f);
+
+            if (tooClose)
+            {
+                if (attackTimer < 60f)
+                    attackTimer = 30f;
+            }
+
+            if (attackTimer < 60f && !npc.WithinRange(target.Center, 1350f))
             {
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * 23f, 1.5f);
                 attackTimer = 30f;
@@ -385,7 +406,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 60f)
             {
-                Vector2 starSpawnPosition = npc.Center + npc.velocity.RotatedBy(MathHelper.PiOver2) * 136f / MathHelper.TwoPi;
+                Vector2 starSpawnPosition = npc.Center + npc.velocity.RotatedBy(MathHelper.PiOver2) * 135f / MathHelper.TwoPi;
                 int star = Utilities.NewProjectileBetter(starSpawnPosition, Vector2.Zero, ModContent.ProjectileType<GiantAstralStar>(), 250, 0f);
                 if (Main.projectile.IndexInRange(star))
                     Main.projectile[star].localAI[0] = beaconAngerFactor;
@@ -425,7 +446,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
 
         public static void DoBehavior_InfectedPlasmaVomit(NPC npc, Player target, float beaconAngerFactor, ref float attackTimer)
         {
-            int shootRate = (int)MathHelper.Lerp(85f, 45f, beaconAngerFactor);
+            int shootRate = (int)MathHelper.Lerp(48f, 16f, beaconAngerFactor);
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
 
             // Drift towards the player.
@@ -460,6 +481,120 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
 
             shootTimer++;
         }
+
+        public static void DoBehavior_ConstellationSpawn(NPC npc, Player target, float beaconAngerFactor, ref float attackTimer)
+        {
+            int totalStarsToCreate = 16;
+            ref float shootCounter = ref npc.Infernum().ExtraAI[0];
+            ref float shootTimer = ref npc.Infernum().ExtraAI[1];
+
+            if (attackTimer >= 120f)
+                shootTimer++;
+            if (attackTimer > 120f && shootCounter < totalStarsToCreate)
+                attackTimer = 120f;
+
+            // Drift towards the player.
+            if (!npc.WithinRange(target.Center, 680f))
+            {
+                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 15f, 0.085f);
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.05f, true) * newSpeed;
+            }
+
+            if (shootTimer > Main.rand.Next(15, 32) - MathHelper.Lerp(0f, 10f, beaconAngerFactor) && shootCounter < totalStarsToCreate)
+            {
+                Main.PlaySound(SoundID.Item8, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 spawnPosition = npc.Center - Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * Main.rand.NextFloat(20f, 96f);
+                    int star = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<ConstellationStar>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(star))
+                        Main.projectile[star].ai[0] = shootCounter;
+
+                    shootCounter++;
+                }
+                shootTimer = 0f;
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer == 175f)
+            {
+                Main.PlaySound(SoundID.Item72, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int starType = ModContent.ProjectileType<ConstellationStar>();
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        if (Main.projectile[i].type != starType || !Main.projectile[i].active)
+                            continue;
+
+                        Main.projectile[i].timeLeft = Main.rand.Next(70, 140);
+                        Main.projectile[i].netUpdate = true;
+                    }
+                }
+            }
+
+            if (attackTimer > 480f)
+                GotoNextAttackState(npc);
+
+            // Adjust rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
+        public static void DoBehavior_FusionBurst(NPC npc, Player target, float beaconAngerFactor, ref float attackTimer)
+        {
+            int fireDelay = 270;
+
+            // Drift towards the player.
+            if (!npc.WithinRange(target.Center, 475f) && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.Pi * 0.56f)
+            {
+                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), attackTimer > fireDelay - 75f ? 9f : 15f, 0.085f);
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), attackTimer > fireDelay - 75f ? 0.031f : 0.05f, true) * newSpeed;
+            }
+
+            if (!npc.WithinRange(target.Center, 800f) && attackTimer > fireDelay - 50f && attackTimer < fireDelay)
+            {
+                npc.Center = npc.Center.MoveTowards(target.Center, 56f);
+                npc.velocity = npc.SafeDirectionTo(target.Center) * npc.velocity.Length();
+                attackTimer = fireDelay - 50f;
+            }
+
+            // Create plasma particles near the mouth to indicate that something is happening.
+            if (attackTimer < fireDelay)
+            {
+                int particleCount = (int)MathHelper.SmoothStep(2f, 6f, Utils.InverseLerp(15f, fireDelay - 45f, attackTimer, true));
+                Vector2 mouthPosition = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 30f;
+                for (int i = 0; i < particleCount; i++)
+                {
+                    Vector2 drawOffset = Main.rand.NextVector2CircularEdge(24f, 24f) * Main.rand.NextFloat(0.8f, 1.2f);
+                    Dust plasma = Dust.NewDustPerfect(mouthPosition + drawOffset, 267);
+                    plasma.color = Color.Lerp(Main.rand.NextBool() ? Color.Cyan : Color.OrangeRed, Color.White, Main.rand.NextFloat(0.5f, 0.8f));
+                    plasma.scale = Main.rand.NextFloat(1.1f, 1.4f);
+                    plasma.velocity = (mouthPosition - plasma.position) * 0.08f;
+                    plasma.noGravity = true;
+                }
+            }
+
+            // Cause the screen to shake.
+            target.Infernum().CurrentScreenShakePower = Utils.InverseLerp(fireDelay - 105f, fireDelay - 15f, attackTimer, true) * Utils.InverseLerp(fireDelay + 12f, fireDelay, attackTimer, true) * 4f;
+
+            // Release a plasma beam.
+            if (attackTimer == fireDelay)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int plasmaBeam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<AstralPlasmaBeam>(), 270, 0f);
+                    if (Main.projectile.IndexInRange(plasmaBeam))
+                        Main.projectile[plasmaBeam].ai[1] = npc.whoAmI;
+                }
+            }
+
+            // Adjust rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            if (attackTimer >= fireDelay + AstralPlasmaBeam.Lifetime + 30f)
+                GotoNextAttackState(npc);
+        }
         #endregion Custom Behaviors
 
         #region Misc AI Operations
@@ -471,14 +606,17 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             DeusAttackType newAttackState;
             WeightedRandom<DeusAttackType> attackSelector = new WeightedRandom<DeusAttackType>();
             attackSelector.Add(DeusAttackType.AstralBombs, lifeRatio < Phase2LifeThreshold ? 0.5f : 0.8f);
-            attackSelector.Add(DeusAttackType.StellarCrash, 1f);
-            attackSelector.Add(DeusAttackType.CelestialLights, 1.15f);
-            attackSelector.Add(DeusAttackType.WarpCharge, 1f);
+            attackSelector.Add(DeusAttackType.StellarCrash, lifeRatio < Phase2LifeThreshold ? 0.7f : 1f);
+            attackSelector.Add(DeusAttackType.CelestialLights, lifeRatio < Phase2LifeThreshold ? 0.8f : 1.15f);
+            attackSelector.Add(DeusAttackType.WarpCharge, lifeRatio < Phase2LifeThreshold ? 0.8f : 1f);
             if (lifeRatio < Phase2LifeThreshold)
             {
-                attackSelector.Add(DeusAttackType.StarWeave, 0.9f);
+                attackSelector.Add(DeusAttackType.StarWeave, 1.225f);
                 attackSelector.Add(DeusAttackType.InfectedPlasmaVomit, 1.1f);
+                attackSelector.Add(DeusAttackType.ConstellationSpawn, 1.15f);
             }
+            if (lifeRatio < Phase3LifeThreshold)
+                attackSelector.Add(DeusAttackType.FusionBurst, 4.1f);
 
             do
                 newAttackState = attackSelector.Get();

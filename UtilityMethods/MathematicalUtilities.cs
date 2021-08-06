@@ -105,5 +105,16 @@ namespace InfernumMode
 
             return currentPosition + v.SafeNormalize(Vector2.Zero) * maxAmountAllowedToMove;
         }
+
+        /// <summary>
+        /// Gives an approximation of a derivative of a function at a given point based on the limit (f(x+h) - f(x)) / h, with an extremely small value for h.
+        /// </summary>
+        /// <param name="fx">The function to derive.</param>
+        /// <param name="x">The input.</param>
+        public static float ApproximateDerivative(this Func<double, double> fx, float x)
+        {
+            double h = 1e-7;
+            return (float)((fx(x + h) - fx(x)) / h);
+        }
     }
 }

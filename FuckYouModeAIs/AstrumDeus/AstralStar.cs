@@ -11,6 +11,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
     public class AstralStar : ModProjectile
     {
         public ref float Time => ref projectile.ai[0];
+        public ref float AngerFactor => ref projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Astral Star");
@@ -26,7 +27,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             projectile.tileCollide = false;
             projectile.alpha = 255;
             projectile.penetrate = 1;
-            projectile.timeLeft = 420;
+            projectile.timeLeft = 480;
         }
 
         public override void AI()
@@ -41,17 +42,17 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             else
             {
                 if (!projectile.WithinRange(closestPlayer.Center, 220f))
-                    projectile.velocity = projectile.velocity.MoveTowards(projectile.SafeDirectionTo(closestPlayer.Center) * projectile.velocity.Length(), 0.45f) * 1.03f;
+                    projectile.velocity = projectile.velocity.MoveTowards(projectile.SafeDirectionTo(closestPlayer.Center) * projectile.velocity.Length(), 0.45f) * (1.03f + AngerFactor * 0.012f);
             }
 
             if (Time > 205f)
             {
                 float angularOffset = (float)Math.Cos((projectile.Center * new Vector2(1.4f, 1f)).Length() / 175f + projectile.identity * 0.89f) * 0.024f;
                 projectile.velocity = projectile.velocity.RotatedBy(angularOffset);
-                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(projectile.velocity.Length() * 1.013f, 7f, 13f);
+                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(projectile.velocity.Length() * 1.013f, 7f, 13f + AngerFactor * 6.5f);
             }
 
-            if (Time == 185f && projectile.identity % 3 == 0)
+            if (Time == 215f && projectile.identity % 3 == 0)
                 Main.PlaySound(SoundID.Item103, projectile.Center);
 
             projectile.rotation = projectile.rotation.AngleLerp(projectile.velocity.ToRotation() + MathHelper.PiOver2, 0.2f);

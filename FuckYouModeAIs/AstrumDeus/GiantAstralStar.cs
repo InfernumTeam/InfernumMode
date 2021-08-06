@@ -56,6 +56,15 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                 projectile.velocity *= 1.024f;
             }
 
+            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.scale >= 7f && Time % 45f == 44f)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 fireVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(14f, 24f) * MathHelper.Lerp(1f, 1.56f, AngerOnCreation);
+                    Utilities.NewProjectileBetter(projectile.Center, fireVelocity, ModContent.ProjectileType<AstralShot2>(), 165, 0f);
+                }
+            }
+
             Time++;
         }
 

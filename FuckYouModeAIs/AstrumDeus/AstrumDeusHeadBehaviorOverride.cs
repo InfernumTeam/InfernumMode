@@ -79,13 +79,14 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             // Create segments and initialize on the first frame.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedSegments == 0f)
             {
-                CreateSegments(npc, 64, ModContent.NPCType<AstrumDeusBodySpectral>(), ModContent.NPCType<AstrumDeusTailSpectral>());
+                CreateSegments(npc, 54, ModContent.NPCType<AstrumDeusBodySpectral>(), ModContent.NPCType<AstrumDeusTailSpectral>());
                 attackType = (int)DeusAttackType.AstralBombs;
                 hasCreatedSegments = 1f;
                 npc.netUpdate = true;
             }
 
             // Clamp position into the world.
+            npc.position.X = MathHelper.Clamp(npc.position.X, 700f, Main.maxTilesX * 16f - 700f);
             npc.position.Y = MathHelper.Clamp(npc.position.Y, 600f, Main.maxTilesY * 16f - 600f);
 
             // Quickly fade in.
@@ -265,7 +266,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), flyAcceleration, true) * newSpeed;
             }
 
-            if (attackTimer > 60 && attackTimer % shootRate == shootRate - 1f)
+            if (attackTimer > 60f && attackTimer % shootRate == shootRate - 1f && starCounter < 30f)
             {
                 int bodyType = ModContent.NPCType<AstrumDeusBodySpectral>();
                 int shootIndex = (int)(starCounter * 2f);
@@ -292,7 +293,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                 starCounter++;
             }
 
-            if (attackTimer >= 60f + shootRate * 30f + 320f)
+            if (attackTimer >= 60f + shootRate * 30f + 380f)
                 GotoNextAttackState(npc);
 
             // Adjust rotation.
@@ -350,7 +351,9 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             else if (wrappedTimer < fadeInTime + chargeTime + fadeOutTime)
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.06f, 0f, 1f);
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.05f);
+
+                if (!npc.WithinRange(target.Center, 200f))
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.05f);
 
                 // Teleport near the player again at the end of the cycle.
                 if (wrappedTimer == fadeInTime + chargeTime + fadeOutTime)
@@ -385,7 +388,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             float spinSpeed = 34f;
             ref float cantKeepSpinningFlag = ref npc.Infernum().ExtraAI[0];
 
-            bool tooClose = npc.WithinRange(target.Center, 620f);
+            bool tooClose = npc.WithinRange(target.Center, 820f);
 
             if (tooClose)
             {
@@ -545,13 +548,17 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             int fireDelay = 270;
 
             // Drift towards the player.
-            if (!npc.WithinRange(target.Center, 475f) && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.Pi * 0.56f)
+            float rotateThreshold = MathHelper.Pi * 0.76f;
+            if (attackTimer > fireDelay && (attackTimer - fireDelay) % (AstralPlasmaBeam.Lifetime + 40f) > AstralPlasmaBeam.Lifetime)
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) - 0.2f, 0.027f, true) * 6f;
+            
+            if (!npc.WithinRange(target.Center, 475f) && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < rotateThreshold)
             {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), attackTimer > fireDelay - 75f ? 9f : 15f, 0.085f);
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), attackTimer > fireDelay - 75f ? 0.031f : 0.05f, true) * newSpeed;
+                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), attackTimer > fireDelay - 75f ? 6f : 15f, 0.085f);
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) - 0.025f, attackTimer > fireDelay - 75f ? 0.013f : 0.03f, true) * newSpeed;
             }
 
-            if (!npc.WithinRange(target.Center, 800f) && attackTimer > fireDelay - 50f && attackTimer < fireDelay)
+            if (!npc.WithinRange(target.Center, 1000f) && attackTimer > fireDelay - 150f && attackTimer < fireDelay - 60f)
             {
                 npc.Center = npc.Center.MoveTowards(target.Center, 56f);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * npc.velocity.Length();
@@ -565,11 +572,11 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                 Vector2 mouthPosition = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 30f;
                 for (int i = 0; i < particleCount; i++)
                 {
-                    Vector2 drawOffset = Main.rand.NextVector2CircularEdge(24f, 24f) * Main.rand.NextFloat(0.8f, 1.2f);
+                    Vector2 drawOffset = Main.rand.NextVector2CircularEdge(24f, 24f) * Main.rand.NextFloat(0.8f, 1.2f) + npc.velocity;
                     Dust plasma = Dust.NewDustPerfect(mouthPosition + drawOffset, 267);
                     plasma.color = Color.Lerp(Main.rand.NextBool() ? Color.Cyan : Color.OrangeRed, Color.White, Main.rand.NextFloat(0.5f, 0.8f));
                     plasma.scale = Main.rand.NextFloat(1.1f, 1.4f);
-                    plasma.velocity = (mouthPosition - plasma.position) * 0.08f;
+                    plasma.velocity = (mouthPosition + npc.velocity - plasma.position) * 0.08f + npc.velocity * 2f;
                     plasma.noGravity = true;
                 }
             }
@@ -577,8 +584,12 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             // Cause the screen to shake.
             target.Infernum().CurrentScreenShakePower = Utils.InverseLerp(fireDelay - 105f, fireDelay - 15f, attackTimer, true) * Utils.InverseLerp(fireDelay + 12f, fireDelay, attackTimer, true) * 4f;
 
+            // Play an acoustic indicator prior to firing.
+            if (attackTimer == fireDelay - 120f)
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+
             // Release a plasma beam.
-            if (attackTimer == fireDelay)
+            if (attackTimer >= fireDelay && (attackTimer - fireDelay) % (AstralPlasmaBeam.Lifetime + 40f) == 0)
             {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -586,13 +597,19 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
                     int plasmaBeam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<AstralPlasmaBeam>(), 270, 0f);
                     if (Main.projectile.IndexInRange(plasmaBeam))
                         Main.projectile[plasmaBeam].ai[1] = npc.whoAmI;
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Vector2 shootVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 13f;
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<AstralShot2>(), 160, 0f);
+                    }
                 }
             }
 
             // Adjust rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (attackTimer >= fireDelay + AstralPlasmaBeam.Lifetime + 30f)
+            if (attackTimer >= fireDelay + (AstralPlasmaBeam.Lifetime + 40f) * 3f + 30f)
                 GotoNextAttackState(npc);
         }
         #endregion Custom Behaviors

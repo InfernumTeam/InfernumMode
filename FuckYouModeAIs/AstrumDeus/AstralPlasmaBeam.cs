@@ -15,8 +15,8 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
         public ref float Time => ref projectile.ai[0];
         public ref float OwnerIndex => ref projectile.ai[1];
         public NPC Owner => Main.npc[(int)OwnerIndex];
-        public const float LaserLength = 4000f;
-        public const int Lifetime = 240;
+        public const float LaserLength = 4800f;
+        public const int Lifetime = 120;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults() => DisplayName.SetDefault("Astral Plasma Beam");
 

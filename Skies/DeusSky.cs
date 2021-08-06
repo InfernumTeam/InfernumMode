@@ -74,7 +74,7 @@ namespace InfernumMode.Skies
                 drawPosition += (MathHelper.TwoPi * 7f * i / 75f).ToRotationVector2() * MathHelper.Max(Main.screenWidth, Main.screenHeight) * drawOutwardness;
                 float rotation = MathHelper.TwoPi * (drawOutwardness + i % 18f / 18f);
                 float scale = Utils.InverseLerp(0.8f, 1.15f, i % 15f / 15f) * Utils.InverseLerp(-40f, 130f, nebulaTimer, true);
-                Color drawColor = CalamityUtils.MulticolorLerp(i / 29f % 0.999f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * nebulaIntensity * 0.375f;
+                Color drawColor = CalamityUtils.MulticolorLerp(i / 29f % 0.999f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * nebulaIntensity * 0.28f;
 
                 spriteBatch.Draw(gasTexture, drawPosition, null, drawColor, rotation, gasTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
@@ -121,7 +121,7 @@ namespace InfernumMode.Skies
                     if (j % 140 == 139)
                         drawColor = Stars[j].Blue ? Color.MediumPurple : Color.Goldenrod;
 
-                    drawColor *= opacity * (1f - minorFade) * intensity * 0.8f;
+                    drawColor *= opacity * (1f - minorFade) * intensity * 0.56f;
                     if (!Main.BackgroundEnabled)
                         drawColor *= 0.45f;
 
@@ -149,8 +149,8 @@ namespace InfernumMode.Skies
         public override void Activate(Vector2 position, params object[] args)
         {
             isActive = true;
-            int horizontalArea = 150;
-            int verticalArea = 21;
+            int horizontalArea = 80;
+            int verticalArea = 12;
             Stars = new AstralStar[horizontalArea * verticalArea];
             int starIndex = 0;
             for (int i = 0; i < horizontalArea; i++)

@@ -1,9 +1,11 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ModLoader;
 namespace InfernumMode.FuckYouModeAIs.HiveMind
 {
 	public class ShadeFire : ModProjectile
     {
+        public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fire");
@@ -24,62 +26,36 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center, (255 - projectile.alpha) * 0.15f / 255f, (255 - projectile.alpha) * 0f / 255f, (255 - projectile.alpha) * 0.2f / 255f);
+            Lighting.AddLight(projectile.Center, projectile.Opacity * 0.15f, 0f, projectile.Opacity * 0.2f);
             if (projectile.timeLeft > 80)
-            {
                 projectile.timeLeft = 80;
-            }
-            if (projectile.ai[0] > 7f)
+
+            Time++;
+            if (Time <= 7f)
+                return;
+
+            float fireScale = MathHelper.Lerp(0.25f, 1f, Utils.InverseLerp(8f, 10f, Time, true));
+            if (Main.rand.NextBool(2))
             {
-                float num296 = 1f;
-                if (projectile.ai[0] == 8f)
+                for (int i = 0; i < 3; i++)
                 {
-                    num296 = 0.25f;
-                }
-                else if (projectile.ai[0] == 9f)
-                {
-                    num296 = 0.5f;
-                }
-                else if (projectile.ai[0] == 10f)
-                {
-                    num296 = 0.75f;
-                }
-                projectile.ai[0] += 1f;
-                if (Main.rand.NextBool(2))
-                {
-                    for (int num298 = 0; num298 < 3; num298++)
+                    int dustType = i == 2 ? 157 : 14;
+                    Dust shadeFire = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, dustType, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default, 1f);
+                    if (Main.rand.NextBool(3))
                     {
-                        int num297 = num298 == 2 ? 157 : 14;
-                        int num299 = Dust.NewDust(projectile.position, projectile.width, projectile.height, num297, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default, 1f);
-                        if (Main.rand.NextBool(3))
-                        {
-                            Main.dust[num299].noGravity = true;
-                            Main.dust[num299].scale *= 1.75f;
-                            Dust expr_DBEF_cp_0 = Main.dust[num299];
-                            expr_DBEF_cp_0.velocity.X *= 2f;
-                            Dust expr_DC0F_cp_0 = Main.dust[num299];
-                            expr_DC0F_cp_0.velocity.Y *= 2f;
-                        }
-                        else
-                        {
-                            Main.dust[num299].scale *= 0.5f;
-                        }
-                        Dust expr_DC74_cp_0 = Main.dust[num299];
-                        expr_DC74_cp_0.velocity.X *= 1.2f;
-                        Dust expr_DC94_cp_0 = Main.dust[num299];
-                        expr_DC94_cp_0.velocity.Y *= 1.2f;
-                        Main.dust[num299].scale *= num296;
-                        Main.dust[num299].velocity += projectile.velocity;
-                        if (!Main.dust[num299].noGravity)
-                        {
-                            Main.dust[num299].velocity *= 0.5f;
-                        }
+                        shadeFire.noGravity = true;
+                        shadeFire.scale *= 1.75f;
+                        shadeFire.velocity *= 2f;
                     }
+                    else
+                        shadeFire.scale *= 0.5f;
+
+                    shadeFire.velocity *= 1.2f;
+                    shadeFire.scale *= fireScale;
+                    shadeFire.velocity += projectile.velocity;
+                    if (!shadeFire.noGravity)
+                        shadeFire.velocity *= 0.5f;
                 }
-            }
-            else
-            {
-                projectile.ai[0] += 1f;
             }
         }
     }

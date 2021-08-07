@@ -59,22 +59,20 @@ namespace InfernumMode.FuckYouModeAIs.Providence
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-			Texture2D value = Main.projectileTexture[projectile.type];
+			Texture2D spearTexture = Main.projectileTexture[projectile.type];
 			int green = 125;
 			int blue = 125;
 			Color baseColor = new Color(255, green, blue, 255);
 
-			Color color33 = baseColor * 0.5f;
-			color33.A = 0;
-			Vector2 vector28 = projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY);
-			Color color34 = color33;
-			Vector2 origin5 = value.Size() / 2f;
-			Color color35 = color33 * 0.5f;
-			float num162 = Utils.InverseLerp(15f, 30f, projectile.timeLeft, clamped: true) * Utils.InverseLerp(360f, 340f, projectile.timeLeft, clamped: true) * (1f + 0.2f * (float)Math.Cos(Main.GlobalTime % 30f / 0.5f * ((float)Math.PI * 2f) * 3f)) * 0.8f;
-			Vector2 vector29 = new Vector2(1f, 1.5f) * num162;
-			Vector2 vector30 = new Vector2(0.5f, 1f) * num162;
-			color34 *= num162;
-			color35 *= num162;
+			float fadeFactor = Utils.InverseLerp(15f, 30f, projectile.timeLeft, true) * Utils.InverseLerp(360f, 340f, projectile.timeLeft, true) * (1f + 0.2f * (float)Math.Cos(Main.GlobalTime % 30f / 0.5f * MathHelper.TwoPi * 3f)) * 0.8f;
+			Color fadedBrightColor = baseColor * 0.5f;
+			fadedBrightColor.A = 0;
+			Vector2 drawPosition = projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY);
+			Vector2 origin5 = spearTexture.Size() / 2f;
+			Color brightColor = fadedBrightColor * fadeFactor;
+			Color dimColor = fadedBrightColor * fadeFactor * 0.5f;
+			Vector2 largeScale = new Vector2(1f, 1.5f) * fadeFactor;
+			Vector2 smallScale = new Vector2(0.5f, 1f) * fadeFactor;
 
 			SpriteEffects spriteEffects = SpriteEffects.None;
 			if (projectile.spriteDirection == -1)
@@ -84,21 +82,21 @@ namespace InfernumMode.FuckYouModeAIs.Providence
 			{
 				for (int i = 0; i < projectile.oldPos.Length; i++)
 				{
-					Vector2 drawPos = projectile.oldPos[i] + vector28;
-					Color color = projectile.GetAlpha(color34) * ((projectile.oldPos.Length - i) / projectile.oldPos.Length);
-					Main.spriteBatch.Draw(value, drawPos, null, color, projectile.rotation, origin5, vector29, spriteEffects, 0f);
-					Main.spriteBatch.Draw(value, drawPos, null, color, projectile.rotation, origin5, vector30, spriteEffects, 0f);
+					Vector2 drawPos = projectile.oldPos[i] + drawPosition;
+					Color color = projectile.GetAlpha(brightColor) * ((projectile.oldPos.Length - i) / projectile.oldPos.Length);
+					spriteBatch.Draw(spearTexture, drawPos, null, color, projectile.rotation, origin5, largeScale, spriteEffects, 0f);
+					spriteBatch.Draw(spearTexture, drawPos, null, color, projectile.rotation, origin5, smallScale, spriteEffects, 0f);
 
-					color = projectile.GetAlpha(color35) * ((projectile.oldPos.Length - i) / projectile.oldPos.Length);
-					Main.spriteBatch.Draw(value, drawPos, null, color, projectile.rotation, origin5, vector29 * 0.6f, spriteEffects, 0f);
-					Main.spriteBatch.Draw(value, drawPos, null, color, projectile.rotation, origin5, vector30 * 0.6f, spriteEffects, 0f);
+					color = projectile.GetAlpha(dimColor) * ((projectile.oldPos.Length - i) / projectile.oldPos.Length);
+					spriteBatch.Draw(spearTexture, drawPos, null, color, projectile.rotation, origin5, largeScale * 0.6f, spriteEffects, 0f);
+					spriteBatch.Draw(spearTexture, drawPos, null, color, projectile.rotation, origin5, smallScale * 0.6f, spriteEffects, 0f);
 				}
 			}
 
-			spriteBatch.Draw(value, vector28, null, color34, projectile.rotation, origin5, vector29, spriteEffects, 0);
-			spriteBatch.Draw(value, vector28, null, color34, projectile.rotation, origin5, vector30, spriteEffects, 0);
-			spriteBatch.Draw(value, vector28, null, color35, projectile.rotation, origin5, vector29 * 0.6f, spriteEffects, 0);
-			spriteBatch.Draw(value, vector28, null, color35, projectile.rotation, origin5, vector30 * 0.6f, spriteEffects, 0);
+			spriteBatch.Draw(spearTexture, drawPosition, null, brightColor, projectile.rotation, origin5, largeScale, spriteEffects, 0);
+			spriteBatch.Draw(spearTexture, drawPosition, null, brightColor, projectile.rotation, origin5, smallScale, spriteEffects, 0);
+			spriteBatch.Draw(spearTexture, drawPosition, null, dimColor, projectile.rotation, origin5, largeScale * 0.6f, spriteEffects, 0);
+			spriteBatch.Draw(spearTexture, drawPosition, null, dimColor, projectile.rotation, origin5, smallScale * 0.6f, spriteEffects, 0);
 
 			return false;
         }

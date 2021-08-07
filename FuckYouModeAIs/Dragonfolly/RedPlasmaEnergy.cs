@@ -61,7 +61,7 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
             }
             else
             {
-                npc.damage = npc.defDamage;
+                npc.damage = HasReachedDestination ? npc.defDamage : 0;
                 if (Main.netMode != NetmodeID.MultiplayerClient && Time % 300f == 240f)
                 {
                     DestinationXOffset = Target.velocity.X * 18f;
@@ -105,7 +105,7 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            drawColor = Color.Red * npc.Opacity * 0.2f;
+            drawColor = Color.Red * npc.Opacity * 0.4f;
             drawColor.A = 0;
             Texture2D energyTexture = Main.npcTexture[npc.type];
             for (int i = 0; i < 7; i++)

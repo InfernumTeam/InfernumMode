@@ -186,8 +186,8 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
                 {
                     npc.velocity.Y -= 0.5f;
                     npc.rotation = npc.rotation.AngleLerp(0f, 0.25f);
-                    if (npc.timeLeft > 120)
-                        npc.timeLeft = 120;
+                    if (npc.timeLeft > 90)
+                        npc.timeLeft = 90;
                     despawning = true;
                 }
                 npc.netUpdate = true;
@@ -350,6 +350,22 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
                     horizontalOffset = 860f;
                     break;
             }
+            
+            // Delete plasma orbs during thunder charges.
+            if (chargeType == DragonfollyAttackType.ThunderCharge)
+            {
+                int plasmaOrbType = ModContent.NPCType<RedPlasmaEnergy>();
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].type != plasmaOrbType || !Main.npc[i].active)
+                        continue;
+
+                    Main.npc[i].life = 0;
+                    Main.npc[i].active = false;
+                    Main.npc[i].HitEffect();
+                    Main.npc[i].netUpdate = true;
+                }
+            }
 
             ref float chargeState = ref npc.Infernum().ExtraAI[0];
             ref float accumulatedSpeed = ref npc.Infernum().ExtraAI[1];
@@ -447,7 +463,7 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
             // Do the actual charge.
             else if (chargeState == 2f)
 			{
-                float horizontalSpeed = 32f;
+                float horizontalSpeed = MathHelper.Lerp(29f, 34.25f, 1f - npc.life / (float)npc.lifeMax);
 
                 // Fly faster than usual after a fakeout.
                 if (hasDoneFakeoutFlag == 1f && chargeType == DragonfollyAttackType.FakeoutCharge)
@@ -469,6 +485,8 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
                         redirectCounter++;
                         npc.netUpdate = true;
 					}
+
+                    npc.velocity *= (chargeType != DragonfollyAttackType.ThunderCharge ? 0.3f : 0.6f);
                     GoToNextAttackState(npc);
                 }
 
@@ -652,7 +670,7 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
             if (attackTimer < flyTime)
             {
                 float flyInertia = 9f;
-                float flySpeed = 16f;
+                float flySpeed = 26f;
 
                 if (!npc.WithinRange(target.Center, 400f))
                     npc.velocity = (npc.velocity * (flyInertia - 1f) + npc.SafeDirectionTo(target.Center) * flySpeed) / flyInertia;

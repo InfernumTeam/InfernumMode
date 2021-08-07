@@ -271,7 +271,7 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
                 int fadeTime = 35;
                 int chargeDelay = 15;
                 int chargeTime = 90;
-                float flyInertia = 21f;
+                float flyInertia = 29f;
                 float chargeSpeed = 31f;
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
 

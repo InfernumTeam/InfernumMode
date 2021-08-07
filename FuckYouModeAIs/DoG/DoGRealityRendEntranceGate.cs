@@ -13,7 +13,6 @@ namespace InfernumMode.FuckYouModeAIs.DoG
 {
     public class DoGRealityRendEntranceGate : ModProjectile
     {
-        public ScreenShakeSpot CurrentSpot;
         public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()
         {
@@ -35,15 +34,12 @@ namespace InfernumMode.FuckYouModeAIs.DoG
         {
             if (projectile.localAI[1] == 0f)
             {
-                CurrentSpot = new ScreenShakeSpot(0, projectile.Center);
                 Filters.Scene.Activate("Infernum:DistortionShader", projectile.Center).GetShader().UseColor(10, 2, 10).UseTargetPosition(projectile.Center);
                 projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
                 projectile.localAI[1] = 1f;
             }
 
-            CurrentSpot.Position = Main.player[Player.FindClosest(projectile.Center, 1, 1)].Center;
-            CurrentSpot.ScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
-            CalamityWorld.ScreenShakeSpots[projectile.whoAmI] = CurrentSpot;
+            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
 
             float fade = Utils.InverseLerp(280, 230, projectile.timeLeft, true);
             if (projectile.timeLeft <= 30)
@@ -115,7 +111,6 @@ namespace InfernumMode.FuckYouModeAIs.DoG
 
         public override void Kill(int timeLeft)
         {
-            CalamityWorld.ScreenShakeSpots.Remove(Projectile.GetByUUID(projectile.owner, projectile.whoAmI)); // Remove the explosion associated with this projectile's UUID.
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(projectile.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);

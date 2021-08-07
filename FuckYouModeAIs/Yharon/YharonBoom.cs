@@ -17,7 +17,6 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 {
     public class YharonBoom : ModProjectile
 	{
-		public ScreenShakeSpot CurrentSpot;
 		public float Radius
 		{
 			get => projectile.ai[0];
@@ -66,12 +65,10 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 		{
 			if (projectile.localAI[0] == 0f)
 			{
-				CurrentSpot = new ScreenShakeSpot(0, projectile.Center);
 				MaxRadius = Main.rand.NextFloat(2000f, 4000f);
 				projectile.localAI[0] = 1f;
 			}
-			CurrentSpot.ScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 38f;
-			CalamityWorld.ScreenShakeSpots[projectile.whoAmI] = CurrentSpot;
+			Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 38f;
 
 			Lighting.AddLight(projectile.Center, 0.2f, 0.1f, 0f);
 			Radius = MathHelper.Lerp(Radius, MaxRadius, 0.15f);
@@ -90,11 +87,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 				}
 			}
 		}
-		public override void Kill(int timeLeft)
-		{
-			if (projectile.Calamity().stealthStrike)
-				CalamityWorld.ScreenShakeSpots.Remove(Projectile.GetByUUID(projectile.owner, projectile.whoAmI)); // Remove the explosion associated with this projectile's UUID.
-		}
+
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
 		{
 			spriteBatch.EnterShaderRegion();

@@ -14,7 +14,6 @@ namespace InfernumMode.FuckYouModeAIs.Twins
 {
     public class TwinsEnergyExplosion : ModProjectile
 	{
-		public ScreenShakeSpot CurrentSpot;
 		public ref float OwnerType => ref projectile.ai[0];
 		public ref float Radius => ref projectile.ai[1];
 		public const int Lifetime = 80;
@@ -41,20 +40,15 @@ namespace InfernumMode.FuckYouModeAIs.Twins
 			if (projectile.localAI[0] == 0f)
 			{
 				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), projectile.Center);
-				CurrentSpot = new ScreenShakeSpot(0, projectile.Center);
 				projectile.localAI[0] = 1f;
 			}
-			CurrentSpot.ScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 14f + 2f;
-			CalamityWorld.ScreenShakeSpots[projectile.whoAmI] = CurrentSpot;
+			Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 14f + 2f;
 
 			Radius = MathHelper.Lerp(Radius, 2516f, 0.15f);
 			projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.InverseLerp(Lifetime, 0f, projectile.timeLeft, true));
 			CalamityGlobalProjectile.ExpandHitboxBy(projectile, (int)(Radius * projectile.scale), (int)(Radius * projectile.scale));
 		}
-		public override void Kill(int timeLeft)
-		{
-			CalamityWorld.ScreenShakeSpots.Remove(Projectile.GetByUUID(projectile.owner, projectile.whoAmI)); // Remove the explosion associated with this projectile's UUID.
-		}
+
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
 		{
 			spriteBatch.EnterShaderRegion();

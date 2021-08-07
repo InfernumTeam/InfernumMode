@@ -109,6 +109,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
             if (deathTimer > 0f)
             {
                 DoDeathEffects(npc, deathTimer);
+                jawAngle = jawAngle.AngleTowards(0f, 0.07f);
                 deathTimer++;
                 return false;
             }

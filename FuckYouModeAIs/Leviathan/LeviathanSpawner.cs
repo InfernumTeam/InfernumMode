@@ -15,7 +15,6 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
 {
     public class LeviathanSpawner : ModProjectile
     {
-        public ScreenShakeSpot CurrentSpot;
         internal ref float Time => ref projectile.ai[0];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
@@ -39,12 +38,6 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
             if (projectile.Opacity > 1f)
                 projectile.Opacity = 1f;
 
-            if (projectile.localAI[0] == 0f)
-            {
-                CurrentSpot = new ScreenShakeSpot(0, projectile.Center);
-                projectile.localAI[0] = 1f;
-            }
-
             if (projectile.timeLeft == 340)
 			{
                 var sound = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanSummonBase"), projectile.Center);
@@ -52,9 +45,8 @@ namespace InfernumMode.FuckYouModeAIs.Leviathan
                     sound.Volume = MathHelper.Clamp(sound.Volume * 1.5f, 0f, 1f);
             }
 
-            CurrentSpot.ScreenShakePower = (float)Math.Pow(Utils.InverseLerp(180f, 290f, Time, true), 0.3D) * 20f;
-            CurrentSpot.ScreenShakePower += (float)Math.Sin(MathHelper.Pi * Math.Pow(Utils.InverseLerp(300f, 440f, Time, true), 0.5D)) * 35f;
-            CalamityWorld.ScreenShakeSpots[projectile.whoAmI] = CurrentSpot;
+            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Pow(Utils.InverseLerp(180f, 290f, Time, true), 0.3D) * 20f;
+            Main.LocalPlayer.Infernum().CurrentScreenShakePower += (float)Math.Sin(MathHelper.Pi * Math.Pow(Utils.InverseLerp(300f, 440f, Time, true), 0.5D)) * 35f;
 
             if (projectile.timeLeft == 45)
 			{

@@ -14,7 +14,6 @@ namespace InfernumMode.FuckYouModeAIs.Providence
 {
 	public class ProvBoomDeath : ModProjectile
 	{
-		public ScreenShakeSpot CurrentSpot;
 		public float Radius
 		{
 			get => projectile.ai[0];
@@ -48,23 +47,17 @@ namespace InfernumMode.FuckYouModeAIs.Providence
 		{
 			if (projectile.localAI[0] == 0f)
 			{
-				CurrentSpot = new ScreenShakeSpot(0, projectile.Center);
 				MaxRadius = Main.rand.NextFloat(1300f, 2200f);
 				projectile.localAI[0] = 1f;
 			}
-			CurrentSpot.ScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 72f;
-			CalamityWorld.ScreenShakeSpots[projectile.whoAmI] = CurrentSpot;
+			Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 72f;
 
 			Lighting.AddLight(projectile.Center, 0.2f, 0.1f, 0f);
 			Radius = MathHelper.Lerp(Radius, MaxRadius, 0.15f);
 			projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.InverseLerp(Lifetime, 0f, projectile.timeLeft, true));
 			CalamityGlobalProjectile.ExpandHitboxBy(projectile, (int)(Radius * projectile.scale), (int)(Radius * projectile.scale));
 		}
-		public override void Kill(int timeLeft)
-		{
-			if (projectile.Calamity().stealthStrike)
-				CalamityWorld.ScreenShakeSpots.Remove(Projectile.GetByUUID(projectile.owner, projectile.whoAmI)); // Remove the explosion associated with this projectile's UUID.
-		}
+
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
 		{
 			spriteBatch.EnterShaderRegion();

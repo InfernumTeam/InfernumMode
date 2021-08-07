@@ -134,7 +134,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
             {
                 var soundInstance = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), projectile.Center);
                 if (soundInstance != null)
-                    soundInstance.Volume = 0.36f;
+                    soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 1.6f, 0f, 1f);
 
                 for (int i = 0; i < 3; i++)
                 {

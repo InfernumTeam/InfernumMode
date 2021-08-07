@@ -46,7 +46,6 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
         #region Instance and Variables
         public override bool InstancePerEntity => true;
 
-
         public static bool MLSealTeleport = false;
         public const int TotalExtraAISlots = 100;
 
@@ -329,6 +328,24 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>())
                 return false;
+
+            if (npc.type == ModContent.NPCType<DevourerofGodsHeadS>() || npc.type == ModContent.NPCType<DevourerofGodsBodyS>() || npc.type == ModContent.NPCType<DevourerofGodsTailS>())
+            {
+                npc.life = 1;
+                npc.dontTakeDamage = true;
+                if (npc.type == ModContent.NPCType<DevourerofGodsHeadS>())
+                {
+                    if (npc.Infernum().ExtraAI[20] == 0f)
+                    {
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                        npc.Infernum().ExtraAI[20] = 1f;
+                    }
+                }
+                else
+                    npc.life = npc.lifeMax;
+                npc.netUpdate = true;
+                return false;
+            }
 
             if (npc.type == ModContent.NPCType<PolterghastNPC>())
             {

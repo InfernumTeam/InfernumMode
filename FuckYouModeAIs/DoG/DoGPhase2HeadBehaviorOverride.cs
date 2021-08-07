@@ -10,7 +10,9 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -52,6 +54,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
             ref float fadeinPortalIndex = ref npc.Infernum().ExtraAI[17];
             ref float specialAttackPortalIndex = ref npc.Infernum().ExtraAI[18];
             ref float fireballShootTimer = ref npc.Infernum().ExtraAI[19];
+            ref float deathTimer = ref npc.Infernum().ExtraAI[20];
 
             if (!Main.player.IndexInRange(npc.target) || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 npc.TargetClosest(false);
@@ -82,6 +85,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
 
                 if (fadeinTimer >= 280f)
                 {
+                    npc.Opacity = 1f;
                     npc.Center = Main.projectile[(int)fadeinPortalIndex].Center;
                     npc.velocity = npc.DirectionTo(target.Center) * 36f;
                     npc.netUpdate = true;
@@ -101,6 +105,13 @@ namespace InfernumMode.FuckYouModeAIs.DoG
             npc.dontTakeDamage = npc.Opacity < 0.5f;
             npc.damage = npc.dontTakeDamage ? 0 : 6000;
             npc.Calamity().DR = 0.3f;
+
+            if (deathTimer > 0f)
+            {
+                DoDeathEffects(npc, deathTimer);
+                deathTimer++;
+                return false;
+            }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && nearDeath && npc.alpha == 0)
             {
@@ -179,6 +190,7 @@ namespace InfernumMode.FuckYouModeAIs.DoG
                         Main.npc[segment].ai[2] = npc.whoAmI;
                         Main.npc[segment].ai[1] = previousSegment;
                         Main.npc[previousSegment].ai[0] = segment;
+                        Main.npc[segment].Infernum().ExtraAI[13] = 80f - segmentSpawn;
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, segment, 0f, 0f, 0f, 0);
                         previousSegment = segment;
                     }
@@ -324,6 +336,109 @@ namespace InfernumMode.FuckYouModeAIs.DoG
                         ModContent.ProjectileType<EssenceChain>(),
                         0, 0f, npc.target, MathHelper.Pi * 1.5f);
                 }
+            }
+        }
+
+        public static void DoDeathEffects(NPC npc, float deathTimer)
+        {
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+            npc.dontTakeDamage = true;
+            npc.damage = 0;
+                
+            void destroySegment(int index, ref float destroyedSegments)
+            {
+                if (Main.rand.NextBool(5))
+                    Main.PlaySound(SoundID.Item94, npc.Center);
+
+                List<int> segments = new List<int>()
+                {
+                    ModContent.NPCType<DevourerofGodsBodyS>(),
+                    ModContent.NPCType<DevourerofGodsTailS>()
+                };
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (segments.Contains(Main.npc[i].type) && Main.npc[i].active && Main.npc[i].Infernum().ExtraAI[13] == index)
+                    {
+                        for (int j = 0; j < 20; j++)
+                        {
+                            Dust cosmicBurst = Dust.NewDustPerfect(Main.npc[i].Center + Main.rand.NextVector2Circular(25f, 25f), 234);
+                            cosmicBurst.scale = 1.7f;
+                            cosmicBurst.velocity = Main.rand.NextVector2Circular(9f, 9f);
+                            cosmicBurst.noGravity = true;
+                        }
+
+                        Main.npc[i].life = 0;
+                        Main.npc[i].HitEffect();
+                        Main.npc[i].active = false;
+                        Main.npc[i].netUpdate = true;
+                        destroyedSegments++;
+                        break;
+                    }
+                }
+            }
+
+            float idealSpeed = MathHelper.Lerp(9f, 4.75f, Utils.InverseLerp(15f, 210f, deathTimer, true));
+            ref float destroyedSegmentsCounts = ref npc.Infernum().ExtraAI[21];
+            if (npc.velocity.Length() != idealSpeed)
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealSpeed, 0.08f);
+
+            if (deathTimer == 120f)
+                Main.NewText("I WILL NOT BE DESTROYED!!!", Color.Cyan);
+            if (deathTimer == 170f)
+                Main.NewText("I WILL NOT BE DESTROYED!!!", Color.Cyan);
+            if (deathTimer == 220f)
+                Main.NewText("I WILL NOT BE DESTROYED!!!!", Color.Cyan);
+
+            if (deathTimer >= 120f && deathTimer < 380f && deathTimer % 4f == 0f)
+            {
+                int segmentToDestroy = (int)(Utils.InverseLerp(120f, 380f, deathTimer, true) * 60f);
+                destroySegment(segmentToDestroy, ref destroyedSegmentsCounts);
+            }
+
+            if (deathTimer == 330f)
+                Main.NewText("I WILL NOT...", Color.Cyan);
+
+            if (deathTimer == 420f)
+                Main.NewText("I...", Color.Cyan);
+
+            if (deathTimer == 442f)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    var soundInstance = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    if (soundInstance != null)
+                        soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 1.6f, 0f, 1f);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        soundInstance = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), npc.Center);
+                        if (soundInstance != null)
+                        {
+                            soundInstance.Pitch = -MathHelper.Lerp(0.1f, 0.4f, i / 3f);
+                            soundInstance.Volume = 0.21f;
+                        }
+                    }
+                }
+            }
+
+            if (deathTimer >= 410f && deathTimer < 470f && deathTimer % 2f == 0f)
+            {
+                int segmentToDestroy = (int)(Utils.InverseLerp(410f, 470f, deathTimer, true) * 10f) + 60;
+                destroySegment(segmentToDestroy, ref destroyedSegmentsCounts);
+            }
+
+            float light = Utils.InverseLerp(430f, 465f, deathTimer, true);
+            MoonlordDeathDrama.RequestLight(light, Main.LocalPlayer.Center);
+
+            if (deathTimer >= 485f)
+            {
+                npc.life = 0;
+                npc.HitEffect();
+                npc.NPCLoot();
+                npc.active = false;
+                npc.netUpdate = true;
             }
         }
 
@@ -725,7 +840,6 @@ namespace InfernumMode.FuckYouModeAIs.DoG
 
         #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
-
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)

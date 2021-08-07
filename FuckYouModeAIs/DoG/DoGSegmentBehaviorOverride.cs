@@ -92,8 +92,10 @@ namespace InfernumMode.FuckYouModeAIs.DoG
 
             if (npc.type == ModContent.NPCType<DevourerofGodsBodyS>())
                 typeof(DevourerofGodsBodyS).GetField("invinceTime", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(npc.modNPC, 0);
-            npc.dontTakeDamage = aheadSegment.dontTakeDamage;
+            npc.dontTakeDamage = head.dontTakeDamage;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
+            if (head.Infernum().ExtraAI[20] > 0f)
+                npc.life = npc.lifeMax;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

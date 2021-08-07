@@ -10,8 +10,8 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
 {
     public class RedLightningRedirectingFeather : ModProjectile
     {
-        public const int AimTime = 20;
-        public const int RedirectDelay = 90;
+        public const int AimTime = 16;
+        public const int RedirectDelay = 40;
         public const int FlyTime = 240;
         public Player Target => Main.player[(int)projectile.ai[1]];
         public ref float Time => ref projectile.ai[0];
@@ -56,7 +56,7 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
             }
             else if (Time == RedirectDelay)
             {
-                projectile.velocity = projectile.rotation.ToRotationVector2() * 27f;
+                projectile.velocity = projectile.rotation.ToRotationVector2() * 34f;
                 Main.PlaySound(SoundID.Item109, projectile.Center);
                 for (int i = 0; i < 16; i++)
                 {

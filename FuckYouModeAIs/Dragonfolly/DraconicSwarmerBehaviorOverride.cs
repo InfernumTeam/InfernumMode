@@ -214,7 +214,7 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
 
                 // Line up for a charge for a short amount of time.
                 float flyInertia = 8f;
-                Vector2 idealFlyVelocity = npc.SafeDirectionTo(target.Center) * (duringFollyFight ? 16f : 12f);
+                Vector2 idealFlyVelocity = npc.SafeDirectionTo(target.Center) * (duringFollyFight ? 20.5f : 14f);
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + idealFlyVelocity) / flyInertia;
                 npc.direction = (npc.velocity.X > 0f).ToDirectionInt();
                 npc.spriteDirection = npc.direction;
@@ -272,7 +272,7 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
                 int chargeDelay = 15;
                 int chargeTime = 90;
                 float flyInertia = 21f;
-                float chargeSpeed = 29f;
+                float chargeSpeed = 31f;
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
 
                 // Try to go towards the player and charge, while fading red.

@@ -186,8 +186,8 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
                 {
                     npc.velocity.Y -= 0.5f;
                     npc.rotation = npc.rotation.AngleLerp(0f, 0.25f);
-                    if (npc.timeLeft > 240)
-                        npc.timeLeft = 240;
+                    if (npc.timeLeft > 120)
+                        npc.timeLeft = 120;
                     despawning = true;
                 }
                 npc.netUpdate = true;
@@ -286,7 +286,7 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
 			{
                 for (float offsetAngle = -1.21f; offsetAngle <= 1.21f; offsetAngle += 0.1f)
                 {
-                    Vector2 spawnPosition = target.Center - Vector2.UnitY.RotatedBy(offsetAngle) * 1500f;
+                    Vector2 spawnPosition = target.Center - Vector2.UnitY.RotatedBy(offsetAngle) * 800f;
                     Vector2 shootDirection = target.DirectionFrom(spawnPosition) * 0.001f;
                     Utilities.NewProjectileBetter(spawnPosition, shootDirection, ModContent.ProjectileType<RedLightningSnipeFeather>(), 300, 0f);
                 }
@@ -341,13 +341,13 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
             {
                 default:
                 case DragonfollyAttackType.OrdinaryCharge:
-                    horizontalOffset = 660f;
+                    horizontalOffset = 550f;
                     break;
                 case DragonfollyAttackType.FakeoutCharge:
-                    horizontalOffset = 870f;
+                    horizontalOffset = 670f;
                     break;
                 case DragonfollyAttackType.ThunderCharge:
-                    horizontalOffset = 1060f;
+                    horizontalOffset = 860f;
                     break;
             }
 
@@ -394,7 +394,7 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
                 if (chargeType == DragonfollyAttackType.OrdinaryCharge && phase2 && redirectCounter > 0f)
                     chargeDelay = 6;
 
-                float flySpeed = 25f;
+                float flySpeed = 32f;
                 float flyInertia = 8f;
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity * (chargeType == DragonfollyAttackType.ThunderCharge ? 0.5f : 1f)) / flyInertia;
@@ -447,11 +447,11 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
             // Do the actual charge.
             else if (chargeState == 2f)
 			{
-                float horizontalSpeed = 25f;
+                float horizontalSpeed = 32f;
 
                 // Fly faster than usual after a fakeout.
                 if (hasDoneFakeoutFlag == 1f && chargeType == DragonfollyAttackType.FakeoutCharge)
-                    horizontalSpeed += 6f;
+                    horizontalSpeed += 9f;
 
                 accumulatedSpeed += phase3 ? 0.08f : 0.04f;
                 npc.velocity.X = chargeDirection * (horizontalSpeed + accumulatedSpeed);
@@ -643,8 +643,8 @@ namespace InfernumMode.FuckYouModeAIs.Dragonfolly
         internal static void DoAttack_ReleaseSpreadOfFeathers(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
         {
             int totalWaves = (int)MathHelper.Lerp(1f, 3.5f, 1f - npc.life / (float)npc.lifeMax);
-            int flyTime = 60;
-            int waveDelay = 30;
+            int flyTime = 40;
+            int waveDelay = 24;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float waveCounter = ref npc.Infernum().ExtraAI[0];
             ref float screamTimer = ref npc.localAI[3];

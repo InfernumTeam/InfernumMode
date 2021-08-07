@@ -144,7 +144,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                     DoBehavior_NPCSpawnArc(npc, target, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.SpinLunge:
-                    DoBehavior_SpinLunge(npc, target, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_SpinLunge(npc, target, lifeRatio, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.CloudDash:
                     DoBehavior_CloudDash(npc, target, lifeRatio, ref slowdownCountdown, ref attackTimer);
@@ -326,7 +326,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             attackTimer++;
         }
 
-        public static void DoBehavior_SpinLunge(NPC npc, Player target, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
+        public static void DoBehavior_SpinLunge(NPC npc, Player target, float lifeRatio, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
         {
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
             ref float spinIncrement = ref npc.Infernum().ExtraAI[2];
@@ -357,6 +357,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             {
                 DoRoar(npc, false);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 4f;
+                npc.velocity *= MathHelper.Lerp(1f, 1.45f, Utils.InverseLerp(1f, 0.6f, lifeRatio));
                 fadeoutCountdown = HiveMindFadeoutTime;
                 npc.netUpdate = true;
             }
@@ -416,13 +417,14 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 if (npc.alpha <= 0)
                 {
                     DoRoar(npc, true);
-                    npc.velocity = Vector2.UnitX * dashDirection * -11f;
+                    npc.velocity = Vector2.UnitX * dashDirection * -12f;
+                    npc.velocity *= MathHelper.Lerp(1f, 1.5f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
                     npc.netUpdate = true;
                 }
             }
 
             // Release various clouds.
-            else if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 2 == 0f)
+            else if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 2f == 0f)
             {
                 Vector2 cloudSpawnPosition = npc.Center + new Vector2(Main.rand.NextFloatDirection(), Main.rand.NextFloatDirection()) * npc.Size * 0.5f;
                 int cloud = Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 64, 0, Main.myPlayer, 11, 0);

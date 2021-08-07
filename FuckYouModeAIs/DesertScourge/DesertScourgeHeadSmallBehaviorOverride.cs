@@ -16,6 +16,8 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
 
         public override bool PreAI(NPC npc)
         {
+            npc.damage = 84;
+
             // Select a new target if an old one was lost.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 npc.TargetClosest();
@@ -75,7 +77,7 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
 
                     // Slowly regress back to the ideal speed over time.
                     newSpeed = MathHelper.Lerp(newSpeed, idealSpeed, 0.018f);
-                    newSpeed = MathHelper.Clamp(newSpeed, 4f, 21.5f);
+                    newSpeed = MathHelper.Clamp(newSpeed, 10f, 21.5f);
 
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), turnSpeed, true) * newSpeed;
                     break;

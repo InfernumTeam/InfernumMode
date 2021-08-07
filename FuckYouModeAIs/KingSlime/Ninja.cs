@@ -82,7 +82,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                         for (int i = 0; i < shurikenCount; i++)
                         {
                             Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i / (float)(shurikenCount - 1f))) * 7f;
-                            Utilities.NewProjectileBetter(npc.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 45, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 72, 0f);
                         }
                     }
 
@@ -98,7 +98,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 {
                     if (KatanaUseTimer > 0f)
                     {
-                        npc.damage = 30;
+                        npc.damage = 115;
                         npc.rotation = KatanaRotation - MathHelper.PiOver2;
                         KatanaRotation += MathHelper.ToRadians(22f) * npc.spriteDirection;
                         KatanaUseTimer--;

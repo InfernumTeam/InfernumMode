@@ -52,9 +52,9 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 
             if (Main.netMode != NetmodeID.MultiplayerClient && time % 60f == 59f)
             {
-                float shootSpeed = 7f;
-                Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * 70f);
-                Utilities.NewProjectileBetter(npc.Center, aimDirection * shootSpeed, ModContent.ProjectileType<JewelBeam>(), 50, 0f);
+                float shootSpeed = 9f;
+                Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * 45f);
+                Utilities.NewProjectileBetter(npc.Center, aimDirection * shootSpeed, ModContent.ProjectileType<JewelBeam>(), 84, 0f);
             }
 
             return false;

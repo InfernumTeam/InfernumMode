@@ -74,7 +74,6 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
                 }
             }
 
-            npc.damage = npc.defDamage;
             npc.TargetClosest();
 
             ref float attackTimer = ref npc.ai[2];
@@ -84,6 +83,9 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < 0.8f;
             bool phase3 = lifeRatio < 0.33f;
+            npc.damage = npc.defDamage + 12;
+            if (phase2)
+                npc.damage += 28;
 
             void goToNextAIState()
             {
@@ -243,7 +245,7 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
                             Vector2 shootVelocity = npc.velocity;
                             shootVelocity.X *= Main.rand.NextFloat(0.35f, 0.65f);
 
-                            Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SittingBlood>(), 45, 0f);
+                            Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SittingBlood>(), 60, 0f);
                         }
 
                         if (attackTimer >= 90f || Math.Abs(npc.Center.X - target.Center.X) > 1200f)
@@ -292,7 +294,7 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
                                 for (int i = 0; i < teethPerShot; i++)
                                 {
                                     float offsetAngle = MathHelper.Lerp(-0.56f, 0.56f, i / (float)teethPerShot) + Main.rand.NextFloat(-0.07f, 0.07f);
-                                    Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitY.RotatedBy(offsetAngle) * 16f, ModContent.ProjectileType<EoCTooth>(), 53, 0f, 255, npc.target);
+                                    Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitY.RotatedBy(offsetAngle) * 16f, ModContent.ProjectileType<EoCTooth>(), 70, 0f, 255, npc.target);
                                 }
                             }
                             teethBurstDelay = 10f;

@@ -15,10 +15,11 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
-        #region AI
 
         public override bool PreAI(NPC npc)
         {
+            npc.damage = 95;
+
             // Select a new target if an old one was lost.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 npc.TargetClosest();
@@ -230,7 +231,7 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
 
             // Slowly regress back to the ideal speed over time.
             newSpeed = MathHelper.Lerp(newSpeed, idealSpeed, 0.018f);
-            newSpeed = MathHelper.Clamp(newSpeed, 4f, 21.5f);
+            newSpeed = MathHelper.Clamp(newSpeed, 9.5f, 21.5f);
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), turnSpeed, true) * newSpeed;
 
@@ -299,7 +300,5 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
                 Main.npc[sandSpewingWorm].Infernum().ExtraAI[0] = 1f;
         }
 		#endregion AI Utility Methods
-
-		#endregion AI
 	}
 }

@@ -173,8 +173,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                     npc.position.Y += 5f;
                 npc.velocity *= 0.8f;
                 npc.rotation *= 0.8f;
-                if (npc.timeLeft < 1800)
-                    npc.timeLeft = 1800;
+                npc.timeLeft = 1800;
                 return false;
             }
 
@@ -305,16 +304,16 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             Vector2 blobSpawnPosition = new Vector2(npc.Center.X + Main.rand.NextFloat(-12f, 12f), npc.Center.Y + 30f);
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
             {
-                int totalProjectiles = anyWorms ? 7 : (int)MathHelper.Lerp(12f, 17f, 1f - npc.life / (float)npc.lifeMax); ;
+                int totalProjectiles = anyWorms ? 7 : (int)MathHelper.Lerp(17f, 22f, 1f - npc.life / (float)npc.lifeMax);
                 float blobSpeed = anyWorms ? 6f : 8f;
-                Vector2 currentBlobVelocity = Vector2.UnitY * -blobSpeed + Vector2.UnitX * (npc.velocity.SafeNormalize(Vector2.Zero).X * 0.2f + target.velocity.X * 0.3f);
+                Vector2 currentBlobVelocity = new Vector2(4f + Main.rand.NextFloat(-0.1f, 0.1f) + target.velocity.X * 0.12f, -blobSpeed);
 
                 npc.TargetClosest();
 
                 for (int i = 0; i < totalProjectiles + 1; i++)
                 {
                     Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), 80, 0f, Main.myPlayer, 0f, 0f);
-                    currentBlobVelocity.X += blobSpeed / totalProjectiles * npc.direction * 0.88f;
+                    currentBlobVelocity.X += blobSpeed / totalProjectiles * -1.12f;
                 }
                 Main.PlaySound(SoundID.NPCHit20, npc.position);
             }

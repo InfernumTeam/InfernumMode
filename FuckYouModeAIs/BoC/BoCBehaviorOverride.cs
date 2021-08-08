@@ -121,7 +121,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
             if (!DoTeleportFadeEffect(npc, attackTimer, target.Center + Main.rand.NextVector2CircularEdge(teleportOffset, teleportOffset), teleportFadeTime))
                 return;
 
-            float floatSpeed = MathHelper.Lerp(4f, 6.5f, 1f - lifeRatio);
+            float floatSpeed = MathHelper.Lerp(5.3f, 7.5f, 1f - lifeRatio);
             npc.velocity = npc.SafeDirectionTo(target.Center) * floatSpeed;
 
             // Stick to the target if close to them.
@@ -130,7 +130,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
                 npc.velocity = Vector2.Zero;
 
                 // Make the attack go much faster though to prevent annoying telefragging.
-                attackTimer += 12f;
+                attackTimer += 18f;
             }
 
             if (attackTimer >= floatTime + teleportFadeTime * 1.5f)
@@ -173,7 +173,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
                     npc.velocity *= 1.0065f;
 
                     // Release ichor everywhere.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 8f == 7f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 5f == 4f)
                     {
                         Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 7.5f);
                         Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(40f, 40f);
@@ -198,7 +198,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
         internal static void DoAttack_BloodDashSwoop(NPC npc, Player target, ref float attackTimer)
         {
             int teleportFadeTime = 46;
-            Vector2 teleportDestination = target.Center + new Vector2(target.direction * -310f, -280f);
+            Vector2 teleportDestination = target.Center + new Vector2(target.direction * -350f, -280f);
             if (Math.Abs(target.velocity.X) > 0f)
                 teleportDestination = target.Center + new Vector2(Math.Sign(target.velocity.X) * -310f, -280f);
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
@@ -210,7 +210,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.velocity = Vector2.UnitY * 9f;
+                    npc.velocity = Vector2.UnitY * 14f;
                     npc.direction = (target.Center.X < npc.Center.X).ToDirectionInt();
                     npc.netUpdate = true;
 
@@ -397,7 +397,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
         internal static void DoAttack_SpinPull(NPC npc, Player target, ref float attackTimer)
         {
             int teleportFadeTime = 50;
-            float spinRadius = 440f;
+            float spinRadius = 395f;
             float spinTime = 120f;
             ref float spinAngle = ref npc.Infernum().ExtraAI[0];
             if (attackTimer == 1f)
@@ -416,10 +416,10 @@ namespace InfernumMode.FuckYouModeAIs.BoC
                 Main.PlaySound(SoundID.ForceRoar, (int)target.Center.X, (int)target.Center.Y, -1, 1f, 0f);
             }
 
-            if (attackTimer < (int)(teleportFadeTime * 1.5f) + spinTime + 15f)
+            if (attackTimer < (int)(teleportFadeTime * 1.5f) + spinTime)
                 npc.Center = teleportDestination;
             else
-                npc.velocity *= 0.96f;
+                npc.velocity *= 0.98f;
 
             if (attackTimer >= teleportFadeTime * 1.5f + spinTime + 70f)
             {
@@ -445,7 +445,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
             switch (oldAttackType)
             {
                 case BoCAttackState.IdlyFloat:
-                    newAttackType = lifeRatio < Subphase2LifeRatio ? BoCAttackState.DiagonalCharge : BoCAttackState.IdlyFloat;
+                    newAttackType = lifeRatio < Subphase2LifeRatio ? BoCAttackState.DiagonalCharge : BoCAttackState.BloodDashSwoop;
                     break;
                 case BoCAttackState.DiagonalCharge:
                     newAttackType = BoCAttackState.BloodDashSwoop;

@@ -73,8 +73,8 @@ namespace InfernumMode.FuckYouModeAIs.BoC
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 shootVelocity = PredictiveAimRotation.ToRotationVector2() * (UseUndergroundAI ? 11f : 13.25f);
-                shootVelocity *= 0.315f;
-                int ray = Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ProjectileID.CultistBossLightningOrbArc, 50, 0f, 255);
+                shootVelocity *= 0.48f;
+                int ray = Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ProjectileID.CultistBossLightningOrbArc, 80, 0f, 255);
 
                 if (Main.projectile.IndexInRange(ray))
                 {

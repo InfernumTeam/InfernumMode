@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.Perforator;
+﻿using CalamityMod;
+using CalamityMod.NPCs.Perforator;
 using InfernumMode.FuckYouModeAIs.BoC;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -30,6 +31,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 shootTimer = 0f;
                 npc.netUpdate = true;
             }
+            npc.Calamity().DR = 0.56f;
             return true;
         }
     }

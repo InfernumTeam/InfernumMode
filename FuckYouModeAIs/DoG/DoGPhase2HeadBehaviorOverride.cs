@@ -106,10 +106,41 @@ namespace InfernumMode.FuckYouModeAIs.DoG
             npc.damage = npc.dontTakeDamage ? 0 : 6000;
             npc.Calamity().DR = 0.3f;
 
+            // Spawn segments.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (spawnedSegmentsFlag == 0f && npc.ai[0] == 0f)
+                {
+                    int previousSegment = npc.whoAmI;
+                    for (int segmentSpawn = 0; segmentSpawn < 81; segmentSpawn++)
+                    {
+                        int segment;
+                        if (segmentSpawn >= 0 && segmentSpawn < 80)
+                            segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsBodyS"), npc.whoAmI);
+                        else
+                            segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsTailS"), npc.whoAmI);
+
+                        Main.npc[segment].realLife = npc.whoAmI;
+                        Main.npc[segment].ai[2] = npc.whoAmI;
+                        Main.npc[segment].ai[1] = previousSegment;
+                        Main.npc[previousSegment].ai[0] = segment;
+                        Main.npc[segment].Infernum().ExtraAI[13] = 80f - segmentSpawn;
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, segment, 0f, 0f, 0f, 0);
+                        previousSegment = segment;
+                    }
+                    spawnedSegmentsFlag = 1f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (deathTimer <= 0f)
+                deathTimer = 1f;
+
             if (deathTimer > 0f)
             {
                 DoDeathEffects(npc, deathTimer);
                 jawAngle = jawAngle.AngleTowards(0f, 0.07f);
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 deathTimer++;
                 return false;
             }
@@ -172,34 +203,9 @@ namespace InfernumMode.FuckYouModeAIs.DoG
             if (npc.ai[3] > 0f)
                 npc.realLife = (int)npc.ai[3];
 
-            // Spawn segments and fire projectiles.
+            // Fire projectiles.
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                // Segments
-                if (spawnedSegmentsFlag == 0f && npc.ai[0] == 0f)
-                {
-                    int previousSegment = npc.whoAmI;
-                    for (int segmentSpawn = 0; segmentSpawn < 81; segmentSpawn++)
-                    {
-                        int segment;
-                        if (segmentSpawn >= 0 && segmentSpawn < 80)
-                            segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsBodyS"), npc.whoAmI);
-                        else
-                            segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsTailS"), npc.whoAmI);
-
-                        Main.npc[segment].realLife = npc.whoAmI;
-                        Main.npc[segment].ai[2] = npc.whoAmI;
-                        Main.npc[segment].ai[1] = previousSegment;
-                        Main.npc[previousSegment].ai[0] = segment;
-                        Main.npc[segment].Infernum().ExtraAI[13] = 80f - segmentSpawn;
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, segment, 0f, 0f, 0f, 0);
-                        previousSegment = segment;
-                    }
-                    spawnedSegmentsFlag = 1f;
-                    npc.netUpdate = true;
-                }
-
-                // Fireballs
                 if (npc.alpha <= 0 && !npc.WithinRange(target.Center, 500f))
                 {
                     fireballShootTimer++;

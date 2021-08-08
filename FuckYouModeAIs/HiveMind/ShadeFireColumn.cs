@@ -33,7 +33,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                     if (projectile.extraUpdates != 4)
                         projectile.extraUpdates = 4;
 
-                    projectile.velocity = Vector2.UnitY * -4f;
+                    projectile.velocity = Vector2.UnitY * -4.45f;
                 }
                 float scale = 1f;
                 if (Time == 8f)

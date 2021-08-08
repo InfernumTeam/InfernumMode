@@ -77,7 +77,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             }
 
             // Gain a massive defense boost if a dank meme is alive.
-            npc.defense = NPC.AnyNPCs(ModContent.NPCType<DankCreeper>()) ? 45 : 5;
+            npc.defense = NPC.AnyNPCs(ModContent.NPCType<DankCreeper>()) ? 45 : -5;
 
             if (summonThresholdByLife == 0f && npc.life > 0)
                 summonThresholdByLife = npc.lifeMax;
@@ -132,7 +132,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             if (shootTimer > 50 && shootTimer % mirageSummonRate == 0f && lifeRatio < 0.75f)
             {
                 Vector2 mirageSummonPosition = target.Center - Vector2.UnitY * 2300f;
-                Utilities.NewProjectileBetter(mirageSummonPosition, Vector2.Zero, ModContent.ProjectileType<HiveMindMirage>(), 28, 3f, target.whoAmI, 1f);
+                Utilities.NewProjectileBetter(mirageSummonPosition, Vector2.Zero, ModContent.ProjectileType<HiveMindMirage>(), 92, 3f, target.whoAmI, 1f);
             }
             if (shootTimer < -120)
             {

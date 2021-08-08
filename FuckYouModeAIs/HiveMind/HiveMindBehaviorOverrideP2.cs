@@ -63,7 +63,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 lifeRatio = 0.1995f;
 
             Player target = Main.player[npc.target];
-            npc.defense = target.ZoneCorrupt ? 4 : 9999;
+            npc.defense = target.ZoneCorrupt ? -5 : 9999;
             CalamityGlobalNPC.hiveMind = npc.whoAmI;
 
             if (below20 && npc.Infernum().ExtraAI[10] == 0f)
@@ -125,7 +125,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                     WorldUtils.Find((target.Top - Vector2.UnitY * 320f).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new Conditions.IsSolid()), out Point result);
                     if (Math.Abs(result.X) > 10000)
                         result = (target.Bottom + Vector2.UnitY * 120f).ToTileCoordinates();
-                    Utilities.NewProjectileBetter(result.ToWorldCoordinates(), Vector2.Zero, ModContent.ProjectileType<ShadeFireColumn>(), 65, 0f);
+                    Utilities.NewProjectileBetter(result.ToWorldCoordinates(), Vector2.Zero, ModContent.ProjectileType<ShadeFireColumn>(), 78, 0f);
                 }
                 flameColumnCountdown--;
             }
@@ -191,9 +191,11 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             {
                 hasBeenHitFlag = 1f;
                 npc.velocity = npc.SafeDirectionTo(target.Center) * -8.5f;
-                DoRoar(npc, true);
                 if (attackTimer < driftTime - 24f)
+                {
                     attackTimer = driftTime - 24f;
+                    DoRoar(npc, true);
+                }
 
                 npc.netUpdate = true;
             }
@@ -357,7 +359,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             {
                 DoRoar(npc, false);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 4f;
-                npc.velocity *= MathHelper.Lerp(1f, 1.45f, Utils.InverseLerp(1f, 0.6f, lifeRatio));
+                npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.InverseLerp(1f, 0.6f, lifeRatio));
                 fadeoutCountdown = HiveMindFadeoutTime;
                 npc.netUpdate = true;
             }
@@ -411,14 +413,14 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                     while (dashDirection == 0f)
                         dashDirection = Main.rand.NextBool(2).ToDirectionInt();
 
-                    npc.position.Y -= RainDashOffset;
+                    npc.position.Y -= RainDashOffset * MathHelper.Lerp(1f, 1.325f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
                     npc.position.X += RainDashOffset * dashDirection;
                 }
                 if (npc.alpha <= 0)
                 {
                     DoRoar(npc, true);
                     npc.velocity = Vector2.UnitX * dashDirection * -12f;
-                    npc.velocity *= MathHelper.Lerp(1f, 1.5f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
+                    npc.velocity *= MathHelper.Lerp(1f, 1.575f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
                     npc.netUpdate = true;
                 }
             }
@@ -427,7 +429,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             else if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 2f == 0f)
             {
                 Vector2 cloudSpawnPosition = npc.Center + new Vector2(Main.rand.NextFloatDirection(), Main.rand.NextFloatDirection()) * npc.Size * 0.5f;
-                int cloud = Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 64, 0, Main.myPlayer, 11, 0);
+                int cloud = Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 72, 0, Main.myPlayer, 11, 0);
                 if (!Main.projectile.IndexInRange(cloud))
                 {
                     Main.projectile[cloud].ai[0] = 11f;
@@ -437,7 +439,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             }
 
             // Reset to the slowdown state in preparation for the next attack.
-            if (cloudSummonCounter >= 10f)
+            if (cloudSummonCounter >= 18f)
             {
                 npc.alpha = 255;
                 dashDirection *= -1f;
@@ -448,7 +450,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 
             // Release rain.
             Vector2 rainSpawnPosition = npc.position + new Vector2(Main.rand.NextFloat(14f, npc.width - 14f), npc.height + 4f);
-            Utilities.NewProjectileBetter(rainSpawnPosition, Vector2.UnitY * 6f, ModContent.ProjectileType<ShaderainHostile>(), 72, 0f, Main.myPlayer, 0f, 0f);
+            Utilities.NewProjectileBetter(rainSpawnPosition, Vector2.UnitY * 6f, ModContent.ProjectileType<ShaderainHostile>(), 82, 0f, Main.myPlayer, 0f, 0f);
         }
 
         public static void DoBehavior_EaterWall(NPC npc, Player target, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
@@ -492,7 +494,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 Vector2 wallSpawnOffset = new Vector2(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
                 Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < 0.2f ? MathHelper.ToRadians(10f) : 0f) * 10f;
                 Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<EaterOfSouls>(), 70, 1f);
-                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(-1f, 1f), wallVelocity * new Vector2(-1f, 1f), ModContent.ProjectileType<EaterOfSouls>(), 70, 1f);
+                Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(-1f, 1f), wallVelocity * new Vector2(-1f, 1f), ModContent.ProjectileType<EaterOfSouls>(), 72, 1f);
 
                 // Reset to the slowdown state in preparation for the next attack.
                 if (npc.ai[3] > EaterWallSlowdownTime + EaterWallSummoningTime)
@@ -535,7 +537,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 
             // Constantly shoot shade flames upward.
             if (npc.alpha <= 0)
-                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -7.4f, ModContent.ProjectileType<ShadeFire>(), 68, 0f);
+                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -7.4f, ModContent.ProjectileType<ShadeFire>(), 82, 0f);
 
             attackTimer++;
 
@@ -550,7 +552,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             // Release clots upward if below the necessary phase threshold.
             if (attackTimer > waitTime && lifeRatio < 0.2f && attackTimer % 10f == 9f)
             {
-                int vileClot = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(7f, 5.25f), ModContent.ProjectileType<VileClot>(), 68, 0f);
+                int vileClot = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(6f, 8.5f), ModContent.ProjectileType<VileClot>(), 74, 0f);
                 Main.projectile[vileClot].tileCollide = false;
             }
 
@@ -598,12 +600,12 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 {
                     Vector2 clotSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 400f, Main.rand.NextFloat(-605f, -545f));
                     Vector2 clotVelocity = Vector2.UnitY.RotatedByRandom(MathHelper.ToRadians(36f)) * 10f;
-                    Utilities.NewProjectileBetter(clotSpawnPosition, clotVelocity, ModContent.ProjectileType<VileClot>(), 64, 1f);
+                    Utilities.NewProjectileBetter(clotSpawnPosition, clotVelocity, ModContent.ProjectileType<VileClot>(), 72, 1f);
                 }
                 if (npc.ai[3] % cloudSpawnRate == cloudSpawnRate - 1f)
                 {
                     Vector2 cloudSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 400f, Main.rand.NextFloat(-605f, -545f));
-                    Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 64, 1f);
+                    Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 72, 1f);
                 }
 
                 // Make flame columns appear.
@@ -670,7 +672,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                         float shootSpeed = i == 0f ? 14f : Main.rand.NextFloat(7.75f, 11f);
                         if (lifeRatio < 0.25f)
                             shootSpeed *= 1.35f;
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 72, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 80, 0f);
                     }
                     Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
                 }

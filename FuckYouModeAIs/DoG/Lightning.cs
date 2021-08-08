@@ -34,11 +34,16 @@ namespace InfernumMode.FuckYouModeAIs.DoG
             if (telegraphTimer == 79)
                 targetPosition = Main.player[Player.FindClosest(projectile.Center, 1, 1)].Center + Main.rand.NextVector2Circular(80f, 80f);
 
-            if (telegraphTimer == 1)
+            if (Main.netMode != NetmodeID.MultiplayerClient && telegraphTimer == 1)
             {
                 projectile.velocity = projectile.SafeDirectionTo(targetPosition) * SpeedMultiplier * 9f;
-                Main.projectile[Projectile.NewProjectile(projectile.Center, projectile.velocity, ProjectileID.CultistBossLightningOrbArc, 85, 0f, projectile.owner,
-                    projectile.velocity.ToRotation(), Main.rand.Next(100))].tileCollide = false;
+                int lightning = Utilities.NewProjectileBetter(projectile.Center, projectile.velocity, ProjectileID.CultistBossLightningOrbArc, 350, 0f, projectile.owner, projectile.velocity.ToRotation(), Main.rand.Next(100));
+                if (Main.projectile.IndexInRange(lightning))
+                {
+                    Main.projectile[lightning].ai[0] = projectile.velocity.ToRotation();
+                    Main.projectile[lightning].ai[1] = Main.rand.Next(100);
+                    Main.projectile[lightning].tileCollide = false;
+                }
                 projectile.Kill();
             }
             telegraphTimer--;

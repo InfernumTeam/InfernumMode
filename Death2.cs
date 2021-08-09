@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.Events;
+﻿using CalamityMod.Events;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -16,8 +15,8 @@ namespace InfernumMode
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Infernal Chalice");
-            Tooltip.SetDefault("Makes bosses absurd unless Boss Rush is active\n" +
-                               "Deathmode must be active to use this item\n" +
+            Tooltip.SetDefault("Makes bosses even more absurd unless Boss Rush is active\n" +
+                               "Death Mode must be active to use this item\n" +
                                "Infernum");
             Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(6, 8));
         }

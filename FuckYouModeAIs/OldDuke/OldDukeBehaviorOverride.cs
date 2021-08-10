@@ -1,6 +1,9 @@
 ﻿using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
+using CalamityMod.NPCs;
+using CalamityMod.NPCs.OldDuke;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,7 +26,11 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             AttackSelectionWait,
             Charge,
             AcidBelch,
-            AcidBubbleFountain
+            AcidBubbleFountain,
+            SharkronSpinSummon,
+            ToothBallVomit,
+            GoreAndAcidSpit,
+            TeleportPause,
         }
 
         public enum OldDukeFrameType
@@ -37,17 +44,20 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
+        public const float Phase2LifeRatio = 0.75f;
+        public const float Phase3LifeRatio = 0.325f;
+        public const float Phase4LifeRatio = 0.125f;
+        public const float PhaseTransitionTime = 150f;
+
+        public const float TeleportPauseTime = 30f;
+
         #region Phase Patterns
         public static readonly List<OldDukeAttackState> Phase1AttackPattern = new List<OldDukeAttackState>()
         {
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.Charge,
-            OldDukeAttackState.Charge,
             OldDukeAttackState.AcidBelch,
-            OldDukeAttackState.Charge,
-            OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -55,15 +65,86 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.SharkronSpinSummon,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.AcidBubbleFountain,
+        };
+
+        public static readonly List<OldDukeAttackState> Phase2AttackPattern = new List<OldDukeAttackState>()
+        {
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.ToothBallVomit,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.SharkronSpinSummon,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.GoreAndAcidSpit,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.AcidBelch,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.AcidBubbleFountain,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.GoreAndAcidSpit,
+        };
+
+        public static readonly List<OldDukeAttackState> Phase3AttackPattern = new List<OldDukeAttackState>()
+        {
+            OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.GoreAndAcidSpit,
+            OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.ToothBallVomit,
+            OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.SharkronSpinSummon,
+        };
+
+        public static readonly List<OldDukeAttackState> Phase4AttackPattern = new List<OldDukeAttackState>()
+        {
+            OldDukeAttackState.TeleportPause,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
         };
         #endregion Phase Patterns
 
@@ -72,19 +153,126 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 		{
             npc.TargetClosest();
 
+            Player target = Main.player[npc.target];
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool outOfOcean = !BossRushEvent.BossRushActive && target.position.X > 8400f && target.position.X < Main.maxTilesX * 16f - 8400f;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float frameType = ref npc.localAI[0];
+            ref float phaseTransitionState = ref npc.Infernum().ExtraAI[6];
+            ref float phaseTransitionTimer = ref npc.Infernum().ExtraAI[7];
+            ref float phaseTransitionSharkSpawnOffset = ref npc.Infernum().ExtraAI[8];
+            ref float despawnTimer = ref npc.Infernum().ExtraAI[9];
+            
+            // Enter new phases.
+            if (phaseTransitionState == 0f && lifeRatio < Phase2LifeRatio)
+            {
+                phaseTransitionTimer = 1f;
+                phaseTransitionState = 1f;
+                attackTimer = 0f;
 
-            Player target = Main.player[npc.target];
-			bool outOfOcean = !BossRushEvent.BossRushActive && target.position.X > 8400f && target.position.X < Main.maxTilesX * 16f - 8400f;
+                npc.netUpdate = true;
+                return false;
+            }
+            if (phaseTransitionState == 1f && lifeRatio < Phase3LifeRatio)
+            {
+                phaseTransitionTimer = 1f;
+                phaseTransitionState = 2f;
+                attackTimer = 0f;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    CalamityUtils.StartRain(true);
+                    Main.cloudBGActive = 1f;
+                    Main.numCloudsTemp = Main.cloudLimit;
+                    Main.numClouds = Main.numCloudsTemp;
+                    Main.windSpeedTemp = 1.04f;
+                    Main.windSpeedSet = Main.windSpeedTemp;
+                    Main.maxRaining = 0.95f;
+                }
+
+                npc.netUpdate = true;
+                return false;
+            }
+            if (phaseTransitionState == 2f && lifeRatio < Phase4LifeRatio)
+            {
+                npc.ai[0] = 0f;
+                npc.ai[2] = 0f;
+                npc.ai[3] = 0f;
+                phaseTransitionState = 3f;
+                attackTimer = 0f;
+
+                npc.netUpdate = true;
+                return false;
+            }
+
+            if (!target.active || target.dead || !target.WithinRange(npc.Center, 6800f))
+            {
+                frameType = (int)OldDukeFrameType.FlapWings;
+                npc.frameCounter++;
+
+                npc.Opacity = 1f - despawnTimer / 30f;
+                npc.rotation *= 0.7f;
+                despawnTimer++;
+
+                if (npc.Opacity <= 0f)
+                {
+                    npc.life = 0;
+                    npc.active = false;
+                    npc.netUpdate = true;
+                }
+                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 4f, 0.25f);
+
+                npc.netUpdate = true;
+                return false;
+            }
+
+            if (despawnTimer > 0f)
+            {
+                npc.Opacity = 1f;
+                despawnTimer = 0f;
+            }
 
             // Reset variables. They may be changed by behaviors below.
+            npc.Calamity().DR = 0.05f;
             npc.dontTakeDamage = false;
             npc.damage = npc.defDamage;
 
-            Vector2 mouthPosition = Vector2.UnitX * (float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f + npc.Center;
-            mouthPosition.Y += 45f;
+            // Handle phase transitions.
+            if (phaseTransitionTimer > 0f)
+            {
+                npc.dontTakeDamage = true;
+
+                npc.ai[0] = 0f;
+                npc.ai[2] = 0f;
+                npc.ai[3] = 0f;
+                DoBehavior_PhaseTransitionEffects(npc, phaseTransitionTimer, ref frameType, ref phaseTransitionSharkSpawnOffset);
+                phaseTransitionTimer++;
+
+                if (phaseTransitionTimer >= PhaseTransitionTime)
+                {
+                    phaseTransitionSharkSpawnOffset = 0f;
+                    phaseTransitionTimer = 0f;
+                    npc.netUpdate = true;
+                }
+
+                return false;
+            }
+
+            bool inPhase2 = phaseTransitionState >= 1f;
+            bool inPhase3 = phaseTransitionState >= 2f;
+            bool inPhase4 = phaseTransitionState >= 3f;
+
+            if (inPhase3)
+            {
+                Main.weatherCounter = 300;
+                Main.maxRaining = 0.95f;
+            }
+            else
+                CalamityMod.CalamityMod.StopRain();
+
+            // Define a general-purpose mouth position vector.
+            Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 45f);
 
             switch ((OldDukeAttackState)(int)attackState)
 			{
@@ -92,16 +280,28 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                     DoBehavior_SpawnEffects(npc, target, attackTimer, ref frameType);
                     break;
                 case OldDukeAttackState.AttackSelectionWait:
-                    DoBehavior_AttackSelectionWait(npc, target, attackTimer, ref frameType);
+                    DoBehavior_AttackSelectionWait(npc, target, inPhase4, attackTimer, ref frameType);
                     break;
                 case OldDukeAttackState.Charge:
-                    DoBehavior_Charge(npc, target, attackTimer, ref frameType);
+                    DoBehavior_Charge(npc, target, inPhase2, inPhase3, inPhase4, attackTimer, ref frameType);
                     break;
                 case OldDukeAttackState.AcidBelch:
-                    DoBehavior_AcidBelch(npc, target, mouthPosition, attackTimer, ref frameType);
+                    DoBehavior_AcidBelch(npc, target, inPhase2, mouthPosition, attackTimer, ref frameType);
                     break;
                 case OldDukeAttackState.AcidBubbleFountain:
-                    DoBehavior_AcidBubbleFountain(npc, target, mouthPosition, attackTimer, ref frameType);
+                    DoBehavior_AcidBubbleFountain(npc, target, inPhase2, attackTimer, ref frameType);
+                    break;
+                case OldDukeAttackState.SharkronSpinSummon:
+                    DoBehavior_SharkronSpinSummon(npc, target, attackTimer, ref frameType);
+                    break;
+                case OldDukeAttackState.ToothBallVomit:
+                    DoBehavior_ToothBallVomit(npc, target, inPhase2, mouthPosition, attackTimer, ref frameType);
+                    break;
+                case OldDukeAttackState.GoreAndAcidSpit:
+                    DoBehavior_GoreAndAcidSpit(npc, target, inPhase2, mouthPosition, attackTimer, ref frameType);
+                    break;
+                case OldDukeAttackState.TeleportPause:
+                    DoBehavior_TeleportPause(npc, target, attackTimer, ref frameType);
                     break;
 			}
 
@@ -111,6 +311,39 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 		}
 
 		#region Specific Behaviors
+
+        public static void DoBehavior_PhaseTransitionEffects(NPC npc, float phaseTransitionTimer, ref float frameType, ref float phaseTransitionSharkSpawnOffset)
+        {
+            // Slow down and rotate towards 0 degrees.
+            npc.velocity *= 0.965f;
+            npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, 0f, 0.02f);
+            npc.rotation = npc.rotation.AngleLerp(0f, 0.1f).AngleTowards(0f, 0.15f);
+
+            // Decide frames.
+            if (phaseTransitionTimer < PhaseTransitionTime - 48f && phaseTransitionTimer > PhaseTransitionTime - 65f)
+                frameType = (int)OldDukeFrameType.Roar;
+            else
+            {
+                frameType = (int)OldDukeFrameType.FlapWings;
+                npc.frameCounter++;
+            }
+
+            // Roar and summon sharks below the boss.
+            if (phaseTransitionTimer == PhaseTransitionTime - 60f)
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeRoar"), npc.Center);
+
+            if (phaseTransitionTimer >= PhaseTransitionTime - 60f)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient && phaseTransitionTimer % 6f == 0f)
+                {
+                    phaseTransitionSharkSpawnOffset += 135f;
+                    Vector2 spawnOffset = new Vector2(phaseTransitionSharkSpawnOffset + 50f, 340f);
+                    NPC.NewNPC((int)(npc.Center.X + spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<OldDukeSharkron>(), 0, 0f, 0f, 1f, -18f, 255);
+                    NPC.NewNPC((int)(npc.Center.X - spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<OldDukeSharkron>(), 0, 0f, 0f, -1f, -18f, 255);
+                }
+            }
+        }
+
         public static void DoBehavior_SpawnEffects(NPC npc, Player target, float attackTimer, ref float frameType)
 		{
             if (attackTimer < 20f)
@@ -156,11 +389,19 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                 GotoNextAttackState(npc);
         }
 
-        public static void DoBehavior_AttackSelectionWait(NPC npc, Player target, float attackTimer, ref float frameType)
-		{
-            ref float horizontalHoverOffset = ref npc.Infernum().ExtraAI[0];
+        public static void DoBehavior_AttackSelectionWait(NPC npc, Player target, bool inPhase4, float attackTimer, ref float frameType)
+        {
             OldDukeAttackState upcomingAttack = (OldDukeAttackState)(int)npc.ai[2];
             bool goingToCharge = upcomingAttack == OldDukeAttackState.Charge;
+            int waitDelay = 45;
+            if (goingToCharge)
+                waitDelay = 40;
+            if (upcomingAttack == OldDukeAttackState.TeleportPause)
+                waitDelay = 20;
+            if (inPhase4)
+                waitDelay -= 4;
+
+            ref float horizontalHoverOffset = ref npc.Infernum().ExtraAI[0];
 
             // Hover near the target.
             if (horizontalHoverOffset == 0f)
@@ -181,15 +422,27 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             frameType = (int)OldDukeFrameType.FlapWings;
             npc.frameCounter++;
 
-            if (attackTimer >= (goingToCharge ? 40f : 45f))
+            if (attackTimer >= waitDelay)
                 GotoNextAttackState(npc);
 		}
 
-        public static void DoBehavior_Charge(NPC npc, Player target, float attackTimer, ref float frameType)
+        public static void DoBehavior_Charge(NPC npc, Player target, bool inPhase2, bool inPhase3, bool inPhase4, float attackTimer, ref float frameType)
 		{
-            int chargeTime = 22;
-            float chargeSpeed = 40f;
-            float aimAheadFactor = MathHelper.Lerp(1f, 1.45f, Utils.InverseLerp(200f, 525f, npc.Distance(target.Center), true));
+            int chargeTime = 29;
+            float chargeSpeed = 28.5f;
+            float aimAheadFactor = 0.95f;
+
+            if (inPhase2)
+            {
+                chargeTime = 26;
+                chargeSpeed = 31.25f;
+            }
+            if (inPhase3)
+            {
+                chargeTime = inPhase4 ? 21 : 22;
+                chargeSpeed = inPhase4 ? 40f : 39f;
+                aimAheadFactor = MathHelper.Lerp(1f, 1.45f, Utils.InverseLerp(200f, 525f, npc.Distance(target.Center), true));
+            }
 
             if (attackTimer >= chargeTime)
 			{
@@ -209,6 +462,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                 npc.rotation = npc.velocity.ToRotation();
                 if (npc.spriteDirection == 1)
                     npc.rotation += MathHelper.Pi;
+                npc.netUpdate = true;
 
                 return;
             }
@@ -231,11 +485,11 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             }
         }
 
-        public static void DoBehavior_AcidBelch(NPC npc, Player target, Vector2 mouthPosition, float attackTimer, ref float frameType)
+        public static void DoBehavior_AcidBelch(NPC npc, Player target, bool inPhase2, Vector2 mouthPosition, float attackTimer, ref float frameType)
         {
-            int shootDelay = 55;
-            int belchCount = 3;
-            int belchRate = 36;
+            int shootDelay = inPhase2 ? 45 : 55;
+            int belchCount = inPhase2 ? 5 : 3;
+            int belchRate = inPhase2 ? 28 : 36;
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
@@ -248,7 +502,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             else
             {
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 2f);
-                npc.Center = npc.Center.MoveTowards(hoverDestination, 8f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
             }
 
 
@@ -275,19 +529,19 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             // Release balls of acid at the target from the mouth.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % belchRate == belchRate - 1f)
             {
-                Vector2 shootVelocity = (mouthPosition - npc.Center).SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 12f;
-                Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<SulphuricBlob>(), 290, 0f);
+                Vector2 shootVelocity = (mouthPosition - npc.Center).SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 19f;
+                Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<SulphuricBlob>(), 320, 0f);
             }
 
             if (attackTimer >= shootDelay + belchRate * (belchCount + 0.7f))
                 GotoNextAttackState(npc);
         }
 
-        public static void DoBehavior_AcidBubbleFountain(NPC npc, Player target, Vector2 mouthPosition, float attackTimer, ref float frameType)
+        public static void DoBehavior_AcidBubbleFountain(NPC npc, Player target, bool inPhase2, float attackTimer, ref float frameType)
         {
-            int shootDelay = 55;
-            int bubbleCount = 15;
-            int bubbleSummonRate = 20;
+            int shootDelay = inPhase2 ? 40 : 55;
+            int bubbleCount = inPhase2 ? 20 : 15;
+            int bubbleSummonRate = inPhase2 ? 12 : 20;
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
@@ -300,7 +554,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             else
             {
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 2f);
-                npc.Center = npc.Center.MoveTowards(hoverDestination, 8f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 15f);
             }
 
             // Look at the target.
@@ -316,11 +570,190 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % bubbleSummonRate == bubbleSummonRate - 1f)
             {
                 Vector2 bubbleSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f + target.velocity.X * 60f, 800f);
-                Vector2 bubbleVelocity = -Vector2.UnitY * Main.rand.NextFloat(8f, 10f);
-                Utilities.NewProjectileBetter(bubbleSpawnPosition, bubbleVelocity, ModContent.ProjectileType<AcidFountainBubble>(), 260, 0f);
+                Vector2 bubbleVelocity = -Vector2.UnitY * Main.rand.NextFloat(10f, 13f);
+                if (inPhase2)
+                    bubbleVelocity *= 1.15f;
+
+                Utilities.NewProjectileBetter(bubbleSpawnPosition, bubbleVelocity, ModContent.ProjectileType<AcidFountainBubble>(), 320, 0f);
             }
 
             if (attackTimer >= shootDelay + bubbleSummonRate * (bubbleCount + 0.5f))
+                GotoNextAttackState(npc);
+        }
+
+        public static void DoBehavior_SharkronSpinSummon(NPC npc, Player target, float attackTimer, ref float frameType)
+        {
+            int spinTime = 120;
+            float spinSpeed = 34f;
+            float totalRotations = 2f;
+
+            if (attackTimer == 31f)
+            {
+                // Prepare a charge to reset speed.
+                int chargeDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                npc.velocity = npc.SafeDirectionTo(target.Center) * spinSpeed;
+                npc.spriteDirection = chargeDirection;
+
+                npc.rotation = npc.velocity.ToRotation();
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+                npc.netUpdate = true;
+
+                // Play sounds and spawn Tooth Balls and a Vortex
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeRoar"), npc.Center);
+
+                Vector2 vortexSpawnPosition = npc.Center + npc.velocity.RotatedBy(npc.spriteDirection * MathHelper.PiOver2) * spinTime / totalRotations / MathHelper.TwoPi;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(vortexSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SharkSummonVortex>(), 480, 0f);
+            }
+
+            frameType = (int)OldDukeFrameType.Charge;
+
+            if (attackTimer < spinTime + 30f && attackTimer >= 30f)
+            {
+                float rotationalOffset = npc.spriteDirection * MathHelper.TwoPi / spinTime * totalRotations;
+                npc.velocity = npc.velocity.RotatedBy(rotationalOffset);
+                npc.rotation += rotationalOffset;
+            }
+
+            if (attackTimer >= spinTime + 60f)
+                GotoNextAttackState(npc);
+        }
+
+        public static void DoBehavior_ToothBallVomit(NPC npc, Player target, bool inPhase3, Vector2 mouthPosition, float attackTimer, ref float frameType)
+        {
+            int shootDelay = inPhase3 ? 50 : 65;
+            int belchCount = inPhase3 ? 6 : 5;
+            int belchRate = inPhase3 ? 45 : 70;
+
+            // Hover near the target.
+            Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
+
+            if (npc.WithinRange(hoverDestination, 26f))
+            {
+                npc.Center = hoverDestination;
+                npc.velocity = Vector2.Zero;
+            }
+            else
+            {
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 2f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
+            }
+
+            // Handle frames.
+            if (attackTimer <= shootDelay)
+            {
+                npc.frameCounter += 1.5f;
+                frameType = (int)OldDukeFrameType.FlapWings;
+            }
+            else
+            {
+                if (attackTimer == shootDelay + 1f)
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeVomit"), npc.Center);
+
+                frameType = (int)OldDukeFrameType.Roar;
+            }
+
+            // Look at the target.
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            npc.rotation = npc.AngleTo(target.Center);
+            if (npc.spriteDirection == 1)
+                npc.rotation += MathHelper.Pi;
+
+            // Release tooth balls at the target from the mouth.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % belchRate == belchRate - 1f)
+            {
+                Vector2 shootVelocity = (mouthPosition - npc.Center).SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 11f;
+                int toothBall = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<OldDukeToothBall>());
+                if (Main.npc.IndexInRange(toothBall))
+                    Main.npc[toothBall].velocity = shootVelocity;
+            }
+
+            if (attackTimer >= shootDelay + belchRate * (belchCount + 0.7f))
+                GotoNextAttackState(npc);
+        }
+
+        public static void DoBehavior_GoreAndAcidSpit(NPC npc, Player target, bool inPhase3, Vector2 mouthPosition, float attackTimer, ref float frameType)
+        {
+            int goreCount = inPhase3 ? 50 : 32;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            npc.velocity *= 0.97f;
+
+            float idealRotation = MathHelper.Pi / 6f * npc.spriteDirection;
+            if (npc.rotation > MathHelper.Pi)
+                npc.rotation -= MathHelper.Pi;
+            if (npc.rotation < -MathHelper.Pi)
+                npc.rotation += MathHelper.Pi;
+            npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.1f).AngleTowards(idealRotation, 0.1f);
+
+            if (attackTimer < 145f)
+            {
+                frameType = (int)OldDukeFrameType.FlapWings;
+                npc.frameCounter++;
+            }
+            else
+                frameType = (int)OldDukeFrameType.Roar;
+
+            if (attackTimer == 150f)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeVomit"), npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < goreCount; i++)
+                    {
+                        Vector2 goreVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(15f, 23f);
+                        Utilities.NewProjectileBetter(mouthPosition, goreVelocity, ModContent.ProjectileType<OldDukeGore>(), 345, 0f);
+                    }
+                }
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 150f && attackTimer < 180f)
+            {
+                Vector2 acidVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(12f, 16f);
+                Utilities.NewProjectileBetter(mouthPosition, acidVelocity, ModContent.ProjectileType<HomingAcid>(), 325, 0f);
+            }
+
+            if (attackTimer >= 180f)
+                GotoNextAttackState(npc);
+        }
+
+        public static void DoBehavior_TeleportPause(NPC npc, Player target, float attackTimer, ref float frameType)
+        {
+            int fadeTime = 20;
+            if (attackTimer <= fadeTime)
+                npc.Opacity = Utils.InverseLerp(12f, 0f, attackTimer, true);
+            else if (attackTimer <= fadeTime * 2f)
+                npc.Opacity = Utils.InverseLerp(12f, 24f, attackTimer, true);
+
+            // Decide frames.
+            if (attackTimer > fadeTime - 4f && attackTimer < fadeTime + 4f)
+                frameType = (int)OldDukeFrameType.Roar;
+            else
+            {
+                frameType = (int)OldDukeFrameType.FlapWings;
+                npc.frameCounter++;
+            }
+
+            npc.velocity *= 0.95f;
+
+            // Teleport.
+            if (attackTimer == fadeTime)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeRoar"), npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    npc.Center = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f);
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Look at the target.
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            npc.rotation = npc.AngleTo(target.Center);
+            if (npc.spriteDirection == 1)
+                npc.rotation += MathHelper.Pi;
+
+            if (attackTimer >= fadeTime * 2f)
                 GotoNextAttackState(npc);
         }
         #endregion Specific Behaviors
@@ -328,10 +761,20 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
         #region Utilities
         public static void GotoNextAttackState(NPC npc)
 		{
+            bool inPhase2 = npc.Infernum().ExtraAI[6] == 1f;
+            bool inPhase3 = npc.Infernum().ExtraAI[6] == 2f;
+            bool inPhase4 = npc.Infernum().ExtraAI[6] == 3f;
             OldDukeAttackState oldAttackState = (OldDukeAttackState)npc.ai[0];
             OldDukeAttackState newAttackState;
 
-            newAttackState = Phase1AttackPattern[(int)(npc.ai[3] + 1) % Phase1AttackPattern.Count];
+            List<OldDukeAttackState> attackPattern = Phase1AttackPattern;
+            if (inPhase2)
+                attackPattern = Phase2AttackPattern;
+            if (inPhase3)
+                attackPattern = Phase3AttackPattern;
+            if (inPhase4)
+                attackPattern = Phase4AttackPattern;
+            newAttackState = attackPattern[(int)(npc.ai[3] + 1) % attackPattern.Count];
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -382,7 +825,128 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
 		public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            return true;
+            ref float attackTimer = ref npc.ai[1];
+            ref float phaseTransitionState = ref npc.Infernum().ExtraAI[6];
+            ref float phaseTransitionTimer = ref npc.Infernum().ExtraAI[7];
+            bool inTheMiddleOfPhaseTransition = phaseTransitionTimer > 0f;
+            OldDukeAttackState currentAttack = (OldDukeAttackState)(int)npc.ai[0];
+
+            SpriteEffects spriteEffects = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D eyeTexture = ModContent.GetTexture("CalamityMod/NPCs/OldDuke/OldDukeGlow");
+            Vector2 origin = new Vector2(texture.Width / 2, texture.Height / Main.npcFrameCount[npc.type] / 2);
+            Color color = lightColor;
+            Color eyeColor = Color.Lerp(Color.White, Color.Yellow, 0.5f);
+            Color afterimageEndColor = Color.White;
+            float rotationalAfterimageFade = 0f;
+            bool inPhase2 = phaseTransitionState >= 1f && (phaseTransitionTimer == 0f || phaseTransitionTimer > PhaseTransitionTime - 60f || phaseTransitionState >= 2f);
+            bool inPhase3 = phaseTransitionState >= 2f && (phaseTransitionTimer == 0f || phaseTransitionTimer > PhaseTransitionTime - 60f);
+
+            if (inPhase3)
+                color = CalamityGlobalNPC.buffColor(color, 0.4f, 0.8f, 0.4f, 1f);
+
+            else if (inPhase2)
+                color = CalamityGlobalNPC.buffColor(color, 0.5f, 0.7f, 0.5f, 1f);
+
+            else if (inTheMiddleOfPhaseTransition && phaseTransitionTimer >= PhaseTransitionTime - 60f)
+            {
+                float transitionFade = Utils.InverseLerp(PhaseTransitionTime - 60f, PhaseTransitionTime, phaseTransitionTimer, true);
+                color = CalamityGlobalNPC.buffColor(color, 1f - 0.5f * transitionFade, 1f - 0.3f * transitionFade, 1f - 0.5f * transitionFade, 1f);
+            }
+
+            int afterimageCount = 10;
+            if (currentAttack == OldDukeAttackState.SpawnAnimation)
+                afterimageCount = 0;
+
+            if (currentAttack == OldDukeAttackState.AttackSelectionWait)
+                afterimageCount = 7;
+
+            if (currentAttack == OldDukeAttackState.AcidBubbleFountain || currentAttack == OldDukeAttackState.AcidBelch)
+                afterimageCount = 4;
+
+            if (currentAttack == OldDukeAttackState.Charge || inPhase3)
+            {
+                afterimageEndColor = Color.Lime;
+                rotationalAfterimageFade = 0.5f;
+            }
+            else
+                color = lightColor;
+
+            // Draw necessary afterimages.
+            if (CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 1; i < afterimageCount; i += 2)
+                {
+                    Color afterimageColor = npc.GetAlpha(Color.Lerp(color, afterimageEndColor, rotationalAfterimageFade)) * ((afterimageCount - i) / 15f);
+                    Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
+                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+
+                // Draw eye afterimages.
+                if (inPhase2)
+                {
+                    for (int i = 1; i < afterimageCount; i += 2)
+                    {
+                        Color afterimageColor = eyeColor;
+                        if (!inPhase3)
+                            afterimageColor = npc.GetAlpha(afterimageColor);
+                        afterimageColor *= (afterimageCount - i) / 15f;
+
+                        Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
+                        spriteBatch.Draw(eyeTexture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    }
+                }
+            }
+
+            int rotationalOffsetImageCount = 0;
+            float rotationalOffsetFade = 0f;
+            float rotationalOffsetOutwardness = 0f;
+
+            if (currentAttack == OldDukeAttackState.SpawnAnimation)
+                rotationalOffsetImageCount = 0;
+
+            if (inTheMiddleOfPhaseTransition && phaseTransitionTimer > 60f)
+            {
+                rotationalOffsetImageCount = 6;
+                rotationalOffsetFade = (float)Math.Sin(MathHelper.Pi * Utils.InverseLerp(60f, PhaseTransitionTime, phaseTransitionTimer, true)) / 3f;
+                rotationalOffsetOutwardness = 60f;
+            }
+
+            if (currentAttack == OldDukeAttackState.TeleportPause)
+            {
+                rotationalOffsetImageCount = 6;
+                rotationalOffsetFade = (float)Math.Sin(MathHelper.Pi * attackTimer / TeleportPauseTime) / 3f;
+                rotationalOffsetOutwardness = 20f;
+            }
+
+            if (CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 0; i < rotationalOffsetImageCount; i++)
+                {
+                    Color rotationalAfterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageEndColor, rotationalAfterimageFade)) * rotationalOffsetFade;
+                    Vector2 rotationalDrawPosition = npc.Center - Main.screenPosition;
+                    rotationalDrawPosition += (i / (float)rotationalOffsetImageCount * MathHelper.TwoPi + npc.rotation).ToRotationVector2() * rotationalOffsetOutwardness * rotationalOffsetFade;
+                    spriteBatch.Draw(texture, rotationalDrawPosition, npc.frame, rotationalAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+                    Color eyeAfterimageColor = eyeColor;
+                    if (!inPhase3)
+                        eyeAfterimageColor = npc.GetAlpha(eyeAfterimageColor);
+                    eyeAfterimageColor *= rotationalOffsetFade;
+
+                    // Draw eye afterimages.
+                    if (inPhase2)
+                        spriteBatch.Draw(eyeTexture, rotationalDrawPosition, npc.frame, eyeAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+
+            Color phase3Color = npc.GetAlpha(Color.Lerp(lightColor, afterimageEndColor, rotationalAfterimageFade));
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            spriteBatch.Draw(texture, drawPosition, npc.frame, inPhase3 ? phase3Color : npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            if (inPhase2)
+                spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, inPhase3 ? eyeColor : npc.GetAlpha(eyeColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            return false;
         }
 
         #endregion Frames and Drawcode

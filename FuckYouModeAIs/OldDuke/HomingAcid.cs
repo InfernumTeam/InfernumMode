@@ -25,7 +25,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             projectile.hostile = true;
             projectile.tileCollide = true;
             projectile.ignoreWater = true;
-            projectile.timeLeft = 480;
+            projectile.timeLeft = 360;
             cooldownSlot = 1;
         }
 
@@ -49,7 +49,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, new Color(255, 255, 255, 127) * projectile.Opacity, ProjectileID.Sets.TrailingMode[projectile.type], 2);
+            Utilities.DrawAfterimagesCentered(projectile, new Color(117, 95, 133, 225) * projectile.Opacity, ProjectileID.Sets.TrailingMode[projectile.type], 2);
             return false;
         }
     }

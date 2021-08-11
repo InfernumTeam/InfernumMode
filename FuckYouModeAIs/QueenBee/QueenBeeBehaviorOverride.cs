@@ -76,6 +76,8 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
                 return false;
             }
 
+            npc.dontTakeDamage = false;
+
             switch ((QueenBeeAttackState)(int)attackType)
             {
                 case QueenBeeAttackState.HorizontalCharge:

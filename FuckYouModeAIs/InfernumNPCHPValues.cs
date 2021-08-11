@@ -22,6 +22,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             [ModContent.NPCType<DesertScourgeHead>()] = 5550,
             [NPCID.KingSlime] = 4200,
             [NPCID.EyeofCthulhu] = 3560,
+            [NPCID.BrainofCthulhu] = 4545,
             [ModContent.NPCType<CrabulonBoss>()] = 8750,
             [NPCID.EaterofWorldsHead] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsBody] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,

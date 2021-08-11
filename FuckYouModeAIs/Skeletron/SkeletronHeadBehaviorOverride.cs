@@ -58,14 +58,6 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
             if (animationChargeTimer <= 0f)
             {
-                // Do normal behavior at first.
-                if (lifeRatio > 0.75f)
-                    DoTypicalAI(npc, target, ref attackTimer);
-                else if (lifeRatio > 0.4f)
-                    DoPhase2AI(npc, target, ref attackTimer, ref attackState);
-                else
-                    DoPhase3AI(npc, target, ref attackTimer, ref attackState);
-
                 // Do phase transition effects as needed.
                 if (phaseChangeCountdown > 0f)
                 {
@@ -91,6 +83,14 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                     attackTimer = 0f;
                     return false;
                 }
+
+                // Do normal behavior at first.
+                if (lifeRatio > 0.75f)
+                    DoTypicalAI(npc, target, ref attackTimer);
+                else if (lifeRatio > 0.4f)
+                    DoPhase2AI(npc, target, ref attackTimer, ref attackState);
+                else
+                    DoPhase3AI(npc, target, ref attackTimer, ref attackState);
 
                 // Phase transition effects.
                 switch ((int)phaseChangeState)

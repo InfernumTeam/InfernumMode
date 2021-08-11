@@ -1,4 +1,5 @@
 ﻿using CalamityMod.World;
+using InfernumMode.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace InfernumMode
     {
         public bool RedElectrified = false;
         public bool ShadowflameInferno = false;
+        public bool DarkFlames = false;
         public float CurrentScreenShakePower;
         public float MusicMuffleFactor;
 
@@ -39,6 +41,7 @@ namespace InfernumMode
         {
             RedElectrified = false;
             ShadowflameInferno = false;
+            DarkFlames = false;
             ScreenFocusInterpolant = 0f;
             MusicMuffleFactor = 0f;
         }
@@ -48,6 +51,7 @@ namespace InfernumMode
         {
             RedElectrified = false;
             ShadowflameInferno = false;
+            DarkFlames = false;
 
             if (PoDWorld.InfernumMode)
                 player.respawnTimer = Utils.Clamp(player.respawnTimer - 2, 0, 3600);
@@ -60,6 +64,8 @@ namespace InfernumMode
             {
                 if (RedElectrified)
                     damageSource = PlayerDeathReason.ByCustomReason($"{player.name} could not withstand the red lightning.");
+                if (DarkFlames)
+                    damageSource = PlayerDeathReason.ByCustomReason($"{player.name} was incinerated by ungodly fire.");
             }
             return base.PreKill(damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource);
         }
@@ -78,6 +84,8 @@ namespace InfernumMode
                 causeLifeRegenLoss(player.controlLeft || player.controlRight ? 64 : 16);
 
             if (ShadowflameInferno)
+                causeLifeRegenLoss(40);
+            if (DarkFlames)
                 causeLifeRegenLoss(40);
         }
         #endregion
@@ -178,6 +186,19 @@ namespace InfernumMode
                     shadowflame.noGravity = true;
                 }
 			}
+
+            if (DarkFlames)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    Dust shadowflame = Dust.NewDustDirect(player.position, player.width, player.height, ModContent.DustType<RavagerMagicDust>());
+                    shadowflame.velocity = player.velocity.SafeNormalize(Vector2.UnitX * player.direction);
+                    shadowflame.velocity = shadowflame.velocity.RotatedByRandom(0.4f) * -Main.rand.NextFloat(2.5f, 5.4f);
+                    shadowflame.velocity += Main.rand.NextVector2Circular(3f, 3f);
+                    shadowflame.scale = Main.rand.NextFloat(0.95f, 1.25f);
+                    shadowflame.noGravity = true;
+                }
+            }
         }
         #endregion
     }

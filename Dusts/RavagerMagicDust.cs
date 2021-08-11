@@ -6,38 +6,24 @@ namespace InfernumMode.Dusts
 {
     public class RavagerMagicDust : ModDust
     {
-        public override void OnSpawn(Dust dust)
-        {
-            dust.noGravity = true;
-        }
+        public override void OnSpawn(Dust dust) => dust.noGravity = true;
 
         public override bool MidUpdate(Dust dust)
         {
-            if (dust.customData != null && dust.customData is NPC)
+            if (dust.customData != null && dust.customData is NPC npc)
+                dust.position += npc.position - npc.oldPos[1];
+
+            else if (dust.customData != null && dust.customData is Player player)
+                dust.position += player.position - player.oldPosition;
+
+            else if (dust.customData != null && dust.customData is Vector2 vector)
             {
-                NPC nPC = (NPC)dust.customData;
-                dust.position += nPC.position - nPC.oldPos[1];
-            }
-            else if (dust.customData != null && dust.customData is Player)
-            {
-                Player player5 = (Player)dust.customData;
-                dust.position += player5.position - player5.oldPosition;
-            }
-            else if (dust.customData != null && dust.customData is Vector2)
-            {
-                Vector2 vector3 = (Vector2)dust.customData - dust.position;
-                if (vector3 != Vector2.Zero)
-                {
-                    vector3.Normalize();
-                }
-                dust.velocity = (dust.velocity * 4f + vector3 * dust.velocity.Length()) / 5f;
+                Vector2 idealVelocity = (vector - dust.position).SafeNormalize(-Vector2.UnitY);
+                dust.velocity = (dust.velocity * 4f + idealVelocity * dust.velocity.Length()) / 5f;
             }
             return true;
         }
 
-        public override Color? GetAlpha(Dust dust, Color lightColor)
-        {
-            return new Color(lightColor.R, lightColor.G, lightColor.B, 25);
-        }
+        public override Color? GetAlpha(Dust dust, Color lightColor) => new Color(lightColor.R, lightColor.G, lightColor.B, 25);
     }
 }

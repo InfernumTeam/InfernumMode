@@ -415,7 +415,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
                     npc.rotation = npc.velocity.X * 0.05f;
 
-                    if (!npc.WithinRange(target.Center, 85f) && attackTimer % 40f == 39f)
+                    if (!npc.WithinRange(target.Center, 85f) && attackTimer % 40f == 39f && attackTimer < totalShots * 50f)
                     {
                         int currentShotCounter = (int)(attackTimer / 40f);
                         Main.PlaySound(SoundID.Item8, target.Center);
@@ -441,7 +441,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                     }
 
                     // Go to the next state after enough shots have been performed.
-                    if (attackTimer >= totalShots * 50f + 35f)
+                    if (attackTimer >= totalShots * 50f + 115f)
                     {
                         attackTimer = 0f;
                         attackState = 2f;

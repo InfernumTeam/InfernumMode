@@ -38,7 +38,7 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
 
             NPC ravagerBody = Main.npc[CalamityGlobalNPC.scavenger];
 
-            float reelbackSpeed = 24f;
+            float reelbackSpeed = ravagerBody.velocity.Length() + 24f;
             float punchSpeed = 21.5f;
             Vector2 stickPosition = ravagerBody.Center + new Vector2(-120f * leftClaw.ToDirectionInt(), 50f);
 
@@ -65,7 +65,7 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
 
                     if (npc.WithinRange(stickPosition, reelbackSpeed + 12f))
                     {
-                        npc.rotation = 0f;
+                        npc.rotation = leftClaw.ToInt() * MathHelper.Pi;
                         npc.velocity = Vector2.Zero;
                         npc.Center = stickPosition;
 

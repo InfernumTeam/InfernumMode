@@ -30,6 +30,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             SharkronSpinSummon,
             ToothBallVomit,
             GoreAndAcidSpit,
+            FastRegularCharge,
             TeleportPause,
         }
 
@@ -76,7 +77,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
         {
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -84,7 +85,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             OldDukeAttackState.SharkronSpinSummon,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.GoreAndAcidSpit,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -92,7 +93,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             OldDukeAttackState.AcidBelch,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -106,7 +107,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -122,7 +123,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.Charge,
@@ -133,7 +134,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.SharkronSpinSummon,
         };
 
@@ -235,7 +236,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
             // Reset variables. They may be changed by behaviors below.
             npc.Calamity().DR = 0.05f;
-            npc.dontTakeDamage = false;
+            npc.dontTakeDamage = outOfOcean;
             npc.damage = npc.defDamage;
 
             // Handle phase transitions.
@@ -259,9 +260,9 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                 return false;
             }
 
-            bool inPhase2 = phaseTransitionState >= 1f;
-            bool inPhase3 = phaseTransitionState >= 2f;
-            bool inPhase4 = phaseTransitionState >= 3f;
+            bool inPhase2 = outOfOcean || phaseTransitionState >= 1f;
+            bool inPhase3 = outOfOcean || phaseTransitionState >= 2f;
+            bool inPhase4 = outOfOcean || phaseTransitionState >= 3f;
 
             if (inPhase3)
             {
@@ -284,6 +285,9 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
                     break;
                 case OldDukeAttackState.Charge:
                     DoBehavior_Charge(npc, target, inPhase2, inPhase3, inPhase4, attackTimer, ref frameType);
+                    break;
+                case OldDukeAttackState.FastRegularCharge:
+                    DoBehavior_FastRegularCharge(npc, target, attackTimer, ref frameType);
                     break;
                 case OldDukeAttackState.AcidBelch:
                     DoBehavior_AcidBelch(npc, target, inPhase2, mouthPosition, attackTimer, ref frameType);
@@ -392,7 +396,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
         public static void DoBehavior_AttackSelectionWait(NPC npc, Player target, bool inPhase4, float attackTimer, ref float frameType)
         {
             OldDukeAttackState upcomingAttack = (OldDukeAttackState)(int)npc.ai[2];
-            bool goingToCharge = upcomingAttack == OldDukeAttackState.Charge;
+            bool goingToCharge = upcomingAttack == OldDukeAttackState.Charge || upcomingAttack == OldDukeAttackState.FastRegularCharge;
             int waitDelay = 45;
             if (goingToCharge)
                 waitDelay = 40;
@@ -412,7 +416,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             // Look at the target.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             npc.rotation = npc.AngleTo(target.Center);
-            if (goingToCharge)
+            if (upcomingAttack == OldDukeAttackState.Charge)
                 npc.rotation = npc.AngleTo(target.Center + target.velocity * 20f);
 
             if (npc.spriteDirection == 1)
@@ -485,6 +489,52 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             }
         }
 
+        public static void DoBehavior_FastRegularCharge(NPC npc, Player target, float attackTimer, ref float frameType)
+        {
+            int chargeTime = 23;
+            float chargeSpeed = 44f;
+
+            if (attackTimer >= chargeTime)
+            {
+                GotoNextAttackState(npc);
+                return;
+            }
+
+            frameType = (int)OldDukeFrameType.Charge;
+
+            // Do the charge on the first frame.
+            if (attackTimer == 1f)
+            {
+                int chargeDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity) * chargeSpeed;
+                npc.spriteDirection = chargeDirection;
+
+                npc.rotation = npc.velocity.ToRotation();
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+                npc.netUpdate = true;
+
+                return;
+            }
+
+            // Otherwise accelerate and emit sulphurous dust.
+            npc.velocity *= 1.01f;
+
+            // Spawn dust
+            int dustCount = 7;
+            for (int i = 0; i < dustCount; i++)
+            {
+                Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 50) / 2f, npc.height) * 0.75f).RotatedBy(MathHelper.TwoPi * i / dustCount);
+                Vector2 dustVelocity = (Main.rand.NextFloatDirection() * MathHelper.PiOver2).ToRotationVector2() * Main.rand.NextFloat(3f, 8f);
+                Dust acid = Dust.NewDustPerfect(dustSpawnPosition + dustVelocity, (int)CalamityDusts.SulfurousSeaAcid, dustVelocity);
+                acid.scale *= 1.45f;
+                acid.velocity *= 0.25f;
+                acid.velocity -= npc.velocity;
+                acid.noGravity = true;
+                acid.noLight = true;
+            }
+        }
+
         public static void DoBehavior_AcidBelch(NPC npc, Player target, bool inPhase2, Vector2 mouthPosition, float attackTimer, ref float frameType)
         {
             int shootDelay = inPhase2 ? 45 : 55;
@@ -493,18 +543,8 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
-
-            if (npc.WithinRange(hoverDestination, 26f))
-            {
-                npc.Center = hoverDestination;
-                npc.velocity = Vector2.Zero;
-            }
-            else
-            {
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 2f);
-                npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
-            }
-
+            if (!npc.WithinRange(hoverDestination, 15f))
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 1.15f);
 
             // Handle frames.
             if (attackTimer <= shootDelay)
@@ -545,17 +585,8 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
-
-            if (npc.WithinRange(hoverDestination, 26f))
-            {
-                npc.Center = hoverDestination;
-                npc.velocity = Vector2.Zero;
-            }
-            else
-            {
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 2f);
-                npc.Center = npc.Center.MoveTowards(hoverDestination, 15f);
-            }
+            if (!npc.WithinRange(hoverDestination, 15f))
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 1.15f);
 
             // Look at the target.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
@@ -628,17 +659,8 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
-
-            if (npc.WithinRange(hoverDestination, 26f))
-            {
-                npc.Center = hoverDestination;
-                npc.velocity = Vector2.Zero;
-            }
-            else
-            {
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 2f);
-                npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
-            }
+            if (!npc.WithinRange(hoverDestination, 15f))
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 1.15f);
 
             // Handle frames.
             if (attackTimer <= shootDelay)

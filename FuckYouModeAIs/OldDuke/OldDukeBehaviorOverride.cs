@@ -411,7 +411,7 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             if (horizontalHoverOffset == 0f)
                 horizontalHoverOffset = Math.Sign(target.Center.X - npc.Center.X) * 500f;
             Vector2 hoverDestination = target.Center + new Vector2(horizontalHoverOffset, -350f) - npc.velocity;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 14.5f, 1.4f);
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 22f, 1.05f);
 
             // Look at the target.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
@@ -543,8 +543,8 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
-            if (!npc.WithinRange(hoverDestination, 15f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 1.15f);
+            if (!npc.WithinRange(hoverDestination, 45f))
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20.5f, 0.75f);
 
             // Handle frames.
             if (attackTimer <= shootDelay)
@@ -585,8 +585,8 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
-            if (!npc.WithinRange(hoverDestination, 15f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 1.15f);
+            if (!npc.WithinRange(hoverDestination, 45f))
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20.5f, 0.75f);
 
             // Look at the target.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
@@ -659,8 +659,8 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
-            if (!npc.WithinRange(hoverDestination, 15f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 1.15f);
+            if (!npc.WithinRange(hoverDestination, 45f))
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20.5f, 0.75f);
 
             // Handle frames.
             if (attackTimer <= shootDelay)

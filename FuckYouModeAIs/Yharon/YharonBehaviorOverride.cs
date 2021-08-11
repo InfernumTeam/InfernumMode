@@ -24,7 +24,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
     {
         public override int NPCOverrideType => ModContent.NPCType<YharonBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
         #region Enumerations
         public enum YharonAttackType
@@ -720,7 +720,9 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     break;
                 case YharonAttackType.SpinCharge:
                     // Fly upward to the side of the player.
-                    if (attackTimer < upwardFlyTime)
+                    if (attackTimer < 45f)
+                        npc.velocity *= 0.97f;
+                    if (attackTimer > 45f && attackTimer < upwardFlyTime)
                     {
                         ref float xAimOffset = ref npc.Infernum().ExtraAI[4];
                         if (xAimOffset == 0f)
@@ -730,7 +732,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 
                         if (npc.Distance(destination) < 16f)
                             npc.Center = destination;
-                        else npc.velocity = npc.SafeDirectionTo(destination) * 16f;
+                        else
+                            npc.velocity = npc.SafeDirectionTo(destination) * 16f;
 
                         npc.spriteDirection = (npc.velocity.X < 0).ToDirectionInt();
                         npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);

@@ -103,7 +103,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                         }
                         break;
                     case 1:
-                        if (lifeRatio < 0.45f)
+                        if (lifeRatio < 0.4f)
                         {
                             phaseChangeCountdown = 90f;
                             phaseChangeState = 2f;

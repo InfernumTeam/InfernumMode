@@ -2,6 +2,7 @@
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.FuckYouModeAIs.BoC;
+using InfernumMode.FuckYouModeAIs.EyeOfCthulhu;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -174,12 +175,17 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 npc.velocity *= 0.8f;
                 npc.rotation *= 0.8f;
                 npc.timeLeft = 1800;
+                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.03f, 0f, 1f);
+                if (npc.Opacity <= 0f)
+                    npc.Center = target.Center + new Vector2(200f, 450f);
                 return false;
             }
 
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.03f, 0f, 1f);
+
             if (attackState == 0f)
             {
-                DoAttack_HoverNearTarget(npc, target, ref attackTimer, anyWorms, out bool gotoNextAttack);
+                DoAttack_HoverNearTarget(npc, target, lifeRatio < 0.15f, ref attackTimer, anyWorms, out bool gotoNextAttack);
                 if (gotoNextAttack)
                 {
                     attackTimer = 0f;
@@ -199,7 +205,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             }
             else if (attackState == 2f)
             {
-                DoAttack_ReleaseRegularBursts(npc, target, ref attackTimer, anyWorms, out bool gotoNextAttack);
+                DoAttack_ReleaseRegularBursts(npc, target, lifeRatio < 0.15f, ref attackTimer, anyWorms, out bool gotoNextAttack);
                 if (gotoNextAttack)
                 {
                     attackTimer = 0f;
@@ -264,7 +270,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             gotoNextAttack = attackTimer >= 215f;
         }
 
-        public static void DoAttack_HoverNearTarget(NPC npc, Player target, ref float attackTimer, bool anyWorms, out bool gotoNextAttack)
+        public static void DoAttack_HoverNearTarget(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool anyWorms, out bool gotoNextAttack)
         {
             if (attackTimer % 120f > 85f)
             {
@@ -272,6 +278,8 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
                 // Release ichor everywhere.
                 int shootRate = anyWorms ? 10 : 6;
+                if (finalWormDead && !anyWorms)
+                    shootRate += 3;
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
                 {
                     Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 8.4f);
@@ -293,32 +301,52 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             gotoNextAttack = attackTimer >= 240f;
         }
 
-        public static void DoAttack_ReleaseRegularBursts(NPC npc, Player target, ref float attackTimer, bool anyWorms, out bool gotoNextAttack)
+        public static void DoAttack_ReleaseRegularBursts(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool anyWorms, out bool gotoNextAttack)
         {
             Vector2 destination = target.Center - Vector2.UnitY * 270f;
-            float distanceFromDestination = npc.Distance(destination);
-            float movementInterpolant = MathHelper.Lerp(0.055f, 0.16f, Utils.InverseLerp(100f, 30f, distanceFromDestination, true));
-            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * MathHelper.Min(distanceFromDestination, 15f), movementInterpolant);
+            if (!finalWormDead || !npc.WithinRange(destination, 80f))
+            {
+                float distanceFromDestination = npc.Distance(destination);
+                float movementInterpolant = MathHelper.Lerp(0.055f, 0.16f, Utils.InverseLerp(100f, 30f, distanceFromDestination, true));
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * MathHelper.Min(distanceFromDestination, 15f), movementInterpolant);
+            }
 
             int shootRate = anyWorms ? 100 : 62;
+            int totalBursts = finalWormDead ? 12 : 8;
+            if (finalWormDead)
+                shootRate -= 12;
             Vector2 blobSpawnPosition = new Vector2(npc.Center.X + Main.rand.NextFloat(-12f, 12f), npc.Center.Y + 30f);
+            
+            // Release blood teeth balls upward occasionally.
+            if (finalWormDead && Main.netMode != NetmodeID.MultiplayerClient && attackTimer % (shootRate * 3f) == shootRate * 3f - 1f)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 toothBallVelocity = -Vector2.UnitY.RotatedByRandom(0.55f) * 17f;
+                    Utilities.NewProjectileBetter(npc.Center - toothBallVelocity * 7f, toothBallVelocity, ModContent.ProjectileType<SittingBlood>(), 80, 0f);
+                }
+            }
+
+            // And release ichor shots upward more frequently.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
             {
                 int totalProjectiles = anyWorms ? 7 : (int)MathHelper.Lerp(17f, 22f, 1f - npc.life / (float)npc.lifeMax);
                 float blobSpeed = anyWorms ? 6f : 8f;
+                if (finalWormDead)
+                    blobSpeed += 0.25f;
                 Vector2 currentBlobVelocity = new Vector2(4f + Main.rand.NextFloat(-0.1f, 0.1f) + target.velocity.X * 0.12f, -blobSpeed);
 
                 npc.TargetClosest();
 
                 for (int i = 0; i < totalProjectiles + 1; i++)
                 {
-                    Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), 80, 0f, Main.myPlayer, 0f, 0f);
+                    Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), finalWormDead ? 105 : 80, 0f, Main.myPlayer, 0f, 0f);
                     currentBlobVelocity.X += blobSpeed / totalProjectiles * -1.12f;
                 }
                 Main.PlaySound(SoundID.NPCHit20, npc.position);
             }
 
-            gotoNextAttack = attackTimer >= shootRate * 8f + shootRate * 0.5f;
+            gotoNextAttack = attackTimer >= shootRate * (totalBursts + 0.5f);
         }
 
         #endregion Specific Attacks

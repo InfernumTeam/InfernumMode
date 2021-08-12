@@ -37,11 +37,11 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
             // Create limbs.
             if (npc.localAI[0] == 0f && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                NPC.NewNPC((int)npc.Center.X - 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegLeft>());
-                NPC.NewNPC((int)npc.Center.X + 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegRight>());
-                NPC.NewNPC((int)npc.Center.X - 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawLeft>());
-                NPC.NewNPC((int)npc.Center.X + 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawRight>());
-                NPC.NewNPC((int)npc.Center.X + 1, (int)npc.Center.Y - 20, ModContent.NPCType<RavagerHead>());
+                NPC.NewNPC((int)npc.Center.X - 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegLeft>(), npc.whoAmI);
+                NPC.NewNPC((int)npc.Center.X + 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegRight>(), npc.whoAmI);
+                NPC.NewNPC((int)npc.Center.X - 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawLeft>(), npc.whoAmI);
+                NPC.NewNPC((int)npc.Center.X + 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawRight>(), npc.whoAmI);
+                NPC.NewNPC((int)npc.Center.X + 1, (int)npc.Center.Y - 20, ModContent.NPCType<RavagerHead>(), npc.whoAmI);
                 npc.localAI[0] = 1f;
             }
 
@@ -59,6 +59,20 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
             if (target.statLife > target.statLifeMax2 * 0.75)
             {
 
+            }
+
+            npc.noTileCollide = false;
+            if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
+            {
+                npc.noTileCollide = true;
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -30f, 0.2f);
+                if (!npc.WithinRange(target.Center, 3000f))
+                {
+                    npc.life = 0;
+                    npc.active = false;
+                    npc.netUpdate = true;
+                }
+                return false;
             }
 
             // Constantly give the target Weak Pertrification.
@@ -97,7 +111,7 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
 
             int darkMagicFireballShootRate = 90;
-            int jumpDelay = (int)MathHelper.Lerp(210f, 120f, 1f - lifeRatio);
+            int jumpDelay = !leftClawActive || !rightClawActive ? 270 : 210;
             float jumpSpeed = 22f;
             float gravity = 0.625f;
             if (!anyLimbsArePresent)
@@ -135,13 +149,17 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
             }
             
             // Jump towards the target if they're far enough away and enough time passes.
-            if (!shouldNotAttack && MathHelper.Distance(target.Center.X, npc.Center.X) > 250f && jumpState == 0f && npc.velocity.Y == 0f)
+            if (!shouldNotAttack && !npc.WithinRange(target.Center, 200f) && jumpState == 0f && npc.velocity.Y == 0f)
             {
                 jumpTimer++;
                 if (jumpTimer >= jumpDelay)
                 {
                     jumpTimer = 0f;
                     jumpState = 1f;
+
+                    if (MathHelper.Distance(npc.Center.X, target.Center.X) < 225f)
+                        jumpSpeed += 4f;
+
                     npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, target.Center, gravity, jumpSpeed, out _);
                     npc.netUpdate = true;
                 }

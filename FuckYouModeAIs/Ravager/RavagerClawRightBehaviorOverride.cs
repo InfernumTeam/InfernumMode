@@ -2,7 +2,7 @@
 using CalamityMod.NPCs.Ravager;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -12,8 +12,10 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
     {
         public override int NPCOverrideType => ModContent.NPCType<RavagerClawRight>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc) => RavagerClawLeftBehaviorOverride.DoClawAI(npc, false);
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor) => RavagerClawLeftBehaviorOverride.DrawClaw(npc, spriteBatch, lightColor, false);
     }
 }

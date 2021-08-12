@@ -19,6 +19,7 @@ using CalamityMod.NPCs.Calamitas;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.Leviathan;
+using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.TownNPCs;
 using CalamityMod.Projectiles.Ranged;
 using CalamityMod.Projectiles.Rogue;
@@ -370,6 +371,30 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
                     npc.ai[2] = 0f;
                     npc.netUpdate = true;
                 }
+                return false;
+            }
+
+            if (npc.type == ModContent.NPCType<RavagerClawLeft>() || npc.type == ModContent.NPCType<RavagerClawRight>())
+            {
+                npc.Infernum().ExtraAI[0] = 1f;
+                npc.netUpdate = true;
+                npc.active = true;
+                npc.dontTakeDamage = true;
+                npc.life = npc.lifeMax;
+
+                // Synchronize the other claw, if it too has been released.
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC checkNPC = Main.npc[i];
+                    bool correctNPC = checkNPC.type == ModContent.NPCType<RavagerClawLeft>() || checkNPC.type == ModContent.NPCType<RavagerClawRight>();
+                    if (!correctNPC || !checkNPC.active || checkNPC.Infernum().ExtraAI[0] != 1f)
+                        continue;
+
+                    checkNPC.ai[0] = 2f;
+                    checkNPC.ai[1] = 0f;
+                    checkNPC.netUpdate = true;
+                }
+
                 return false;
             }
 

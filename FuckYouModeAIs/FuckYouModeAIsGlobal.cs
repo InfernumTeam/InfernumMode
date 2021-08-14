@@ -166,7 +166,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
                 for (int i = 0; i < Main.rand.Next(11, 15 + 1); i++)
                     Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
                 if (Main.npc.IndexInRange(Main.wof))
-                    Main.npc[Main.wof].StrikeNPC(npc.lifeMax, 0f, 0);
+                    Main.npc[Main.wof].StrikeNPC(1550, 0f, 0);
             }
 
             if (npc.type == NPCID.WallofFlesh)

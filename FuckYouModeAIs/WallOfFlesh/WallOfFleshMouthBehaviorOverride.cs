@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +21,7 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
 
         public override bool PreAI(NPC npc)
         {
-            npc.Calamity().DR = 0.2f;
+            npc.Calamity().DR = MathHelper.Lerp(0.225f, 0.725f, Utils.InverseLerp(0f, 3f, NPC.CountNPCS(NPCID.WallofFleshEye), true));
 
             ref float initialized01Flag = ref npc.localAI[0];
             ref float attackTimer = ref npc.ai[3];
@@ -149,7 +148,7 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
         internal static void PerformMouthMotion(NPC npc, float lifeRatio)
 		{
             float verticalDestination = (Main.wofB + Main.wofT) / 2 - npc.height / 2;
-            float horizontalSpeed = MathHelper.Lerp(4f, 5.6f, 1f - lifeRatio);
+            float horizontalSpeed = MathHelper.Lerp(4f, 8.7f, 1f - lifeRatio);
             if (verticalDestination < (Main.maxTilesY - 180) * 16f)
                 verticalDestination = (Main.maxTilesY - 180) * 16f;
 
@@ -326,7 +325,7 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
 
             try
             {
-                Vector2 searchPosition = target.Center + new Vector2(target.velocity.X * 110f, -50f);
+                Vector2 searchPosition = target.Center + new Vector2(target.velocity.X * 90f + target.direction * 90f, -50f);
                 WorldUtils.Find(searchPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(350), new Conditions.HasLava()), out Point result);
                 result.Y += 4;
 

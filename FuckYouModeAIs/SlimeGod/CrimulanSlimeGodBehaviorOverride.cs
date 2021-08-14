@@ -165,10 +165,10 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 npc.TargetClosest(true);
                 npc.velocity.X *= 0.85f;
                 float jumpDelay = 15f + 30f * (npc.life / (float)npc.lifeMax);
-                float forwardJumpSpeed = 6f + 5f * (1f - npc.life / (float)npc.lifeMax);
-                float jumpSpeed = 6f;
+                float forwardJumpSpeed = 10f + 5f * (1f - npc.life / (float)npc.lifeMax);
+                float jumpSpeed = 16f;
                 if (!Collision.CanHit(npc.Center, 1, 1, target.Center, 1, 1))
-                    jumpSpeed += 2.4f;
+                    jumpSpeed += 4f;
 
                 if (attackTimer > jumpDelay)
                 {

@@ -175,7 +175,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 				{
                     for (int i = -1; i <= 1; i += 2)
                     {
-                        Vector2 waveSpawnPosition = npc.Bottom + new Vector2(waveShootCounter / 30f * i * 160f, 160f);
+                        Vector2 waveSpawnPosition = npc.Bottom + new Vector2(waveShootCounter / 30f * i * 120f, 160f);
                         if (target.Center.Y > waveSpawnPosition.Y + 120f)
                             waveSpawnPosition.Y = target.Center.Y + 240f;
 
@@ -202,10 +202,10 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 npc.TargetClosest(true);
                 npc.velocity.X *= 0.85f;
                 float jumpDelay = 15f + 30f * (npc.life / (float)npc.lifeMax);
-                float forwardJumpSpeed = 6f + 5f * (1f - npc.life / (float)npc.lifeMax);
-                float jumpSpeed = 6f;
+                float forwardJumpSpeed = 10f + 5f * (1f - npc.life / (float)npc.lifeMax);
+                float jumpSpeed = 16;
                 if (!Collision.CanHit(npc.Center, 1, 1, target.Center, 1, 1))
-                    jumpSpeed += 2.4f;
+                    jumpSpeed += 4f;
 
                 if (attackTimer > jumpDelay)
                 {
@@ -218,7 +218,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                         {
                             Vector2 ballVelocity = Vector2.UnitX * Main.rand.NextBool(2).ToDirectionInt() * Main.rand.NextFloat(2f, 3.4f);
                             ballVelocity.Y -= Main.rand.NextFloat(3.5f, 9f);
-                            Utilities.NewProjectileBetter(npc.Bottom - Vector2.UnitY * 30f, ballVelocity, ModContent.ProjectileType<AbyssBallVolley>(), 100, 0f);
+                            Utilities.NewProjectileBetter(npc.Bottom - Vector2.UnitY * 30f, ballVelocity, ModContent.ProjectileType<RedirectingCursedBall>(), 100, 0f);
                         }
                     }
 

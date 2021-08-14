@@ -46,7 +46,8 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             // Set a global whoAmI variable.
             CalamityGlobalNPC.perfHive = npc.whoAmI;
 
-            npc.damage = 0;
+            // Set damage.
+            npc.damage = 72;
 
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -259,10 +260,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
             // Swoop.
             if (attackTimer >= 90f && attackTimer <= 180f)
-            {
                 npc.velocity = npc.velocity.RotatedBy(MathHelper.PiOver2 / 90f * -npc.direction);
-                npc.damage = 72;
-            }
 
             if (attackTimer > 180f)
                 npc.velocity *= 0.97f;
@@ -294,8 +292,9 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 270f;
                 float distanceFromDestination = npc.Distance(destination);
-                float movementInterpolant = MathHelper.Lerp(0.055f, 0.16f, Utils.InverseLerp(100f, 30f, distanceFromDestination, true));
+                float movementInterpolant = MathHelper.Lerp(0.055f, 0.1f, Utils.InverseLerp(100f, 30f, distanceFromDestination, true));
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * MathHelper.Min(distanceFromDestination, 15f), movementInterpolant);
+                npc.velocity -= npc.SafeDirectionTo(target.Center) * Utils.InverseLerp(235f, 115f, npc.Distance(target.Center), true) * 12f;
             }
 
             gotoNextAttack = attackTimer >= 240f;

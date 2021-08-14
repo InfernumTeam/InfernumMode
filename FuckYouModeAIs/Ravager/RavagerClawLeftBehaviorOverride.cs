@@ -152,7 +152,7 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
                     {
                         punchTimer = 0f;
                         attackState = (int)RavagerClawAttackState.AccelerationPunch;
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * 17f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * 14f;
                         npc.netUpdate = true;
                     }
 

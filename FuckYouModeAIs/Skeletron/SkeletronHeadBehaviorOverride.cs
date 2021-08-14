@@ -432,7 +432,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
                             for (int i = 0; i < skullCount; i++)
                             {
-                                Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
+                                Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 0.25f))) * skullSpeed;
                                 int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
                                 if (Main.projectile.IndexInRange(skull))
                                     Main.projectile[skull].ai[0] = 0.005f;

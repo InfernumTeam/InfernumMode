@@ -124,11 +124,9 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                for (int i = 0; i < 4; i++)
+                                for (int i = 0; i < 5; i++)
                                 {
-                                    Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 12f;
-                                    if ((int)(adjustedTimer / 40) % 2 == 1)
-                                        flameShootVelocity = flameShootVelocity.RotatedBy(MathHelper.Pi / 8f);
+                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 5f) * 12f;
                                     Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 95, 0f);
                                 }
                             }

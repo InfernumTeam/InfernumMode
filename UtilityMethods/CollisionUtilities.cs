@@ -22,5 +22,13 @@ namespace InfernumMode
 
             return minDist <= radius;
         }
+
+        public static bool EllipseCollision(Vector2 checkPosition, Vector2 focus1, Vector2 focus2, float distanceConstant, out float distance)
+        {
+            float distance1 = Vector2.Distance(checkPosition, focus1);
+            float distance2 = Vector2.Distance(checkPosition, focus2);
+            distance = distance1 + distance2;
+            return distance <= distanceConstant;
+        }
     }
 }

@@ -18,11 +18,11 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
         public override void SetDefaults()
         {
             npc.aiStyle = aiType = -1;
-            npc.damage = 70;
+            npc.damage = 115;
 			npc.width = 40;
             npc.height = 30;
             npc.defense = 6;
-            npc.lifeMax = 180;
+            npc.lifeMax = 320;
             npc.knockBackResist = 0f;
             animationType = 121;
             npc.alpha = 55;
@@ -40,19 +40,19 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 		{
             npc.TargetClosest();
 
-            if (Time < 100f)
-                npc.velocity = -Vector2.UnitY * MathHelper.Lerp(1f, 6f, Time / 100f);
+            if (Time < 70f)
+                npc.velocity = -Vector2.UnitY * MathHelper.Lerp(1f, 6f, Time / 70f);
             else if (Time < 135f)
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(Target.Center) * -4.5f, 0.2f);
             else if (Time == 135f)
 			{
-                npc.velocity = npc.SafeDirectionTo(Target.Center) * 10f;
+                npc.velocity = npc.SafeDirectionTo(Target.Center) * 15f;
                 npc.netUpdate = true;
 			}
 
             if (Time > 135)
 			{
-                if (npc.velocity.Length() < 16f)
+                if (npc.velocity.Length() < 20.5f)
                     npc.velocity *= 1.02f;
 
                 if (Time > 360f || Collision.SolidCollision(npc.position, npc.width, npc.height))

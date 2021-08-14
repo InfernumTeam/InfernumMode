@@ -96,9 +96,9 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
             {
                 if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<RavagerHead>())
                     headActive = true;
-                if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<RavagerClawRight>())
+                if (Main.npc[i].active && Main.npc[i].Infernum().ExtraAI[0] == 0f && Main.npc[i].type == ModContent.NPCType<RavagerClawRight>())
                     rightClawActive = true;
-                if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<RavagerClawLeft>())
+                if (Main.npc[i].active && Main.npc[i].Infernum().ExtraAI[0] == 0f && Main.npc[i].type == ModContent.NPCType<RavagerClawLeft>())
                     leftClawActive = true;
                 if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<RavagerLegRight>())
                     rightLegActive = true;
@@ -182,6 +182,9 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
                         Gore stompGore = Gore.NewGoreDirect(new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
                         stompGore.velocity *= 0.4f;
                     }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && !anyLimbsArePresent)
+                        Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 250, 0f);
 
                     jumpState = 0f;
                     npc.netUpdate = true;

@@ -268,7 +268,7 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
                         Vector2 destination = target.Center - Vector2.UnitY * 265f;
                         npc.velocity = npc.DirectionTo(destination) * 21f;
                         npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-                        if (npc.DistanceSQ(destination) < 32f * 32f)
+                        if (npc.WithinRange(destination, 32f))
                         {
                             subState = 1f;
                             npc.netUpdate = true;
@@ -276,7 +276,8 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
                             // High pitched boss roar.
                             Main.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
                         }
-                        npc.damage = 0;
+                        if (npc.WithinRange(target.Center, 115f))
+                            npc.Center -= npc.SafeDirectionTo(target.Center) * 15f;
                     }
 
                     // Release teeth into the sky.

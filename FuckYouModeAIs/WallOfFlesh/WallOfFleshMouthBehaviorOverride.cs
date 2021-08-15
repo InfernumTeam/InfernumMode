@@ -148,7 +148,7 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
         internal static void PerformMouthMotion(NPC npc, float lifeRatio)
 		{
             float verticalDestination = (Main.wofB + Main.wofT) / 2 - npc.height / 2;
-            float horizontalSpeed = MathHelper.Lerp(4f, 8.7f, 1f - lifeRatio);
+            float horizontalSpeed = MathHelper.Lerp(4f, 7f, 1f - lifeRatio);
             if (verticalDestination < (Main.maxTilesY - 180) * 16f)
                 verticalDestination = (Main.maxTilesY - 180) * 16f;
 

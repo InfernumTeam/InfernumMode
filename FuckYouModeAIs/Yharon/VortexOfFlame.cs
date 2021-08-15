@@ -33,6 +33,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             if (projectile.owner == Main.myPlayer)
             {
                 Player player = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+
                 if (projectile.timeLeft % 120 == 0)
                 {
                     for (int i = 0; i < 4; i++)

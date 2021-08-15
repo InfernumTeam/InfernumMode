@@ -38,6 +38,7 @@ using Terraria.ModLoader;
 
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
+using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
 
 namespace InfernumMode.FuckYouModeAIs.MainAI
@@ -141,7 +142,10 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
 
         public override bool PreNPCLoot(NPC npc)
         {
-            if (PoDWorld.InfernumMode && npc.type == InfernumMode.CalamityMod.NPCType("Providence"))
+            if (!PoDWorld.InfernumMode)
+                return base.PreNPCLoot(npc);
+
+            if (npc.type == InfernumMode.CalamityMod.NPCType("Providence"))
             {
                 // Drops pre-scal, cannot be sold, does nothing aka purely vanity. Requires at least expert for consistency with other post scal dev items.
                 DropHelper.DropItemCondition(npc, ModContent.ItemType<ProfanedSoulCrystal>(), true, true);
@@ -153,6 +157,10 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
 
                 return true;
             }
+
+            if (npc.type == ModContent.NPCType<OldDukeNPC>())
+                CalamityMod.CalamityMod.StopRain();
+
             return base.PreNPCLoot(npc);
         }
 

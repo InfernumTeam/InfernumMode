@@ -268,6 +268,9 @@ namespace InfernumMode.FuckYouModeAIs.OldDuke
             {
                 Main.weatherCounter = 300;
                 Main.maxRaining = 0.95f;
+                npc.damage = (int)(npc.damage * 1.15);
+                if (inPhase4)
+                    npc.damage = (int)(npc.damage * 1.15);
             }
             else
                 CalamityMod.CalamityMod.StopRain();

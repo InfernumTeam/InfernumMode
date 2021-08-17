@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -326,7 +327,7 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
             try
             {
                 Vector2 searchPosition = target.Center + new Vector2(target.velocity.X * 90f + target.direction * 90f, -50f);
-                WorldUtils.Find(searchPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(350), new Conditions.HasLava()), out Point result);
+                WorldUtils.Find(searchPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(350), new CustomTileConditions.IsLavaOrSolid()), out Point result);
                 result.Y += 4;
 
                 if (inPhase2)

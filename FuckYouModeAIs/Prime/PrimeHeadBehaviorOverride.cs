@@ -62,7 +62,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
 
         public override bool PreAI(NPC npc)
         {
-            npc.frame = new Rectangle(0, 10000, 1, 1);
+            npc.frame = new Rectangle(100000, 100000, 94, 94);
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float armCycleTimer = ref npc.ai[2];
@@ -342,7 +342,7 @@ namespace InfernumMode.FuckYouModeAIs.Prime
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float rocketAngularOffset = Utils.InverseLerp(125f, 225f, attackTimer, true) * MathHelper.TwoPi;
-                    Vector2 rocketVelocity = rocketAngularOffset.ToRotationVector2() * (Main.rand.NextFloat(6f, 7f) + npc.Distance(target.Center) * 0.003f);
+                    Vector2 rocketVelocity = rocketAngularOffset.ToRotationVector2() * (Main.rand.NextFloat(5.5f, 6.2f) + npc.Distance(target.Center) * 0.00267f);
                     Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f + rocketVelocity * 2.5f, rocketVelocity, ProjectileID.SaucerMissile, 115, 0f);
                 }
             }

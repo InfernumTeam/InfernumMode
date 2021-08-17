@@ -34,5 +34,14 @@ namespace InfernumMode.Miscellaneous
                 return (tile.liquid >= 200 && !tile.honey() && !tile.lava()) || (tile.nactive() && Main.tileSolid[tile.type]);
             }
         }
+
+        public class IsLavaOrSolid : GenCondition
+        {
+            protected override bool CheckValidity(int x, int y)
+            {
+                Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+                return (tile.liquid >= 200 && tile.lava()) || (tile.nactive() && Main.tileSolid[tile.type]);
+            }
+        }
     }
 }

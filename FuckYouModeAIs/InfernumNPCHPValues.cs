@@ -34,6 +34,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             [NPCID.WallofFlesh] = 11875,
             [NPCID.Spazmatism] = 36260,
             [NPCID.Retinazer] = 33915,
+            [NPCID.SkeletronPrime] = 44444,
             [ModContent.NPCType<Bumblefuck>()] = 227550,
             [ModContent.NPCType<ProvidenceBoss>()] = 900000,
             [ModContent.NPCType<OldDukeBoss>()] = 872444,

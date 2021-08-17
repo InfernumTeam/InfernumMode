@@ -405,14 +405,14 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             if (nextAttackType != YharonAttackType.PhoenixSupercharge && nextAttackType != YharonAttackType.HeatFlash)
                 fireIntensity = MathHelper.Lerp(fireIntensity, 0f, 0.075f);
 
-            float chargeSpeed = 31f;
+            float chargeSpeed = 34.5f;
             float chargeDelay = 45;
             float chargeTime = 45f;
             float fastChargeSpeedMultiplier = 1.5f;
 
-            float fireballBreathShootDelay = 40f;
+            float fireballBreathShootDelay = 34f;
             float totalFireballBreaths = 12f;
-            float fireballBreathShootRate = 5f;
+            float fireballBreathShootRate = 4f;
 
             float flarenadoSpawnDelay = 30f;
 
@@ -490,7 +490,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 
             if (phase2)
             {
-                chargeSpeed += 3f;
+                chargeSpeed += 2.7f;
                 fastChargeSpeedMultiplier += 0.08f;
             }
 

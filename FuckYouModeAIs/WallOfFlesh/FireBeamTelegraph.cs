@@ -83,7 +83,7 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
 
 		public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Zombie, Target.Center, 104);
+            Main.PlaySound(SoundID.Item74, Target.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

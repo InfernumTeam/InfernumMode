@@ -44,6 +44,13 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
             if (GeyserHeight < 2f)
                 GeyserHeight = 2f;
             GeyserHeight = MathHelper.Lerp(GeyserHeight, GeyserHeight * 1.44f, 0.14f);
+
+            if (Time == 0f)
+            {
+                Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+                Main.PlaySound(SoundID.Item73, closestPlayer.Center);
+            }
+
             Time++;
 
             CreateVisuals();

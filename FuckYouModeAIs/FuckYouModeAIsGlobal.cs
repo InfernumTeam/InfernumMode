@@ -40,6 +40,7 @@ using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
+using CalamityMod.NPCs.AquaticScourge;
 
 namespace InfernumMode.FuckYouModeAIs.MainAI
 {
@@ -267,6 +268,9 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
 
             if (npc.type == NPCID.KingSlime && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.67);
+
+            if (npc.type == ModContent.NPCType<AquaticScourgeBody>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
+                damage = (int)(damage * 0.45);
 
             if (projectile.type == ProjectileID.HolyArrow || projectile.type == ProjectileID.HallowStar)
                 damage = (int)(damage * 0.65);

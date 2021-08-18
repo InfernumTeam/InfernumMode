@@ -52,11 +52,8 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             if (target.HasBuff(BuffID.VortexDebuff))
                 target.ClearBuff(BuffID.VortexDebuff);
 
-            // This will affect the other gods as well in terms of behavior.
-            ref float universalState = ref npc.ai[0];
-            ref float universalTimer = ref npc.ai[1];
-            ref float localState = ref npc.ai[2];
-            ref float localTimer = ref npc.ai[3];
+            ref float localState = ref npc.ai[0];
+            ref float localTimer = ref npc.ai[1];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[3] == 0f)
             {
@@ -67,32 +64,6 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGod = npc.whoAmI;
-
-            universalTimer++;
-            int attackLength = 900;
-            if (universalState == (int)CrimulanSlimeGodBehaviorOverride.CrimulanSlimeGodAttackType.IchorSlam)
-                attackLength = 270;
-            if (universalState == (int)CrimulanSlimeGodBehaviorOverride.CrimulanSlimeGodAttackType.BigSlam)
-                attackLength = 270;
-            if (universalState == (int)CrimulanSlimeGodBehaviorOverride.CrimulanSlimeGodAttackType.GelCloudSlam)
-                attackLength = 440;
-            if (universalTimer > attackLength)
-            {
-                universalTimer = 0f;
-
-                int attackCycleCount = 3;
-                if (Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodRed) && Main.npc[CalamityGlobalNPC.slimeGodRed].life < Main.npc[CalamityGlobalNPC.slimeGodRed].lifeMax * 0.5f)
-                    attackCycleCount = 4;
-
-                if (Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodRed))
-                {
-                    Main.npc[CalamityGlobalNPC.slimeGodRed].noTileCollide = false;
-                    Main.npc[CalamityGlobalNPC.slimeGodPurple].noTileCollide = false;
-                }
-                universalState = (universalState + 1f) % attackCycleCount;
-                UpdateOtherSlimeAIValues();
-                npc.netUpdate = true;
-            }
 
             switch ((SlimeGodCoreAttackType)(int)localState)
             {
@@ -468,30 +439,20 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             for (int i = 0; i < 4; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
-            ref float localState = ref npc.ai[2];
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodRed))
-			{
-                if (localState < 3f)
-                    localState = 3f;
-                localState++;
-
-                int highestAttackIndex = npc.life < npc.lifeMax * 0.5f ? 7 : 6;
-                if (localState >= highestAttackIndex)
-                    localState = 3f;
-                return;
-			}
-
-            float universalState = npc.ai[0];
-            float oldLocalState = npc.ai[2];
+            ref float localState = ref npc.ai[0];
+            float oldLocalState = npc.ai[0];
+            bool anyBigBois = NPC.AnyNPCs(ModContent.NPCType<CrimulanSGBig>()) || NPC.AnyNPCs(ModContent.NPCType<CrimulanSGSmall>()) || NPC.AnyNPCs(ModContent.NPCType<EbonianSGBig>()) || NPC.AnyNPCs(ModContent.NPCType<EbonianSGSmall>());
 
             WeightedRandom<float> newStatePicker = new WeightedRandom<float>(Main.rand);
-            newStatePicker.Add(0, universalState == 1f || universalState == 3f ? 3f : 1f);
-            newStatePicker.Add(1, universalState == 2f ? 3f : 1f);
-            newStatePicker.Add(2, universalState == 4f ? 3f : 1f);
-            
-            localState = newStatePicker.Get();
-            while (localState == oldLocalState)
-                localState = (localState + 1f) % 3f;
+            newStatePicker.Add(anyBigBois ? (int)SlimeGodCoreAttackType.HoverAndFireAbyssBalls : (int)SlimeGodCoreAttackType.FastHover, 1f);
+            newStatePicker.Add(anyBigBois ? (int)SlimeGodCoreAttackType.SlowVerticalCharge : (int)SlimeGodCoreAttackType.FastVerticalCharge, 1f);
+            newStatePicker.Add(anyBigBois ? (int)SlimeGodCoreAttackType.SlowHorizontalCharge : (int)SlimeGodCoreAttackType.FastHorizontalCharge, 1f);
+            if (!anyBigBois)
+                newStatePicker.Add((int)SlimeGodCoreAttackType.Spin, 1f);
+
+            do
+                localState = newStatePicker.Get();
+            while (localState == oldLocalState);
         }
         #endregion AI
     }

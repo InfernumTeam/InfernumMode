@@ -1,4 +1,6 @@
+using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -7,8 +9,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 {
     public class SlimeSpawnCorrupt2 : ModNPC
     {
-        public Player Target => Main.player[npc.target];
-        public ref float Time => ref npc.ai[1];
+        public ref float RedirectCountdown => ref npc.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Corrupt Slime Spawn");
@@ -18,56 +19,86 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
         public override void SetDefaults()
         {
             npc.aiStyle = aiType = -1;
-            npc.damage = 115;
+            npc.damage = 100;
 			npc.width = 40;
             npc.height = 30;
-            npc.defense = 6;
+            npc.defense = 5;
             npc.lifeMax = 320;
             npc.knockBackResist = 0f;
             animationType = 121;
-            npc.alpha = 55;
-            npc.lavaImmune = false;
+            npc.alpha = 35;
+            npc.lavaImmune = true;
             npc.noGravity = false;
             npc.noTileCollide = true;
             npc.canGhostHeal = false;
-            npc.dontTakeDamage = true;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.buffImmune[BuffID.OnFire] = true;
         }
 
-		public override void AI()
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(npc.lifeMax);
+
+        public override void ReceiveExtraAI(BinaryReader reader) => npc.lifeMax = reader.ReadInt32();
+
+        public override void AI()
 		{
-            npc.TargetClosest();
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodPurple))
+            {
+                npc.active = false;
+                return;
+            }
 
-            if (Time < 70f)
-                npc.velocity = -Vector2.UnitY * MathHelper.Lerp(1f, 6f, Time / 70f);
-            else if (Time < 135f)
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(Target.Center) * -4.5f, 0.2f);
-            else if (Time == 135f)
-			{
-                npc.velocity = npc.SafeDirectionTo(Target.Center) * 15f;
-                npc.netUpdate = true;
-			}
+            NPC slimeGod = Main.npc[CalamityGlobalNPC.slimeGodPurple];
+            float time = slimeGod.ai[1];
 
-            if (Time > 135)
-			{
-                if (npc.velocity.Length() < 20.5f)
-                    npc.velocity *= 1.02f;
+            if (time > 500f)
+                npc.active = false;
 
-                if (Time > 360f || Collision.SolidCollision(npc.position, npc.width, npc.height))
-                    npc.StrikeNPCNoInteraction(9999, 0f, 0);
-			}
-            Time++;
-		}
+            if (!npc.WithinRange(slimeGod.Center, Main.rand.NextFloat(380f, 520f)) || time > 420f)
+                RedirectCountdown = 60f;
 
-		public override bool PreNPCLoot() => false;
+            if (RedirectCountdown > 0f && !npc.WithinRange(slimeGod.Center, 50f))
+            {
+                Vector2 destinationOffset = (MathHelper.TwoPi * npc.whoAmI / 13f).ToRotationVector2() * 12f;
+                npc.velocity = (npc.velocity * 27f + npc.SafeDirectionTo(slimeGod.Center + destinationOffset) * 19f) / 28f;
+                RedirectCountdown--;
+            }
+
+            npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.05f, -0.2f, 0.2f);
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (projectile.penetrate > 1 || projectile.penetrate == -1)
+                damage = (int)(damage * 0.35);
+        }
 
         public override void HitEffect(int hitDirection, double damage)
         {
             for (int k = 0; k < 5; k++)
                 Dust.NewDust(npc.position, npc.width, npc.height, 4, hitDirection, -1f, 0, default, 1f);
+
+            if (npc.life <= 0)
+            {
+                for (int k = 0; k < 20; k++)
+                    Dust.NewDust(npc.position, npc.width, npc.height, 4, hitDirection, -1f, 0, default, 1f);
+            }
         }
+
+        public override bool CheckDead()
+        {
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodPurple))
+                return base.CheckDead();
+
+            Main.npc[CalamityGlobalNPC.slimeGodPurple].life -= npc.lifeMax;
+            Main.npc[CalamityGlobalNPC.slimeGodPurple].HitEffect(0, npc.lifeMax);
+            if (Main.npc[CalamityGlobalNPC.slimeGodPurple].life <= 0)
+                Main.npc[CalamityGlobalNPC.slimeGodPurple].NPCLoot();
+
+            return base.CheckDead();
+        }
+
+        public override bool PreNPCLoot() => false;
 
         public override void OnHitPlayer(Player player, int damage, bool crit)
         {

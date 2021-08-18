@@ -295,7 +295,7 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
                 do
                     spawnPoint = Main.rand.Next(potentialSpawnPoints);
                 while (MathHelper.Distance(spawnPoint.X, target.Center.X) < 180f);
-                Utilities.NewProjectileBetter(Main.rand.Next(potentialSpawnPoints), -Vector2.UnitY * (13.5f + enrageFactor * 1.8f), ModContent.ProjectileType<SulphuricAcidBubble>(), 110, 0f);
+                Utilities.NewProjectileBetter(Main.rand.Next(potentialSpawnPoints), -Vector2.UnitY * (11f + enrageFactor * 1.8f), ModContent.ProjectileType<SulphuricAcidBubble>(), 110, 0f);
             }
 
             if (attackTimer >= 385f)
@@ -451,8 +451,8 @@ namespace InfernumMode.FuckYouModeAIs.AquaticScourge
             attackSelector.Add(AquaticScourgeAttackType.SpitTeeth, 1.1f);
             attackSelector.Add(AquaticScourgeAttackType.ReleaseCircleOfSand, 0.9);
             attackSelector.Add(AquaticScourgeAttackType.BelchParasites, lifeRatio < 0.7f && NPC.CountNPCS(ModContent.NPCType<AquaticParasite2>()) < 6 ? 1.2f : 0f);
-            attackSelector.Add(AquaticScourgeAttackType.BubbleSummon, lifeRatio < 0.4f ? 1.4f : 0f);
-            attackSelector.Add(AquaticScourgeAttackType.CallForSeekers, lifeRatio < 0.2f && NPC.CountNPCS(ModContent.NPCType<AquaticSeekerHead2>()) < 4 ? 1.6f : 0f);
+            attackSelector.Add(AquaticScourgeAttackType.BubbleSummon, lifeRatio < 0.5f ? 1.4f : 0f);
+            attackSelector.Add(AquaticScourgeAttackType.CallForSeekers, lifeRatio < 0.35f && NPC.CountNPCS(ModContent.NPCType<AquaticSeekerHead2>()) < 4 ? 1.6f : 0f);
 
             do
                 nextAttack = attackSelector.Get();

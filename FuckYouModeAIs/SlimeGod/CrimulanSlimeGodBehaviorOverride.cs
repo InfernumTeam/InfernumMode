@@ -3,6 +3,7 @@ using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -18,33 +19,21 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
         #region Enumerations
         public enum CrimulanSlimeGodAttackType
         {
-            IchorSlam = 0,
-            ShortLeaps = 1,
-            BigSlam = 2,
-            GelCloudSlam = 3
+            LongLeaps = 0,
+            SplitSwarm = 1
         }
         #endregion
 
         #region AI
-
         public override bool PreAI(NPC npc)
         {
             // Do targeting.
             npc.TargetClosest();
             Player target = Main.player[npc.target];
 
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGod) || !NPC.AnyNPCs(ModContent.NPCType<CalamityMod.NPCs.SlimeGod.SlimeGod>()))
-            {
-                npc.life = 0;
-                npc.StrikeNPCNoInteraction(9999, 0f, 0);
-                npc.HitEffect();
-                Main.PlaySound(SoundID.NPCDeath1, npc.Center);
-                return false;
-            }
-
             // This will affect the other gods as well in terms of behavior.
-            ref float universalState = ref Main.npc[CalamityGlobalNPC.slimeGod].ai[0];
-            ref float universalTimer = ref Main.npc[CalamityGlobalNPC.slimeGod].ai[1];
+            ref float attackState = ref npc.ai[0];
+            ref float attackTimer = ref npc.ai[1];
             ref float stuckTimer = ref npc.Infernum().ExtraAI[5];
             ref float stuckTeleportCountdown = ref npc.Infernum().ExtraAI[6];
 
@@ -59,7 +48,11 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 return false;
             }
 
+            // Reset things.
+            npc.Opacity = 1f;
             npc.damage = npc.defDamage;
+            npc.noGravity = false;
+            npc.noTileCollide = false;
 
             if (!Collision.CanHit(target.Center, 1, 1, npc.Center, 1, 1))
             {
@@ -77,227 +70,207 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGodRed = npc.whoAmI;
-            npc.realLife = CalamityGlobalNPC.slimeGodPurple;
-            if (npc.realLife == -1)
-                return false;
-            npc.life = Main.npc[npc.realLife].life;
-            npc.lifeMax = Main.npc[npc.realLife].lifeMax;
 
-            switch ((CrimulanSlimeGodAttackType)(int)universalState)
+            switch ((CrimulanSlimeGodAttackType)(int)attackState)
             {
-                case CrimulanSlimeGodAttackType.IchorSlam:
-                    DoAttack_IchorSlam(npc, target, ref universalTimer);
+                case CrimulanSlimeGodAttackType.LongLeaps:
+                    DoAttack_LongLeaps(npc, target, ref attackTimer);
                     break;
-                case CrimulanSlimeGodAttackType.ShortLeaps:
-                    DoAttack_ShortLeaps(npc, target, ref universalTimer);
-                    break;
-                case CrimulanSlimeGodAttackType.BigSlam:
-                    DoAttack_BigSlam(npc, ref universalTimer);
-                    break;
-                case CrimulanSlimeGodAttackType.GelCloudSlam:
-                    DoAttack_GelCloud(npc, target, ref universalTimer);
+                case CrimulanSlimeGodAttackType.SplitSwarm:
+                    DoAttack_SplitSwarm(npc, target, ref attackTimer);
                     break;
             }
+
+            // Enforce gravity more heavily.
+            if (!npc.noGravity && npc.velocity.Y < 11f)
+                npc.velocity.Y += 0.1f;
+
+            if (npc.Opacity <= 0f)
+            {
+                npc.scale = 0.001f;
+                npc.dontTakeDamage = true;
+            }
+            else
+                npc.dontTakeDamage = false;
 
             return false;
         }
 
-        public static void DoAttack_IchorSlam(NPC npc, Player target, ref float attackTimer)
+        public static void DoAttack_LongLeaps(NPC npc, Player target, ref float attackTimer)
         {
-            ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
-            if (attackSubstate == 0f)
-            {
-                Vector2 destination = target.Center - Vector2.UnitY * 350f;
-                npc.velocity = (npc.velocity * 5f + npc.SafeDirectionTo(destination) * 11f) / 6f;
-                npc.noGravity = true;
+            npc.Opacity = 1f;
+            npc.scale = 1f;
+            ref float jumpCounter = ref npc.Infernum().ExtraAI[0];
+            ref float noTileCollisionCountdown = ref npc.Infernum().ExtraAI[1];
 
-                if (npc.WithinRange(destination, 25f))
-                    attackTimer = 100f;
-
-                if (attackTimer >= 100f)
-                {
-                    npc.velocity = Vector2.UnitY * 14f;
-                    attackSubstate = 1f;
-                    npc.netUpdate = true;
-                }
-            }
-
-            else
-            {
-                if (npc.velocity.Y == 0f && attackTimer < 225f)
-                {
-                    Main.PlaySound(SoundID.NPCHit1, npc.Center);
-                    attackSubstate = 2f;
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        for (int i = -1; i <= 1; i += 2)
-                        {
-                            Vector2 shootVelocity = Vector2.UnitX * i * 5f;
-                            Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ModContent.ProjectileType<IchorGelWave>(), 95, 0f);
-                            Utilities.NewProjectileBetter(npc.Bottom - Vector2.UnitY * 30f, shootVelocity, ModContent.ProjectileType<IchorGelWave>(), 95, 0f);
-                        }
-                    }
-
-                    // Create tile collision dust.
-                    Collision.HitTiles(npc.BottomLeft, Vector2.UnitY * 10f, npc.width, 20);
-
-                    attackTimer = 225f;
-                    npc.velocity.X = 0f;
-                    npc.netUpdate = true;
-                }
-
-                if (npc.velocity.Y < 11f)
-                    npc.velocity.Y += 0.2f;
-            }
-        }
-
-        public static void DoAttack_ShortLeaps(NPC npc, Player target, ref float attackTimer)
-        {
-            int maxJumps = 5;
-            npc.noGravity = false;
-            npc.noTileCollide = npc.Bottom.Y < target.Top.Y - 36f;
-
-            ref float jumpCount = ref npc.Infernum().ExtraAI[0];
-
+            // Slow down and prepare to jump if on the ground.
             if (npc.velocity.Y == 0f)
             {
-                npc.TargetClosest(true);
-                npc.velocity.X *= 0.85f;
-                float jumpDelay = 15f + 30f * (npc.life / (float)npc.lifeMax);
-                float forwardJumpSpeed = 10f + 5f * (1f - npc.life / (float)npc.lifeMax);
-                float jumpSpeed = 16f;
-                if (!Collision.CanHit(npc.Center, 1, 1, target.Center, 1, 1))
-                    jumpSpeed += 4f;
+                npc.velocity.X *= 0.5f;
+                attackTimer++;
 
-                if (attackTimer > jumpDelay)
+                float lifeRatio = npc.life / (float)npc.lifeMax;
+                float jumpDelay = MathHelper.Lerp(27f, 8f, 1f - lifeRatio);
+                if (attackTimer >= jumpDelay)
                 {
-                    npc.TargetClosest();
+                    attackTimer = 0f;
+                    noTileCollisionCountdown = 10f;
+                    jumpCounter++;
 
-                    // Spawn slimes every second leap.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && jumpCount % 2 == 1)
-                    {
-                        int slimeType = Main.rand.NextBool(3) ? ModContent.NPCType<SlimeSpawnCrimson2>() : ModContent.NPCType<SlimeSpawnCrimson>();
-                        int spawnCount = NPC.CountNPCS(ModContent.NPCType<SlimeSpawnCrimson>()) + NPC.CountNPCS(ModContent.NPCType<SlimeSpawnCrimson2>());
+                    npc.velocity.Y -= 6f;
+                    if (target.position.Y + target.height < npc.Center.Y)
+                        npc.velocity.Y -= 1.25f;
+                    if (target.position.Y + target.height < npc.Center.Y - 40f)
+                        npc.velocity.Y -= 1.5f;
+                    if (target.position.Y + target.height < npc.Center.Y - 80f)
+                        npc.velocity.Y -= 1.75f;
+                    if (target.position.Y + target.height < npc.Center.Y - 120f)
+                        npc.velocity.Y -= 2.5f;
+                    if (target.position.Y + target.height < npc.Center.Y - 160f)
+                        npc.velocity.Y -= 3f;
+                    if (target.position.Y + target.height < npc.Center.Y - 200f)
+                        npc.velocity.Y -= 3f;
+                    if (target.position.Y + target.height < npc.Center.Y - 400f)
+                        npc.velocity.Y -= 6.1f;
+                    if (!Collision.CanHit(npc.Center, 1, 1, target.Center, 1, 1))
+                        npc.velocity.Y -= 3.25f;
 
-                        if (spawnCount < 3)
-                            NPC.NewNPC((int)npc.Center.X, (int)npc.Bottom.Y - 10, slimeType);
-                    }
-
-                    if (jumpCount == 2f || jumpCount == 4f)
-                    {
-                        jumpSpeed *= 2f;
-                        forwardJumpSpeed /= 2f;
-                    }
-
-                    npc.velocity.Y = -jumpSpeed;
-                    npc.velocity.X = forwardJumpSpeed * npc.direction;
-                    jumpCount++;
-
+                    npc.velocity.X = (target.Center.X > npc.Center.X).ToDirectionInt() * 13f;
                     npc.netUpdate = true;
                 }
             }
             else
+                npc.noTileCollide = !Collision.SolidCollision(npc.position, npc.width, npc.height + 16) && npc.Bottom.Y < target.Center.Y;
+
+            if (noTileCollisionCountdown > 0f)
             {
-                npc.velocity.X *= 0.99f;
-                if (npc.direction < 0 && npc.velocity.X > -1f)
-                    npc.velocity.X = -1f;
-                if (npc.direction > 0 && npc.velocity.X < 1f)
-                    npc.velocity.X = 1f;
+                npc.noTileCollide = true;
+                noTileCollisionCountdown--;
             }
 
-            // Go to the next attack state after enough leaps have been performed.
-            if (jumpCount >= maxJumps && attackTimer >= 60f)
-                attackTimer = 1000f;
+            if (jumpCounter >= 5)
+                GotoNextAttackState(npc);
         }
 
-        public static void DoAttack_BigSlam(NPC npc, ref float attackTimer)
+        public static void DoAttack_SplitSwarm(NPC npc, Player target, ref float attackTimer)
         {
-            ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
+            ref float jumpTimer = ref npc.Infernum().ExtraAI[0];
+            ref float noTileCollisionCountdown = ref npc.Infernum().ExtraAI[1];
+            npc.noTileCollide = !Collision.CanHit(target.Center, 1, 1, npc.Center, 1, 1) ||
+                Collision.SolidCollision(npc.position, npc.width, npc.height) || npc.Center.Y < target.Center.Y - 200f;
 
-            if (attackSubstate == 0f && npc.velocity.Y == 0f)
-                attackSubstate = 1f;
-
-            if (attackSubstate == 1f)
+            if (attackTimer == 1f)
             {
-                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 12f, 0.04f);
-                npc.noGravity = true;
-
-                if (npc.velocity.Y < -11.83f)
-                    attackTimer = 60f;
-
-                if (attackTimer >= 60f)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.velocity = Vector2.UnitY * 7f;
-                    attackSubstate = 2f;
-                    npc.netUpdate = true;
-                }
-            }
+                    int totalSlimesToSpawn = (int)MathHelper.Lerp(7f, 12f, 1f - npc.life / (float)npc.lifeMax);
+                    int lifePerSlime = (int)Math.Ceiling(npc.life / (float)totalSlimesToSpawn);
 
-            if (attackSubstate == 2f)
-            {
-                if (npc.velocity.Y == 0f && attackTimer < 225f)
-                {
-                    Main.PlaySound(SoundID.NPCHit1, npc.Center);
-                    Main.PlaySound(SoundID.Item73, npc.Center);
-                    attackSubstate = 3f;
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    for (int i = 0; i < totalSlimesToSpawn; i++)
                     {
-                        for (int i = 0; i < 7; i++)
+                        int slime = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SlimeSpawnCrimson3>(), npc.whoAmI);
+                        if (Main.npc.IndexInRange(slime))
                         {
-                            Vector2 ballVelocity = Vector2.UnitX * Main.rand.NextBool(2).ToDirectionInt() * Main.rand.NextFloat(3f, 4f);
-                            ballVelocity.Y -= Main.rand.NextFloat(3f, 6f);
-                            Utilities.NewProjectileBetter(npc.Bottom - Vector2.UnitY * 30f, ballVelocity, ModContent.ProjectileType<RedirectingIchorBall>(), 100, 0f);
+                            Main.npc[slime].velocity = Main.rand.NextVector2CircularEdge(6f, 6f);
+                            Main.npc[slime].Center += Main.rand.NextVector2Circular(15f, 15f);
+                            Main.npc[slime].lifeMax = Main.npc[slime].life = lifePerSlime;
+                            Main.npc[slime].netUpdate = true;
                         }
                     }
-
-                    // Create tile collision dust.
-                    Collision.HitTiles(npc.BottomLeft, Vector2.UnitY * 10f, npc.width, 20);
-
-                    npc.velocity.X = 0f;
-                    attackTimer = 230f;
-                    npc.netUpdate = true;
                 }
 
-                if (npc.velocity.Y < 14f)
-                    npc.velocity.Y += 0.7f;
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodPossession"), npc.Center);
+                for (int k = 0; k < 50; k++)
+                    Dust.NewDust(npc.position, npc.width, npc.height, 4, Main.rand.NextFloatDirection() * 3f, -1f, 0, default, 1f);
             }
+
+            if (attackTimer < 420f)
+            {
+                // Slow down and prepare to jump if on the ground.
+                if (npc.velocity.Y == 0f)
+                {
+                    npc.velocity.X *= 0.5f;
+                    jumpTimer++;
+
+                    float lifeRatio = npc.life / (float)npc.lifeMax;
+                    float jumpDelay = MathHelper.Lerp(27f, 8f, 1f - lifeRatio);
+                    if (jumpTimer >= jumpDelay)
+                    {
+                        jumpTimer = 0f;
+                        noTileCollisionCountdown = 10f;
+
+                        npc.velocity.Y -= 6f;
+                        if (target.position.Y + target.height < npc.Center.Y)
+                            npc.velocity.Y -= 1.25f;
+                        if (target.position.Y + target.height < npc.Center.Y - 40f)
+                            npc.velocity.Y -= 1.5f;
+                        if (target.position.Y + target.height < npc.Center.Y - 80f)
+                            npc.velocity.Y -= 1.75f;
+                        if (target.position.Y + target.height < npc.Center.Y - 120f)
+                            npc.velocity.Y -= 2.5f;
+                        if (target.position.Y + target.height < npc.Center.Y - 160f)
+                            npc.velocity.Y -= 3f;
+                        if (target.position.Y + target.height < npc.Center.Y - 200f)
+                            npc.velocity.Y -= 3f;
+                        if (target.position.Y + target.height < npc.Center.Y - 400f)
+                            npc.velocity.Y -= 6.1f;
+                        if (!Collision.CanHit(npc.Center, 1, 1, target.Center, 1, 1))
+                            npc.velocity.Y -= 3.25f;
+
+                        npc.velocity.X = (target.Center.X > npc.Center.X).ToDirectionInt() * 13f;
+                        npc.netUpdate = true;
+                    }
+                }
+                else
+                    npc.noTileCollide = !Collision.SolidCollision(npc.position, npc.width, npc.height + 16) && npc.Bottom.Y < target.Center.Y;
+
+                if (noTileCollisionCountdown > 0f)
+                {
+                    npc.noTileCollide = true;
+                    noTileCollisionCountdown--;
+                }
+            }
+            else
+            {
+                npc.velocity.X *= 0.925f;
+                if (attackTimer > 540f)
+                    GotoNextAttackState(npc);
+            }
+
+            if (attackTimer > 500f)
+            {
+                npc.Opacity = 1f;
+                npc.scale = MathHelper.Clamp(npc.scale + 0.075f, 0f, 1f);
+            }
+            else
+                npc.Opacity = 0f;
+            npc.damage = 0;
+            attackTimer++;
         }
 
-        public static void DoAttack_GelCloud(NPC npc, Player target, ref float attackTimer)
-		{
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 60f)
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CrimulanCloud>());
+        public static void GotoNextAttackState(NPC npc)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
 
-            npc.scale = 1f - (float)System.Math.Sin(Utils.InverseLerp(220f, 260f, attackTimer, true) * MathHelper.Pi);
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 240f)
-			{
-                int cloud = NPC.FindFirstNPC(ModContent.NPCType<CrimulanCloud>());
-                if (Main.npc.IndexInRange(cloud))
-				{
-                    npc.Center = Main.npc[cloud].Center;
-                    Main.npc[cloud].active = false;
-                    Main.npc[cloud].netUpdate = true;
-                }
+            for (int i = 0; i < 4; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
 
-                float jumpSpeed = 22f;
-                npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, target.Center, 0.35f, jumpSpeed, out _);
+            CrimulanSlimeGodAttackType oldAttackState = (CrimulanSlimeGodAttackType)(int)npc.ai[0];
+            CrimulanSlimeGodAttackType newAttackState = oldAttackState;
+            switch (oldAttackState)
+            {
+                case CrimulanSlimeGodAttackType.LongLeaps:
+                    newAttackState = CrimulanSlimeGodAttackType.SplitSwarm;
+                    break;
+                case CrimulanSlimeGodAttackType.SplitSwarm:
+                    newAttackState = CrimulanSlimeGodAttackType.LongLeaps;
+                    break;
+            }
 
-                for (int i = 0; i < 10; i++)
-                {
-                    Vector2 abyssBallSpwanPosition = npc.Bottom + Main.rand.NextVector2Circular(50f, 10f);
-                    Utilities.NewProjectileBetter(abyssBallSpwanPosition, Main.rand.NextVector2Circular(7f, 7f), ModContent.ProjectileType<AbyssMine2>(), 90, 0f);
-                }
-
-                npc.netUpdate = true;
-			}
-
-            if (attackTimer < 240f || npc.velocity.Y == 0f)
-                npc.velocity.X *= 0.92f;
-
-            if (npc.velocity.Y < 14f)
-                npc.velocity.Y += 0.35f;
+            npc.ai[0] = (int)newAttackState;
+            npc.ai[1] = 0f;
+            npc.netUpdate = true;
         }
         #endregion AI
     }

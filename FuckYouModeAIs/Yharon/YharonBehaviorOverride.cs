@@ -92,6 +92,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
         {
             YharonAttackType.FastCharge,
             YharonAttackType.SpinCharge,
+            YharonAttackType.FastCharge,
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.FireMouthBreath,
             YharonAttackType.FlarenadoAndDetonatingFlameSpawn,
@@ -102,10 +103,10 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.FireMouthBreath,
-            YharonAttackType.SpinCharge,
             YharonAttackType.Charge,
             YharonAttackType.FastCharge,
             YharonAttackType.SpinCharge,
+            YharonAttackType.FastCharge,
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.FlarenadoAndDetonatingFlameSpawn,
             YharonAttackType.FireMouthBreath,
@@ -383,7 +384,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             {
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.15f);
                 npc.velocity *= 0.96f;
-                npc.Infernum().ExtraAI[9] = (int)MathHelper.Lerp(npc.Infernum().ExtraAI[3], 16, 0.275f);
+                fireIntensity = MathHelper.Lerp(0.275f, 1f, Utils.InverseLerp(transitionTimer, transitionTimer - 75f, subphaseTransitionTimer, true));
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
 
                 if (subphaseTransitionTimer < 18f)
@@ -393,6 +394,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
                 }
 
+                npc.dontTakeDamage = true;
                 subphaseTransitionTimer--;
                 return false;
             }
@@ -508,6 +510,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(180f, 180f);
                     Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(12f, 12f), ModContent.ProjectileType<MajesticSparkle>(), 0, 0f);
                 }
+                fireIntensity = Utils.InverseLerp(phase2InvincibilityTime, phase2InvincibilityTime - 45f, invincibilityTime, true) * Utils.InverseLerp(0f, 45f, invincibilityTime, true);
                 npc.dontTakeDamage = true;
                 invincibilityTime--;
             }
@@ -534,7 +537,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                                 Utilities.NewProjectileBetter(npc.Center + angle.ToRotationVector2() * 60f, angle.ToRotationVector2() * 15f, ModContent.ProjectileType<FlareBomb>(), 480, 0f);
                             }
                         }
-                        GoToNextAttack(npc, ref attackType);
+                        GotoNextAttack(npc, ref attackType);
                     }
                     break;
                 case YharonAttackType.Charge:
@@ -550,7 +553,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                             int playerDirection = Math.Sign(player.velocity.X);
                             if (playerDirection == 0)
                                 playerDirection = Main.rand.NextBool(2).ToDirectionInt();
-                            npc.Center = player.Center + new Vector2(playerDirection * 690f, 400f * Main.rand.NextBool(2).ToDirectionInt());
+                            Vector2 offsetDirection = player.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 560f;
+                            npc.Center = player.Center + offsetDirection;
                             npc.velocity = Vector2.Zero;
                             npc.netUpdate = true;
 
@@ -585,7 +589,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     }
                     else if (attackTimer >= chargeDelay + chargeTime)
                     {
-                        GoToNextAttack(npc, ref attackType);
+                        GotoNextAttack(npc, ref attackType);
                     }
                     break;
                 case YharonAttackType.FastCharge:
@@ -640,7 +644,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     }
                     if (attackTimer >= chargeDelay + chargeTime)
                     {
-                        GoToNextAttack(npc, ref attackType);
+                        GotoNextAttack(npc, ref attackType);
                     }
                     break;
                 case YharonAttackType.FireMouthBreath:
@@ -676,14 +680,14 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                         }
                         if (attackTimer >= fireballBreathShootDelay + fireballBreathShootRate * totalFireballBreaths)
-                            GoToNextAttack(npc, ref attackType);
+                            GotoNextAttack(npc, ref attackType);
                     }
                     break;
                 case YharonAttackType.FlarenadoAndDetonatingFlameSpawn:
                     // Slow down quickly, rotate towards a horizontal orientation, and then spawn a bunch of detonating flares and some flarenado things.
+                    specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                     if (attackTimer < flarenadoSpawnDelay)
                     {
-                        specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                         npc.velocity *= 0.955f;
                         npc.rotation = npc.rotation.AngleTowards(0f, 0.1f);
                     }
@@ -701,7 +705,6 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     }
                     else if (attackTimer < flarenadoSpawnDelay + 75)
                     {
-                        specialFrameType = (int)YharonFrameDrawingType.Roar;
                         if ((attackTimer - flarenadoSpawnDelay) % 12 == 11)
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient && NPC.CountNPCS(ModContent.NPCType<DetonatingFlare>()) + NPC.CountNPCS(ModContent.NPCType<DetonatingFlare2>()) < 8)
@@ -716,7 +719,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                         }
                     }
-                    else GoToNextAttack(npc, ref attackType);
+                    else 
+                        GotoNextAttack(npc, ref attackType);
                     break;
                 case YharonAttackType.SpinCharge:
                     // Fly upward to the side of the player.
@@ -785,7 +789,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
                     }
                     if (attackTimer >= upwardFlyTime + horizontalMovementDelay + totalSpins * 75f)
-                        GoToNextAttack(npc, ref attackType);
+                        GotoNextAttack(npc, ref attackType);
                     break;
                 case YharonAttackType.InfernadoAndFireShotgunBreath:
                     if (attackTimer < fireballBreathShootDelay)
@@ -831,7 +835,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                                 }
                             }
                             if (attackTimer >= fireballBreathShootDelay + shotgunBurstFireRate * totalShotgunBursts - 1)
-                                GoToNextAttack(npc, ref attackType);
+                                GotoNextAttack(npc, ref attackType);
                             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                         }
                         specialFrameType = (int)YharonFrameDrawingType.Roar;
@@ -880,7 +884,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                             }
                         }
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
-                        GoToNextAttack(npc, ref attackType);
+                        GotoNextAttack(npc, ref attackType);
                     }
                     break;
                 case YharonAttackType.RingOfFire:
@@ -900,7 +904,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         }
                     }
                     if (attackTimer >= flareRingSpawnRate * totalFlaresInRing)
-                        GoToNextAttack(npc, ref attackType);
+                        GotoNextAttack(npc, ref attackType);
                     break;
                 case YharonAttackType.SplittingMeteors:
                     int directionToDestination = (npc.Center.X > player.Center.X).ToDirectionInt();
@@ -943,7 +947,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                             Utilities.NewProjectileBetter(npc.Center + npc.velocity * 3f, npc.velocity, ModContent.ProjectileType<YharonFireball>(), 515, 0f, Main.myPlayer, 0f, 0f);
                     }
                     if (attackTimer >= splittingMeteorRiseTime + splittingMeteorBombTime)
-                        GoToNextAttack(npc, ref attackType);
+                        GotoNextAttack(npc, ref attackType);
                     break;
                 case YharonAttackType.HeatFlash:
                     npc.damage = 0;
@@ -1023,7 +1027,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     }
 
                     if (attackTimer >= heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime)
-                        GoToNextAttack(npc, ref attackType);
+                        GotoNextAttack(npc, ref attackType);
                     specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                     break;
                 case YharonAttackType.VortexOfFlame:
@@ -1067,7 +1071,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         Utilities.NewProjectileBetter(npc.Center + new Vector2(xOffset, -90f), Vector2.UnitY.RotatedBy(0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
                     }
                     if (attackTimer > flameVortexSpawnDelay + totalFlameWaves * 7)
-                        GoToNextAttack(npc, ref attackType);
+                        GotoNextAttack(npc, ref attackType);
                     break;
                 case YharonAttackType.FinalDyingRoar:
                     npc.dontTakeDamage = true;
@@ -1322,12 +1326,13 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             return false;
         }
 
-        public static void GoToNextAttack(NPC npc, ref float attackType)
+        public static void GotoNextAttack(NPC npc, ref float attackType)
         {
             ref float attackTypeIndex = ref npc.Infernum().ExtraAI[0];
             attackTypeIndex++;
 
-            YharonAttackType[] patternToUse = SubphaseTable.First(table => table.Value(npc)).Key;
+            bool patternExists = SubphaseTable.Any(table => table.Value(npc));
+            YharonAttackType[] patternToUse = !patternExists ? SubphaseTable.First().Key : SubphaseTable.First(table => table.Value(npc)).Key;
             attackType = (int)patternToUse[(int)(attackTypeIndex % patternToUse.Length)];
 
             // Reset the attack timer and subphase specific variables.

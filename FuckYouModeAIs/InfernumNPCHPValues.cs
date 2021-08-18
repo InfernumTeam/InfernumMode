@@ -10,6 +10,8 @@ using Terraria.ModLoader;
 
 using CrabulonBoss = CalamityMod.NPCs.Crabulon.CrabulonIdle;
 using HiveMindP1Boss = CalamityMod.NPCs.HiveMind.HiveMind;
+using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
+using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
 
@@ -30,6 +32,8 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             [ModContent.NPCType<HiveMindP1Boss>()] = 1312,
             [ModContent.NPCType<HiveMindP2>()] = 4695,
             [ModContent.NPCType<PerforatorHive>()] = 6132,
+            [ModContent.NPCType<CrimulanSGBig>()] = 5100,
+            [ModContent.NPCType<EbonianSGBig>()] = 5100,
             [NPCID.WallofFleshEye] = 4115,
             [NPCID.WallofFlesh] = 11875,
             [NPCID.Spazmatism] = 36260,

@@ -19,7 +19,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
         public override void SetDefaults()
         {
             npc.aiStyle = aiType = -1;
-            npc.damage = 100;
+            npc.damage = 67;
 			npc.width = 40;
             npc.height = 30;
             npc.defense = 5;

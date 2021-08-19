@@ -244,7 +244,7 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
 
                     spawnPosition = spawnPosition.ToTileCoordinates().ToWorldCoordinates();
                     Vector2 tentacleDirection = target.DirectionFrom(spawnPosition);
-                    Utilities.NewProjectileBetter(spawnPosition, tentacleDirection, ModContent.ProjectileType<TileTentacle>(), 65, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, tentacleDirection, ModContent.ProjectileType<TileTentacle>(), 95, 0f);
 				}
                 enrageAttackCountdown--;
             }
@@ -308,7 +308,7 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
                 Vector2 velocity = new Vector2(0f, -shootSpeed).RotatedBy(angle);
                 velocity.X *= (targetDestination.X - spawnPosition.X > 0).ToDirectionInt();
 
-                Utilities.NewProjectileBetter(spawnPosition + velocity * 3f, velocity, ModContent.ProjectileType<BloodVomit>(), 60, 0f);
+                Utilities.NewProjectileBetter(spawnPosition + velocity * 3f, velocity, ModContent.ProjectileType<BloodVomit>(), 70, 0f);
             }
         }
 
@@ -320,7 +320,7 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
             for (float x = -1180f; x < 1180f; x += inPhase2 ? 200f : 256f)
             {
                 Vector2 spawnPosition = target.Center + new Vector2(x, Main.screenHeight * -0.4f);
-                int scythe = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 2f, ProjectileID.DemonSickle, 60, 0f);
+                int scythe = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 2f, ModContent.ProjectileType<HellishScythe>(), 80, 0f);
                 Main.projectile[scythe].tileCollide = false;
             }
 
@@ -331,7 +331,7 @@ namespace InfernumMode.FuckYouModeAIs.WallOfFlesh
                 result.Y += 4;
 
                 if (inPhase2)
-                    Utilities.NewProjectileBetter(result.ToWorldCoordinates(), Vector2.Zero, ModContent.ProjectileType<CursedGeyser>(), 60, 0f);
+                    Utilities.NewProjectileBetter(result.ToWorldCoordinates(), Vector2.Zero, ModContent.ProjectileType<CursedGeyser>(), 80, 0f);
             }
 
             // Do nothing if no valid spawn solution is found.

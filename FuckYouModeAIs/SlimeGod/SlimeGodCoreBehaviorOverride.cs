@@ -48,9 +48,11 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             npc.TargetClosest();
             Player target = Main.player[npc.target];
 
-            // This debuff is not fun.
+            // These debuffs are not fun.
             if (target.HasBuff(BuffID.VortexDebuff))
                 target.ClearBuff(BuffID.VortexDebuff);
+            if (target.HasBuff(BuffID.Cursed))
+                target.ClearBuff(BuffID.Cursed);
 
             ref float localState = ref npc.ai[0];
             ref float localTimer = ref npc.ai[1];

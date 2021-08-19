@@ -1,4 +1,5 @@
-﻿using CalamityMod.Dusts;
+﻿using CalamityMod;
+using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.Projectiles.Boss;
@@ -294,6 +295,9 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 
         public override bool PreAI(NPC npc)
         {
+            // Split the appropriate kill time length.
+            npc.Calamity().KillTime = 5150;
+
             // Stop rain if it's happen so it doesn't obstruct the fight (also because Yharon is heat oriented).
             CalamityMod.CalamityMod.StopRain();
 
@@ -337,6 +341,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             ref float fireIntensity = ref npc.Infernum().ExtraAI[9];
             ref float subphaseTransitionTimer = ref npc.Infernum().ExtraAI[11];
             ref float currentSubphase = ref npc.Infernum().ExtraAI[12];
+            ref float teleportChargeCounter = ref npc.Infernum().ExtraAI[13];
 
             // Go to phase 2 if at 10%.
             if (npc.Infernum().ExtraAI[2] == 0f && lifeRatio < 0.1f)
@@ -492,6 +497,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 
             if (phase2)
             {
+                chargeDelay = (int)(chargeDelay * 0.775);
                 chargeSpeed += 2.7f;
                 fastChargeSpeedMultiplier += 0.08f;
             }
@@ -554,6 +560,13 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                             if (playerDirection == 0)
                                 playerDirection = Main.rand.NextBool(2).ToDirectionInt();
                             Vector2 offsetDirection = player.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 560f;
+
+                            // If a teleport charge was done beforehand randomize the offset direction if the
+                            // player is descending. This still has an uncommon chance to end up in a similar direction as the one
+                            // initially chosen.
+                            if (teleportChargeCounter > 0f && offsetDirection.AngleBetween(Vector2.UnitY) < MathHelper.Pi / 15f)
+                                offsetDirection = Main.rand.NextVector2Unit() * offsetDirection.Length();
+
                             npc.Center = player.Center + offsetDirection;
                             npc.velocity = Vector2.Zero;
                             npc.netUpdate = true;
@@ -1329,11 +1342,17 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
         public static void GotoNextAttack(NPC npc, ref float attackType)
         {
             ref float attackTypeIndex = ref npc.Infernum().ExtraAI[0];
+            ref float teleportChargeCounter = ref npc.Infernum().ExtraAI[13];
             attackTypeIndex++;
 
             bool patternExists = SubphaseTable.Any(table => table.Value(npc));
             YharonAttackType[] patternToUse = !patternExists ? SubphaseTable.First().Key : SubphaseTable.First(table => table.Value(npc)).Key;
             attackType = (int)patternToUse[(int)(attackTypeIndex % patternToUse.Length)];
+
+            if ((YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge)
+                teleportChargeCounter++;
+            else
+                teleportChargeCounter = 0f;
 
             // Reset the attack timer and subphase specific variables.
             npc.ai[1] = 0f;

@@ -14,7 +14,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
         #region AI
         public override bool PreAI(NPC npc)
 		{
-			ref float attackTimer = ref npc.ai[0];
+			ref float attackTimer = ref npc.Infernum().ExtraAI[0];
 			ref float openMouthFlag = ref npc.localAI[2];
 
 			// Make a roar sound on summoning.

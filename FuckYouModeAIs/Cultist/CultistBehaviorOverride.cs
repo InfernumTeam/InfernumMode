@@ -955,7 +955,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			if (attackTimer > waitDelay + 45f)
 			{
 				frameType = (int)CultistFrameState.Hover;
-				if (!NPC.AnyNPCs(NPCID.AncientCultistSquidhead) && !NPC.AnyNPCs(NPCID.CultistDragonHead) && !NPC.AnyNPCs(NPCID.CultistDragonBody1) && !NPC.AnyNPCs(NPCID.CultistDragonTail))
+				if (!NPC.AnyNPCs(NPCID.CultistDragonHead) && !NPC.AnyNPCs(NPCID.CultistDragonBody1) && !NPC.AnyNPCs(NPCID.CultistDragonTail))
 					GotoNextAttackState(npc);
 				else
 					npc.dontTakeDamage = true;

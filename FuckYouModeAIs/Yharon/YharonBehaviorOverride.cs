@@ -290,6 +290,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
         // Final Dying Roar flame illusion count = npc.Infernum().ExtraAI[10]
         // Transition phase timer = npc.Infernum().ExtraAI[11]
         // Current subphase = npc.Infernum().ExtraAI[12]
+        // Teleport dash count = npc.Infernum().ExtraAI[13]
 
         #region AI
 
@@ -1345,14 +1346,15 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             ref float teleportChargeCounter = ref npc.Infernum().ExtraAI[13];
             attackTypeIndex++;
 
-            bool patternExists = SubphaseTable.Any(table => table.Value(npc));
-            YharonAttackType[] patternToUse = !patternExists ? SubphaseTable.First().Key : SubphaseTable.First(table => table.Value(npc)).Key;
-            attackType = (int)patternToUse[(int)(attackTypeIndex % patternToUse.Length)];
-
             if ((YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge)
                 teleportChargeCounter++;
             else
                 teleportChargeCounter = 0f;
+
+            bool patternExists = SubphaseTable.Any(table => table.Value(npc));
+            YharonAttackType[] patternToUse = !patternExists ? SubphaseTable.First().Key : SubphaseTable.First(table => table.Value(npc)).Key;
+            attackType = (int)patternToUse[(int)(attackTypeIndex % patternToUse.Length)];
+
 
             // Reset the attack timer and subphase specific variables.
             npc.ai[1] = 0f;

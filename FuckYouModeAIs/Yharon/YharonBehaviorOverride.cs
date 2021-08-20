@@ -296,19 +296,23 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 
         public override bool PreAI(NPC npc)
         {
-            // Split the appropriate kill time length.
+            // Fuck you and your reactive DR
             npc.Calamity().KillTime = 5150;
+            npc.Calamity().AITimer = npc.Calamity().KillTime;
 
             // Stop rain if it's happen so it doesn't obstruct the fight (also because Yharon is heat oriented).
             CalamityMod.CalamityMod.StopRain();
 
             // Reset total HP.
-            if (npc.lifeMax != 3333330)
+            if (npc.lifeMax != 5000000)
             {
-                npc.lifeMax = 3333330;
+                npc.lifeMax = 5000000;
                 npc.life = npc.lifeMax;
                 npc.netUpdate = true;
             }
+
+            // Consistent DR throughout the fight (I think? and hope)
+            npc.Calamity().DR = 0.4f;
 
             // Aquire a new target if the current one is dead or inactive.
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
@@ -355,7 +359,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                 string key = "Mods.CalamityMod.FlameText";
 
                 if (Main.netMode == NetmodeID.SinglePlayer)
-                    Main.NewText(Language.GetTextValue(key), Color.Orange);
+                    Main.NewText("The air is scorching your skin...", Color.Orange);
                 else if (Main.netMode == NetmodeID.Server)
                     NetMessage.BroadcastChatMessage(NetworkText.FromKey(key), Color.Orange);
 

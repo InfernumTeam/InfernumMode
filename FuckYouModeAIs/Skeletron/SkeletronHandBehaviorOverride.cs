@@ -18,12 +18,12 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
             float armDirection = -npc.ai[0];
             NPC owner = Main.npc[(int)npc.ai[1]];
             float animationTime = owner.ai[2];
-            float phaseChangeCountdown = owner.Infernum().ExtraAI[0];
             if (!owner.active)
             {
                 npc.active = false;
                 return false;
             }
+            float phaseChangeCountdown = owner.Infernum().ExtraAI[0];
 
             npc.life = npc.lifeMax = 200;
             npc.damage = npc.defDamage;

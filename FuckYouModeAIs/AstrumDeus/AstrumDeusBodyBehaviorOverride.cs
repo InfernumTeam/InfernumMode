@@ -36,7 +36,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
             npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
 
-            npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.65f);
+            npc.Calamity().DR = 0.55f;
             npc.Calamity().newAI[1] = 600f;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;

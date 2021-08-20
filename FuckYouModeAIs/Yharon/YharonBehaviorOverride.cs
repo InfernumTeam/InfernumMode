@@ -320,8 +320,10 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                 {
                     npc.velocity.Y -= 0.5f;
                     npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
-                    if (npc.timeLeft > 240)
-                        npc.timeLeft = 240;
+                    if (npc.timeLeft > 120)
+                        npc.timeLeft = 120;
+                    if (!npc.WithinRange(Main.player[npc.target].Center, 4200f))
+                        npc.active = false;
                     return false;
                 }
                 npc.netUpdate = true;

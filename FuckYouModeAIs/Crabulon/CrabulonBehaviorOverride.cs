@@ -31,6 +31,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
         #region AI
 
         public const float Phase2LifeRatio = 0.75f;
+        public const float Phase3LifeRatio = 0.35f;
 
         public override bool PreAI(NPC npc)
         {
@@ -67,6 +68,13 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(25f, 25f);
                 NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
                 hasSummonedClumpFlag = 1f;
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedClumpFlag == 1f && lifeRatio < Phase3LifeRatio)
+            {
+                Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(25f, 25f);
+                NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
+                hasSummonedClumpFlag = 2f;
             }
 
             bool enraged = !target.ZoneGlowshroom && npc.Top.Y / 16 < Main.worldSurface && !BossRushEvent.BossRushActive;
@@ -218,7 +226,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float walkSpeed = MathHelper.Lerp(1.9f, 3f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(1.9f, 4.45f, 1f - lifeRatio);
             if (enraged)
                 walkSpeed += 1.05f;
             walkSpeed += horizontalDistanceFromTarget * 0.004f;
@@ -247,7 +255,6 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             }
             else
                 npc.velocity.X = (npc.velocity.X * 20f + walkSpeed) / 21f;
-
 
             Vector2 checkArea = new Vector2(80f);
             Vector2 checkTopLeft = npc.Center - checkArea * 0.5f;

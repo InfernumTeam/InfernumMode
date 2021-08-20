@@ -456,7 +456,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             bool berserkChargeMode = phase2 && lifeRatio < 0.3f && lifeRatio >= 0.05f;
 
             Vector2 offsetCenter = npc.SafeDirectionTo(player.Center) * (npc.width * 0.5f + 10) + npc.Center;
-            Vector2 mouthPosition = new Vector2(offsetCenter.X + 60 * npc.direction, offsetCenter.Y - 15);
+            Vector2 mouthPosition = new Vector2(offsetCenter.X + npc.direction * 60f, offsetCenter.Y - 15);
 
             bool enraged = ArenaSpawnAndEnrageCheck(npc, player);
 
@@ -493,10 +493,9 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                 totalFlameWaves = 10;
                 flameVortexSpawnDelay = 40f;
             }
+            // Further npc damage manipulation can be done later if necessary.
             else
-            {
-                npc.damage = npc.defDamage; // Further npc damage manipulation can be done later if necessary.
-            }
+                npc.damage = npc.defDamage;
 
             if (phase2)
             {
@@ -727,10 +726,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                             {
                                 Vector2 flareSpawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(200f, 100f) * Main.rand.NextFloat(0.6f, 1f);
 
-                                if (player.Distance(flareSpawnPosition) > 190f)
-                                {
+                                if (!player.WithinRange(flareSpawnPosition, 190f))
                                     NPC.NewNPC((int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
-                                }
                             }
                             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                         }
@@ -750,7 +747,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 
                         Vector2 destination = player.Center + new Vector2(xAimOffset, -450f);
 
-                        if (npc.Distance(destination) < 16f)
+                        if (npc.WithinRange(destination, 16f))
                             npc.Center = destination;
                         else
                             npc.velocity = npc.SafeDirectionTo(destination) * 16f;
@@ -758,7 +755,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         npc.spriteDirection = (npc.velocity.X < 0).ToDirectionInt();
                         npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
 
-                        if (Vector2.Distance(destination, npc.Center) < 42f)
+                        if (npc.WithinRange(destination, 42f))
                             attackTimer = upwardFlyTime - 1f;
                         specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                     }
@@ -843,10 +840,11 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                                 for (int i = 0; i < fireballCount; i++)
                                 {
                                     float offsetAngle = MathHelper.Lerp(-angleSpread, angleSpread, i / (float)fireballCount);
-                                    float speed = Main.rand.NextFloat(9f, 13f);
+                                    float burstSpeed = Main.rand.NextFloat(9f, 13f);
                                     if (enraged)
-                                        speed *= Main.rand.NextFloat(1.5f, 2.7f);
-                                    int fire = Utilities.NewProjectileBetter(mouthPosition, npc.SafeDirectionTo(mouthPosition).RotatedBy(offsetAngle) * speed, ProjectileID.CultistBossFireBall, 500, 0f, Main.myPlayer);
+                                        burstSpeed *= Main.rand.NextFloat(1.5f, 2.7f);
+                                    Vector2 burstVelocity = npc.SafeDirectionTo(mouthPosition).RotatedBy(offsetAngle) * burstSpeed;
+                                    int fire = Utilities.NewProjectileBetter(mouthPosition, burstVelocity, ProjectileID.CultistBossFireBall, 500, 0f, Main.myPlayer);
                                     Main.projectile[fire].tileCollide = false;
                                 }
                             }
@@ -858,7 +856,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     }
                     break;
                 case YharonAttackType.MassiveInfernadoSummon:
-                    // Slow down and charge up
+
+                    // Slow down and charge up.
                     if (attackTimer < infernadoAttackPowerupTime)
                     {
                         specialFrameType = (int)YharonFrameDrawingType.FlapWings;
@@ -880,7 +879,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         }
                         specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                     }
-                    // Release the energy, spawn some charging infernados, and go to the next attack phase.
+
+                    // Release the energy, spawn some charging infernados, and go to the next attack state.
                     if (attackTimer == infernadoAttackPowerupTime)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -907,6 +907,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                     npc.velocity *= 0.955f;
                     npc.rotation = npc.rotation.AngleTowards(0f, 0.1f);
+
+                    // Emit bursts of fire and summon a detonating flare.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % flareRingSpawnRate == flareRingSpawnRate - 1)
                     {
                         Vector2 flareSpawnPosition = npc.Center + ((attackTimer - flareRingSpawnRate + 1) / flareRingSpawnRate * MathHelper.TwoPi / totalFlaresInRing).ToRotationVector2() * 665f;
@@ -925,6 +927,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                 case YharonAttackType.SplittingMeteors:
                     int directionToDestination = (npc.Center.X > player.Center.X).ToDirectionInt();
                     bool morePowerfulMeteors = lifeRatio < 0.7f;
+
+                    // Fly towards the hover destination near the target.
                     if (attackTimer < splittingMeteorRiseTime)
                     {
                         Vector2 destination = player.Center + new Vector2(directionToDestination * 750f, -300f);
@@ -935,10 +939,13 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 
                         npc.spriteDirection = (npc.Center.X > player.Center.X).ToDirectionInt();
 
-                        if (Vector2.Distance(destination, npc.Center) < 32f)
+                        // Once it has been reached, change the attack timer to begin the carpet bombing.
+                        if (npc.WithinRange(destination, 32f))
                             attackTimer = splittingMeteorRiseTime - 1f;
                         specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                     }
+
+                    // Begin flying horizontally.
                     else if (attackTimer == splittingMeteorRiseTime)
                     {
                         Vector2 velocity = npc.SafeDirectionTo(player.Center);
@@ -951,6 +958,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         if (morePowerfulMeteors)
                             npc.velocity *= 1.45f;
                     }
+
+                    // And vomit meteors.
                     else
                     {
                         npc.position.X += npc.SafeDirectionTo(player.Center).X * 7f;
@@ -967,18 +976,22 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     break;
                 case YharonAttackType.HeatFlash:
                     npc.damage = 0;
+
+                    // Attempt to fly above the target.
                     if (attackTimer < heatFlashIdleDelay)
                     {
                         npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(player.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
                         npc.spriteDirection = 1;
 
                         Vector2 destinationAbovePlayer = player.Center - Vector2.UnitY * 420f - npc.Center;
-                        npc.SimpleFlyMovement(Vector2.Normalize(destinationAbovePlayer - npc.velocity) * 36f, 3.5f);
+                        npc.SimpleFlyMovement((destinationAbovePlayer - npc.velocity).SafeNormalize(Vector2.Zero) * 36f, 3.5f);
                     }
+
+                    // After hovering, create a burst of flames around the target.
                     else
                     {
                         // Teleport above the player if somewhat far away from them.
-                        if (attackTimer == heatFlashIdleDelay && npc.Distance(player.Center) > 360f)
+                        if (attackTimer == heatFlashIdleDelay && !npc.WithinRange(player.Center, 360f))
                         {
                             npc.Center = player.Center - Vector2.UnitY * 420f;
                             if (!Main.dedServ)
@@ -995,26 +1008,33 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                             }
                         }
                         npc.velocity *= 0.95f;
+
                         // Transform into a phoenix flame form.
                         fireIntensity = MathHelper.Max(fireIntensity, Utils.InverseLerp(0f, chargeDelay - 1f, attackTimer, true));
 
+                        // Rapidly approach a 0 rotation.
                         npc.rotation = npc.rotation.AngleTowards(0f, 0.7f);
+
                         if (attackTimer >= heatFlashIdleDelay + heatFlashStartDelay && attackTimer <= heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime)
                         {
                             float brightness = (float)Math.Sin(Utils.InverseLerp(heatFlashIdleDelay + heatFlashStartDelay, heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime, attackTimer, true) * MathHelper.Pi);
                             bool atMaximumBrightness = attackTimer == heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime / 2;
+                            
+                            // Immediately create the ring of flames if the brightness is at its maximum.
                             if (atMaximumBrightness)
                             {
+                                // The outwardness of the ring is dependant on the speed of the target. However, the additive boost cannot exceed a certain amount.
                                 float outwardness = 550f + MathHelper.Min(player.velocity.Length(), 40f) * 12f;
-
-                                // Spawn a circle of flames.
                                 for (int i = 0; i < heatFlashTotalFlames; i++)
                                 {
                                     float angle = MathHelper.TwoPi * i / heatFlashTotalFlames;
                                     if (Main.netMode != NetmodeID.MultiplayerClient)
                                     {
-                                        float angleFromTarget = Utilities.AngleBetween(angle.ToRotationVector2(), player.velocity);
+                                        float angleFromTarget = angle.ToRotationVector2().AngleBetween(player.velocity);
                                         Utilities.NewProjectileBetter(player.Center + angle.ToRotationVector2() * outwardness, Vector2.Zero, ModContent.ProjectileType<YharonHeatFlashFireball>(), 595, 0f, Main.myPlayer);
+
+                                        // Create a cluster of flames that appear in the direction the target is currently moving.
+                                        // This makes it harder to maneuver through the burst.
                                         if (angleFromTarget <= MathHelper.TwoPi / heatFlashTotalFlames)
                                         {
                                             for (int j = 0; j < Main.rand.Next(11, 17 + 1); j++)
@@ -1024,6 +1044,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                                             }
                                         }
                                     }
+
+                                    // Emit some dust on top of the target.
                                     else if (!Main.dedServ)
                                     {
                                         for (int j = 0; j < 14; j++)
@@ -1050,8 +1072,9 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     npc.velocity *= 0.85f;
                     npc.spriteDirection = -1;
                     npc.rotation = npc.rotation.AngleTowards(0f, 0.185f);
+
                     // Teleport above the player if somewhat far away from them.
-                    if (attackTimer == 1f && npc.Distance(player.Center) > 360f)
+                    if (attackTimer == 1f && !npc.WithinRange(player.Center, 360f))
                     {
                         npc.Center = player.Center - Vector2.UnitY * 480f;
                         if (!Main.dedServ)
@@ -1070,7 +1093,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                     }
 
-                    // Spawn vortices of doom.
+                    // Spawn vortices of doom. They periodically shoot homing fire projectiles.
                     if (attackTimer == flameVortexSpawnDelay && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < totalFlameVortices; i++)
@@ -1080,11 +1103,12 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         }
                     }
 
+                    // Emit splitting fireballs from the side in a fashion similar to that of Old Duke's shark summoning attack.
                     if (attackTimer > flameVortexSpawnDelay && attackTimer % 7 == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float xOffset = (attackTimer - flameVortexSpawnDelay) / 7f * 205f + 260f;
-                        Utilities.NewProjectileBetter(npc.Center + new Vector2(-xOffset, -90f), Vector2.UnitY.RotatedBy(-0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
-                        Utilities.NewProjectileBetter(npc.Center + new Vector2(xOffset, -90f), Vector2.UnitY.RotatedBy(0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
+                        float horizontalOffset = (attackTimer - flameVortexSpawnDelay) / 7f * 205f + 260f;
+                        Utilities.NewProjectileBetter(npc.Center + new Vector2(-horizontalOffset, -90f), Vector2.UnitY.RotatedBy(-0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
+                        Utilities.NewProjectileBetter(npc.Center + new Vector2(horizontalOffset, -90f), Vector2.UnitY.RotatedBy(0.18f) * -20f, ModContent.ProjectileType<YharonFireball>(), 525, 0f, Main.myPlayer);
                     }
                     if (attackTimer > flameVortexSpawnDelay + totalFlameWaves * 7)
                         GotoNextAttack(npc, ref attackType);
@@ -1108,9 +1132,11 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             int totalCharges = 6;
             float confusingChargeSpeed = 42f;
 
-            float splittingMeteorBombingSpeed = 24f;
+            float splittingMeteorHoverSpeed = 24f;
+            float splittingMeteorBombingSpeed = 37.5f;
             float splittingMeteorRiseTime = 120f;
             float splittingMeteorBombTime = 90f;
+            int fireballReleaseRate = 3;
             int totalTimeSpentPerCarpetBomb = (int)(splittingMeteorRiseTime + splittingMeteorBombTime);
 
             int totalBerserkCharges = 10;
@@ -1121,8 +1147,12 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             ref float finalAttackCompletionState = ref npc.Infernum().ExtraAI[6];
             ref float totalMeteorBomings = ref npc.Infernum().ExtraAI[7];
             ref float fireIntensity = ref npc.Infernum().ExtraAI[9];
+
+            // First, create two heat mirages that circle the target and charge at them multiple times.
+            // This is intended to confuse them.
             if (attackTimer <= totalCharges * 90)
             {
+                // Create a text indicator.
                 if (finalAttackCompletionState != 1f)
                 {
                     npc.life = (int)(npc.lifeMax * 0.05);
@@ -1132,6 +1162,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The heat is surging..."), Color.Orange);
                     finalAttackCompletionState = 1f;
                 }
+
                 if (attackTimer % 90 < 45)
                 {
                     npc.spriteDirection = (npc.Center.X > player.Center.X).ToDirectionInt();
@@ -1140,6 +1171,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         xAimOffset = 890f * Math.Sign((npc.Center - player.Center).X);
 
                     float offsetAngle = 0f;
+
+                    // Angularly offset the hover destination based on the time to make it harder to predict.
                     if (attackTimer % 90 >= 20)
                         offsetAngle = MathHelper.Lerp(0f, MathHelper.ToRadians(25f), Utils.InverseLerp(20f, 45f, attackTimer % 90f));
 
@@ -1149,6 +1182,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(player.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
                     specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                 }
+
+                // Charge at the target.
                 if (attackTimer % 90 == 45)
                 {
                     npc.velocity = npc.SafeDirectionTo(player.Center) * confusingChargeSpeed;
@@ -1156,11 +1191,15 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     specialFrameType = (int)YharonFrameDrawingType.IdleWings;
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                 }
-                npc.Infernum().ExtraAI[10] = 3f; // 2 clones and original.
+
+                // Define the total instance count; 2 clones and the original.
+                npc.Infernum().ExtraAI[10] = 3f;
             }
+
+            // Then, perform a series of carpet bombs all over the arena.
             else if (attackTimer <= totalCharges * 90 + totalTimeSpentPerCarpetBomb)
             {
-                // Start to fade into magic sparkles.
+                // Begin to fade into magic sparkles.
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.65f, 0.15f);
                 npc.life = (int)MathHelper.Lerp(npc.life, npc.lifeMax * 0.025f, 0.025f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1169,32 +1208,38 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(12f, 12f), ModContent.ProjectileType<MajesticSparkle>(), 0, 0f);
                 }
 
+                // Fly towards the hover destination near the target.
                 float adjustedAttackTimer = attackTimer - totalCharges * 90;
                 float directionToDestination = (npc.Center.X > player.Center.X).ToDirectionInt();
                 if (adjustedAttackTimer < splittingMeteorRiseTime)
                 {
                     Vector2 destination = player.Center + new Vector2(directionToDestination * 750f, -300f);
-                    Vector2 idealVelocity = npc.SafeDirectionTo(destination) * splittingMeteorBombingSpeed;
+                    Vector2 idealVelocity = npc.SafeDirectionTo(destination) * splittingMeteorHoverSpeed;
 
                     npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.035f);
                     npc.rotation = npc.rotation.AngleTowards(0f, 0.25f);
 
                     npc.spriteDirection = (npc.Center.X > player.Center.X).ToDirectionInt();
 
-                    if (Vector2.Distance(destination, npc.Center) < 32f)
+                    // Once it has been reached, change the attack timer to begin the carpet bombing.
+                    if (npc.WithinRange(destination, 32f))
                         attackTimer = splittingMeteorRiseTime + totalCharges * 90 - 1f;
                     specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                 }
+
+                // Begin flying horizontally.
                 else if (adjustedAttackTimer == splittingMeteorRiseTime)
                 {
-                    Vector2 velocity = npc.SafeDirectionTo(player.Center);
-                    velocity.Y *= 0.15f;
-                    velocity = velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection);
+                    Vector2 chargeDirection = npc.SafeDirectionTo(player.Center);
+                    chargeDirection.Y *= 0.15f;
+                    chargeDirection = chargeDirection.SafeNormalize(Vector2.UnitX * npc.spriteDirection);
 
                     specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
 
-                    npc.velocity = velocity * splittingMeteorBombingSpeed * 1.55f;
+                    npc.velocity = chargeDirection * splittingMeteorBombingSpeed;
                 }
+
+                // And vomit meteors.
                 else
                 {
                     npc.position.X += npc.SafeDirectionTo(player.Center).X * 7f;
@@ -1202,9 +1247,9 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
                     npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
 
-                    int fireballReleaseRate = 3;
                     if (adjustedAttackTimer % fireballReleaseRate == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(npc.Center + npc.velocity * 3f, npc.velocity, ModContent.ProjectileType<YharonFireball>(), 565, 0f, Main.myPlayer, 0f, 0f);
+
                     if (adjustedAttackTimer >= splittingMeteorRiseTime + splittingMeteorBombTime && totalMeteorBomings < 3)
                     {
                         attackTimer = totalCharges * 90;
@@ -1212,10 +1257,13 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     }
                 }
             }
+
+            // Lastly, do multiple final, powerful charges.
             else if (attackTimer <= totalCharges * 90 + totalTimeSpentPerCarpetBomb + totalBerserkCharges * 45)
             {
                 finalAttackCompletionState = 0f;
 
+                // Fade into magic sparkles more heavily.
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.3f, 0.15f);
                 npc.life = (int)MathHelper.Lerp(npc.life, npc.lifeMax * 0.01f, 0.025f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1226,9 +1274,11 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(12f, 12f), ModContent.ProjectileType<MajesticSparkle>(), 0, 0f);
                     }
                 }
-                // Longer trail and even more intense fire.
+
+                // Gain a longer trail and even more intense fire.
                 fireIntensity = 1.5f;
 
+                // Hover and charge.
                 if (attackTimer % 45 < 20)
                 {
                     npc.spriteDirection = (npc.Center.X > player.Center.X).ToDirectionInt();
@@ -1250,6 +1300,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                 }
             }
+
+            // After all final charges are complete, slow down, emit many sparkles and fart explosions, and die.
             else
             {
                 ref float pulseDeathEffectCooldown = ref npc.Infernum().ExtraAI[5];
@@ -1310,6 +1362,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
         {
             ref float enraged01Flag = ref npc.ai[2];
             ref float spawnedArena01Flag = ref npc.ai[3];
+
             // Create the arena, but not as a multiplayer client.
             // In single player, the arena gets created and never gets synced because it's single player.
             if (spawnedArena01Flag == 0f)
@@ -1432,15 +1485,19 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
 
                 int afterimageCount = 1;
                 bool phase2 = npc.Infernum().ExtraAI[2] == 1f;
-                bool inLastSubphases = npc.life / (float)npc.lifeMax <= 0.3f && phase2;
+                bool inLastSubphases = npc.life / (float)npc.lifeMax <= 0.4f && phase2;
 
-                if (attackType == YharonAttackType.PhoenixSupercharge ||
-                    inLastSubphases ||
+                // Cloak Yharon in a blazing white forme if in the last 4 subphases, performing a heat flash attack/phoenix supercharge/majestic charge,
+                // or if the phase transition/phase 2 invincibility countdowns are active.
+                if (inLastSubphases ||
+                    attackType == YharonAttackType.PhoenixSupercharge ||
                     attackType == YharonAttackType.HeatFlash ||
                     doingMajesticCharge ||
                     npc.Infernum().ExtraAI[3] > 0f ||
                     npc.Infernum().ExtraAI[11] > 0f)
                 {
+                    // Determine the intensity of the effect. This varies based the conditions by which is started but in certain cases
+                    // depends on ExtraAI[9];
                     float fireIntensity = npc.Infernum().ExtraAI[9];
                     if (attackType != YharonAttackType.PhoenixSupercharge && attackType != YharonAttackType.HeatFlash)
                         fireIntensity = 0.75f;
@@ -1449,16 +1506,23 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                         fireIntensity = MathHelper.Max(fireIntensity, 0.8f);
 
                     afterimageCount += (int)(fireIntensity * 20);
+
+                    // Fade to a rainbow color.
                     color = Color.Lerp(color, new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB, 0), fireIntensity);
 
+                    // And then brighten it to a point of searing white flames.
                     float whiteBlend = MathHelper.Lerp(0.9f, 0.5f, Utils.InverseLerp(0f, 14f, npc.velocity.Length(), true));
                     color = Color.Lerp(color, Color.White, whiteBlend);
+
+                    // This effect is reduced if Yharon is moving slowly/standing still, however.
                     if (npc.velocity.Length() < 3f)
-                    {
                         color *= MathHelper.Lerp(1f, 0.5f + (float)Math.Cos(Main.GlobalTime) * 0.08f, Utils.InverseLerp(3f, 0f, npc.velocity.Length()));
-                    }
+
                     color.A = 0;
                 }
+
+                // Cylicly change the base color to pink/lavender if doing a majestic charge.
+                // The result is still mostly white, however, due to additive coloring.
                 if (doingMajesticCharge)
                 {
                     color = Color.Lerp(Color.HotPink, Color.Lavender, (float)Math.Cos(Main.GlobalTime * 3f) * 0.5f + 0.5f);
@@ -1469,6 +1533,9 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                 for (int i = 0; i < afterimageCount; i++)
                 {
                     Vector2 drawOffset = Vector2.Zero;
+
+                    // Use a draw offset that becomes stronger the slower Yharon is. If he's fast enough,
+                    // no draw offset is used.
                     if (npc.velocity.Length() < 7f)
                     {
                         float angle = MathHelper.TwoPi * i / afterimageCount;
@@ -1484,11 +1551,7 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                 }
             }
             int illusionCount = (int)npc.Infernum().ExtraAI[10];
-            if (illusionCount == 0)
-            {
-                drawYharon(npc.Center);
-            }
-            else
+            if (illusionCount > 0)
             {
                 Player player = Main.player[npc.target];
                 for (int i = 0; i < illusionCount; i++)
@@ -1500,6 +1563,8 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
                     drawYharon(drawPosition, offsetAngle, (drawPosition.X > player.Center.X).ToDirectionInt() != npc.spriteDirection);
                 }
             }
+            else
+                drawYharon(npc.Center);
 
             return false;
         }

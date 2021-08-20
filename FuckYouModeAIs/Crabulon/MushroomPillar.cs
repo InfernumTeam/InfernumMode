@@ -27,7 +27,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 			projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
-            projectile.timeLeft = 240;
+            projectile.timeLeft = 200;
         }
 
 		public override void SendExtraAI(BinaryWriter writer)

@@ -1,7 +1,6 @@
-﻿using InfernumMode.FuckYouModeAIs.Polterghast;
+﻿using CalamityMod;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -28,6 +27,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
             npc.life = npc.lifeMax = 200;
             npc.damage = npc.defDamage;
+            npc.Calamity().DR = 0.4f;
             npc.dontTakeDamage = true;
 
             if (animationTime < 200f || phaseChangeCountdown > 0f)

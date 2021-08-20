@@ -1,4 +1,5 @@
-﻿using InfernumMode.FuckYouModeAIs.Polterghast;
+﻿using CalamityMod;
+using InfernumMode.FuckYouModeAIs.Polterghast;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -41,6 +42,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
             npc.damage = npc.defDamage;
             npc.defense = npc.defDefense;
+            npc.Calamity().DR = 0.35f;
             npc.dontTakeDamage = false;
 
             if (summonAnimationTimer < 200f)

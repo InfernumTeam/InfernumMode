@@ -354,14 +354,12 @@ namespace InfernumMode.FuckYouModeAIs.Yharon
             if (npc.Infernum().ExtraAI[2] == 0f && lifeRatio < 0.1f)
             {
                 npc.Infernum().ExtraAI[2] = 1f;
-
-                // The air is getting warmer around you...
-                string key = "Mods.CalamityMod.FlameText";
+                string text = "The air is scorching your skin...";
 
                 if (Main.netMode == NetmodeID.SinglePlayer)
-                    Main.NewText("The air is scorching your skin...", Color.Orange);
+                    Main.NewText(text, Color.Orange);
                 else if (Main.netMode == NetmodeID.Server)
-                    NetMessage.BroadcastChatMessage(NetworkText.FromKey(key), Color.Orange);
+                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Orange);
 
                 attackType = 0; // Reset the attack type.
 

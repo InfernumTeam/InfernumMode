@@ -105,7 +105,5 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
             return false;
         }
-
-        public override bool CanDamage() => Time >= 15f;
     }
 }

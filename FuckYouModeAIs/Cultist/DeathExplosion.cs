@@ -8,7 +8,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 {
     public class DeathExplosion : BaseWaveExplosionProjectile
 	{
-		public override int Lifetime => 80;
+		public override int Lifetime => 270;
 		public override float MaxRadius => 2100f;
 		public override float RadiusExpandRateInterpolant => 0.15f;
 		public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)

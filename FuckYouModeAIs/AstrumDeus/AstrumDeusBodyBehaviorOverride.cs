@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.AstrumDeus;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -39,6 +40,10 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             npc.Calamity().DR = 0.55f;
             npc.Calamity().newAI[1] = 600f;
 
+            Player target = Main.player[npc.target];
+            float headAngerFactor = headSegment.Infernum().ExtraAI[6];
+
+            // Perform segment positioning and rotation.
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.075f);
@@ -50,11 +55,31 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             if (Main.netMode != NetmodeID.MultiplayerClient && headSegment.localAI[1] == 1f && Main.rand.NextFloat() < npc.Opacity)
                 Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<AstralSparkle>(), 0, 0f);
 
-            // Grow any nearby stars.
-            int starGrowChance = (int)MathHelper.Lerp(230f, 135f, headSegment.Infernum().ExtraAI[6]);
             List<Projectile> stars = Utilities.AllProjectilesByID(ModContent.ProjectileType<GiantAstralStar>()).ToList();
-            if (stars.Count > 0 && stars.First().scale < 7f && Main.rand.NextBool(starGrowChance))
-                Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 8f), ModContent.ProjectileType<StellarEnergy>(), 0, 0f);
+
+            bool growingStar = stars.Count > 0 && stars.First().scale < 7f;
+            if (growingStar)
+            {
+                int starGrowChance = (int)MathHelper.Lerp(230f, 135f, headAngerFactor);
+                int laserShootChance = (int)MathHelper.Lerp(285f, 160f, headAngerFactor);
+
+                // Grow any nearby stars.
+                if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(starGrowChance))
+                    Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 8f), ModContent.ProjectileType<StellarEnergy>(), 0, 0f);
+
+                // And fire lasers at the target from time to time while doing so.
+                // This does not happen if the target is noticably close.
+                if (!npc.WithinRange(target.Center, 200f) && Main.rand.NextBool(laserShootChance))
+                {
+                    Main.PlaySound(SoundID.Item12, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float shootSpeed = npc.Distance(target.Center) / 135f + 18.5f;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * shootSpeed;
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AstralShot2>(), 160, 0f);
+                    }
+                }
+            }
 
             return false;
         }

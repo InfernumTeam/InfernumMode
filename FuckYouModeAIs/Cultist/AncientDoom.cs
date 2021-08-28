@@ -100,7 +100,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
             Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
             for (int i = 0; i < 45; i++)
             {
-                Vector2 doomVelocity = (MathHelper.TwoPi * i / 45f).ToRotationVector2() * 3.5f;
+                Vector2 doomVelocity = (MathHelper.TwoPi * i / 45f).ToRotationVector2() * 3.15f;
                 Utilities.NewProjectileBetter(projectile.Center, doomVelocity, ModContent.ProjectileType<DarkPulse>(), 130, 0f);
                 Utilities.NewProjectileBetter(projectile.Center, doomVelocity * 0.25f, ModContent.ProjectileType<DarkPulse>(), 130, 0f);
             }
@@ -109,7 +109,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
                 Vector2 beamDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
                 if (projectile.localAI[1] == 1f)
                     beamDirection = beamDirection.RotatedBy(MathHelper.TwoPi / 18f);
-                Utilities.NewProjectileBetter(projectile.Center, beamDirection, ModContent.ProjectileType<DoomBeam>(), 200, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, beamDirection, ModContent.ProjectileType<DoomBeam>(), 240, 0f);
             }
         }
     }

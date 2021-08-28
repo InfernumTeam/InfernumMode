@@ -68,7 +68,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			ref float initialXPosition = ref npc.Infernum().ExtraAI[8];
 			ref float borderDustCounter = ref npc.Infernum().ExtraAI[9];
 
-			bool shouldBeInPhase2 = npc.life < npc.lifeMax * 0.55f;
+			bool shouldBeInPhase2 = npc.life < npc.lifeMax * 0.65f;
 			bool inPhase2 = phaseState == 2f;
 			bool dying = npc.Infernum().ExtraAI[6] == 1f;
 
@@ -239,6 +239,14 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				// Create a rumble effect to go with the summoning of the pillars.
 				Main.LocalPlayer.Infernum().CurrentScreenShakePower = 15f;
 				return;
+			}
+
+			// Focus on the boss as it spawns.
+			if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 4000f))
+			{
+				Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
+				Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(0f, 15f, deathTimer, true);
+				Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(300f, 292f, deathTimer, true);
 			}
 
 			if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(36) && deathTimer >= 75f && deathTimer < 210f)
@@ -457,7 +465,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				Vector2 fireballVelocity = aimRotation.ToRotationVector2() * Main.rand.NextFloat(12f, 14f);
 				fireballVelocity = fireballVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
 
-				int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 105, 0f);
+				int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 150, 0f);
 				if (Main.projectile.IndexInRange(fireball) && phase2)
 					Main.projectile[fireball].tileCollide = false;
 				frameType = (int)CultistFrameState.HoldArmsOut;
@@ -522,7 +530,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				{
 					Vector2 fireballSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 24f, 6f);
 					Vector2 fireballVelocity = ((target.Center - fireballSpawnPosition + target.velocity * 20f).ToRotation() + MathHelper.Lerp(-0.8f, 0.8f, i / 3f)).ToRotationVector2() * 7.5f;
-					int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 115, 0f);
+					int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 155, 0f);
 					if (Main.projectile.IndexInRange(fireball))
 						Main.projectile[fireball].tileCollide = false;
 				}
@@ -631,7 +639,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 									if (!phase2)
 										lightningVelocity *= 1.15f;
 
-									int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 110, 0f);
+									int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 160, 0f);
 									Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();
 									Main.projectile[lightning].ai[1] = Main.rand.Next(100);
 									Main.projectile[lightning].tileCollide = false;
@@ -676,7 +684,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
 					if (Main.netMode != NetmodeID.MultiplayerClient)
 					{
-						int lightning = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<RedLightning>(), 170, 0f);
+						int lightning = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<RedLightning>(), 215, 0f);
 						if (Main.projectile.IndexInRange(lightning))
 						{
 							Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
@@ -754,7 +762,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 					Vector2 lightSpawnPosition = target.Center + target.velocity * 15f + Main.rand.NextVector2Circular(920f, 920f);
 					lightSpawnPosition += target.velocity * Main.rand.NextFloat(5f, 32f);
 					CreateTeleportTelegraph(npc.Center, lightSpawnPosition, 150, true, 1);
-					int light = Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 130, 0f);
+					int light = Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 170, 0f);
 					if (Main.projectile.IndexInRange(light))
 						Main.projectile[light].ai[0] = 215f - adjustedTime + Main.rand.Next(20);
 				}
@@ -993,7 +1001,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 					for (int i = 0; i < 5; i++)
 					{
 						Vector2 shootVelocity = (target.Center - iceMassSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 5f) * 3.2f;
-						Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), 110, 0f);
+						Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), 155, 0f);
 					}
 
 					npc.Center = teleportPosition;
@@ -1108,8 +1116,8 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 		public static void GotoNextAttackState(NPC npc)
 		{
 			npc.alpha = 0;
-			bool phase2 = npc.life < npc.lifeMax * 0.55f;
-			bool phase3 = npc.life < npc.lifeMax * 0.2f;
+			bool phase2 = npc.life < npc.lifeMax * 0.65f;
+			bool phase3 = npc.life < npc.lifeMax * 0.25f;
 			CultistAIState oldAttackState = (CultistAIState)(int)npc.ai[0];
 			CultistAIState newAttackState = CultistAIState.FireballBarrage;
 

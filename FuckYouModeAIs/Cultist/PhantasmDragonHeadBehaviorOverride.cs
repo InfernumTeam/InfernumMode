@@ -117,7 +117,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				if (i == segmentCount - 1)
 					bodyType = NPCID.CultistDragonTail;
 
-				int nextSegment = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, bodyType, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
+				int nextSegment = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, bodyType, previousSegment, 0f, 0f, 0f, 0f, 255);
 				Main.npc[nextSegment].ai[3] = npc.whoAmI;
 				Main.npc[nextSegment].ai[1] = previousSegment;
 				Main.npc[nextSegment].realLife = npc.whoAmI;

@@ -379,13 +379,13 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             ref float cantKeepSpinningFlag = ref npc.Infernum().ExtraAI[0];
 
             // Check if any segments are too close to the target.
-            bool tooClose = npc.WithinRange(target.Center, 750f);
+            bool tooClose = npc.WithinRange(target.Center, 650f);
             int bodyType = ModContent.NPCType<AstrumDeusBodySpectral>();
             if (!tooClose)
             {
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].type != bodyType || !Main.npc[i].active || !Main.npc[i].WithinRange(target.Center, 425f))
+                    if (Main.npc[i].type != bodyType || !Main.npc[i].active || !Main.npc[i].WithinRange(target.Center, 300f))
                         continue;
 
                     tooClose = true;
@@ -397,14 +397,13 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             // This delays the star creation.
             if (attackTimer < 60f && tooClose)
             {
-                if (attackTimer < 60f)
-                    attackTimer = 30f;
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * -20f, 1.5f);
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * -30f, 3f);
+                attackTimer = 30f;
             }
 
             // Move near the target if it's too far away if the star has not been created yet.
             // This delays the star creation.
-            if (attackTimer < 60f && !npc.WithinRange(target.Center, 1350f))
+            if (attackTimer < 60f && !npc.WithinRange(target.Center, 1550f))
             {
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * 23f, 1.5f);
                 attackTimer = 30f;
@@ -439,7 +438,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             }
 
             // If an opening is found to hit the target and the star is fully charged, fly towards the target and send the star towards them too.
-            bool aimedTowardsPlayer = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.Pi * 0.1f;
+            bool aimedTowardsPlayer = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.Pi * 0.18f;
             if (aimedTowardsPlayer && stars.Count > 0 && stars.First().velocity == Vector2.Zero && attackTimer > 90f)
             {
                 stars.First().velocity = stars.First().SafeDirectionTo(target.Center) * MathHelper.Lerp(4f, 8f, beaconAngerFactor);
@@ -570,7 +569,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             // Drift towards the player.
             float rotateThreshold = MathHelper.Pi * 0.76f;
             if (rayHasBeenReleased && (attackTimer - fireDelay) % (AstralPlasmaBeam.Lifetime + 40f) > AstralPlasmaBeam.Lifetime)
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) - 0.2f, 0.027f, true) * 6f;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) - 0.2f, 0.027f, true) * idealGeneralMoveSpeed;
             
             if (!npc.WithinRange(target.Center, 475f) && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < rotateThreshold)
             {
@@ -584,7 +583,7 @@ namespace InfernumMode.FuckYouModeAIs.AstrumDeus
             {
                 npc.Center = npc.Center.MoveTowards(target.Center, 56f);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * npc.velocity.Length();
-                attackTimer = fireDelay - 50f;
+                attackTimer = fireDelay - 80f;
             }
 
             // Create plasma particles near the mouth to indicate that something is happening.

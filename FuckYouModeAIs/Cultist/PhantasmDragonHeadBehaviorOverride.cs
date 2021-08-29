@@ -7,7 +7,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 {
 	public class PhantasmDragonHeadBehaviorOverride : NPCBehaviorOverride
 	{
-		public override int NPCOverrideType => NPCID.CultistDragonBody1;
+		public override int NPCOverrideType => NPCID.CultistDragonHead;
 
 		public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 

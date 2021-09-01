@@ -54,7 +54,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				if (!npc.WithinRange(target.Center, 250f))
 				{
 					float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 14f, 0.065f);
-					npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
+					npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.0415f, true) * newSpeed;
 				}
 				else if (npc.velocity.Length() < 24f)
 					npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length() + 0.1f, 24f, 0.16f);
@@ -62,14 +62,18 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 				openMouthFlag = 1f;
 
 				// Release bursts of shadow fireballs at the target.
-				if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 38f == 37f)
+				if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 24f == 23f)
 				{
-					Vector2 fireballVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 7.8f;
-					fireballVelocity = fireballVelocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi / 5f).RotatedByRandom(0.16f);
+					for (int i = 0; i < 3; i++)
+					{
+						Vector2 fireballVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 7.8f;
+						fireballVelocity = fireballVelocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi / 5f).RotatedByRandom(0.16f);
+						fireballVelocity = fireballVelocity.RotatedBy(MathHelper.Lerp(-0.27f, 0.27f, i / 2f));
 
-					int fireball = Utilities.NewProjectileBetter(npc.Center + fireballVelocity, fireballVelocity, ProjectileID.CultistBossFireBallClone, 110, 0f);
-					if (!Main.projectile.IndexInRange(fireball))
-						Main.projectile[fireball].tileCollide = false;
+						int fireball = Utilities.NewProjectileBetter(npc.Center + fireballVelocity, fireballVelocity, ProjectileID.CultistBossFireBallClone, 110, 0f);
+						if (!Main.projectile.IndexInRange(fireball))
+							Main.projectile[fireball].tileCollide = false;
+					}
 				}
 			}
 			else

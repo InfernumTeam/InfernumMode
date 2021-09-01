@@ -426,14 +426,13 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
 		public static void DoAttack_FireballBarrage(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
 		{
-			int fireballShootRate = 5;
-			int fireballCount = phase2 ? 10 : 32;
+			int fireballShootRate = phase2 ? 9 : 5;
+			int fireballCount = phase2 ? 38 : 32;
 			int attackLength = 105 + fireballShootRate * fireballCount;
 			if (phase2)
 				attackLength += 270;
 
-			bool canShootFireballs = attackTimer < 105 + fireballShootRate * fireballCount;
-			canShootFireballs &= attackTimer >= 105f && attackTimer % fireballShootRate == fireballShootRate - 1f;
+			bool canShootFireballs = attackTimer >= 105f && attackTimer < 105f + fireballShootRate * fireballCount;
 
 			ref float aimRotation = ref npc.Infernum().ExtraAI[0];
 
@@ -456,19 +455,52 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 			// Shoot fireballs.
 			else if (canShootFireballs)
 			{
-				Vector2 fireballSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 24f, 6f);
-				if (aimRotation == 0f)
-					aimRotation = (target.Center - fireballSpawnPosition + (!phase2 ? Vector2.Zero : target.velocity * 30f)).ToRotation();
-				else if (!phase2)
-					aimRotation = aimRotation.AngleTowards(npc.AngleTo(target.Center), 0.1f);
+				// Fire a barrage of fireballs from the hands in Phase 1.
+				if (!phase2)
+				{
+					if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % fireballShootRate == fireballShootRate - 1f)
+					{
+						Vector2 fireballSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 24f, 6f);
+						if (aimRotation == 0f)
+							aimRotation = (target.Center - fireballSpawnPosition + target.velocity * 30f).ToRotation();
+						else
+							aimRotation = aimRotation.AngleTowards(npc.AngleTo(target.Center), 0.1f);
 
-				Vector2 fireballVelocity = aimRotation.ToRotationVector2() * Main.rand.NextFloat(12f, 14f);
-				fireballVelocity = fireballVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
+						Vector2 fireballShootVelocity = aimRotation.ToRotationVector2() * Main.rand.NextFloat(12f, 14f);
+						fireballShootVelocity = fireballShootVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
 
-				int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 150, 0f);
-				if (Main.projectile.IndexInRange(fireball) && phase2)
-					Main.projectile[fireball].tileCollide = false;
-				frameType = (int)CultistFrameState.HoldArmsOut;
+						Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 150, 0f);
+					}
+					frameType = (int)CultistFrameState.HoldArmsOut;
+				}
+
+				// In Phase 2 however, conjure fireballs that appear from the sides of the target.
+                else
+				{
+					// Also make cinders appear around the target to actually give a sense that things are warming up.
+					for (int i = 0; i < 4; i++)
+                    {
+						if (!Main.rand.NextBool(7))
+							continue;
+
+						Dust fire = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Square(-1200f, 1200f), 6);
+						fire.velocity = -Vector2.UnitY.RotatedByRandom(0.35f) * Main.rand.NextFloat(2.5f, 4f);
+						fire.scale *= Main.rand.NextFloat(1f, 1.4f);
+						fire.fadeIn = Main.rand.NextFloat(0.4f, 0.75f);
+						fire.noGravity = true;
+                    }
+
+					if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % fireballShootRate == fireballShootRate - 1f)
+					{
+						Vector2 fireballSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(1035f, 1185f);
+						Vector2 fireballShootVelocity = (target.Center + target.velocity * 25f - fireballSpawnPosition).SafeNormalize(Vector2.UnitY) * 8.5f;
+
+						int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 165, 0f);
+						if (Main.projectile.IndexInRange(fireball) && phase2)
+							Main.projectile[fireball].tileCollide = false;
+					}
+					frameType = (int)CultistFrameState.RaiseArmsUp;
+				}
 			}
 
 			// Shoot a powerful fire beam in phase 2.
@@ -521,18 +553,6 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 						Vector2 aimDirection = (target.Center - beamShootPosition).SafeNormalize(-Vector2.UnitY);
 						Utilities.NewProjectileBetter(beamShootPosition, aimDirection, ModContent.ProjectileType<CultistFireBeamTelegraph>(), 0, 0f);
 					}
-				}
-			}
-
-			if (Main.netMode != NetmodeID.MultiplayerClient && phase2 && attackTimer < 105 + fireballShootRate * fireballCount && attackTimer > 105f && attackTimer % 25f == 24f)
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					Vector2 fireballSpawnPosition = npc.Center + new Vector2(npc.spriteDirection * 24f, 6f);
-					Vector2 fireballVelocity = ((target.Center - fireballSpawnPosition + target.velocity * 20f).ToRotation() + MathHelper.Lerp(-0.8f, 0.8f, i / 3f)).ToRotationVector2() * 7.5f;
-					int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballVelocity, ProjectileID.CultistBossFireBall, 155, 0f);
-					if (Main.projectile.IndexInRange(fireball))
-						Main.projectile[fireball].tileCollide = false;
 				}
 			}
 

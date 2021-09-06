@@ -2,7 +2,6 @@ using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
@@ -22,7 +21,7 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
             projectile.ignoreWater = true;
             projectile.timeLeft = 240;
             projectile.scale = 0.15f;
-            projectile.extraUpdates = 1;
+            projectile.extraUpdates = 3;
             projectile.hide = true;
         }
 
@@ -31,6 +30,7 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
             projectile.Opacity = Utils.InverseLerp(240f, 225f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 50f, projectile.timeLeft, true);
             if (projectile.Opacity > 1f)
                 projectile.Opacity = 1f;
+            projectile.Opacity *= 0.75f;
 
             projectile.scale = projectile.scale * 1.018f + 0.055f;
         }
@@ -54,9 +54,9 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
         {
             get
             {
-                Vector2 scale = new Vector2(projectile.scale, projectile.scale * 0.2f);
-                if (scale.Y > 1.55f)
-                    scale.Y = 1.55f;
+                Vector2 scale = new Vector2(projectile.scale, projectile.scale * 0.3f);
+                if (scale.Y > 4f)
+                    scale.Y = 4f;
                 scale *= 0.1f;
                 return scale;
             }
@@ -76,14 +76,12 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float width = Scale.X * 670f;
-            return Utils.CenteredRectangle(projectile.Center, new Vector2(width, Scale.Y * 85f)).Intersects(targetHitbox);
+            return Utils.CenteredRectangle(projectile.Center, new Vector2(width, Scale.Y * 185f)).Intersects(targetHitbox);
         }
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
         {
             drawCacheProjsBehindNPCsAndTiles.Add(index);
         }
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) =>  target.AddBuff(ModContent.BuffType<DarkFlames>(), 180);
     }
 }

@@ -21,6 +21,10 @@ namespace InfernumMode.Dusts
                 Vector2 idealVelocity = (vector - dust.position).SafeNormalize(-Vector2.UnitY);
                 dust.velocity = (dust.velocity * 4f + idealVelocity * dust.velocity.Length()) / 5f;
             }
+
+            if (!dust.noLight)
+                Lighting.AddLight(dust.position, Color.BlueViolet.ToVector3() * 0.35f);
+
             return true;
         }
 

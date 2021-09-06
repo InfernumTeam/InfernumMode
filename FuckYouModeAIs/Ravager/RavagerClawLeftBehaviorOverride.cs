@@ -1,5 +1,6 @@
 ﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
+using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,6 +30,9 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
 
         public static bool DoClawAI(NPC npc, bool leftClaw)
         {
+            if (npc.dontTakeDamage)
+                npc.life = 1;
+
             // Do targeting.
             npc.TargetClosest();
             Player target = Main.player[npc.target];
@@ -148,6 +152,19 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
                         npc.velocity *= 0.965f;
                     npc.rotation = npc.AngleTo(target.Center);
 
+                    // Emit magic as a telegraph to signal that a punch will happen soon.
+                    if (punchTimer >= 165f)
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            Dust darkMagicFire = Dust.NewDustPerfect(npc.Center + npc.rotation.ToRotationVector2() * 28f, ModContent.DustType<RavagerMagicDust>());
+                            darkMagicFire.velocity = (npc.rotation + Main.rand.NextFloat(-0.56f, 0.56f)).ToRotationVector2() * Main.rand.NextFloat(2f, 4f);
+                            darkMagicFire.position += Main.rand.NextVector2Circular(3f, 3f);
+                            darkMagicFire.scale = 1.45f;
+                            darkMagicFire.noGravity = true;
+                        }
+                    }
+
                     if (punchTimer >= 240f)
                     {
                         punchTimer = 0f;
@@ -159,6 +176,54 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
                     punchTimer++;
                     break;
                 case RavagerClawAttackState.AccelerationPunch:
+
+                    // Emit dust.
+                    if (punchTimer % 12f == 11f)
+                    {
+                        for (int i = 0; i < 18; i++)
+                        {
+                            Vector2 ringOffset = Vector2.UnitX * -npc.width / 2f - Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 18f) * new Vector2(8f, 16f);
+                            ringOffset = ringOffset.RotatedBy(npc.rotation);
+                            Dust darkMagicFire = Dust.NewDustDirect(npc.Center, 0, 0, ModContent.DustType<RavagerMagicDust>(), 0f, 0f, 160, default, 1f);
+                            darkMagicFire.scale = 1.35f;
+                            darkMagicFire.fadeIn = 1.4f;
+                            darkMagicFire.noGravity = true;
+                            darkMagicFire.position = npc.Center + ringOffset;
+                            darkMagicFire.velocity = npc.velocity * 0.1f;
+                            darkMagicFire.velocity = Vector2.Normalize(npc.Center - npc.velocity * 3f - darkMagicFire.position) * 1.25f;
+                        }
+                    }
+                    if (Main.rand.NextBool(4))
+                    {
+                        Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * MathHelper.Pi / 16f) * npc.width * 0.5f;
+                        Dust smoke = Dust.NewDustDirect(npc.position, npc.width, npc.height, 31, 0f, 0f, 100, default, 1f);
+                        smoke.position = npc.Center + spawnOffset;
+                        smoke.velocity *= 0.1f;
+                        smoke.fadeIn = 0.9f;
+                    }
+                    if (Main.rand.NextBool(32))
+                    {
+                        Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * MathHelper.Pi / 8f) * npc.width * 0.5f;
+                        Dust smoke = Dust.NewDustDirect(npc.position, npc.width, npc.height, 31, 0f, 0f, 155, default, 0.8f);
+                        smoke.velocity *= 0.3f;
+                        smoke.position = npc.Center + spawnOffset;
+                        if (Main.rand.NextBool(2))
+                            smoke.fadeIn = 1.4f;
+                    }
+                    if (Main.rand.Next(2) == 0)
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            Vector2 spawnOffset = -Vector2.UnitX.RotatedBy(npc.velocity.ToRotation() + Main.rand.NextFloatDirection() * MathHelper.PiOver4) * npc.width * 0.5f;
+                            Dust darkMagicFire = Dust.NewDustDirect(npc.position, npc.width, npc.height, ModContent.DustType<RavagerMagicDust>(), 0f, 0f, 0, default, 1.45f);
+                            darkMagicFire.velocity *= 0.3f;
+                            darkMagicFire.position = npc.Center + spawnOffset;
+                            darkMagicFire.noGravity = true;
+                            if (Main.rand.NextBool(2))
+                                darkMagicFire.fadeIn = 1.75f;
+                        }
+                    }
+
                     if (punchTimer >= 45f)
                     {
                         punchTimer = 0f;
@@ -166,7 +231,7 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
                         npc.velocity *= 0.5f;
                         npc.netUpdate = true;
                     }
-                    npc.velocity *= 1.01f;
+                    npc.velocity *= 1.014f;
                     npc.rotation = npc.velocity.ToRotation();
 
                     punchTimer++;

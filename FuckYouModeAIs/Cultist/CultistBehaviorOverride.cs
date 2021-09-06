@@ -1284,7 +1284,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
 				for (int i = 0; i < 80; i++)
 				{
-					float fade = (1f - Math.Abs(i - 40f) / 40f);
+					float fade = 1f - Math.Abs(i - 40f) / 40f;
 					Vector2 drawPosition = baseDrawPosition + Vector2.UnitY * (i - 40f) / 40f * borderOutwardness;
 					spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Purple, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.None, 0f);
 				}
@@ -1299,7 +1299,7 @@ namespace InfernumMode.FuckYouModeAIs.Cultist
 
 				for (int i = 0; i < 80; i++)
 				{
-					float fade = (1f - Math.Abs(i - 40f) / 40f);
+					float fade = 1f - Math.Abs(i - 40f) / 40f;
 					Vector2 drawPosition = baseDrawPosition + Vector2.UnitY * (i - 40f) / 40f * borderOutwardness;
 					spriteBatch.Draw(borderTexture, drawPosition, null, Color.Lerp(borderColor, Color.Purple, 1f - fade) * fade, 0f, borderTexture.Size() * 0.5f, new Vector2(0.33f, 1f), SpriteEffects.FlipHorizontally, 0f);
 				}

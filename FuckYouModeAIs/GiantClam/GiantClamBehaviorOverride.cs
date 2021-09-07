@@ -43,6 +43,13 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
 
                 npc.chaseable = false;
                 npc.defense = 9999;
+
+                if (Main.hardMode)
+                {
+                    npc.lifeMax = 5000;
+                    npc.life = 5000;
+                }
+
                 return false;
             }
             else if (hitCount == HitsRequiredToAnger)
@@ -50,14 +57,12 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
                 hitCount++;
                 npc.defense = 15;
                 npc.damage = 150;
+
                 if (Main.hardMode)
                 {
                     npc.defense = 35;
                     npc.damage = 250;
                 }
-
-                if (hidingInShell == 1f)
-                    npc.defense *= 100;
 
                 npc.defDamage = npc.damage;
                 npc.defDefense = npc.defense;
@@ -80,22 +85,17 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
                     if (attackTimer == 0 || attackTimer == 180)
                     {
                         int projectileType = ModContent.ProjectileType<PearlSwirl>();
-                        Utilities.NewProjectileBetter(npc.Center, new Vector2(10f, 0f), projectileType, 150, 0f);
-                        Utilities.NewProjectileBetter(npc.Center, new Vector2(0f, 10f), projectileType, 150, 0f);
-                        Utilities.NewProjectileBetter(npc.Center, new Vector2(-10f, 0f), projectileType, 150, 0f);
-                        Utilities.NewProjectileBetter(npc.Center, new Vector2(0f, -10f), projectileType, 150, 0f);
+                        for (float angle = 0; angle <= MathHelper.TwoPi; angle += MathHelper.PiOver2)
+                            Utilities.NewProjectileBetter(npc.Center, angle.ToRotationVector2() * 10f, projectileType, npc.damage, 0f);
                         if (hardmode)
                         {
-                            int one = Utilities.NewProjectileBetter(npc.Center, new Vector2(10f, 0f), projectileType, 150, 0f);
-                            int two = Utilities.NewProjectileBetter(npc.Center, new Vector2(0f, 10f), projectileType, 150, 0f);
-                            int three = Utilities.NewProjectileBetter(npc.Center, new Vector2(-10f, 0f), projectileType, 150, 0f);
-                            int four = Utilities.NewProjectileBetter(npc.Center, new Vector2(0f, -10f), projectileType, 150, 0f);
-                            int[] reverses = { one, two, three, four };
-                            foreach (int proj in reverses)
+                            for (float angle = 0; angle <= MathHelper.TwoPi; angle += MathHelper.PiOver2)
                             {
+                                int proj = Utilities.NewProjectileBetter(npc.Center, angle.ToRotationVector2() * 10f, projectileType, npc.damage, 0f);
                                 if (Main.projectile.IndexInRange(proj))
                                     Main.projectile[proj].ai[0] = 1f;
                             }
+                            
                         }
                     }
 
@@ -149,6 +149,7 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
                 case GiantClamAttackState.TeleportSlam:
                     ref float attackSubstate = ref npc.Infernum().ExtraAI[3];
                     ref float slamCount = ref npc.Infernum().ExtraAI[4];
+                    npc.damage = hardmode ? 200 : 300;
                     if (attackTimer == 1f)
                         attackSubstate = 1f;
 
@@ -220,7 +221,12 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
             }
 
             if (hidingInShell == 0)
+            {
                 Lighting.AddLight(npc.Center, 0f, npc.Opacity * 2.5f, npc.Opacity * 2.5f);
+                npc.defense = npc.defDefense;
+            }
+            else
+                npc.defense = 9999;
 
             return false;
             
@@ -236,6 +242,7 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
 
             npc.Infernum().ExtraAI[0] = (float)NextAttack;
             npc.Infernum().ExtraAI[1] = 0f;
+            npc.damage = Main.hardMode ? 150 : 250;
 
             switch (NextAttack)
             {

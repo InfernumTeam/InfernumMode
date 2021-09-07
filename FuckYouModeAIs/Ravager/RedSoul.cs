@@ -44,8 +44,8 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
                 Player closestTarget = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
                 projectile.velocity = projectile.velocity.RotateTowards(projectile.AngleTo(closestTarget.Center), 0.042f);
             }
-            else if (projectile.velocity.Length() < 31f)
-                projectile.velocity *= 1.013f;
+            else if (projectile.velocity.Length() < 17f)
+                projectile.velocity *= 1.01195f;
 
             Time++;
         }

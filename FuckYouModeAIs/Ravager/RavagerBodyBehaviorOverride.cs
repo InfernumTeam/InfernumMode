@@ -505,6 +505,9 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
                     {
                         npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, 0.3f);
                         npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, 2f);
+
+                        // Stay away from the target directly, to prevent cheap hits.
+                        npc.Center -= npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * Utils.InverseLerp(270f, 165f, npc.Distance(target.Center), true) * 28f;
                     }
 
                     // Prepare to slow down after enough time has passed.

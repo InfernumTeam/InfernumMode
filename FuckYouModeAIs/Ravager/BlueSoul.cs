@@ -38,8 +38,8 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
 
             projectile.rotation = projectile.velocity.ToRotation();
 
-            if (projectile.velocity.Length() < 31f)
-                projectile.velocity *= 1.0155f;
+            if (projectile.velocity.Length() < 17f)
+                projectile.velocity *= 1.0145f;
         }
 
         public override bool CanDamage() => projectile.Opacity > 0.75f;

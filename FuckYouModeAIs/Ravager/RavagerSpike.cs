@@ -26,7 +26,7 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
             projectile.tileCollide = projectile.velocity.Y > 0f;
 
-            if (projectile.velocity.Y < 14f)
+            if (projectile.velocity.Y < 7f)
                 projectile.velocity.Y += projectile.velocity.Y > 0f ? FallingGravity : FlyingGravity;
         }
     }

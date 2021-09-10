@@ -84,6 +84,10 @@ namespace InfernumMode
 			// Flip the matrix around 180 degrees.
 			effectView *= Matrix.CreateRotationZ(MathHelper.Pi);
 
+			// Account for the inverted gravity effect.
+			if (Main.LocalPlayer.gravDir == -1f)
+				effectView *= Matrix.CreateScale(1f, -1f, 1f) * Matrix.CreateTranslation(0f, height, 0f);
+
 			// And account for the current zoom.
 			effectView *= Matrix.CreateScale(zoom.X, zoom.Y, 1f);
 

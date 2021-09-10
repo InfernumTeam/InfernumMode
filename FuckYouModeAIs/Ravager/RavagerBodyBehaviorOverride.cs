@@ -318,9 +318,9 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
                     if (WorldUtils.Find(checkArea, Searches.Chain(new Searches.Down(4500), new Conditions.IsSolid()), out Point groundedPosition))
                         checkArea = groundedPosition;
 
-                    for (int teleportAttempts = 0; teleportAttempts < 45000; teleportAttempts++)
+                    for (int teleportAttempts = 0; teleportAttempts < 100000; teleportAttempts++)
                     {
-                        float maxSearchArea = MathHelper.Lerp(35f, 110f, (float)Math.Sqrt(teleportAttempts / 45000f));
+                        float maxSearchArea = MathHelper.Lerp(35f, 180f, (float)Math.Sqrt(teleportAttempts / 100000f));
 
                         // Ensure that the teleport position is not too close to the target, to prevent cheap hits.
                         Vector2 teleportOffset;
@@ -331,20 +331,21 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
                         Point teleportPosition = (checkArea.ToVector2() + teleportOffset).ToPoint();
 
                         // Discard areas that are not open enough.
-                        bool fitsForRavager = !Collision.SolidTiles(teleportPosition.X - 10, teleportPosition.X + 10, teleportPosition.Y - 9, teleportPosition.Y);
-                        bool fitsForPillars = !Collision.SolidTiles(teleportPosition.X - 16, teleportPosition.X + 16, teleportPosition.Y - 4, teleportPosition.Y);
+                        bool fitsForRavager = !Collision.SolidTiles(teleportPosition.X - 8, teleportPosition.X + 8, teleportPosition.Y - 9, teleportPosition.Y);
+                        bool fitsForPillars = !Collision.SolidTiles(teleportPosition.X - 11, teleportPosition.X + 11, teleportPosition.Y - 4, teleportPosition.Y);
 
                         if (!fitsForPillars || !fitsForRavager)
                             continue;
 
                         // And discard areas that don't have solid ground.
-                        bool solidGround = true;
-                        for (int i = -12; i < 12; i++)
+                        bool solidGround = false;
+                        for (int i = -8; i < 8; i++)
                         {
                             Tile ground = CalamityUtils.ParanoidTileRetrieval(teleportPosition.X + i, teleportPosition.Y + 1);
-                            if (!ground.nactive() || !Main.tileSolid[ground.type] || !Main.tileSolidTop[ground.type])
+                            bool notAFuckingTree = ground.type != TileID.Trees && ground.type != TileID.PineTree && ground.type != TileID.PalmTree;
+                            if (ground.nactive() && notAFuckingTree && (Main.tileSolid[ground.type] || Main.tileSolidTop[ground.type]))
                             {
-                                solidGround = false;
+                                solidGround = true;
                                 break;
                             }
                         }
@@ -361,7 +362,7 @@ namespace InfernumMode.FuckYouModeAIs.Ravager
                             int totalPillarsOnEachSide = lifeRatio < 0.45f ? 3 : 2;
                             for (int i = 0; i < totalPillarsOnEachSide; i++)
                             {
-                                float horizontalSpawnOffset = MathHelper.Lerp(195f, 525f, i / 3f);
+                                float horizontalSpawnOffset = MathHelper.Lerp(195f, 475f, i / 3f);
                                 NPC.NewNPC((int)(npc.Bottom.X - horizontalSpawnOffset), (int)npc.Bottom.Y - 8, ModContent.NPCType<FlamePillar>());
                                 NPC.NewNPC((int)(npc.Bottom.X + horizontalSpawnOffset), (int)npc.Bottom.Y - 8, ModContent.NPCType<FlamePillar>());
                             }

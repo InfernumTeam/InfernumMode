@@ -3,6 +3,7 @@ using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.Projectiles.Enemy;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -25,7 +26,7 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
 
         public override int NPCOverrideType => ModContent.NPCType<GiantClamNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
         public override bool PreAI(NPC npc)
         {
@@ -184,7 +185,7 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
                     }
                     else if (attackSubstate == 3f)
                     {
-                        if (npc.Center.Y > target.position.Y + 100 || npc.noTileCollide == false)
+                        if (npc.Bottom.Y > target.Top.Y || npc.noTileCollide == false)
                         {
                             npc.noTileCollide = false;
 
@@ -288,5 +289,17 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
                     npc.frame.Y = ((int)MathHelper.Clamp(attackTimer, 0f, 6f) + 5) * frameHeight;
             }
         }
-    }
+
+		public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            Vector2 origin = npc.frame.Size() * 0.5f;
+            Texture2D npcTexture = ModContent.GetTexture("CalamityMod/NPCs/SunkenSea/GiantClam");
+            Texture2D glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/SunkenSea/GiantClamGlow");
+            spriteBatch.Draw(npcTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.LightBlue, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            return false;
+		}
+	}
 }

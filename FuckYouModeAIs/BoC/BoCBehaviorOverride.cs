@@ -144,7 +144,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
             if (horizontalTeleportDirection == 0f)
                 horizontalTeleportDirection = Main.rand.NextBool(2).ToDirectionInt();
             ref float canFloatFlag = ref npc.Infernum().ExtraAI[0];
-            Vector2 teleportDestination = target.Center + new Vector2(horizontalTeleportDirection * 440f, -240f);
+            Vector2 teleportDestination = target.Center + new Vector2(horizontalTeleportDirection * 400f, -210f);
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
                 return;
 
@@ -161,7 +161,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 11.5f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 14f;
                     npc.netUpdate = true;
                 }
             }
@@ -214,11 +214,11 @@ namespace InfernumMode.FuckYouModeAIs.BoC
                     npc.direction = (target.Center.X < npc.Center.X).ToDirectionInt();
                     npc.netUpdate = true;
 
-                    for (int i = 0; i < 16; i++)
+                    for (int i = 0; i < 30; i++)
                     {
                         Vector2 spawnPosition = npc.Center - Vector2.UnitY.RotatedByRandom(0.42f) * 12f;
-                        Vector2 bloodVelocity = Utilities.GetProjectilePhysicsFiringVelocity(spawnPosition, target.Center, BloodGeyser2.Gravity, Main.rand.NextFloat(11f, 13.35f), out _);
-                        bloodVelocity = bloodVelocity.RotatedByRandom(0.18f);
+                        Vector2 bloodVelocity = Utilities.GetProjectilePhysicsFiringVelocity(spawnPosition, target.Center, BloodGeyser2.Gravity, Main.rand.NextFloat(12f, 14f), out _);
+                        bloodVelocity = bloodVelocity.RotatedByRandom(0.78f);
 
                         Utilities.NewProjectileBetter(spawnPosition, bloodVelocity, ModContent.ProjectileType<BloodGeyser2>(), 50, 0f);
                     }
@@ -454,7 +454,7 @@ namespace InfernumMode.FuckYouModeAIs.BoC
                     newAttackType = BoCAttackState.CreeperBloodDripping;
                     break;
                 case BoCAttackState.CreeperBloodDripping:
-                    newAttackType = lifeRatio < Subphase3LifeRatio ? BoCAttackState.PsionicBombardment : BoCAttackState.IdlyFloat;
+                    newAttackType = lifeRatio < Subphase3LifeRatio ? (Main.rand.NextBool() ? BoCAttackState.PsionicBombardment : BoCAttackState.ConvergingIllusions) : BoCAttackState.IdlyFloat;
                     break;
                 case BoCAttackState.ConvergingIllusions:
                     newAttackType = BoCAttackState.PsionicBombardment;

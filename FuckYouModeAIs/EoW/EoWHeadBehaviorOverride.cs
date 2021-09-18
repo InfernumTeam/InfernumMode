@@ -95,7 +95,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
             {
                 int secondWorm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai1: splitCounter, ai2: npc.ai[2] * 0.5f, Target: npc.target);
                 if (Main.npc.IndexInRange(secondWorm))
-                    Main.npc[secondWorm]
+                    Main.npc[secondWorm].realLife = npc.whoAmI;
             }
 
             npc.netUpdate = true;

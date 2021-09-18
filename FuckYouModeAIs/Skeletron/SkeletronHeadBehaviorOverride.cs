@@ -249,9 +249,12 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int skull = Utilities.NewProjectileBetter(skullShootPosition, skullShootVelocity, ProjectileID.Skull, 115, 0f);
+                        int skull = Utilities.NewProjectileBetter(skullShootPosition, skullShootVelocity, ProjectileID.Skull, 100, 0f);
                         if (Main.projectile.IndexInRange(skull))
+                        {
+                            Main.projectile[skull].ai[0] = -1f;
                             Main.projectile[skull].tileCollide = false;
+                        }
                     }
                 }
                 npc.rotation = npc.velocity.X * 0.04f;
@@ -297,18 +300,18 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            float skullSpeed = 6f;
+                            float skullSpeed = 4.8f;
                             int skullCount = 3;
                             if (currentShotCounter % 5 == 4)
                             {
-                                skullSpeed *= 1.35f;
+                                skullSpeed *= 1.2f;
                                 skullCount = 5;
                             }
 
                             for (int i = 0; i < skullCount; i++)
                             {
                                 Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
-                                int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                                int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 90, 0f);
                                 if (Main.projectile.IndexInRange(skull))
                                     Main.projectile[skull].ai[0] = 0.005f;
                             }
@@ -372,7 +375,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                             for (int i = 0; i < 4; i++)
                             {
                                 Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 4f) * 7f;
-                                Utilities.NewProjectileBetter(npc.Center, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 105, 0f);
+                                Utilities.NewProjectileBetter(npc.Center, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 95, 0f);
                             }
                         }
                     }
@@ -435,7 +438,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                             for (int i = 0; i < skullCount; i++)
                             {
                                 Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 0.25f))) * skullSpeed;
-                                int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                                int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 90, 0f);
                                 if (Main.projectile.IndexInRange(skull))
                                     Main.projectile[skull].ai[0] = 0.005f;
                             }
@@ -473,7 +476,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                         for (int i = 0; i < skullCount; i++)
                         {
                             Vector2 skullVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 95f).RotatedBy(MathHelper.Lerp(-0.44f, 0.44f, i / (skullCount - 1f))) * skullSpeed;
-                            int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                            int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 90, 0f);
                             if (Main.projectile.IndexInRange(skull))
                                 Main.projectile[skull].ai[0] = 0.005f;
                         }

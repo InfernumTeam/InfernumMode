@@ -345,7 +345,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 Main.PlaySound(SoundID.NPCHit20, npc.position);
             }
 
-            gotoNextAttack = attackTimer >= shootRate * (totalBursts + 0.5f);
+            gotoNextAttack = attackTimer >= shootRate * (totalBursts + 0.9f);
         }
 
         #endregion Specific Attacks

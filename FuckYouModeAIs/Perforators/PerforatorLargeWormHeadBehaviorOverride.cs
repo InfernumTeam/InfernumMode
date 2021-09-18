@@ -1,12 +1,9 @@
 ﻿using CalamityMod;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.FuckYouModeAIs.BoC;
 using InfernumMode.FuckYouModeAIs.EyeOfCthulhu;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -26,6 +23,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             npc.TargetClosest();
 
             npc.alpha = Utils.Clamp(npc.alpha - 30, 0, 255);
+            npc.Calamity().DR = 0.05f;
 
             // Create segments.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedSegments == 0f)

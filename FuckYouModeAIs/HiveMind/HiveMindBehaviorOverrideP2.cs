@@ -41,7 +41,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
         public const float LungeSpinTotalRotations = 2f;
         public const float LungeSpinChargeDelay = 15f;
         public const float LungeSpinChargeTime = 20f;
-        public const float RainDashOffset = 300f;
+        public const float RainDashOffset = 380f;
         public const float EaterWallSlowdownTime = 40f;
         public const float EaterWallSummoningTime = 60f;
         public const float EaterWallTotalHeight = 1900f;
@@ -64,6 +64,8 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 
             Player target = Main.player[npc.target];
             npc.defense = target.ZoneCorrupt ? -5 : 9999;
+            npc.Calamity().DR = 0f;
+
             CalamityGlobalNPC.hiveMind = npc.whoAmI;
 
             if (below20 && npc.Infernum().ExtraAI[10] == 0f)
@@ -358,7 +360,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             if (attackTimer == LungeSpinTime + LungeSpinChargeDelay)
             {
                 DoRoar(npc, false);
-                npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 4f;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 3.3f;
                 npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.InverseLerp(1f, 0.6f, lifeRatio));
                 fadeoutCountdown = HiveMindFadeoutTime;
                 npc.netUpdate = true;
@@ -406,7 +408,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
 
             if (npc.alpha > 0)
             {
-                npc.alpha -= 5;
+                npc.alpha -= 4;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.Center = target.Center;
@@ -419,7 +421,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 if (npc.alpha <= 0)
                 {
                     DoRoar(npc, true);
-                    npc.velocity = Vector2.UnitX * dashDirection * -12f;
+                    npc.velocity = Vector2.UnitX * dashDirection * -11f;
                     npc.velocity *= MathHelper.Lerp(1f, 1.575f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
                     npc.netUpdate = true;
                 }
@@ -489,7 +491,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             // And release the Eater of Souls wall.
             else
             {
-                verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < 0.2f ? 3.6f : 4.15f);
+                verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < 0.2f ? 4.5f : 4.15f);
 
                 Vector2 wallSpawnOffset = new Vector2(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
                 Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < 0.2f ? MathHelper.ToRadians(10f) : 0f) * 10f;

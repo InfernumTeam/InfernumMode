@@ -214,7 +214,7 @@ namespace InfernumMode.FuckYouModeAIs.EyeOfCthulhu
                     ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
 
                     if (chargeDirection == 0f)
-                        chargeDirection = Main.rand.NextBool(2).ToDirectionInt();
+                        chargeDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
                     // Redirect.
                     if (subState == 0f)

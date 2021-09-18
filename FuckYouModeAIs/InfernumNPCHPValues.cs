@@ -34,7 +34,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             [ModContent.NPCType<PerforatorHive>()] = 6132,
             [ModContent.NPCType<CrimulanSGBig>()] = 5100,
             [ModContent.NPCType<EbonianSGBig>()] = 5100,
-            [NPCID.WallofFleshEye] = 4115,
+            [NPCID.WallofFleshEye] = 3232,
             [NPCID.WallofFlesh] = 11875,
             [NPCID.Spazmatism] = 36260,
             [NPCID.Retinazer] = 33915,

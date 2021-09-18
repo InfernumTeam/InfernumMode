@@ -31,7 +31,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 shootTimer = 0f;
                 npc.netUpdate = true;
             }
-            npc.Calamity().DR = 0.56f;
+            npc.Calamity().DR = 0.1f;
             return true;
         }
     }

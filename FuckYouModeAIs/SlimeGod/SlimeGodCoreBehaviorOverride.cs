@@ -245,12 +245,18 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             npc.damage = npc.defDamage;
             ref float spinAngleOffset = ref npc.Infernum().ExtraAI[0];
 
+            if (attackTimer == 1f)
+            {
+                spinAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                npc.netUpdate = true;
+            }
+
             if (attackTimer < 180f)
             {
                 npc.damage = 0;
 
                 Vector2 destination = target.Center + spinAngleOffset.ToRotationVector2() * 360f;
-                npc.Center = npc.Center.MoveTowards(destination, 46f);
+                npc.Center = npc.Center.MoveTowards(destination, 32f);
 
                 spinAngleOffset += MathHelper.TwoPi * Utils.InverseLerp(170f, 150f, attackTimer, true) / 90f;
                 npc.rotation += spinAngleOffset * 0.3f;

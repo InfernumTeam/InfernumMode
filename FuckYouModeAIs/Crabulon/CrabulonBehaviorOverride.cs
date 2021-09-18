@@ -20,12 +20,12 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 
         #region Enumerations
         internal enum CrabulonAttackState
-		{
+        {
             SpawnWait,
             JumpToTarget,
             WalkToTarget,
             CreateGroundMushrooms
-		}
+        }
         #endregion
 
         #region AI
@@ -105,7 +105,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 
         #region Specific Attacks
         internal static void DoDespawnEffects(NPC npc)
-		{
+        {
             npc.noTileCollide = true;
             npc.noGravity = false;
             npc.alpha = Utils.Clamp(npc.alpha + 20, 0, 255);
@@ -113,9 +113,9 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             if (npc.timeLeft > 45)
                 npc.timeLeft = 45;
         }
-        
+
         internal static void DoAttack_SpawnWait(NPC npc, float attackTimer)
-		{
+        {
             if (attackTimer == 0f)
                 npc.alpha = 255;
             npc.damage = 0;
@@ -128,7 +128,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 
             if (attackTimer >= 210f || npc.justHit)
                 GotoNextAttackState(npc);
-		}
+        }
 
         internal static void DoAttack_JumpToTarget(NPC npc, Player target, float attackTimer, bool enraged)
         {
@@ -155,6 +155,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 
             ref float hasJumpedFlag = ref npc.Infernum().ExtraAI[0];
             ref float hasHitGroundFlag = ref npc.Infernum().ExtraAI[1];
+            ref float jumpTimer = ref npc.Infernum().ExtraAI[2];
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.velocity.Y == 0f && hasJumpedFlag == 0f)
             {
                 npc.position.Y -= 16f;
@@ -169,9 +170,11 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                 npc.velocity.Y += extraGravity;
 
             if (hasJumpedFlag == 1f)
-			{
+            {
                 // Don't interact with any obstacles in the way if above the target.
                 npc.noTileCollide = npc.Bottom.Y < target.Top.Y && hasHitGroundFlag == 0f;
+                if (jumpTimer < 8f)
+                    npc.noTileCollide = true;
 
                 // Do more damage since Crabulon is essentially trying to squish the target.
                 npc.damage = npc.defDamage + 15;
@@ -180,10 +183,10 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                 {
                     // Make some visual and auditory effects when hitting the ground.
                     if (hasHitGroundFlag == 0f)
-					{
+                    {
                         Main.PlaySound(SoundID.Item14, npc.Center);
                         for (int i = 0; i < 36; i++)
-						{
+                        {
                             Vector2 dustSpawnPosition = Vector2.Lerp(npc.BottomLeft, npc.BottomRight, i / 36f);
                             Dust stompMushroomDust = Dust.NewDustDirect(dustSpawnPosition, 4, 4, 56);
                             stompMushroomDust.velocity = Vector2.UnitY * Main.rand.NextFloatDirection() * npc.velocity.Length() * 0.5f;
@@ -203,7 +206,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f;
                                 int shroom = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<CrabShroom>());
                                 if (Main.npc.IndexInRange(shroom))
-								{
+                                {
                                     Main.npc[shroom].velocity = -Vector2.UnitY.RotatedByRandom(0.36f) * Main.rand.NextFloat(3f, 6f);
                                     Main.npc[shroom].netUpdate = true;
                                 }
@@ -216,7 +219,10 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                     if (Math.Abs(npc.velocity.X) < 0.2f)
                         GotoNextAttackState(npc);
                 }
-			}
+                jumpTimer++;
+            }
+            else
+                jumpTimer = 0f;
         }
 
         internal static void DoAttack_WalkToTarget(NPC npc, Player target, float attackTimer, bool enraged)
@@ -234,7 +240,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 
             // Release spores into the air after a specific life ratio is passed.
             if (lifeRatio < Phase2LifeRatio)
-			{
+            {
                 bool canShoot = attackTimer % 120f >= 80f && attackTimer % 8f == 7f;
                 shouldSlowDown = attackTimer % 120f >= 60f;
                 float shootPower = MathHelper.Lerp(5f, 10f, Utils.InverseLerp(80f, 120f, attackTimer % 120f, true));
@@ -245,7 +251,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                     shootVelocity.Y -= shootPower * 0.75f;
                     Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<MushBomb>(), 45, 0f);
                 }
-			}
+            }
 
             if (shouldSlowDown)
             {
@@ -282,7 +288,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 75f)
-			{
+            {
                 for (float dx = -1000f; dx < 1000f; dx += enraged ? 250f : 360f)
                 {
                     Vector2 spawnPosition = target.Bottom + Vector2.UnitX * dx;
@@ -303,7 +309,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             CrabulonAttackState currentAttackState = (CrabulonAttackState)(int)npc.ai[2];
             CrabulonAttackState newAttackState = CrabulonAttackState.JumpToTarget;
             switch (currentAttackState)
-			{
+            {
                 case CrabulonAttackState.SpawnWait:
                     newAttackState = CrabulonAttackState.WalkToTarget;
                     break;

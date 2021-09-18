@@ -78,7 +78,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                     {
                         for (int n = 0; n < 2; n++)
                         {
-                            Vector2 shootVelocity = new Vector2(n - 2f, -40f).SafeNormalize(Vector2.UnitY) * 8.25f;
+                            Vector2 shootVelocity = new Vector2(n - 2f, -4f).SafeNormalize(Vector2.UnitY) * 26f;
                             Utilities.NewProjectileBetter(npc.Center, shootVelocity, type, 95, 0f, Main.myPlayer);
                             spikeTimer = 125f;
                         }

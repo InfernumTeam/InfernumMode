@@ -178,7 +178,8 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
         public static void DoBehavior_SuspensionStateDrift(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             float driftTime = lifeRatio < 0.2 ? 75f : 150f;
-            bool fadingAway = attackTimer > driftTime - 24f;
+            float reelbackTime = 45f;
+            bool fadingAway = attackTimer > driftTime - reelbackTime;
 
             npc.alpha = Utils.Clamp(npc.alpha + fadingAway.ToInt() * 9, 0, 255);
             npc.dontTakeDamage = fadingAway;
@@ -193,9 +194,9 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             {
                 hasBeenHitFlag = 1f;
                 npc.velocity = npc.SafeDirectionTo(target.Center) * -8.5f;
-                if (attackTimer < driftTime - 24f)
+                if (attackTimer < driftTime - reelbackTime)
                 {
-                    attackTimer = driftTime - 24f;
+                    attackTimer = driftTime - reelbackTime;
                     DoRoar(npc, true);
                 }
 
@@ -205,7 +206,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
                 npc.velocity *= 1.06f;
             else
             {
-                npc.velocity = npc.SafeDirectionTo(target.Center) * 7f;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 168f / reelbackTime;
                 if (npc.WithinRange(target.Center, 15f))
                 {
                     npc.velocity = Vector2.Zero;
@@ -334,6 +335,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
         {
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
             ref float spinIncrement = ref npc.Infernum().ExtraAI[2];
+            ref float initialSpinRotation = ref npc.Infernum().ExtraAI[3];
 
             // Delare the previous attack for later.
             npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
@@ -341,10 +343,11 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             if (npc.ai[0] == 0f)
             {
                 fadeoutCountdown = HiveMindFadeoutTime;
+                initialSpinRotation = Main.rand.NextFloat(MathHelper.TwoPi);
 
                 npc.velocity = Vector2.Zero;
                 npc.alpha = 255;
-                npc.Center = target.Center + Vector2.UnitY * SpinRadius;
+                npc.Center = target.Center + initialSpinRotation.ToRotationVector2() * SpinRadius;
                 npc.ai[0] = 1f;
             }
 
@@ -370,7 +373,7 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             else if (attackTimer < LungeSpinTime + LungeSpinChargeDelay)
             {
                 npc.velocity = Vector2.Zero;
-                npc.Center = target.Center + Vector2.UnitY.RotatedBy(MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / LungeSpinTime) * SpinRadius;
+                npc.Center = target.Center + (MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / LungeSpinTime + initialSpinRotation).ToRotationVector2() * SpinRadius;
             }
 
             // Reset to the slowdown state in preparation for the next attack.

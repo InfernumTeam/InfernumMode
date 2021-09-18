@@ -136,6 +136,8 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                     return false;
                 }
             }
+            else
+                npc.timeLeft = 3600;
 
             switch ((KingSlimeAttackType)(int)npc.ai[1])
             {

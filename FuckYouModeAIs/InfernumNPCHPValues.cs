@@ -32,6 +32,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             [ModContent.NPCType<HiveMindP1Boss>()] = 1312,
             [ModContent.NPCType<HiveMindP2>()] = 4695,
             [ModContent.NPCType<PerforatorHive>()] = 6132,
+            [NPCID.SkeletronHead] = 5517,
             [ModContent.NPCType<CrimulanSGBig>()] = 4020,
             [ModContent.NPCType<EbonianSGBig>()] = 4020,
             [NPCID.WallofFleshEye] = 3232,

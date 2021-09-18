@@ -8,7 +8,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.FuckYouModeAIs.MoonLord
+namespace InfernumMode.FuckYouModeAIs.AstrumDeus
 {
     public class DeusSpawnerBehaviorOverride : ProjectileBehaviorOverride
     {

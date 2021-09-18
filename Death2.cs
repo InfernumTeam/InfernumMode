@@ -28,8 +28,6 @@ namespace InfernumMode
             item.height = 82;
             item.useAnimation = 45;
             item.useTime = 45;
-            item.useAnimation = 45;
-            item.useTime = 45;
             item.channel = true;
             item.noUseGraphic = true;
             item.shoot = ModContent.ProjectileType<InfernalChaliceHoldout>();

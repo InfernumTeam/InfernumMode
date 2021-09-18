@@ -1,1 +1,6 @@
-Post Deathmode thing that reworks bosses. Not much else to it.
+An extension mod for Calamity that adds an extra difficulty - [c/F44847:Infernum]
+
+This difficulty is harder than Death mode.
+The primary focus of the mod is expansive reworking of boss AIs.
+
+Possible plans to add custom music, items, and exclusive bosses in the future.... maybe.

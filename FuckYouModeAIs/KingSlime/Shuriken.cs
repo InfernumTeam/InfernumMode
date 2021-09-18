@@ -46,6 +46,8 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * pulseOutwardness;
                 Vector2 drawPosition = projectile.Center - Main.screenPosition + drawOffset;
                 Color innerAfterimageColor = Color.Wheat * projectile.Opacity * 0.5f;
+                innerAfterimageColor.A = 0;
+
                 Color outerAfterimageColor = Color.Lerp(Color.DarkGray, Color.Black, 0.66f) * projectile.Opacity * 0.5f;
                 spriteBatch.Draw(shurikenTexture, drawPosition, null, outerAfterimageColor, projectile.rotation, shurikenTexture.Size() * 0.5f, projectile.scale * 1.085f, SpriteEffects.None, 0f);
                 spriteBatch.Draw(shurikenTexture, drawPosition, null, innerAfterimageColor, projectile.rotation, shurikenTexture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);

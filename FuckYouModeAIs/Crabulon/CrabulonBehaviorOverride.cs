@@ -30,8 +30,8 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 
         #region AI
 
-        public const float Phase2LifeRatio = 0.75f;
-        public const float Phase3LifeRatio = 0.35f;
+        public const float Phase2LifeRatio = 0.85f;
+        public const float Phase3LifeRatio = 0.4f;
 
         public override bool PreAI(NPC npc)
         {
@@ -64,6 +64,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             ref float attackType = ref npc.ai[2];
             ref float attackTimer = ref npc.ai[1];
             ref float hasSummonedClumpFlag = ref npc.ai[3];
+            ref float jumpCount = ref npc.Infernum().ExtraAI[6];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedClumpFlag == 0f && lifeRatio < Phase2LifeRatio)
             {
@@ -89,7 +90,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                     npc.ai[0] = 1f;
                     break;
                 case CrabulonAttackState.JumpToTarget:
-                    DoAttack_JumpToTarget(npc, target, attackTimer, enraged);
+                    DoAttack_JumpToTarget(npc, target, attackTimer, enraged, ref jumpCount);
                     npc.ai[0] = 3f;
                     break;
                 case CrabulonAttackState.WalkToTarget:
@@ -132,7 +133,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                 GotoNextAttackState(npc);
         }
 
-        internal static void DoAttack_JumpToTarget(NPC npc, Player target, float attackTimer, bool enraged)
+        internal static void DoAttack_JumpToTarget(NPC npc, Player target, float attackTimer, bool enraged, ref float jumpCount)
         {
             // Rapidly decelerate for the first half second or so prior to the jump.
             if (attackTimer < 30f)
@@ -205,6 +206,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                             {
                                 if (tooManyShrooms)
                                     break;
+
                                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f;
                                 int shroom = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<CrabShroom>());
                                 if (Main.npc.IndexInRange(shroom))
@@ -214,7 +216,22 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                                 }
                             }
                         }
+                        jumpCount++;
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient && jumpCount % 3f == 2f)
+                        {
+                            for (int i = 0; i < 15; i++)
+                            {
+                                Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.45f;
+                                Vector2 sporeShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(6f, 12f);
+                                int cloud = Utilities.NewProjectileBetter(spawnPosition, sporeShootVelocity, ModContent.ProjectileType<SporeCloud>(), 75, 0f);
+                                if (Main.projectile.IndexInRange(cloud))
+                                    Main.projectile[cloud].ai[0] = Main.rand.Next(3);
+                            }
+                        }
+
                         hasHitGroundFlag = 1f;
+                        npc.netUpdate = true;
                     }
 
                     npc.velocity.X *= 0.9f;
@@ -251,7 +268,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * shootPower;
                     shootVelocity.X += npc.SafeDirectionTo(target.Center).X * shootPower * 0.45f;
                     shootVelocity.Y -= shootPower * 0.75f;
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<MushBomb>(), 45, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<MushBomb>(), 70, 0f);
                 }
             }
 
@@ -294,7 +311,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                 for (float dx = -1000f; dx < 1000f; dx += enraged ? 250f : 360f)
                 {
                     Vector2 spawnPosition = target.Bottom + Vector2.UnitX * dx;
-                    Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), 50, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), 70, 0f);
                 }
             }
 

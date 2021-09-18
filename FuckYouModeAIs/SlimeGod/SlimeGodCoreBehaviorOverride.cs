@@ -283,7 +283,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 
         public static void DoAttack_FastHover(NPC npc, Player target, ref float attackTimer)
         {
-            Vector2 destination = target.Center - Vector2.UnitY * 350f;
+            Vector2 destination = target.Center - Vector2.UnitY * 350f + Vector2.UnitX * target.velocity * 30f;
             if (!npc.WithinRange(destination, 250f))
             {
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 14f, 0.6f);
@@ -294,12 +294,12 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 50f == 49f)
             {
-                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center) * 12f;
+                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 24f) * 13f;
                 Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<ExplosiveAbyssMine>(), 95, 0f);
             }
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 80f == 79f)
             {
-                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center) * 8f;
+                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 24f) * 10f;
                 Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<RedirectingAbyssBall>(), 95, 0f);
             }
 
@@ -420,10 +420,10 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             if (attackSubstate == 2f)
             {
                 // Release abyss balls upward.
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 20f == 19f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 16f == 15f)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitX * 6f, ModContent.ProjectileType<AbyssBallVolley>(), 95, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 6f, ModContent.ProjectileType<AbyssBallVolley>(), 95, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitX * 8f, ModContent.ProjectileType<AbyssBallVolley>(), 95, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 8f, ModContent.ProjectileType<AbyssBallVolley>(), 95, 0f);
                 }
 
                 npc.rotation += (npc.velocity.Y > 0f).ToDirectionInt() * 0.15f;

@@ -47,7 +47,8 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
             CalamityGlobalNPC.perfHive = npc.whoAmI;
 
             // Set damage.
-            npc.damage = 72;
+            npc.defDamage = 74;
+            npc.damage = npc.defDamage;
 
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -182,38 +183,43 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 return false;
             }
 
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.03f, 0f, 1f);
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.015f, 0f, 1f);
 
-            if (attackState == 0f)
+            if (npc.Opacity >= 1f)
             {
-                DoAttack_HoverNearTarget(npc, target, lifeRatio < 0.15f, ref attackTimer, anyWorms, out bool gotoNextAttack);
-                if (gotoNextAttack)
+                if (attackState == 0f)
                 {
-                    attackTimer = 0f;
-                    attackState = npc.WithinRange(target.Center, 880f) ? 1f : 2f;
-                    npc.netUpdate = true;
+                    DoAttack_HoverNearTarget(npc, target, lifeRatio < 0.15f, ref attackTimer, anyWorms, out bool gotoNextAttack);
+                    if (gotoNextAttack)
+                    {
+                        attackTimer = 0f;
+                        attackState = npc.WithinRange(target.Center, 880f) ? 1f : 2f;
+                        npc.netUpdate = true;
+                    }
+                }
+                else if (attackState == 1f)
+                {
+                    DoAttack_SwoopTowardsPlayer(npc, target, ref attackTimer, anyWorms, out bool gotoNextAttack);
+                    if (gotoNextAttack)
+                    {
+                        attackTimer = 0f;
+                        attackState = 2f;
+                        npc.netUpdate = true;
+                    }
+                }
+                else if (attackState == 2f)
+                {
+                    DoAttack_ReleaseRegularBursts(npc, target, lifeRatio < 0.15f, ref attackTimer, anyWorms, out bool gotoNextAttack);
+                    if (gotoNextAttack)
+                    {
+                        attackTimer = 0f;
+                        attackState = 0f;
+                        npc.netUpdate = true;
+                    }
                 }
             }
-            else if (attackState == 1f)
-            {
-                DoAttack_SwoopTowardsPlayer(npc, target, ref attackTimer, anyWorms, out bool gotoNextAttack);
-                if (gotoNextAttack)
-                {
-                    attackTimer = 0f;
-                    attackState = 2f;
-                    npc.netUpdate = true;
-                }
-            }
-            else if (attackState == 2f)
-            {
-                DoAttack_ReleaseRegularBursts(npc, target, lifeRatio < 0.15f, ref attackTimer, anyWorms, out bool gotoNextAttack);
-                if (gotoNextAttack)
-                {
-                    attackTimer = 0f;
-                    attackState = 0f;
-                    npc.netUpdate = true;
-                }
-            }
+            else
+                npc.damage = 0;
 
             npc.rotation = MathHelper.Clamp(npc.velocity.X * 0.04f, -MathHelper.Pi / 6f, MathHelper.Pi / 6f);
 
@@ -334,6 +340,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 if (finalWormDead)
                     blobSpeed += 0.25f;
                 Vector2 currentBlobVelocity = new Vector2(4f + Main.rand.NextFloat(-0.1f, 0.1f) + target.velocity.X * 0.12f, -blobSpeed);
+                currentBlobVelocity.X += target.direction * 2f;
 
                 npc.TargetClosest();
 

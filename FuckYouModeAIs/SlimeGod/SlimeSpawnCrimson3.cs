@@ -112,7 +112,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 if (!Collision.CanHit(npc.Center, 1, 1, slimeGod.Center, 1, 1))
                     npc.velocity.Y -= 4f;
 
-                npc.velocity.X = (slimeGod.Center.X > npc.Center.X).ToDirectionInt() * 6f;
+                npc.velocity.X = (slimeGod.Center.X > npc.Center.X).ToDirectionInt() * 9f;
                 npc.netUpdate = true;
             }
 

@@ -48,6 +48,8 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             // Reset damage. Do none by default if somewhat transparent.
             npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
 
+            npc.defense = 14;
+
             // If none was found or it was too far away, despawn.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead ||
                 !Main.player[npc.target].active || !npc.WithinRange(Main.player[npc.target].Center, 3400f))
@@ -141,15 +143,15 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float jumpSpeed = MathHelper.Lerp(13.5f, 18.75f, 1f - lifeRatio);
-            float extraGravity = MathHelper.Lerp(0f, 0.375f, 1f - lifeRatio);
-            float jumpAngularImprecision = MathHelper.Lerp(0.15f, 0f, Utils.InverseLerp(0f, 0.7f, 1f - lifeRatio));
+            float extraGravity = MathHelper.Lerp(0f, 0.45f, 1f - lifeRatio);
+            float jumpAngularImprecision = MathHelper.Lerp(0.1f, 0f, Utils.InverseLerp(0f, 0.7f, 1f - lifeRatio));
 
             jumpSpeed += MathHelper.Clamp((npc.Top.Y - target.Top.Y) * 0.02f, 0f, 12f);
 
             if (enraged)
             {
-                extraGravity += 0.125f;
-                jumpSpeed += 2.5f;
+                extraGravity += 0.18f;
+                jumpSpeed += 2.8f;
                 jumpAngularImprecision *= 0.25f;
             }
 
@@ -159,7 +161,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.velocity.Y == 0f && hasJumpedFlag == 0f)
             {
                 npc.position.Y -= 16f;
-                npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, target.Center + target.velocity * 10f, extraGravity + 0.3f, jumpSpeed, out _);
+                npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, target.Center + target.velocity * 20f, extraGravity + 0.3f, jumpSpeed, out _);
                 npc.velocity = npc.velocity.RotatedByRandom(jumpAngularImprecision);
                 hasJumpedFlag = 1f;
 
@@ -177,7 +179,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                     npc.noTileCollide = true;
 
                 // Do more damage since Crabulon is essentially trying to squish the target.
-                npc.damage = npc.defDamage + 15;
+                npc.damage = npc.defDamage + 50;
 
                 if (npc.velocity.Y == 0f)
                 {
@@ -232,9 +234,9 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float walkSpeed = MathHelper.Lerp(1.9f, 4.45f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(2.4f, 5.6f, 1f - lifeRatio);
             if (enraged)
-                walkSpeed += 1.05f;
+                walkSpeed += 1.5f;
             walkSpeed += horizontalDistanceFromTarget * 0.004f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 
@@ -274,7 +276,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             else
                 npc.velocity.Y *= 0.96f;
 
-            if (attackTimer >= 200f || npc.collideX || target.Center.Y < npc.Top.Y - 250f)
+            if (attackTimer >= 160f || npc.collideX || target.Center.Y < npc.Top.Y - 200f || target.Center.Y > npc.Bottom.Y + 80f)
                 GotoNextAttackState(npc);
         }
 

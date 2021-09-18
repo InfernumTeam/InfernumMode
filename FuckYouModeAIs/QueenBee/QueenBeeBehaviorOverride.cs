@@ -340,7 +340,7 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
                 Vector2 flyDestination = target.Center - new Vector2((target.Center.X - npc.Center.X > 0).ToDirectionInt() * 270f, 240f);
                 DoHoverMovement(npc, flyDestination, 0.15f);
             }
-            else
+            else if (attackTimer < 775f)
             {
                 npc.velocity *= 0.9785f;
 
@@ -367,7 +367,7 @@ namespace InfernumMode.FuckYouModeAIs.QueenBee
                 }
             }
 
-            if (attackTimer >= 775f)
+            if (attackTimer >= 805f)
                 GotoNextAttackState(npc);
 
             npc.spriteDirection = (target.Center.X - npc.Center.X > 0).ToDirectionInt();

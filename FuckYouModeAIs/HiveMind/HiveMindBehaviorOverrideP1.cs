@@ -113,10 +113,10 @@ namespace InfernumMode.FuckYouModeAIs.HiveMind
             shootTimer--;
 
             float clotShootRate = 260f;
-            float mirageSummonRate = 300f;
+            float mirageSummonRate = 450f;
 
             if (lifeRatio < 0.5f)
-                mirageSummonRate = 180f;
+                mirageSummonRate = 270f;
             if (lifeRatio < 0.25f)
                 clotShootRate = 145f;
 

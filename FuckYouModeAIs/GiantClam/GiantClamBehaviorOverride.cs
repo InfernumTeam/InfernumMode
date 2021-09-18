@@ -57,12 +57,12 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
             {
                 hitCount++;
                 npc.defense = 15;
-                npc.damage = 150;
+                npc.damage = 50;
 
                 if (Main.hardMode)
                 {
                     npc.defense = 35;
-                    npc.damage = 250;
+                    npc.damage = 90;
                 }
 
                 npc.defDamage = npc.damage;
@@ -243,7 +243,11 @@ namespace InfernumMode.FuckYouModeAIs.GiantClam
 
             npc.Infernum().ExtraAI[0] = (float)NextAttack;
             npc.Infernum().ExtraAI[1] = 0f;
-            npc.damage = Main.hardMode ? 150 : 250;
+
+            if (NextAttack == GiantClamAttackState.TeleportSlam)
+                npc.damage = Main.hardMode ? 120 : 80;
+            else
+                npc.damage = npc.defDamage;
 
             switch (NextAttack)
             {

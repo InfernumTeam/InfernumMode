@@ -18,6 +18,9 @@ namespace InfernumMode
                 item.consumable = false;
                 item.maxStack = 1;
             }
+
+            if (item.type == ItemID.StarCannon)
+                item.damage = 24;
         }
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {

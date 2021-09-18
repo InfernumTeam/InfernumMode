@@ -149,7 +149,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                                 break;
                         }
 
-                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, wormTypeToSpawn);
+                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, wormTypeToSpawn, 1);
                     }
 
                     float explosionSpeed = 10f;

@@ -242,9 +242,13 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
 
         public static void DoAttack_Spin(NPC npc, Player target, ref float attackTimer)
 		{
+            npc.damage = npc.defDamage;
             ref float spinAngleOffset = ref npc.Infernum().ExtraAI[0];
+
             if (attackTimer < 180f)
             {
+                npc.damage = 0;
+
                 Vector2 destination = target.Center + spinAngleOffset.ToRotationVector2() * 360f;
                 npc.Center = npc.Center.MoveTowards(destination, 46f);
 

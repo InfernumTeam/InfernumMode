@@ -64,7 +64,9 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                 if (stuckTimer > 180f)
                 {
                     stuckTimer = 0f;
-                    npc.Center = target.Center - Vector2.UnitY * 10f;
+                    do
+                        npc.Center = target.Center + Main.rand.NextVector2CircularEdge(360f, 360f);
+                    while (Collision.SolidCollision(npc.Center, 4, 4));
                     stuckTeleportCountdown = 40f;
                     npc.netUpdate = true;
                 }

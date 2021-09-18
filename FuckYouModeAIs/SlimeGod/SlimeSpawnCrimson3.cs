@@ -72,15 +72,15 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             {
                 npc.velocity.X *= 0.9f;
 
-                if (npc.WithinRange(Target.Center, 750f))
+                if (npc.WithinRange(Target.Center, 750f) && Math.Abs(Target.Center.Y - npc.Center.Y) > 205f)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient && spikeTimer == 0f)
                     {
-                        for (int n = 0; n < 4; n++)
+                        for (int n = 0; n < 2; n++)
                         {
-                            Vector2 shootVelocity = new Vector2(n - 2f, -4f).SafeNormalize(Vector2.UnitY) * 8.25f;
+                            Vector2 shootVelocity = new Vector2(n - 2f, -28f).SafeNormalize(Vector2.UnitY) * 8.25f;
                             Utilities.NewProjectileBetter(npc.Center, shootVelocity, type, 95, 0f, Main.myPlayer);
-                            spikeTimer = 90f;
+                            spikeTimer = 125f;
                         }
                     }
                 }

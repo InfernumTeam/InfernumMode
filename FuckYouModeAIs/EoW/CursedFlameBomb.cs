@@ -46,14 +46,14 @@ namespace InfernumMode.FuckYouModeAIs.EoW
 
             float burstSpeed = projectile.velocity.Length();
             float initialAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 5; i++)
             {
-                Vector2 shootVelocity = (initialAngleOffset + MathHelper.TwoPi * i / 6f).ToRotationVector2() * burstSpeed;
+                Vector2 shootVelocity = (initialAngleOffset + MathHelper.TwoPi * i / 5f).ToRotationVector2() * burstSpeed;
                 Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<CursedBullet>(), 80, 0f);
             }
 		}
 
-        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.White, Color.Red, Utils.InverseLerp(45f, 0f, projectile.timeLeft, true)) * projectile.Opacity;
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {

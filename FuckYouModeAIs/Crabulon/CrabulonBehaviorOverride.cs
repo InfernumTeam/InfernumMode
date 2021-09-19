@@ -180,7 +180,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
                     npc.noTileCollide = true;
 
                 // Do more damage since Crabulon is essentially trying to squish the target.
-                npc.damage = npc.defDamage + 50;
+                npc.damage = npc.defDamage + 36;
 
                 if (npc.velocity.Y == 0f)
                 {

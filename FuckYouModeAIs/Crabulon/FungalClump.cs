@@ -47,7 +47,7 @@ namespace InfernumMode.FuckYouModeAIs.Crabulon
             npc.target = Owner.target;
             npc.damage = MainBossLifeRatio < 0.45f ? 0 : 5;
 
-            HomeTowardsTarget(MathHelper.Lerp(9f, 13.5f, 1f - MainBossLifeRatio));
+            HomeTowardsTarget(MathHelper.Lerp(7f, 11f, 1f - MainBossLifeRatio));
 
             if (Main.netMode != NetmodeID.MultiplayerClient && MainBossLifeRatio < 0.45f && Time % 90f == 89f)
                 ReleaseSpores();

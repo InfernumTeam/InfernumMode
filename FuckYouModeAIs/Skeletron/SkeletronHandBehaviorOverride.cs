@@ -101,7 +101,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
                         if (Main.netMode != NetmodeID.MultiplayerClient && facingPlayer && adjustedTimer > 90f && adjustedTimer < 140f && adjustedTimer % 5f == 4f)
                         {
                             Vector2 skullSpawnPosition = npc.Center;
-                            Vector2 skullShootVelocity = (skullSpawnPosition - owner.Center).SafeNormalize(Vector2.UnitY) * 8f;
+                            Vector2 skullShootVelocity = (skullSpawnPosition - owner.Center).SafeNormalize(Vector2.UnitY) * 6f;
                             skullSpawnPosition += skullShootVelocity * 4f;
                             Utilities.NewProjectileBetter(skullSpawnPosition, skullShootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 105, 0f);
                         }

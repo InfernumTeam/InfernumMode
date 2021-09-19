@@ -309,7 +309,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            float skullSpeed = 4.8f;
+                            float skullSpeed = 3.3f;
                             int skullCount = 3;
                             if (currentShotCounter % 4 == 3)
                             {
@@ -436,7 +436,7 @@ namespace InfernumMode.FuckYouModeAIs.Skeletron
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            float skullSpeed = 6f;
+                            float skullSpeed = 3.8f;
                             int skullCount = 4;
                             if (currentShotCounter % 2 == 1)
                             {

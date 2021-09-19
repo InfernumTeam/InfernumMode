@@ -27,6 +27,7 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
             int digLungeTime = 420;
+            int sandSlamTime = 330;
             ref float initializedFlag = ref npc.Infernum().ExtraAI[0];
             ref float inAirTime = ref npc.Infernum().ExtraAI[1];
             ref float fallTime = ref npc.Infernum().ExtraAI[2];
@@ -36,6 +37,8 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
             ref float mandatoryLungeCount = ref npc.Infernum().ExtraAI[6];
             ref float mandatoryLungeCountdown = ref npc.Infernum().ExtraAI[7];
             ref float boneToothShootCounter = ref npc.Infernum().ExtraAI[8];
+            ref float sandSlamTimer = ref npc.Infernum().ExtraAI[10];
+            ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
@@ -72,7 +75,7 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
                         Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.43f) * Main.rand.NextFloat(8f, 11f);
                         spawnPosition += shootVelocity * 2.5f;
 
-                        int sand = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<BoneTooth>(), 52, 0f);
+                        int sand = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<BoneTooth>(), 62, 0f);
                         if (Main.projectile.IndexInRange(sand))
                             Main.projectile[sand].tileCollide = false;
                     }
@@ -83,20 +86,26 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
                 mandatoryLungeCountdown--;
 
             // Perform mandatory lunges at certain life intervals.
-            if (mandatoryLungeCount == 0f && lifeRatio < 0.7f)
+            if (mandatoryLungeCount == 0f && lifeRatio < 0.8f)
             {
                 digAttackTime = mandatoryLungeCountdown = digLungeTime;
                 mandatoryLungeCount++;
                 npc.netUpdate = true;
             }
-            if (mandatoryLungeCount == 1f && lifeRatio < 0.4f)
+            if (mandatoryLungeCount == 1f && lifeRatio < 0.7f)
+            {
+                digAttackTime = mandatoryLungeCountdown = digLungeTime;
+                mandatoryLungeCount++;
+                npc.netUpdate = true;
+            }
+            if (mandatoryLungeCount == 2f && lifeRatio < 0.55f)
             {
                 digAttackTime = mandatoryLungeCountdown = digLungeTime;
                 mandatoryLungeCount++;
                 npc.netUpdate = true;
             }
 
-            // Do the dig lunge as necessary.
+            // Do the dig lunge as necessary if it's being performed.
             if (digAttackTime > 0f)
             {
                 DoAttack_DoDigLunge(npc, target, digLungeTime - digAttackTime, lifeRatio, ref lungeFallTimer);
@@ -106,16 +115,32 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
                 return false;
             }
 
+            // Do the sand slam as necessary if it's being performed.
+            if (sandSlamTimer > 0f)
+            {
+                DoAttack_SandSlam(npc, target, sandSlamTime - sandSlamTimer, lifeRatio);
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                sandSlamTimer--;
+
+                return false;
+            }
+
+            wasPreviouslyInTiles = 0f;
             lungeFallTimer = 0f;
 
-            if (lifeRatio < 0.1f)
+            if (lifeRatio < 0.5f)
             {
                 // After an amount of time, begin the dig/lunge.
                 digPreparationTime++;
                 if (digPreparationTime >= digLungeTime)
                 {
                     digPreparationTime = 0f;
-                    digAttackTime = digLungeTime;
+
+                    if (Main.rand.NextBool(2))
+                        digAttackTime = digLungeTime;
+                    else
+                        sandSlamTimer = sandSlamTime;
+
                     npc.netUpdate = true;
                 }
             }
@@ -184,7 +209,7 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
                             Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(1.21f) * Main.rand.NextFloat(9f, 11f);
                             spawnPosition += shootVelocity * 2.6f;
 
-                            int sand = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SandBlast>(), 52, 0f);
+                            int sand = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SandBlast>(), 60, 0f);
                             if (Main.projectile.IndexInRange(sand))
                                 Main.projectile[sand].tileCollide = false;
 						}
@@ -193,6 +218,67 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
                 }
 			}
 		}
+
+        public static void DoAttack_SandSlam(NPC npc, Player target, float attackTimer, float lifeRatio)
+        {
+            ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
+
+            int riseTime = 150;
+            if (lifeRatio < 0.4f)
+                riseTime = 125;
+            if (lifeRatio < 0.1f)
+                riseTime = 105;
+
+            // Rise upward in anticipation of slamming into the target.
+            if (attackTimer < riseTime)
+            {
+                float riseSpeed = !Collision.SolidCollision(npc.Center, 2, 2) ? 19f : 9f;
+                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -riseSpeed, 0.045f);
+                if (MathHelper.Distance(npc.Center.X, target.Center.X) > 300f)
+                    npc.velocity.X = (npc.velocity.X * 24f + npc.SafeDirectionTo(target.Center).X * 10.5f) / 25f;
+            }
+
+            // Slam back down after the rise ends.
+            if (attackTimer >= riseTime)
+            {
+                bool inTiles = Collision.SolidCollision(npc.Center, 2, 2);
+
+                // Release a bunch of sand and seekers once tiles have been hit.
+                if (Main.netMode != NetmodeID.MultiplayerClient && inTiles && wasPreviouslyInTiles == 0f)
+                {
+                    for (int i = 0; i < 50; i++)
+                    {
+                        Vector2 sandShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 50f) * 7f;
+                        Vector2 spawnPosition = npc.Center + sandShootVelocity * 3f;
+                        int sand = Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 60, 0f);
+                        if (Main.projectile.IndexInRange(sand))
+                            Main.projectile[sand].tileCollide = false;
+                    }
+
+                    // Release 4 dried seekers if none currently exist.
+                    if (!NPC.AnyNPCs(ModContent.NPCType<DriedSeekerHead>()))
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            Vector2 initialSeekerVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 9f;
+                            Vector2 spawnPosition = npc.Center + initialSeekerVelocity * 2f;
+                            int seeker = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<DriedSeekerHead>(), 1);
+                            if (Main.npc.IndexInRange(seeker))
+                                Main.npc[seeker].velocity = initialSeekerVelocity;
+                        }
+                    }
+                    wasPreviouslyInTiles = 1f;
+                }
+
+                if (npc.velocity.Y < 26f)
+                    npc.velocity.Y += 0.5f;
+                if (inTiles)
+                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y, -8f, 8f);
+
+                if (MathHelper.Distance(npc.Center.X, target.Center.X) > 240f)
+                    npc.velocity.X = (npc.velocity.X * 21f + npc.SafeDirectionTo(target.Center).X * 10.5f) / 22f;
+            }
+        }
 
         public static void DoAttack_FallIntoGround(NPC npc, bool inTiles, ref float fallTime, ref float inAirTime)
         {
@@ -205,9 +291,7 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
         
         public static void DoAttack_FlyTowardsTarget(NPC npc, Player target, float lifeRatio, bool inTiles, ref float inAirTime, ref float fallTime)
         {
-            ref float fuck = ref npc.Infernum().ExtraAI[9];
-            fuck++;
-
+            ref float waveTimer = ref npc.Infernum().ExtraAI[9];
             Vector2 destination = target.Center;
 
             // If close to the target, determine the destination based on the current direction of the worm.
@@ -217,9 +301,11 @@ namespace InfernumMode.FuckYouModeAIs.DesertScourge
             float distanceFromDestination = npc.Distance(destination);
             float turnSpeed = MathHelper.Lerp(0.007f, 0.065f, Utils.InverseLerp(175f, 475f, distanceFromDestination, true));
 
+            waveTimer++;
+
             float newSpeed = npc.velocity.Length();
             float idealSpeed = MathHelper.Lerp(4.5f, 9.25f, 1f - lifeRatio);
-            idealSpeed += MathHelper.Lerp(0f, 2.4f, (float)Math.Sin(fuck * MathHelper.TwoPi / 300f) * 0.5f + 0.5f);
+            idealSpeed += MathHelper.Lerp(0f, 2.4f, (float)Math.Sin(waveTimer * MathHelper.TwoPi / 300f) * 0.5f + 0.5f);
 
             // Accelerate quickly if relatively far from the destination.
             if (distanceFromDestination > 1250f)

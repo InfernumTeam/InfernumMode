@@ -146,6 +146,14 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             if (!PoDWorld.InfernumMode)
                 return base.PreNPCLoot(npc);
 
+            if (npc.type == NPCID.EaterofWorldsHead)
+            {
+                bool fuck = npc.realLife == -1 && npc.ai[2] >= 2;
+                if (fuck)
+                    npc.boss = true;
+                return fuck;
+            }
+
             if (npc.type == InfernumMode.CalamityMod.NPCType("Providence"))
             {
                 // Drops pre-scal, cannot be sold, does nothing aka purely vanity. Requires at least expert for consistency with other post scal dev items.

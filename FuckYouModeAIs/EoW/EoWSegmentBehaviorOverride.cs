@@ -1,7 +1,5 @@
-﻿using CalamityMod;
-using InfernumMode.OverridingSystem;
+﻿using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
 
@@ -24,6 +22,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
                 npc.active = false;
                 npc.netUpdate = true;
             }
+
             // Inherit various attributes from the head segment.
             // This code will go upstream across every segment, until it reaches the head.
             npc.scale = aheadSegment.scale;
@@ -55,6 +54,5 @@ namespace InfernumMode.FuckYouModeAIs.EoW
             EoWBodyBehaviorOverride.SegmentAI(npc);
             return false;
         }
-
     }
 }

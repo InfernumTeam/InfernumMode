@@ -1,12 +1,14 @@
 ﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
-using CalamityMod.Projectiles.Boss;
+using InfernumMode.FuckYouModeAIs.Ravager;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+
+using EbonianSlimeGod = CalamityMod.NPCs.SlimeGod.SlimeGod;
 
 namespace InfernumMode.FuckYouModeAIs.SlimeGod
 {
@@ -19,8 +21,9 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
         #region Enumerations
         public enum CrimulanSlimeGodAttackType
         {
-            LongLeaps = 0,
-            SplitSwarm = 1
+            LongLeaps,
+            SplitSwarm,
+            PowerfulSlam
         }
         #endregion
 
@@ -81,6 +84,10 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                     break;
                 case CrimulanSlimeGodAttackType.SplitSwarm:
                     DoAttack_SplitSwarm(npc, target, ref attackTimer);
+                    break;
+                case CrimulanSlimeGodAttackType.PowerfulSlam:
+                    if (DoAttack_PowerfulSlam(npc, target, true, ref attackTimer))
+                        GotoNextAttackState(npc);
                     break;
             }
 
@@ -251,6 +258,93 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             attackTimer++;
         }
 
+        public static bool DoAttack_PowerfulSlam(NPC npc, Player target, bool crimulanSlime, ref float attackTimer)
+        {
+            npc.Opacity = 1f;
+            npc.scale = 1f;
+
+            // Attempt to hover to a position above the player.
+            if (attackTimer < 420f)
+            {
+                float flySpeed = MathHelper.Lerp(12.5f, 27f, Utils.InverseLerp(150f, 300f, attackTimer, true));
+                Vector2 destination = target.Center - Vector2.UnitY * 340f;
+                npc.velocity = (npc.velocity * 4f + npc.SafeDirectionTo(destination) * flySpeed) / 5f;
+
+                if (npc.WithinRange(destination, 40f))
+                {
+                    attackTimer = 420f;
+                    npc.netUpdate = true;
+                }
+
+                // Disable gravity and tile collision.
+                npc.noGravity = true;
+                npc.noTileCollide = true;
+            }
+
+            // Once reached, slam downward.
+            else
+            {
+                if (attackTimer == 421f)
+                    npc.velocity = Vector2.UnitY * 4f;
+
+                // If velocity is 0 (indicating something has been hit) create a shockwave and some other things.
+                if (npc.velocity.Y == 0f)
+                {
+                    Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 70, 1.25f, -0.25f);
+                    for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)
+                    {
+                        for (int i = 0; i < 6; i++)
+                        {
+                            Dust stompDust = Dust.NewDustDirect(new Vector2(x, npc.Bottom.Y), npc.width + 30, 4, 4, 0f, 0f, 100, default, 1.5f);
+                            stompDust.velocity *= 0.2f;
+                        }
+                    }
+
+                    // Create the shockwave and other projectiles.
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 135, 0f);
+
+                        int projectileType = crimulanSlime ? ModContent.ProjectileType<RedirectingIchorBall>() : ModContent.ProjectileType<RedirectingCursedBall>();
+                        int projectileCount = 7;
+
+                        // Fire more projectiles if alone.
+                        if ((crimulanSlime && !NPC.AnyNPCs(ModContent.NPCType<EbonianSlimeGod>())) || (!crimulanSlime && !NPC.AnyNPCs(ModContent.NPCType<SlimeGodRun>())))
+                            projectileCount = 13;
+
+                        for (int i = 0; i < projectileCount; i++)
+                        {
+                            Vector2 shootVelocity = (MathHelper.TwoPi * i / projectileCount).ToRotationVector2() * 8f;
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, projectileType, 95, 0f);
+                        }
+                    }
+
+                    npc.netUpdate = true;
+                    return true;
+                }
+
+                // Enforce extra gravity.
+                if (npc.velocity.Y < 42f)
+                    npc.velocity.Y += MathHelper.Lerp(0.3f, 1.5f, Utils.InverseLerp(420f, 455f, attackTimer, true));
+                npc.velocity.X *= 0.9f;
+
+                // Custom gravity is used.
+                npc.noGravity = true;
+
+                // Fall through tiles in the way.
+                if (!target.dead)
+                {
+                    if ((target.position.Y > npc.Bottom.Y && npc.velocity.Y > 0f) || (target.position.Y < npc.Bottom.Y && npc.velocity.Y < 0f))
+                        npc.noTileCollide = true;
+                    else if ((npc.velocity.Y > 0f && npc.Bottom.Y > target.Top.Y) || (Collision.CanHit(npc.position, npc.width, npc.height, target.Center, 1, 1) && !Collision.SolidCollision(npc.position, npc.width, npc.height)))
+                        npc.noTileCollide = false;
+                }
+            }
+
+            attackTimer++;
+            return false;
+        }
+
         public static void GotoNextAttackState(NPC npc)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -259,6 +353,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             for (int i = 0; i < 4; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
+            float lifeRatio = npc.life / (float)npc.lifeMax;
             CrimulanSlimeGodAttackType oldAttackState = (CrimulanSlimeGodAttackType)(int)npc.ai[0];
             CrimulanSlimeGodAttackType newAttackState = oldAttackState;
             switch (oldAttackState)
@@ -267,6 +362,9 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                     newAttackState = CrimulanSlimeGodAttackType.SplitSwarm;
                     break;
                 case CrimulanSlimeGodAttackType.SplitSwarm:
+                    newAttackState = lifeRatio < 0.5f ? CrimulanSlimeGodAttackType.PowerfulSlam : CrimulanSlimeGodAttackType.LongLeaps;
+                    break;
+                case CrimulanSlimeGodAttackType.PowerfulSlam:
                     newAttackState = CrimulanSlimeGodAttackType.LongLeaps;
                     break;
             }

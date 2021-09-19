@@ -1,13 +1,10 @@
 ﻿using CalamityMod.NPCs;
-using CalamityMod.NPCs.SlimeGod;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
 
 using EbonianSlimeGod = CalamityMod.NPCs.SlimeGod.SlimeGod;
 
@@ -23,7 +20,8 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
         public enum EbonianSlimeGodAttackType
         {
             LongLeaps,
-            SplitSwarm
+            SplitSwarm,
+            PowerfulSlam
         }
         #endregion
 
@@ -84,6 +82,10 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                     break;
                 case EbonianSlimeGodAttackType.SplitSwarm:
                     DoAttack_SplitSwarm(npc, target, ref attackTimer);
+                    break;
+                case EbonianSlimeGodAttackType.PowerfulSlam:
+                    if (CrimulanSlimeGodBehaviorOverride.DoAttack_PowerfulSlam(npc, target, false, ref attackTimer))
+                        GotoNextAttackState(npc);
                     break;
             }
 
@@ -222,6 +224,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
             for (int i = 0; i < 4; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
+            float lifeRatio = npc.life / (float)npc.lifeMax;
             EbonianSlimeGodAttackType oldAttackState = (EbonianSlimeGodAttackType)(int)npc.ai[0];
             EbonianSlimeGodAttackType newAttackState = oldAttackState;
             switch (oldAttackState)
@@ -230,6 +233,9 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
                     newAttackState = EbonianSlimeGodAttackType.SplitSwarm;
                     break;
                 case EbonianSlimeGodAttackType.SplitSwarm:
+                    newAttackState = lifeRatio < 0.5f ? EbonianSlimeGodAttackType.PowerfulSlam : EbonianSlimeGodAttackType.LongLeaps;
+                    break;
+                case EbonianSlimeGodAttackType.PowerfulSlam:
                     newAttackState = EbonianSlimeGodAttackType.LongLeaps;
                     break;
             }

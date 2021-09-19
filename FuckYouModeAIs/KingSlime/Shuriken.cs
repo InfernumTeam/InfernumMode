@@ -40,6 +40,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D shurikenTexture = Main.projectileTexture[projectile.type];
+            Texture2D outlineTexture = ModContent.GetTexture("InfernumMode/FuckYouModeAIs/KingSlime/ShurikenOutline");
             float pulseOutwardness = MathHelper.Lerp(2f, 3f, (float)Math.Cos(Main.GlobalTime * 2.5f) * 0.5f + 0.5f);
             for (int i = 0; i < 4; i++)
             {
@@ -52,6 +53,9 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 spriteBatch.Draw(shurikenTexture, drawPosition, null, outerAfterimageColor, projectile.rotation, shurikenTexture.Size() * 0.5f, projectile.scale * 1.085f, SpriteEffects.None, 0f);
                 spriteBatch.Draw(shurikenTexture, drawPosition, null, innerAfterimageColor, projectile.rotation, shurikenTexture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
             }
+
+            Vector2 outlineDrawPosition = projectile.Center - Main.screenPosition;
+            spriteBatch.Draw(outlineTexture, outlineDrawPosition, null, Color.White * projectile.Opacity * 0.8f, projectile.rotation, outlineTexture.Size() * 0.5f, projectile.scale * 1.25f, SpriteEffects.None, 0f);
             Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
             return false;
         }

@@ -355,12 +355,15 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
+            Texture2D outlineTexture = ModContent.GetTexture("InfernumMode/FuckYouModeAIs/KingSlime/NinjaOutline");
+            Vector2 outlineDrawPosition = npc.Center - Main.screenPosition - Vector2.UnitY * 6f;
+            SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
             if (KatanaUseTimer > 0f)
             {
                 Texture2D katanaTexture = ModContent.GetTexture("InfernumMode/FuckYouModeAIs/KingSlime/Katana");
                 Vector2 drawPosition = npc.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(npc.rotation) * 5f;
                 drawPosition -= npc.rotation.ToRotationVector2() * npc.spriteDirection * 22f;
-                SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                 float rotation = KatanaRotation + MathHelper.Pi - MathHelper.PiOver4;
                 if (npc.spriteDirection == -1)
                     rotation -= MathHelper.PiOver2;
@@ -371,6 +374,7 @@ namespace InfernumMode.FuckYouModeAIs.KingSlime
                 }
                 spriteBatch.Draw(katanaTexture, drawPosition, null, npc.GetAlpha(drawColor), rotation, katanaTexture.Size() * 0.5f, 1f, direction, 0f);
             }
+            spriteBatch.Draw(outlineTexture, outlineDrawPosition, npc.frame, Color.White * npc.Opacity * 0.6f, npc.rotation, npc.frame.Size() * 0.5f, npc.scale * 1.05f, direction, 0f);
             return true;
         }
 

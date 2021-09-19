@@ -30,7 +30,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
         // This is applicable to all split worms as well.
         // Since split worms share HP, the total amount of HP of the boss is approximately equal to Worm HP * (Total Splits + 1).
         // A small discrepancy exists since the split happens near death and not on death.
-        public const int TotalLifeAcrossWorm = 8000;
+        public const int TotalLifeAcrossWorm = 4445;
         public const int BaseBodySegmentCount = 40;
         public const int TotalSplitsToPerform = 2;
 
@@ -58,9 +58,9 @@ namespace InfernumMode.FuckYouModeAIs.EoW
 
             Player target = Main.player[npc.target];
             if (target.ZoneCorrupt || target.ZoneCrimson)
-                enrageTimer = MathHelper.Clamp(enrageTimer + 1f, 0f, 480f);
-            else
                 enrageTimer = MathHelper.Clamp(enrageTimer - 2.4f, 0f, 480f);
+            else
+                enrageTimer = MathHelper.Clamp(enrageTimer + 1f, 0f, 480f);
 
             bool enraged = enrageTimer >= 300f;
 
@@ -172,7 +172,17 @@ namespace InfernumMode.FuckYouModeAIs.EoW
                 }
             }
 
-            DoDefaultMovement(npc, target, flySpeed, turnSpeedFactor);
+            float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
+            offsetAngle *= Utils.InverseLerp(100f, 350f, npc.Distance(target.Center), true);
+
+            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
+            if (!npc.WithinRange(target.Center, 400f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
+            {
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) + offsetAngle, turnSpeedFactor * 0.018f, true) * idealVelocity.Length();
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, turnSpeedFactor * 0.025f);
+            }
+            else if (npc.velocity.Length() < flySpeed * 2.1f)
+                npc.velocity *= 1.018f;
 
             if (attackTimer >= 520f)
                 GotoNextAttackState(npc);
@@ -227,8 +237,8 @@ namespace InfernumMode.FuckYouModeAIs.EoW
             }
 
             // And release rain clouds.
-            int rainReleaseRate = splitCounter >= 1f ? 15 : 22;
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % rainReleaseRate == rainReleaseRate - 1f && npc.Center.Y < target.Center.Y - 100f)
+            int rainReleaseRate = splitCounter >= 1f ? 45 : 35;
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % rainReleaseRate == rainReleaseRate - 1f && npc.Center.Y < target.Center.Y - 185f)
             {
                 Vector2 cloudSpawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.45f;
                 Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ShadeNimbusHostile>(), 85, 0f);
@@ -258,6 +268,10 @@ namespace InfernumMode.FuckYouModeAIs.EoW
             if (attackTimer >= riseTime)
             {
                 bool inTiles = Collision.SolidCollision(npc.Center, 2, 2);
+                if (npc.velocity.Y < 26f)
+                    npc.velocity.Y += enraged ? 0.75f : 0.5f;
+                if (inTiles)
+                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y, -8f, 8f);
 
                 // Release a shockwave and dark hearts once tiles have been hit.
                 if (inTiles && wasPreviouslyInTiles == 0f)
@@ -282,11 +296,6 @@ namespace InfernumMode.FuckYouModeAIs.EoW
                         }
                         wasPreviouslyInTiles = 1f;
                     }
-
-                    if (npc.velocity.Y < 26f)
-                        npc.velocity.Y += enraged ? 0.75f : 0.5f;
-                    if (inTiles)
-                        npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y, -8f, 8f);
 
                     if (MathHelper.Distance(npc.Center.X, target.Center.X) > 240f)
                         npc.velocity.X = (npc.velocity.X * 21f + npc.SafeDirectionTo(target.Center).X * 10.5f) / 22f;
@@ -319,7 +328,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
             offsetAngle *= Utils.InverseLerp(100f, 350f, npc.Distance(target.Center), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
-            if (!npc.WithinRange(target.Center, 180f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
+            if (!npc.WithinRange(target.Center, 320f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) + offsetAngle, turnSpeedFactor * 0.018f, true) * idealVelocity.Length();
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, turnSpeedFactor * 0.025f);
@@ -351,8 +360,6 @@ namespace InfernumMode.FuckYouModeAIs.EoW
 
         public static void HandleSplit(NPC npc, ref float splitCounter)
         {
-            splitCounter++;
-
             // Delete all segments and create two new worms.
             for (int i = 0; i < Main.maxNPCs; i++)
             {
@@ -363,6 +370,8 @@ namespace InfernumMode.FuckYouModeAIs.EoW
                     Main.npc[i].active = false;
                 }
             }
+
+            splitCounter++;
 
             // Create new worms with linked HP.
             int wormCount = (int)Math.Pow(2D, splitCounter);

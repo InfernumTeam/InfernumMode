@@ -148,10 +148,16 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
 
             if (npc.type == NPCID.EaterofWorldsHead)
             {
-                bool fuck = npc.realLife == -1 && npc.ai[2] >= 2;
-                if (fuck)
+                if (npc.realLife != -1 && Main.npc[npc.realLife].Infernum().ExtraAI[7] == 0f)
+                {
+                    Main.npc[npc.realLife].NPCLoot();
+                    Main.npc[npc.realLife].Infernum().ExtraAI[7] = 1f;
+                    return false;
+                }
+
+                if (npc.ai[2] >= 2f)
                     npc.boss = true;
-                return fuck;
+                return npc.ai[2] >= 2f;
             }
 
             if (npc.type == InfernumMode.CalamityMod.NPCType("Providence"))

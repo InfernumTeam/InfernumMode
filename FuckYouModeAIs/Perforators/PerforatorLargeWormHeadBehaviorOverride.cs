@@ -55,10 +55,10 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
 
             if (fallCountdown > 0f)
             {
-                if (npc.Center.Y < target.Center.Y + 670f)
+                if (npc.Center.Y < target.Center.Y + 450f)
                     npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + moveSpeed * 1.775f, -17f, 17f);
                 else
-                    npc.velocity.Y *= 0.93f;
+                    npc.velocity.Y *= 0.945f;
                 fallCountdown--;
             }
             else
@@ -66,7 +66,7 @@ namespace InfernumMode.FuckYouModeAIs.Perforators
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed, -17f, 17f);
                 npc.velocity.X = (npc.velocity.X * 5f + npc.SafeDirectionTo(target.Center).X * 8.5f) / 6f;
 
-                if (totalSegmentsInAir >= 13)
+                if (totalSegmentsInAir >= 16)
                 {
                     fallCountdown = 65f;
                     for (int i = 0; i < 8; i++)

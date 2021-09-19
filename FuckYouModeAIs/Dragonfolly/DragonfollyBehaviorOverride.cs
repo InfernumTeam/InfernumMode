@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.FuckYouModeAIs.Twins;
@@ -14,7 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Dragonfolly
 {
-	public class DragonfollyBehaviorOverride : NPCBehaviorOverride
+    public class DragonfollyBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<Bumblefuck>();
 

@@ -1,7 +1,4 @@
-using CalamityMod;
 using CalamityMod.Projectiles;
-using CalamityMod.Projectiles.DraedonsArsenal;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Providence
 {
-	public class ProvBoomDeath : ModProjectile
+    public class ProvBoomDeath : ModProjectile
 	{
 		public float Radius
 		{

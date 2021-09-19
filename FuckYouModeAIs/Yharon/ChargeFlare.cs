@@ -1,4 +1,3 @@
-using CalamityMod.Projectiles;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Yharon
 {
-	public class ChargeFlare : ModProjectile
+    public class ChargeFlare : ModProjectile
     {
         public override void SetStaticDefaults()
         {

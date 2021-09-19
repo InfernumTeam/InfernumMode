@@ -1,18 +1,15 @@
-﻿using CalamityMod.Dusts;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Guardians
 {
-	public class HealerGuardianBehaviorOverride : NPCBehaviorOverride
+    public class HealerGuardianBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianBoss3>();
 

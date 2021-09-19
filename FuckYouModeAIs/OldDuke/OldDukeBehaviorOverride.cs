@@ -12,13 +12,12 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
 
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
 
 namespace InfernumMode.FuckYouModeAIs.OldDuke
 {
-	public class OldDukeBehaviorOverride : NPCBehaviorOverride
+    public class OldDukeBehaviorOverride : NPCBehaviorOverride
     {
         public enum OldDukeAttackState
         {

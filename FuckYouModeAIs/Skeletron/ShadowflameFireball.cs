@@ -1,12 +1,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Skeletron
 {
-	public class ShadowflameFireball : ModProjectile
+    public class ShadowflameFireball : ModProjectile
     {
         public override void SetStaticDefaults() => DisplayName.SetDefault("Shadowflame Bomb");
 

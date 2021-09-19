@@ -1,5 +1,3 @@
-using CalamityMod.Projectiles.DraedonsArsenal;
-using CalamityMod.World;
 using InfernumMode.Miscellaneous;
 using Microsoft.Xna.Framework;
 using System;

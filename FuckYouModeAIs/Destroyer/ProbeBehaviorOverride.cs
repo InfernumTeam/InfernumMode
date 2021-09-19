@@ -1,14 +1,11 @@
-﻿using CalamityMod;
-using InfernumMode.OverridingSystem;
+﻿using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Destroyer
 {
-	public class ProbeBehaviorOverride : NPCBehaviorOverride
+    public class ProbeBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.Probe;
 

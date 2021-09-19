@@ -5,8 +5,6 @@ using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 using Terraria.ID;
 using CalamityMod.Projectiles.Boss;
-using CalamityMod.Projectiles.DraedonsArsenal;
-using CalamityMod.World;
 using System;
 
 namespace InfernumMode.FuckYouModeAIs.DoG

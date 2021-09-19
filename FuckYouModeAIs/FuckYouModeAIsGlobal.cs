@@ -1,18 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Accessories.Wings;
-using CalamityMod.Items.Armor.Vanity;
 using CalamityMod.Items.Dyes;
-using CalamityMod.Items.LoreItems;
-using CalamityMod.Items.Materials;
-using CalamityMod.Items.Placeables.Furniture.Trophies;
-using CalamityMod.Items.SummonItems;
-using CalamityMod.Items.Weapons.Magic;
-using CalamityMod.Items.Weapons.Melee;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.Items.Weapons.Summon;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.Calamitas;
@@ -20,10 +9,8 @@ using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Ravager;
-using CalamityMod.NPCs.TownNPCs;
 using CalamityMod.Projectiles.Ranged;
 using CalamityMod.Projectiles.Rogue;
-using CalamityMod.Tiles.Ores;
 using CalamityMod.World;
 using InfernumMode.Buffs;
 using InfernumMode.FuckYouModeAIs.Cultist;
@@ -44,7 +31,7 @@ using CalamityMod.NPCs.AquaticScourge;
 
 namespace InfernumMode.FuckYouModeAIs.MainAI
 {
-	public partial class FuckYouModeAIsGlobal : GlobalNPC
+    public partial class FuckYouModeAIsGlobal : GlobalNPC
     {
         #region Instance and Variables
         public override bool InstancePerEntity => true;

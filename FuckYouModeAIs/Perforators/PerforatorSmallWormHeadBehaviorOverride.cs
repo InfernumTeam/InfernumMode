@@ -1,11 +1,8 @@
 ﻿using CalamityMod;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.FuckYouModeAIs.BoC;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

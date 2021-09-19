@@ -1,5 +1,4 @@
 using CalamityMod.NPCs;
-using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Polterghast
 {
-	public class WavySoul : ModProjectile
+    public class WavySoul : ModProjectile
     {
         public float Time => 200f - projectile.timeLeft;
         public override void SetStaticDefaults()

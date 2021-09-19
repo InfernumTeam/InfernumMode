@@ -1,4 +1,3 @@
-using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -7,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Polterghast
 {
-	public class DeathAnimationSoul : ModProjectile
+    public class DeathAnimationSoul : ModProjectile
     {
         public bool Cyan => projectile.ai[0] == 1f;
         public bool CompleteFadein => projectile.ai[1] == 1f;

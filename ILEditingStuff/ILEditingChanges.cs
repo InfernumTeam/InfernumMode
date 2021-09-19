@@ -4,14 +4,12 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.UI;
 using CalamityMod.World;
 using InfernumMode.FuckYouModeAIs.MainAI;
-using InfernumMode.FuckYouModeAIs.Perforators;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using MonoMod.RuntimeDetour;
 using MonoMod.RuntimeDetour.HookGen;
 using System;
 using System.Linq;
@@ -22,7 +20,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.ILEditingStuff
 {
-	public class ILEditingChanges
+    public class ILEditingChanges
     {
         public static event ILContext.Manipulator ModifyPreAINPC
         {

@@ -1,5 +1,4 @@
 using CalamityMod.NPCs;
-using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Polterghast
 {
-	public class NotSpecialSoul : ModProjectile
+    public class NotSpecialSoul : ModProjectile
     {
         public bool Cyan => projectile.ai[0] == 1f;
         public override void SetStaticDefaults()

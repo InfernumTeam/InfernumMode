@@ -1,5 +1,4 @@
-﻿using CalamityMod.Dusts;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -12,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Guardians
 {
-	public class AttackerGuardianBehaviorOverride : NPCBehaviorOverride
+    public class AttackerGuardianBehaviorOverride : NPCBehaviorOverride
     {
         internal enum Phase2GuardianAttackState
         {

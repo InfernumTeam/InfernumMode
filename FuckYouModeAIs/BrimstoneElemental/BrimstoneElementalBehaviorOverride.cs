@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
@@ -8,13 +7,11 @@ using CalamityMod.World;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Utilities;
 
 using BrimmyNPC = CalamityMod.NPCs.BrimstoneElemental.BrimstoneElemental;
 

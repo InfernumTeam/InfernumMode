@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Dusts;
-using CalamityMod.NPCs;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -10,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.GameContent.Events;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
@@ -21,7 +19,7 @@ using YharonBoss = CalamityMod.NPCs.Yharon.Yharon;
 
 namespace InfernumMode.FuckYouModeAIs.Yharon
 {
-	public class YharonBehaviorOverride : NPCBehaviorOverride
+    public class YharonBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<YharonBoss>();
 

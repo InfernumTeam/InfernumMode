@@ -1,6 +1,4 @@
-﻿using CalamityMod.Dusts;
-using InfernumMode.FuckYouModeAIs.Twins;
-using InfernumMode.OverridingSystem;
+﻿using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,7 +6,7 @@ using Terraria.ID;
 
 namespace InfernumMode.FuckYouModeAIs.Cultist
 {
-	public class CultistCloneBehaviorOverride : NPCBehaviorOverride
+    public class CultistCloneBehaviorOverride : NPCBehaviorOverride
 	{
 		public override int NPCOverrideType => NPCID.CultistBossClone;
 

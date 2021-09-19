@@ -1,17 +1,14 @@
 ﻿using CalamityMod.NPCs.NormalNPCs;
-using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
 
 namespace InfernumMode.FuckYouModeAIs.KingSlime
 {
-	public class JewelBehaviorOverride : NPCBehaviorOverride
+    public class JewelBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<KingSlimeJewel>();
 

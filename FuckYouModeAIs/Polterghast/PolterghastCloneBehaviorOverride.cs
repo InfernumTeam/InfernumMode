@@ -2,17 +2,13 @@
 using CalamityMod.NPCs.Polterghast;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Polterghast
 {
-	public class PolterghastCloneBehaviorOverride : NPCBehaviorOverride
+    public class PolterghastCloneBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<PolterPhantom>();
 

@@ -1,24 +1,15 @@
-﻿using CalamityMod.Dusts;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.Yharon;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent.Events;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Yharon
 {
-	public class DetonatingFlameBehaviorOverride : NPCBehaviorOverride
+    public class DetonatingFlameBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<DetonatingFlare>();
 

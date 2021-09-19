@@ -1,9 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.DevourerofGods;
-using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
 using InfernumMode.OverridingSystem;
@@ -14,14 +12,13 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 using DoGHead = CalamityMod.NPCs.DevourerofGods.DevourerofGodsHeadS;
 
 namespace InfernumMode.FuckYouModeAIs.DoG
 {
-	public class DoGPhase2HeadBehaviorOverride : NPCBehaviorOverride
+    public class DoGPhase2HeadBehaviorOverride : NPCBehaviorOverride
     {
         public enum SpecialAttackType
         {

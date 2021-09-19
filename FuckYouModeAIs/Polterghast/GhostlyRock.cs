@@ -1,4 +1,3 @@
-using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -7,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Polterghast
 {
-	public class GhostlyRock : ModProjectile
+    public class GhostlyRock : ModProjectile
     {
         public override void SetStaticDefaults()
         {

@@ -1,16 +1,4 @@
-﻿using CalamityMod.NPCs.Cryogen;
-using CalamityMod.Projectiles.Boss;
-using InfernumMode.OverridingSystem;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-
-using CryogenBoss = CalamityMod.NPCs.Cryogen.Cryogen;
-
-namespace InfernumMode.FuckYouModeAIs.Cryogen
+﻿namespace InfernumMode.FuckYouModeAIs.Cryogen
 {
     /*
     public class CryogenBehaviorOverride : NPCBehaviorOverride

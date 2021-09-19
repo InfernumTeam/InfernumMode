@@ -1,5 +1,4 @@
 using CalamityMod.NPCs;
-using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -8,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.Polterghast
 {
-	public class PairedSoul : ModProjectile
+    public class PairedSoul : ModProjectile
     {
         public Projectile Twin => Main.projectile[(int)projectile.ai[1]];
         public Player Target => Main.player[projectile.owner];

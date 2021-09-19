@@ -1,4 +1,3 @@
-using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Enemy;
 using Microsoft.Xna.Framework;

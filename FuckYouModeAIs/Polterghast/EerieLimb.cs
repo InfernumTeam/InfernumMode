@@ -1,5 +1,4 @@
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.Polterghast;
 using InfernumMode.InverseKinematics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

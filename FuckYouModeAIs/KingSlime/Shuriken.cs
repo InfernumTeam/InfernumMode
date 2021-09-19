@@ -1,4 +1,3 @@
-using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -8,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.FuckYouModeAIs.KingSlime
 {
-	public class Shuriken : ModProjectile
+    public class Shuriken : ModProjectile
     {
         public override void SetStaticDefaults()
         {

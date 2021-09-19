@@ -1,6 +1,4 @@
-﻿using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.NPCs.SunkenSea;
-using CalamityMod.Projectiles.Enemy;
+﻿using CalamityMod.Projectiles.Enemy;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,7 +6,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Utilities;
 using GiantClamNPC = CalamityMod.NPCs.SunkenSea.GiantClam;
 
 namespace InfernumMode.FuckYouModeAIs.GiantClam

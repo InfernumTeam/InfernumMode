@@ -1,4 +1,3 @@
-using InfernumMode.FuckYouModeAIs.Cryogen;
 using InfernumMode.FuckYouModeAIs.Twins;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.OverridingSystem;

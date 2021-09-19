@@ -16,8 +16,7 @@ namespace InfernumMode.Items
         {
             DisplayName.SetDefault("Sparkling Tuna Can");
             Tooltip.SetDefault("Summons the Giant Clam\n" +
-                "Can only be used in the sunken sea\n" +
-                "Infernum");
+                "Can only be used in the sunken sea");
         }
 
         public override void SetDefaults()
@@ -32,7 +31,6 @@ namespace InfernumMode.Items
         }
 
         public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<GiantClam>()) && player.Calamity().ZoneSunkenSea;
-        public override void ModifyTooltips(List<TooltipLine> tooltips) => tooltips.FirstOrDefault(x => x.Name == "Tooltip2" && x.mod == "Terraria").overrideColor = Color.DarkRed;
 
         public override void AddRecipes()
         {
@@ -76,8 +74,11 @@ namespace InfernumMode.Items
 
         public override bool UseItem(Player player)
         {
-            Vector2 spawnPosition = new Vector2(player.direction == 1 ? player.Center.X + 300 : player.Center.X - 300, player.Center.Y);
-            NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GiantClam>());
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Vector2 spawnPosition = player.Center + Vector2.UnitX * player.direction * 300f;
+                NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GiantClam>());
+            }
             return true;
         }
     }

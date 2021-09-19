@@ -271,17 +271,22 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             bool isDesertScourge = npc.type == ModContent.NPCType<DesertScourgeHead>() || npc.type == ModContent.NPCType<DesertScourgeBody>();
             isDesertScourge |= npc.type == ModContent.NPCType<DesertScourgeTail>() || npc.type == ModContent.NPCType<DesertScourgeHeadSmall>();
             isDesertScourge |= npc.type == ModContent.NPCType<DesertScourgeBodySmall>() || npc.type == ModContent.NPCType<DesertScourgeTailSmall>();
+            bool isSplitEoW = npc.type == NPCID.EaterofWorldsBody && npc.realLife >= 0 && Main.npc[npc.realLife].ai[2] >= 1f;
 
             if (isDesertScourge && (projectile.type == ProjectileID.JestersArrow || projectile.type == ProjectileID.UnholyArrow || projectile.type == ProjectileID.WaterBolt))
                 damage = (int)(damage * 0.45);
 
             if (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare)
                 damage = (int)(damage * 0.8);
+
             if (isDesertScourge && (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare))
                 damage = (int)(damage * 0.75);
 
             if (npc.type == NPCID.KingSlime && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.67);
+
+            if (isSplitEoW && (projectile.penetrate == -1 || projectile.penetrate > 1))
+                damage = (int)(damage * 0.55);
 
             if (npc.type == ModContent.NPCType<AquaticScourgeBody>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.45);

@@ -128,7 +128,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
                         float shootOffsetAngle = 0f;
                         if (totalFireballsPerBurst > 1f)
                             shootOffsetAngle = MathHelper.Lerp(-0.84f, 0.84f, i / (float)(totalFireballsPerBurst - 1f));
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(shootOffsetAngle) * 9f;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(shootOffsetAngle) * 7f;
                         Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<CursedFlameBomb>(), 85, 0f);
                     }
                 }
@@ -327,7 +327,7 @@ namespace InfernumMode.FuckYouModeAIs.EoW
             float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
             offsetAngle *= Utils.InverseLerp(100f, 350f, npc.Distance(target.Center), true);
 
-            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
+            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed * 0.8f;
             if (!npc.WithinRange(target.Center, 320f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) + offsetAngle, turnSpeedFactor * 0.018f, true) * idealVelocity.Length();

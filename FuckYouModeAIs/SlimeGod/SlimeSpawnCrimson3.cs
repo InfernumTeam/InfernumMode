@@ -26,7 +26,7 @@ namespace InfernumMode.FuckYouModeAIs.SlimeGod
         {
             npc.aiStyle = -1;
             aiType = -1;
-            npc.damage = 0;
+            npc.damage = 50;
 			npc.width = 40;
             npc.height = 30;
             npc.defense = 6;

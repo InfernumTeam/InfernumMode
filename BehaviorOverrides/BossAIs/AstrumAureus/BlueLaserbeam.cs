@@ -56,6 +56,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (index == -1)
                 index = AstrumAureusBehaviorOverride.LaserbeamSpawnOffsets.Count - 1;
             projectile.Center = Main.npc[OwnerIndex].Center + AstrumAureusBehaviorOverride.LaserbeamSpawnOffsets[index];
+
+            if (RotationalSpeed == 0f)
+                RotationalSpeed = MathHelper.Pi / 180f * -0.84f;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;

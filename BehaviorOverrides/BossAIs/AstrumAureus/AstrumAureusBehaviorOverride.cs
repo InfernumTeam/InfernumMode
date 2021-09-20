@@ -586,15 +586,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             }
 
             // Release slow spreads of lasers after the beams have been released.
-            if (attackTimer > laserShootDelay && attackTimer % 45f == 44f)
+            if (attackTimer > laserShootDelay && attackTimer % 30f == 29f)
             {
                 Main.PlaySound(SoundID.Item33, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < 10; i++)
                     {
-                        Vector2 laserShootVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 7.5f;
+                        Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 10f).ToRotationVector2() * 7.5f;
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
                     }
 

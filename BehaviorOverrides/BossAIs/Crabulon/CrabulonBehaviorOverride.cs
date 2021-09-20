@@ -45,9 +45,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 npc.TargetClosest();
 
-            // Reset damage. Do none by default if somewhat transparent.
+            // Reset things.
             npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
-
+            npc.noTileCollide = false;
             npc.defense = 14;
 
             // If none was found or it was too far away, despawn.
@@ -170,7 +170,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             }
 
             if (npc.velocity.Y != 0f)
-                npc.velocity.Y += extraGravity;
+                npc.velocity.Y += extraGravity + 0.3f;
 
             if (hasJumpedFlag == 1f)
             {
@@ -178,6 +178,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 npc.noTileCollide = npc.Bottom.Y < target.Top.Y && hasHitGroundFlag == 0f;
                 if (jumpTimer < 8f)
                     npc.noTileCollide = true;
+
+                // Do gravity manually.
+                npc.noGravity = true;
 
                 // Do more damage since Crabulon is essentially trying to squish the target.
                 npc.damage = npc.defDamage + 36;
@@ -281,17 +284,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             else
                 npc.velocity.X = (npc.velocity.X * 20f + walkSpeed) / 21f;
 
-            Vector2 checkArea = new Vector2(80f);
-            Vector2 checkTopLeft = npc.Center - checkArea * 0.5f;
-            npc.noTileCollide = Collision.SolidCollision(checkTopLeft, (int)checkArea.X, (int)checkArea.Y);
+            npc.noGravity = true;
+            npc.noTileCollide = true;
 
-            // Walk upwards to reach the target if below them.
-            if (npc.Center.Y > target.Bottom.Y && npc.velocity.Y > -14f)
-                npc.velocity.Y -= 0.15f;
+            // Check if tile collision ignoral is necessary.
+            int horizontalCheckArea = 80;
+            int verticalCheckArea = 20;
+            Vector2 checkPosition = new Vector2(npc.Center.X - horizontalCheckArea * 0.5f, npc.Bottom.Y - verticalCheckArea);
+            if (Collision.SolidCollision(checkPosition, horizontalCheckArea, verticalCheckArea))
+            {
+                if (npc.velocity.Y > 0f)
+                    npc.velocity.Y = 0f;
 
-            // Otherwise slow down vertical movement.
+                if (npc.velocity.Y > -0.2)
+                    npc.velocity.Y -= 0.025f;
+                else
+                    npc.velocity.Y -= 0.2f;
+
+                if (npc.velocity.Y < -4f)
+                    npc.velocity.Y = -4f;
+
+                // Walk upwards to reach the target if below them.
+                if (npc.Center.Y > target.Bottom.Y && npc.velocity.Y > -14f)
+                    npc.velocity.Y -= 0.15f;
+
+            }
             else
-                npc.velocity.Y *= 0.96f;
+            {
+                if (npc.velocity.Y < 0f)
+                    npc.velocity.Y = 0f;
+
+                if (npc.velocity.Y < 0.1)
+                    npc.velocity.Y += 0.025f;
+                else
+                    npc.velocity.Y += 0.5f;
+            }
 
             if (attackTimer >= 160f || npc.collideX || target.Center.Y < npc.Top.Y - 200f || target.Center.Y > npc.Bottom.Y + 80f)
                 GotoNextAttackState(npc);

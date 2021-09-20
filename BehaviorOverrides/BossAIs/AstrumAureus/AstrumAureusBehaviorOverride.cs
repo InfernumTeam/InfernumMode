@@ -658,7 +658,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             if (lifeRatio < Phase2LifeRatio)
             {
-                attackSelector.Add(AureusAttackType.CreateAureusSpawnRing, 0.7);
+                attackSelector.Add(AureusAttackType.CreateAureusSpawnRing, 0.85);
                 attackSelector.Add(AureusAttackType.CelestialRain);
             }
 

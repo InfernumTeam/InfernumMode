@@ -482,19 +482,50 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             npc.velocity.X *= 0.9f;
 
             if (rainAngle == 0f)
-                rainAngle = Main.rand.NextFloat(-MathHelper.PiOver2 / 8f, MathHelper.PiOver2 / 8f);
+                rainAngle = Main.rand.NextFloat(-MathHelper.PiOver2 / 6f, MathHelper.PiOver2 / 6f);
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cometShootRate == cometShootRate - 1f && attackTimer > 60f)
+            // Charge up astral energy and gain a good amount of extra defense.
+            if (attackTimer < 90f)
+            {
+                int dustCount = attackTimer >= 50f ? 2 : 1;
+                for (int i = 0; i < dustCount; i++)
+                {
+                    int dustType = Main.rand.NextBool(2) ? ModContent.DustType<AstralOrange>() : ModContent.DustType<AstralBlue>();
+                    float dustScale = i % 2 == 1 ? 1.65f : 1.2f;
+
+                    Vector2 dustSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(75f, 120f);
+                    Dust chargeDust = Dust.NewDustPerfect(dustSpawnPosition, dustType);
+                    chargeDust.velocity = (npc.Center - dustSpawnPosition).SafeNormalize(Vector2.UnitY) * (dustCount == 2 ? 7f : 4.6f);
+                    chargeDust.scale = dustScale;
+                    chargeDust.noGravity = true;
+                }
+
+                npc.defense = npc.defDefense + 42;
+            }
+
+            // Make an explosion prior to the comets being released.
+            if (attackTimer == 120f)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                Utilities.CreateGenericDustExplosion(npc.Center, ModContent.DustType<AstralOrange>(), 60, 11f, 1.8f);
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cometShootRate == cometShootRate - 1f && attackTimer > 120f)
             {
                 Vector2 cometSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-1050, 1050f), -780f);
                 Vector2 shootDirection = Vector2.UnitY.RotatedBy(rainAngle);
                 Vector2 shootVelocity = shootDirection * 16f;
 
-                int cometType = Main.rand.NextBool(12) ? ModContent.ProjectileType<AstralFlame>() : ModContent.ProjectileType<AstralBlueComet>();
+                int cometType = ModContent.ProjectileType<AstralBlueComet>();
+                if (Main.rand.NextBool(12))
+                {
+                    cometType = ModContent.ProjectileType<AstralFlame>();
+                    shootVelocity *= 0.55f;
+                }
                 Utilities.NewProjectileBetter(cometSpawnPosition, shootVelocity, cometType, 170, 0f);
             }
 
-            if (attackTimer > 450f)
+            if (attackTimer > 520f)
                 GotoNextAttackState(npc);
         }
 
@@ -517,7 +548,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (shouldSlowDown)
             {
                 // Make the attack go by more quickly if close to the target horizontally.
-                attackTimer++;
+                if (attackTimer < 360f)
+                    attackTimer++;
 
                 npc.velocity.X *= 0.8f;
                 if (Math.Abs(npc.velocity.X) < 0.1f)

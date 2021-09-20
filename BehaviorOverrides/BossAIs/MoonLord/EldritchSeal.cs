@@ -6,7 +6,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static InfernumMode.BehaviorOverrides.BossAIs.BehaviorOverridesGlobal;
+using static InfernumMode.GlobalInstances.BehaviorOverridesGlobal;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -52,8 +52,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             bool anySpecialSeals = Main.npc.Any(npc => npc.type == this.npc.type && npc.active && npc.ai[0] == 3f);
             Lighting.AddLight(npc.Center, 1f, 1f, 1f);
             Player player = Main.player[Player.FindClosest(npc.Center, 1, 1)];
-            npc.GetGlobalNPC<BehaviorOverridesGlobal>().ExtraAI[7] += 1f;
-            npc.dontTakeDamage = hitCounter > 0 || npc.GetGlobalNPC<BehaviorOverridesGlobal>().ExtraAI[7] < 60f * secondsOfInvinicibility;
+            npc.Infernum().ExtraAI[7] += 1f;
+            npc.dontTakeDamage = hitCounter > 0 || npc.Infernum().ExtraAI[7] < 60f * secondsOfInvinicibility;
             if (hitCounter > 0)
                 hitCounter--;
             npc.ai[1] += 1f;
@@ -110,10 +110,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     break;
             }
             const float radius = 900f;
-            npc.GetGlobalNPC<BehaviorOverridesGlobal>().ExtraAI[0] += MathHelper.ToRadians(0.6f);
+            npc.Infernum().ExtraAI[0] += MathHelper.ToRadians(0.6f);
             if (npc.ai[0] != 3f)
             {
-                npc.position = Main.npc[(int)npc.ai[3]].Center + npc.GetGlobalNPC<BehaviorOverridesGlobal>().ExtraAI[0].ToRotationVector2() * radius;
+                npc.position = Main.npc[(int)npc.ai[3]].Center + npc.Infernum().ExtraAI[0].ToRotationVector2() * radius;
                 Main.LocalPlayer.Calamity().adrenaline = 0;
                 npc.Calamity().DR = 0.999999f;
             }

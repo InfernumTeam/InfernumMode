@@ -8,7 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using static InfernumMode.Utilities;
-using static InfernumMode.BehaviorOverrides.BossAIs.BehaviorOverridesGlobal;
+using static InfernumMode.GlobalInstances.BehaviorOverridesGlobal;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {

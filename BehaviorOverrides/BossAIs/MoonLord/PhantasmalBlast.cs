@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 return;
             }
             NPC core = Main.npc[NPC.FindFirstNPC(NPCID.MoonLordCore)];
-            projectile.tileCollide = projectile.Hitbox.Intersects(core.GetGlobalNPC<BehaviorOverridesGlobal>().arenaRectangle);
+            projectile.tileCollide = projectile.Hitbox.Intersects(core.Infernum().arenaRectangle);
             if (projectile.Distance(player.Center) < 30f)
                 projectile.Kill();
             projectile.rotation = projectile.velocity.ToRotation();

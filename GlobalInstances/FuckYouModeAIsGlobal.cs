@@ -29,7 +29,7 @@ using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
 using CalamityMod.NPCs.AquaticScourge;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs
+namespace InfernumMode.GlobalInstances
 {
     public partial class BehaviorOverridesGlobal : GlobalNPC
     {

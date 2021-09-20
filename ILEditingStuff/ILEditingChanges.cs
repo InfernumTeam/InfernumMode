@@ -4,6 +4,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.UI;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs;
+using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;

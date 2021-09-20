@@ -16,7 +16,7 @@ using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
 using CalamityMod.NPCs.AstrumAureus;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs
+namespace InfernumMode.GlobalInstances
 {
 	public static class InfernumNPCHPValues
     {

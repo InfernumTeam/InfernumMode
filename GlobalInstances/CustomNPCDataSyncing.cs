@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Terraria;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs
+namespace InfernumMode.GlobalInstances
 {
 	public partial class BehaviorOverridesGlobal
     {

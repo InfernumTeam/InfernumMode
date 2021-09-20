@@ -9,7 +9,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.EarthElemental
     {
         public override int NPCOverrideType => ModContent.NPCType<Horse>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 
         // AI stuff here.
         // I suggest looking at existing boss AIs as references with this.

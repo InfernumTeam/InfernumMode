@@ -31,7 +31,7 @@ using CalamityMod.NPCs.AquaticScourge;
 
 namespace InfernumMode.GlobalInstances
 {
-    public partial class BehaviorOverridesGlobal : GlobalNPC
+    public partial class GlobalNPCOverrides : GlobalNPC
     {
         #region Instance and Variables
         public override bool InstancePerEntity => true;

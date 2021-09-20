@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.GlobalInstances
 {
-    public class FuckYouModeDrawEffects : GlobalNPC
+    public class GlobalNPCDrawEffects : GlobalNPC
     {
         public override bool InstancePerEntity => true;
 

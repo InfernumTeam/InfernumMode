@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.GlobalInstances
 {
-    public class FuckYouModeProjectileAIs : GlobalProjectile
+    public class GlobalProjectileOverrides : GlobalProjectile
     {
         public override bool InstancePerEntity => true;
 

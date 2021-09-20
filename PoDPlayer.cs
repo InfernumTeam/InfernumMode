@@ -27,13 +27,13 @@ namespace InfernumMode
                 return;
 
             bool useHIV = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("HiveMindP2")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].Infernum().ExtraAI[10] == 1f || Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].life < Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].lifeMax * 0.2f);
-            player.ManageSpecialBiomeVisuals("FuckYouMode:HiveMind", useHIV);
+            player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", useHIV);
 
             bool useFolly = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("Bumblefuck")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("Bumblefuck"))].Infernum().ExtraAI[8] > 0f);
-            player.ManageSpecialBiomeVisuals("FuckYouMode:Dragonfolly", useFolly);
+            player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", useFolly);
 
             bool useDeus = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("AstrumDeusHeadSpectral"));
-            player.ManageSpecialBiomeVisuals("FuckYouMode:Deus", useDeus);
+            player.ManageSpecialBiomeVisuals("InfernumMode:Deus", useDeus);
         }
         #endregion
         #region Reset Effects

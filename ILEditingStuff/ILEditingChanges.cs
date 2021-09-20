@@ -293,7 +293,7 @@ namespace InfernumMode.ILEditingStuff
                 int oldLifeMax = npc.lifeMax;
                 if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
                 {
-                    npc.GetGlobalNPC<FuckYouModeDrawEffects>().SetDefaults(npc);
+                    npc.GetGlobalNPC<GlobalNPCDrawEffects>().SetDefaults(npc);
                 }
             }));
             cursor.Emit(OpCodes.Ret);
@@ -312,7 +312,7 @@ namespace InfernumMode.ILEditingStuff
                 GlobalNPC[] arr = typeof(NPCLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags).GetValue(instance) as GlobalNPC[];
 
                 if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && PoDWorld.InfernumMode)
-                    return npc.GetGlobalNPC<FuckYouModeDrawEffects>().PreDraw(npc, spriteBatch, drawColor);
+                    return npc.GetGlobalNPC<GlobalNPCDrawEffects>().PreDraw(npc, spriteBatch, drawColor);
 
                 for (int i = 0; i < arr.Length; i++)
                 {
@@ -340,7 +340,7 @@ namespace InfernumMode.ILEditingStuff
                 }
                 if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(type) && PoDWorld.InfernumMode)
                 {
-                    npc.GetGlobalNPC<FuckYouModeDrawEffects>().FindFrame(npc, frameHeight);
+                    npc.GetGlobalNPC<GlobalNPCDrawEffects>().FindFrame(npc, frameHeight);
                     return;
                 }
                 npc.VanillaFindFrame(frameHeight);
@@ -373,7 +373,7 @@ namespace InfernumMode.ILEditingStuff
                 GlobalNPC[] arr = typeof(NPCLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags).GetValue(instance) as GlobalNPC[];
                 foreach (GlobalNPC g in arr)
                 {
-                    if (g is BehaviorOverridesGlobal)
+                    if (g is GlobalNPCOverrides)
                         return g.Instance(npc).CheckDead(npc);
                     result &= g.Instance(npc).CheckDead(npc);
                 }

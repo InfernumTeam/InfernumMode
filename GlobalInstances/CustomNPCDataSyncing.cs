@@ -3,8 +3,8 @@ using Terraria;
 
 namespace InfernumMode.GlobalInstances
 {
-	public partial class BehaviorOverridesGlobal
-    {
+	public partial class GlobalNPCOverrides
+	{
 		internal bool[] HasAssociatedAIBeenUsed = new bool[TotalExtraAISlots];
 		internal int TotalAISlotsInUse => HasAssociatedAIBeenUsed.Count(slot => slot);
 		public override void PostAI(NPC npc)

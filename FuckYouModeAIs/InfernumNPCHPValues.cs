@@ -14,6 +14,7 @@ using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
 using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
+using CalamityMod.NPCs.AstrumAureus;
 
 namespace InfernumMode.FuckYouModeAIs.MainAI
 {
@@ -42,6 +43,7 @@ namespace InfernumMode.FuckYouModeAIs.MainAI
             [NPCID.Spazmatism] = 36260,
             [NPCID.Retinazer] = 33915,
             [NPCID.SkeletronPrime] = 44444,
+            [ModContent.NPCType<AureusSpawn>()] = 25000,
             [NPCID.CultistBoss] = 56000,
             [ModContent.NPCType<Bumblefuck>()] = 227550,
             [ModContent.NPCType<ProvidenceBoss>()] = 900000,

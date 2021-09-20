@@ -3,7 +3,7 @@ using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.UI;
 using CalamityMod.World;
-using InfernumMode.FuckYouModeAIs.MainAI;
+using InfernumMode.BehaviorOverrides.BossAIs;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -372,7 +372,7 @@ namespace InfernumMode.ILEditingStuff
                 GlobalNPC[] arr = typeof(NPCLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags).GetValue(instance) as GlobalNPC[];
                 foreach (GlobalNPC g in arr)
                 {
-                    if (g is FuckYouModeAIsGlobal)
+                    if (g is BehaviorOverridesGlobal)
                         return g.Instance(npc).CheckDead(npc);
                     result &= g.Instance(npc).CheckDead(npc);
                 }

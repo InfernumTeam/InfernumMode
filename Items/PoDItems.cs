@@ -1,6 +1,6 @@
 ﻿using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.DevourerofGods;
-using InfernumMode.FuckYouModeAIs.DoG;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;

@@ -1,4 +1,4 @@
-using InfernumMode.FuckYouModeAIs.Twins;
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Skies;

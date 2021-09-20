@@ -1,6 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs.AstrumDeus;
-using InfernumMode.FuckYouModeAIs.AstrumDeus;
+using InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

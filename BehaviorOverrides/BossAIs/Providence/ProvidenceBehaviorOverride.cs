@@ -164,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 						for (int i = 0; i < 3; i++)
 						{
 							int shootType = ModContent.ProjectileType<SwirlingFire>();
-							if ((Main.rand.NextBool(50) && deathEffectTimer >= 110f) || deathEffectTimer == 92f)
+							if ((Main.rand.NextBool(150) && deathEffectTimer >= 110f) || deathEffectTimer == 92f)
 							{
 								if (deathEffectTimer >= 320f)
 								{
@@ -993,7 +993,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 				spriteBatch.ExitShaderRegion();
 			}
 
-			int totalProvidencesToDraw = (int)MathHelper.Lerp(1f, 25f, burnIntensity);
+			int totalProvidencesToDraw = (int)MathHelper.Lerp(1f, 30f, burnIntensity);
 			Texture2D baseTexture = ModContent.GetTexture("CalamityMod/NPCs/Providence/Providence");
 			Vector2 textureOrigin = new Vector2(Main.npcTexture[npc.type].Width / 2, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type] / 2);
 			for (int i = 0; i < totalProvidencesToDraw; i++)

@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 				MaxRadius = Main.rand.NextFloat(2000f, 4000f);
 				projectile.localAI[0] = 1f;
 			}
-			Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 38f;
+			Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 10f;
 
 			Lighting.AddLight(projectile.Center, 0.2f, 0.1f, 0f);
 			Radius = MathHelper.Lerp(Radius, MaxRadius, 0.15f);

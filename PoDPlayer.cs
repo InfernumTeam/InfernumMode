@@ -133,7 +133,7 @@ namespace InfernumMode
 			}
 
             if (CurrentScreenShakePower > 0f)
-                CurrentScreenShakePower = Utils.Clamp(CurrentScreenShakePower - 0.2f, 0f, 50f);
+                CurrentScreenShakePower = Utils.Clamp(CurrentScreenShakePower - 0.2f, 0f, 15f);
             else
                 return;
 

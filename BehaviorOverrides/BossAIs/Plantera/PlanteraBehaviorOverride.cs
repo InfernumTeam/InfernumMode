@@ -17,8 +17,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
-        public const float Phase2LifeRatio = 0.9f;
-        public const float Phase3LifeRatio = 0.5f;
+        public const float Phase2LifeRatio = 0.95f;
+        public const float Phase3LifeRatio = 0.55f;
         public const float Phase4LifeRatio = 0.2f;
 
         #region Enumerations
@@ -242,39 +242,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             int blossomRate = inPhase4 ? 200 : 180;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % blossomRate == blossomRate - 1f)
             {
-                List<Vector2> flowerSpawnPositions = new List<Vector2>();
+                int petalCount = inPhase4 ? 5 : 4;
 
-                for (int i = 0; i < Main.maxNPCs; i++)
+                for (int i = 0; i < petalCount; i++)
                 {
-                    if (Main.npc[i].type != NPCID.PlanterasHook || !Main.npc[i].active)
-                        continue;
-
-                    flowerSpawnPositions.Add(Main.npc[i].Center);
+                    Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / petalCount).ToRotationVector2() * 500f;
+                    Vector2 centeredSpawnPosition = spawnPosition.ToTileCoordinates().ToWorldCoordinates();
+                    Utilities.NewProjectileBetter(centeredSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ExplodingFlower>(), 0, 0f);
                 }
-
-                for (int tries = 0; tries < 10000; tries++)
-                {
-                    Vector2 potentialSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(480f, 1350f);
-                    Point potentialTilePosition = potentialSpawnPosition.ToTileCoordinates();
-                    Vector2 ceneteredSpawnPosition = potentialTilePosition.ToWorldCoordinates();
-                    Tile tile = CalamityUtils.ParanoidTileRetrieval(potentialTilePosition.X, potentialTilePosition.Y);
-
-                    // If a tile is an active wall with no tile in fron of it register it as a place to spawn a flower.
-                    if (tile.wall > 0 && !WorldGen.SolidTile(tile))
-                        flowerSpawnPositions.Add(ceneteredSpawnPosition);
-
-                    // If a tile is a jungle grass mud tile and is active but not actuated register it as a place to spawn a flower.
-                    if (tile.type == TileID.JungleGrass && tile.nactive())
-                        flowerSpawnPositions.Add(ceneteredSpawnPosition);
-
-                    // Stop attempting to spawn more flowers once enough have been decided.
-                    if (flowerSpawnPositions.Count > (inPhase4 ? 5 : 4))
-                        break;
-                }
-
-                // Create the flowers.
-                foreach (Vector2 flowerSpawnPosition in flowerSpawnPositions)
-                    Utilities.NewProjectileBetter(flowerSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ExplodingFlower>(), 0, 0f);
             }
 
             // Release seeds.
@@ -288,7 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, 155, 0f);
             }
 
-            if (attackTimer > 600f)
+            if (attackTimer > 360f)
                 GotoNextAttackState(npc);
         }
 
@@ -311,7 +286,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             if (attackTimer == 1f)
             {
-                petalReleaseDelay = inPhase4 ? 7f : 10f;
+                petalReleaseDelay = inPhase4 ? 12f : 16f;
                 petalCount = 1f;
             }
 
@@ -325,21 +300,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 {
                     for (int i = 0; i < (int)petalCount; i++)
                     {
-                        float rotateOffset = MathHelper.Lerp(-0.47f, 0.47f, i / (petalCount - 1f));
+                        float rotateOffset = MathHelper.Lerp(-0.33f, 0.33f, i / (petalCount - 1f));
                         Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(rotateOffset) * 9.25f;
                         Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 68f;
-                        Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<BouncingPetal>(), 155, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<Petal>(), 155, 0f);
                     }
                 }
 
                 // Make the next petal burst take longer to happen.
-                petalReleaseDelay = (int)(petalReleaseDelay * 1.325f);
+                petalReleaseDelay = (int)(petalReleaseDelay * 1.5f);
                 petalReleaseCountdown = 0f;
                 petalCount++;
             }
 
             // Go to the next attack after a burst of 8 petals has been shot.
-            if (petalCount >= 8f)
+            if (petalCount >= 6f)
                 GotoNextAttackState(npc);
         }
 
@@ -373,7 +348,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 }
             }
 
-            if (attackTimer >= 385f)
+            if (attackTimer >= 250f)
                 GotoNextAttackState(npc);
         }
 
@@ -417,7 +392,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle) > MathHelper.Pi * 0.16f)
                 {
                     // Time is relative to when the tentacle was created and as such is synchronized.
-                    float time = attackTimer - (tentacleSpawnDelay + tentacleSummonTime) - 40f;
+                    float time = attackTimer - (tentacleSpawnDelay + tentacleSummonTime) - 85f;
                     if (inPhase4)
                         time += 30f;
                     NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle, 128f, time);
@@ -491,7 +466,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             int chargeSlowdownDelay = 30;
             int chargeTime = 30;
             int chargeTimer = (int)(attackTimer - 60) % (chargeTime + chargeSlowdownDelay);
-            int chargeCount = 8;
+            int chargeCount = 5;
             float chargeSpeed = (enraged ? 19f : 14.25f) + (1f - lifeRatio) * 3.2f;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 

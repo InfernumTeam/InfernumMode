@@ -57,8 +57,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             Player target = Main.player[npc.target];
 
-            npc.dontTakeDamage = !target.ZoneCrimson && !target.ZoneCorrupt;
-
             int hookCount = 3;
             bool enraged = target.Center.Y < Main.worldSurface * 16f;
             float lifeRatio = npc.life / (float)npc.lifeMax;

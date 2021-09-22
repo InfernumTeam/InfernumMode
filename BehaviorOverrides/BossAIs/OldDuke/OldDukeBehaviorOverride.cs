@@ -397,6 +397,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_AttackSelectionWait(NPC npc, Player target, bool inPhase4, float attackTimer, ref float frameType)
         {
+            npc.damage = 0;
+
             OldDukeAttackState upcomingAttack = (OldDukeAttackState)(int)npc.ai[2];
             bool goingToCharge = upcomingAttack == OldDukeAttackState.Charge || upcomingAttack == OldDukeAttackState.FastRegularCharge;
             int waitDelay = 45;
@@ -539,6 +541,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_AcidBelch(NPC npc, Player target, bool inPhase2, Vector2 mouthPosition, float attackTimer, ref float frameType)
         {
+            npc.damage = 0;
+
             int shootDelay = inPhase2 ? 45 : 55;
             int belchCount = inPhase2 ? 5 : 3;
             int belchRate = inPhase2 ? 28 : 36;
@@ -581,6 +585,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_AcidBubbleFountain(NPC npc, Player target, bool inPhase2, float attackTimer, ref float frameType)
         {
+            npc.damage = 0;
+
             int shootDelay = inPhase2 ? 40 : 55;
             int bubbleCount = inPhase2 ? 20 : 15;
             int bubbleSummonRate = inPhase2 ? 12 : 20;
@@ -616,6 +622,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_SharkronSpinSummon(NPC npc, Player target, float attackTimer, ref float frameType)
         {
+            npc.damage = 0;
+
             int spinTime = 120;
             float spinSpeed = 34f;
             float totalRotations = 2f;
@@ -655,6 +663,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_ToothBallVomit(NPC npc, Player target, bool inPhase3, Vector2 mouthPosition, float attackTimer, ref float frameType)
         {
+            npc.damage = 0;
+
             int shootDelay = inPhase3 ? 50 : 65;
             int belchCount = inPhase3 ? 6 : 5;
             int belchRate = inPhase3 ? 45 : 70;
@@ -699,6 +709,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_GoreAndAcidSpit(NPC npc, Player target, bool inPhase3, Vector2 mouthPosition, float attackTimer, ref float frameType)
         {
+            npc.damage = 0;
+
             int goreCount = inPhase3 ? 50 : 32;
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             npc.velocity *= 0.97f;
@@ -743,6 +755,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_TeleportPause(NPC npc, Player target, float attackTimer, ref float frameType)
         {
+            npc.damage = 0;
+
             int fadeTime = 20;
             if (attackTimer <= fadeTime)
                 npc.Opacity = Utils.InverseLerp(12f, 0f, attackTimer, true);

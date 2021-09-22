@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 npc.TargetClosest();
 
             // Reset damage.
-            npc.damage = npc.defDamage;
+            npc.damage = 0;
 
             // If none was found or it was too far away, despawn.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead ||
@@ -156,7 +156,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             Player oldTarget = Main.player[npc.target];
 
             npc.velocity = npc.SafeDirectionTo(oldTarget.Center) * -newSpeed;
-            npc.damage = 0;
 
             if (npc.timeLeft > 60)
                 npc.timeLeft = 60;
@@ -170,7 +169,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_UnripeFakeout(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
-            npc.damage = 0;
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
@@ -229,7 +227,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_RedBlossom(NPC npc, Player target, bool inPhase4, bool enraged, ref float attackTimer)
         {
-            npc.damage = 0;
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
@@ -242,7 +239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             int blossomRate = inPhase4 ? 200 : 180;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % blossomRate == blossomRate - 1f)
             {
-                int petalCount = inPhase4 ? 5 : 4;
+                int petalCount = inPhase4 ? 6 : 5;
 
                 for (int i = 0; i < petalCount; i++)
                 {
@@ -253,12 +250,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             }
 
             // Release seeds.
-            int seedFireRate = enraged ? 12 : 20;
+            int seedFireRate = enraged ? 10 : 16;
             if (inPhase4)
-                seedFireRate += 6;
+                seedFireRate -= 2;
             if (attackTimer % seedFireRate == seedFireRate - 1f)
             {
-                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 15f;
+                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 17.5f;
                 Vector2 spawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.Zero) * 68f;
                 Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, 155, 0f);
             }
@@ -269,7 +266,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_PetalBurst(NPC npc, Player target, bool inPhase4, bool enraged, ref float attackTimer)
         {
-            npc.damage = enraged ? 235 : 0;
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
@@ -320,7 +316,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_PoisonousGasRelease(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
-            npc.damage = 0;
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
@@ -328,7 +323,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             else
                 npc.velocity *= 0.9f;
 
-            int gasReleaseRate = enraged ? 60 : 110;
+            int gasReleaseRate = enraged ? 50 : 90;
             float gasSpeed = enraged ? 7f : 3.6f;
 
             // Periodically release gas.
@@ -354,7 +349,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_TentacleSnap(NPC npc, Player target, bool inPhase4, ref float attackTimer)
         {
-            npc.damage = 0;
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
@@ -395,7 +389,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     float time = attackTimer - (tentacleSpawnDelay + tentacleSummonTime) - 85f;
                     if (inPhase4)
                         time += 30f;
-                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle, 128f, time);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
+                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle + angularStep, 128f, time);
+                    }
                 }
             }
 
@@ -413,7 +411,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_SporeGrowth(NPC npc, Player target, bool inPhase4, ref float attackTimer)
         {
-            npc.damage = 0;
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
@@ -569,8 +566,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public static void GotoNextAttackState(NPC npc)
         {
-            npc.damage = 0;
-
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float phase3TransitionTimer = npc.Infernum().ExtraAI[7];
 

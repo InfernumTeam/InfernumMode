@@ -7,12 +7,14 @@ using CalamityMod.World;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using Terraria.Utilities;
 using BrimmyNPC = CalamityMod.NPCs.BrimstoneElemental.BrimstoneElemental;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
@@ -21,10 +23,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
     {
         public override int NPCOverrideType => ModContent.NPCType<BrimmyNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public const float BaseDR = 0.25f;
         public const float InvincibleDR = 0.99999f;
+        public const float RoseCircleRadius = 1279f;
 
         #region Enumerations
         public enum BrimmyAttackType
@@ -79,6 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float frameType = ref npc.localAI[0];
 
             npc.dontTakeDamage = pissedOff;
+            npc.damage = 0;
 
             if (spawnAnimationTimer < 240f)
             {
@@ -240,21 +244,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Use the flying animation.
             frameType = (int)BrimmyFrameType.TypicalFly;
 
-            int totalRosesToSpawn = shouldBeBuffed ? 6 : 5;
+            int totalRosesToSpawn = shouldBeBuffed ? 7 : 6;
             int castingAnimationTime = shouldBeBuffed ? 70 : 110;
             if (pissedOff)
                 totalRosesToSpawn += 5;
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
             ref float attackState = ref npc.Infernum().ExtraAI[0];
-            ref float roseSpawnBaseAngle = ref npc.Infernum().ExtraAI[1];
-            ref float roseSpawnCenterX = ref npc.Infernum().ExtraAI[2];
-            ref float roseSpawnCenterY = ref npc.Infernum().ExtraAI[3];
-            ref float roseCreationCounter = ref npc.Infernum().ExtraAI[4];
+            ref float roseCreationCounter = ref npc.Infernum().ExtraAI[1];
+            ref float circleCenterX = ref npc.Infernum().ExtraAI[2];
+            ref float circleCenterY = ref npc.Infernum().ExtraAI[3];
+            Vector2 circleCenter = new Vector2(circleCenterX, circleCenterY);
 
             // Adjust sprite direction to look at the player.
             if (MathHelper.Distance(target.Center.X, npc.Center.X) > 45f)
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
             npc.rotation = npc.velocity.X * 0.04f;
+
+            if (circleCenterX == 0f)
+			{
+                circleCenterX = target.Center.X;
+                circleCenterY = target.Center.Y;
+                npc.netUpdate = true;
+            }
+
+            // Hurt the player if they walk into the vines.
+            else if (!target.WithinRange(circleCenter, RoseCircleRadius - 8f))
+			{
+                int roseDamage = Main.rand.Next(120, 135);
+                if (CalamityWorld.downedProvidence)
+                    roseDamage = (int)(roseDamage * 1.75);
+
+                target.Center = circleCenter + (target.Center - circleCenter).SafeNormalize(Vector2.Zero) * (RoseCircleRadius - 10f);
+                target.Hurt(PlayerDeathReason.LegacyEmpty(), roseDamage, 0);
+            }
 
             switch ((int)attackState)
             {
@@ -269,6 +291,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         if (roseCreationCounter >= 4f)
                         {
                             roseCreationCounter = 0f;
+                            circleCenterX = 0f;
+                            circleCenterY = 0f;
                             SelectNewAttack(npc);
                         }
                         npc.netUpdate = true;
@@ -276,15 +300,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     break;
                 case 1:
                     npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.4f) * 0.96f;
-
-                    // Initialize the rose spawn offset angle and spawn position before performing the attack.
-                    if (attackTimer == castingAnimationTime - 15f)
-                    {
-                        roseSpawnCenterX = target.Center.X + target.velocity.X * 16f;
-                        roseSpawnCenterY = target.Center.Y + target.velocity.Y * 15f;
-                        roseSpawnBaseAngle = Main.rand.NextFloat(-0.61f, 0.61f);
-                        npc.netUpdate = true;
-                    }
 
                     // Create the charge dust.
                     int dustCount = attackTimer >= 35f ? 2 : 1;
@@ -307,12 +322,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         for (int i = 0; i < totalRosesToSpawn; i++)
                         {
                             // Generate sets of points where the roses will be spawned.
-                            // This relies on a hefty amount of trig to avoid the excessive use of ExtraAI slots.
-                            float spawnRotationAngle = MathHelper.Lerp(-1.35f, 1.35f, i / (float)totalRosesToSpawn);
-                            float baseVerticalSpawnOffset = (float)Math.Sin((roseSpawnBaseAngle + spawnRotationAngle) * 56f) * 125f + 415f;
-                            Vector2 roseSpawnPosition = new Vector2(roseSpawnCenterX, roseSpawnCenterY) - Vector2.UnitY.RotatedBy(roseSpawnBaseAngle + spawnRotationAngle) * baseVerticalSpawnOffset;
+                            Vector2 roseSpawnPosition = target.Center + (MathHelper.TwoPi * i / totalRosesToSpawn).ToRotationVector2() * 470f;
 
-                            Dust.QuickDustLine(eyePosition, roseSpawnPosition, 135f, Color.Red);
+                            Dust.QuickDustLine(eyePosition, roseSpawnPosition, 175f, Color.Red);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 int rose = Utilities.NewProjectileBetter(roseSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneRose>(), 0, 0f);
@@ -323,10 +335,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                         attackTimer = 0f;
                         attackState = 0f;
-                        roseSpawnBaseAngle = 0f;
-                        roseSpawnCenterX = 0f;
-                        roseSpawnCenterY = 0f;
-
                         npc.netUpdate = true;
                     }
                     break;
@@ -466,8 +474,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.velocity *= 0.8f;
             npc.rotation = npc.velocity.X * 0.04f;
 
-            npc.Calamity().DR = InvincibleDR;
+            npc.Calamity().DR = 0.85f;
             npc.Calamity().unbreakableDR = true;
+
+            // Teleport below the player.
+            if (attackTimer == 5f)
+			{
+                Vector2 teleportDestination = target.Center + Vector2.UnitY * 220f;
+                CreateTeleportTelegraph(npc.Center, teleportDestination, 250);
+                npc.Center = teleportDestination;
+            }
 
             // Have a small delay prior to the bullet hell to allow the target to prepare.
             if (attackTimer < 105f)
@@ -531,9 +547,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 case 0:
                     attackState++;
                     attackTimer = 0f;
-                    Vector2 teleportDestination = target.Center - Vector2.UnitY * 350f;
+                    Vector2 teleportDestination = target.Center - Main.rand.NextVector2CircularEdge(300f, 300f);
                     CreateTeleportTelegraph(npc.Center, teleportDestination, 250);
-                    npc.Center = target.Center - Main.rand.NextVector2CircularEdge(300f, 300f);
+                    npc.Center = teleportDestination;
                     npc.netUpdate = true;
                     break;
 
@@ -643,7 +659,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 BrimmyAttackType.FlameChargeSkullBlasts,
                 BrimmyAttackType.BrimstoneRoseBurst,
-                BrimmyAttackType.FlameChargeSkullBlasts,
+                BrimmyAttackType.BrimstoneRoseBurst,
+                BrimmyAttackType.FlameTeleportBombardment,
                 BrimmyAttackType.GrimmBulletHellCopyLmao
             };
             possibleAttacks.AddWithCondition(BrimmyAttackType.EyeLaserbeams, lifeRatio < 0.5f);
@@ -692,6 +709,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     break;
             }
         }
-        #endregion
-    }
+
+		public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+		{
+            BrimmyAttackType attackState = (BrimmyAttackType)(int)npc.ai[0];
+            UnifiedRandom roseRNG = new UnifiedRandom(npc.whoAmI + 466920161);
+            if (attackState == BrimmyAttackType.BrimstoneRoseBurst)
+			{
+                float circleAngle = 0f;
+                Texture2D vineTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/CharredVine");
+                Texture2D roseTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstoneRose");
+                Vector2 vineOrigin = vineTexture.Size() * 0.5f;
+                Vector2 roseOrigin = roseTexture.Size() * 0.5f;
+
+                while (circleAngle < MathHelper.TwoPi)
+                {
+                    float vineRotation = circleAngle;
+                    Vector2 drawPosition = new Vector2(npc.Infernum().ExtraAI[2], npc.Infernum().ExtraAI[3]);
+                    drawPosition += circleAngle.ToRotationVector2() * RoseCircleRadius - Main.screenPosition;
+                    spriteBatch.Draw(vineTexture, drawPosition, null, Color.White, vineRotation, vineOrigin, 1f, SpriteEffects.None, 0f);
+
+                    // A benefit of using radians is that a necessary angle increment can be easily computed by the formula:
+                    // theta = arc length / radius.
+                    circleAngle += vineTexture.Height / RoseCircleRadius;
+
+                    if (roseRNG.NextBool(4))
+					{
+                        float roseRotation = roseRNG.NextFloat(MathHelper.TwoPi);
+                        float roseScale = roseRNG.NextFloat(0.5f, 0.8f);
+                        Vector2 rosePosition = drawPosition + roseRNG.NextVector2Circular(8f, 1.25f).RotatedBy(circleAngle);
+                        spriteBatch.Draw(roseTexture, rosePosition, null, Color.White, roseRotation, roseOrigin, roseScale, SpriteEffects.None, 0f);
+                    }
+                }
+			}
+            return true;
+		}
+		#endregion
+	}
 }

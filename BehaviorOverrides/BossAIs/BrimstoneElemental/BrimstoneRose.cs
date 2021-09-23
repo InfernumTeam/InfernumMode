@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 int petalCount = CalamityWorld.downedProvidence ? 3 : 2;
                 int petalDamage = CalamityWorld.downedProvidence ? 325 : 145;
-                float petalShootSpeed = CalamityWorld.downedProvidence ? 7.8f : 5.6f;
+                float petalShootSpeed = CalamityWorld.downedProvidence ? 5.6f : 3.7f;
                 if (SpawnedWhileAngry)
                 {
                     petalShootSpeed *= 1.6f;

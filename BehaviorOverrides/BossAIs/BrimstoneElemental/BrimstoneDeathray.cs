@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 return;
 
             int dartDamage = CalamityWorld.downedProvidence || BossRushEvent.BossRushActive ? 310 : 140;
-            for (float dartOffset = 20f; dartOffset < LaserLength; dartOffset += 200f)
+            for (float dartOffset = 20f; dartOffset < LaserLength; dartOffset += 165f)
             {
                 Vector2 dartSpawnPosition = OwnerEyePosition + projectile.velocity * dartOffset;
                 for (int i = -1; i <= 1; i++)
@@ -80,10 +80,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-        public override bool CanDamage() => Time > 35f;
+        public override bool CanDamage() => Time > 50f;
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
+            if (Time <= 50f)
+                return;
+
             if (CalamityWorld.downedProvidence || BossRushEvent.BossRushActive)
                 target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 300);
             else

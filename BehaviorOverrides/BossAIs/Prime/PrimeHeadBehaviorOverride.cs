@@ -222,7 +222,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 3f == 2f)
                 {
-                    float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.6f : 1f);
+                    float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.52f : 1f);
                     Vector2 rocketVelocity = Main.rand.NextVector2CircularEdge(rocketSpeed, rocketSpeed);
                     if (rocketVelocity.Y < -1f)
                         rocketVelocity.Y = -1f;
@@ -473,7 +473,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             PrimeAttackType currentAttack = (PrimeAttackType)(int)npc.ai[0];
-            PrimeAttackType nextAttack = currentAttack;
+            PrimeAttackType nextAttack;
             if (!AnyArms)
             {
                 if (lifeRatio < 0.5f && Main.rand.NextBool(4) && currentAttack != PrimeAttackType.LightningSupercharge)
@@ -486,11 +486,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
             }
             else
-            {
-                do
-                    nextAttack = Utils.SelectRandom(Main.rand, PrimeAttackType.MetalBurst, PrimeAttackType.RocketRelease);
-                while (nextAttack == currentAttack);
-            }
+                nextAttack = PrimeAttackType.RocketRelease;
 
             npc.ai[0] = (int)nextAttack;
             npc.ai[1] = 0f;

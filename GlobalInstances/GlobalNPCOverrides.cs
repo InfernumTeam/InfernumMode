@@ -282,6 +282,9 @@ namespace InfernumMode.GlobalInstances
             if (isSplitEoW && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.55);
 
+            if (npc.type == NPCID.WallofFleshEye && (projectile.penetrate == -1 || projectile.penetrate > 1))
+                damage = (int)(damage * 0.785);
+
             if (npc.type == ModContent.NPCType<AquaticScourgeBody>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.45);
 

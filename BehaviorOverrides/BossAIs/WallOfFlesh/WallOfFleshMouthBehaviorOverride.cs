@@ -179,7 +179,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             }
 
             List<float> offsetFactors = new List<float>();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
 			{
                 float potentialOffsetFactor = Main.rand.NextFloat();
                 while (offsetFactors.Any(factor => MathHelper.Distance(factor, potentialOffsetFactor) < 0.25f))

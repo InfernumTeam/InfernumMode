@@ -52,22 +52,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 if (projectile.velocity.Y > -20f)
                     projectile.velocity.Y -= 0.24f;
 			}
-            else if (SoulOfNight)
-            {
-                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(projectile.velocity.Length(), 7f, 0.1f);
-                projectile.velocity = projectile.velocity.RotatedBy(projectile.spriteDirection * MathHelper.TwoPi / 120f);
-
-                if (!projectile.WithinRange(target.Center, 60f))
-                    projectile.Center += projectile.DirectionTo(target.Center) * 4f;
-            }
             else
             {
-                projectile.velocity.X += Math.Sign(target.Center.X - projectile.Center.X) * 0.2f;
-                projectile.velocity.Y += Math.Sign(target.Center.Y - projectile.Center.Y) * 0.2f;
-                projectile.velocity = Vector2.Clamp(projectile.velocity, Vector2.One * -7f, Vector2.One * 7f);
-            }
+                if (projectile.timeLeft > 190f)
+                {
+                    projectile.velocity = Vector2.Lerp(projectile.velocity, -Vector2.UnitY * 8f, 0.05f);
+                    projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+                }
+                else if (projectile.timeLeft > 160f)
+                {
+                    projectile.velocity = Vector2.Lerp(projectile.velocity, Vector2.Zero, 0.05f).MoveTowards(Vector2.Zero, 0.1f);
+                    projectile.rotation = projectile.rotation.AngleLerp(projectile.AngleTo(target.Center) - MathHelper.PiOver2, 0.12f);
+                }
 
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+                float maxSpeed = SoulOfNight ? 14.25f : 12f;
+                float acceleration = SoulOfNight ? 1.025f : 1.03f;
+                if (projectile.timeLeft == 160f)
+                    projectile.velocity = projectile.SafeDirectionTo(target.Center) * 3f;
+                if (projectile.timeLeft < 160f && projectile.velocity.Length() < maxSpeed)
+                    projectile.velocity *= acceleration;
+            }
 
             if (projectile.timeLeft < 25)
                 projectile.alpha = Utils.Clamp(projectile.alpha + 13, 0, 255);

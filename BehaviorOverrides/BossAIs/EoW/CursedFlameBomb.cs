@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 		}
 
-        public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.White, Color.Red, Utils.InverseLerp(45f, 0f, projectile.timeLeft, true)) * projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.White, Color.MediumPurple, Utils.InverseLerp(45f, 0f, projectile.timeLeft, true)) * projectile.Opacity;
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {

@@ -28,6 +28,7 @@ using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
 using CalamityMod.NPCs.AquaticScourge;
+using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -144,6 +145,12 @@ namespace InfernumMode.GlobalInstances
 
                 if (npc.ai[2] >= 2f)
                     npc.boss = true;
+                else if (npc.realLife == -1 && npc.Infernum().ExtraAI[8] == 0f)
+                {
+                    npc.Infernum().ExtraAI[8] = 1f;
+                    EoWHeadBehaviorOverride.HandleSplit(npc, ref npc.ai[2]);
+                }
+
                 return npc.ai[2] >= 2f;
             }
 

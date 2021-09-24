@@ -28,9 +28,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
         // This is applicable to all split worms as well.
-        // Since split worms share HP, the total amount of HP of the boss is approximately equal to Worm HP * (Total Splits + 1).
-        // A small discrepancy exists since the split happens near death and not on death.
-        public const int TotalLifeAcrossWorm = 4445;
+        // Since split worms share HP, the total amount of HP of the boss is equal to Worm HP * (Total Splits + 1).
+        public const int TotalLifeAcrossWorm = 4000;
         public const int BaseBodySegmentCount = 40;
         public const int TotalSplitsToPerform = 2;
 
@@ -84,12 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 
             // Split into two and two different life ratios.
-            if (npc.realLife == -1)
-            {
-                if (lifeRatio < 0.1f && splitCounter < TotalSplitsToPerform)
-                    HandleSplit(npc, ref splitCounter);
-            }
-            else
+            if (npc.realLife != -1)
             {
                 npc.life = Main.npc[npc.realLife].life;
                 npc.lifeMax = Main.npc[npc.realLife].lifeMax;

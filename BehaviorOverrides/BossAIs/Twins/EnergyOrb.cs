@@ -50,6 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 			}
 
             npc.target = Owner.target;
+            npc.timeLeft = 3600;
             npc.rotation += MathHelper.ToRadians(16f * AngularDirection);
 
             if (OwnerAttackState == TwinsAttackSynchronizer.RetinazerAttackState.DanceOfLightnings)

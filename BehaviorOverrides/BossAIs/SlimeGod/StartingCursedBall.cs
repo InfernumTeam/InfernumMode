@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             projectile.Opacity = Utils.InverseLerp(480f, 470f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * 0.75f;
 
             if (Time == 0f)
-                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * 13.5f;
+                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * 16f;
 
             if (projectile.timeLeft < 35)
                 projectile.velocity *= 0.98f;

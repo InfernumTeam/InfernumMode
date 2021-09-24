@@ -49,6 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 				return;
 			}
 
+            npc.timeLeft = 3600;
             npc.target = Owner.target;
 
             if (StunTimer > 0f)

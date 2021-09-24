@@ -42,6 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
 
         public override void Kill(int timeLeft)
         {
+            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

@@ -335,19 +335,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 }
             }
 
-            if (attackTimer == 180f)
+            if (attackTimer == 220f)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 10f) * 16.5f;
                 npc.netUpdate = true;
             }
 
-            if (attackTimer > 180f)
+            if (attackTimer > 220f)
                 npc.rotation += npc.velocity.X * 0.05f;
 
-            if (attackTimer > 240f)
+            if (attackTimer > 280f)
                 npc.velocity *= 0.98f;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 290f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 330f)
             {
                 attackTimer = 0f;
                 SelectAttackState(npc);

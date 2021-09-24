@@ -58,9 +58,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             DetermineMouthRotation(npc, target);
 
             attackTimer++;
-            if (attackTimer % 120f == 119f)
-                SpitBlood(npc, target);
-
             int scytheCeilingShootRate = lifeRatio < 0.5f ? 300 : 180;
             if (attackTimer % scytheCeilingShootRate == scytheCeilingShootRate - 1f)
                 DoCeilingAndFloorAttack(npc, target, lifeRatio < 0.5f);
@@ -290,28 +287,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 npc.rotation = 0f;
         }
 
-        internal static void SpitBlood(NPC npc, Player target)
-		{
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-                return;
-
-            float shootSpeed = 12f;
-            Vector2 spawnPosition = npc.Center + Vector2.UnitX * npc.direction * 20f + npc.velocity;
-            Vector2 targetDestination = target.Center + Vector2.UnitX * (target.velocity.X + (target.Center.X - spawnPosition.X > 0).ToDirectionInt() * 10f) * 16f;
-            float distance = MathHelper.Distance(spawnPosition.X, targetDestination.X);
-
-            for (int i = 0; i < 3; i++)
-            {
-                float angle = 0.5f * (float)Math.Asin(MathHelper.Clamp(BloodVomit.Gravity * distance / (float)Math.Pow(shootSpeed, 2), -1f, 1f));
-                angle += MathHelper.Lerp(-0.5f, 0.5f, i / 3f);
-
-                Vector2 velocity = new Vector2(0f, -shootSpeed).RotatedBy(angle);
-                velocity.X *= (targetDestination.X - spawnPosition.X > 0).ToDirectionInt();
-
-                Utilities.NewProjectileBetter(spawnPosition + velocity * 3f, velocity, ModContent.ProjectileType<BloodVomit>(), 95, 0f);
-            }
-        }
-
         internal static void DoCeilingAndFloorAttack(NPC npc, Player target, bool inPhase2)
         {
             if (Main.myPlayer != npc.target)
@@ -319,7 +294,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             for (float x = -1180f; x < 1180f; x += inPhase2 ? 200f : 256f)
             {
-                Vector2 spawnPosition = target.Center + new Vector2(x, Main.screenHeight * -0.4f);
+                Vector2 spawnPosition = target.Center + new Vector2(x, Main.screenHeight * -0.55f);
                 int scythe = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 2f, ModContent.ProjectileType<HellishScythe>(), 100, 0f);
                 Main.projectile[scythe].tileCollide = false;
             }

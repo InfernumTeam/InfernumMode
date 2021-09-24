@@ -194,6 +194,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     for (int i = 0; i < spikesPerBurst; i++)
                     {
                         Vector2 spikeVelocity = (MathHelper.TwoPi * i / spikesPerBurst).ToRotationVector2() * 5.5f;
+                        if (AnyArms)
+                            spikeVelocity *= 0.56f;
+
                         Utilities.NewProjectileBetter(npc.Center + spikeVelocity * 12f, spikeVelocity, ModContent.ProjectileType<MetallicSpike>(), 115, 0f);
                     }
                 }
@@ -486,7 +489,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
             }
             else
-                nextAttack = PrimeAttackType.RocketRelease;
+            {
+                do
+                    nextAttack = Utils.SelectRandom(Main.rand, PrimeAttackType.MetalBurst, PrimeAttackType.RocketRelease);
+                while (nextAttack == currentAttack);
+            }
 
             npc.ai[0] = (int)nextAttack;
             npc.ai[1] = 0f;

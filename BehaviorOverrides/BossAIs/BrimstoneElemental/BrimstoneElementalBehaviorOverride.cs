@@ -82,7 +82,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float frameType = ref npc.localAI[0];
 
             npc.dontTakeDamage = pissedOff;
-            npc.damage = 0;
 
             if (spawnAnimationTimer < 240f)
             {
@@ -94,18 +93,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             switch ((BrimmyAttackType)(int)attackType)
             {
                 case BrimmyAttackType.FlameTeleportBombardment:
+                    npc.damage = 0;
                     DoBehavior_FlameTeleportBombardment(npc, target, lifeRatio, pissedOff, shouldBeBuffed, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.BrimstoneRoseBurst:
+                    npc.damage = npc.defDamage;
                     DoBehavior_BrimstoneRoseBurst(npc, target, pissedOff, shouldBeBuffed, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.FlameChargeSkullBlasts:
+                    npc.damage = 0;
                     DoBehavior_FlameChargeSkullBlasts(npc, target, lifeRatio, pissedOff, shouldBeBuffed, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.GrimmBulletHellCopyLmao:
+                    npc.damage = npc.defDamage;
                     DoBehavior_CocoonBulletHell(npc, target, lifeRatio, pissedOff, shouldBeBuffed, ref attackTimer, ref frameType);
                     break;
                 case BrimmyAttackType.EyeLaserbeams:
+                    npc.damage = 0;
                     DoBehavior_EyeLaserbeams(npc, target, lifeRatio, pissedOff, shouldBeBuffed, ref attackTimer, ref frameType);
                     break;
             }

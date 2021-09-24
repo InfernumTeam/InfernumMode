@@ -219,7 +219,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(0.59f) * Main.rand.NextFloat(15f, 23f);
+                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(0.46f) * Main.rand.NextFloat(16.75f, 23f);
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
                     }
 
@@ -304,7 +304,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             float distanceBelowTarget = npc.Top.Y - (target.Top.Y + 80f);
 
                             if (distanceBelowTarget > 0f)
-                                jumpIntensity = 1f + distanceBelowTarget * 0.0015f;
+                                jumpIntensity = 1f + distanceBelowTarget * 0.00042f;
 
                             if (jumpIntensity > 3.6f)
                                 jumpIntensity = 3.6f;

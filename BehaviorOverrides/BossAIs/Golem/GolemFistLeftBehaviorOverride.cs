@@ -10,9 +10,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
-        public override bool PreAI(NPC npc) => DoClawAI(npc, true);
+        public override bool PreAI(NPC npc) => DoFistAI(npc, true);
 
-        public static bool DoClawAI(NPC npc, bool leftClaw)
+        public static bool DoFistAI(NPC npc, bool leftFist)
         {
             return false;
         }

@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             projectile.Opacity = Utils.InverseLerp(300f, 285f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (projectile.velocity.Length() < 20f)
+            if (projectile.velocity.Length() < 14f)
                 projectile.velocity *= 1.02f;
 
             projectile.frameCounter++;

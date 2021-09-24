@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 float _ = 0f;
                 Vector2 top = projectile.oldPos[i] + projectile.Size * 0.5f;
                 Vector2 bottom = projectile.oldPos[i + 1] + projectile.Size * 0.5f;
-                if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), top, bottom, 16f, ref _))
+                if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), top, bottom, 24f, ref _))
                     return true;
             }
             return false;

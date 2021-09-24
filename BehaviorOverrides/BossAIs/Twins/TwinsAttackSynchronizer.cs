@@ -107,7 +107,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             UniversalAttackTimer++;
 
             if (RetinazerIndex == -1 && SpazmatismIndex == -1)
+            {
+                CurrentAttackState = TwinsAttackState.ChargeRedirect;
                 return;
+            }
 
             if (_targetIndex == -1 || Target.dead || !Target.active)
             {

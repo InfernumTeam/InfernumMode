@@ -77,6 +77,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGodRed = npc.whoAmI;
 
+            // Disappear if the core is missing.
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGod))
+            {
+                npc.active = false;
+                return false;
+            }
+
             switch ((CrimulanSlimeGodAttackType)(int)attackState)
             {
                 case CrimulanSlimeGodAttackType.LongLeaps:

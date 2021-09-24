@@ -64,6 +64,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 npc.localAI[3] = 1f;
             }
 
+            // Disappear if the target is gone.
+            if (!target.active || target.dead || !npc.WithinRange(target.Center, 5000f))
+            {
+                npc.TargetClosest();
+                target = Main.player[npc.target];
+                if (!target.active || target.dead || !npc.WithinRange(target.Center, 5000f))
+                    npc.active = false;
+            }
+
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGod = npc.whoAmI;
 
@@ -241,7 +250,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         }
 
         public static void DoAttack_Spin(NPC npc, Player target, ref float attackTimer)
-		{
+        {
             npc.damage = npc.defDamage;
             ref float spinAngleOffset = ref npc.Infernum().ExtraAI[0];
 
@@ -269,10 +278,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             }
 
             if (attackTimer == 180f)
-			{
+            {
                 npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 10f) * 16.5f;
                 npc.netUpdate = true;
-			}
+            }
 
             if (attackTimer > 180f)
                 npc.rotation += npc.velocity.X * 0.05f;
@@ -365,7 +374,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             {
                 // Release abyss balls upward.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 20f == 19f)
-				{
+                {
                     Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<AbyssBallVolley>(), 95, 0f);
                     Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 6f, ModContent.ProjectileType<AbyssBallVolley>(), 95, 0f);
                 }

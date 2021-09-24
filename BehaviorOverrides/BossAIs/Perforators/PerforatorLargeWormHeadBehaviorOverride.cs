@@ -4,6 +4,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -55,29 +56,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             if (fallCountdown > 0f)
             {
-                if (npc.Center.Y < target.Center.Y + 450f)
+                if (npc.Center.Y < target.Center.Y + 550f)
                     npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + moveSpeed * 1.775f, -17f, 17f);
                 else
-                    npc.velocity.Y *= 0.945f;
+                    npc.velocity.Y -= 1.2f;
                 fallCountdown--;
             }
             else
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed, -17f, 17f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed, -17f, 8f);
                 npc.velocity.X = (npc.velocity.X * 5f + npc.SafeDirectionTo(target.Center).X * 8.5f) / 6f;
 
                 if (totalSegmentsInAir >= 16)
                 {
-                    fallCountdown = 65f;
-                    for (int i = 0; i < 8; i++)
+                    fallCountdown = 35f;
+                    for (int i = 0; i < 6; i++)
                     {
-                        Vector2 ichorVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 6f;
+                        Vector2 ichorVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 6f;
                         Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorSpit>(), 80, 0f);
                     }
 
                     if (!Collision.SolidCollision(npc.position, npc.width, npc.height))
                     {
-                        for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < 2; i++)
                         {
                             Vector2 ichorVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.Lerp(-0.46f, 0.46f, i / 3f)) * 10f;
                             Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<SittingBlood>(), 75, 0f);

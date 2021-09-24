@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
         public override void AI()
         {
-            if (projectile.velocity.Y < 14f)
+            if (projectile.velocity.Y < 8f)
                 projectile.velocity.Y += 0.26f;
             projectile.alpha = Utils.Clamp(projectile.alpha - 72, 0, 255);
 

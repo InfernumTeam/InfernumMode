@@ -33,7 +33,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             FastHover,
             FastHorizontalCharge,
             FastVerticalCharge,
-            Spin
+            Spin,
+            Spin2
         }
         #endregion
 
@@ -99,6 +100,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 case SlimeGodCoreAttackType.Spin:
                     DoAttack_Spin(npc, target, ref localTimer);
                     break;
+                case SlimeGodCoreAttackType.Spin2:
+                    DoAttack_Spin2(npc, target, ref localTimer);
+                    break;
             }
 
             localTimer++;
@@ -118,14 +122,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public static void DoAttack_HoverAndFireAbyssBalls(NPC npc, Player target, ref float attackTimer)
         {
-            Vector2 destination = target.Center - Vector2.UnitY * 300f;
-            if (!npc.WithinRange(destination, 200f))
+            Vector2 destination = target.Center - Vector2.UnitY * 350f;
+            if (!npc.WithinRange(destination, 90f))
             {
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 13.5f, 0.4f);
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 13.5f, 0.85f);
                 npc.rotation = npc.velocity.X * 0.15f;
             }
             else
+            {
+                if (npc.velocity.Length() > 4.5f)
+                    npc.velocity *= 0.97f;
                 npc.rotation += npc.velocity.X * 0.04f;
+            }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 180f == 179f)
             {
@@ -296,25 +304,79 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             }
         }
 
+        public static void DoAttack_Spin2(NPC npc, Player target, ref float attackTimer)
+        {
+            npc.damage = npc.defDamage;
+            ref float spinAngleOffset = ref npc.Infernum().ExtraAI[0];
+
+            if (attackTimer == 1f)
+            {
+                spinAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer < 180f)
+            {
+                npc.damage = 0;
+
+                Vector2 destination = target.Center + spinAngleOffset.ToRotationVector2() * 480f;
+                npc.Center = npc.Center.MoveTowards(destination, 32f);
+
+                spinAngleOffset += MathHelper.TwoPi * Utils.InverseLerp(170f, 150f, attackTimer, true) / 90f;
+                npc.rotation += spinAngleOffset * 0.3f;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 15f == 14f)
+                {
+                    Vector2 abyssBallVelocity = npc.SafeDirectionTo(target.Center) * 0.0001f;
+                    int ballType = Main.rand.NextBool() ? ModContent.ProjectileType<StartingCursedBall>() : ModContent.ProjectileType<StartingIchorBall>();
+                    int ball = Utilities.NewProjectileBetter(npc.Center, abyssBallVelocity, ballType, 100, 0f);
+                    if (Main.projectile.IndexInRange(ball))
+                        Main.projectile[ball].ai[0] = attackTimer - 225f;
+                }
+            }
+
+            if (attackTimer == 180f)
+            {
+                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 10f) * 16.5f;
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer > 180f)
+                npc.rotation += npc.velocity.X * 0.05f;
+
+            if (attackTimer > 240f)
+                npc.velocity *= 0.98f;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 290f)
+            {
+                attackTimer = 0f;
+                SelectAttackState(npc);
+            }
+        }
+
         public static void DoAttack_FastHover(NPC npc, Player target, ref float attackTimer)
         {
-            Vector2 destination = target.Center - Vector2.UnitY * 350f + Vector2.UnitX * target.velocity * 30f;
-            if (!npc.WithinRange(destination, 250f))
+            Vector2 destination = target.Center - Vector2.UnitY * 400f + Vector2.UnitX * target.velocity * 35f;
+            if (!npc.WithinRange(destination, 120f))
             {
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 14f, 0.6f);
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 14f, 1f);
                 npc.rotation = npc.velocity.X * 0.15f;
             }
             else
+            {
+                if (npc.velocity.Length() > 4.5f)
+                    npc.velocity *= 0.97f;
                 npc.rotation += npc.velocity.X * 0.04f;
+            }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 50f == 49f)
             {
-                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 24f) * 13f;
+                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 24f) * 15f;
                 Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<ExplosiveAbyssMine>(), 95, 0f);
             }
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 80f == 79f)
             {
-                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 24f) * 10f;
+                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 24f) * 10.5f;
                 Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<RedirectingAbyssBall>(), 95, 0f);
             }
 
@@ -365,6 +427,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                     attackTimer = 0f;
                     attackSubstate = 2f;
                     npc.velocity = chargeVelocity;
+                    if (Main.rand.NextBool(3))
+                        npc.velocity *= 1.5f;
+
                     npc.netUpdate = true;
                 }
             }
@@ -427,6 +492,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                     attackTimer = 0f;
                     attackSubstate = 2f;
                     npc.velocity = chargeVelocity;
+                    if (Main.rand.NextBool(3))
+                        npc.velocity *= 1.5f;
+
                     npc.netUpdate = true;
                 }
             }
@@ -469,7 +537,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             newStatePicker.Add(anyBigBois ? (int)SlimeGodCoreAttackType.SlowVerticalCharge : (int)SlimeGodCoreAttackType.FastVerticalCharge, 1f);
             newStatePicker.Add(anyBigBois ? (int)SlimeGodCoreAttackType.SlowHorizontalCharge : (int)SlimeGodCoreAttackType.FastHorizontalCharge, 1f);
             if (!anyBigBois)
-                newStatePicker.Add((int)SlimeGodCoreAttackType.Spin, 1f);
+            {
+                newStatePicker.Add((int)SlimeGodCoreAttackType.Spin, 1.15f);
+                newStatePicker.Add((int)SlimeGodCoreAttackType.Spin2, 1.15f);
+            }
 
             do
                 localState = newStatePicker.Get();

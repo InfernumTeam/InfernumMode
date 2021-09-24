@@ -144,7 +144,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             // Have the main head generate a bunch of thorns at the beginning.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.realLife == -1 && attackTimer == 15f)
             {
-                for (float dx = -2000f; dx < 2000f; dx += enraged ? 380f : 520f)
+                float spacing = enraged ? 380f : 520f;
+                spacing *= MathHelper.Lerp(1f, 1.5f, splitCounter / TotalSplitsToPerform);
+                for (float dx = -2000f; dx < 2000f; dx += spacing)
                 {
                     Vector2 spawnPosition = target.Bottom + Vector2.UnitX * dx;
                     Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<CorruptThorn>(), 90, 0f);
@@ -231,7 +233,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 
             // And release rain clouds.
-            int rainReleaseRate = splitCounter >= 1f ? 45 : 35;
+            int rainReleaseRate = splitCounter >= 1f ? 67 : 35;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % rainReleaseRate == rainReleaseRate - 1f && npc.Center.Y < target.Center.Y - 185f)
             {
                 Vector2 cloudSpawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.45f;

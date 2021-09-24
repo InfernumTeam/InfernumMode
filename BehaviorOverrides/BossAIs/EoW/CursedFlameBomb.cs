@@ -44,11 +44,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
+            int burstCount = NPC.CountNPCS(NPCID.EaterofWorldsHead) >= 4 ? 3 : 5;
             float burstSpeed = projectile.velocity.Length();
             float initialAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < burstCount; i++)
             {
-                Vector2 shootVelocity = (initialAngleOffset + MathHelper.TwoPi * i / 5f).ToRotationVector2() * burstSpeed;
+                Vector2 shootVelocity = (initialAngleOffset + MathHelper.TwoPi * i / burstCount).ToRotationVector2() * burstSpeed;
                 Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<CursedBullet>(), 80, 0f);
             }
 		}

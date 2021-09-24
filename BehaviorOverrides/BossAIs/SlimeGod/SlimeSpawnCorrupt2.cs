@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (RedirectCountdown > 0f && !npc.WithinRange(slimeGod.Center, 50f))
             {
                 Vector2 destinationOffset = (MathHelper.TwoPi * npc.whoAmI / 13f).ToRotationVector2() * 12f;
-                npc.velocity = (npc.velocity * 29f + npc.SafeDirectionTo(slimeGod.Center + destinationOffset) * 23f) / 30f;
+                npc.velocity = (npc.velocity * 34f + npc.SafeDirectionTo(slimeGod.Center + destinationOffset) * 20.75f) / 35f;
                 RedirectCountdown--;
             }
 

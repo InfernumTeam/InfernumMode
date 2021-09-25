@@ -22,8 +22,6 @@ namespace InfernumMode
 
         internal static readonly Color HiveMindSkyColor = new Color(53, 42, 81);
 
-        public object CryogenAIClass { get; private set; }
-
         public override void Load()
         {
             OverridingListManager.Load();

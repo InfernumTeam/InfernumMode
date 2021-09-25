@@ -28,12 +28,6 @@ namespace InfernumMode
 
             bool useHIV = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("HiveMindP2")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].Infernum().ExtraAI[10] == 1f || Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].life < Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].lifeMax * 0.2f);
             player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", useHIV);
-
-            bool useFolly = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("Bumblefuck")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("Bumblefuck"))].Infernum().ExtraAI[8] > 0f);
-            player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", useFolly);
-
-            bool useDeus = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("AstrumDeusHeadSpectral"));
-            player.ManageSpecialBiomeVisuals("InfernumMode:Deus", useDeus);
         }
         #endregion
         #region Reset Effects
@@ -151,28 +145,6 @@ namespace InfernumMode
             if (PoDWorld.InfernumMode && !CalamityWorld.death)
             {
                 CalamityWorld.death = true;
-            }
-            if (PoDWorld.InfernumMode && CalamityWorld.DoGSecondStageCountdown > 600)
-            {
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].active &&
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("Signus") ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverHead")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverBody")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverTail")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverNakedHead")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverNakedBody")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("StormWeaverNakedTail")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("CeaselessVoid")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("DarkEnergy")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("DarkEnergy2")) ||
-                        (Main.npc[i].type == InfernumMode.CalamityMod.NPCType("DarkEnergy3"))))
-                    {
-                        Main.npc[i].active = false;
-                    }
-                }
-                CalamityWorld.DoGSecondStageCountdown = 599;
             }
 
             if (ShadowflameInferno)

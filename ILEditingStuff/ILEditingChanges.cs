@@ -3,7 +3,6 @@ using CalamityMod.CalPlayer;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.UI;
 using CalamityMod.World;
-using InfernumMode.BehaviorOverrides.BossAIs;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -91,8 +90,7 @@ namespace InfernumMode.ILEditingStuff
 
         public static void ILEditingLoad()
         {
-            On.Terraria.Gore.NewGore += RemoveCultistGore;
-            IL.Terraria.Player.ItemCheck += ItemCheckChange;
+            //On.Terraria.Gore.NewGore += RemoveCultistGore;
             IL.Terraria.Main.DrawTiles += WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += WoFLavaColorChange2;
             IL.Terraria.Main.UpdateAudio += ManipulateSoundMuffleFactor;
@@ -104,13 +102,12 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreAIProjectile += ProjectilePreAIChange;
             ModifyPreDrawProjectile += ProjectilePreDrawChange;
             ModeIndicatorUIDraw += DrawInfernumIcon;
-            CalamityWorldPostUpdate += PermitODRain;
+            //CalamityWorldPostUpdate += PermitODRain;
         }
 
         public static void ILEditingUnload()
         {
-            On.Terraria.Gore.NewGore -= RemoveCultistGore;
-            IL.Terraria.Player.ItemCheck -= ItemCheckChange;
+            //On.Terraria.Gore.NewGore -= RemoveCultistGore;
             IL.Terraria.Main.DrawTiles -= WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw -= WoFLavaColorChange2;
             IL.Terraria.Main.UpdateAudio += ManipulateSoundMuffleFactor;
@@ -122,7 +119,7 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreAIProjectile -= ProjectilePreAIChange;
             ModifyPreDrawProjectile -= ProjectilePreDrawChange;
             ModeIndicatorUIDraw -= DrawInfernumIcon;
-            CalamityWorldPostUpdate -= PermitODRain;
+            //CalamityWorldPostUpdate -= PermitODRain;
         }
 
         internal static int RemoveCultistGore(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
@@ -217,22 +214,6 @@ namespace InfernumMode.ILEditingStuff
                 return vertexColor;
             });
             cursor.Emit(OpCodes.Stloc, 9);
-        }
-
-        private static void ItemCheckChange(ILContext instructionContext)
-        {
-            var c = new ILCursor(instructionContext);
-            // Attempt to match a section of code which involves the value 3032. Other values can be used, including not just numbers.
-            if (!c.TryGotoNext(i => i.MatchLdcI4(3032)))
-                return;
-            c.Index++;
-            c.EmitDelegate<Action>(() =>
-            {
-                if (NPC.AnyNPCs(NPCID.MoonLordCore) && PoDWorld.InfernumMode)
-                {
-                    Main.LocalPlayer.noBuilding = true;
-                }
-            });
         }
 
         private static void NPCPreAIChange(ILContext context)

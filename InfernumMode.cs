@@ -1,4 +1,3 @@
-using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Items;
 using InfernumMode.OverridingSystem;
@@ -32,12 +31,6 @@ namespace InfernumMode
 
             Filters.Scene["InfernumMode:HiveMind"] = new Filter(new HiveMindScreenShaderData("FilterMiniTower").UseColor(HiveMindSkyColor).UseOpacity(0.6f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:HiveMind"] = new HiveMindSky();
-
-            Filters.Scene["InfernumMode:Dragonfolly"] = new Filter(new DragonfollyScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.6f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:Dragonfolly"] = new DragonfollySky();
-
-            Filters.Scene["InfernumMode:Deus"] = new Filter(new DeusScreenShaderData("FilterMiniTower").UseColor(Color.Lerp(Color.Purple, Color.Black, 0.75f)).UseOpacity(0.24f), EffectPriority.VeryHigh);
-            SkyManager.Instance["InfernumMode:Deus"] = new DeusSky();
 
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
@@ -124,12 +117,6 @@ namespace InfernumMode
             ILEditingChanges.ILEditingUnload();
             Instance = null;
             CalamityMod = null;
-        }
-
-        public override void PreUpdateEntities()
-        {
-            TwinsAttackSynchronizer.DoUniversalUpdate();
-            TwinsAttackSynchronizer.PostUpdateEffects();
         }
     }
 }

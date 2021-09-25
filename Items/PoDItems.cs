@@ -1,5 +1,7 @@
-﻿using CalamityMod.CalPlayer;
+using CalamityMod;
+using CalamityMod.CalPlayer;
 using CalamityMod.Items.Ammo;
+using CalamityMod.Items.TreasureBags;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using Microsoft.Xna.Framework;
@@ -26,6 +28,7 @@ namespace InfernumMode
             if (item.type == ItemID.StarCannon)
                 item.damage = 24;
         }
+
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
             if (item.type == ItemID.CelestialSigil)
@@ -78,6 +81,12 @@ namespace InfernumMode
                 NPC.NewNPC((int)player.Center.X, (int)player.Center.Y, NPCID.MoonLordCore);
             }
             return base.UseItem(item, player);
+        }
+
+        public override void RightClick(Item item, Player player)
+        {
+            if (item.type == ModContent.ItemType<StarterBag>())
+                DropHelper.DropItemCondition(player, ModContent.ItemType<Death2>(), Main.expertMode);
         }
     }
 }

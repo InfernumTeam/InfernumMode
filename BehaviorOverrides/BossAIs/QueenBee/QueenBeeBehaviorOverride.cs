@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
             Player target = Main.player[npc.target];
 
-            npc.defense = target.ZoneJungle ? npc.defDefense : 65;
+            npc.defense = target.ZoneJungle ? npc.defDefense : 70;
 
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -342,6 +342,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             }
             else if (attackTimer < 775f)
             {
+                // Gain some extra defense to prevent melting.
+                npc.defense += 30;
+
                 npc.velocity *= 0.9785f;
 
                 // Roar and make a circle of honey dust as an indicator before release the bees.

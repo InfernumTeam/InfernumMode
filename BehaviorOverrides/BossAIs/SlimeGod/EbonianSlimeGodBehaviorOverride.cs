@@ -36,6 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             // This will affect the other gods as well in terms of behavior.
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float doneWithSpawnAnimationFlag = ref npc.ai[2];
             ref float stuckTimer = ref npc.Infernum().ExtraAI[5];
             ref float stuckTeleportCountdown = ref npc.Infernum().ExtraAI[6];
 
@@ -79,6 +80,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGod))
             {
                 npc.active = false;
+                return false;
+            }
+
+            if (doneWithSpawnAnimationFlag == 0f)
+            {
+                if (npc.velocity.Y == 0f)
+                {
+                    for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)
+                    {
+                        for (int i = 0; i < 6; i++)
+                        {
+                            Dust stompDust = Dust.NewDustDirect(new Vector2(x, npc.Bottom.Y), npc.width + 30, 4, 4, 0f, 0f, 100, default, 1.5f);
+                            stompDust.velocity *= 0.2f;
+                        }
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 10; i++)
+                        {
+                            Vector2 slimeVelocity = -Vector2.UnitY.RotatedByRandom(0.59f) * Main.rand.NextFloat(4f, 10f);
+                            Utilities.NewProjectileBetter(npc.Center, slimeVelocity, ModContent.ProjectileType<RedirectingCursedBall>(), 80, 0f);
+                        }
+                    }
+                    doneWithSpawnAnimationFlag = 1f;
+                    npc.netUpdate = true;
+                }
+                npc.velocity = Vector2.UnitY * 16f;
                 return false;
             }
 

@@ -48,8 +48,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             float moveSpeed = MathHelper.Lerp(0.15f, 0.36f, 1f - npc.life / (float)npc.lifeMax);
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                bool inAir = !Collision.SolidCollision(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height);
-                inAir &= !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval((int)Main.npc[i].Center.X / 16, (int)Main.npc[i].Center.Y / 16).type];
+                bool inAir = true;
+                if (Collision.SolidCollision(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height))
+                    inAir = false;
                 if (Main.npc[i].type == bodyType && Main.npc[i].active && inAir)
                     totalSegmentsInAir++;
             }

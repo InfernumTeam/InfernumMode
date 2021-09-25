@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             if (ownerAttackState == BoCAttackState.CreeperBloodDripping)
             {
                 bool eligableToFire = npc.Top.Y < target.Center.Y;
-                if (attackTimer > 90f && eligableToFire && attackTimer % 35f == 34f && npc.alpha <= 80)
+                if (attackTimer > 135f && eligableToFire && attackTimer % 35f == 34f && npc.alpha <= 80)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

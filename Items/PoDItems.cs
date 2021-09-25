@@ -1,4 +1,5 @@
 ﻿using CalamityMod.CalPlayer;
+using CalamityMod.Items.Ammo;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using Microsoft.Xna.Framework;
@@ -18,6 +19,9 @@ namespace InfernumMode
                 item.consumable = false;
                 item.maxStack = 1;
             }
+
+            if (item.type == ModContent.ItemType<FlashBullet>())
+                item.damage = 4;
 
             if (item.type == ItemID.StarCannon)
                 item.damage = 24;

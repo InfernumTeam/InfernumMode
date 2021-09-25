@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
                     // Slowly regress back to the ideal speed over time.
                     newSpeed = MathHelper.Lerp(newSpeed, idealSpeed, 0.018f);
-                    newSpeed = MathHelper.Clamp(newSpeed, 10f, 21.5f);
+                    newSpeed = MathHelper.Clamp(newSpeed, 9f, 19f);
 
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), turnSpeed, true) * newSpeed;
                     break;

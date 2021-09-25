@@ -141,9 +141,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 case EoCAttackType.HoverCharge:
                     int hoverTime = 60;
                     int chargeTime = phase2 ? 30 : 45;
-                    float chargeSpeed = MathHelper.Lerp(8f, 13f, 1f - lifeRatio);
+                    float chargeSpeed = MathHelper.Lerp(8f, 12f, 1f - lifeRatio);
                     if (phase2)
-                        chargeSpeed += 1.5f;
+                        chargeSpeed += 1.3f;
                     float hoverAcceleration = MathHelper.Lerp(0.1f, 0.25f, 1f - lifeRatio);
                     float hoverSpeed = MathHelper.Lerp(8.5f, 17f, 1f - lifeRatio);
 
@@ -220,7 +220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     if (subState == 0f)
                     {
                         Vector2 destination = target.Center + new Vector2(-chargeDirection * 1100f, -300f);
-                        npc.velocity = npc.DirectionTo(destination) * 27f;
+                        npc.velocity = Vector2.Lerp(npc.velocity, npc.DirectionTo(destination) * 27f, 0.06f);
                         npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
                         if (npc.DistanceSQ(destination) < 32f * 32f)
                         {
@@ -291,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Vector2 spawnPosition = npc.Center - Vector2.UnitY * 26f;
+                                Vector2 spawnPosition = npc.Center - Vector2.UnitY * 20f;
                                 for (int i = 0; i < teethPerShot; i++)
                                 {
                                     float offsetAngle = MathHelper.Lerp(-0.56f, 0.56f, i / (float)teethPerShot) + Main.rand.NextFloat(-0.07f, 0.07f);
@@ -415,7 +415,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                             {
                                 attackTimer = 0f;
                                 chainChargeCounter++;
-                                npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed * 1.635f;
+                                npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed * 1.6f;
                                 npc.velocity *= MathHelper.Lerp(1f, 0.67f, chainChargeCounter / chargeChainCount);
                                 npc.netUpdate = true;
 

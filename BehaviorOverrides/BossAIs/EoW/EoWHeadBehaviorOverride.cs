@@ -225,7 +225,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
             offsetAngle *= Utils.InverseLerp(70f, 240f, npc.Distance(hoverDestination), true);
 
-            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 12;
+            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 12f;
+            if (splitCounter == 2f)
+                idealVelocity *= 0.8f;
+
             if (!npc.WithinRange(hoverDestination, 225f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) + offsetAngle, 0.018f, true) * idealVelocity.Length();

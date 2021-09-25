@@ -57,6 +57,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             float idealScale = MathHelper.Lerp(1.85f, 3f, lifeRatio);
             npc.scale = idealScale;
 
+            if (npc.localAI[2] == 0f)
+            {
+                npc.timeLeft = 3600;
+                npc.localAI[2] = 1f;
+            }
+
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * 0.4f && hasSummonedNinjaFlag == 0f)
             {
                 NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());

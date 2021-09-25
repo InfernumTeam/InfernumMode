@@ -107,7 +107,6 @@ namespace InfernumMode.GlobalInstances
 
             if (PoDWorld.InfernumMode && !BossRushEvent.BossRushActive)
             {
-
                 if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
                     OverridingListManager.InfernumSetDefaultsOverrideList[npc.type].DynamicInvoke(npc);
             }

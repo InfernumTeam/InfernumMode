@@ -1,5 +1,6 @@
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.ILEditingStuff;
+using InfernumMode.Items;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Skies;
 using Microsoft.Xna.Framework;
@@ -117,7 +118,9 @@ namespace InfernumMode
 			return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
 		}
 
-		public override void Unload()
+        public override void AddRecipes() => RecipeUpdates.Update();
+
+        public override void Unload()
         {
             OverridingListManager.Unload();
             ILEditingChanges.ILEditingUnload();

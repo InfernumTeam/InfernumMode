@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             StingerBurst,
             HoneyBlast,
             CreateMinionsFromAbdomen,
-            SummonBeesFromBelow
+            BeeletHell
         }
 
         internal enum QueenBeeFrameType
@@ -92,8 +92,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 case QueenBeeAttackState.CreateMinionsFromAbdomen:
                     DoAttack_CreateMinionsFromAbdomen(npc, target, ref frameType, ref attackTimer);
                     break;
-                case QueenBeeAttackState.SummonBeesFromBelow:
-                    DoAttack_SummonBeesFromBelow(npc, target, ref frameType, ref attackTimer);
+                case QueenBeeAttackState.BeeletHell:
+                    DoAttack_BeeletHell(npc, target, ref frameType, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -213,7 +213,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                         float burstOutwardness = MathHelper.Lerp(0.04f, 0.12f, 1f - npc.life / (float)npc.lifeMax);
                         stingerShootVelocity = stingerShootVelocity.RotatedBy(MathHelper.Lerp(-burstOutwardness, burstOutwardness, i / 11f));
 
-                        int stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, 75, 0f);
+                        int stinger = Utilities.NewProjectileBetter(stingerSpawnPosition, stingerShootVelocity, ProjectileID.Stinger, 85, 0f);
                         if (Main.projectile.IndexInRange(stinger))
                             Main.projectile[stinger].tileCollide = false;
                     }
@@ -277,7 +277,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 {
                     Vector2 honeySpawnPosition = new Vector2(npc.Center.X, npc.Center.Y + npc.height * 0.325f);
                     Vector2 honeyShootVelocity = (target.Center - honeySpawnPosition).SafeNormalize(Vector2.UnitY) * 10f;
-                    int honeyBlast = Utilities.NewProjectileBetter(honeySpawnPosition, honeyShootVelocity, ModContent.ProjectileType<HoneyBlast>(), 65, 0f);
+                    int honeyBlast = Utilities.NewProjectileBetter(honeySpawnPosition, honeyShootVelocity, ModContent.ProjectileType<HoneyBlast>(), 80, 0f);
                     if (Main.projectile.IndexInRange(honeyBlast))
                         Main.projectile[honeyBlast].ai[0] = honeyIsPoisonous.ToInt();
                 }
@@ -317,7 +317,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 {
                     Vector2 hiveShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 11.5f;
                     spawnPosition += hiveShootVelocity * 2f;
-                    Projectile.NewProjectile(spawnPosition, hiveShootVelocity, ModContent.ProjectileType<HornetHive>(), 55, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, hiveShootVelocity, ModContent.ProjectileType<HornetHive>(), 100, 0f);
                 }
                 else
                 {
@@ -330,7 +330,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 GotoNextAttackState(npc);
         }
 
-        internal static void DoAttack_SummonBeesFromBelow(NPC npc, Player target, ref float frameType, ref float attackTimer)
+        internal static void DoAttack_BeeletHell(NPC npc, Player target, ref float frameType, ref float attackTimer)
         {
             frameType = (int)QueenBeeFrameType.UpwardFly;
 
@@ -363,7 +363,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 {
                     Vector2 beeSpawnPosition = target.Center + new Vector2(Main.rand.NextBool(2).ToDirectionInt() * 1200f, Main.rand.NextFloat(-900f, 0f));
                     Vector2 beeVelocity = (target.Center - beeSpawnPosition).SafeNormalize(Vector2.UnitY) * new Vector2(4f, 20f);
-                    Utilities.NewProjectileBetter(beeSpawnPosition, beeVelocity, ModContent.ProjectileType<TinyBee>(), 65, 0f);
+                    Utilities.NewProjectileBetter(beeSpawnPosition, beeVelocity, ModContent.ProjectileType<TinyBee>(), 90, 0f);
                 }
             }
 
@@ -423,12 +423,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                     newAttackType = QueenBeeAttackState.CreateMinionsFromAbdomen;
                     break;
                 case QueenBeeAttackState.CreateMinionsFromAbdomen:
-                    newAttackType = lifeRatio < 0.5f ? QueenBeeAttackState.SummonBeesFromBelow : QueenBeeAttackState.HorizontalCharge;
+                    newAttackType = lifeRatio < 0.5f ? QueenBeeAttackState.BeeletHell : QueenBeeAttackState.HorizontalCharge;
                     break;
             }
 
             if (lifeRatio < 0.1f)
-                newAttackType = oldAttackType == QueenBeeAttackState.HorizontalCharge ? QueenBeeAttackState.SummonBeesFromBelow : QueenBeeAttackState.HorizontalCharge;
+                newAttackType = oldAttackType == QueenBeeAttackState.HorizontalCharge ? QueenBeeAttackState.BeeletHell : QueenBeeAttackState.HorizontalCharge;
 
             npc.ai[0] = (int)newAttackType;
             npc.ai[1] = 0f;

@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             // Count segments in the air.
             int totalSegmentsInAir = 0;
             int bodyType = ModContent.NPCType<PerforatorBodyLarge>();
-            float moveSpeed = MathHelper.Lerp(0.09f, 0.36f, 1f - npc.life / (float)npc.lifeMax);
+            float moveSpeed = MathHelper.Lerp(0.15f, 0.36f, 1f - npc.life / (float)npc.lifeMax);
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 bool inAir = !Collision.SolidCollision(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height);
@@ -56,20 +56,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             if (fallCountdown > 0f)
             {
-                if (npc.Center.Y < target.Center.Y + 550f)
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + moveSpeed * 1.775f, -17f, 17f);
-                else
-                    npc.velocity.Y -= 1.2f;
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + moveSpeed * 1.775f, -17f, 17f);
                 fallCountdown--;
             }
             else
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed, -17f, 8f);
-                npc.velocity.X = (npc.velocity.X * 5f + npc.SafeDirectionTo(target.Center).X * 8.5f) / 6f;
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed, -17f, 17f);
 
-                if (totalSegmentsInAir >= 16)
+                if (MathHelper.Distance(target.Center.X, npc.Center.X) > 125f)
+                    npc.velocity.X = (npc.velocity.X * 5f + npc.SafeDirectionTo(target.Center).X * 8.5f) / 6f;
+
+                if (totalSegmentsInAir >= 14)
                 {
-                    fallCountdown = 35f;
+                    fallCountdown = 50f;
                     for (int i = 0; i < 6; i++)
                     {
                         Vector2 ichorVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 6f;
@@ -84,6 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                             Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<SittingBlood>(), 75, 0f);
                         }
                     }
+                    npc.netUpdate = true;
                 }
             }
 

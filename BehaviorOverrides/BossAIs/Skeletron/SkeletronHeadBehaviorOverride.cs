@@ -251,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 if (attackTimer % skullShootRate == skullShootRate - 1f && targetInLineOfSight)
                 {
                     Main.PlaySound(SoundID.Item8, target.Center);
-                    Vector2 skullShootVelocity = npc.velocity;
+                    Vector2 skullShootVelocity = Vector2.Lerp(npc.velocity.SafeNormalize(Vector2.UnitY), npc.SafeDirectionTo(target.Center, Vector2.UnitY), 0.5f) * npc.velocity.Length();
                     skullShootVelocity.X *= 0.4f;
                     skullShootVelocity = skullShootVelocity.ClampMagnitude(10f, 16f);
                     Vector2 skullShootPosition = npc.Center + skullShootVelocity * 5f;

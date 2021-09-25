@@ -346,7 +346,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
                 for (int i = 0; i < totalProjectiles + 1; i++)
                 {
-                    Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), finalWormDead ? 105 : 80, 0f, Main.myPlayer, 0f, 0f);
+                    Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), finalWormDead ? 110 : 95, 0f, Main.myPlayer, 0f, 0f);
                     currentBlobVelocity.X += blobSpeed / totalProjectiles * -1.12f;
                 }
                 Main.PlaySound(SoundID.NPCHit20, npc.position);

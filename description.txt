@@ -4,4 +4,6 @@ This difficulty is harder than Death mode.
 The primary focus of the mod is expansive reworking of boss AIs.
 
 Possible plans to add custom music, items, and exclusive bosses in the future.... maybe.
-Some bosses may gain (unnecessary) extra phases for maximum "It's not over yet!" energy
+Some bosses may gain (unnecessary) extra phases for maximum "It's not over yet!" energy.
+
+NOTE: As of now, only Pre-HM boss AIs are included.

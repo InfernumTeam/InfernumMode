@@ -30,6 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
         public override void AI()
 		{
+            projectile.tileCollide = projectile.timeLeft < 390;
             if (projectile.velocity != Vector2.Zero)
                 projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }

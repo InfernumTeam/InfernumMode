@@ -28,6 +28,7 @@ namespace InfernumMode.Items
             item.useTime = 45;
             item.useStyle = ItemUseStyleID.EatingUsing;
             item.consumable = true;
+            item.maxStack = 999;
         }
 
         public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<GiantClam>()) && player.Calamity().ZoneSunkenSea;

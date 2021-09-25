@@ -69,7 +69,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 frameType = (int)QueenBeeFrameType.UpwardFly;
                 finalPhaseTransitionTimer--;
                 if (finalPhaseTransitionTimer == 0f)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<BeeWave>(), 0, 0f);
+
+                    Main.PlaySound(SoundID.Roar, npc.Center, 0);
                     GotoNextAttackState(npc);
+                }
 
                 npc.velocity *= 0.93f;
 

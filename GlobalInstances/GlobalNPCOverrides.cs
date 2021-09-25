@@ -107,12 +107,6 @@ namespace InfernumMode.GlobalInstances
 
             if (PoDWorld.InfernumMode && !BossRushEvent.BossRushActive)
             {
-                // Make perf worms immune to debuffs.
-                if (CalamityGlobalNPC.PerforatorIDs.Contains(npc.type))
-                {
-                    for (int k = 0; k < npc.buffImmune.Length; k++)
-                        npc.buffImmune[k] = true;
-                }
 
                 if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
                     OverridingListManager.InfernumSetDefaultsOverrideList[npc.type].DynamicInvoke(npc);
@@ -128,6 +122,13 @@ namespace InfernumMode.GlobalInstances
                 {
                     npc.life = npc.lifeMax = InfernumNPCHPValues.HPValues[npc.type];
                     npc.netUpdate = true;
+                }
+
+                // Make perf worms immune to debuffs.
+                if (CalamityGlobalNPC.PerforatorIDs.Contains(npc.type))
+                {
+                    for (int k = 0; k < npc.buffImmune.Length; k++)
+                        npc.buffImmune[k] = true;
                 }
 
                 if (OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type))

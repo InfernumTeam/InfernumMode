@@ -494,7 +494,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             // And release the Eater of Souls wall.
             else
             {
-                verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < 0.2f ? 4.5f : 4.15f);
+                verticalSpawnOffset += EaterWallTotalHeight / EaterWallSummoningTime * (lifeRatio < 0.2f ? 4.35f : 4.15f);
 
                 Vector2 wallSpawnOffset = new Vector2(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
                 Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < 0.2f ? MathHelper.ToRadians(10f) : 0f) * 10f;
@@ -555,7 +555,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
 
             // Release clots upward if below the necessary phase threshold.
-            if (attackTimer > waitTime && lifeRatio < 0.2f && attackTimer % 10f == 9f)
+            if (attackTimer > waitTime && lifeRatio < 0.2f && attackTimer % 8f == 7f)
             {
                 int vileClot = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(6f, 8.5f), ModContent.ProjectileType<VileClot>(), 74, 0f);
                 Main.projectile[vileClot].tileCollide = false;
@@ -596,15 +596,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             {
                 attackTimer++;
 
-                int clotSpawnRate = lifeRatio < 0.2f ? 12 : 15;
-                int cloudSpawnRate = lifeRatio < 0.2f ? 35 : 45;
+                int clotSpawnRate = lifeRatio < 0.2f ? 9 : 13;
+                int cloudSpawnRate = lifeRatio < 0.2f ? 30 : 40;
                 int attackTime = lifeRatio < 0.2f ? 180 : 210;
 
                 // Release clouds and clots.
                 if (npc.ai[3] % clotSpawnRate == clotSpawnRate - 1f)
                 {
-                    Vector2 clotSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 400f, Main.rand.NextFloat(-605f, -545f));
-                    Vector2 clotVelocity = Vector2.UnitY.RotatedByRandom(MathHelper.ToRadians(36f)) * 10f;
+                    Vector2 clotSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 540f, Main.rand.NextFloat(-555f, -505f));
+                    Vector2 clotVelocity = Vector2.UnitY.RotatedByRandom(MathHelper.ToRadians(36f)) * 12f;
                     Utilities.NewProjectileBetter(clotSpawnPosition, clotVelocity, ModContent.ProjectileType<VileClot>(), 72, 1f);
                 }
                 if (npc.ai[3] % cloudSpawnRate == cloudSpawnRate - 1f)
@@ -644,7 +644,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public static void DoBehavior_BlobBurst(NPC npc, Player target, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
         {
-            int blobShootRate = 60;
+            int blobShootRate = 50;
             int blobShotCount = 4;
             ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
 
@@ -674,10 +674,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     for (int i = 0; i < 6; i++)
                     {
                         float offsetAngle = i == 0 ? 0f : Main.rand.NextFloat(-0.53f, 0.53f);
-                        float shootSpeed = i == 0f ? 14f : Main.rand.NextFloat(7.75f, 11f);
+                        float shootSpeed = i == 0f ? 15.6f : Main.rand.NextFloat(9f, 12f);
                         if (lifeRatio < 0.25f)
-                            shootSpeed *= 1.35f;
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 80, 0f);
+                            shootSpeed *= 1.325f;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                            Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 80, 0f);
                     }
                     Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
                 }

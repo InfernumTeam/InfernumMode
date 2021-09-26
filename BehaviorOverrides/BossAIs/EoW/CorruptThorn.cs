@@ -163,7 +163,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 		{
 			float _ = 0f;
 			Vector2 start = projectile.Bottom;
-			Vector2 end = projectile.Bottom - Vector2.UnitY.RotatedBy(projectile.rotation) * (CurrentHeight - 8f);
+			Vector2 end = projectile.Bottom - Vector2.UnitY.RotatedBy(projectile.rotation) * CurrentHeight;
 			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, projectile.width * projectile.scale, ref _);
 		}
 	}

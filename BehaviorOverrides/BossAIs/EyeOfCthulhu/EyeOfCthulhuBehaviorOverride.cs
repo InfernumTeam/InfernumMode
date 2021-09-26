@@ -141,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 case EoCAttackType.HoverCharge:
                     int hoverTime = 60;
                     int chargeTime = phase2 ? 30 : 45;
-                    float chargeSpeed = MathHelper.Lerp(8f, 12f, 1f - lifeRatio);
+                    float chargeSpeed = MathHelper.Lerp(8f, 11.15f, 1f - lifeRatio);
                     if (phase2)
                         chargeSpeed += 1.3f;
                     float hoverAcceleration = MathHelper.Lerp(0.1f, 0.25f, 1f - lifeRatio);
@@ -225,7 +225,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         if (npc.DistanceSQ(destination) < 32f * 32f)
                         {
                             subState = 1f;
-                            npc.velocity = npc.DirectionTo(target.Center - Vector2.UnitY * 300f) * 17f;
+                            npc.velocity = npc.DirectionTo(target.Center - Vector2.UnitY * 300f) * 15f;
                             npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                             npc.netUpdate = true;
                             attackTimer = 0f;
@@ -361,7 +361,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         if (attackTimer >= spinTime)
                         {
                             attackTimer = 0f;
-                            npc.velocity = (spinAngle + MathHelper.PiOver2).ToRotationVector2() * 10f;
+                            npc.velocity = (spinAngle + MathHelper.PiOver2).ToRotationVector2() * 9.5f;
                             subState = 2f;
                             npc.netUpdate = true;
                         }

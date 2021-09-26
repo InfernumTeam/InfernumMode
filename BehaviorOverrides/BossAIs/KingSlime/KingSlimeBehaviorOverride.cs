@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 npc.localAI[2] = 1f;
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * 0.4f && hasSummonedNinjaFlag == 0f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * 0.3f && hasSummonedNinjaFlag == 0f)
             {
                 NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
                 hasSummonedNinjaFlag = 1f;
@@ -111,10 +111,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             if (npc.velocity.Y > 0f)
                 npc.velocity.Y += MathHelper.Lerp(0.05f, 0.25f, 1f - lifeRatio);
 
-            if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 2500f))
+            if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
             {
                 npc.TargetClosest();
-                if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 2500f))
+                if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
                 {
                     npc.velocity.X *= 0.8f;
                     if (Math.Abs(npc.velocity.X) < 0.1f)
@@ -291,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             Vector2 kingSlimeDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
 
             // Draw the ninja, if it's still stuck.
-            if (npc.life > npc.lifeMax * 0.4f)
+            if (npc.life > npc.lifeMax * 0.3f)
             {
                 Vector2 drawOffset = Vector2.Zero;
                 float ninjaRotation = npc.velocity.X * 0.05f;

@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             projectile.rotation += (projectile.velocity.X > 0f).ToDirectionInt() * 0.4f;
             projectile.tileCollide = projectile.timeLeft < 90;
 
-            if (projectile.velocity.Length() < 14f)
+            if (projectile.velocity.Length() < 10f)
                 projectile.velocity *= 1.0145f;
         }
 

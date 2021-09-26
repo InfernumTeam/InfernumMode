@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             UndergroundFlameDash,
             CursedRain,
             SlowDown,
-            BlobSniping
+            BlobBurst
         }
 
         internal const float HiveMindFadeoutTime = 25f;
@@ -163,8 +163,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 case HiveMindP2AttackState.SlowDown:
                     DoBehavior_SlowDown(npc, ref slowdownCountdown);
                     break;
-                case HiveMindP2AttackState.BlobSniping:
-                    DoBehavior_BlobSniping(npc, target, lifeRatio, ref slowdownCountdown, ref attackTimer);
+                case HiveMindP2AttackState.BlobBurst:
+                    DoBehavior_BlobBurst(npc, target, lifeRatio, ref slowdownCountdown, ref attackTimer);
                     break;
             }
 
@@ -261,8 +261,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
             while (nextAttack == previousAttack);
 
-            if (lifeRatio < 0.2f && Main.rand.NextBool(4) && previousAttack != HiveMindP2AttackState.BlobSniping)
-                nextAttack = HiveMindP2AttackState.BlobSniping;
+            if (lifeRatio < 0.2f && Main.rand.NextBool(4) && previousAttack != HiveMindP2AttackState.BlobBurst)
+                nextAttack = HiveMindP2AttackState.BlobBurst;
 
             // Reset things.
             npc.ai = new float[] { 0f, 0f, 0f, 0f };
@@ -642,7 +642,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
         }
 
-        public static void DoBehavior_BlobSniping(NPC npc, Player target, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
+        public static void DoBehavior_BlobBurst(NPC npc, Player target, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
         {
             int blobShootRate = 60;
             int blobShotCount = 4;

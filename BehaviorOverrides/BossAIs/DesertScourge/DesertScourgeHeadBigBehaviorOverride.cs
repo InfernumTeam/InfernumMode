@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             Player target = Main.player[npc.target];
             bool inTiles = Collision.SolidCollision(npc.position, npc.width, npc.height);
             npc.defense = target.ZoneDesert ? npc.defDefense : 1000;
-            npc.dontTakeDamage = mandatoryLungeCountdown > 120f || NPC.AnyNPCs(ModContent.NPCType<DesertScourgeHeadSmall>());
+            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<DesertScourgeHeadSmall>());
 
             // Idly release bone teeth.
             boneToothShootCounter++;
@@ -181,7 +181,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 			{
                 if (MathHelper.Distance(target.Center.X, npc.Center.X) > 125f)
                     npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.DirectionTo(target.Center).X * 12f, 0.04f);
-                if (lungeFallTimer > 145f || target.Center.Y - npc.Center.Y < -1020f)
+                if (lungeFallTimer > 145f || target.Center.Y - npc.Center.Y < -820f)
                     npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -16f, 0.08f);
 
                 // Fall.
@@ -189,7 +189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     npc.velocity.Y += 0.6f;
 
                 // Prepare to fall and play a sound.
-                if (lungeFallTimer == 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 825f)
+                if (lungeFallTimer == 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 555f)
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
 

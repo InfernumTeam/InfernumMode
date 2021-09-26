@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                         int shurikenCount = (int)MathHelper.Lerp(2f, 7f, Utils.InverseLerp(300f, 720f, npc.Distance(Target.Center), true));
                         for (int i = 0; i < shurikenCount; i++)
                         {
-                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i / (float)(shurikenCount - 1f))) * 7f;
+                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i / (float)(shurikenCount - 1f))) * 5.5f;
                             Utilities.NewProjectileBetter(npc.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 72, 0f);
                         }
                     }

@@ -287,15 +287,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
                 for (int tries = 0; tries < 10000; tries++)
                 {
-                    Vector2 potentialSpawnPoint = groundedTargetPosition + new Vector2(Main.rand.NextFloat(-400f - tries * 0.04f, 400f + tries * 0.04f), Main.rand.NextFloat(-400f - tries * 0.025f, 100f));
+                    Vector2 potentialSpawnPoint = groundedTargetPosition + new Vector2(Main.rand.NextFloat(-500f - tries * 0.04f, 500f + tries * 0.04f), Main.rand.NextFloat(-500f - tries * 0.025f, 100f));
                     Vector2 potentialEndPoint = potentialSpawnPoint + Vector2.UnitX * npc.spriteDirection * 150f;
 
                     // Ignore a position is too close to the target.
-                    if (Target.WithinRange(potentialSpawnPoint, 180f) || Target.WithinRange(potentialEndPoint, 180f))
+                    if (Target.WithinRange(potentialSpawnPoint, 270f) || Target.WithinRange(potentialEndPoint, 270f))
                         continue;
 
                     // If it's close to the original position.
-                    if (npc.WithinRange(potentialSpawnPoint, 180f))
+                    if (npc.WithinRange(potentialSpawnPoint, 200f))
                         continue;
 
                     // If there would be a wall in the way.

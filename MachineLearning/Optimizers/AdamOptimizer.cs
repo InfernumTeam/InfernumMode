@@ -5,15 +5,15 @@ namespace InfernumMode.MachineLearning.Optimizers
     [Serializable]
     public class AdamOptimizer : BaseOptimizer
     {
-        public double Beta1;
-        public double Beta2;
+        public double FirstMomentDecayFactor;
+        public double SecondMomentDecayFactor;
         public double[] PreviousValuesFirstMoment = null;
         public double[] PreviousValuesSecondMoment = null;
 
-        public AdamOptimizer(double beta1, double beta2)
+        public AdamOptimizer(double firstMomentDecayFactor, double secondMomentDecayFactor)
         {
-            Beta1 = beta1;
-            Beta2 = beta2;
+            FirstMomentDecayFactor = firstMomentDecayFactor;
+            SecondMomentDecayFactor = secondMomentDecayFactor;
         }
 
         public override double[] DecideUpdateValues(double[] updateValues, double learningRate)
@@ -27,11 +27,11 @@ namespace InfernumMode.MachineLearning.Optimizers
 
             for (int i = 0; i < updateValues.Length; i++)
             {
-                PreviousValuesFirstMoment[i] = Beta1 * PreviousValuesFirstMoment[i] + (1D - Beta1) * updateValues[i];
-                PreviousValuesSecondMoment[i] = Beta2 * PreviousValuesSecondMoment[i] + (1D - Beta2) * updateValues[i] * updateValues[i];
+                PreviousValuesFirstMoment[i] = FirstMomentDecayFactor * PreviousValuesFirstMoment[i] + (1D - FirstMomentDecayFactor) * updateValues[i];
+                PreviousValuesSecondMoment[i] = SecondMomentDecayFactor * PreviousValuesSecondMoment[i] + (1D - SecondMomentDecayFactor) * updateValues[i] * updateValues[i];
 
-                double biasCorrectedFirstMoment = PreviousValuesFirstMoment[i] / (1D - Beta1);
-                double biasCorrectedSecondMoment = PreviousValuesSecondMoment[i] / (1D - Beta2);
+                double biasCorrectedFirstMoment = PreviousValuesFirstMoment[i] / (1D - FirstMomentDecayFactor);
+                double biasCorrectedSecondMoment = PreviousValuesSecondMoment[i] / (1D - SecondMomentDecayFactor);
                 updateValues[i] = learningRate / (Math.Sqrt(biasCorrectedSecondMoment) + 1e-8) * biasCorrectedFirstMoment;
             }
 

@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override void AI()
         {
             projectile.ai[1] += 1f;
-            if (projectile.ai[1] > 900f)
+            if (projectile.ai[1] > 720f)
 			{
                 projectile.localAI[0] += 10f;
 				projectile.damage = 0;
@@ -60,14 +60,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 projectile.velocity *= 0.985f;
         }
 
-        public override bool CanHitPlayer(Player target) => projectile.ai[1] <= 900f;
+        public override bool CanHitPlayer(Player target) => projectile.ai[1] <= 720f;
 
 
         public override Color? GetAlpha(Color lightColor)
 		{
-			if (projectile.ai[1] > 900f)
+			if (projectile.ai[1] > 720f)
 			{
-				byte b2 = (byte)((26f - (projectile.ai[1] - 900f)) * 10f);
+				byte b2 = (byte)((26f - (projectile.ai[1] - 720f)) * 10f);
 				byte a2 = (byte)(projectile.alpha * (b2 / 255f));
 				return new Color(b2, b2, b2, a2);
 			}

@@ -337,17 +337,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 {
                     reelBackCountdown = 45f;
                     npc.velocity = npc.DirectionTo(target.Center) * -8f;
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<BrainIllusion>())
+                            Main.npc[i].active = false;
+                    }
                     Main.PlaySound(SoundID.ForceRoar, (int)target.Center.X, (int)target.Center.Y, -1, 1f, 0f);
                 }
 
                 Vector2 newSpawnOffset = new Vector2(spawnOffsetX, spawnOffsetY);
+                if (newSpawnOffset.HasNaNs() || newSpawnOffset.Length() > 1200f)
+                {
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<BrainIllusion>())
+                            Main.npc[i].active = false;
+                    }
+                    GotoNextAttackState(npc);
+                }
+
                 npc.Center = target.Center + newSpawnOffset;
                 newSpawnOffset += npc.velocity;
                 spawnOffsetX = newSpawnOffset.X;
                 spawnOffsetY = newSpawnOffset.Y;
 
                 if (attackTimer >= 420f || npc.Hitbox.Intersects(target.Hitbox))
+                {
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<BrainIllusion>())
+                            Main.npc[i].active = false;
+                    }
                     GotoNextAttackState(npc);
+                }
             }
         }
 
@@ -467,6 +489,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     break;
             }
 
+            newAttackType = BoCAttackState.ConvergingIllusions;
             npc.ai[0] = (int)newAttackType;
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)

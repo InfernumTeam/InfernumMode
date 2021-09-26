@@ -80,12 +80,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
 		public void InitializePillarProperties()
 		{
-			WorldUtils.Find(new Vector2(projectile.Top.X, projectile.Top.Y - 160).ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
+			// Prevent exploits by having the player linger underground in a tight tunnel.
+			Vector2 checkPosition = projectile.Top - Vector2.UnitY * 160f;
+			bool exploitAttempted = !Collision.CanHit(projectile.Bottom, 1, 1, projectile.Top - Vector2.UnitY * 180f, 1, 1);
+
+			WorldUtils.Find(checkPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
 			{
 				new Conditions.IsSolid(),
 				new CustomTileConditions.ActiveAndNotActuated(),
 				new CustomTileConditions.NotPlatform()
 			}), out Point newBottom);
+
+			if (exploitAttempted)
+				newBottom = projectile.Bottom.ToTileCoordinates();
 
 			bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).halfBrick();
 			projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);

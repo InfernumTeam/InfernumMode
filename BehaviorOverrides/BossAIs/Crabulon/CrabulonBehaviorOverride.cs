@@ -1,13 +1,14 @@
 ﻿using CalamityMod.Events;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using Terraria.World.Generation;
 using CrabulonNPC = CalamityMod.NPCs.Crabulon.CrabulonIdle;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
@@ -338,7 +339,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 for (float dx = -1000f; dx < 1000f; dx += enraged ? 250f : 360f)
                 {
                     Vector2 spawnPosition = target.Bottom + Vector2.UnitX * dx;
-                    Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), 70, 0f);
+                    WorldUtils.Find(spawnPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
+                    {
+                        new Conditions.IsSolid(),
+                        new CustomTileConditions.ActiveAndNotActuated(),
+                        new CustomTileConditions.NotPlatform()
+                    }), out Point newBottom);
+                    Utilities.NewProjectileBetter(newBottom.ToWorldCoordinates(8, 0), Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), 70, 0f);
                 }
             }
 

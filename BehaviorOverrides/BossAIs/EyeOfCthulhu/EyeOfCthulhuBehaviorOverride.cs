@@ -63,13 +63,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             if (Main.dayTime || target.dead)
             {
                 npc.TargetClosest();
+                target = Main.player[npc.target];
+
                 if (Main.dayTime || target.dead)
                 {
-                    npc.velocity.Y -= 0.08f;
+                    npc.velocity.Y -= 0.18f;
                     npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                     if (npc.timeLeft > 120)
                         npc.timeLeft = 120;
+                    if (!npc.WithinRange(target.Center, 2300f))
+                        npc.active = false;
                     return false;
                 }
             }
@@ -209,7 +213,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     break;
 
                 case EoCAttackType.HorizontalBloodCharge:
-                    int toothReleaseRate = phase2 ? 7 : 12;
+                    int toothReleaseRate = phase2 ? 9 : 15;
                     ref float subState = ref npc.Infernum().ExtraAI[0];
                     ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
 
@@ -294,7 +298,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                                 Vector2 spawnPosition = npc.Center - Vector2.UnitY * 20f;
                                 for (int i = 0; i < teethPerShot; i++)
                                 {
-                                    float offsetAngle = MathHelper.Lerp(-0.56f, 0.56f, i / (float)teethPerShot) + Main.rand.NextFloat(-0.07f, 0.07f);
+                                    float offsetAngle = MathHelper.Lerp(-0.52f, 0.52f, i / (float)teethPerShot) + Main.rand.NextFloat(-0.07f, 0.07f);
                                     Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitY.RotatedBy(offsetAngle) * 16f, ModContent.ProjectileType<EoCTooth>(), 70, 0f, 255, npc.target);
                                 }
                             }

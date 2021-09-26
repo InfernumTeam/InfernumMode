@@ -30,6 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 hasSummonedSegments = 1f;
             }
 
+            npc.timeLeft = 3600;
             if (!NPC.AnyNPCs(ModContent.NPCType<PerforatorHive>()))
             {
                 npc.active = false;
@@ -45,23 +46,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             float moveSpeed = MathHelper.Lerp(0.13f, 0.3f, 1f - npc.life / (float)npc.lifeMax);
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                bool inAir = !Collision.SolidCollision(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height);
-                inAir &= !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval((int)Main.npc[i].Center.X / 16, (int)Main.npc[i].Center.Y / 16).type];
+                bool inAir = true;
+                if (Collision.SolidCollision(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height))
+                    inAir = false;
                 if (Main.npc[i].type == bodyType && Main.npc[i].active && inAir)
                     totalSegmentsInAir++;
             }
 
             if (fallCountdown > 0f)
             {
-                if (npc.Center.Y < target.Center.Y + 470f)
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + moveSpeed * 1.5f, -17f, 17f);
-                else
-                    npc.velocity.Y *= 0.93f;
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + moveSpeed * 1.2f, -17f, 17f);
                 fallCountdown--;
             }
             else
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed, -17f, 17f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed * 3f, -17f, 17f);
                 npc.velocity.X = (npc.velocity.X * 3f + npc.SafeDirectionTo(target.Center).X * 8.5f) / 4f;
 
                 if (totalSegmentsInAir >= 7)

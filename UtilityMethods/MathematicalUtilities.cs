@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Utilities;
 
 namespace InfernumMode
 {
@@ -111,10 +112,84 @@ namespace InfernumMode
         /// </summary>
         /// <param name="fx">The function to derive.</param>
         /// <param name="x">The input.</param>
-        public static float ApproximateDerivative(this Func<double, double> fx, float x)
+        public static double ApproximateDerivative(this Func<double, double> fx, double x)
         {
             double h = 1e-7;
             return (float)((fx(x + h) - fx(x)) / h);
+        }
+
+        /// <summary>
+        /// Approximates the partial derivative of a function at a given input for a specific variable.
+        /// </summary>
+        /// <param name="fxy">The function.</param>
+        /// <param name="x">The function input.</param>
+        public static double ApproximatePartialDerivative(this Func<double, double, double> fxy, double x, double y, int term)
+        {
+            switch (term)
+            {
+                case 0:
+                    return (fxy(x + 1e-7, y) - fxy(x, y)) * 1e7;
+                case 1:
+                    return (fxy(x, y + 1e-7) - fxy(x, y)) * 1e7;
+            }
+            return 0D;
+        }
+
+        /// <summary>
+        /// Returns a number between a minimum and maximum range.
+        /// </summary>
+        /// <param name="rng">The random number generator.</param>
+        /// <param name="min">The lower bound for randomness.</param>
+        /// <param name="max">The upper bound for randomness.</param>
+        public static double NextRange(this UnifiedRandom rng, double min, double max) => rng.NextDouble() * (max - min) + min;
+
+        /// <summary>
+        /// Generates a 2D array of an arbitrary width and height and randomizes it with upper and lower bounds.
+        /// </summary>
+        /// <param name="rng">The random number generator.</param>
+        /// <param name="width">The width of the array.</param>
+        /// <param name="height">The height of the array.</param>
+        /// <param name="min">The lower bound for randomness.</param>
+        /// <param name="max">The upper bound for randomness.</param>
+        public static double[,] GenerateRandomArray(this UnifiedRandom rng, int width, int height, double min, double max)
+        {
+            double[,] result = new double[width, height];
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    result[i, j] = rng.NextRange(min, max);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Performs a logistic sigmoid function on an input.
+        /// </summary>
+        /// <param name="x">The input.</param>
+        public static double Sigmoid(double x) => 1D / (1D + Math.Exp(-x));
+
+        /// <summary>
+        /// Gets the index of the number with the highest value in a collection of numbers.
+        /// </summary>
+        /// <param name="values">The collection of numbers.</param>
+        public static int Argmax(double[] values)
+        {
+            int index = -1;
+            double min = double.NegativeInfinity;
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] > min)
+                {
+                    index = i;
+                    min = values[i];
+                }
+            }
+            return index;
         }
     }
 }

@@ -59,8 +59,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
             Player target = Main.player[npc.target];
             bool inTiles = Collision.SolidCollision(npc.position, npc.width, npc.height);
-            npc.defense = target.ZoneDesert ? npc.defDefense : 1000;
-            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<DesertScourgeHeadSmall>());
+            npc.defense = npc.defDefense;
+            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<DesertScourgeHeadSmall>()) || !target.ZoneDesert;
 
             // Idly release bone teeth.
             boneToothShootCounter++;

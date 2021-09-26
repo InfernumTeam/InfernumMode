@@ -62,10 +62,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         destination += npc.velocity.SafeNormalize(Vector2.UnitY) * 180f;
 
                     float distanceFromDestination = npc.Distance(destination);
-                    float turnSpeed = MathHelper.Lerp(0.008f, 0.055f, Utils.InverseLerp(175f, 475f, distanceFromDestination, true));
+                    float turnSpeed = MathHelper.Lerp(0.008f, 0.038f, Utils.InverseLerp(175f, 475f, distanceFromDestination, true));
 
                     float newSpeed = npc.velocity.Length();
-                    float idealSpeed = MathHelper.Lerp(6.7f, 13f, 1f - lifeRatio);
+                    float idealSpeed = MathHelper.Lerp(5.8f, 10.25f, 1f - lifeRatio);
 
                     // Accelerate quickly if relatively far from the destination.
                     if (distanceFromDestination > 1250f)
@@ -89,10 +89,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         destination += (time / 105f * MathHelper.TwoPi).ToRotationVector2() * 270f;
 
                     distanceFromDestination = npc.Distance(destination);
-                    turnSpeed = MathHelper.Lerp(0.04f, 0.11f, Utils.InverseLerp(175f, 475f, distanceFromDestination, true));
+                    turnSpeed = MathHelper.Lerp(0.04f, 0.076f, Utils.InverseLerp(175f, 475f, distanceFromDestination, true));
 
                     newSpeed = npc.velocity.Length();
-                    idealSpeed = MathHelper.Lerp(5.5f, 10f, 1f - lifeRatio);
+                    idealSpeed = MathHelper.Lerp(4.7f, 9f, 1f - lifeRatio);
 
                     // Accelerate quickly if relatively far from the destination.
                     if (distanceFromDestination > 1250f)

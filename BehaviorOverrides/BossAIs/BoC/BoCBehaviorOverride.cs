@@ -354,6 +354,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                             Main.npc[i].active = false;
                     }
                     GotoNextAttackState(npc);
+                    return;
                 }
 
                 npc.Center = target.Center + newSpawnOffset;

@@ -380,7 +380,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 float blobSpeed = anyWorms ? 6f : 8f;
                 if (finalWormDead)
                     blobSpeed += 0.25f;
-                Vector2 currentBlobVelocity = new Vector2(4f + Main.rand.NextFloat(-0.1f, 0.1f) + target.velocity.X * 0.12f, -blobSpeed);
+                Vector2 currentBlobVelocity = new Vector2(4f + Main.rand.NextFloat(-0.1f, 0.1f) + target.velocity.X * 0.12f, blobSpeed * -0.65f);
                 currentBlobVelocity.X += target.direction * 2.67f;
 
                 npc.TargetClosest();

@@ -32,6 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 hasSummonedSegments = 1f;
             }
 
+            npc.timeLeft = 3600;
             if (!NPC.AnyNPCs(ModContent.NPCType<PerforatorHive>()))
             {
                 npc.active = false;
@@ -61,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             }
             else
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed, -17f, 17f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed * 2f, -17f, 17f);
 
                 if (MathHelper.Distance(target.Center.X, npc.Center.X) > 125f)
                     npc.velocity.X = (npc.velocity.X * 5f + npc.SafeDirectionTo(target.Center).X * 8.5f) / 6f;

@@ -148,7 +148,7 @@ namespace InfernumMode.GlobalInstances
                 damage = (int)(damage * 0.67);
 
             if (isSplitEoW && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.55);
+                damage = (int)(damage * 0.45);
 
             if (npc.type == NPCID.WallofFleshEye && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.785);

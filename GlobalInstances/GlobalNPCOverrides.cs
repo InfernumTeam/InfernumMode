@@ -449,15 +449,19 @@ namespace InfernumMode.GlobalInstances
 
             return base.CheckDead(npc);
         }
+
         public override bool CheckActive(NPC npc)
         {
             if (!PoDWorld.InfernumMode)
                 return base.CheckActive(npc);
 
+            if (npc.type == NPCID.KingSlime)
+                return false;
             if (npc.type == NPCID.AncientCultistSquidhead)
                 return false;
             if (npc.type == NPCID.MoonLordFreeEye)
                 return false;
+
             return base.CheckActive(npc);
         }
 

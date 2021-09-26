@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             if (attackTimer % scytheCeilingShootRate == scytheCeilingShootRate - 1f)
                 DoCeilingAndFloorAttack(npc, target, lifeRatio < 0.5f);
 
-            int beamShootRate = 440;
+            int beamShootRate = 310;
             if (!NPC.AnyNPCs(NPCID.WallofFleshEye) && attackTimer % beamShootRate == beamShootRate - 1f)
                 PrepareFireBeam(npc, target);
 

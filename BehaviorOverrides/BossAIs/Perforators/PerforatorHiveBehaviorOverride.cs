@@ -309,11 +309,52 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
         public static void DoAttack_ReleaseRegularBursts(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool anyWorms, out bool gotoNextAttack)
         {
             Vector2 destination = target.Center - Vector2.UnitY * 270f;
+
             if (!finalWormDead || !npc.WithinRange(destination, 80f))
             {
-                float distanceFromDestination = npc.Distance(destination);
-                float movementInterpolant = MathHelper.Lerp(0.055f, 0.16f, Utils.InverseLerp(100f, 30f, distanceFromDestination, true));
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * MathHelper.Min(distanceFromDestination, 15f), movementInterpolant);
+                float movementSpeed = MathHelper.Lerp(4.6f, 7f, 1f - npc.life / (float)npc.lifeMax);
+                float acceleration = 0.2f;
+                if (npc.position.Y > destination.Y)
+                {
+                    if (npc.velocity.Y > 0f)
+                    {
+                        npc.velocity.Y *= 0.98f;
+                    }
+                    npc.velocity.Y -= acceleration;
+                    if (npc.velocity.Y > movementSpeed * 0.45f)
+                        npc.velocity.Y = movementSpeed * 0.45f;
+                }
+                else if (npc.position.Y < destination.Y - 100f)
+                {
+                    if (npc.velocity.Y < 0f)
+                    {
+                        npc.velocity.Y *= 0.98f;
+                    }
+                    npc.velocity.Y += acceleration;
+                    if (npc.velocity.Y < -movementSpeed * 0.45f)
+                        npc.velocity.Y = -movementSpeed * 0.45f;
+                }
+
+                if (npc.Center.X > destination.X + 230f)
+                {
+                    if (npc.velocity.X > 0f)
+                    {
+                        npc.velocity.X *= 0.98f;
+                    }
+                    npc.velocity.X -= acceleration;
+                    if (npc.velocity.X > movementSpeed)
+                        npc.velocity.X = movementSpeed;
+                }
+                else if (npc.Center.X < destination.X - 230f)
+                {
+                    if (npc.velocity.X < 0f)
+                    {
+                        npc.velocity.X *= 0.98f;
+                    }
+                    npc.velocity.X += acceleration;
+                    if (npc.velocity.X < -movementSpeed)
+                        npc.velocity.X = -movementSpeed;
+                }
             }
 
             int shootRate = anyWorms ? 100 : 62;
@@ -335,7 +376,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             // And release ichor shots upward more frequently.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
             {
-                int totalProjectiles = anyWorms ? 7 : (int)MathHelper.Lerp(17f, 22f, 1f - npc.life / (float)npc.lifeMax);
+                int totalProjectiles = (int)MathHelper.Lerp(26f, 35f, 1f - npc.life / (float)npc.lifeMax);
                 float blobSpeed = anyWorms ? 6f : 8f;
                 if (finalWormDead)
                     blobSpeed += 0.25f;
@@ -347,7 +388,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 for (int i = 0; i < totalProjectiles + 1; i++)
                 {
                     Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), finalWormDead ? 110 : 95, 0f, Main.myPlayer, 0f, 0f);
-                    currentBlobVelocity.X += blobSpeed / totalProjectiles * -1.12f;
+                    currentBlobVelocity.X += blobSpeed / totalProjectiles * -1.38f;
                 }
                 Main.PlaySound(SoundID.NPCHit20, npc.position);
             }

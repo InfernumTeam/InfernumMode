@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 npc.TargetClosest();
 
             // If none was found or it was too far away, despawn.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active || !npc.WithinRange(Main.player[npc.target].Center, 3400f))
+            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active || !npc.WithinRange(Main.player[npc.target].Center, 3950f))
             {
                 DoDespawnEffects(npc);
                 return false;
@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             npc.Calamity().DR = 0.35f;
             npc.dontTakeDamage = false;
 
-            if (summonAnimationTimer < 200f)
+            if (summonAnimationTimer < 225f)
             {
                 DoSpawnAnimationStuff(npc, target, summonAnimationTimer, ref animationChargeTimer);
                 summonAnimationTimer++;
@@ -96,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 }
 
                 // Do normal behavior at first.
-                if (lifeRatio > 0.75f)
+                if (lifeRatio > 0.825f)
                     DoTypicalAI(npc, target, ref attackTimer);
                 else if (lifeRatio > 0.4f)
                     DoPhase2AI(npc, target, ref attackTimer, ref attackState);
@@ -107,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 switch ((int)phaseChangeState)
                 {
                     case 0:
-                        if (lifeRatio < 0.75f)
+                        if (lifeRatio < 0.825f)
                         {
                             phaseChangeCountdown = 90f;
                             phaseChangeState = 1f;
@@ -251,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 if (attackTimer % skullShootRate == skullShootRate - 1f && targetInLineOfSight)
                 {
                     Main.PlaySound(SoundID.Item8, target.Center);
-                    Vector2 skullShootVelocity = Vector2.Lerp(npc.velocity.SafeNormalize(Vector2.UnitY), npc.SafeDirectionTo(target.Center, Vector2.UnitY), 0.5f) * npc.velocity.Length();
+                    Vector2 skullShootVelocity = Vector2.Lerp(npc.velocity.SafeNormalize(Vector2.UnitY), npc.SafeDirectionTo(target.Center, Vector2.UnitY), 0.75f) * npc.velocity.Length();
                     skullShootVelocity.X *= 0.4f;
                     skullShootVelocity = skullShootVelocity.ClampMagnitude(10f, 16f);
                     Vector2 skullShootPosition = npc.Center + skullShootVelocity * 5f;
@@ -350,6 +350,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     else
                         npc.velocity *= 0.94f;
 
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f)
+                    {
+                        Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(1.15f) * Main.rand.NextFloat(8f, 12.65f);
+                        if (Main.rand.NextBool(2))
+                            shootVelocity.Y *= -1f;
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                    }
+
                     npc.damage = 0;
                     npc.rotation = npc.velocity.X * 0.05f;
 
@@ -429,7 +437,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     npc.rotation = npc.velocity.X * 0.05f;
 
-                    if (!npc.WithinRange(target.Center, 85f) && attackTimer % 40f == 39f && attackTimer < totalShots * 50f)
+                    if (!npc.WithinRange(target.Center, 85f) && attackTimer % 45f == 44f && attackTimer < totalShots * 45f)
                     {
                         int currentShotCounter = (int)(attackTimer / 40f);
                         Main.PlaySound(SoundID.Item8, target.Center);
@@ -479,7 +487,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     if (attackTimer >= 30f && attackTimer % 45f == 0f)
                     {
                         Main.PlaySound(SoundID.Item8, target.Center);
-                        float skullSpeed = 5f;
+                        float skullSpeed = 4.25f;
                         int skullCount = 4;
 
                         for (int i = 0; i < skullCount; i++)

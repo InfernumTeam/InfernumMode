@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             float phaseChangeCountdown = owner.Infernum().ExtraAI[0];
 
             npc.life = npc.lifeMax = 200;
-            npc.damage = npc.defDamage;
+            npc.damage = 0;
             npc.Calamity().DR = 0.4f;
             npc.dontTakeDamage = true;
 
@@ -34,7 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             {
                 Vector2 destination = owner.Center + new Vector2(armDirection * 125f, -285f);
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 17f, 0.3f);
-                npc.damage = 0;
 
                 npc.rotation = npc.AngleTo(destination - Vector2.UnitY * 25f) - MathHelper.PiOver2;
             }
@@ -118,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         npc.Center = npc.Center.MoveTowards(destination, 5f);
 
                         adjustedTimer = attackTimer % 180f;
-                        if (adjustedTimer > 50f && adjustedTimer < 170f && adjustedTimer % 40f == 39f)
+                        if (adjustedTimer > 50f && adjustedTimer < 170f && adjustedTimer % 45f == 44f)
                         {
                             Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
@@ -126,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                             {
                                 for (int i = 0; i < 5; i++)
                                 {
-                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 5f) * 12f;
+                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 5f) * 7.95f;
                                     Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 95, 0f);
                                 }
                             }

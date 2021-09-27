@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 				return;
 			}
 
-            npc.damage = 0;
+            npc.damage = KatanaUseTimer > 0 ? 115 : 0;
             npc.noTileCollide = npc.Bottom.Y < Target.Top.Y;
             AttackDelayFuckYou++;
 
@@ -102,7 +102,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 {
                     if (KatanaUseTimer > 0f)
                     {
-                        npc.damage = 115;
                         npc.rotation = KatanaRotation - MathHelper.PiOver2;
                         KatanaRotation += MathHelper.ToRadians(22f) * npc.spriteDirection;
                         KatanaUseTimer--;

@@ -10,6 +10,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.Projectiles.Ranged;
+using CalamityMod.Projectiles.DraedonsArsenal;
 using CalamityMod.Projectiles.Rogue;
 using CalamityMod.World;
 using InfernumMode.Buffs;
@@ -290,6 +291,12 @@ namespace InfernumMode.GlobalInstances
             if (isSplitEoW && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.45);
 
+            if ((npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyMedium>() ||
+                npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyLarge>()) && (projectile.penetrate >= 2 || projectile.penetrate == -1))
+            {
+                damage = (int)(damage * 0.4);
+            }
+
             bool isInkCloud = projectile.type == ModContent.ProjectileType<InkCloud>() || projectile.type == ModContent.ProjectileType<InkCloud2>() || projectile.type == ModContent.ProjectileType<InkCloud3>();
             if (isInkCloud && (npc.type == ModContent.NPCType<SlimeSpawnCrimson3>() || npc.type == ModContent.NPCType<SlimeSpawnCorrupt2>()))
                 damage = (int)(damage * 0.6);
@@ -297,17 +304,14 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.WallofFleshEye && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.785);
 
-            if (npc.type == ModContent.NPCType<AquaticScourgeBody>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.45);
+            if (npc.type == NPCID.WallofFleshEye && projectile.type == ModContent.ProjectileType<TrackingDiskLaser>())
+                damage = (int)(damage * 0.625);
 
             if (projectile.type == ProjectileID.HolyArrow || projectile.type == ProjectileID.HallowStar)
                 damage = (int)(damage * 0.65);
 
-            if ((npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyMedium>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyLarge>()) && (projectile.penetrate >= 2 || projectile.penetrate == -1))
-            {
-                damage = (int)(damage * 0.4);
-            }
+            if (npc.type == ModContent.NPCType<AquaticScourgeBody>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
+                damage = (int)(damage * 0.45);
 
             if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
                 damage = (int)(damage * 0.55);

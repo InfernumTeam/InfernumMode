@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 			if (Time >= 30f)
 			{
 				if (Time < 100f)
-					projectile.velocity *= 1.052f;
+					projectile.velocity *= 1.046f;
 				else
 					Time = 200f;
 			}

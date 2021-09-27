@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -59,7 +60,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 				return;
 			}
 
-            npc.damage = npc.defDamage;
+            npc.damage = 0;
+            npc.noTileCollide = npc.Bottom.Y < Target.Top.Y;
             AttackDelayFuckYou++;
 
             if (MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 2f)
@@ -136,8 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 DoRunEffects();
 
             // Teleport if far from the target or it is typically possible to do so.
-            bool anythingInWay = Collision.CanHit(npc.Center, 2, 2, npc.Center + Vector2.UnitX * npc.spriteDirection * 80f, 2, 2);
-            bool canDashTeleport = ((Time % 360f == 359f && anythingInWay) || !npc.WithinRange(Target.Center, 540f) || StuckTimer >= 150f) && AttackDelayFuckYou > 150f;
+            bool canDashTeleport = (!npc.WithinRange(Target.Center, 850f) || StuckTimer >= 150f) && AttackDelayFuckYou > 150f;
 
             if (TeleportCountdown > 0f)
             {
@@ -165,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             if (Main.netMode != NetmodeID.MultiplayerClient && canDashTeleport)
             {
                 StuckTimer = 0f;
-                DoJump(10f);
+                DoJump(12f);
                 TeleportCountdown = 70f;
                 npc.netUpdate = true;
             }
@@ -173,8 +174,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             if (Main.netMode != NetmodeID.MultiplayerClient && horizontalDistanceFromTarget > 320f && Time % 60f == 59f && onSolidGround)
             {
                 float jumpSpeed = (float)Math.Sqrt(horizontalDistanceFromTarget) * 0.5f;
-                if (jumpSpeed >= 9f)
-                    jumpSpeed = 9f;
+                if (jumpSpeed >= 11f)
+                    jumpSpeed = 11f;
                 jumpSpeed *= Main.rand.NextFloat(1.15f, 1.4f);
                 DoJump(jumpSpeed);
 
@@ -226,21 +227,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             // Jump if there's an impending obstacle.
             if (onSolidGround && tileAheadAboveTarget.active() && Main.tileSolid[tileAheadAboveTarget.type])
             {
-                DoJump(8f);
+                DoJump(10f);
                 npc.netUpdate = true;
             }
 
             // If the next tile below the ninja's feet is inactive or actuated, jump.
             if (onSolidGround && !tileAheadBelowTarget.active() && Main.tileSolid[tileAheadBelowTarget.type])
             {
-                DoJump(10f);
+                DoJump(11.5f);
                 npc.netUpdate = true;
             }
 
             // Jump if is stuck somewhat on the X axis.
             if (onSolidGround && MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 2f)
             {
-                DoJump(13f);
+                DoJump(15f);
                 npc.netUpdate = true;
             }
             else
@@ -261,7 +262,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             {
                 Vector2 teleportPoint = Vector2.Zero;
 
-                Vector2 top = Target.Center - Vector2.UnitY * 400f;
+                Vector2 top = Target.Center - Vector2.UnitY * 100f;
                 if (top.Y < 100f)
                     top.Y = 100f;
 
@@ -287,7 +288,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
                 for (int tries = 0; tries < 10000; tries++)
                 {
-                    Vector2 potentialSpawnPoint = groundedTargetPosition + new Vector2(Main.rand.NextFloat(-500f - tries * 0.04f, 500f + tries * 0.04f), Main.rand.NextFloat(-500f - tries * 0.025f, 100f));
+                    Vector2 potentialSpawnPoint = groundedTargetPosition + new Vector2(Main.rand.NextFloat(-500f - tries * 0.06f, 500f + tries * 0.06f), Main.rand.NextFloat(-30f, 500f + tries * 0.03f));
                     Vector2 potentialEndPoint = potentialSpawnPoint + Vector2.UnitX * npc.spriteDirection * 150f;
 
                     // Ignore a position is too close to the target.
@@ -295,11 +296,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                         continue;
 
                     // If it's close to the original position.
-                    if (npc.WithinRange(potentialSpawnPoint, 200f))
+                    if (npc.WithinRange(potentialSpawnPoint, 200f) || !Target.WithinRange(potentialSpawnPoint, 900f))
                         continue;
 
-                    // If there would be a wall in the way.
-                    if (!Collision.CanHit(potentialSpawnPoint - npc.Size * 0.5f, npc.width, npc.height, potentialEndPoint, 2, 2))
+                    if (!Collision.CanHit(potentialSpawnPoint, 1, 1, Target.position, Target.width, Target.height))
                         continue;
 
                     // If the area would result in the ninja being stuck.
@@ -354,9 +354,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
+            Texture2D texture = Main.npcTexture[npc.type];
             Texture2D outlineTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/NinjaOutline");
             Vector2 outlineDrawPosition = npc.Center - Main.screenPosition - Vector2.UnitY * 6f;
-            SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             if (KatanaUseTimer > 0f)
             {
@@ -364,17 +365,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 Vector2 drawPosition = npc.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(npc.rotation) * 5f;
                 drawPosition -= npc.rotation.ToRotationVector2() * npc.spriteDirection * 22f;
                 float rotation = KatanaRotation + MathHelper.Pi - MathHelper.PiOver4;
+                SpriteEffects outlineDirection = direction;
                 if (npc.spriteDirection == -1)
                     rotation -= MathHelper.PiOver2;
                 else
                 {
-                    direction |= SpriteEffects.FlipHorizontally;
+                    outlineDirection |= SpriteEffects.FlipHorizontally;
                     rotation += MathHelper.PiOver2;
                 }
-                spriteBatch.Draw(katanaTexture, drawPosition, null, npc.GetAlpha(drawColor), rotation, katanaTexture.Size() * 0.5f, 1f, direction, 0f);
+                spriteBatch.Draw(katanaTexture, drawPosition, null, npc.GetAlpha(drawColor), rotation, katanaTexture.Size() * 0.5f, 1f, outlineDirection, 0f);
             }
             spriteBatch.Draw(outlineTexture, outlineDrawPosition, npc.frame, Color.White * npc.Opacity * 0.6f, npc.rotation, npc.frame.Size() * 0.5f, npc.scale * 1.05f, direction, 0f);
-            return true;
+            spriteBatch.Draw(texture, outlineDrawPosition, npc.frame, npc.GetAlpha(drawColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            return false;
         }
 
         public override void FindFrame(int frameHeight)

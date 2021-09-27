@@ -53,6 +53,47 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             bool shouldNotChangeScale = false;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
+            if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
+            {
+                npc.TargetClosest();
+                if (!Main.player[npc.target].active || Main.player[npc.target].dead)
+                {
+                    npc.velocity.X *= 0.8f;
+                    if (Math.Abs(npc.velocity.X) < 0.1f)
+                        npc.velocity.X = 0f;
+
+                    npc.dontTakeDamage = true;
+                    npc.damage = 0;
+
+                    // Release slime dust to accompany the teleport
+                    for (int i = 0; i < 30; i++)
+                    {
+                        Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
+                        slime.noGravity = true;
+                        slime.velocity *= 0.5f;
+                    }
+
+                    npc.scale *= 0.97f;
+                    if (npc.timeLeft > 30)
+                        npc.timeLeft = 30;
+                    npc.position.X += npc.width / 2;
+                    npc.position.Y += npc.height;
+                    npc.width = (int)(108f * npc.scale);
+                    npc.height = (int)(88f * npc.scale);
+                    npc.position.X -= npc.width / 2;
+                    npc.position.Y -= npc.height;
+
+                    if (npc.scale < 0.7f || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
+                    {
+                        npc.active = false;
+                        npc.netUpdate = true;
+                    }
+                    return false;
+                }
+            }
+            else
+                npc.timeLeft = 3600;
+
             float oldScale = npc.scale;
             float idealScale = MathHelper.Lerp(1.85f, 3f, lifeRatio);
             npc.scale = idealScale;
@@ -110,41 +151,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             // Enforce slightly stronger gravity.
             if (npc.velocity.Y > 0f)
                 npc.velocity.Y += MathHelper.Lerp(0.05f, 0.25f, 1f - lifeRatio);
-
-            if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
-            {
-                npc.TargetClosest();
-                if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 1300f))
-                {
-                    npc.velocity.X *= 0.8f;
-                    if (Math.Abs(npc.velocity.X) < 0.1f)
-                        npc.velocity.X = 0f;
-
-                    npc.noTileCollide = true;
-                    npc.dontTakeDamage = true;
-                    npc.position.Y += 5f;
-                    npc.damage = 0;
-
-                    // Release slime dust to accompany the teleport
-                    for (int i = 0; i < 30; i++)
-                    {
-                        Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
-                        slime.noGravity = true;
-                        slime.velocity *= 0.5f;
-                    }
-
-                    if (npc.timeLeft > 30)
-                        npc.timeLeft = 30;
-                    if (npc.scale < 0.9f)
-                    {
-                        npc.active = false;
-                        npc.netUpdate = true;
-                    }
-                    return false;
-                }
-            }
-            else
-                npc.timeLeft = 3600;
 
             switch ((KingSlimeAttackType)(int)npc.ai[1])
             {

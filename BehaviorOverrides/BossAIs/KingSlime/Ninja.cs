@@ -69,7 +69,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             npc.TargetClosest();
 
-            bool onSolidGround = WorldGen.SolidTile(Framing.GetTileSafely(npc.Bottom + Vector2.UnitY * 16f));
+            Tile tileBelow = Framing.GetTileSafely(npc.Bottom);
+            bool onSolidGround = WorldGen.SolidTile(tileBelow);
+            if (Main.tileSolidTop[tileBelow.type] && tileBelow.nactive())
+                onSolidGround = true;
             float horizontalDistanceFromTarget = MathHelper.Distance(Target.Center.X, npc.Center.X);
 
             if (ShurikenShootCountdown > 0f)
@@ -147,15 +150,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 return;
             }
 
-            if (KatanaUseTimer < 50f && onSolidGround)
+            if (onSolidGround)
                 KatanaUseTimer = 0f;
 
-            if (npc.WithinRange(Target.Center, 260f) && KatanaUseTimer <= 0f && AttackDelayFuckYou > 150f)
+            if (npc.WithinRange(Target.Center, 260f) && KatanaUseTimer <= 0f && AttackDelayFuckYou > 150f && onSolidGround)
             {
-                npc.spriteDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
+                npc.spriteDirection = (Target.Center.X > npc.Center.X).ToDirectionInt();
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * 8f;
                 npc.velocity.Y -= 4f;
-                KatanaRotation = npc.rotation + MathHelper.PiOver2;
+                KatanaRotation = 0f;
                 KatanaUseTimer = KatanaUseLength = 54f;
                 ShurikenShootCountdown = 0f;
                 npc.netUpdate = true;
@@ -364,16 +367,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 Texture2D katanaTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/Katana");
                 Vector2 drawPosition = npc.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(npc.rotation) * 5f;
                 drawPosition -= npc.rotation.ToRotationVector2() * npc.spriteDirection * 22f;
-                float rotation = KatanaRotation + MathHelper.Pi - MathHelper.PiOver4;
-                SpriteEffects outlineDirection = direction;
-                if (npc.spriteDirection == -1)
-                    rotation -= MathHelper.PiOver2;
-                else
+                float rotation = MathHelper.PiOver4 + npc.rotation;
+                SpriteEffects katanaDirection = direction | SpriteEffects.FlipHorizontally;
+                if (npc.spriteDirection == 1)
                 {
-                    outlineDirection |= SpriteEffects.FlipHorizontally;
-                    rotation += MathHelper.PiOver2;
+                    katanaDirection |= SpriteEffects.FlipHorizontally;
+                    rotation -= MathHelper.PiOver2;
                 }
-                spriteBatch.Draw(katanaTexture, drawPosition, null, npc.GetAlpha(drawColor), rotation, katanaTexture.Size() * 0.5f, 1f, outlineDirection, 0f);
+                else
+                    rotation += MathHelper.PiOver2;
+                spriteBatch.Draw(katanaTexture, drawPosition, null, npc.GetAlpha(drawColor), rotation, katanaTexture.Size() * 0.5f, 1f, katanaDirection, 0f);
             }
             spriteBatch.Draw(outlineTexture, outlineDrawPosition, npc.frame, Color.White * npc.Opacity * 0.6f, npc.rotation, npc.frame.Size() * 0.5f, npc.scale * 1.05f, direction, 0f);
             spriteBatch.Draw(texture, outlineDrawPosition, npc.frame, npc.GetAlpha(drawColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);

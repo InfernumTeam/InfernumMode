@@ -14,6 +14,8 @@ using CalamityMod.Projectiles.Rogue;
 using CalamityMod.World;
 using InfernumMode.Buffs;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
+using InfernumMode.BehaviorOverrides.BossAIs.EoW;
+using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -28,7 +30,6 @@ using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
 using CalamityMod.NPCs.AquaticScourge;
-using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -288,6 +289,10 @@ namespace InfernumMode.GlobalInstances
 
             if (isSplitEoW && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.45);
+
+            bool isInkCloud = projectile.type == ModContent.ProjectileType<InkCloud>() || projectile.type == ModContent.ProjectileType<InkCloud2>() || projectile.type == ModContent.ProjectileType<InkCloud3>();
+            if (isInkCloud && (npc.type == ModContent.NPCType<SlimeSpawnCrimson3>() || npc.type == ModContent.NPCType<SlimeSpawnCorrupt2>()))
+                damage = (int)(damage * 0.6);
 
             if (npc.type == NPCID.WallofFleshEye && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.785);

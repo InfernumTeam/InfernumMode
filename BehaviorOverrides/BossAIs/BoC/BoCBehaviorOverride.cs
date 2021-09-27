@@ -490,7 +490,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     break;
             }
 
-            newAttackType = BoCAttackState.ConvergingIllusions;
             npc.ai[0] = (int)newAttackType;
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)

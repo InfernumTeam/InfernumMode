@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
@@ -10,30 +12,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spore");
-            Main.projFrames[projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 2;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 6;
+            projectile.width = projectile.height = 8;
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.penetrate = 1;
             projectile.timeLeft = 150;
+            projectile.Opacity = 0f;
         }
 
         public override void AI()
         {
-			// Idly release spore dust.
-			Dust fungi = Dust.NewDustPerfect(projectile.Center, 56);
-			fungi.velocity = projectile.velocity + Main.rand.NextVector2Circular(0.2f, 0.2f);
-			fungi.scale = 1.1f;
-			fungi.color = Color.Cyan;
-			fungi.noGravity = true;
-
 			HomeInOnTarget();
 
 			Lighting.AddLight(projectile.Center, Color.CornflowerBlue.ToVector3() * projectile.Opacity * 0.5f);
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver4;
+
+            if (projectile.timeLeft > 10f)
+                projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.1f, 0f, 1f);
+            else
+                projectile.Opacity = MathHelper.Clamp(projectile.Opacity - 0.1f, 0f, 1f);
         }
 
 		public void HomeInOnTarget()
@@ -44,6 +47,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 				projectile.velocity = (projectile.velocity * 15f + projectile.SafeDirectionTo(target.Center) * homeSpeed) / 16f;
 		}
 
-		public override bool CanDamage() => projectile.alpha < 20;
+        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
+            return false;
+        }
+
+        public override bool CanDamage() => projectile.alpha < 20;
     }
 }

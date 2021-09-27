@@ -62,9 +62,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             if (attackTimer % scytheCeilingShootRate == scytheCeilingShootRate - 1f)
                 DoCeilingAndFloorAttack(npc, target, lifeRatio < 0.5f);
 
-            int beamShootRate = 310;
+            int beamShootRate = 380;
             if (!NPC.AnyNPCs(NPCID.WallofFleshEye) && attackTimer % beamShootRate == beamShootRate - 1f)
                 PrepareFireBeam(npc, target);
+
+            int miscEnemyCount = NPC.CountNPCS(NPCID.LeechHead) + NPC.CountNPCS(NPCID.TheHungryII);
+            if (Main.netMode != NetmodeID.MultiplayerClient && miscEnemyCount < 3 && !NPC.AnyNPCs(NPCID.WallofFleshEye) && attackTimer % 240f == 239f)
+            {
+                int leech = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, Main.rand.NextBool() ? NPCID.LeechHead : NPCID.TheHungryII);
+                if (Main.npc.IndexInRange(leech))
+                    Main.npc[leech].velocity = npc.velocity * 1.25f;
+            }
 
             return false;
         }
@@ -294,7 +302,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             for (float x = -1180f; x < 1180f; x += inPhase2 ? 200f : 256f)
             {
-                Vector2 spawnPosition = target.Center + new Vector2(x, Main.screenHeight * -0.55f);
+                Vector2 spawnPosition = target.Center + new Vector2(x, Main.screenHeight * -0.45f);
                 int scythe = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 2f, ModContent.ProjectileType<HellishScythe>(), 100, 0f);
                 Main.projectile[scythe].tileCollide = false;
             }

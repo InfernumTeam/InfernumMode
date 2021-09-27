@@ -2,6 +2,7 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.Projectiles.DraedonsArsenal;
 using CalamityMod.Projectiles.Rogue;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
@@ -158,6 +159,9 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == NPCID.WallofFleshEye && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.785);
+
+            if (npc.type == NPCID.WallofFleshEye && projectile.type == ModContent.ProjectileType<TrackingDiskLaser>())
+                damage = (int)(damage * 0.625);
 
             if (projectile.type == ProjectileID.HolyArrow || projectile.type == ProjectileID.HallowStar)
                 damage = (int)(damage * 0.65);

@@ -1,6 +1,6 @@
 An extension mod for Calamity that adds an extra difficulty - [c/F44847:Infernum]
 
-This difficulty is harder than Death mode and can be activated with the Infernal Chalice when Death Mode is active.
+This difficulty is harder than Death mode and can be activated with the [c/d92256:Infernal Chalice] when Death Mode is active.
 The primary focus of the mod is expansive reworking of boss AIs.
 
 Possible plans to add custom music, items, and exclusive bosses in the future.... maybe.

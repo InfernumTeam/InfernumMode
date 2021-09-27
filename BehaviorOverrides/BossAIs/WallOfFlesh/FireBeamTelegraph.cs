@@ -88,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 return;
 
             Vector2 beamDirection = projectile.velocity.SafeNormalize(Vector2.UnitY);
-            int beam = Utilities.NewProjectileBetter(projectile.Center, beamDirection, ModContent.ProjectileType<FireBeamWoF>(), 125, 0f);
+            int beam = Utilities.NewProjectileBetter(projectile.Center, beamDirection, ModContent.ProjectileType<FireBeamWoF>(), 220, 0f);
             if (Main.projectile.IndexInRange(beam))
                 Main.projectile[beam].ai[1] = Owner.whoAmI;
         }

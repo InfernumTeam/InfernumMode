@@ -43,7 +43,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             if (GeyserHeight < 2f)
                 GeyserHeight = 2f;
-            GeyserHeight = MathHelper.Lerp(GeyserHeight, GeyserHeight * 1.44f, 0.125f);
+
+            if (Time > 35f)
+                GeyserHeight = MathHelper.Lerp(GeyserHeight, GeyserHeight * 1.44f, 0.123f);
+            else
+                projectile.timeLeft++;
 
             if (Time == 0f)
             {

@@ -59,10 +59,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
-            if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 3400f))
+            if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 6400f))
             {
                 npc.TargetClosest(false);
-                if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 3400f))
+                if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 6400f))
                 {
                     DoDespawnEffects(npc);
                     return false;

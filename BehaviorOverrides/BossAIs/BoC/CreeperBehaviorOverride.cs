@@ -85,11 +85,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             }
 
             // Otherwise, if a target is close, release ichor at them, assuming no tiles are in the way.
-            else if (npc.WithinRange(target.Center, 380f) && npc.alpha <= 10)
+            else if (npc.alpha <= 10)
             {
                 bool obstanceInWayOfTarget = !Collision.CanHitLine(npc.position, npc.width, npc.height, target.position, target.width, target.height);
-                if (Main.netMode != NetmodeID.MultiplayerClient && !obstanceInWayOfTarget && attackTimer % 60f == 59f)
-                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 4.8f, ModContent.ProjectileType<IchorSpit>(), 50, 0f);
+                if (Main.netMode != NetmodeID.MultiplayerClient && !obstanceInWayOfTarget && attackTimer % 75f == 74f && Main.rand.NextBool(4))
+                {
+                    float aimAwayAngle = Utils.InverseLerp(480f, 300f, npc.Distance(target.Center), true) * Main.rand.NextFloat(2.16f, 3.84f);
+                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(aimAwayAngle) * 8f, ModContent.ProjectileType<IchorSpit>(), 50, 0f);
+                }
             }
 
             // Drift towards the destination around the brain.

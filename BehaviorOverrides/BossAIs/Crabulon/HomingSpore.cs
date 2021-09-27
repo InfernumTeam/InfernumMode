@@ -19,6 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override void SetDefaults()
         {
             projectile.width = projectile.height = 8;
+            projectile.scale = 0.8f;
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.penetrate = 1;

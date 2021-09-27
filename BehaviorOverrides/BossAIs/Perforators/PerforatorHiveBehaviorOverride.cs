@@ -376,7 +376,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             // And release ichor shots upward more frequently.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
             {
-                int totalProjectiles = (int)MathHelper.Lerp(26f, 35f, 1f - npc.life / (float)npc.lifeMax);
+                int totalProjectiles = (int)MathHelper.Lerp(25f, 32f, 1f - npc.life / (float)npc.lifeMax);
                 float blobSpeed = anyWorms ? 6f : 8f;
                 if (finalWormDead)
                     blobSpeed += 0.25f;

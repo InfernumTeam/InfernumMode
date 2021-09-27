@@ -201,6 +201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             Vector2 teleportDestination = target.Center + new Vector2(target.direction * -350f, -280f);
             if (Math.Abs(target.velocity.X) > 0f)
                 teleportDestination = target.Center + new Vector2(Math.Sign(target.velocity.X) * -310f, -280f);
+
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
                 return;
 
@@ -244,7 +245,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         internal static void DoAttack_CreeperBloodDripping(NPC npc, Player target, ref float attackTimer)
         {
             int teleportFadeTime = 54;
-            Vector2 teleportDestination = target.Center + Main.rand.NextVector2CircularEdge(340f, 340f);
+            Vector2 teleportDestination;
+            int tries = 0;
+            do
+            {
+                teleportDestination = target.Center + Main.rand.NextVector2CircularEdge(340f, 340f);
+                tries++;
+
+                if (tries > 500f)
+                    break;
+            }
+            while (Collision.SolidCollision(teleportDestination - npc.Size * 0.5f, npc.width, npc.height));
+
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
                 return;
 
@@ -308,6 +320,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         {
             int teleportFadeTime = 50;
             Vector2 teleportDestination = target.Center - Vector2.UnitY * 350f;
+            while (Collision.SolidCollision(teleportDestination - npc.Size * 0.5f, npc.width, npc.height))
+                teleportDestination.Y -= 8f;
+
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
                 return;
 
@@ -420,6 +435,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     break;
             }
 
+            newAttackType = BoCAttackState.IdlyFloat;
             npc.ai[0] = (int)newAttackType;
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)

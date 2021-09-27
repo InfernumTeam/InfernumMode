@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     destination = owner.Center + (MathHelper.TwoPi * creeperOffsetAngleFactor + attackTimer / 35f).ToRotationVector2() * 160f;
                     idealAlpha = owner.alpha + 20;
                     break;
-                case BoCAttackState.ConvergingIllusions:
+                case BoCAttackState.DashingIllusions:
                 case BoCAttackState.BloodDashSwoop:
                 case BoCAttackState.SpinPull:
                     destination = owner.Center + destinationOffsetDirection * 16f;

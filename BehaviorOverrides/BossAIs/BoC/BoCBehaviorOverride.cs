@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             DiagonalCharge,
             BloodDashSwoop,
             CreeperBloodDripping,
-            ConvergingIllusions,
+            DashingIllusions,
             PsionicBombardment,
             SpinPull
 		}
@@ -87,8 +87,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 case BoCAttackState.CreeperBloodDripping:
                     DoAttack_CreeperBloodDripping(npc, target, ref attackTimer);
                     break;
-                case BoCAttackState.ConvergingIllusions:
-                    DoAttack_ConvergingIllusions(npc, target, ref attackTimer);
+                case BoCAttackState.DashingIllusions:
+                    DoAttack_DashingIllusions(npc, target, ref attackTimer);
                     break;
                 case BoCAttackState.PsionicBombardment:
                     DoAttack_PsionicBombardment(npc, target, ref attackTimer);
@@ -255,24 +255,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 GotoNextAttackState(npc);
         }
 
-        internal static void DoAttack_ConvergingIllusions(NPC npc, Player target, ref float attackTimer)
+        internal static void DoAttack_DashingIllusions(NPC npc, Player target, ref float attackTimer)
         {
-            ref float incorrectHitFlag = ref npc.Infernum().ExtraAI[0];
-            ref float reelBackCountdown = ref npc.Infernum().ExtraAI[1];
-            ref float spawnOffsetX = ref npc.Infernum().ExtraAI[2];
-            ref float spawnOffsetY = ref npc.Infernum().ExtraAI[3];
-
-            npc.dontTakeDamage = attackTimer < 100f || incorrectHitFlag == 1f || npc.Opacity < 0.6f;
-            if (reelBackCountdown > 0)
-            {
-                reelBackCountdown--;
-                float idealOpacity = 1f - Utils.InverseLerp(45f, 5f, reelBackCountdown, true);
-                npc.velocity *= 0.98f;
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, idealOpacity, 0.25f);
-                if (reelBackCountdown == 1f)
-                    GotoNextAttackState(npc);
-                return;
-            }
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             int teleportFadeTime = 35;
             Vector2 teleportDestination = target.Center + Vector2.UnitY * 435f;
@@ -285,91 +270,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == teleportFadeTime + 1f)
             {
-                for (int i = 0; i < 8; i++)
+                for (int i = 1; i < 8; i++)
                 {
-                    Vector2 illusionVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 8f;
                     int illusion = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion>());
-                    Main.npc[illusion].velocity = illusionVelocity;
+                    Main.npc[illusion].ai[1] = MathHelper.TwoPi * i / 8f;
                 }
             }
 
-            float covergenceStartOutwardness = 640f;
-            float baseConvergenceSpeed = covergenceStartOutwardness / 150f;
-            if (attackTimer >= 90f && attackTimer <= 110f)
+            if (attackTimer == teleportFadeTime + 75f)
             {
-                npc.Opacity = Utils.Clamp(npc.Opacity - 0.05f, 0f, 1f);
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 100f)
+                Main.PlaySound(SoundID.Roar, target.Center, 0);
+
+                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * 14.25f;
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer > teleportFadeTime + 135f)
+            {
+                npc.velocity *= 0.98f;
+                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.05f, 0f, 1f);
+
+                if (npc.Opacity <= 0f)
                 {
-                    float baseOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    int offsetIndex = 0;
+                    chargeCounter++;
 
-                    int illusionType = ModContent.NPCType<BrainIllusion>();
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        bool incorrectType = Main.npc[i].type != illusionType && Main.npc[i].type != NPCID.BrainofCthulhu;
-                        if (incorrectType || !Main.npc[i].active)
-                            continue;
-                        Vector2 positionOffset = (offsetIndex / 9f * MathHelper.TwoPi + baseOffsetAngle).ToRotationVector2() * covergenceStartOutwardness;
-                        Main.npc[i].Center = target.Center + positionOffset;
-                        Main.npc[i].velocity = Main.npc[i].DirectionTo(target.Center) * baseConvergenceSpeed;
-
-                        if (i != npc.whoAmI)
-                            Main.npc[i].ai[1] = positionOffset.ToRotation();
-                        else
-                        {
-                            spawnOffsetX = positionOffset.X;
-                            spawnOffsetY = positionOffset.Y;
-                        }
-                        Main.npc[i].netUpdate = true;
-
-                        offsetIndex++;
-                    }
+                    if (chargeCounter >= 2f)
+                        GotoNextAttackState(npc);
+                    else
+                        attackTimer = teleportFadeTime + 35f;
+                    npc.Opacity = 1f;
                     npc.netUpdate = true;
-                }
-            }
-            else
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.05f);
-
-            if (attackTimer >= 110f)
-            {
-                // Reel back and fade out if the player hit the correct brain.
-                if (npc.justHit && reelBackCountdown == 0f)
-                {
-                    reelBackCountdown = 45f;
-                    npc.velocity = npc.DirectionTo(target.Center) * -8f;
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<BrainIllusion>())
-                            Main.npc[i].active = false;
-                    }
-                    Main.PlaySound(SoundID.ForceRoar, (int)target.Center.X, (int)target.Center.Y, -1, 1f, 0f);
-                }
-
-                Vector2 newSpawnOffset = new Vector2(spawnOffsetX, spawnOffsetY);
-                if (newSpawnOffset.HasNaNs() || newSpawnOffset.Length() > 1200f)
-                {
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<BrainIllusion>())
-                            Main.npc[i].active = false;
-                    }
-                    GotoNextAttackState(npc);
-                    return;
-                }
-
-                npc.Center = target.Center + newSpawnOffset;
-                newSpawnOffset += npc.velocity;
-                spawnOffsetX = newSpawnOffset.X;
-                spawnOffsetY = newSpawnOffset.Y;
-
-                if (attackTimer >= 420f || npc.Hitbox.Intersects(target.Hitbox))
-                {
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<BrainIllusion>())
-                            Main.npc[i].active = false;
-                    }
-                    GotoNextAttackState(npc);
                 }
             }
         }
@@ -477,9 +407,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     newAttackType = BoCAttackState.CreeperBloodDripping;
                     break;
                 case BoCAttackState.CreeperBloodDripping:
-                    newAttackType = lifeRatio < Subphase3LifeRatio ? (Main.rand.NextBool() ? BoCAttackState.PsionicBombardment : BoCAttackState.ConvergingIllusions) : BoCAttackState.IdlyFloat;
+                    newAttackType = lifeRatio < Subphase3LifeRatio ? (Main.rand.NextBool() ? BoCAttackState.PsionicBombardment : BoCAttackState.DashingIllusions) : BoCAttackState.IdlyFloat;
                     break;
-                case BoCAttackState.ConvergingIllusions:
+                case BoCAttackState.DashingIllusions:
                     newAttackType = BoCAttackState.PsionicBombardment;
                     break;
                 case BoCAttackState.PsionicBombardment:

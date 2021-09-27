@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed * 3f, -17f, 17f);
                 npc.velocity.X = (npc.velocity.X * 3f + npc.SafeDirectionTo(target.Center).X * 8.5f) / 4f;
 
-                if (totalSegmentsInAir >= 7)
+                if (totalSegmentsInAir >= 7 && target.Center.Y - npc.Center.Y > -920f)
                 {
                     fallCountdown = 45f;
                     for (int i = 0; i < 10; i++)

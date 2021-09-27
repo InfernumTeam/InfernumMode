@@ -19,7 +19,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool PreAI(Projectile projectile)
         {
-            if (PoDWorld.InfernumMode)
+            if (InfernumMode.CanUseCustomAIs)
             {
                 if (OverridingListManager.InfernumProjectilePreAIOverrideList.ContainsKey(projectile.type))
                     return (bool)OverridingListManager.InfernumProjectilePreAIOverrideList[projectile.type].DynamicInvoke(projectile);

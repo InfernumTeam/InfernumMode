@@ -43,7 +43,7 @@ namespace InfernumMode.GlobalInstances
             for (int i = 0; i < ExtraAI.Length; i++)
                 ExtraAI[i] = 0f;
 
-            if (PoDWorld.InfernumMode && !BossRushEvent.BossRushActive)
+            if (InfernumMode.CanUseCustomAIs)
             {
                 if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
                     OverridingListManager.InfernumSetDefaultsOverrideList[npc.type].DynamicInvoke(npc);
@@ -51,7 +51,7 @@ namespace InfernumMode.GlobalInstances
         }
         public override bool PreAI(NPC npc)
         {
-            if (PoDWorld.InfernumMode && !BossRushEvent.BossRushActive)
+            if (InfernumMode.CanUseCustomAIs)
             {
                 // Correct an enemy's life depending on its cached true life value.
                 if (InfernumNPCHPValues.HPValues.ContainsKey(npc.type) &&
@@ -76,7 +76,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool PreNPCLoot(NPC npc)
         {
-            if (!PoDWorld.InfernumMode)
+            if (!InfernumMode.CanUseCustomAIs)
                 return base.PreNPCLoot(npc);
 
             if (npc.type == NPCID.EaterofWorldsHead)
@@ -104,7 +104,7 @@ namespace InfernumMode.GlobalInstances
 
         public override void NPCLoot(NPC npc)
         {
-            if (!PoDWorld.InfernumMode)
+            if (!InfernumMode.CanUseCustomAIs)
                 return;
             
             if (npc.type == NPCID.WallofFleshEye)
@@ -127,7 +127,7 @@ namespace InfernumMode.GlobalInstances
 
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (!PoDWorld.InfernumMode)
+            if (!InfernumMode.CanUseCustomAIs)
                 return;
 
             bool isDesertScourge = npc.type == ModContent.NPCType<DesertScourgeHead>() || npc.type == ModContent.NPCType<DesertScourgeBody>();
@@ -165,7 +165,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
         {
-            if (!PoDWorld.InfernumMode)
+            if (!InfernumMode.CanUseCustomAIs)
                 return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
 
             return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
@@ -173,7 +173,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool CheckActive(NPC npc)
         {
-            if (!PoDWorld.InfernumMode)
+            if (!InfernumMode.CanUseCustomAIs)
                 return base.CheckActive(npc);
 
             if (npc.type == NPCID.KingSlime)

@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Items;
@@ -19,6 +20,7 @@ namespace InfernumMode
     {
         internal static InfernumMode Instance = null;
         internal static Mod CalamityMod = null;
+        internal static bool CanUseCustomAIs => !BossRushEvent.BossRushActive && PoDWorld.InfernumMode;
 
         internal static readonly Color HiveMindSkyColor = new Color(53, 42, 81);
 

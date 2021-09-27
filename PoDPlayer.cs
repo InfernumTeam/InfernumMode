@@ -23,7 +23,7 @@ namespace InfernumMode
         #region Skies
         public override void UpdateBiomeVisuals()
         {
-            if (!PoDWorld.InfernumMode)
+            if (!InfernumMode.CanUseCustomAIs)
                 return;
 
             bool useHIV = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("HiveMindP2")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].Infernum().ExtraAI[10] == 1f || Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].life < Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].lifeMax * 0.2f);

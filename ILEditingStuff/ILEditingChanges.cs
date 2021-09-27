@@ -125,7 +125,7 @@ namespace InfernumMode.ILEditingStuff
 
         internal static int RemoveCultistGore(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
-            if (PoDWorld.InfernumMode && Type >= GoreID.Cultist1 && Type <= GoreID.CultistBoss2)
+            if (InfernumMode.CanUseCustomAIs && Type >= GoreID.Cultist1 && Type <= GoreID.CultistBoss2)
                 return Main.maxDust;
 
             return orig(Position, Velocity, Type, Scale);
@@ -133,7 +133,7 @@ namespace InfernumMode.ILEditingStuff
 
         internal static Color BlendLavaColors(Color baseColor)
         {
-            if (PoDWorld.InfernumMode && Main.wof >= 0 && Main.npc[Main.wof].active)
+            if (InfernumMode.CanUseCustomAIs && Main.wof >= 0 && Main.npc[Main.wof].active)
             {
                 float lifeRatio = Main.npc[Main.wof].life / (float)Main.npc[Main.wof].lifeMax;
                 float fade = (float)Math.Pow(1f - lifeRatio, 0.4f);
@@ -158,7 +158,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ldloc, 155);
             cursor.EmitDelegate<Func<int, Color, Color>>((liquidType, baseColor) =>
             {
-                if (liquidType == 1 && PoDWorld.InfernumMode && Main.wof >= 0 && Main.npc[Main.wof].active)
+                if (liquidType == 1 && InfernumMode.CanUseCustomAIs && Main.wof >= 0 && Main.npc[Main.wof].active)
                     baseColor = BlendLavaColors(baseColor);
 
                 return baseColor;
@@ -180,7 +180,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ldloc, 9);
             cursor.EmitDelegate<Func<int, VertexColors, VertexColors>>((liquidType, vertexColor) =>
             {
-                if (liquidType == 1 && PoDWorld.InfernumMode && Main.wof >= 0 && Main.npc[Main.wof].active)
+                if (liquidType == 1 && InfernumMode.CanUseCustomAIs && Main.wof >= 0 && Main.npc[Main.wof].active)
 				{
                     vertexColor.BottomLeftColor = BlendLavaColors(vertexColor.BottomLeftColor);
                     vertexColor.BottomRightColor = BlendLavaColors(vertexColor.BottomRightColor);
@@ -221,7 +221,7 @@ namespace InfernumMode.ILEditingStuff
                     GlobalNPC globalNPC = arr[i];
                     if (globalNPC != null &&
                         globalNPC is CalamityMod.NPCs.CalamityGlobalNPC &&
-                        OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type) && PoDWorld.InfernumMode)
+                        OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
                     {
                         continue;
                     }
@@ -283,7 +283,7 @@ namespace InfernumMode.ILEditingStuff
                 object instance = typeof(NPCLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
                 GlobalNPC[] arr = typeof(NPCLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags).GetValue(instance) as GlobalNPC[];
 
-                if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && PoDWorld.InfernumMode)
+                if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
                     return npc.GetGlobalNPC<GlobalNPCDrawEffects>().PreDraw(npc, spriteBatch, drawColor);
 
                 for (int i = 0; i < arr.Length; i++)
@@ -310,7 +310,7 @@ namespace InfernumMode.ILEditingStuff
                 {
                     npc.type = npc.modNPC.animationType;
                 }
-                if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(type) && PoDWorld.InfernumMode)
+                if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(type) && InfernumMode.CanUseCustomAIs)
                 {
                     npc.GetGlobalNPC<GlobalNPCDrawEffects>().FindFrame(npc, frameHeight);
                     return;

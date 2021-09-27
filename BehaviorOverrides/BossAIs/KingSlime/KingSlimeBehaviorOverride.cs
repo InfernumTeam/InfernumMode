@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
             {
                 npc.TargetClosest();
-                if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
+                if (!Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 1300f))
                 {
                     npc.velocity.X *= 0.8f;
                     if (Math.Abs(npc.velocity.X) < 0.1f)
@@ -122,6 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
                     npc.noTileCollide = true;
                     npc.dontTakeDamage = true;
+                    npc.position.Y += 5f;
                     npc.damage = 0;
 
                     // Release slime dust to accompany the teleport

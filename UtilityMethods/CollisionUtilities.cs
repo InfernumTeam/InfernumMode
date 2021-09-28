@@ -5,6 +5,19 @@ namespace InfernumMode
 {
     public static partial class Utilities
     {
+        public static bool RotatingHitboxCollision(this Entity entity, Vector2 targetTopLeft, Vector2 targetHitboxDimensions, Vector2? directionOverride = null)
+        {
+            Vector2 lineDirection = directionOverride ?? entity.velocity;
+
+            // Ensure that the line direction is a unit vector.
+            lineDirection = lineDirection.SafeNormalize(Vector2.UnitY);
+            Vector2 start = entity.Center - lineDirection * entity.height * 0.5f;
+            Vector2 end = entity.Center + lineDirection * entity.height * 0.5f;
+
+            float _ = 0f;
+            return Collision.CheckAABBvLineCollision(targetTopLeft, targetHitboxDimensions, start, end, entity.width, ref _);
+        }
+
         public static bool CircularCollision(Vector2 checkPosition, Rectangle hitbox, float radius)
         {
             float dist1 = Vector2.Distance(checkPosition, hitbox.TopLeft());

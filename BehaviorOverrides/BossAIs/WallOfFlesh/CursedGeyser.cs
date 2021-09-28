@@ -44,8 +44,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             if (GeyserHeight < 2f)
                 GeyserHeight = 2f;
 
-            if (Time > 35f)
-                GeyserHeight = MathHelper.Lerp(GeyserHeight, GeyserHeight * 1.44f, 0.123f);
+            if (Time > 55f)
+                GeyserHeight = MathHelper.Lerp(GeyserHeight, GeyserHeight * 1.44f, 0.1243f) + 2f;
             else
                 projectile.timeLeft++;
 
@@ -104,6 +104,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            if (Time < 55f)
+			{
+                float telegraphFade = Utils.InverseLerp(0f, 8f, Time, true) * Utils.InverseLerp(55f, 45f, Time, true);
+                float telegraphWidth = telegraphFade * 4f;
+                Color telegraphColor = Color.Crimson * telegraphFade;
+                Vector2 start = projectile.Center - Vector2.UnitY * 2000f;
+                Vector2 end = projectile.Center + Vector2.UnitY * 2000f;
+                Utilities.DrawLineBetter(spriteBatch, start, end, telegraphColor, telegraphWidth);
+			}
+
             if (TentacleDrawer is null)
                 TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFGeyserTexture"]);
 

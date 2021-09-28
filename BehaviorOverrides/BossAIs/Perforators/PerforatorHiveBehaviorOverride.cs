@@ -376,19 +376,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             // And release ichor shots upward more frequently.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
             {
-                int totalProjectiles = (int)MathHelper.Lerp(25f, 32f, 1f - npc.life / (float)npc.lifeMax);
+                int totalProjectiles = (int)MathHelper.Lerp(27f, 35f, 1f - npc.life / (float)npc.lifeMax);
                 float blobSpeed = anyWorms ? 6f : 8f;
                 if (finalWormDead)
                     blobSpeed += 0.25f;
                 Vector2 currentBlobVelocity = new Vector2(4f + Main.rand.NextFloat(-0.1f, 0.1f) + target.velocity.X * 0.12f, blobSpeed * -0.65f);
-                currentBlobVelocity.X += target.direction * 2.67f;
 
                 npc.TargetClosest();
 
                 for (int i = 0; i < totalProjectiles + 1; i++)
                 {
                     Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), finalWormDead ? 110 : 95, 0f, Main.myPlayer, 0f, 0f);
-                    currentBlobVelocity.X += blobSpeed / totalProjectiles * -1.38f;
+                    currentBlobVelocity.X += blobSpeed / totalProjectiles * -1.54f;
                 }
                 Main.PlaySound(SoundID.NPCHit20, npc.position);
             }

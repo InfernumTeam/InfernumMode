@@ -157,6 +157,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 jumpAngularImprecision *= 0.25f;
             }
 
+            if (Utilities.AnyProjectiles(ModContent.ProjectileType<MushroomPillar>()))
+                jumpSpeed *= 0.85f;
+
             ref float hasJumpedFlag = ref npc.Infernum().ExtraAI[0];
             ref float hasHitGroundFlag = ref npc.Infernum().ExtraAI[1];
             ref float jumpTimer = ref npc.Infernum().ExtraAI[2];

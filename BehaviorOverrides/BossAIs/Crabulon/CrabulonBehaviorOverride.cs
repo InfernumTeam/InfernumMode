@@ -328,7 +328,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             }
 
             if (attackTimer >= 160f || npc.collideX || target.Center.Y < npc.Top.Y - 200f || target.Center.Y > npc.Bottom.Y + 80f)
+            {
                 GotoNextAttackState(npc);
+                if (target.Center.Y > npc.Bottom.Y + 80f)
+                    npc.ai[2] = (int)CrabulonAttackState.JumpToTarget;
+            }
         }
 
         internal static void DoAttack_CreateGroundMushrooms(NPC npc, Player target, ref float attackTimer, bool enraged)

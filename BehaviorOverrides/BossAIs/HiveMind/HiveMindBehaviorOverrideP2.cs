@@ -164,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     DoBehavior_SlowDown(npc, ref slowdownCountdown);
                     break;
                 case HiveMindP2AttackState.BlobBurst:
-                    DoBehavior_BlobBurst(npc, target, lifeRatio, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_BlobBurst(npc, target, lifeRatio, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
                     break;
             }
 
@@ -226,11 +226,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     nextAttack == HiveMindP2AttackState.CloudDash ||
                     nextAttack == HiveMindP2AttackState.UndergroundFlameDash ||
                     nextAttack == HiveMindP2AttackState.EaterOfSoulsWall || 
-                    nextAttack == HiveMindP2AttackState.CursedRain;
+                    nextAttack == HiveMindP2AttackState.CursedRain ||
+                    nextAttack == HiveMindP2AttackState.BlobBurst;
                 if (shouldBecomeInvisible)
                 {
                     if (nextAttack == HiveMindP2AttackState.EaterOfSoulsWall || nextAttack == HiveMindP2AttackState.CursedRain)
                         npc.Center = target.Center - Vector2.UnitY * 350f;
+                    if (nextAttack == HiveMindP2AttackState.BlobBurst)
+                        npc.Center = target.Center - Vector2.UnitY * 400f;
 
                     npc.alpha = 255;
                 }
@@ -536,7 +539,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             float waitTime = lifeRatio < 0.2f ? 96f : 75f;
             float moveTime = lifeRatio < 0.2f ? 50f : 90f;
-            float dashSpeed = lifeRatio < 0.2f ? 21f : 19f;
+            float dashSpeed = lifeRatio < 0.2f ? 24f : 21.5f;
 
             npc.alpha = Utils.Clamp(npc.alpha - 36, 0, 255);
 
@@ -642,14 +645,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
         }
 
-        public static void DoBehavior_BlobBurst(NPC npc, Player target, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
+        public static void DoBehavior_BlobBurst(NPC npc, Player target, float lifeRatio, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
         {
             int blobShootRate = 50;
             int blobShotCount = 4;
+            ref float hasFadedInFlag = ref npc.ai[1];
             ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
 
             // Delare the previous attack for later.
             npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
+
+            if (npc.alpha >= 0 && hasFadedInFlag == 0f)
+            {
+                npc.alpha -= 4;
+                npc.velocity = Vector2.Zero;
+                if (npc.alpha <= 0f)
+                {
+                    DoRoar(npc, true);
+                    fadeoutCountdown = HiveMindFadeoutTime;
+                    npc.alpha = 0;
+                    hasFadedInFlag = 1f;
+                    npc.netUpdate = true;
+                }
+                return;
+            }
 
             attackTimer++;
             hoverOffsetAngle += MathHelper.ToRadians(5f);

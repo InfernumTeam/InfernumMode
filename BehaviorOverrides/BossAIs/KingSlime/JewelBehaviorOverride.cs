@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             time++;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && time % 60f == 59f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && time % 75f == 74f)
             {
                 float shootSpeed = NPC.AnyNPCs(ModContent.NPCType<Ninja>()) ? 6f : 9f;
                 Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * 45f);

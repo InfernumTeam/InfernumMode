@@ -69,10 +69,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 Main.PlaySound(SoundID.Item92, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < 14; i++)
                     {
                         Vector2 spawnPosition = npc.Center;
-                        Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.43f) * Main.rand.NextFloat(8f, 11f);
+                        Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.73f) * Main.rand.NextFloat(8f, 15f);
                         spawnPosition += shootVelocity * 2.5f;
 
                         int sand = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<BoneTooth>(), 62, 0f);
@@ -181,7 +181,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 			{
                 if (MathHelper.Distance(target.Center.X, npc.Center.X) > 125f)
                     npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.DirectionTo(target.Center).X * 12f, 0.04f);
-                if (lungeFallTimer > 145f || target.Center.Y - npc.Center.Y < -820f)
+                if (lungeFallTimer > 145f || target.Center.Y - npc.Center.Y < -720f)
                     npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -16f, 0.08f);
 
                 // Fall.
@@ -189,7 +189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     npc.velocity.Y += 0.6f;
 
                 // Prepare to fall and play a sound.
-                if (lungeFallTimer == 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 555f)
+                if (lungeFallTimer == 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 255f)
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
 
@@ -201,12 +201,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 if (lungeFallTimer > 0f)
                 {
                     // After a certain point, release a bunch of sand into the air.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && lungeFallTimer == 40f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && lungeFallTimer == 30f)
 					{
-                        for (int i = 0; i < (lifeRatio < 0.1f ? 28 : 16); i++)
+                        for (int i = 0; i < (lifeRatio < 0.1f ? 38 : 25); i++)
 						{
                             Vector2 spawnPosition = npc.Center;
-                            Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(1.21f) * Main.rand.NextFloat(9f, 11f);
+                            Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(1.61f) * Main.rand.NextFloat(11f, 13.5f);
                             spawnPosition += shootVelocity * 2.6f;
 
                             int sand = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SandBlast>(), 60, 0f);

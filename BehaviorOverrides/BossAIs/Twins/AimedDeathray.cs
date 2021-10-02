@@ -43,6 +43,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             if (!Main.npc.IndexInRange((int)projectile.ai[1]) || !Main.npc[(int)projectile.ai[1]].active)
                 projectile.Kill();
 
+            if (Time == TelegraphTime + 1f)
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaBolt"), projectile.Center);
+
             projectile.velocity = (Main.npc[(int)projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2();
             projectile.Center = Main.npc[(int)projectile.ai[1]].Center + projectile.velocity * 96f;
         }

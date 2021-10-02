@@ -1,12 +1,7 @@
-﻿using CalamityMod.NPCs;
-using CalamityMod.NPCs.SlimeGod;
-using CalamityMod.NPCs.StormWeaver;
-using CalamityMod.Projectiles.Boss;
+﻿using CalamityMod.NPCs.StormWeaver;
+using InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -14,7 +9,6 @@ using Terraria.Utilities;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {
-    /*
     public class StormWeaverArmoredHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<StormWeaverHead>();
@@ -38,8 +32,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             npc.TargetClosest();
             Player target = Main.player[npc.target];
 
-            ref float attackState = ref npc.ai[0];
-            ref float attackTimer = ref npc.ai[1];
+            // Fade in.
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.2f, 0f, 1f);
+
+            // Create segments.
+            if (npc.localAI[0] == 0f)
+            {
+                AquaticScourgeHeadBehaviorOverride.CreateSegments(npc, 32, ModContent.NPCType<StormWeaverBody>(), ModContent.NPCType<StormWeaverTail>());
+                npc.localAI[0] = 1f;
+            }
+
+            ref float attackState = ref npc.ai[1];
+            ref float attackTimer = ref npc.ai[2];
 
             switch ((StormWeaverArmoredAttackType)(int)attackState)
             {
@@ -54,18 +58,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     break;
             }
 
+            // Determine rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
             attackTimer++;
             return false;
         }
 
         public static void DoAttack_NormalMove(NPC npc, Player target, float attackTimer)
         {
-            float turnSpeed = (!npc.WithinRange(target.Center, 220f)).ToInt() * 0.027f;
+            float turnSpeed = (!npc.WithinRange(target.Center, 220f)).ToInt() * 0.039f;
             float moveSpeed = npc.velocity.Length();
 
-            if (!npc.WithinRange(target.Center, 285f))
+            if (npc.WithinRange(target.Center, 285f))
                 moveSpeed *= 1.015f;
-            else if (npc.velocity.Length() > 13f + attackTimer / 65f)
+            else if (npc.velocity.Length() > 13f + attackTimer / 35f)
                 moveSpeed *= 0.98f;
 
             moveSpeed = MathHelper.Clamp(moveSpeed, 12f, 25f);
@@ -79,10 +86,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
         public static void DoAttack_SparkBurst(NPC npc, Player target, float attackTimer)
         {
-            float turnSpeed = (!npc.WithinRange(target.Center, 220f)).ToInt() * 0.024f;
+            float turnSpeed = (!npc.WithinRange(target.Center, 220f)).ToInt() * 0.054f;
             float moveSpeed = npc.velocity.Length();
 
-            if (!npc.WithinRange(target.Center, 285f))
+            if (npc.WithinRange(target.Center, 285f))
                 moveSpeed *= 1.01f;
             else if (npc.velocity.Length() > 13f)
                 moveSpeed *= 0.98f;
@@ -91,21 +98,74 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
-            if (attackTimer % 75f == 74f && !npc.WithinRange(target.Center, 280f))
+            if (attackTimer % 45f == 44f && !npc.WithinRange(target.Center, 210f))
             {
+                // Create some mouth dust.
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust electricity = Dust.NewDustPerfect(npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 30f, 229);
+                    electricity.velocity = Main.rand.NextVector2Circular(5f, 5f) + npc.velocity;
+                    electricity.scale = 1.9f;
+                    electricity.noGravity = true;
+                }
+
                 Main.PlaySound(SoundID.Item94, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < 7; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-0.41f, 0.41f, i / 4f);
+                        float offsetAngle = MathHelper.Lerp(-0.41f, 0.41f, i / 6f);
                         Vector2 sparkVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(offsetAngle) * 8f;
                         Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 245, 0f);
                     }
                 }
             }
 
-            if (attackTimer >= 360f)
+            if (attackTimer >= 450f)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoAttack_TailDischarge(NPC npc, Player target, float attackTimer)
+        {
+            float turnSpeed = (!npc.WithinRange(target.Center, 220f)).ToInt() * 0.041f;
+            float moveSpeed = npc.velocity.Length();
+
+            if (npc.WithinRange(target.Center, 285f))
+                moveSpeed *= 1.01f;
+            else if (npc.velocity.Length() > 10.5f)
+                moveSpeed *= 0.98f;
+
+            moveSpeed = MathHelper.Clamp(moveSpeed, 7f, 17f);
+
+            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
+
+            if (attackTimer % 60f == 59f)
+            {
+                int tailIndex = NPC.FindFirstNPC(ModContent.NPCType<StormWeaverTail>());
+
+                if (tailIndex != -1 && !Main.npc[tailIndex].WithinRange(target.Center, 210f))
+                {
+                    NPC tail = Main.npc[tailIndex];
+                    Main.PlaySound(SoundID.Item122, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 13; i++)
+                        {
+                            Vector2 lightningVelocity = tail.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + Main.rand.NextFloatDirection() * 0.05f) / 13f) * 7f;
+                            int arc = Utilities.NewProjectileBetter(tail.Center + lightningVelocity * 2f, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 245, 0f);
+                            if (Main.projectile.IndexInRange(arc))
+                            {
+                                Main.projectile[arc].ai[0] = lightningVelocity.ToRotation();
+                                Main.projectile[arc].ai[1] = Main.rand.Next(100);
+                                Main.projectile[arc].tileCollide = false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (attackTimer >= 320f)
                 SelectNewAttack(npc);
         }
 
@@ -114,12 +174,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            npc.netUpdate = true;
             for (int i = 0; i < 4; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
-            ref float attackState = ref npc.ai[0];
-            float oldAttackState = npc.ai[0];
+            ref float attackState = ref npc.ai[1];
+            float oldAttackState = npc.ai[1];
             WeightedRandom<float> newStatePicker = new WeightedRandom<float>(Main.rand);
             newStatePicker.Add((int)StormWeaverArmoredAttackType.NormalMove, 1.5);
             newStatePicker.Add((int)StormWeaverArmoredAttackType.SparkBurst);
@@ -128,8 +187,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             do
                 attackState = newStatePicker.Get();
             while (attackState == oldAttackState);
+
+            npc.ai[1] = (int)attackState;
+            npc.ai[2] = 0f;
+            npc.netUpdate = true;
         }
         #endregion AI
     }
-    */
 }

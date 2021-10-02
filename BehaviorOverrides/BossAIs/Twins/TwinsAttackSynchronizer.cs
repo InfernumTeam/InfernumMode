@@ -471,7 +471,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         int fireRate = 35;
                         if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % fireRate == fireRate - 1)
                         {
-                            float shootSpeed = MathHelper.Lerp(6.5f, 9f, 1f - CombinedLifeRatio);
+                            float shootSpeed = MathHelper.Lerp(8.5f, 11f, 1f - CombinedLifeRatio);
                             Vector2 shootVelocity = npc.DirectionTo(Target.Center) * shootSpeed;
                             int projectileType = isSpazmatism ? ProjectileID.CursedFlameHostile : ProjectileID.DeathLaser;
                             
@@ -529,12 +529,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     if (UniversalAttackTimer == redirectTime)
                     {
                         npc.rotation = npc.rotation.AngleTowards(isRetinazer ? MathHelper.PiOver2 : 0f, MathHelper.TwoPi / 4f);
-                        npc.velocity = isRetinazer ? Vector2.UnitX * -11f : Vector2.UnitX * 11f;
+                        npc.velocity = isRetinazer ? Vector2.UnitX * -17f : Vector2.UnitX * 17f;
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer > redirectTime && UniversalAttackTimer % shootRate == shootRate - 1)
 					{
-                        float shootSpeed = isRetinazer ? 5f : 16f;
+                        float shootSpeed = isRetinazer ? 5f : 14f;
                         Vector2 shootVelocity = (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * shootSpeed;
                         int projectileType = isRetinazer ? ModContent.ProjectileType<ScavengerLaser>() : ProjectileID.CursedFlameHostile;
                         Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, projectileType, 80, 0f);
@@ -581,7 +581,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                 chargingTime = 0f;
 
                             Tile tile = CalamityUtils.ParanoidTileRetrieval((int)npc.Center.X / 16, (int)npc.Center.Y / 16);
-                            bool platformFuck = (TileID.Sets.Platforms[tile.type] || Main.tileSolidTop[tile.type]) && tile.nactive();
+                            bool platformFuck = (TileID.Sets.Platforms[tile.type] || Main.tileSolidTop[tile.type]) && tile.nactive() && npc.Center.Y > Target.Center.Y;
                             if (platformFuck || Collision.SolidCollision(npc.position, npc.width, npc.height))
 							{
                                 chargingTime = 0f;
@@ -591,11 +591,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
 								{
-                                    int totalProjectiles = 10;
+                                    int totalProjectiles = 15;
                                     for (int i = 0; i < totalProjectiles; i++)
 									{
                                         float randomAngularOffset = Main.rand.NextFloat(-MathHelper.Pi / totalProjectiles, MathHelper.Pi / totalProjectiles) * 0.4f;
-                                        Vector2 shootVelocity = (MathHelper.TwoPi * i / totalProjectiles).ToRotationVector2().RotatedBy(randomAngularOffset) * 11f;
+                                        Vector2 shootVelocity = (MathHelper.TwoPi * i / totalProjectiles).ToRotationVector2().RotatedBy(randomAngularOffset) * 12.5f;
                                         int fire = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ProjectileID.CursedFlameHostile, 100, 0f);
                                         Main.projectile[fire].ignoreWater = true;
                                     }
@@ -735,13 +735,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     if (attackTimer < AimedDeathray.TelegraphTime + 30f)
                         npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(Target.Center + Target.velocity * 27f) - MathHelper.PiOver2, 0.1f);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer < barrageBurstTime && attackTimer % 6f == 5f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer < barrageBurstTime && attackTimer % 9f == 8f)
                     {
-                        Vector2 laserVelocity = npc.DirectionTo(Target.Center).RotatedByRandom(MathHelper.ToRadians(10f)) * 13f;
+                        Vector2 laserVelocity = npc.DirectionTo(Target.Center).RotatedByRandom(MathHelper.ToRadians(10f)) * 10f;
                         int laser = Utilities.NewProjectileBetter(npc.Center + laserVelocity * 3.6f, laserVelocity, ProjectileID.DeathLaser, 100, 0f);
                         Main.projectile[laser].tileCollide = false;
                     }
-                    if (Main.netMode != NetmodeID.MultiplayerClient && (int)attackTimer == 30)
+                    if ((int)attackTimer == 30 && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.DirectionTo(Target.Center) * 48f, npc.DirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 200, 0f);
                         Main.projectile[deathRay].ai[1] = npc.whoAmI;
@@ -783,7 +783,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                         npc.netUpdate = true;
                     }
-                    if (attackTimer >= 270f && attackTimer % 10f == 9f && npc.velocity.Length() > 13f)
+                    if (attackTimer >= 270f && attackTimer < 400f && attackTimer % 16f == 15f && npc.velocity.Length() > 13f)
                     {
                         Main.PlaySound(SoundID.Item33, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)

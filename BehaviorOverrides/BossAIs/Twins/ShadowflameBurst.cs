@@ -37,6 +37,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 projectile.Opacity = 1f;
 
             projectile.rotation = projectile.velocity.ToRotation();
+            projectile.velocity *= 1.03f;
+
             Lighting.AddLight(projectile.Center, Color.Magenta.ToVector3() * 1.6f);
 
             if (!Main.dedServ && Main.rand.NextBool(5))
@@ -82,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (FireDrawer is null)
                 FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(projectile.velocity.Length() / 13f);
+            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.4f);
             GameShaders.Misc["Infernum:Fire"].UseImage("Images/Misc/Perlin");
             FireDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 38);
             return false;

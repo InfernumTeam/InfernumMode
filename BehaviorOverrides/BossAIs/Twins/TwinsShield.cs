@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 		public ref float Radius => ref projectile.ai[1];
 		public NPC Owner => Main.npc[(int)OwnerIndex];
 		public const float MaxRadius = 180f;
-		public const int HealTime = 600;
+		public const int HealTime = 180;
 		public const int Lifetime = HealTime + HealTime / 3;
 
 		public override void SetStaticDefaults()

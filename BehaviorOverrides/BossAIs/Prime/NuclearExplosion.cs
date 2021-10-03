@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override void AI()
         {
-            projectile.scale += 0.036f;
+            projectile.scale += 0.05f;
             projectile.Opacity = Utils.InverseLerp(300f, 265f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 50f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
@@ -32,10 +32,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             if (Main.netMode != NetmodeID.MultiplayerClient && projectile.Opacity > 0.74f)
             {
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 6; i++)
                 {
                     Vector2 spawnPosition = projectile.Center + Main.rand.NextVector2Circular(35f, 35f);
-                    Vector2 smokeVelocity = -Vector2.UnitY.RotatedByRandom(2.16f) * Main.rand.NextFloat(4f, 21f);
+                    Vector2 smokeVelocity = -Vector2.UnitY.RotatedByRandom(2.16f) * Main.rand.NextFloat(6f, 29f);
                     Projectile.NewProjectile(spawnPosition, smokeVelocity, ModContent.ProjectileType<NukeSmoke>(), 0, 0f);
                 }
             }

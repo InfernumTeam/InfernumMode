@@ -426,7 +426,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
 		public static void DoAttack_FireballBarrage(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
 		{
-			int fireballShootRate = phase2 ? 9 : 5;
+			int fireballShootRate = phase2 ? 9 : 7;
 			int fireballCount = phase2 ? 38 : 32;
 			int attackLength = 105 + fireballShootRate * fireballCount;
 			if (phase2)
@@ -493,7 +493,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 					if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % fireballShootRate == fireballShootRate - 1f)
 					{
 						Vector2 fireballSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(1035f, 1185f);
-						Vector2 fireballShootVelocity = (target.Center + target.velocity * 25f - fireballSpawnPosition).SafeNormalize(Vector2.UnitY) * 8.5f;
+						Vector2 fireballShootVelocity = (target.Center + target.velocity * 25f - fireballSpawnPosition).SafeNormalize(Vector2.UnitY) * 7f;
 
 						int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 165, 0f);
 						if (Main.projectile.IndexInRange(fireball) && phase2)
@@ -696,7 +696,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 				if (attackTimer % 4f == 3f)
 				{
 					lightningSpawnPosition += Main.rand.NextVector2Circular(18f, 18f);
-					Vector2 lightningVelocity = (target.Center - lightningSpawnPosition + target.velocity * 13f).SafeNormalize(Vector2.UnitY) * 0.99f;
+					Vector2 lightningVelocity = (target.Center - lightningSpawnPosition + target.velocity * 13f).SafeNormalize(Vector2.UnitY) * 1.35f;
 					lightningVelocity += Main.rand.NextVector2Circular(0.125f, 0.125f);
 
 					npc.spriteDirection = (lightningVelocity.X > 0f).ToDirectionInt();
@@ -936,7 +936,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 				createRitualZap();
 
 			// Don't take damage until a bit after the ritual has started.
-			npc.dontTakeDamage = attackTimer <= 50f;
+			npc.dontTakeDamage = attackTimer <= 90f;
 
 			// Cancel the ritual if hit before it's complete.
 			if (npc.justHit && attackTimer < waitDelay)

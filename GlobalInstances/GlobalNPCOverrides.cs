@@ -315,6 +315,10 @@ namespace InfernumMode.GlobalInstances
             if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
                 damage = (int)(damage * 0.55);
 
+            bool isPhantasmDragon = npc.type == NPCID.CultistDragonBody1 || npc.type == NPCID.CultistDragonBody2 || npc.type == NPCID.CultistDragonBody3 || npc.type == NPCID.CultistDragonBody4 || npc.type == NPCID.CultistDragonTail;
+            if (isPhantasmDragon && (projectile.penetrate == -1 || projectile.penetrate > 1))
+                damage = (int)(damage * 0.24);
+
             if (npc.type == ModContent.NPCType<DevourerofGodsHeadS>() || npc.type == ModContent.NPCType<DevourerofGodsTailS>() &&
                 (projectile.type == ModContent.ProjectileType<PhantasmalRuinGhost>() || projectile.type == ModContent.ProjectileType<PhantasmalRuinProj>()) || projectile.type == ProjectileID.LostSoulFriendly)
             {
@@ -415,6 +419,35 @@ namespace InfernumMode.GlobalInstances
                     npc.netUpdate = true;
                 }
                 return false;
+            }
+
+            if ((npc.type == NPCID.Spazmatism || npc.type == NPCID.Retinazer))
+            {
+                bool otherTwinHasCreatedShield = false;
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (!Main.npc[i].active)
+                        continue;
+                    if (Main.npc[i].type != NPCID.Retinazer && Main.npc[i].type != NPCID.Spazmatism)
+                        continue;
+                    if (Main.npc[i].type == npc.type)
+                        continue;
+
+                    if (Main.npc[i].Infernum().ExtraAI[3] == 1f)
+                    {
+                        otherTwinHasCreatedShield = true;
+                        break;
+                    }
+                }
+
+                if (npc.Infernum().ExtraAI[3] == 0f && !otherTwinHasCreatedShield)
+                {
+                    npc.life = 1;
+                    npc.active = true;
+                    npc.netUpdate = true;
+                    npc.dontTakeDamage = true;
+                    return false;
+                }
             }
 
             if (npc.type == ModContent.NPCType<RavagerClawLeft>() || npc.type == ModContent.NPCType<RavagerClawRight>())

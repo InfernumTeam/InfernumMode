@@ -67,8 +67,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             npc.rotation += MathHelper.ToRadians(10f * Math.Sign(npc.velocity.X));
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && Time % 90f == 89f)
-                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ShadowflameExplosion>(), 120, 0f);
+            float attackWrappedTimer = Time % 150f;
+            if (attackWrappedTimer >= 85f && attackWrappedTimer <= 95f && attackWrappedTimer % 2f == 0f)
+            {
+                if (attackWrappedTimer == 86f)
+                    Main.PlaySound(SoundID.Item125, npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float offsetAngle = MathHelper.Lerp(-0.51f, 0.51f, Utils.InverseLerp(85f, 95f, attackWrappedTimer, true));
+                    Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(offsetAngle) * 10f;
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ShadowflameCinder>(), 120, 0f);
+                }
+            }
 
             Time++;
         }
@@ -95,10 +106,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (FireDrawer is null)
                 FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(2f);
+            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.9f);
             GameShaders.Misc["Infernum:Fire"].UseImage("Images/Misc/Perlin");
             FireDrawer.Draw(npc.oldPos, npc.Size * 0.5f - Main.screenPosition + npc.velocity * 1.6f, 47);
-            return true;
+
+            Texture2D texture = Main.npcTexture[npc.type];
+            Vector2 origin = texture.Size() * 0.5f;
+            Color afterimageColor = Color.White * 0.16f;
+            afterimageColor.A = 0;
+
+            for (int i = 0; i < 8; i++)
+            {
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 3f;
+                Vector2 drawPosition = npc.Center - Main.screenPosition + drawOffset;
+                spriteBatch.Draw(texture, drawPosition, null, afterimageColor, 0f, origin, npc.scale, SpriteEffects.None, 0f);
+            }
+
+            return false;
         }
 
 		public override bool CheckDead()

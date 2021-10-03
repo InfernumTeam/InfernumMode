@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
             if (projectile.velocity.Y < 18f)
-                projectile.velocity.Y += 0.25f;
+                projectile.velocity.Y += 0.5f;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

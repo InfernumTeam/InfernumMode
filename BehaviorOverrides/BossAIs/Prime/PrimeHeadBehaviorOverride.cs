@@ -76,8 +76,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Continuously reset defense.
             npc.defense = npc.defDefense;
 
-            // Don't allow further damage to happen when below 55% life if any arms remain.
-            npc.dontTakeDamage = lifeRatio < 0.55f && AnyArms;
+            // Don't allow further damage to happen when below 65% life if any arms remain.
+            npc.dontTakeDamage = lifeRatio < 0.65f && AnyArms;
 
             switch ((PrimeAttackType)(int)attackType)
             {
@@ -94,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     DoAttack_HoverCharge(npc, target, attackTimer, ref frameType);
                     break;
                 case PrimeAttackType.LaserRay:
-                    DoAttack_LaserRay(npc, target, attackTimer, ref frameType);
+                    DoAttack_LaserRay(npc, target, lifeRatio, attackTimer, ref frameType);
                     break;
                 case PrimeAttackType.LightningSupercharge:
                     DoAttack_LightningSupercharge(npc, target, ref attackTimer, ref frameType);
@@ -212,6 +212,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int cycleTime = 36;
             int rocketCountPerCycle = 7;
             int shootCycleCount = AnyArms ? 4 : 6;
+
+            // The attack lasts longer when only the laser and cannon are around so you can focus them down.
+            if (!NPC.AnyNPCs(NPCID.PrimeVice) && !NPC.AnyNPCs(NPCID.PrimeSaw) && NPC.AnyNPCs(NPCID.PrimeLaser) && NPC.AnyNPCs(NPCID.PrimeCannon))
+                shootCycleCount = 6;
+
             float wrappedTime = attackTimer % cycleTime;
 
             npc.rotation = npc.velocity.X * 0.04f;
@@ -298,8 +303,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 GotoNextAttackState(npc);
         }
 
-        public static void DoAttack_LaserRay(NPC npc, Player target, float attackTimer, ref float frameType)
+        public static void DoAttack_LaserRay(NPC npc, Player target, float lifeRatio, float attackTimer, ref float frameType)
         {
+            ref float laserRayRotation = ref npc.Infernum().ExtraAI[0];
+
+            float angularOffset = MathHelper.ToRadians(36f);
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
             float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.InverseLerp(45f, 90f, attackTimer, true));
             npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), movementSpeed)) / 8f;
@@ -319,13 +327,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float angularOffset = MathHelper.ToRadians(36f);
                     for (int i = -1; i <= 1; i += 2)
                     {
                         Vector2 beamSpawnPosition = npc.Center + new Vector2(-i * 16f, -7f);
                         Vector2 beamDirection = (target.Center - beamSpawnPosition).SafeNormalize(-Vector2.UnitY).RotatedBy(angularOffset * -i);
 
-                        int beam = Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<LaserRay>(), 140, 0f);
+                        int beam = Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<LaserRay>(), 230, 0f);
                         if (Main.projectile.IndexInRange(beam))
                         {
                             Main.projectile[beam].ai[0] = i * angularOffset / 120f * 0.385f;
@@ -333,13 +340,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                             Main.projectile[beam].netUpdate = true;
                         }
                     }
+
+                    laserRayRotation = npc.AngleTo(target.Center);
                 }
             }
 
             frameType = attackTimer < 110f ? (int)PrimeFrameType.ClosedMouth : (int)PrimeFrameType.OpenMouth;
 
             // Release a few rockets after creating the laser to create pressure.
-            if (attackTimer > 125f && attackTimer % 20f == 19f)
+            int rocketReleaseRate = lifeRatio < 0.5f ? 14 : 20;
+            if (attackTimer > 125f && attackTimer % rocketReleaseRate == rocketReleaseRate - 1f)
             {
                 Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -347,6 +357,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     float rocketAngularOffset = Utils.InverseLerp(125f, 225f, attackTimer, true) * MathHelper.TwoPi;
                     Vector2 rocketVelocity = rocketAngularOffset.ToRotationVector2() * (Main.rand.NextFloat(5.5f, 6.2f) + npc.Distance(target.Center) * 0.00267f);
                     Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f + rocketVelocity * 2.5f, rocketVelocity, ProjectileID.SaucerMissile, 115, 0f);
+                }
+            }
+
+            // Create a bullet hell outside of the laser area to prevent RoD cheese.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 125f)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 shootDirection;
+                    do
+                        shootDirection = Main.rand.NextVector2Unit();
+                    while (shootDirection.AngleBetween(laserRayRotation.ToRotationVector2()) < angularOffset);
+
+                    Vector2 spikeVelocity = shootDirection * Main.rand.NextFloat(11f, 20f);
+                    Utilities.NewProjectileBetter(npc.Center + spikeVelocity * 5f, spikeVelocity, ModContent.ProjectileType<MetallicSpike>(), 155, 0f);
                 }
             }
 
@@ -424,7 +449,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                             Vector2 laserFirePosition = npc.Center - Vector2.UnitY * 16f;
                             Vector2 laserDirection = (target.Center - laserFirePosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 9f);
 
-                            int beam = Utilities.NewProjectileBetter(laserFirePosition, laserDirection, ModContent.ProjectileType<LaserRayIdle>(), 140, 0f);
+                            int beam = Utilities.NewProjectileBetter(laserFirePosition, laserDirection, ModContent.ProjectileType<LaserRayIdle>(), 230, 0f);
                             if (Main.projectile.IndexInRange(beam))
                             {
                                 Main.projectile[beam].ai[0] = 0f;

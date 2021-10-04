@@ -15,6 +15,7 @@ using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
 using CalamityMod.NPCs.AstrumAureus;
+using CalamityMod.NPCs.StormWeaver;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -49,6 +50,7 @@ namespace InfernumMode.GlobalInstances
             [NPCID.CultistBoss] = 56000,
             [ModContent.NPCType<Bumblefuck>()] = 227550,
             [ModContent.NPCType<ProvidenceBoss>()] = 900000,
+            [ModContent.NPCType<StormWeaverHeadNaked>()] = 999998,
             [ModContent.NPCType<OldDukeBoss>()] = 872444,
             [ModContent.NPCType<DevourerofGodsHead>()] = 1400000,
             [ModContent.NPCType<DevourerofGodsHeadS>()] = 4180000

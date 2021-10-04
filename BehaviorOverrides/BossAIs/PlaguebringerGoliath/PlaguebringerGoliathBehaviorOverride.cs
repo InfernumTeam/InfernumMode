@@ -18,10 +18,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
         #region Enumerations
+        // Make 8 attacks.
         public enum PBGAttackType
         {
             Charge,
-            ReleaseMissilesUpward
+            MissileLaunch,
+            PlagueVomit,
+            CarpetBombing,
+            ExplodingPlagueChargers,
+            DroneSummoning,
+            PlagueSwarm,
+            BombConstructors,
         }
 
         public enum PBGFrameType
@@ -56,10 +63,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             switch ((PBGAttackType)(int)attackType)
             {
                 case PBGAttackType.Charge:
-                    DoBehavior_Charge(npc, target, attackTimer, enrageFactor, ref frameType);
+                    DoBehavior_Charge(npc, target, enrageFactor, ref frameType);
                     break;
-                case PBGAttackType.ReleaseMissilesUpward:
-                    DoBehavior_ReleaseMissilesUpward(npc, target, ref attackTimer, enrageFactor, ref frameType);
+                case PBGAttackType.MissileLaunch:
+                    DoBehavior_MissileLaunch(npc, target, ref attackTimer, enrageFactor, ref frameType);
+                    break;
+                case PBGAttackType.PlagueVomit:
+                    DoBehavior_PlagueVomit(npc, target, ref attackTimer, enrageFactor, ref frameType);
+                    break;
+                case PBGAttackType.CarpetBombing:
+                    DoBehavior_CarpetBombing(npc, target, enrageFactor, ref frameType);
                     break;
             }
 
@@ -68,12 +81,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         }
 
         #region Specific Behaviors
-        public static void DoBehavior_Charge(NPC npc, Player target, float attackTimer, float enrageFactor, ref float frameType)
+        public static void DoBehavior_Charge(NPC npc, Player target, float enrageFactor, ref float frameType)
         {
-            int maxChargeCount = (int)Math.Ceiling(3f + enrageFactor * 1.3f);
-            int chargeTime = (int)(68f - enrageFactor * 31f);
+            int maxChargeCount = (int)Math.Ceiling(5f + enrageFactor * 1.3f);
+            int chargeTime = (int)(48f - enrageFactor * 15f);
             bool canDoDiagonalCharges = enrageFactor > 0.3f;
-            float chargeSpeed = enrageFactor * 2.75f + 27.5f;
+            float chargeSpeed = enrageFactor * 4f + 30f;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
@@ -98,12 +111,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 115f))
+                if (npc.WithinRange(hoverDestination, 255f))
                 {
-                    npc.velocity *= 0.97f;
+                    npc.velocity *= 0.935f;
 
                     // Do the charge.
-                    if (npc.WithinRange(hoverDestination, 85f) && hoverTimer > 45f)
+                    if (npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f)
                     {
                         hoverTimer = 0f;
                         chargeState = 2f;
@@ -115,8 +128,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     }
                 }
                 else
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 27f, 1.35f);
-                npc.Center = npc.Center.MoveTowards(hoverDestination, 15f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 3f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
                 npc.rotation = npc.velocity.X * 0.0125f;
                 hoverTimer++;
             }
@@ -151,70 +164,232 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
         }
 
-        public static void DoBehavior_ReleaseMissilesUpward(NPC npc, Player target, ref float attackTimer, float enrageFactor, ref float frameType)
-        {
-            int burstCount = (int)Math.Round(2 + enrageFactor * 1.55f);
-            int hoverDelay = (int)(30f - enrageFactor * 16f);
-            int shootDelay = (int)(20f - enrageFactor * 8f);
-            float rocketShootSpeed = enrageFactor * 2f + 8f;
-            ref float burstCounter = ref npc.Infernum().ExtraAI[0];
-            ref float shootState = ref npc.Infernum().ExtraAI[1];
+        public static void DoBehavior_MissileLaunch(NPC npc, Player target, ref float attackTimer, float enrageFactor, ref float frameType)
+		{
+            int attackCycleCount = 2;
+            int missileShootRate = (int)(16f - enrageFactor * 6f);
+            float missileShootSpeed = enrageFactor * 5f + 12f;
+            ref float attackState = ref npc.Infernum().ExtraAI[0];
+            ref float bombingCount = ref npc.Infernum().ExtraAI[1];
+            ref float missileShootTimer = ref npc.Infernum().ExtraAI[2];
+            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[3];
 
-            // Hover for a bit.
-            if (shootState == 0f)
+            frameType = (int)PBGFrameType.Fly;
+            switch ((int)attackState)
+			{
+                // Attempt to hover near the target.
+                case 0:
+                    Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, -360f);
+                    Vector2 hoverDestination = target.Center + hoverOffset;
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 21f, 1f);
+                    npc.Center = npc.Center.MoveTowards(hoverDestination, 4f);
+
+                    // Make the attack go by way quicker once in position.
+                    if (npc.WithinRange(hoverDestination, 35f))
+                        attackTimer += 4f;
+
+                    missileShootTimer = 0f;
+                    if (attackTimer >= 180f)
+					{
+                        attackState++;
+                        attackTimer = 0f;
+					}
+                    break;
+
+                // Slow down and release a bunch of missiles.
+                case 1:
+                    npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.5f) * 0.95f;
+
+                    missileShootTimer++;
+                    if (missileShootTimer >= missileShootRate)
+					{
+                        Main.PlaySound(SoundID.Item11, npc.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+						{
+                            Vector2 abdomenPosition = npc.Center + Vector2.UnitY.RotatedBy(npc.rotation) * new Vector2(npc.spriteDirection, 1f) * 108f;
+                            Vector2 shootDirection = (abdomenPosition - npc.Center).SafeNormalize(Vector2.UnitY);
+                            shootDirection = shootDirection.RotateTowards(npc.SafeDirectionTo(target.Center).ToRotation(), Main.rand.NextFloat(0.74f, 1.04f));
+                            Vector2 shootVelocity = shootDirection.RotatedByRandom(0.31f) * missileShootSpeed;
+                            Utilities.NewProjectileBetter(abdomenPosition, shootVelocity, ModContent.ProjectileType<RedirectingPlagueMissile>(), 160, 0f);
+                        }
+                        missileShootTimer = 0f;
+                        npc.netUpdate = true;
+                    }
+
+                    if (attackTimer >= 120f)
+					{
+                        attackCycleCounter++;
+                        if (attackCycleCounter >= attackCycleCount)
+                            GotoNextAttackState(npc);
+						else
+						{
+                            attackTimer = 0f;
+                            attackState = 0f;
+						}
+                        npc.netUpdate = true;
+					}
+                    break;
+            }
+
+            // Determine rotation.
+            npc.rotation = npc.velocity.X * 0.0125f;
+        }
+
+        public static void DoBehavior_PlagueVomit(NPC npc, Player target, ref float attackTimer, float enrageFactor, ref float frameType)
+        {
+            int attackCycleCount = 2;
+            int vomitShootRate = (int)(55f - enrageFactor * 25f);
+            float vomitShootSpeed = 11f;
+            ref float attackState = ref npc.Infernum().ExtraAI[0];
+            ref float bombingCount = ref npc.Infernum().ExtraAI[1];
+            ref float vomitShootTimer = ref npc.Infernum().ExtraAI[2];
+            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[3];
+
+            frameType = (int)PBGFrameType.Fly;
+            switch ((int)attackState)
             {
-                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 410f, -80f);
+                // Attempt to hover near the target.
+                case 0:
+                    Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, -360f);
+                    Vector2 hoverDestination = target.Center + hoverOffset;
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 21f, 1f);
+                    npc.Center = npc.Center.MoveTowards(hoverDestination, 4f);
+
+                    // Make the attack go by way quicker once in position.
+                    if (npc.WithinRange(hoverDestination, 35f))
+                        attackTimer += 4f;
+
+                    vomitShootTimer = 0f;
+                    if (attackTimer >= 120f)
+                    {
+                        attackState++;
+                        attackTimer = 0f;
+                    }
+                    break;
+
+                // Slow down and release a bunch of vomits.
+                case 1:
+                    npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.5f) * 0.95f;
+
+                    vomitShootTimer++;
+                    if (vomitShootTimer >= vomitShootRate)
+                    {
+                        Main.PlaySound(SoundID.Item11, npc.Center);
+
+                        npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 mouthPosition = npc.Center;
+                            mouthPosition += Vector2.UnitY.RotatedBy(npc.rotation) * 18f;
+                            mouthPosition -= Vector2.UnitX.RotatedBy(npc.rotation) * npc.spriteDirection * -68f;
+                            Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * vomitShootSpeed;
+                            Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<PlagueVomit>(), 160, 0f);
+                        }
+                        vomitShootTimer = 0f;
+                        npc.netUpdate = true;
+                    }
+
+                    if (attackTimer >= 180f)
+                    {
+                        attackCycleCounter++;
+                        if (attackCycleCounter >= attackCycleCount)
+                            GotoNextAttackState(npc);
+                        else
+                        {
+                            attackTimer = 0f;
+                            attackState = 0f;
+                        }
+                        npc.netUpdate = true;
+                    }
+                    break;
+            }
+
+            // Determine rotation.
+            npc.rotation = npc.velocity.X * 0.0125f;
+        }
+
+        public static void DoBehavior_CarpetBombing(NPC npc, Player target, float enrageFactor, ref float frameType)
+        {
+            int maxChargeCount = (int)Math.Ceiling(2f + enrageFactor * 1.1f);
+            int chargeTime = (int)(68f - enrageFactor * 31f);
+            float chargeSpeed = enrageFactor * 2.75f + 27.5f;
+
+            ref float chargeCount = ref npc.Infernum().ExtraAI[0];
+            ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
+            ref float chargeState = ref npc.Infernum().ExtraAI[2];
+            ref float hoverTimer = ref npc.Infernum().ExtraAI[3];
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 740f, -325f);
+
+            // Do initializations.
+            if (Main.netMode != NetmodeID.MultiplayerClient && chargeState == 0f)
+            {
+                chargeState = 1f;
+                npc.netUpdate = true;
+            }
+
+            // Hover until reaching the destination.
+            if (chargeState == 1f)
+            {
+                Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 85f) || attackTimer > hoverDelay - 4f)
+                if (npc.WithinRange(hoverDestination, 195f))
                 {
-                    npc.velocity *= 0.96f;
+                    npc.velocity *= 0.95f;
 
                     // Do the charge.
-                    if ((npc.WithinRange(hoverDestination, 65f) || attackTimer > hoverDelay) && attackTimer > 10f)
+                    if (npc.WithinRange(hoverDestination, 135f) && hoverTimer > 30f)
                     {
-                        attackTimer = 0f;
-                        shootState = 1f;
+                        hoverTimer = 0f;
+                        chargeState = 2f;
+                        npc.velocity = Vector2.UnitX * npc.SafeDirectionTo(target.Center, Vector2.UnitX).X * chargeSpeed;
+                        npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        if (burstCounter >= burstCount)
-                            GotoNextAttackState(npc);
+                        Main.PlaySound(SoundID.Roar, target.Center, 0);
                     }
                 }
                 else
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 27f, 0.75f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 0.95f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 3f);
                 npc.rotation = npc.velocity.X * 0.0125f;
+                hoverTimer++;
             }
 
-            // Slow down and shoot redirecting missiles.
-            if (shootState == 1f)
-			{
-                npc.velocity *= 0.95f;
-                npc.rotation = npc.velocity.X * 0.0125f;
+            // Charge behavior.
+            if (chargeState == 2f)
+            {
+                frameType = (int)PBGFrameType.Charge;
 
-                if (attackTimer == shootDelay)
+                npc.damage = npc.defDamage;
+                npc.rotation = npc.velocity.ToRotation();
+                if (npc.spriteDirection == -1)
+                    npc.rotation += MathHelper.Pi;
+
+                chargeTimer++;
+
+                // Slow down before transitioning back to hovering.
+                if (chargeTimer > chargeTime - 15f)
+                    npc.velocity *= 0.97f;
+
+				// Otherwise, release missiles.
+				else if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 6f == 5f)
 				{
-                    Main.PlaySound(SoundID.Item11, npc.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Vector2 firstThrusterOffset = new Vector2(-42f, -106f).RotatedBy(npc.rotation);
-                        firstThrusterOffset.X *= npc.spriteDirection;
-                        Vector2 secondThrusterOffset = new Vector2(108f, -90f).RotatedBy(npc.rotation);
-                        secondThrusterOffset.X *= npc.spriteDirection;
-                        Vector2 rocketVelocity = (npc.rotation - MathHelper.PiOver2 + 0.2f).ToRotationVector2() * rocketShootSpeed;
-                        rocketVelocity.X *= npc.spriteDirection;
-                        Utilities.NewProjectileBetter(npc.Center + firstThrusterOffset, rocketVelocity, ModContent.ProjectileType<RedirectingPlagueMissile>(), 0, 0f);
-                        Utilities.NewProjectileBetter(npc.Center + secondThrusterOffset, rocketVelocity, ModContent.ProjectileType<RedirectingPlagueMissile>(), 0, 0f);
-                    }
-                    npc.netUpdate = true;
-                }
+                    Vector2 missileShootVelocity = new Vector2(npc.velocity.X * 0.6f, 12f);
+                    Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 2f, missileShootVelocity, ModContent.ProjectileType<PlagueMissile>(), 160, 0f);
+				}
 
-                if (attackTimer >= shootDelay + 8f)
+                if (chargeTimer >= chargeTime)
                 {
-                    attackTimer = 0f;
-                    shootState = 0f;
-                    burstCounter++;
+                    chargeCount++;
+                    chargeTimer = 0f;
+                    chargeState = 0f;
                     npc.netUpdate = true;
+
+                    if (chargeCount > maxChargeCount)
+                        GotoNextAttackState(npc);
                 }
             }
         }
@@ -227,9 +402,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             switch (currentAttackState)
             {
                 case PBGAttackType.Charge:
-                    newAttackState = PBGAttackType.ReleaseMissilesUpward;
+                    newAttackState = PBGAttackType.MissileLaunch;
                     break;
-                case PBGAttackType.ReleaseMissilesUpward:
+                case PBGAttackType.MissileLaunch:
+                    newAttackState = PBGAttackType.CarpetBombing;
+                    break;
+                case PBGAttackType.CarpetBombing:
+                    newAttackState = PBGAttackType.PlagueVomit;
+                    break;
+                case PBGAttackType.PlagueVomit:
                     newAttackState = PBGAttackType.Charge;
                     break;
             }

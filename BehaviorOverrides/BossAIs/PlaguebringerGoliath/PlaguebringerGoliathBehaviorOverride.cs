@@ -17,6 +17,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
+        public const float Phase2LifeRatio = 0.65f;
+
         #region Enumerations
         // Make 8 attacks.
         public enum PBGAttackType
@@ -27,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             CarpetBombing,
             ExplodingPlagueChargers,
             DroneSummoning,
-            PlagueSwarm,
+            CarpetBombing2,
             BombConstructors,
         }
 
@@ -74,6 +76,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 case PBGAttackType.CarpetBombing:
                     DoBehavior_CarpetBombing(npc, target, enrageFactor, ref frameType);
                     break;
+                case PBGAttackType.ExplodingPlagueChargers:
+                    DoBehavior_ExplodingPlagueChargers(npc, target, enrageFactor, ref frameType);
+                    break;
+                case PBGAttackType.DroneSummoning:
+                    DoBehavior_DroneSummoning(npc, target, enrageFactor, attackTimer);
+                    break;
+                case PBGAttackType.CarpetBombing2:
+                    DoBehavior_CarpetBombing2(npc, target, enrageFactor, ref frameType);
+                    break;
+                case PBGAttackType.BombConstructors:
+                    DoBehavior_BombConstructors(npc, target, enrageFactor, ref attackTimer);
+                    break;
             }
 
             attackTimer++;
@@ -83,22 +97,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         #region Specific Behaviors
         public static void DoBehavior_Charge(NPC npc, Player target, float enrageFactor, ref float frameType)
         {
-            int maxChargeCount = (int)Math.Ceiling(5f + enrageFactor * 1.3f);
-            int chargeTime = (int)(48f - enrageFactor * 15f);
+            int maxChargeCount = (int)Math.Ceiling(5f + enrageFactor * 1.4f);
+            int chargeTime = (int)(48f - enrageFactor * 13f);
             bool canDoDiagonalCharges = enrageFactor > 0.3f;
-            float chargeSpeed = enrageFactor * 4f + 30f;
+            float chargeSpeed = enrageFactor * 13f + 26f;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
             ref float chargeTimer = ref npc.Infernum().ExtraAI[2];
             ref float chargeState = ref npc.Infernum().ExtraAI[3];
             ref float hoverTimer = ref npc.Infernum().ExtraAI[4];
-            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 540f, hoverOffsetY);
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 600f, hoverOffsetY);
+
+            if (NPC.AnyNPCs(ModContent.NPCType<SmallDrone>()))
+            {
+                chargeSpeed *= 0.625f;
+                chargeTime += 20;
+            }
 
             // Do initializations.
             if (Main.netMode != NetmodeID.MultiplayerClient && chargeState == 0f)
             {
-                hoverOffsetY = canDoDiagonalCharges ? -360f : 0f;
+                hoverOffsetY = canDoDiagonalCharges ? -400f : 0f;
                 if (chargeCount % 2 == 1)
                     hoverOffsetY = 0f;
                 chargeState = 1f;
@@ -313,7 +333,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public static void DoBehavior_CarpetBombing(NPC npc, Player target, float enrageFactor, ref float frameType)
         {
             int maxChargeCount = (int)Math.Ceiling(2f + enrageFactor * 1.1f);
-            int chargeTime = (int)(68f - enrageFactor * 31f);
+            int chargeTime = (int)(68f + enrageFactor * 16f);
             float chargeSpeed = enrageFactor * 2.75f + 27.5f;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
@@ -375,7 +395,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.velocity *= 0.97f;
 
 				// Otherwise, release missiles.
-				else if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 6f == 5f)
+				else if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 5f == 4f)
 				{
                     Vector2 missileShootVelocity = new Vector2(npc.velocity.X * 0.6f, 12f);
                     Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 2f, missileShootVelocity, ModContent.ProjectileType<PlagueMissile>(), 160, 0f);
@@ -394,6 +414,260 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
         }
 
+        public static void DoBehavior_ExplodingPlagueChargers(NPC npc, Player target, float enrageFactor, ref float frameType)
+        {
+            int attackCycleCount = 3;
+            int chargeTime = (int)(56f - enrageFactor * 17f);
+            int summonRate = (int)(24f - enrageFactor * 8f);
+            float chargeSpeed = enrageFactor * 4f + 25f;
+
+            ref float chargeCount = ref npc.Infernum().ExtraAI[0];
+            ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
+            ref float chargeTimer = ref npc.Infernum().ExtraAI[2];
+            ref float chargeState = ref npc.Infernum().ExtraAI[3];
+            ref float hoverTimer = ref npc.Infernum().ExtraAI[4];
+            ref float summonTimer = ref npc.Infernum().ExtraAI[5];
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, hoverOffsetY);
+
+            // Do initializations.
+            if (Main.netMode != NetmodeID.MultiplayerClient && chargeState == 0f)
+            {
+                hoverOffsetY = 400f * (chargeCount % 2f == 0f).ToDirectionInt();
+                chargeState = 1f;
+                summonTimer = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Hover until reaching the destination.
+            if (chargeState == 1f)
+            {
+                Vector2 hoverDestination = target.Center + hoverOffset;
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+
+                if (npc.WithinRange(hoverDestination, 255f))
+                {
+                    npc.velocity *= 0.935f;
+
+                    // Do the charge.
+                    if (npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f)
+                    {
+                        hoverTimer = 0f;
+                        chargeState = 2f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                        npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                        npc.netUpdate = true;
+
+                        Main.PlaySound(SoundID.Roar, target.Center, 0);
+                    }
+                }
+                else
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 3f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
+                npc.rotation = npc.velocity.X * 0.0125f;
+                hoverTimer++;
+            }
+
+            // Charge behavior.
+            if (chargeState == 2f)
+            {
+                frameType = (int)PBGFrameType.Charge;
+
+                npc.damage = npc.defDamage;
+                npc.rotation = npc.velocity.ToRotation();
+                if (npc.spriteDirection == -1)
+                    npc.rotation += MathHelper.Pi;
+
+                chargeTimer++;
+
+                // Slow down before transitioning back to hovering.
+                if (chargeTimer > chargeTime - 15f)
+                    npc.velocity *= 0.97f;
+
+                if (chargeTimer >= chargeTime)
+                {
+                    chargeCount++;
+                    hoverOffsetY = 0f;
+                    chargeTimer = 0f;
+                    chargeState++;
+                    npc.netUpdate = true;
+
+                    if (chargeCount > attackCycleCount)
+                        GotoNextAttackState(npc);
+                }
+            }
+
+            // Slow down and summon a bunch of explosive plague chargers.
+            if (chargeState == 3f)
+            {
+                summonTimer++;
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                npc.velocity *= 0.95f;
+                npc.rotation = npc.velocity.X * 0.0125f;
+
+                if (summonTimer % summonRate == summonRate - 1f)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Item/BrimflameRecharge"), target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient && NPC.CountNPCS(ModContent.NPCType<ExplosivePlagueCharger>()) < 9)
+					{
+                        Vector2 chargerSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * new Vector2(2f, 1f) * Main.rand.NextFloat(100f, 180f);
+                        NPC.NewNPC((int)chargerSpawnPosition.X, (int)chargerSpawnPosition.Y, ModContent.NPCType<ExplosivePlagueCharger>());
+					}
+                }
+
+                if (summonTimer >= 120f)
+				{
+                    summonTimer = 0f;
+                    chargeState = 0f;
+                    npc.netUpdate = true;
+				}
+            }
+        }
+
+        public static void DoBehavior_DroneSummoning(NPC npc, Player target, float enrageFactor, float attackTimer)
+		{
+            int droneSummonCount = (int)(3f + enrageFactor * 2.2f);
+
+            // Slow down.
+            npc.velocity *= 0.97f;
+            npc.rotation = npc.velocity.X * 0.0125f;
+
+            // Summon drones once ready.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 75f)
+			{
+                for (int i = 0; i < droneSummonCount; i++)
+				{
+                    float horizontalSpawnOffset = MathHelper.Lerp(-560f, 560f, i / (float)(droneSummonCount - 1f));
+                    Vector2 spawnPosition = target.Center + new Vector2(horizontalSpawnOffset, -800f);
+                    NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<SmallDrone>());
+				}
+			}
+
+            if (attackTimer >= 150f)
+                GotoNextAttackState(npc);
+		}
+
+        public static void DoBehavior_CarpetBombing2(NPC npc, Player target, float enrageFactor, ref float frameType)
+        {
+            int attackCycleCount = 4;
+            int chargeTime = (int)(56f - enrageFactor * 17f);
+            int bombingDelay = (int)(105f - enrageFactor * 45f);
+            float chargeSpeed = enrageFactor * 4f + 24f;
+
+            ref float chargeCount = ref npc.Infernum().ExtraAI[0];
+            ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
+            ref float chargeTimer = ref npc.Infernum().ExtraAI[2];
+            ref float chargeState = ref npc.Infernum().ExtraAI[3];
+            ref float hoverTimer = ref npc.Infernum().ExtraAI[4];
+            ref float bombingTimer = ref npc.Infernum().ExtraAI[5];
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, hoverOffsetY);
+
+            // Do initializations.
+            if (Main.netMode != NetmodeID.MultiplayerClient && chargeState == 0f)
+            {
+                hoverOffsetY = 400f * (chargeCount % 2f == 0f).ToDirectionInt();
+                chargeState = 1f;
+                bombingTimer = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Hover until reaching the destination.
+            if (chargeState == 1f)
+            {
+                Vector2 hoverDestination = target.Center + hoverOffset;
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+
+                if (npc.WithinRange(hoverDestination, 255f))
+                {
+                    npc.velocity *= 0.935f;
+
+                    // Do the charge.
+                    if (npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f)
+                    {
+                        hoverTimer = 0f;
+                        chargeState = 2f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                        npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                        npc.netUpdate = true;
+
+                        Main.PlaySound(SoundID.Roar, target.Center, 0);
+                    }
+                }
+                else
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 3f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
+                npc.rotation = npc.velocity.X * 0.0125f;
+                hoverTimer++;
+            }
+
+            // Charge behavior.
+            if (chargeState == 2f)
+            {
+                frameType = (int)PBGFrameType.Charge;
+
+                npc.damage = npc.defDamage;
+                npc.rotation = npc.velocity.ToRotation();
+                if (npc.spriteDirection == -1)
+                    npc.rotation += MathHelper.Pi;
+
+                chargeTimer++;
+
+                // Slow down before transitioning back to hovering.
+                if (chargeTimer > chargeTime - 15f)
+                    npc.velocity *= 0.97f;
+
+                if (chargeTimer >= chargeTime)
+                {
+                    chargeCount++;
+                    hoverOffsetY = 0f;
+                    chargeTimer = 0f;
+                    chargeState++;
+                    npc.netUpdate = true;
+
+                    if (chargeCount > attackCycleCount)
+                        GotoNextAttackState(npc);
+                }
+            }
+
+            // Slow down and summon a bunch of explosive plague chargers.
+            if (chargeState == 3f)
+            {
+                bombingTimer++;
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                npc.velocity *= 0.95f;
+                npc.rotation = npc.velocity.X * 0.0125f;
+
+                if (bombingTimer == 1f)
+                {
+                    float bombRotation = Main.rand.NextBool(2).ToInt() * Main.rand.NextFloatDirection() * 0.16f;
+                    for (float horizontalOffset = -1900f; horizontalOffset < 1900f; horizontalOffset += 90f)
+					{
+                        int telegraph = Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * horizontalOffset, Vector2.Zero, ModContent.ProjectileType<BombingTelegraph>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(telegraph))
+						{
+                            Main.projectile[telegraph].ai[0] = bombingDelay;
+                            Main.projectile[telegraph].owner = target.whoAmI;
+                            Main.projectile[telegraph].rotation = bombRotation;
+                        }
+					}
+                }
+
+                if (bombingTimer == bombingDelay)
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TankCannon"), target.Center);
+
+                if (bombingTimer > bombingDelay + 90f)
+                {
+                    bombingTimer = 0f;
+                    chargeState = 0f;
+                    npc.netUpdate = true;
+                }
+            }
+        }
+
+        public static void DoBehavior_BombConstructors(NPC npc, Player target, float enrageFactor, ref float attackTimer)
+		{
+
+		}
+
         public static void GotoNextAttackState(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -406,18 +680,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     break;
                 case PBGAttackType.MissileLaunch:
                     newAttackState = PBGAttackType.CarpetBombing;
+                    if (Main.rand.NextBool(2) && lifeRatio < Phase2LifeRatio)
+                        newAttackState = PBGAttackType.CarpetBombing2;
                     break;
                 case PBGAttackType.CarpetBombing:
+                case PBGAttackType.CarpetBombing2:
                     newAttackState = PBGAttackType.PlagueVomit;
                     break;
                 case PBGAttackType.PlagueVomit:
+                    newAttackState = PBGAttackType.ExplodingPlagueChargers;
+                    break;
+                case PBGAttackType.ExplodingPlagueChargers:
+                    newAttackState = PBGAttackType.Charge;
+                    if (lifeRatio < Phase2LifeRatio)
+                        newAttackState = PBGAttackType.DroneSummoning;
+                    break;
+                case PBGAttackType.DroneSummoning:
                     newAttackState = PBGAttackType.Charge;
                     break;
             }
-
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 8; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
             npc.netUpdate = true;
         }
@@ -474,7 +758,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             int afterimageCount = 10;
             Rectangle frame = new Rectangle(npc.frame.X, npc.frame.Y, texture.Width / 2, texture.Height / frameCount);
             Vector2 origin = frame.Size() / 2f;
-            Vector2 drawOffset = Vector2.UnitX * (charging ? 175f : 125f);
 
             if (CalamityConfig.Instance.Afterimages)
             {
@@ -482,8 +765,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 {
                     Color color38 = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
                     Vector2 drawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
-                    drawPosition -= new Vector2(texture.Width, texture.Height / frameCount) * npc.scale / 2f;
-                    drawPosition += origin * npc.scale + drawOffset;
                     spriteBatch.Draw(texture, drawPosition, frame, color38, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }

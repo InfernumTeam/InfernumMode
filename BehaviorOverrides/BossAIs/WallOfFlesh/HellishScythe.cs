@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,6 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
     public class HellishScythe : ModProjectile
     {
 		public ref float Time => ref projectile.ai[0];
+		public ref float TelegraphTime => ref projectile.ai[1];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Demon Scythe");
 
 		public override void SetDefaults()
@@ -25,26 +27,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override void AI()
 		{
-			if (projectile.ai[1] == 0f && projectile.type == 44)
-			{
-				projectile.ai[1] = 1f;
-				Main.PlaySound(SoundID.Item8, projectile.position);
-			}
-			Time++;
+			TelegraphTime++;
+			if (TelegraphTime <= 30f)
+				return;
 
 			projectile.rotation += projectile.direction * 0.8f;
 			if (Time >= 30f)
 			{
 				if (Time < 100f)
-					projectile.velocity *= 1.046f;
+					projectile.velocity *= 1.052f;
 				else
 					Time = 200f;
 			}
-			for (int num258 = 0; num258 < 2; num258++)
+
+			for (int i = 0; i < 2; i++)
 			{
-				Dust demonMagic = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 27, 0f, 0f, 100, default(Color), 1f);
+				Dust demonMagic = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 27, 0f, 0f, 100, default, 1f);
 				demonMagic.noGravity = true;
 			}
+
+			Time++;
 		}
 
 		public override Color? GetAlpha(Color lightColor) => Color.White;
@@ -62,6 +64,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
 				Dust.NewDust(projectile.position, projectile.width, projectile.height, 27, projectile.velocity.X, projectile.velocity.Y, 100, default, 1f);
 			}
+		}
+
+		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+		{
+			if (TelegraphTime > 30f)
+				return true;
+
+			float width = Utils.InverseLerp(0f, 8f, TelegraphTime, true) * 3f;
+			Vector2 start = projectile.Center - Vector2.UnitY * 2700f;
+			Vector2 end = projectile.Center + Vector2.UnitY * 2700f;
+			spriteBatch.DrawLineBetter(start, end, Color.BlueViolet * 0.67f, width);
+			return false;
 		}
 	}
 }

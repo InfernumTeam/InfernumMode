@@ -47,11 +47,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             time++;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && time % 75f == 74f)
+            bool canReachTarget = Collision.CanHit(npc.position, npc.width, npc.height, target.position, target.width, target.height);
+            int shootRate = canReachTarget ? 75 : 30;
+            float predictivenessFactor = canReachTarget ? 45f : 24f;
+            if (Main.netMode != NetmodeID.MultiplayerClient && time % shootRate == shootRate - 1f)
             {
-                float shootSpeed = NPC.AnyNPCs(ModContent.NPCType<Ninja>()) ? 6f : 9f;
-                Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * 45f);
-                Utilities.NewProjectileBetter(npc.Center, aimDirection * shootSpeed, ModContent.ProjectileType<JewelBeam>(), 84, 0f);
+                float shootSpeed = NPC.AnyNPCs(ModContent.NPCType<Ninja>()) && !canReachTarget ? 6f : 9f;
+                Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor);
+                int beam = Utilities.NewProjectileBetter(npc.Center, aimDirection * shootSpeed, ModContent.ProjectileType<JewelBeam>(), 84, 0f);
+                if (Main.projectile.IndexInRange(beam))
+                    Main.projectile[beam].tileCollide = canReachTarget;
             }
 
             return false;

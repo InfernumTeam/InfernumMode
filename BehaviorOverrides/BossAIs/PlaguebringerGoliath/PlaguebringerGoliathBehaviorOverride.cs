@@ -3,6 +3,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,10 +18,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
-        public const float Phase2LifeRatio = 0.65f;
+        public const float Phase2LifeRatio = 0.7f;
+        public const float Phase3LifeRatio = 0.3f;
 
         #region Enumerations
-        // Make 8 attacks.
         public enum PBGAttackType
         {
             Charge,
@@ -506,7 +507,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
                 if (summonTimer % summonRate == summonRate - 1f)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Item/BrimflameRecharge"), target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient && NPC.CountNPCS(ModContent.NPCType<ExplosivePlagueCharger>()) < 9)
 					{
                         Vector2 chargerSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * new Vector2(2f, 1f) * Main.rand.NextFloat(100f, 180f);
@@ -525,7 +525,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public static void DoBehavior_DroneSummoning(NPC npc, Player target, float enrageFactor, float attackTimer)
 		{
-            int droneSummonCount = (int)(3f + enrageFactor * 2.2f);
+            int droneSummonCount = 4;
 
             // Slow down.
             npc.velocity *= 0.97f;
@@ -534,22 +534,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Summon drones once ready.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 75f)
 			{
+                List<int> drones = new List<int>();
                 for (int i = 0; i < droneSummonCount; i++)
 				{
-                    float horizontalSpawnOffset = MathHelper.Lerp(-560f, 560f, i / (float)(droneSummonCount - 1f));
-                    Vector2 spawnPosition = target.Center + new Vector2(horizontalSpawnOffset, -800f);
-                    NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<SmallDrone>());
-				}
-			}
+                    int drone = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SmallDrone>());
+                    Main.npc[drone].target = npc.target;
+                    drones.Add(drone);
+                }
 
-            if (attackTimer >= 150f)
+                for (int i = 0; i < drones.Count; i++)
+				{
+                    Main.npc[drones[i]].ai[0] = -35f;
+                    Main.npc[drones[i]].ai[1] = drones[(i + 1) % drones.Count];
+                    Main.npc[drones[i]].ai[2] = MathHelper.TwoPi * (i + 0.5f) / drones.Count;
+				}
+            }
+
+            if (attackTimer >= SmallDrone.LaserAttackTime + 125f)
                 GotoNextAttackState(npc);
 		}
 
         public static void DoBehavior_CarpetBombing2(NPC npc, Player target, float enrageFactor, ref float frameType)
         {
             int attackCycleCount = 4;
-            int chargeTime = (int)(56f - enrageFactor * 17f);
+            int chargeTime = (int)(56f - enrageFactor * 22f);
             int bombingDelay = (int)(105f - enrageFactor * 45f);
             float chargeSpeed = enrageFactor * 4f + 24f;
 
@@ -665,8 +673,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public static void DoBehavior_BombConstructors(NPC npc, Player target, float enrageFactor, ref float attackTimer)
 		{
+            // Move over the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 420f;
+            if (!npc.WithinRange(hoverDestination, 95f))
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 0.7f);
+            npc.rotation = npc.velocity.X * 0.0125f;
+            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-		}
+            // Release a swarm of drones and a nuke.
+            if (attackTimer == 1f)
+			{
+                Main.NewText("NUCLEAR CORE GENERATED. INITIATING BUILD PROCEDURE!", Color.Lime);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+                    for (int i = 0; i < 4; i++)
+                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BuilderDroneSmall>(), npc.whoAmI, Target: npc.target);
+                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BuilderDroneBig>(), npc.whoAmI, Target: npc.target);
+                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y + 24, ModContent.NPCType<PlagueNuke>(), npc.whoAmI, Target: npc.target);
+                }
+                npc.netUpdate = true;
+			}
+
+            if (attackTimer > PlagueNuke.BuildTime + PlagueNuke.ExplodeDelay + 120f)
+                GotoNextAttackState(npc);
+        }
 
         public static void GotoNextAttackState(NPC npc)
         {
@@ -688,17 +718,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     newAttackState = PBGAttackType.PlagueVomit;
                     break;
                 case PBGAttackType.PlagueVomit:
-                    newAttackState = PBGAttackType.ExplodingPlagueChargers;
-                    break;
-                case PBGAttackType.ExplodingPlagueChargers:
                     newAttackState = PBGAttackType.Charge;
                     if (lifeRatio < Phase2LifeRatio)
-                        newAttackState = PBGAttackType.DroneSummoning;
+                        newAttackState = PBGAttackType.ExplodingPlagueChargers;
+                    break;
+                case PBGAttackType.ExplodingPlagueChargers:
+                    newAttackState = PBGAttackType.DroneSummoning;
                     break;
                 case PBGAttackType.DroneSummoning:
                     newAttackState = PBGAttackType.Charge;
+                    if (lifeRatio < Phase3LifeRatio)
+                        newAttackState = PBGAttackType.BombConstructors;
+                    break;
+                case PBGAttackType.BombConstructors:
+                    newAttackState = PBGAttackType.Charge;
                     break;
             }
+
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;
             for (int i = 0; i < 8; i++)

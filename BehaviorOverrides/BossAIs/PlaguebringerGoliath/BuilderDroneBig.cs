@@ -5,28 +5,24 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
-    public class SmallDrone : ModNPC
+    public class BuilderDroneBig : ModNPC
     {
-        public Vector2 InitialTargetPosition;
+        public Vector2 GeneralHoverPosition;
         public Player Target => Main.player[npc.target];
-        public ref float AttackTimer => ref npc.ai[0];
-        public ref float NextDroneIndex => ref npc.ai[1];
-        public ref float OffsetDirection => ref npc.ai[2];
-        public ref float MoveOffset => ref npc.ai[3];
-        public const int LaserAttackTime = 250;
+        public ref float GeneralTimer => ref npc.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Small Drone");
+            DisplayName.SetDefault("Big Builder Drone");
             Main.npcFrameCount[npc.type] = 5;
         }
 
         public override void SetDefaults()
         {
-            npc.damage = 140;
+            npc.damage = 100;
             npc.npcSlots = 0f;
             npc.width = npc.height = 42;
             npc.defense = 15;
-            npc.lifeMax = 1220;
+            npc.lifeMax = 4880;
             npc.aiStyle = aiType = -1;
             npc.knockBackResist = 0f;
             npc.noGravity = true;
@@ -54,32 +50,52 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             else if (npc.timeLeft > 600)
                 npc.timeLeft = 600;
 
-            if (InitialTargetPosition == Vector2.Zero)
-                InitialTargetPosition = Target.Center;
+            // Randomly play sounds to indicate building.
+            if (Main.rand.NextBool(10))
+			{
+                switch (Main.rand.Next(4))
+				{
+                    case 0:
+                        Main.PlaySound(SoundID.Item12, npc.Center);
+                        break;
+                    case 1:
+                        Main.PlaySound(SoundID.Item15, npc.Center);
+                        break;
+                    case 2:
+                        Main.PlaySound(SoundID.Item22, npc.Center);
+                        break;
+                    case 3:
+                        Main.PlaySound(SoundID.Item23, npc.Center);
+                        break;
+                }
+			}
 
-            MoveOffset = MathHelper.Lerp(0f, 1400f, 1f - AttackTimer / LaserAttackTime);
-            MoveOffset += MathHelper.Lerp(450f, 0f, Utils.InverseLerp(-35f, 0f, AttackTimer, true));
-            npc.Center = InitialTargetPosition + OffsetDirection.ToRotationVector2() * MoveOffset;
-            if (AttackTimer == 0f)
-            {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MechGaussRifle"), npc.Center);
+            Vector2 continousHoverPosition = Target.Center + new Vector2(-250f, -175f);
+            if (Vector2.Distance(GeneralHoverPosition, continousHoverPosition) > 325f)
+                GeneralHoverPosition = continousHoverPosition;
+
+            // Move in the general area of the hover position if not noticeably close or movement is very low.
+            if (!npc.WithinRange(continousHoverPosition, 200f) || npc.velocity.Length() < 1f)
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(GeneralHoverPosition) * 13f, 0.85f);
+
+            // Explode into rockets if the small builders are gone.
+            if (!NPC.AnyNPCs(ModContent.NPCType<BuilderDroneSmall>()) || GeneralTimer >= PlagueNuke.BuildTime)
+			{
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 laserDirection = npc.SafeDirectionTo(Main.npc[(int)NextDroneIndex].Center, Vector2.UnitY);
-                    int laser = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<PlagueDeathray>(), 215, 0f);
-                    if (Main.projectile.IndexInRange(laser))
-                        Main.projectile[laser].ai[1] = npc.whoAmI;
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Vector2 rocketVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(9f, 13f);
+                        Vector2 rocketSpawnPosition = npc.Center + rocketVelocity * 4f;
+                        Utilities.NewProjectileBetter(rocketSpawnPosition, rocketVelocity, ModContent.ProjectileType<RedirectingPlagueMissile>(), 160, 0f);
+                    }
                 }
-            }
-            AttackTimer++;
 
-            // Explode if close to the target or enough time has passed.
-            if (npc.WithinRange(Target.Center, 40f) || AttackTimer > LaserAttackTime)
-            {
                 npc.life = 0;
                 npc.checkDead();
                 npc.active = false;
             }
+            GeneralTimer++;
         }
 
         public override bool PreNPCLoot() => false;
@@ -114,6 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 plague.velocity *= 2f;
                 plague.noGravity = true;
             }
+
             return true;
         }
 

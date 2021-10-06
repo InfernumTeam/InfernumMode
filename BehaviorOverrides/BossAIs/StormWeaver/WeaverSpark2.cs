@@ -12,10 +12,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
         public override void SetDefaults()
         {
-            projectile.width = 72;
-            projectile.height = 72;
+            projectile.width = projectile.height = 18;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
+            projectile.hostile = true;
             projectile.timeLeft = 360;
             projectile.Opacity = 0f;
             projectile.hide = true;

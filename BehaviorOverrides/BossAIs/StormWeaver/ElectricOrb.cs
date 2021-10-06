@@ -10,11 +10,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Orb");
+            Main.projFrames[projectile.type] = 6;
         }
 
         public override void SetDefaults()
         {
-            Main.projFrames[projectile.type] = 6;
             projectile.width = projectile.height = 88;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
@@ -53,9 +53,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             }
 
             float initialSparkRotation = Main.rand.NextFloat(MathHelper.TwoPi);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 6; i++)
             {
-                Vector2 sparkVelocity = (MathHelper.TwoPi * i / 10f + initialSparkRotation).ToRotationVector2() * 15f;
+                Vector2 sparkVelocity = (MathHelper.TwoPi * i / 6f + initialSparkRotation).ToRotationVector2() * 15f;
                 Utilities.NewProjectileBetter(projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<WeaverSpark>(), 255, 0f);
             }
         }

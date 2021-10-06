@@ -336,12 +336,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             int maxChargeCount = (int)Math.Ceiling(2f + enrageFactor * 1.1f);
             int chargeTime = (int)(68f + enrageFactor * 16f);
             float chargeSpeed = enrageFactor * 2.75f + 27.5f;
+            float horizontalOffset = 750f;
+            if (enrageFactor > 0.7f)
+                horizontalOffset = 900f;
+            if (enrageFactor > 1f)
+                horizontalOffset = 1100f;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
             ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
             ref float chargeState = ref npc.Infernum().ExtraAI[2];
             ref float hoverTimer = ref npc.Infernum().ExtraAI[3];
-            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 740f, -325f);
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * horizontalOffset, -325f);
 
             // Do initializations.
             if (Main.netMode != NetmodeID.MultiplayerClient && chargeState == 0f)

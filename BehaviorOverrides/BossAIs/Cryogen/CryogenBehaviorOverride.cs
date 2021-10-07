@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-		#region Enumerations
+        #region Enumerations
         internal enum CryogenAttackState
         {
             IcicleCircleBurst,
@@ -458,7 +458,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
             ref float teleportPositionX = ref npc.Infernum().ExtraAI[0];
             ref float teleportPositionY = ref npc.Infernum().ExtraAI[1];
-            
+
             // Idly release bombs.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % idleBombReleaseRate == idleBombReleaseRate - 1f)
             {
@@ -565,9 +565,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
             // Periodically create two pillars.
             if (icePillarCreationTimer >= pillarCreationRate)
-			{
+            {
                 for (int i = -1; i <= 1; i += 2)
-				{
+                {
                     Vector2 spawnPosition = target.Center + Vector2.UnitX * pillarHorizontalOffset * i;
                     Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<IcePillar>(), 130, 0f);
                 }
@@ -606,21 +606,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 npc.rotation = npc.velocity.X * 0.02f;
                 npc.Opacity = Utils.InverseLerp(intialTeleportDelay - 1f, intialTeleportDelay - 24f, attackTimer, true);
             }
-			else
-			{
+            else
+            {
                 teleportTimer++;
                 npc.Opacity = Utils.InverseLerp(teleportDelay - 1f, teleportDelay - 24f, teleportTimer, true);
 
                 // Periodically release redirecting icicles.
                 if (attackTimer % spikeReleaseRate == spikeReleaseRate - 1f)
-				{
+                {
                     Main.PlaySound(SoundID.Item28, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-					{
+                    {
                         Vector2 icicleShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 4f);
                         Utilities.NewProjectileBetter(npc.Center + icicleShootVelocity * 4f, icicleShootVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 150, 0f);
-					}
-				}
+                    }
+                }
             }
 
             // Reset opacity and teleport after the delay is finished.
@@ -651,7 +651,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
                 EmitIceParticles(npc.Center, 4f, 40);
             }
-		}
+        }
 
         public static void DoAttack_HorizontalDash(NPC npc, Player target, ref float attackTimer, ref float attackState, float attackPower)
         {
@@ -769,7 +769,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 blizzardSound = Main.PlayTrackedSound(SoundID.BlizzardStrongLoop, npc.Center).ToFloat();
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 60f && attackTimer % spiritSummonRate == spiritSummonRate - 1f)
-			{
+            {
                 Vector2 spiritSpawnPosition = target.Center - Vector2.UnitY * Main.rand.NextFloat(450f);
                 spiritSpawnPosition.X += Main.rand.NextBool(2).ToDirectionInt() * 825f;
                 Vector2 spiritVelocity = Vector2.UnitX * Math.Sign(target.Center.X - spiritSpawnPosition.X) * 6.5f;

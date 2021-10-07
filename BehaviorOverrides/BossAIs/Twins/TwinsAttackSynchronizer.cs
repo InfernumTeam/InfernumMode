@@ -288,7 +288,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 if (alone)
                 {
-                    npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.05f, npc.lifeMax * 0.5f, 1f - healCountdown / TwinsShield.HealTime);
+                    npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.05f, npc.lifeMax * 0.3f, 1f - healCountdown / TwinsShield.HealTime);
                     if (healCountdown == TwinsShield.HealTime - 5)
                         Main.NewText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: ERROR DETECTING SECONDARY UNIT. BURNING EXCESS FUEL RESERVES.", npc.type == NPCID.Spazmatism ? Color.MediumPurple : Color.IndianRed);
                     healCountdown--;

@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
-            projectile.timeLeft = 240;
+            projectile.timeLeft = 150;
         }
 
         public override void AI()

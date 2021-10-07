@@ -113,7 +113,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             int maxChargeCount = (int)Math.Ceiling(5f + enrageFactor * 1.4f);
             int chargeTime = (int)(48f - enrageFactor * 13f);
             bool canDoDiagonalCharges = enrageFactor > 0.3f;
-            float chargeSpeed = enrageFactor * 13f + 26f;
+            float chargeSpeed = enrageFactor * 11f + 24f;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
@@ -573,9 +573,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public static void DoBehavior_CarpetBombing2(NPC npc, Player target, float enrageFactor, ref float frameType)
         {
-            int attackCycleCount = 4;
+            int attackCycleCount = 3;
             int chargeTime = (int)(56f - enrageFactor * 22f);
-            int bombingDelay = (int)(105f - enrageFactor * 45f);
+            int bombingDelay = (int)(65f - enrageFactor * 22f);
             float chargeSpeed = enrageFactor * 4f + 24f;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];

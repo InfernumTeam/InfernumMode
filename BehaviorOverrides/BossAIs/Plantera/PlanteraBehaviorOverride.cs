@@ -239,25 +239,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             int blossomRate = inPhase4 ? 200 : 180;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % blossomRate == blossomRate - 1f)
             {
-                int petalCount = inPhase4 ? 6 : 5;
+                int petalCount = inPhase4 ? 10 : 8;
 
                 for (int i = 0; i < petalCount; i++)
                 {
                     Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / petalCount).ToRotationVector2() * 500f;
+                    spawnPosition += Main.rand.NextVector2Circular(150f, 150f);
                     Vector2 centeredSpawnPosition = spawnPosition.ToTileCoordinates().ToWorldCoordinates();
                     Utilities.NewProjectileBetter(centeredSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ExplodingFlower>(), 0, 0f);
                 }
             }
 
             // Release seeds.
-            int seedFireRate = enraged ? 10 : 16;
+            int seedFireRate = enraged ? 15 : 27;
             if (inPhase4)
                 seedFireRate -= 2;
             if (attackTimer % seedFireRate == seedFireRate - 1f)
             {
-                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 17.5f;
-                Vector2 spawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.Zero) * 68f;
-                Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, 155, 0f);
+                for (int i = 0; i < 3; i++)
+                {
+                    float shootOffsetAngle = MathHelper.Lerp(-0.34f, 0.34f, i / 2f);
+                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 13.5f;
+                    Vector2 spawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.Zero) * 68f;
+                    Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, 155, 0f);
+                }
             }
 
             if (attackTimer > 360f)
@@ -304,7 +309,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 }
 
                 // Make the next petal burst take longer to happen.
-                petalReleaseDelay = (int)(petalReleaseDelay * 1.5f);
+                petalReleaseDelay = (int)(petalReleaseDelay * 1.4f);
                 petalReleaseCountdown = 0f;
                 petalCount++;
             }
@@ -324,7 +329,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 npc.velocity *= 0.9f;
 
             int gasReleaseRate = enraged ? 50 : 90;
-            float gasSpeed = enraged ? 7f : 3.6f;
 
             // Periodically release gas.
             if (attackTimer % gasReleaseRate == gasReleaseRate - 1f)
@@ -334,10 +338,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 32f;
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < 15; i++)
                     {
-                        float offsetAngle = MathHelper.Lerp(-0.78f, 0.78f, i / 5f);
-                        Vector2 gasSporeVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(offsetAngle) * gasSpeed;
+                        Vector2 gasSporeVelocity;
+                        do
+                            gasSporeVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 26f);
+                        while (gasSporeVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.53f);
+
+                        if (enraged)
+                            gasSporeVelocity *= 1.25f;
+
                         Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGasPlantera>(), 160, 0f);
                     }
                 }
@@ -443,7 +453,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // Stop attempting to spawn more flowers once enough have been decided.
-                    if (flowerSpawnPositions.Count > (inPhase4 ? 18 : 14))
+                    if (flowerSpawnPositions.Count > (inPhase4 ? 12 : 9))
                         break;
                 }
 

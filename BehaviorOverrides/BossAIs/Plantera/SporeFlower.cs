@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             int spore = NPC.NewNPC((int)projectile.Center.X, (int)projectile.Center.Y, NPCID.Spore);
             if (Main.npc.IndexInRange(spore))
-                Main.npc[spore].velocity = -Vector2.UnitY.RotatedByRandom(0.67f) * Main.rand.NextFloat(2f, 4f);
+                Main.npc[spore].velocity = -Vector2.UnitY.RotatedByRandom(0.67f) * Main.rand.NextFloat(3f, 6f);
 		}
 
 		public override Color? GetAlpha(Color lightColor) => Color.Red * 0.6f;

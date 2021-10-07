@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
@@ -30,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             if (Time < 60f)
             {
                 float spinSlowdown = Utils.InverseLerp(56f, 40f, Time, true);
-                projectile.velocity *= 0.95f;
+                projectile.velocity *= 0.93f;
                 projectile.rotation += (projectile.velocity.X > 0f).ToDirectionInt() * spinSlowdown * 0.3f;
                 if (spinSlowdown < 1f)
                 {
@@ -40,9 +41,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             }
 
             if (Time == 60f)
-                projectile.velocity = projectile.SafeDirectionTo(closestPlayer.Center + closestPlayer.velocity * AimAheadFactor) * 11f;
-            if (Time > 60f && projectile.velocity.Length() < 25f)
-                projectile.velocity *= 1.014f;
+            {
+                projectile.velocity = projectile.SafeDirectionTo(closestPlayer.Center + closestPlayer.velocity * AimAheadFactor) * 9f;
+                Main.PlaySound(SoundID.Item8, projectile.Center);
+            }
+            if (Time > 60f && projectile.velocity.Length() < 16f)
+                projectile.velocity *= 1.01f;
 
             Lighting.AddLight(projectile.Center, Vector3.One * projectile.Opacity * 0.4f);
             Time++;

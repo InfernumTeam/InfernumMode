@@ -50,6 +50,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             npc.TargetClosest();
 
             Player target = Main.player[npc.target];
+
+            // Fly away if the target is gone.
+            if (!target.active || target.dead)
+			{
+                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 24f, 0.025f);
+                npc.rotation = npc.velocity.X * 0.02f;
+                if (!npc.WithinRange(target.Center, 4200f))
+                    npc.active = false;
+
+                return false;
+			}
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float enrageFactor = 1f - lifeRatio;
             if (target.Center.Y < Main.worldSurface * 16f)

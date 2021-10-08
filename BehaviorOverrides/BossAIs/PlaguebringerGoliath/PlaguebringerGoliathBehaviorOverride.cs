@@ -417,7 +417,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.velocity *= 0.97f;
 
 				// Otherwise, release missiles.
-				else if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 5f == 4f)
+				else if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 12f == 11f)
 				{
                     Vector2 missileShootVelocity = new Vector2(npc.velocity.X * 0.6f, 12f);
                     Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 2f, missileShootVelocity, ModContent.ProjectileType<PlagueMissile>(), 160, 0f);
@@ -853,12 +853,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 case PBGAttackType.PlagueVomit:
                     newAttackState = PBGAttackType.Charge;
                     if (lifeRatio < Phase2LifeRatio)
-                        newAttackState = PBGAttackType.ExplodingPlagueChargers;
-                    break;
-                case PBGAttackType.ExplodingPlagueChargers:
-                    newAttackState = PBGAttackType.DroneSummoning;
+                        newAttackState = PBGAttackType.DroneSummoning;
                     break;
                 case PBGAttackType.DroneSummoning:
+                    newAttackState = PBGAttackType.ExplodingPlagueChargers;
+                    break;
+                case PBGAttackType.ExplodingPlagueChargers:
                     newAttackState = PBGAttackType.Charge;
                     if (lifeRatio < Phase3LifeRatio)
                         newAttackState = PBGAttackType.BombConstructors;

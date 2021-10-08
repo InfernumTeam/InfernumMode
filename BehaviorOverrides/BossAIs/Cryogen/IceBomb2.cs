@@ -32,9 +32,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 5; i++)
             {
-                Vector2 spikeVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.33f, 0.33f, i / 2f)) * 5f;
+                Vector2 spikeVelocity = -Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.43f, 0.43f, i / 4f)) * 15f;
                 Utilities.NewProjectileBetter(projectile.Center, spikeVelocity, ModContent.ProjectileType<IceRain2>(), 120, 0f);
             }
         }

@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     Main.numClouds = Main.numCloudsTemp;
                     Main.windSpeedTemp = 1.56f;
                     Main.windSpeedSet = Main.windSpeedTemp;
-                    Main.maxRaining = 0.98f;
+                    Main.maxRaining = 0.9f;
                 }
 
                 npc.localAI[0] = 1f;

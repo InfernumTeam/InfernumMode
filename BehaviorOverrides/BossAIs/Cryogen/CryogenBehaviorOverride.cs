@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             Main.numClouds = Main.numCloudsTemp;
             Main.windSpeedTemp = MathHelper.Lerp(0f, 0.82f, blizzardIntensity);
             Main.windSpeedSet = Main.windSpeedTemp;
-            Main.maxRaining = blizzardIntensity * 0.98f;
+            Main.maxRaining = blizzardIntensity * 0.9f;
             Main.windSpeed = MathHelper.Lerp(Main.windSpeed, Main.windSpeedSet, 0.04f);
             Main.raining = true;
             return false;
@@ -130,6 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             {
                 EmitIceParticles(npc.Center, 3.5f, 40);
 
+                // Emit gores at the start as necessary.
                 if (subphaseState == 0f)
                 {
                     for (int i = 1; i <= 5; i++)
@@ -144,6 +145,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                         Gore.NewGore(npc.Center, npc.velocity, InfernumMode.Instance.GetGoreSlot("Gores/CryogenGore" + i), npc.scale);
                 }
 
+                // Reset everything and sync.
+                npc.frame.Y = 0;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     attackState = 0f;
@@ -193,9 +196,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             {
                 CryogenAttackState.IcicleCircleBurst,
                 CryogenAttackState.ShatteringIcePillars,
+                CryogenAttackState.PredictiveIcicles,
                 CryogenAttackState.IcicleCircleBurst,
                 CryogenAttackState.TeleportAndReleaseIceBombs,
                 CryogenAttackState.IcicleCircleBurst,
+                CryogenAttackState.PredictiveIcicles,
                 CryogenAttackState.ShatteringIcePillars,
             };
 
@@ -226,8 +231,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 CryogenAttackState.IcicleCircleBurst,
                 CryogenAttackState.ShatteringIcePillars,
                 CryogenAttackState.IcicleTeleportDashes,
+                CryogenAttackState.PredictiveIcicles,
                 CryogenAttackState.TeleportAndReleaseIceBombs,
                 CryogenAttackState.IcicleCircleBurst,
+                CryogenAttackState.PredictiveIcicles,
                 CryogenAttackState.TeleportAndReleaseIceBombs,
                 CryogenAttackState.IcicleTeleportDashes,
             };
@@ -273,9 +280,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             {
                 case CryogenAttackState.IcicleCircleBurst:
                     DoAttack_IcicleCircleBurst(npc, target, ref attackTimer, ref attackState, attackPower);
-                    break;
-                case CryogenAttackState.PredictiveIcicles:
-                    DoAttack_PredictiveIcicles(npc, target, ref attackTimer, ref attackState, attackPower);
                     break;
                 case CryogenAttackState.ShatteringIcePillars:
                     DoAttack_ShatteringIcePillars(npc, target, ref attackTimer, ref attackState, attackPower);
@@ -422,6 +426,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             if (attackTimer % burstCreationRate == burstCreationRate - 1f)
             {
                 EmitIceParticles(npc.Center, 3.5f, 25);
+                Main.PlaySound(SoundID.Item28, npc.Center);
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < icicleCount; i++)
@@ -840,7 +846,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                     {
                         Vector2 projectileVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(6.5f, 10.5f);
                         Vector2 spawnPosition = npc.Center + projectileVelocity * 4f;
-                        Utilities.NewProjectileBetter(spawnPosition, projectileVelocity, projectileType, 135, 0f);
+                        int projectile = Utilities.NewProjectileBetter(spawnPosition, projectileVelocity, projectileType, 135, 0f);
+                        if (projectileType == ModContent.ProjectileType<AimedIcicleSpike>() && Main.projectile.IndexInRange(projectile))
+                            Main.projectile[projectile].ai[1] = 15f;
                     }
                 }
             }

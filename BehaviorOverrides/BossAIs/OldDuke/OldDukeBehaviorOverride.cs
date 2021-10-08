@@ -188,7 +188,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     Main.numClouds = Main.numCloudsTemp;
                     Main.windSpeedTemp = 1.04f;
                     Main.windSpeedSet = Main.windSpeedTemp;
-                    Main.maxRaining = 0.95f;
+                    Main.maxRaining = 0.87f;
                 }
 
                 npc.netUpdate = true;
@@ -266,7 +266,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (inPhase3)
             {
                 Main.weatherCounter = 300;
-                Main.maxRaining = 0.95f;
+                Main.maxRaining = 0.87f;
                 npc.damage = (int)(npc.damage * 1.15);
                 if (inPhase4)
                     npc.damage = (int)(npc.damage * 1.15);

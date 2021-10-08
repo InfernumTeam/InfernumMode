@@ -695,16 +695,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public static void DoBehavior_CarpetBombing3(NPC npc, Player target, float enrageFactor, ref float frameType, float attackTimer)
         {
             int chargeCount = 6;
-            int chargeTime = (int)(92f - enrageFactor * 24f);
+            int chargeTime = (int)(130f - enrageFactor * 24f);
             float chargeSpeed = enrageFactor * 6f + 14f;
 
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
-            ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
-            ref float chargeTimer = ref npc.Infernum().ExtraAI[2];
-            ref float chargeState = ref npc.Infernum().ExtraAI[3];
-            ref float hoverTimer = ref npc.Infernum().ExtraAI[4];
-            ref float bombingTimer = ref npc.Infernum().ExtraAI[5];
-            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, hoverOffsetY);
+            ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
+            ref float chargeState = ref npc.Infernum().ExtraAI[2];
+            ref float hoverTimer = ref npc.Infernum().ExtraAI[3];
+            ref float bombingTimer = ref npc.Infernum().ExtraAI[4];
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, 0f);
 
             // Create a wave visual effect.
             if (attackTimer == 1f)
@@ -717,7 +716,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Do initializations.
             if (Main.netMode != NetmodeID.MultiplayerClient && chargeState == 0f)
             {
-                hoverOffsetY = 400f * (chargeCounter % 2f == 0f).ToDirectionInt();
                 chargeState = 1f;
                 bombingTimer = 0f;
                 npc.netUpdate = true;
@@ -781,7 +779,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     GotoNextAttackState(npc);
             }
 
-            bool canReleaseBombs = attackTimer % 120f > 75f && attackTimer % 4f == 0f;
+            bool canReleaseBombs = attackTimer % 16f == 15f;
             if (canReleaseBombs)
             {
                 Main.PlaySound(SoundID.Item45, target.Center);

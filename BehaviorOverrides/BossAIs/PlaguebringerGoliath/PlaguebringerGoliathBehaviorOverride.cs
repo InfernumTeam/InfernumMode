@@ -202,8 +202,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         }
 
         public static void DoBehavior_MissileLaunch(NPC npc, Player target, ref float attackTimer, float enrageFactor, ref float frameType)
-		{
-            int attackCycleCount = 2;
+        {
+            int attackCycleCount = enrageFactor > 1f - Phase3LifeRatio ? 1 : 2;
             int missileShootRate = (int)(16f - enrageFactor * 6f);
             float missileShootSpeed = enrageFactor * 5f + 12f;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
@@ -275,7 +275,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public static void DoBehavior_PlagueVomit(NPC npc, Player target, ref float attackTimer, float enrageFactor, ref float frameType)
         {
-            int attackCycleCount = 2;
+            int attackCycleCount = enrageFactor > 1f - Phase3LifeRatio ? 1 : 2;
             int vomitShootRate = (int)(55f - enrageFactor * 25f);
             float vomitShootSpeed = 11f;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
@@ -438,9 +438,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public static void DoBehavior_ExplodingPlagueChargers(NPC npc, Player target, float enrageFactor, ref float frameType)
         {
-            int attackCycleCount = 3;
+            int attackCycleCount = enrageFactor > 1f - Phase3LifeRatio ? 2 : 3;
             int chargeTime = (int)(56f - enrageFactor * 17f);
-            int summonRate = (int)(24f - enrageFactor * 8f);
+            int summonRate = (int)(24f - enrageFactor * 9f);
             float chargeSpeed = enrageFactor * 4f + 25f;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
@@ -781,14 +781,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     GotoNextAttackState(npc);
             }
 
-            bool canReleaseBombs = attackTimer % 120f > 75f && attackTimer % 6f == 0f;
+            bool canReleaseBombs = attackTimer % 120f > 75f && attackTimer % 4f == 0f;
             if (canReleaseBombs)
             {
                 Main.PlaySound(SoundID.Item45, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float bombRotation = Main.rand.NextBool(2).ToInt() * Main.rand.NextFloatDirection() * 0.14f;
-                    float horizontalOffset = Main.rand.NextFloatDirection() * 450f;
+                    float horizontalOffset = Main.rand.NextFloatDirection() * 580f;
                     int telegraph = Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * horizontalOffset, Vector2.Zero, ModContent.ProjectileType<BombingTelegraph>(), 0, 0f);
                     if (Main.projectile.IndexInRange(telegraph))
                     {

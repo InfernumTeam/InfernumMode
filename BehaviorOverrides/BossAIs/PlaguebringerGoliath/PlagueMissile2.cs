@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -42,6 +43,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 dust.scale = Main.rand.NextFloat(1.1f, 1.35f);
                 dust.noGravity = true;
             }
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Texture2D glowmask = ModContent.GetTexture(Texture.Replace("2", string.Empty) + "Glowmask");
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glowmask, drawPosition, null, projectile.GetAlpha(Color.White), projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+            return false;
         }
 
         public override bool CanDamage() => projectile.Opacity >= 0.8f;

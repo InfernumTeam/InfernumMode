@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.Cryogen;
+using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -59,6 +60,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
                 return false;
             }
+
+            // Set the whoAmI index.
+            GlobalNPCOverrides.Cryogen = npc.whoAmI;
 
             ref float subphaseState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -414,7 +418,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             float zeroBasedAttackPower = attackPower - 1f;
             int burstCount = 6;
             int burstCreationRate = 120 - (int)(zeroBasedAttackPower * 12f);
-            int icicleCount = 3 + (int)(zeroBasedAttackPower * 2f);
+            int icicleCount = 6 + (int)(zeroBasedAttackPower * 4f);
             Vector2 destination = target.Center - Vector2.UnitY * 325f;
             if (!npc.WithinRange(destination, 60f))
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 15f, 1.4f);
@@ -523,13 +527,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         {
             float zeroBasedAttackPower = attackPower - 1f;
             int burstCount = 3;
-            int burstCreationRate = 150 - (int)(zeroBasedAttackPower * 25f);
+            int burstCreationRate = 160 - (int)(zeroBasedAttackPower * 25f);
             int pillarCreationRate = 135 - (int)(zeroBasedAttackPower * 30f);
             int icicleCount = 5 + (int)(zeroBasedAttackPower * 3f);
             float pillarHorizontalOffset = 630f - zeroBasedAttackPower * 130f;
             ref float icePillarCreationTimer = ref npc.Infernum().ExtraAI[0];
 
-            Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -355f);
+            Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -425f);
             if (!npc.WithinRange(destination, 90f))
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 15f, 1.4f);
             else
@@ -540,7 +544,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             // Increment timers.
             icePillarCreationTimer++;
 
-            if (attackTimer % burstCreationRate == burstCreationRate - 1f)
+            if (attackTimer % burstCreationRate == burstCreationRate - 1f && attackTimer < burstCreationRate * burstCount)
             {
                 EmitIceParticles(npc.Center, 3.5f, 25);
                 Main.PlaySound(SoundID.Item28, npc.Center);
@@ -570,7 +574,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             }
 
             // Periodically create two pillars.
-            if (icePillarCreationTimer >= pillarCreationRate)
+            if (icePillarCreationTimer >= pillarCreationRate && attackTimer < burstCreationRate * burstCount)
             {
                 for (int i = -1; i <= 1; i += 2)
                 {
@@ -581,7 +585,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 npc.netUpdate = true;
             }
 
-            if (attackTimer >= burstCreationRate * burstCount + 60f)
+            if (attackTimer >= burstCreationRate * burstCount + 155f)
             {
                 icePillarCreationTimer = 0f;
                 attackTimer = 0f;
@@ -596,7 +600,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             int intialTeleportDelay = 90;
             int teleportDelay = 60;
             int teleportCount = 8;
-            float verticalTeleportOffset = MathHelper.Lerp(520f, 435f, zeroBasedAttackPower);
+            float verticalTeleportOffset = MathHelper.Lerp(490f, 630f, zeroBasedAttackPower);
             int spikeReleaseRate = zeroBasedAttackPower > 0.8f ? 15 : 20;
             Vector2 initialTeleportOffset = target.Center - Vector2.UnitY * 350f;
 

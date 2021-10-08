@@ -542,7 +542,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float telegraphDirectionY = ref npc.Infernum().ExtraAI[1];
 
             int hoverTime = (int)MathHelper.Lerp(105f, 200f, 1f - lifeRatio);
-            int totalLaserbeamBursts = 12;
+            int totalLaserbeamBursts = 2;
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
 
             if (pissedOff || shouldBeBuffed)
@@ -697,7 +697,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             possibleAttacks.Remove((BrimmyAttackType)(int)npc.ai[0]);
 
             npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
-            npc.ai[0] = (int)BrimmyAttackType.EyeLaserbeams;
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }

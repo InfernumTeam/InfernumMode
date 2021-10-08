@@ -258,7 +258,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    float shootOffsetAngle = MathHelper.Lerp(-0.34f, 0.34f, i / 2f);
+                    float shootOffsetAngle = MathHelper.Lerp(-0.48f, 0.48f, i / 2f);
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 13.5f;
                     Vector2 spawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.Zero) * 68f;
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, 155, 0f);
@@ -338,7 +338,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 32f;
-                    for (int i = 0; i < 15; i++)
+                    for (int i = 0; i < 24; i++)
                     {
                         Vector2 gasSporeVelocity;
                         do

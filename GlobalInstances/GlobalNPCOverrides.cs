@@ -47,6 +47,8 @@ namespace InfernumMode.GlobalInstances
         internal Rectangle arenaRectangle = default;
         internal bool canTelegraph = false;
 
+        public static int Cryogen = -1;
+
         #endregion
 
         #region Helper Properties
@@ -54,6 +56,34 @@ namespace InfernumMode.GlobalInstances
         public static bool IsDoGAlive => NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()) ||
                                          NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHeadS>());
         #endregion
+
+        #region Reset Effects
+        public override void ResetEffects(NPC npc)
+        {
+            void ResetSavedIndex(ref int type, int type1, int type2 = -1)
+            {
+                if (type >= 0)
+                {
+                    if (!Main.npc[type].active)
+                    {
+                        type = -1;
+                    }
+                    else if (type2 == -1)
+                    {
+                        if (Main.npc[type].type != type1)
+                            type = -1;
+                    }
+                    else
+                    {
+                        if (Main.npc[type].type != type1 && Main.npc[type].type != type2)
+                            type = -1;
+                    }
+                }
+            }
+
+            ResetSavedIndex(ref Cryogen, ModContent.NPCType<CryogenNPC>());
+        }
+        #endregion Reset Effects
 
         #region Overrides
 

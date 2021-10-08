@@ -29,6 +29,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 Countdown--;
             else
             {
+                if (projectile.ai[1] == 1f)
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TankCannon"), Target.Center);
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 missileSpawnPosition = new Vector2(projectile.Center.X, Target.Center.Y) - Vector2.UnitY.RotatedBy(projectile.rotation) * 1000f;

@@ -52,10 +52,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
 
             // Draw afterimages.
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 6; i++)
             {
-                Vector2 afterimageOffset = projectile.velocity.SafeNormalize(Vector2.Zero) * i * -4f;
-                Color afterimageColor = Color.Lime * (1f - i / 4f) * 0.7f;
+                Vector2 afterimageOffset = projectile.velocity.SafeNormalize(Vector2.Zero) * i * -16f;
+                Color afterimageColor = Color.Lime * (1f - i / 6f) * 0.7f;
                 afterimageColor.A = 0;
                 spriteBatch.Draw(texture, drawPosition + afterimageOffset, null, projectile.GetAlpha(afterimageColor), projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
             }

@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 		// Explode on death.
         public override void Kill(int timeLeft)
         {
-            projectile.damage = 25;
+            projectile.damage = 32;
             projectile.Damage();
 
 			Main.PlaySound(SoundID.Item14, projectile.position);

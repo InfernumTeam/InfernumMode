@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             if (npc.ai[0] == 0f)
             {
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.DirectionTo(destination) * 11f, 0.1f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.DirectionTo(destination) * 14f, 0.1f);
                 if (npc.WithinRange(destination, npc.velocity.Length() * 1.35f))
                 {
                     npc.velocity = npc.DirectionTo(target.Center) * -7f;
@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
                 if (time >= 60f)
                 {
-                    npc.velocity = npc.DirectionTo(target.Center) * 20f;
+                    npc.velocity = npc.DirectionTo(target.Center) * 22f;
                     npc.ai[0] = 2f;
                     npc.netUpdate = true;
                 }

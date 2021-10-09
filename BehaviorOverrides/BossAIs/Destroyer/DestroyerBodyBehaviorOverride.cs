@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 {
                     for (int i = -1; i <= 1; i += 2)
                     {
-                        int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * i * 7f, ProjectileID.DeathLaser, 90, 0f);
+                        int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * i * 12f, ProjectileID.DeathLaser, 90, 0f);
                         Main.projectile[laser].timeLeft = 250;
                         Main.projectile[laser].tileCollide = false;
                     }

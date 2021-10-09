@@ -122,44 +122,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             switch ((DestroyerAttackType)(int)npc.ai[1])
             {
                 case DestroyerAttackType.FlyAttack:
-                    float idealSearchSpeed = phase2 ? 10.5f : 8.5f;
-                    float idealLungeSpeed = idealSearchSpeed * 1.6f;
+                    float turnSpeed = (!npc.WithinRange(target.Center, 220f)).ToInt() * 0.039f;
+                    float moveSpeed = npc.velocity.Length();
 
-                    ref float fallCountdown = ref npc.Infernum().ExtraAI[0];
+                    if (npc.WithinRange(target.Center, 285f))
+                        moveSpeed *= 1.02f;
+                    else if (npc.velocity.Length() > 14f)
+                        moveSpeed *= 0.98f;
 
-                    if (fallCountdown > 0f)
-                    {
-                        npc.velocity.X *= 0.985f;
-                        if (npc.velocity.Y < 15f)
-                            npc.velocity.Y += 0.3f;
+                    moveSpeed = MathHelper.Clamp(moveSpeed, 10f, 19f);
 
-                        fallCountdown--;
-                    }
-                    else
-                    {
-                        bool targetInLineOfSight = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) > 0.87f;
-                        if (targetInLineOfSight)
-                            npc.velocity = npc.velocity.SafeNormalize(-Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealLungeSpeed, 0.1f);
-                        else
-                        {
-                            float turnSpeed = MathHelper.Lerp(MathHelper.Pi * 0.008f, MathHelper.Pi * 0.018f, (float)Math.Pow(Utils.InverseLerp(600f, 60f, npc.Distance(target.Center), true), 4D));
-                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * MathHelper.Lerp(npc.velocity.Length(), idealSearchSpeed, 0.1f);
-                        }
-
-                        int totalSegmentsInAir = 0;
-                        for (int i = 0; i < Main.maxNPCs; i++)
-                        {
-                            bool inAir = !Collision.SolidCollision(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height);
-                            inAir &= !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval((int)Main.npc[i].Center.X / 16, (int)Main.npc[i].Center.Y / 16).type];
-                            if (Main.npc[i].type == NPCID.TheDestroyerBody && Main.npc[i].active && inAir)
-                                totalSegmentsInAir++;
-                        }
-
-                        if (totalSegmentsInAir / (float)BodySegmentCount > 0.625f)
-                            fallCountdown = 120f;
-                    }
-
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 90f == 89f)
+                    {
+                        for (int i = 0; i < (phase2 ? 2 : 1); i++)
+                        {
+                            int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                            Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.52f) * 12f;
+                        }
+                    }
+
                     if (attackTimer >= 420f)
                         goToNextAIState();
                     break;
@@ -194,7 +178,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
                         if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= diveTime + ascendTime - 30f)
                         {
-                            for (int i = 0; i < 2; i++)
+                            for (int i = 0; i < 4; i++)
                                 Utilities.NewProjectileBetter(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.8f) * 17f, ModContent.ProjectileType<DestroyerBomb>(), 0, 0f);
                         }
                     }
@@ -212,7 +196,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                         destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 2300f;
                         if (npc.WithinRange(destination, 23f))
                         {
-                            npc.velocity.X = Math.Sign(target.Center.X - npc.Center.X) * MathHelper.Lerp(13f, 9f, 1f - lifeRatio);
+                            npc.velocity.X = Math.Sign(target.Center.X - npc.Center.X) * MathHelper.Lerp(17f, 12f, 1f - lifeRatio);
                             npc.velocity.Y = 11f;
                             attackTimer = 90f;
                         }
@@ -237,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     else
                         npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 60f == 59f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 45f == 44f)
                     {
                         int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
                         for (int i = 0; i < probeCount; i++)
@@ -251,48 +235,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                         goToNextAIState();
                     break;
                 case DestroyerAttackType.ElectricPulses:
-                    idealSearchSpeed = 9.75f;
-
-                    fallCountdown = ref npc.Infernum().ExtraAI[0];
-
-                    if (fallCountdown > 0f)
-                    {
-                        npc.velocity.X *= 0.985f;
-                        if (npc.velocity.Y < 11f)
-                            npc.velocity.Y += 0.2f;
-
-                        fallCountdown--;
-                    }
-                    else
-                    {
-                        bool targetInLineOfSight = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) > 0.87f;
-                        if (targetInLineOfSight)
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 45f == 44f)
-                                Utilities.NewProjectileBetter(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY) * 4f, ModContent.ProjectileType<ElectricPulse>(), 0, 0f);
-                        }
-                        else
-                        {
-                            float turnSpeed = MathHelper.Lerp(MathHelper.Pi * 0.008f, MathHelper.Pi * 0.018f, (float)Math.Pow(Utils.InverseLerp(600f, 60f, npc.Distance(target.Center), true), 4D));
-                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * MathHelper.Lerp(npc.velocity.Length(), idealSearchSpeed, 0.1f);
-                        }
-
-                        int totalSegmentsInAir = 0;
-                        for (int i = 0; i < Main.maxNPCs; i++)
-                        {
-                            bool inAir = !Collision.SolidCollision(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height);
-                            inAir &= !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval((int)Main.npc[i].Center.X / 16, (int)Main.npc[i].Center.Y / 16).type];
-                            if (Main.npc[i].type == NPCID.TheDestroyerBody && Main.npc[i].active && inAir)
-                                totalSegmentsInAir++;
-                        }
-
-                        if (totalSegmentsInAir / (float)BodySegmentCount > 0.625f)
-                            fallCountdown = 120f;
-                    }
-
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                    if (attackTimer >= 420f)
-                        goToNextAIState();
+                    goToNextAIState();
                     break;
             }
 

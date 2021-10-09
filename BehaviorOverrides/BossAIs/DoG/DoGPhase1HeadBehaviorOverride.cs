@@ -410,18 +410,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             float jawRotation = npc.Infernum().ExtraAI[7];
 
-            Texture2D headTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/DevourerofGodsHead");
+            Texture2D headTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Head");
             Vector2 drawPosition = npc.Center - Main.screenPosition;
-            Vector2 headTextureOrigin = Main.npcTexture[npc.type].Size() * 0.5f;
-            drawPosition -= headTexture.Size() * npc.scale * 0.5f;
-            drawPosition += headTextureOrigin * npc.scale + new Vector2(0f, 4f + npc.gfxOffY);
+            Vector2 headTextureOrigin = headTexture.Size() * 0.5f;
 
-            Texture2D jawTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/DevourerofGodsJaw");
+            Texture2D jawTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Jaw");
             Vector2 jawOrigin = jawTexture.Size() * 0.5f;
 
             for (int i = -1; i <= 1; i += 2)
             {
-                float jawBaseOffset = 30f;
+                float jawBaseOffset = 20f;
                 SpriteEffects jawSpriteEffect = spriteEffects;
                 if (i == 1)
                 {
@@ -429,20 +427,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     jawBaseOffset *= -1f;
                 }
                 Vector2 jawPosition = drawPosition;
-                jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * i * (jawBaseOffset + (float)Math.Sin(jawRotation) * 20f);
-                jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (26f + (float)Math.Sin(jawRotation) * 30f);
-                spriteBatch.Draw(jawTexture, jawPosition, npc.frame, lightColor, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
+                jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * (18f + i * (34f + jawBaseOffset + (float)Math.Sin(jawRotation) * 20f));
+                jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (16f + (float)Math.Sin(jawRotation) * 20f);
+                spriteBatch.Draw(jawTexture, jawPosition, null, lightColor, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
             }
 
-            spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            Rectangle headFrame = headTexture.Frame();
+            spriteBatch.Draw(headTexture, drawPosition, headFrame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
 
-            Texture2D glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/DevourerofGods/DevourerofGodsHeadGlow");
-
-            spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.Lerp(Color.White, Color.Fuchsia, 0.5f), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
-
-            glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/DevourerofGods/DevourerofGodsHeadGlow2");
-            spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.Lerp(Color.White, Color.Cyan, 0.5f), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
-
+            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1HeadGlow");
+            spriteBatch.Draw(glowmaskTexture, drawPosition, headFrame, Color.White, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
             return false;
         }
         #endregion Drawing

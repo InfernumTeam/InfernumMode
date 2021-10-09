@@ -130,9 +130,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
             }
 
-            if (deathTimer <= 0f)
-                deathTimer = 1f;
-
             if (deathTimer > 0f)
             {
                 DoDeathEffects(npc, deathTimer);

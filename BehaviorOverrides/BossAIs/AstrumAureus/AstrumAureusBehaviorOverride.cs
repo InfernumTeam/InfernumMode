@@ -304,7 +304,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             float distanceBelowTarget = npc.Top.Y - (target.Top.Y + 80f);
 
                             if (distanceBelowTarget > 0f)
-                                jumpIntensity = 1f + distanceBelowTarget * 0.00042f;
+                                jumpIntensity = 1f + distanceBelowTarget * 0.00105f;
 
                             if (jumpIntensity > 3.6f)
                                 jumpIntensity = 3.6f;

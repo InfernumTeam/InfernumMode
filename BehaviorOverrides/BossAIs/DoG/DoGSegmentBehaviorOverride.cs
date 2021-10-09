@@ -3,6 +3,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
@@ -14,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
     {
         public override int NPCOverrideType => ModContent.NPCType<DevourerofGodsBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public static void DoGSegmentAI(NPC npc)
         {
@@ -92,6 +93,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             if (npc.type == ModContent.NPCType<DevourerofGodsBodyS>())
                 typeof(DevourerofGodsBodyS).GetField("invinceTime", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(npc.modNPC, 0);
+
+            Vector2 size = npc.Size;
+            if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
+                size = new Vector2(102f);
+            if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
+                size = new Vector2(82f, 110f);
+
+            if (npc.Size != size)
+                npc.Size = size;
+
             npc.dontTakeDamage = head.dontTakeDamage;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
             if (head.Infernum().ExtraAI[20] > 0f)
@@ -99,7 +110,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
-                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.05f);
+                directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
@@ -111,17 +122,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             DoGSegmentAI(npc);
             return false;
         }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D bodyTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Body");
+            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1BodyGlowmask");
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            Vector2 origin = bodyTexture.Size() * 0.5f;
+            spriteBatch.Draw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            return false;
+        }
     }
 
     public class DoGPhase1TailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<DevourerofGodsTail>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc)
         {
             DoGPhase1BodyBehaviorOverride.DoGSegmentAI(npc);
+            return false;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D tailTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Tail");
+            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1TailGlowmask");
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            Vector2 origin = tailTexture.Size() * 0.5f;
+            spriteBatch.Draw(tailTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

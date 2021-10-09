@@ -3,6 +3,7 @@ using CalamityMod.Dusts;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -364,6 +365,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                                 fire.velocity *= 0.2f;
                             }
                         }
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient && lifeRatio < Phase2LifeRatio)
+                            Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 200, 0f);
                     }
                     else
                     {
@@ -580,6 +584,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                                 laserDirection = 1;
                             Main.projectile[i].Infernum().ExtraAI[0] = i;
                             Main.projectile[i].ai[0] = MathHelper.Pi / 180f * laserDirection * 0.84f;
+                            Main.projectile[i].ai[1] = npc.whoAmI;
                         }
                     }
                 }
@@ -653,7 +658,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             AureusAttackType newAttackState;
             WeightedRandom<AureusAttackType> attackSelector = new WeightedRandom<AureusAttackType>();
             attackSelector.Add(AureusAttackType.WalkAndShootLasers, 1.5);
-            attackSelector.Add(AureusAttackType.LeapAtTarget, 1D + Utils.InverseLerp(540f, 1360f, npc.Center.Y - target.Center.Y) * 1.75f);
+            attackSelector.Add(AureusAttackType.LeapAtTarget, 1D + Utils.InverseLerp(640f, 1860f, npc.Center.Y - target.Center.Y) * 3f);
             attackSelector.Add(AureusAttackType.RocketBarrage);
 
             if (lifeRatio < Phase2LifeRatio)

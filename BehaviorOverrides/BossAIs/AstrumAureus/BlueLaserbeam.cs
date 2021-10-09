@@ -26,7 +26,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         {
             projectile.width = projectile.height = 12;
             projectile.hostile = true;
-            projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
             projectile.timeLeft = (int)Lifetime;

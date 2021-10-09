@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.UI;
 using CalamityMod.World;
@@ -13,8 +14,10 @@ using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour.HookGen;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent.Events;
 using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -23,6 +26,7 @@ namespace InfernumMode.ILEditingStuff
 {
     public class ILEditingChanges
     {
+        public static List<int> DrawCacheProjsOverSignusBlackening = new List<int>(Main.maxProjectiles);
         public static event ILContext.Manipulator ModifyPreAINPC
         {
             add => HookEndpointManager.Modify(typeof(NPCLoader).GetMethod("PreAI", Utilities.UniversalBindingFlags), value);
@@ -97,6 +101,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += WoFLavaColorChange2;
             On.Terraria.Rain.MakeRain += DisableRainDuringCryogenFight;
             On.Terraria.Main.snowing += ForceSnowDuringCryogenFight;
+            IL.Terraria.Main.DoDraw += DrawSignusBlack;
             ModifyPreAINPC += NPCPreAIChange;
             ModifySetDefaultsNPC += NPCSetDefaultsChange;
             ModifyFindFrameNPC += NPCFindFrameChange;
@@ -116,6 +121,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw -= WoFLavaColorChange2;
             On.Terraria.Rain.MakeRain -= DisableRainDuringCryogenFight;
             On.Terraria.Main.snowing -= ForceSnowDuringCryogenFight;
+            IL.Terraria.Main.DoDraw -= DrawSignusBlack;
             ModifyPreAINPC -= NPCPreAIChange;
             ModifySetDefaultsNPC -= NPCSetDefaultsChange;
             ModifyFindFrameNPC -= NPCFindFrameChange;
@@ -499,6 +505,40 @@ namespace InfernumMode.ILEditingStuff
             Main.snowTiles = 1500;
             orig();
             Main.snowTiles = realSnowTilesCount;
+        }
+
+        private static void DrawSignusBlack(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<MoonlordDeathDrama>("DrawWhite")))
+                return;
+
+            cursor.EmitDelegate<Action>(() =>
+            {
+                if (CalamityGlobalNPC.signus != -1)
+                {
+                    float fadeToBlack = Main.npc[CalamityGlobalNPC.signus].ai[3];
+                    Color color = Color.Black * fadeToBlack;
+                    Main.spriteBatch.Draw(Main.magicPixel, new Rectangle(-2, -2, Main.screenWidth + 4, Main.screenHeight + 4), new Rectangle(0, 0, 1, 1), color);
+                }
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.instance.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                for (int i = 0; i < DrawCacheProjsOverSignusBlackening.Count; i++)
+                {
+                    try
+                    {
+                        Main.instance.DrawProj(DrawCacheProjsOverSignusBlackening[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        TimeLogger.DrawException(e);
+                        Main.projectile[DrawCacheProjsOverSignusBlackening[i]].active = false;
+                    }
+                }
+                DrawCacheProjsOverSignusBlackening.Clear();
+            });
         }
 
         private static void PermitODRain(ILContext il)

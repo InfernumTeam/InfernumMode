@@ -37,14 +37,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
             // Fly towards the closest player.
-            if (Time < 75f && !projectile.WithinRange(closestPlayer.Center, 75f))
+            if (Time < 45f && !projectile.WithinRange(closestPlayer.Center, 75f))
                 projectile.velocity = projectile.velocity.RotateTowards(projectile.AngleTo(closestPlayer.Center), 0.02f);
 
             if (projectile.WithinRange(closestPlayer.Center, 30f))
                 projectile.Kill();
 
-            if (Time >= 75 && projectile.velocity.Length() < 28f)
-                projectile.velocity *= 1.015f;
+            if (Time >= 45f && projectile.velocity.Length() < 32f)
+                projectile.velocity *= 1.02f;
 
             Vector2 backOfMissile = projectile.Center - (projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 20f;
             Dust.NewDustDirect(backOfMissile, 5, 5, ModContent.DustType<AstralOrange>());

@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
         {
             NormalMove,
             SparkBurst,
-            TailDischarge,
+            LightningDischarge,
         }
         #endregion
 
@@ -53,8 +53,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 case StormWeaverArmoredAttackType.SparkBurst:
                     DoAttack_SparkBurst(npc, target, attackTimer);
                     break;
-                case StormWeaverArmoredAttackType.TailDischarge:
-                    DoAttack_TailDischarge(npc, target, attackTimer);
+                case StormWeaverArmoredAttackType.LightningDischarge:
+                    DoAttack_LightningDischarge(npc, target, attackTimer);
                     break;
             }
 
@@ -125,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 SelectNewAttack(npc);
         }
 
-        public static void DoAttack_TailDischarge(NPC npc, Player target, float attackTimer)
+        public static void DoAttack_LightningDischarge(NPC npc, Player target, float attackTimer)
         {
             float turnSpeed = (!npc.WithinRange(target.Center, 220f)).ToInt() * 0.041f;
             float moveSpeed = npc.velocity.Length();
@@ -141,19 +141,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             if (attackTimer % 60f == 59f)
             {
-                int tailIndex = NPC.FindFirstNPC(ModContent.NPCType<StormWeaverTail>());
-
-                if (tailIndex != -1 && !Main.npc[tailIndex].WithinRange(target.Center, 210f))
+                if (!npc.WithinRange(target.Center, 210f))
                 {
-                    NPC tail = Main.npc[tailIndex];
                     Main.PlaySound(SoundID.Item122, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 13; i++)
+                        for (int i = 0; i < 10; i++)
                         {
-                            Vector2 lightningVelocity = tail.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + Main.rand.NextFloatDirection() * 0.05f) / 13f) * 7f;
-                            int arc = Utilities.NewProjectileBetter(tail.Center + lightningVelocity * 2f, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 245, 0f);
+                            Vector2 lightningVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + Main.rand.NextFloatDirection() * 0.05f) / 10f) * 6.6f;
+                            int arc = Utilities.NewProjectileBetter(npc.Center + lightningVelocity * 2f, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 245, 0f);
                             if (Main.projectile.IndexInRange(arc))
                             {
                                 Main.projectile[arc].ai[0] = lightningVelocity.ToRotation();
@@ -182,7 +179,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             WeightedRandom<float> newStatePicker = new WeightedRandom<float>(Main.rand);
             newStatePicker.Add((int)StormWeaverArmoredAttackType.NormalMove, 1.5);
             newStatePicker.Add((int)StormWeaverArmoredAttackType.SparkBurst);
-            newStatePicker.Add((int)StormWeaverArmoredAttackType.TailDischarge);
+            newStatePicker.Add((int)StormWeaverArmoredAttackType.LightningDischarge);
 
             do
                 attackState = newStatePicker.Get();

@@ -243,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 270f;
                 destination.X += (target.Center.X - npc.Center.X < 0f).ToDirectionInt() * 360f;
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 19f, anyWorms ? 0.054f : 0.07f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 17f, anyWorms ? 0.054f : 0.07f);
 
                 if (npc.WithinRange(destination, 35f))
 				{

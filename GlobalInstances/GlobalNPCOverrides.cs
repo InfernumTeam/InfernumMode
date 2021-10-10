@@ -30,6 +30,7 @@ using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
 using CalamityMod.NPCs.AquaticScourge;
+using CalamityMod.NPCs.Signus;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -382,6 +383,9 @@ namespace InfernumMode.GlobalInstances
                 if (npc.Opacity < 0.1f)
                     rotation = float.NaN;
             }
+
+            if (npc.type == ModContent.NPCType<Signus>())
+                rotation = float.NaN;
 
             // Prevent Yharon from showing himself amongst his illusions in Subphase 10.
             if (npc.type == ModContent.NPCType<YharonNPC>())

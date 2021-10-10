@@ -15,7 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 100;
+            projectile.width = 500;
+            projectile.height = 100;
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
@@ -32,7 +33,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             projectile.rotation = projectile.ai[0];
         }
 
-        public override Color? GetAlpha(Color lightColor) => Color.Fuchsia * projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.DarkViolet * projectile.Opacity * 1.4f;
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            float _ = 0f;
+            Vector2 start = projectile.Center - projectile.rotation.ToRotationVector2() * projectile.width * projectile.scale * 0.5f;
+            Vector2 end = projectile.Center + projectile.rotation.ToRotationVector2() * projectile.width * projectile.scale * 0.5f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, projectile.height * 0.5f, ref _);
+        }
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
         {

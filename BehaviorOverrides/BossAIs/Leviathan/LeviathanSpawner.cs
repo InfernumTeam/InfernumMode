@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("The Fountain of Pain");
+            DisplayName.SetDefault("Water");
         }
 
         public override void SetDefaults()

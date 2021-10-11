@@ -191,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootRate = (int)MathHelper.Lerp(110f, 60f, 1f - lifeRatio);
-            float walkSpeed = MathHelper.Lerp(7f, 11f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(5.4f, 9f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 
@@ -220,7 +220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(0.46f) * Main.rand.NextFloat(16.75f, 23f);
+                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(0.38f) * Main.rand.NextFloat(16.75f, 22f);
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
                     }
 

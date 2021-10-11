@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
 		public void InitializePillarProperties()
 		{
-			WorldUtils.Find(new Vector2(projectile.Top.X, projectile.Top.Y - 160).ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
+			WorldUtils.Find(projectile.Top.ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
 			{
 				new Conditions.IsSolid(),
 				new CustomTileConditions.ActiveAndNotActuated(),
@@ -149,6 +149,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 				Vector2 icicleShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 10f);
 				Utilities.NewProjectileBetter(icicleSpawnPosition, icicleShootVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 145, 0f);
 			}
+		}
+
+		public override Color? GetAlpha(Color lightColor)
+		{
+			return Main.dayTime ? new Color(50, 50, 255, 255 - projectile.alpha) : new Color(255, 255, 255, projectile.alpha);
 		}
 
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

@@ -82,9 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     break;
             }
 
-            // Stop rain once weak.
-            if (lifeRatio < 0.1f)
-                CalamityMod.CalamityMod.StopRain();
+            Main.rainTime = 480;
 
             // Determine rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;

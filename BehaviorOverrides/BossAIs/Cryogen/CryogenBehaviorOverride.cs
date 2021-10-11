@@ -111,6 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             Main.windSpeedSet = Main.windSpeedTemp;
             Main.maxRaining = blizzardIntensity * 0.9f;
             Main.windSpeed = MathHelper.Lerp(Main.windSpeed, Main.windSpeedSet, 0.04f);
+            Main.rainTime = 480;
             Main.raining = true;
             return false;
         }

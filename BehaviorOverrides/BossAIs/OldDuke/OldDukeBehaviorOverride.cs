@@ -265,7 +265,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             if (inPhase3)
             {
-                Main.weatherCounter = 300;
+                Main.rainTime = 300;
                 Main.maxRaining = 0.87f;
                 npc.damage = (int)(npc.damage * 1.15);
                 if (inPhase4)

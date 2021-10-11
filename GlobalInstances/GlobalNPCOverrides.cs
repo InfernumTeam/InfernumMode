@@ -433,12 +433,13 @@ namespace InfernumMode.GlobalInstances
             {
                 if (npc.Infernum().ExtraAI[6] > 0f)
                     return true;
+
                 npc.Infernum().ExtraAI[6] = 1f;
                 npc.life = 1;
                 npc.netUpdate = true;
                 npc.dontTakeDamage = true;
 
-                return npc.Infernum().ExtraAI[6] == 0f;
+                return false;
             }
 
             if (npc.type == ModContent.NPCType<Bumblefuck2>())

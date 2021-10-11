@@ -97,10 +97,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         {
             int fadeInTime = 12;
             int riseTime = 25;
-            int chargeTime = lifeRatio < Phase2LifeRatio ? 25 : 32;
-            int knifeReleaseRate = lifeRatio < Phase2LifeRatio ? 4 : 6;
+            int chargeTime = 32;
+            int knifeReleaseRate = 6;
             int fadeOutTime = 25;
             int chargeCount = 3;
+
+            if (lifeRatio < Phase2LifeRatio)
+            {
+                chargeTime -= 7;
+                knifeReleaseRate -= 2;
+            }
+            if (lifeRatio < Phase3LifeRatio)
+            {
+                chargeTime -= 4;
+                knifeReleaseRate--;
+                chargeCount--;
+            }
+
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -196,7 +209,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             int chargeSlowdownDelay = (int)MathHelper.Lerp(32f, 48f, 1f - lifeRatio);
             int slowdownTime = 25;
             float scytheSpread = MathHelper.SmoothStep(0.95f, 1.34f, 1f - lifeRatio);
-            int attackCycleCount = 2;
+            int attackCycleCount = lifeRatio < Phase3LifeRatio ? 1 : 2;
+
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -269,10 +283,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         {
             int redirectTime = 20;
             int telegraphTime = 30;
-            int blackTime = lifeRatio < Phase2LifeRatio ? 95 : 85;
-            float maxInitialSlashDistance = lifeRatio < Phase2LifeRatio ? 300f : 350f;
-            float slashMovementSpeed = lifeRatio < Phase2LifeRatio ? 44f : 40f;
+            int blackTime = 85;
+            float maxInitialSlashDistance = 350f;
+            float slashMovementSpeed = 40f;
             int finalDelay = 130;
+
+            if (lifeRatio < Phase2LifeRatio)
+            {
+                blackTime += 10;
+                maxInitialSlashDistance -= 50f;
+                slashMovementSpeed += 4f;
+            }
+            if (lifeRatio < Phase3LifeRatio)
+            {
+                blackTime += 5;
+                maxInitialSlashDistance -= 15f;
+                finalDelay -= 15;
+            }
+
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float chargeHoverCenterX = ref npc.Infernum().ExtraAI[1];
             ref float chargeHoverCenterY = ref npc.Infernum().ExtraAI[2];
@@ -409,10 +437,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             int chargeCount = 3;
             int hoverTime = 75;
             int chargeTime = 45;
-            float chargeSpeed = lifeRatio < Phase2LifeRatio ? 54f : 45f;
+            float chargeSpeed = 45f;
             int slowdownTime = 20;
+
+            if (lifeRatio < Phase2LifeRatio)
+            {
+                hoverTime -= 8;
+                chargeTime -= 3;
+                chargeSpeed += 7.5f;
+            }
+            if (lifeRatio < Phase3LifeRatio)
+            {
+                chargeCount--;
+                chargeTime -= 3;
+                chargeSpeed += 3f;
+                slowdownTime -= 4;
+            }
+
             int totalChargeTime = hoverTime + chargeTime + slowdownTime;
             float wrappedAttackTimer = attackTimer % totalChargeTime;
+
             ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
 
@@ -482,7 +526,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public static void DoAttack_CosmicFlameChargeBelch(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            float chargeSpeed = MathHelper.Lerp(32f, 37f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(31f, 37f, 1f - lifeRatio);
             int spinDelay = 35;
             float spinSpeed = MathHelper.TwoPi / MathHelper.Lerp(100f, 50f, 1f - lifeRatio);
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];

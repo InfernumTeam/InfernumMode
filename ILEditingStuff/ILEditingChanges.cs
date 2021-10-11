@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.Events;
 using Terraria.Graphics;
 using Terraria.ID;
@@ -102,6 +103,7 @@ namespace InfernumMode.ILEditingStuff
             On.Terraria.Rain.MakeRain += DisableRainDuringCryogenFight;
             On.Terraria.Main.snowing += ForceSnowDuringCryogenFight;
             IL.Terraria.Main.DoDraw += DrawSignusBlack;
+			On.Terraria.Player.KillMe += RemoveTheDamnCancerousDoGInstakill;
             ModifyPreAINPC += NPCPreAIChange;
             ModifySetDefaultsNPC += NPCSetDefaultsChange;
             ModifyFindFrameNPC += NPCFindFrameChange;
@@ -113,7 +115,7 @@ namespace InfernumMode.ILEditingStuff
             CalamityWorldPostUpdate += PermitODRain;
         }
 
-        public static void ILEditingUnload()
+		public static void ILEditingUnload()
         {
             On.Terraria.Gore.NewGore -= RemoveCultistGore;
             IL.Terraria.Player.ItemCheck -= ItemCheckChange;
@@ -122,6 +124,7 @@ namespace InfernumMode.ILEditingStuff
             On.Terraria.Rain.MakeRain -= DisableRainDuringCryogenFight;
             On.Terraria.Main.snowing -= ForceSnowDuringCryogenFight;
             IL.Terraria.Main.DoDraw -= DrawSignusBlack;
+            On.Terraria.Player.KillMe -= RemoveTheDamnCancerousDoGInstakill;
             ModifyPreAINPC -= NPCPreAIChange;
             ModifySetDefaultsNPC -= NPCSetDefaultsChange;
             ModifyFindFrameNPC -= NPCFindFrameChange;
@@ -131,6 +134,15 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreDrawProjectile -= ProjectilePreDrawChange;
             ModeIndicatorUIDraw -= DrawInfernumIcon;
             CalamityWorldPostUpdate -= PermitODRain;
+        }
+
+        // Why.
+        internal static void RemoveTheDamnCancerousDoGInstakill(On.Terraria.Player.orig_KillMe orig, Player self, PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp)
+        {
+            if (damageSource.SourceCustomReason == self.name + "'s essence was consumed by the devourer.")
+                return;
+
+            orig(self, damageSource, dmg, hitDirection, pvp);
         }
 
         internal static int RemoveCultistGore(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)

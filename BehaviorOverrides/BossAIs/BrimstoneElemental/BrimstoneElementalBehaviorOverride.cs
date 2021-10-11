@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             int bombardTime = 75;
             int fireballShootRate = lifeRatio < 0.5f ? 6 : 9;
             int fadeOutTime = (int)MathHelper.Lerp(48f, 27f, 1f - lifeRatio);
-            float horizontalTeleportOffset = MathHelper.Lerp(985f, 850f, 1f - lifeRatio);
+            float horizontalTeleportOffset = MathHelper.Lerp(950f, 820f, 1f - lifeRatio);
             float verticalDestinationOffset = MathHelper.Lerp(600f, 475f, 1f - lifeRatio);
             Vector2 verticalDestination = target.Center - Vector2.UnitY * verticalDestinationOffset;
             ref float bombardCounter = ref npc.Infernum().ExtraAI[0];
@@ -192,7 +192,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     // Go to the next attack state and teleport once completely invisible.
                     if (npc.Opacity <= 0f)
                     {
-                        Vector2 teleportOffset = Vector2.UnitX * horizontalTeleportOffset * (bombardCounter % 2f == 0f).ToDirectionInt();
+                        Vector2 teleportOffset = Vector2.UnitX * horizontalTeleportOffset * (bombardCounter % 2f == 0f).ToDirectionInt() * Main.rand.NextFloat(0.65f, 1f);
                         attackTimer = 0f;
                         attackState++;
                         npc.Center = target.Center + teleportOffset;
@@ -251,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Use the flying animation.
             frameType = (int)BrimmyFrameType.TypicalFly;
 
-            int totalRosesToSpawn = shouldBeBuffed ? 7 : 6;
+            int totalRosesToSpawn = shouldBeBuffed ? 10 : 8;
             int castingAnimationTime = shouldBeBuffed ? 70 : 110;
             if (pissedOff)
                 totalRosesToSpawn += 5;
@@ -487,7 +487,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Teleport below the player.
             if (attackTimer == 5f)
 			{
-                Vector2 teleportDestination = target.Center + Vector2.UnitY * 220f;
+                Vector2 teleportDestination = target.Center + Vector2.UnitY * 350f;
                 CreateTeleportTelegraph(npc.Center, teleportDestination, 250);
                 npc.Center = teleportDestination;
             }
@@ -636,7 +636,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     if (wrappedTime < 120f)
                     {
                         Vector2 idealDirection = (target.Center + target.velocity * 45f - eyePosition).SafeNormalize(Vector2.UnitY);
-                        deathrayDirection = Vector2.Lerp(deathrayDirection, idealDirection, 0.02f).MoveTowards(idealDirection, 0.0084f);
+                        deathrayDirection = Vector2.Lerp(deathrayDirection, idealDirection, 0.02f).MoveTowards(idealDirection, 0.012f);
                         telegraphDirectionX = deathrayDirection.X;
                         telegraphDirectionY = deathrayDirection.Y;
                     }

@@ -17,13 +17,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override Texture2D LaserMiddleTexture => Main.extraTexture[21];
         public override Texture2D LaserEndTexture => Main.extraTexture[22];
         public override float MaxLaserLength => 2400f;
-        public override float MaxScale => 1f;
+        public override float MaxScale => 0.5f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Deathray");
 
         public override void SetDefaults()
         {
-            projectile.width = 48;
-            projectile.height = 48;
+            projectile.width = 24;
+            projectile.height = 24;
             projectile.hostile = true;
             projectile.alpha = 255;
             projectile.penetrate = -1;

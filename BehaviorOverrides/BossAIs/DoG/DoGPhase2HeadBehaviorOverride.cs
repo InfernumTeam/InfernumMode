@@ -56,6 +56,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (!Main.player.IndexInRange(npc.target) || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 npc.TargetClosest(false);
 
+            if (npc.life > 10000)
+                npc.life = 10000;
+
             Player target = Main.player[npc.target];
 
             target.Calamity().normalityRelocator = false;
@@ -102,6 +105,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.dontTakeDamage = npc.Opacity < 0.5f;
             npc.damage = npc.dontTakeDamage ? 0 : 6000;
             npc.Calamity().DR = 0.3f;
+
+            // Stay in the world.
+            npc.position.Y = MathHelper.Clamp(npc.position.Y, 100f, Main.maxTilesY * 16f - 100f);
 
             // Spawn segments.
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -250,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.position.Y < Main.topWorld + 16f)
                 npc.velocity.Y -= 3f;
 
-            if (npc.position.Y < Main.topWorld + 16f)
+            if (npc.position.Y < 200f)
             {
                 for (int a = 0; a < Main.maxNPCs; a++)
                 {
@@ -537,7 +543,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<DoGLightningBarrier>())
                             Main.projectile[i].Kill();
                     }
-                    npc.Center = target.Center - Vector2.UnitY * (Main.screenHeight + 300f);
+                    npc.Center = target.Center - Vector2.UnitY * 3300f;
                     npc.netUpdate = true;
 
                     for (int i = 0; i < Main.maxNPCs; i++)
@@ -816,7 +822,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         Main.projectile[i].Kill();
                 }
 
-                npc.Center = target.Center - Vector2.UnitY * Main.screenHeight * 2.2f;
+                npc.Center = target.Center - Vector2.UnitY * 3300f;
                 npc.netUpdate = true;
 
                 for (int i = 0; i < Main.maxNPCs; i++)

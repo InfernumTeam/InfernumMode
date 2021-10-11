@@ -479,7 +479,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             // Briefly attempt to hover next to the target.
             if (wrappedAttackTimer <= hoverTime)
             {
-                Vector2 hoverDestination = target.Center + new Vector2(chargeDirection * -455f, 0f);
+                Vector2 hoverDestination = target.Center + new Vector2(chargeDirection * -560f, 0f);
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 22f;
                 idealVelocity = idealVelocity.ClampMagnitude(0f, npc.Distance(hoverDestination));
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 5f);
@@ -535,7 +535,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public static void DoAttack_CosmicFlameChargeBelch(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            float chargeSpeed = MathHelper.Lerp(31f, 37f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(25f, 31f, 1f - lifeRatio);
             int spinDelay = 35;
             float spinSpeed = MathHelper.TwoPi / MathHelper.Lerp(100f, 50f, 1f - lifeRatio);
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
@@ -644,8 +644,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             float oldAttackState = npc.ai[1];
             WeightedRandom<SignusAttackType> newStatePicker = new WeightedRandom<SignusAttackType>(Main.rand);
             newStatePicker.Add(SignusAttackType.KunaiDashes);
-            newStatePicker.Add(SignusAttackType.ScytheTeleportThrow);
-            newStatePicker.Add(SignusAttackType.ShadowDash, lifeRatio < Phase2LifeRatio ? 1.6 : 1D);
+			newStatePicker.Add(SignusAttackType.ScytheTeleportThrow);
+            if (!NPC.AnyNPCs(ModContent.NPCType<UnworldlyEntity>()))
+                newStatePicker.Add(SignusAttackType.ShadowDash, lifeRatio < Phase2LifeRatio ? 1.6 : 1D);
             newStatePicker.Add(SignusAttackType.FastHorizontalCharge);
 
             if (lifeRatio < Phase2LifeRatio)

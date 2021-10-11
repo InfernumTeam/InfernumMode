@@ -21,7 +21,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
             NPC head = Main.npc[(int)npc.ai[2]];
-            if (!aheadSegment.active)
+            npc.life = head.life;
+            if (!head.active)
             {
                 npc.life = 0;
                 npc.HitEffect();

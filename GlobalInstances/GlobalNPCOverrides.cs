@@ -411,20 +411,16 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>())
                 return false;
 
-            if (npc.type == ModContent.NPCType<DevourerofGodsHeadS>() || npc.type == ModContent.NPCType<DevourerofGodsBodyS>() || npc.type == ModContent.NPCType<DevourerofGodsTailS>())
+            if (npc.type == ModContent.NPCType<DevourerofGodsHeadS>())
             {
                 npc.life = 1;
                 npc.dontTakeDamage = true;
-                if (npc.type == ModContent.NPCType<DevourerofGodsHeadS>())
+                if (npc.Infernum().ExtraAI[20] == 0f)
                 {
-                    if (npc.Infernum().ExtraAI[20] == 0f)
-                    {
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
-                        npc.Infernum().ExtraAI[20] = 1f;
-                    }
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    npc.Infernum().ExtraAI[20] = 1f;
                 }
-                else
-                    npc.life = npc.lifeMax;
+                npc.active = true;
                 npc.netUpdate = true;
                 return false;
             }

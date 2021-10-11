@@ -52,8 +52,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             // Set the whoAmI index.
             CalamityGlobalNPC.signus = npc.whoAmI;
 
-            // Regularly fade in.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.2f, 0f, 1f);
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = false;
 
@@ -61,6 +59,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             ref float attackState = ref npc.ai[1];
             ref float attackTimer = ref npc.ai[2];
             ref float fadeToBlack = ref npc.ai[3];
+            ref float attackDelay = ref npc.Infernum().ExtraAI[8];
+
+            if (attackDelay < 70f)
+            {
+                attackDelay++;
+                npc.Opacity = Utils.InverseLerp(0f, 30f, attackDelay, true);
+                return false;
+            }
+
+            // Regularly fade in.
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.2f, 0f, 1f);
 
             switch ((SignusAttackType)(int)attackState)
             {

@@ -668,7 +668,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         {
             float zeroBasedAttackPower = attackPower - 1f;
             int chargeCount = 3;
-            float chargeSpeed = MathHelper.Lerp(15.5f, 20f, zeroBasedAttackPower);
+            float chargeSpeed = MathHelper.Lerp(17f, 22f, zeroBasedAttackPower);
 
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];

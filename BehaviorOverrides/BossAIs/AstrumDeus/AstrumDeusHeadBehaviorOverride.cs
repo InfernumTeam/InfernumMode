@@ -144,7 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public static void DoBehavior_AstralBombs(NPC npc, Player target, float beaconAngerFactor, float lifeRatio, float attackTimer)
         {
-            int shootRate = (int)MathHelper.Lerp(10f, 7f, 1f - lifeRatio);
+            int shootRate = (int)MathHelper.Lerp(9f, 5f, 1f - lifeRatio);
             int totalBombsToShoot = lifeRatio < Phase2LifeThreshold ? 38 : 45;
             float flySpeed = MathHelper.Lerp(12f, 16f, 1f - lifeRatio) + beaconAngerFactor * 10f;
             float flyAcceleration = MathHelper.Lerp(0.028f, 0.034f, 1f - lifeRatio) + beaconAngerFactor * 0.036f;
@@ -171,7 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 {
                     float bombShootOffset = lifeRatio < Phase2LifeThreshold ? 850f : 1050f;
                     Vector2 bombShootPosition = target.Center - Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * bombShootOffset;
-                    Vector2 bombShootVelocity = (target.Center - bombShootPosition).SafeNormalize(Vector2.UnitY) * 11f;
+                    Vector2 bombShootVelocity = (target.Center - bombShootPosition).SafeNormalize(Vector2.UnitY) * 15f;
                     if (lifeRatio < Phase2LifeThreshold)
                         bombShootVelocity *= 1.4f;
 

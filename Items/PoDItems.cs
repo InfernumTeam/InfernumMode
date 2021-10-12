@@ -25,6 +25,9 @@ namespace InfernumMode
             if (item.type == ModContent.ItemType<FlashBullet>())
                 item.damage = 4;
 
+            if (item.type == ModContent.ItemType<NapalmArrow>())
+                item.damage = 9;
+
             if (item.type == ItemID.StarCannon)
                 item.damage = 24;
         }

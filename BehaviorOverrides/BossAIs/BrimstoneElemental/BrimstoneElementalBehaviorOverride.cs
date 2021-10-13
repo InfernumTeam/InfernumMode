@@ -452,11 +452,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                         if (burstCounter >= totalBursts)
                         {
-                            attackState = 0f;
+                            attackTimer = 0f;
+                            attackState = 3f;
                             burstCounter = 0f;
-                            SelectNewAttack(npc);
                         }
                     }
+                    break;
+
+                // Sit in place for a bit prior to going to the next attack.
+                case 3:
+                    npc.velocity *= 0.95f;
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+
+                    if (attackTimer > 125f)
+					{
+                        attackState = 0f;
+                        SelectNewAttack(npc);
+					}
                     break;
             }
         }
@@ -487,7 +499,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Teleport below the player.
             if (attackTimer == 5f)
 			{
-                Vector2 teleportDestination = target.Center + Vector2.UnitY * 350f;
+                Vector2 teleportDestination = target.Center - Vector2.UnitY * 300f;
+
                 CreateTeleportTelegraph(npc.Center, teleportDestination, 250);
                 npc.Center = teleportDestination;
             }

@@ -35,7 +35,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         {
             projectile.Opacity = Utils.InverseLerp(0f, 15f, Time, true) * Utils.InverseLerp(0f, 15f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            projectile.velocity *= 1.01f;
 
             Lighting.AddLight(projectile.Center, projectile.Opacity * 0.9f, 0f, 0f);
 

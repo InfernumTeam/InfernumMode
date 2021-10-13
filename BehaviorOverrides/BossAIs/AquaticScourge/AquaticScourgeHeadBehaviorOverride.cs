@@ -286,7 +286,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 List<Vector2> potentialSpawnPoints = new List<Vector2>();
                 for (int i = -120; i < 120; i++)
                 {
-                    Point waterPosition = new Point((int)(target.Center.X / 16 + i), (int)target.Center.Y / 16);
+                    Point waterPosition = new Point((int)(target.Center.X / 16 + i), (int)target.Center.Y / 16 - 50);
                     if (WorldUtils.Find(waterPosition, Searches.Chain(new Searches.Down(8000), new CustomTileConditions.IsWater()), out Point updatedWaterPosition))
                         potentialSpawnPoints.Add(updatedWaterPosition.ToWorldCoordinates());
                 }
@@ -295,7 +295,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 do
                     spawnPoint = Main.rand.Next(potentialSpawnPoints);
                 while (MathHelper.Distance(spawnPoint.X, target.Center.X) < 180f);
-                Utilities.NewProjectileBetter(Main.rand.Next(potentialSpawnPoints), -Vector2.UnitY * (11f + enrageFactor * 1.8f), ModContent.ProjectileType<SulphuricAcidBubble>(), 110, 0f);
+                Utilities.NewProjectileBetter(Main.rand.Next(potentialSpawnPoints), -Vector2.UnitY * (8.4f + enrageFactor * 1.8f), ModContent.ProjectileType<SulphuricAcidBubble>(), 110, 0f);
             }
 
             if (attackTimer >= 385f)

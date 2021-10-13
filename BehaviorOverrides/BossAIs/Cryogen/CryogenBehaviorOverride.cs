@@ -201,6 +201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             {
                 CryogenAttackState.IcicleCircleBurst,
                 CryogenAttackState.ShatteringIcePillars,
+                CryogenAttackState.TeleportAndReleaseIceBombs,
                 CryogenAttackState.PredictiveIcicles,
                 CryogenAttackState.IcicleCircleBurst,
                 CryogenAttackState.TeleportAndReleaseIceBombs,
@@ -272,9 +273,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             {
                 CryogenAttackState.HorizontalDash,
                 CryogenAttackState.ShatteringIcePillars,
+                CryogenAttackState.TeleportAndReleaseIceBombs,
                 CryogenAttackState.IcicleCircleBurst,
                 CryogenAttackState.ShatteringIcePillars,
                 CryogenAttackState.IcicleTeleportDashes,
+                CryogenAttackState.TeleportAndReleaseIceBombs,
                 CryogenAttackState.HorizontalDash,
                 CryogenAttackState.IcicleCircleBurst,
                 CryogenAttackState.IcicleTeleportDashes,
@@ -619,7 +622,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             int intialTeleportDelay = 90;
             int teleportDelay = 60;
             int teleportCount = 8;
-            float verticalTeleportOffset = MathHelper.Lerp(490f, 630f, zeroBasedAttackPower);
+            float verticalTeleportOffset = MathHelper.Lerp(560f, 700f, zeroBasedAttackPower);
             int spikeReleaseRate = zeroBasedAttackPower > 0.8f ? 15 : 20;
             Vector2 initialTeleportOffset = target.Center - Vector2.UnitY * 350f;
 

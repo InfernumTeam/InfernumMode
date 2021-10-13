@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     }
                     if (npc.ai[1] % modulo == modulo - 30f)
                     {
-                        Utilities.NewProjectileBetter(npc.Center, npc.DirectionTo(targetPosition) * 2.8f, ProjectileID.PhantasmalBolt, 185, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(targetPosition) * 2.8f, ProjectileID.PhantasmalBolt, 185, 0f);
                         targetPosition = default;
                     }
                     break;
@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         for (int i = -3; i <= 3; i++)
                         {
                             float angle = MathHelper.Pi / 3f * i;
-                            Utilities.NewProjectileBetter(npc.Center, (npc.DirectionTo(targetPosition) * 1.4f).RotatedBy(angle), ProjectileID.PhantasmalBolt, 185, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, (npc.SafeDirectionTo(targetPosition) * 1.4f).RotatedBy(angle), ProjectileID.PhantasmalBolt, 185, 0f);
                         }
                     }
                     break;
@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                                 default, 1f);
                             Main.dust[idx].noGravity = true;
                         }
-                        Utilities.NewProjectileBetter(npc.Center, npc.DirectionTo(targetPosition) * 1.4f, ModContent.ProjectileType<PhantasmalBlast>(), 185, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(targetPosition) * 1.4f, ModContent.ProjectileType<PhantasmalBlast>(), 185, 0f);
                         targetPosition = default;
                     }
                     break;
@@ -146,11 +146,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     }
                     if (npc.ai[2] > 0f)
                     {
-                        npc.SimpleFlyMovement(npc.DirectionTo(player.Center + npc.Infernum().ExtraAI[0].ToRotationVector2() * 540f) * 16f, 0.5f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(player.Center + npc.Infernum().ExtraAI[0].ToRotationVector2() * 540f) * 16f, 0.5f);
                         if (npc.ai[2] == 1f)
                         {
                             npc.velocity = Vector2.Zero;
-                            int idx = Utilities.NewProjectileBetter(npc.Center, npc.DirectionTo(targetPosition), ModContent.ProjectileType<MoonlordPendulum>(), 350, 0f, 255, 0f, npc.whoAmI);
+                            int idx = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(targetPosition), ModContent.ProjectileType<MoonlordPendulum>(), 350, 0f, 255, 0f, npc.whoAmI);
                             Main.projectile[idx].ai[0] = 0f;
                             Main.projectile[idx].ai[1] = npc.whoAmI;
                             targetPosition = default;

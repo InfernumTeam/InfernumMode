@@ -154,12 +154,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     if (attackTimer < hoverTime)
                     {
                         Vector2 destination = target.Center - Vector2.UnitY * 185f;
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * hoverSpeed, hoverAcceleration);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverAcceleration);
                         npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
                     }
                     else if (attackTimer == hoverTime)
                     {
-                        npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                         // Normal boss roar.
@@ -180,7 +180,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     if (attackTimer < servantSummonDelay)
                     {
                         Vector2 destination = target.Center - Vector2.UnitY * 275f;
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * hoverSpeed, hoverAcceleration);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverAcceleration);
                     }
                     else if ((attackTimer - servantSummonDelay) % servantSpawnRate == servantSpawnRate - 1)
                     {
@@ -189,7 +189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         {
                             int eye = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<ExplodingServant>());
                             Main.npc[eye].target = npc.target;
-                            Main.npc[eye].velocity = Main.npc[eye].DirectionTo(target.Center) * 4.5f;
+                            Main.npc[eye].velocity = Main.npc[eye].SafeDirectionTo(target.Center) * 4.5f;
                         }
 
                         if (!Main.dedServ)
@@ -224,12 +224,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     if (subState == 0f)
                     {
                         Vector2 destination = target.Center + new Vector2(-chargeDirection * 1100f, -300f);
-                        npc.velocity = Vector2.Lerp(npc.velocity, npc.DirectionTo(destination) * 27f, 0.06f);
+                        npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 27f, 0.06f);
                         npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
                         if (npc.DistanceSQ(destination) < 32f * 32f)
                         {
                             subState = 1f;
-                            npc.velocity = npc.DirectionTo(target.Center - Vector2.UnitY * 300f) * 15f;
+                            npc.velocity = npc.SafeDirectionTo(target.Center - Vector2.UnitY * 300f) * 15f;
                             npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                             npc.netUpdate = true;
                             attackTimer = 0f;
@@ -270,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     if (subState == 0f)
                     {
                         Vector2 destination = target.Center - Vector2.UnitY * 265f;
-                        npc.velocity = npc.DirectionTo(destination) * 21f;
+                        npc.velocity = npc.SafeDirectionTo(destination) * 21f;
                         npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
                         if (npc.WithinRange(destination, 32f))
                         {
@@ -340,7 +340,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                             redirectSpeed *= 1.015f;
 
                         Vector2 destination = target.Center + spinAngle.ToRotationVector2() * spinRadius;
-                        npc.velocity = (npc.velocity * 3f + npc.DirectionTo(destination) * redirectSpeed) / 4f;
+                        npc.velocity = (npc.velocity * 3f + npc.SafeDirectionTo(destination) * redirectSpeed) / 4f;
                         npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                         if (npc.Distance(destination) < redirectSpeed + 8f)
@@ -380,7 +380,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         if (attackTimer >= chargeDelay)
                         {
                             attackTimer = 0f;
-                            npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed;
+                            npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                             subState = 3f;
                             npc.netUpdate = true;
 
@@ -419,7 +419,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                             {
                                 attackTimer = 0f;
                                 chainChargeCounter++;
-                                npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed * 1.6f;
+                                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed * 1.6f;
                                 npc.velocity *= MathHelper.Lerp(1f, 0.67f, chainChargeCounter / chargeChainCount);
                                 npc.netUpdate = true;
 

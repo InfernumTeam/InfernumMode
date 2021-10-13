@@ -348,7 +348,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     if (!npc.WithinRange(destination, 42f))
                     {
-                        npc.velocity = npc.DirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 27f, 0.065f);
+                        npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 27f, 0.065f);
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                     }
                     else
@@ -365,14 +365,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                 float shootSpeed = MathHelper.Lerp(9f, 15.7f, 1f - CombinedLifeRatio);
                                 for (int i = 0; i < 4; i++)
                                 {
-                                    Vector2 shootVelocity = npc.DirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.45f, 0.45f, i / 3f)) * shootSpeed;
+                                    Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.45f, 0.45f, i / 3f)) * shootSpeed;
                                     Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.CursedFlameHostile, 95, 0f);
                                 }
                             }
                             else
                             {
                                 float shootSpeed = MathHelper.Lerp(8f, 14f, 1f - CombinedLifeRatio);
-                                Vector2 shootVelocity = npc.DirectionTo(Target.Center) * shootSpeed;
+                                Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.DeathLaser, 90, 0f);
                             }
                         }
@@ -382,13 +382,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 case TwinsAttackState.DownwardCharge:
                     if (UniversalAttackTimer < 29)
                     {
-                        npc.velocity = npc.DirectionTo(Target.Center) * -6f;
+                        npc.velocity = npc.SafeDirectionTo(Target.Center) * -6f;
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                     }
                     if (UniversalAttackTimer == 30)
                     {
                         float chargeSpeed = MathHelper.Lerp(10f, 16f, 1f - CombinedLifeRatio);
-                        npc.velocity = npc.DirectionTo(Target.Center) * chargeSpeed;
+                        npc.velocity = npc.SafeDirectionTo(Target.Center) * chargeSpeed;
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                         Main.PlaySound(SoundID.Roar, npc.Center, 0);
                     }
@@ -429,7 +429,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             npc.damage = npc.defDamage;
 
                             float chargeSpeed = MathHelper.Lerp(16.5f, 23f, 1f - CombinedLifeRatio);
-                            npc.velocity = npc.DirectionTo(Target.Center + Target.velocity * 6.6f) * chargeSpeed;
+                            npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 6.6f) * chargeSpeed;
                             npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                             npc.netUpdate = true;
 
@@ -475,7 +475,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % fireRate == fireRate - 1)
                         {
                             float shootSpeed = MathHelper.Lerp(8.5f, 11f, 1f - CombinedLifeRatio);
-                            Vector2 shootVelocity = npc.DirectionTo(Target.Center) * shootSpeed;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
                             int projectileType = isSpazmatism ? ProjectileID.CursedFlameHostile : ProjectileID.DeathLaser;
                             
                             int proj = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, projectileType, 90, 0f);
@@ -496,7 +496,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     // Reel back.
                     if (UniversalAttackTimer >= 300 && UniversalAttackTimer < 330)
                     {
-                        npc.velocity = npc.DirectionTo(Target.Center) * -6f;
+                        npc.velocity = npc.SafeDirectionTo(Target.Center) * -6f;
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                     }
 
@@ -504,7 +504,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     if (UniversalAttackTimer == 330)
                     {
                         float chargeSpeed = MathHelper.Lerp(16f, 24f, 1f - CombinedLifeRatio);
-                        npc.velocity = npc.DirectionTo(Target.Center + Target.velocity * 6f) * chargeSpeed;
+                        npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 6f) * chargeSpeed;
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                         Main.PlaySound(SoundID.Roar, npc.Center, 0);
                     }
@@ -563,7 +563,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 						{
                             offsetAngle = Main.rand.NextFloat(MathHelper.ToRadians(-34f), MathHelper.ToRadians(34f));
                             npc.Center = destination;
-                            npc.velocity = npc.DirectionTo(Target.Center + Target.velocity * 7f) * 21f;
+                            npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 7f) * 21f;
                             npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                             npc.noTileCollide = false;
 
@@ -574,7 +574,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 						else if (chargingTime == 0f)
 						{
                             npc.noTileCollide = npc.Bottom.Y > Target.Top.Y - 180f;
-                            npc.velocity = npc.DirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 14f, 0.15f);
+                            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 14f, 0.15f);
                             npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                         }
                         else if (chargingTime > 0)
@@ -611,7 +611,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         if (npc.WithinRange(destination, 40f))
                         {
                             npc.Center = destination;
-                            npc.velocity = npc.DirectionTo(Target.Center + Target.velocity * 7f) * 21f;
+                            npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 7f) * 21f;
                             npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                             npc.noTileCollide = false;
 
@@ -630,7 +630,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         }
                         else
                         {
-                            npc.velocity = npc.DirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 23f, 0.15f);
+                            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 23f, 0.15f);
                             npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                         }
                     }
@@ -639,7 +639,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 case TwinsAttackState.LazilyObserve:
                     destination = Target.Center + new Vector2(isRetinazer ? -540f : 540f, -500f);
 
-                    Vector2 hoverVelocity = npc.DirectionTo(destination - npc.velocity) * 9f;
+                    Vector2 hoverVelocity = npc.SafeDirectionTo(destination - npc.velocity) * 9f;
                     npc.SimpleFlyMovement(hoverVelocity, 0.16f);
                     npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(Target.Center) - MathHelper.PiOver2, MathHelper.TwoPi / 10f);
                     break;
@@ -704,7 +704,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     {
                         for (int i = 0; i < 3; i++)
                         {
-                            Vector2 laserVelocity = npc.DirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.5f, 0.5f, i / 2f)) * 9f;
+                            Vector2 laserVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.5f, 0.5f, i / 2f)) * 9f;
                             int laser = Utilities.NewProjectileBetter(npc.Center + laserVelocity * 8f, laserVelocity, ProjectileID.DeathLaser, 100, 0f);
                             Main.projectile[laser].tileCollide = false;
                         }
@@ -739,13 +739,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer < barrageBurstTime && attackTimer % 15f == 14f)
                     {
-                        Vector2 laserVelocity = npc.DirectionTo(Target.Center).RotatedByRandom(MathHelper.ToRadians(10f)) * 10f;
+                        Vector2 laserVelocity = npc.SafeDirectionTo(Target.Center).RotatedByRandom(MathHelper.ToRadians(10f)) * 10f;
                         int laser = Utilities.NewProjectileBetter(npc.Center + laserVelocity * 3.6f, laserVelocity, ProjectileID.DeathLaser, 100, 0f);
                         Main.projectile[laser].tileCollide = false;
                     }
                     if (attackTimer == 30f && Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.DirectionTo(Target.Center) * 48f, npc.DirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 200, 0f);
+                        int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 200, 0f);
                         Main.projectile[deathRay].ai[1] = npc.whoAmI;
                     }
 
@@ -781,7 +781,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     }
                     if (attackTimer == 270f)
                     {
-                        npc.velocity = npc.DirectionTo(Target.Center - Vector2.UnitY * 250f) * 19f;
+                        npc.velocity = npc.SafeDirectionTo(Target.Center - Vector2.UnitY * 250f) * 19f;
                         npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                         npc.netUpdate = true;
                     }
@@ -991,7 +991,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                     for (int i = 0; i < fireballsPerBurst; i++)
                                     {
                                         float offsetAngle = MathHelper.Lerp(-0.87f, 0.87f, i / (float)fireballsPerBurst);
-                                        Vector2 shootVelocity = npc.DirectionTo(Target.Center).RotatedBy(offsetAngle) * 16f;
+                                        Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(offsetAngle) * 16f;
                                         Utilities.NewProjectileBetter(npc.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingShadowflameBurst>(), 115, 0f);
                                     }
                                 }
@@ -1037,7 +1037,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     
                     if (attackTimer == redirectTime)
 					{
-                        Vector2 flyVelocity = npc.DirectionTo(Target.Center);
+                        Vector2 flyVelocity = npc.SafeDirectionTo(Target.Center);
                         flyVelocity.Y *= 0.2f;
                         flyVelocity = flyVelocity.SafeNormalize(Vector2.UnitX * (npc.velocity.X > 0).ToDirectionInt());
                         npc.velocity = flyVelocity * carpetBombChargeSpeed;

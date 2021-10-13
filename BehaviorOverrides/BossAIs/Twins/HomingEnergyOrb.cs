@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             Lighting.AddLight(projectile.Center, 0.55f, 0.25f, 0f);
 
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            projectile.velocity = (projectile.velocity * 29f + projectile.DirectionTo(target.Center) * 16f) / 30f;
+            projectile.velocity = (projectile.velocity * 29f + projectile.SafeDirectionTo(target.Center) * 16f) / 30f;
             projectile.Opacity = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
             if (Main.netMode != NetmodeID.MultiplayerClient && projectile.WithinRange(target.Center, 70f))
             {

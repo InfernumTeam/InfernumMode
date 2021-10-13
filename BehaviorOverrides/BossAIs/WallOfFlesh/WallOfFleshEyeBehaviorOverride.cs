@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             npc.velocity = (destination - npc.Center).SafeNormalize(Vector2.Zero) * MathHelper.Min(npc.Distance(destination) * 0.5f, maxSpeed);
             if (!npc.WithinRange(Main.npc[Main.wof].Center, 750f))
-                npc.Center = Main.npc[Main.wof].Center + Main.npc[Main.wof].DirectionTo(npc.Center) * 750f;
+                npc.Center = Main.npc[Main.wof].Center + Main.npc[Main.wof].SafeDirectionTo(npc.Center) * 750f;
 
             npc.spriteDirection = 1;
             npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.1f);

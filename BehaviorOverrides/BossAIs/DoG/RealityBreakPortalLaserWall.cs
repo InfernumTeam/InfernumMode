@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     Player closest = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
                     for (int i = 0; i < 4; i++)
-                        Projectile.NewProjectile(projectile.Center, (projectile.DirectionTo(closest.Center) * 10f).RotatedBy(MathHelper.TwoPi / 4f * i), InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 85, 0f, projectile.owner);
+                        Projectile.NewProjectile(projectile.Center, (projectile.SafeDirectionTo(closest.Center) * 10f).RotatedBy(MathHelper.TwoPi / 4f * i), InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 85, 0f, projectile.owner);
                 }
             }
 

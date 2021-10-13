@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Player player = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             if (projectile.timeLeft < maxTimeLeft - 60)
             {
-                projectile.velocity = (projectile.velocity * 60f + projectile.DirectionTo(player.Center) * 13f) / 60.5f;
+                projectile.velocity = (projectile.velocity * 60f + projectile.SafeDirectionTo(player.Center) * 13f) / 60.5f;
             }
             if (!NPC.AnyNPCs(NPCID.MoonLordCore))
             {

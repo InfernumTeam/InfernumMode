@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     for (int i = 0; i < 4; i++)
                     {
                         float offsetAngle = MathHelper.TwoPi * i / 4f;
-                        Utilities.NewProjectileBetter(projectile.Center, projectile.DirectionTo(player.Center).RotatedBy(offsetAngle) * 7f, ProjectileID.CultistBossFireBall, 560, 0f, Main.myPlayer);
+                        Utilities.NewProjectileBetter(projectile.Center, projectile.SafeDirectionTo(player.Center).RotatedBy(offsetAngle) * 7f, ProjectileID.CultistBossFireBall, 560, 0f, Main.myPlayer);
                     }
                 }
             }

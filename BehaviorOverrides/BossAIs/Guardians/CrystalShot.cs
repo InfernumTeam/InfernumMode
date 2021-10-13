@@ -61,7 +61,7 @@ namespace CalamityMod.Projectiles.Boss
 			{
 				Vector2 idealVelocity = projectile.velocity;
 				if (Main.player.IndexInRange((int)projectile.ai[0]))
-					idealVelocity = projectile.DirectionTo(Target.Center) * 30f;
+					idealVelocity = projectile.SafeDirectionTo(Target.Center) * 30f;
 
 				projectile.velocity = Vector2.SmoothStep(projectile.velocity, idealVelocity, MathHelper.Lerp(0.05f, 0.1f, Utils.InverseLerp(150f, 30f, projectile.timeLeft, true)));
 			}

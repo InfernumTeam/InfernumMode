@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 				for (int i = 0; i < 3; i++)
 				{
 					float shootSpeed = MathHelper.Lerp(1f, 6.5f, i / 3f);
-					int star = Projectile.NewProjectile(projectile.Center, projectile.DirectionTo(target.Center + target.velocity * 35f) * shootSpeed, projectile.type, projectile.damage, projectile.knockBack);
+					int star = Projectile.NewProjectile(projectile.Center, projectile.SafeDirectionTo(target.Center + target.velocity * 35f) * shootSpeed, projectile.type, projectile.damage, projectile.knockBack);
 					Main.projectile[star].Size /= 1.3f;
 					Main.projectile[star].scale /= 1.3f;
 					Main.projectile[star].netUpdate = true;

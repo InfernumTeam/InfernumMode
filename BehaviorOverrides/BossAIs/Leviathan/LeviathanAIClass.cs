@@ -171,7 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     npc.spriteDirection = npc.direction;
 
                     Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 900f;
-                    npc.SimpleFlyMovement(npc.DirectionTo(destination) * 8f, 0.16f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 8f, 0.16f);
 
                     if (attackTimer >= (sirenAlive ? 100f : 240f))
                         goToNextAIState();
@@ -183,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     int shootDelay = sirenAlive ? 60 : 35;
 
                     destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 960f;
-                    npc.SimpleFlyMovement(npc.DirectionTo(destination) * 10f, 0.2f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 10f, 0.2f);
 
                     if (attackTimer >= shootDelay && attackTimer <= shootDelay + 35f && usingBelchFrames)
                     {
@@ -231,7 +231,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                             goToNextAIState();
 
                         destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 950f;
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * 11f, 0.15f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 11f, 0.15f);
                     }
                     else if (attackTimer < hoverTime + slowdownTime)
                         npc.velocity *= 0.97f;
@@ -287,7 +287,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     npc.spriteDirection = npc.direction;
 
                     destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * (anahitaFightingToo ? 1360f : 1110f);
-                    npc.SimpleFlyMovement(npc.DirectionTo(destination) * 19f, 0.3f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 19f, 0.3f);
 
                     int vomitCount = 9;
                     int vomitTime = anahitaFightingToo ? 65 : 75;
@@ -337,7 +337,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     if (attackTimer < redirectTime)
                     {
                         destination = target.Center - Vector2.UnitX.RotatedBy(hoverOffsetAngle) * Math.Sign(target.Center.X - npc.Center.X) * 1000f;
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * (outOfOcean ? 23f : 12f), (outOfOcean || !sirenAlive) ? 0.55f : 0.25f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * (outOfOcean ? 23f : 12f), (outOfOcean || !sirenAlive) ? 0.55f : 0.25f);
                         npc.spriteDirection = npc.direction;
                     }
 

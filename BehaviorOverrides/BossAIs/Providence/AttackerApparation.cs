@@ -67,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             switch (State)
             {
                 case AttackState.TopLeftCharge:
-                    projectile.velocity = projectile.DirectionTo(Target.Center) * 18f;
+                    projectile.velocity = projectile.SafeDirectionTo(Target.Center) * 18f;
                     projectile.spriteDirection = (projectile.velocity.X < 0).ToDirectionInt();
 
                     break;
@@ -88,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 case AttackState.TopLeftRedirect:
                     if (Main.myPlayer == projectile.owner && projectile.alpha == 0)
                     {
-                        Vector2 baseShootDirection = projectile.DirectionTo(Target.Center);
+                        Vector2 baseShootDirection = projectile.SafeDirectionTo(Target.Center);
                         for (int i = 0; i < 9; i++)
                         {
                             Vector2 spawnPosition = projectile.Center;
@@ -177,7 +177,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     if (AttackTimer < 45f)
                     {
                         float initialSpeed = projectile.velocity.Length();
-                        projectile.velocity += projectile.DirectionTo(Target.Center).RotatedBy((float)Math.Cos(projectile.timeLeft / 30f) * 0.14f);
+                        projectile.velocity += projectile.SafeDirectionTo(Target.Center).RotatedBy((float)Math.Cos(projectile.timeLeft / 30f) * 0.14f);
                         projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * initialSpeed;
                     }
 

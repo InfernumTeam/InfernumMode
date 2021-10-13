@@ -108,9 +108,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             }
 
             if (ShouldBeInvisible)
-                destination = AttackerGuardian.Center + AttackerGuardian.DirectionTo(npc.Center);
+                destination = AttackerGuardian.Center + AttackerGuardian.SafeDirectionTo(npc.Center);
 
-            npc.velocity = npc.DirectionTo(destination) * MathHelper.Min(16f + (AttackerGuardian.position - AttackerGuardian.oldPos[1]).Length() * 2f, npc.Distance(destination));
+            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(16f + (AttackerGuardian.position - AttackerGuardian.oldPos[1]).Length() * 2f, npc.Distance(destination));
             if (npc.velocity.HasNaNs())
                 npc.velocity = Vector2.UnitY;
         }

@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 rayDirection = projectile.DirectionTo(AimDestination);
+                    Vector2 rayDirection = projectile.SafeDirectionTo(AimDestination);
                     Utilities.NewProjectileBetter(projectile.Center, rayDirection, ModContent.ProjectileType<DoGDeathray>(), 440, 0f, Main.myPlayer, 0f, projectile.whoAmI);
                 }
             }

@@ -578,7 +578,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 			if (attackTimer % (hoverTime + summonLightningTime) < hoverTime)
 			{
 				Vector2 destination = target.Center - Vector2.UnitY * 375f;
-				Vector2 idealVelocity = npc.DirectionTo(destination) * MathHelper.Max(10f, npc.Distance(destination) * 0.05f);
+				Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathHelper.Max(10f, npc.Distance(destination) * 0.05f);
 
 				if (!npc.WithinRange(destination, 185f))
 					npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.15f);

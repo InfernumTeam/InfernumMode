@@ -86,12 +86,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                 Vector2 destination = target.Center + Vector2.UnitX * 540f * xOffsetDirection;
 
                 float distanceFromDestination = npc.Distance(destination);
-                Vector2 linearVelocityToDestination = npc.DirectionTo(destination) * MathHelper.Min(15f + target.velocity.Length() * 0.5f, distanceFromDestination);
+                Vector2 linearVelocityToDestination = npc.SafeDirectionTo(destination) * MathHelper.Min(15f + target.velocity.Length() * 0.5f, distanceFromDestination);
                 npc.velocity = Vector2.Lerp(linearVelocityToDestination, (destination - npc.Center) / 15f, Utils.InverseLerp(180f, 420f, distanceFromDestination, true));
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && npc.WithinRange(destination, 12f + target.velocity.Length() * 0.5f))
                 {
-                    npc.velocity = npc.DirectionTo(target.Center + target.velocity * 9f) * 19f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 9f) * 19f;
 
                     // Release a burst of spears outward.
                     int spearBurstCount = remainingGuardians == 1 ? 6 : 3;
@@ -99,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                     for (int i = 0; i < spearBurstCount; i++)
                     {
                         float offsetAngle = MathHelper.Lerp(-spearBurstSpread, spearBurstSpread, i / (float)spearBurstCount);
-                        Vector2 shootVelocity = npc.DirectionTo(target.Center + target.velocity.Y * new Vector2(8f, 36f)).RotatedBy(offsetAngle) * 9f;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity.Y * new Vector2(8f, 36f)).RotatedBy(offsetAngle) * 9f;
                         Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 150, 0f);
                     }
 
@@ -136,7 +136,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                 {
                     for (int i = 0; i < 12; i++)
                     {
-                        Vector2 shootVelocity = npc.DirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 12f) * 12f;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 12f) * 12f;
                         Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 170, 0f);
                     }
                 }
@@ -169,7 +169,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                     if (attackTimer == 30f)
                     {
                         npc.Center = target.Center + (MathHelper.PiOver2 * Main.rand.Next(4)).ToRotationVector2() * 600f;
-                        npc.velocity = -npc.DirectionTo(target.Center);
+                        npc.velocity = -npc.SafeDirectionTo(target.Center);
                         npc.rotation = npc.AngleTo(target.Center);
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         if (npc.spriteDirection == -1)
@@ -189,7 +189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                     if (attackTimer == 75f)
                     {
                         arcDirection = (Math.Cos(npc.AngleTo(target.Center)) > 0).ToDirectionInt();
-                        npc.velocity = npc.DirectionTo(target.Center) * 24f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * 24f;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -207,7 +207,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                         npc.velocity = npc.velocity.RotatedBy(arcDirection * MathHelper.TwoPi / 75f);
 
                         if (!npc.WithinRange(target.Center, 180f))
-                            npc.Center += npc.DirectionTo(target.Center) * (12f + target.velocity.Length() * 0.15f);
+                            npc.Center += npc.SafeDirectionTo(target.Center) * (12f + target.velocity.Length() * 0.15f);
 
                         npc.rotation = npc.velocity.ToRotation();
                         if (npc.spriteDirection == -1)
@@ -220,7 +220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                             Main.PlaySound(SoundID.Item101, npc.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                Vector2 shootVelocity = npc.DirectionTo(target.Center).RotatedBy(MathHelper.PiOver2 * Main.rand.NextFloatDirection()) * 3f;
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.PiOver2 * Main.rand.NextFloatDirection()) * 3f;
                                 int shot = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<CrystalShot>(), 160, 0f);
                                 Main.projectile[shot].ai[0] = npc.target;
                                 Main.projectile[shot].ai[1] = Main.rand.NextFloat();
@@ -231,7 +231,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                         {
                             for (int i = 0; i < 18; i++)
                             {
-                                Vector2 shootVelocity = npc.DirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 18f) * 19f;
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 18f) * 19f;
                                 Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 170, 0f);
                             }
                         }
@@ -290,7 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
 
                         float shootSpeed = 11f;
                         Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(shootSpeed, shootSpeed);
-                        shootVelocity = Vector2.Lerp(shootVelocity, npc.DirectionTo(target.Center) * shootSpeed, Main.rand.NextFloat(0.6f, 0.7f));
+                        shootVelocity = Vector2.Lerp(shootVelocity, npc.SafeDirectionTo(target.Center) * shootSpeed, Main.rand.NextFloat(0.6f, 0.7f));
                         shootVelocity = shootVelocity.SafeNormalize(Vector2.UnitY) * shootSpeed;
 
                         spawnPosition += shootVelocity * 5f;
@@ -338,7 +338,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                     {
                         for (int i = 0; i < 6; i++)
                         {
-                            Vector2 shootVelocity = npc.DirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 6f) * 10f;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 6f) * 10f;
                             Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 180, 0f);
                         }
                     }

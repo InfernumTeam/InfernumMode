@@ -119,7 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     Player player = Main.player[i];
                     float pushSpeed = MathHelper.Lerp(0f, 45f, Utils.InverseLerp(3800f, 250f, projectile.Distance(player.Center), true));
-                    player.velocity -= player.DirectionTo(projectile.Center) * pushSpeed;
+                    player.velocity -= player.SafeDirectionTo(projectile.Center) * pushSpeed;
                 }
             }
 

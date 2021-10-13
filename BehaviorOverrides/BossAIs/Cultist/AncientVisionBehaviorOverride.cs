@@ -78,11 +78,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 					break;
 				case 1:
 					if (attackState == 20f)
-						npc.velocity = npc.DirectionTo(target.Center) * 17f;
+						npc.velocity = npc.SafeDirectionTo(target.Center) * 17f;
 
 					if (attackTimer < 20f)
 					{
-						npc.velocity = Vector2.Lerp(npc.velocity, npc.DirectionTo(target.Center) * -7f, 0.08f);
+						npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -7f, 0.08f);
 						npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center), 0.1f);
 						npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center), 0.1f);
 					}

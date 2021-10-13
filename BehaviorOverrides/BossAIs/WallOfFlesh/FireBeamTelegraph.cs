@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             // Try to aim at the target.
             if (projectile.timeLeft > 32f)
-                projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.DirectionTo(Target.Center), 0.09f);
+                projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(Target.Center), 0.09f);
 
             projectile.Center = Owner.Center + projectile.velocity.SafeNormalize(Vector2.UnitY) * 70f;
 

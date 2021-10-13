@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             if (projectile.timeLeft > maxTimeLeft - 120)
             {
-                projectile.velocity = (projectile.velocity * 38f + projectile.DirectionTo(Main.player[(int)projectile.ai[0]].Center) * 6f) / 39f;
+                projectile.velocity = (projectile.velocity * 38f + projectile.SafeDirectionTo(Main.player[(int)projectile.ai[0]].Center) * 6f) / 39f;
             }
             else
             {

@@ -128,7 +128,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                     const float acceleration = 0.3f;
                     const float maxVelocity = 13f;
-                    npc.SimpleFlyMovement(npc.DirectionTo(player.Center + idealPosition) * maxVelocity, acceleration);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(player.Center + idealPosition) * maxVelocity, acceleration);
 
                     npc.localAI[0] = npc.rotation;
                     npc.localAI[1] = npc.velocity.X / 15f;
@@ -174,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     if (npc.Distance(Main.LocalPlayer.Center) >= 90f || Math.Abs(npc.velocity.Length() - 12f) > 0.1f)
                     {
                         Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, Main.rand.Next(100, 101), 1f, 0f);
-                        npc.velocity = npc.DirectionTo(Main.LocalPlayer.Center) * 12f;
+                        npc.velocity = npc.SafeDirectionTo(Main.LocalPlayer.Center) * 12f;
                     }
                 }
                 // Slow down
@@ -236,7 +236,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         {
                             const float acceleration = 0.3f;
                             const float maxVelocity = 15f;
-                            npc.SimpleFlyMovement(npc.DirectionTo(idealPosition) * maxVelocity, acceleration);
+                            npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, acceleration);
                             npc.rotation = npc.localAI[0] = npc.velocity.X / 14f;
                             npc.localAI[2] = 0.4f;
                         }
@@ -282,7 +282,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         {
                             const float acceleration = 0.3f;
                             const float maxVelocity = 15f;
-                            npc.SimpleFlyMovement(npc.DirectionTo(idealPosition) * maxVelocity, acceleration);
+                            npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, acceleration);
                             npc.rotation = npc.localAI[0] = npc.velocity.X / 14f;
                             npc.localAI[2] = 0.4f;
                         }
@@ -309,7 +309,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                                 {
                                     Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, Main.rand.Next(100, 101), 1f, 0f);
                                 }
-                                Utilities.NewProjectileBetter(npc.Center, npc.DirectionTo(npc.Infernum().angleTarget) * 15f * (enrage ? 1.4f : 1f), ModContent.ProjectileType<PhantasmalBlast>(), 200, 2.6f);
+                                Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(npc.Infernum().angleTarget) * 15f * (enrage ? 1.4f : 1f), ModContent.ProjectileType<PhantasmalBlast>(), 200, 2.6f);
                             }
                         }
                         break;
@@ -322,7 +322,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         {
                             const float acceleration = 0.3f;
                             const float maxVelocity = 15f;
-                            npc.SimpleFlyMovement(npc.DirectionTo(idealPosition) * maxVelocity, acceleration);
+                            npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, acceleration);
                             npc.rotation = npc.localAI[0] = npc.velocity.X / 14f;
                             npc.localAI[2] = 0.4f;
                         }
@@ -373,7 +373,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         if (npc.ai[1] < seekTimeSpin)
                         {
                             idealPosition = player.Center + new Vector2(0f, -420f);
-                            npc.SimpleFlyMovement(npc.DirectionTo(idealPosition) * maxVelocity, 0.3f);
+                            npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, 0.3f);
                             npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
                             npc.localAI[0] = npc.rotation;
                             npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.5f, 0.05f);
@@ -422,7 +422,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                             if (Math.Abs(player.Center.X - xSeekPosition) < Math.Abs(player.Center.X + xSeekPosition))
                                 signX = -1f;
                             idealPosition = player.Center + new Vector2(signX * xSeekPosition, -480f);
-                            npc.SimpleFlyMovement(npc.DirectionTo(idealPosition) * maxVelocity, 0.3f);
+                            npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, 0.3f);
                             npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
                             npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.5f, 0.05f);
                         }
@@ -467,7 +467,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                                 signX = -1f;
                             signX *= -1f;
                             idealPosition = player.Center + new Vector2(signX * xSeekPosition, -480f);
-                            npc.SimpleFlyMovement(npc.DirectionTo(idealPosition) * maxVelocity, 0.3f);
+                            npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, 0.3f);
                             npc.rotation = npc.localAI[0] = npc.velocity.X / 14f;
                             npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.5f, 0.05f);
                         }
@@ -491,7 +491,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                                 (int)(blastTime / blastCount / (enrage ? 2f : 1f)) - 1)
                             {
                                 npc.localAI[0] = npc.AngleTo(npc.Infernum().angleTarget);
-                                NewProjectileBetter(npc.Center, npc.DirectionTo(npc.Infernum().angleTarget) * 15f, ModContent.ProjectileType<PhantasmalBlast>(), 200, 2.6f);
+                                NewProjectileBetter(npc.Center, npc.SafeDirectionTo(npc.Infernum().angleTarget) * 15f, ModContent.ProjectileType<PhantasmalBlast>(), 200, 2.6f);
                             }
                         }
                         break;
@@ -534,7 +534,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                             idealPosition = player.Center + new Vector2(xSeekPosition * signX, core.Infernum().arenaRectangle.Y - 50f);
                             idealPosition.X = core.Infernum().arenaRectangle.X + core.Infernum().arenaRectangle.Width * (groupIndex == 3).ToInt();
                             idealPosition.Y = core.Infernum().arenaRectangle.Y + 16f;
-                            npc.SimpleFlyMovement(npc.DirectionTo(idealPosition) * maxVelocity, 1.5f);
+                            npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, 1.5f);
                             npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.5f, 0.05f);
                             npc.rotation = 0f;
                         }
@@ -602,7 +602,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                                 }
                             }
                         }
-                        npc.SimpleFlyMovement(npc.DirectionTo(idealPosition) * maxVelocity, 0.5f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, 0.5f);
                         break;
                 }
                 // Go to next AI state

@@ -180,7 +180,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 			else
 			{
                 if (MathHelper.Distance(target.Center.X, npc.Center.X) > 125f)
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.DirectionTo(target.Center).X * 12f, 0.04f);
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 12f, 0.04f);
                 if (lungeFallTimer > 145f || target.Center.Y - npc.Center.Y < -720f)
                     npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -16f, 0.08f);
 

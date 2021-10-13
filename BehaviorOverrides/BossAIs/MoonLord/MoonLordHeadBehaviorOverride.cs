@@ -194,7 +194,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         if (npc.Infernum().ExtraAI[1] == 180f && Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             npc.TargetClosest(false);
-                            Vector2 angleVector = npc.DirectionTo(Main.player[npc.target].Center);
+                            Vector2 angleVector = npc.SafeDirectionTo(Main.player[npc.target].Center);
 
                             float angleSign = -1f;
                             if (angleVector.X < 0f)
@@ -243,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         npc.netUpdate = true;
                     }
 
-                    Vector2 directionAheadOfPlayer = npc.DirectionTo(Main.player[npc.target].Center + Main.player[npc.target].velocity * 20f);
+                    Vector2 directionAheadOfPlayer = npc.SafeDirectionTo(Main.player[npc.target].Center + Main.player[npc.target].velocity * 20f);
                     pupilAngle = pupilAngle.AngleLerp(directionAheadOfPlayer.ToRotation(), 0.5f);
 
                     // Cause the pupil to go outward.

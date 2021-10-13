@@ -88,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 				if (newSpeed > 16f)
 					newSpeed -= 0.045f;
 
-				float angleBetweenDirectionAndTarget = npc.velocity.AngleBetween(npc.DirectionTo(target.Center));
+				float angleBetweenDirectionAndTarget = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center));
 				if (angleBetweenDirectionAndTarget < 0.55f && angleBetweenDirectionAndTarget > MathHelper.Pi / 3f)
 					newSpeed += 0.09f;
 

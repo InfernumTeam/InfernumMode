@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             float shootWaitTime = 160f;
 
             // Try to be at the opposite side of the attacker relative to the player at all times.
-            Vector2 destination = target.Center - target.DirectionTo(attacker.Center) * MathHelper.Max(160f, target.Distance(attacker.Center));
+            Vector2 destination = target.Center - target.SafeDirectionTo(attacker.Center) * MathHelper.Max(160f, target.Distance(attacker.Center));
 
             if (shootTimer >= shootWaitTime)
             {
@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                     npc.velocity = Vector2.UnitY * -2.4f;
 
                 float flySpeed = MathHelper.Lerp(9f, 23f, Utils.InverseLerp(50f, 270f, npc.Distance(destination), true));
-                npc.velocity = npc.velocity * 0.85f + npc.DirectionTo(destination) * flySpeed * 0.15f;
+                npc.velocity = npc.velocity * 0.85f + npc.SafeDirectionTo(destination) * flySpeed * 0.15f;
             }
             else
             {
@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float shotNumber = (shootTimer - shootWaitTime) / shootRate;
-                        Vector2 shootVelocity = npc.DirectionTo(target.Center).RotatedBy(MathHelper.PiOver2 * Main.rand.NextFloatDirection()) * 3f;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.PiOver2 * Main.rand.NextFloatDirection()) * 3f;
                         int shot = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<CrystalShot>(), 135, 0f);
                         Main.projectile[shot].ai[0] = npc.target;
                         Main.projectile[shot].ai[1] = shotNumber / totalCrystalShots;

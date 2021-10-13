@@ -346,7 +346,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             flyAcceleration = MathHelper.Lerp(flyAcceleration, idealFlyAcceleration, 0.3f);
 
-            float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.DirectionTo(destination));
+            float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(destination));
             if (distanceFromDestination > 100f)
             {
                 float speed = npc.velocity.Length();

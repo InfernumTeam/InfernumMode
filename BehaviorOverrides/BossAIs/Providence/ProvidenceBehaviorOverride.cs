@@ -181,7 +181,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 							}
 
 							Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(7f, 7f) * Main.rand.NextFloat(0.7f, 1.3f);
-							if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.DirectionTo(target.Center)) < 0.5f)
+							if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
 								shootVelocity *= 1.7f;
 
 							Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 220, 0f, 255);
@@ -343,7 +343,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 							{
 								Player player = Main.player[i];
 								float pushSpeed = MathHelper.Lerp(0f, 36f, Utils.InverseLerp(2900f, 250f, npc.Distance(player.Center)));
-								player.velocity -= player.DirectionTo(npc.Center) * pushSpeed;
+								player.velocity -= player.SafeDirectionTo(npc.Center) * pushSpeed;
 							}
 						}
 					}
@@ -364,7 +364,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 					if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % starShootTime == starShootTime - 1)
 					{
 						if (Main.rand.NextBool(2))
-							Utilities.NewProjectileBetter(crystalCenter, npc.DirectionTo(target.Center) * 12f, ModContent.ProjectileType<GreatStar>(), 216, 0f);
+							Utilities.NewProjectileBetter(crystalCenter, npc.SafeDirectionTo(target.Center) * 12f, ModContent.ProjectileType<GreatStar>(), 216, 0f);
 						for (int i = 0; i < totalStarsPerBurst; i++)
 						{
 							Vector2 shootVelocity = (MathHelper.TwoPi * i / totalStarsPerBurst).ToRotationVector2() * burstSpeed;
@@ -516,12 +516,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 							{
 								Player player = Main.player[i];
 								float pushSpeed = MathHelper.Lerp(0f, maxPushbackSpeed, Utils.InverseLerp(2200f, 180f, npc.Distance(player.Center)));
-								player.velocity -= player.DirectionTo(npc.Center) * pushSpeed;
+								player.velocity -= player.SafeDirectionTo(npc.Center) * pushSpeed;
 							}
 
 							// Release a prism death laser.
 							float laserSpeed = MathHelper.TwoPi * 1.025f / PrismRay.LaserLifetime;
-							Vector2 laserUnitDirection = npc.DirectionTo(target.Center);
+							Vector2 laserUnitDirection = npc.SafeDirectionTo(target.Center);
 							int laserXDirection = -(laserUnitDirection.X > 0).ToDirectionInt();
 							laserSpeed *= laserXDirection;
 

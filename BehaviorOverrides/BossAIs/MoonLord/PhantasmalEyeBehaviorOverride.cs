@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (projectile.localAI[0] < 50f)
             {
                 projectile.velocity.X = projectile.velocity.RotatedBy(projectile.ai[1]).X;
-                projectile.velocity.X = (projectile.velocity * 40f + projectile.DirectionTo(Main.player[Player.FindClosest(projectile.Center, 1, 1)].Center) * 6).X / 41f;
+                projectile.velocity.X = (projectile.velocity * 40f + projectile.SafeDirectionTo(Main.player[Player.FindClosest(projectile.Center, 1, 1)].Center) * 6).X / 41f;
                 projectile.velocity.Y -= 0.07f;
             }
             else if (projectile.localAI[0] >= 50f)

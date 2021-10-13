@@ -202,7 +202,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                         }
                         else
                         {
-                            npc.velocity = Vector2.Lerp(npc.velocity, npc.DirectionTo(destination) * 20f, 0.05f);
+                            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 20f, 0.05f);
                             attackTimer--;
                         }
                     }

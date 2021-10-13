@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ref float spawnedSegmentsFlag = ref npc.Infernum().ExtraAI[5];
             ref float sentinelAttackTimer = ref npc.Infernum().ExtraAI[6];
             ref float signusAttackState = ref npc.Infernum().ExtraAI[7];
-            ref float jawAngle = ref npc.Infernum().ExtraAI[8];
+            ref float jawRotation = ref npc.Infernum().ExtraAI[8];
             ref float chompTime = ref npc.Infernum().ExtraAI[9];
             ref float time = ref npc.Infernum().ExtraAI[10];
             ref float flyAcceleration = ref npc.Infernum().ExtraAI[11];
@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     npc.Opacity = 1f;
                     npc.Center = Main.projectile[(int)fadeinPortalIndex].Center;
-                    npc.velocity = npc.DirectionTo(target.Center) * 36f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * 36f;
                     npc.netUpdate = true;
                 }
                 return false;
@@ -136,7 +136,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (deathTimer > 0f)
             {
                 DoDeathEffects(npc, deathTimer);
-                jawAngle = jawAngle.AngleTowards(0f, 0.07f);
+                jawRotation = jawRotation.AngleTowards(0f, 0.07f);
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 deathTimer++;
                 return false;
@@ -221,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.active = false;
 
             // Chomping after attempting to eat the player.
-            bool chomping = npc.Infernum().ExtraAI[1] == 0f && DoChomp(npc, target, ref chompTime, ref jawAngle);
+            bool chomping = npc.Infernum().ExtraAI[1] == 0f && DoChomp(npc, target, ref chompTime, ref jawRotation);
 
             // Do movement and barrier sneak attack anticheese.
             if (!target.dead && target.active)
@@ -230,7 +230,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     DoBarrierSneakAttack(npc, target, ref trapChargeTimer, ref totalCharges, ref specialAttackTimer, ref trapChargePortalIndex);
                 else
                 {
-                    DoAggressiveFlyMovement(npc, target, chomping, ref jawAngle, ref chompTime, ref time, ref flyAcceleration);
+                    DoAggressiveFlyMovement(npc, target, chomping, ref jawRotation, ref chompTime, ref time, ref flyAcceleration);
 
                     if (specialAttackState == 0f)
                         DoAnticheeseRunChecks(npc, target, ref horizontalRunAnticheeseCounter, ref trapChargeTimer);
@@ -446,7 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        public static bool DoChomp(NPC npc, Player target, ref float chompTime, ref float jawAngle)
+        public static bool DoChomp(NPC npc, Player target, ref float chompTime, ref float jawRotation)
         {
             bool chomping = chompTime > 0f;
             float idealChompAngle = MathHelper.ToRadians(-18f);
@@ -454,11 +454,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 chompTime--;
 
-                if (jawAngle != idealChompAngle)
+                if (jawRotation != idealChompAngle)
                 {
-                    jawAngle = jawAngle.AngleTowards(idealChompAngle, 0.12f);
+                    jawRotation = jawRotation.AngleTowards(idealChompAngle, 0.12f);
 
-                    if (Math.Abs(jawAngle - idealChompAngle) < 0.001f)
+                    if (Math.Abs(jawRotation - idealChompAngle) < 0.001f)
                     {
                         for (int i = 0; i < 40; i++)
                         {
@@ -467,7 +467,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                             electricity.noGravity = true;
                             electricity.scale = 2.6f;
                         }
-                        jawAngle = idealChompAngle;
+                        jawRotation = idealChompAngle;
                     }
                 }
             }
@@ -500,7 +500,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         Main.npc[i].netUpdate = true;
                     }
                 }
-                npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
             }
 
@@ -551,14 +551,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                             Main.npc[i].netUpdate = true;
                         }
                     }
-                    npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed;
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                     npc.Opacity = 1f;
                     npc.dontTakeDamage = false;
                 }
             }
         }
 
-        public static void DoAggressiveFlyMovement(NPC npc, Player target, bool chomping, ref float jawAngle, ref float chompTime, ref float time, ref float flyAcceleration)
+        public static void DoAggressiveFlyMovement(NPC npc, Player target, bool chomping, ref float jawRotation, ref float chompTime, ref float time, ref float flyAcceleration)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.03f, lifeRatio);
@@ -588,7 +588,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             flyAcceleration = MathHelper.Lerp(flyAcceleration, idealFlyAcceleration, 0.3f);
 
-            float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.DirectionTo(destination));
+            float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(destination));
 
             // Adjust the speed based on how the direction towards the target compares to the direction of the
             // current velocity. This check is unnecessary once close to the target, which would prompt a snap/charge.
@@ -615,10 +615,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Jaw opening when near player.
             if (!chomping)
             {
-                if ((npc.Distance(target.Center) < 330f && directionToPlayerOrthogonality > 0.79f) ||
-                    (npc.Distance(target.Center) < 550f && directionToPlayerOrthogonality > 0.87f))
+                float distanceFromTarget = npc.Distance(target.Center);
+                if ((distanceFromTarget < 330f && directionToPlayerOrthogonality > 0.79f) || (distanceFromTarget < 550f && directionToPlayerOrthogonality > 0.87f))
                 {
-                    jawAngle = jawAngle.AngleTowards(idealMouthOpeningAngle, 0.028f);
+                    jawRotation = jawRotation.AngleTowards(idealMouthOpeningAngle, 0.028f);
                     if (distanceFromDestination * 0.5f < 56f)
                     {
                         if (chompTime == 0f)
@@ -630,7 +630,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
                 else
                 {
-                    jawAngle = jawAngle.AngleTowards(0f, 0.07f);
+                    jawRotation = jawRotation.AngleTowards(0f, 0.07f);
                 }
             }
 
@@ -638,7 +638,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (distanceFromDestination * 0.5f < 160f && directionToPlayerOrthogonality > 0.45f && npc.velocity.Length() < idealFlySpeed * 1.7f)
             {
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.5f;
-                jawAngle = jawAngle.AngleLerp(idealMouthOpeningAngle, 0.55f);
+                jawRotation = jawRotation.AngleLerp(idealMouthOpeningAngle, 0.55f);
 
                 if (chompTime == 0f)
                 {
@@ -830,7 +830,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         Main.npc[i].netUpdate = true;
                     }
                 }
-                npc.velocity = npc.DirectionTo(target.Center) * 32f;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 32f;
                 npc.Opacity = 1f;
                 npc.dontTakeDamage = false;
                 specialAttackState = 0f;

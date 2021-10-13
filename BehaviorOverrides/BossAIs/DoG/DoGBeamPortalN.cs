@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Time % 60f == 59f && Time < 180f)
             {
                 Player closest = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-                projectile.velocity = projectile.DirectionTo(closest.Center) * 8.5f;
+                projectile.velocity = projectile.SafeDirectionTo(closest.Center) * 8.5f;
             }
 
             // Decelerate after the final charge.

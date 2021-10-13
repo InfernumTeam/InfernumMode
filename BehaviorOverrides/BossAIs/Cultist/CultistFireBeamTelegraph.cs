@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // Try to aim at the target.
             if (projectile.timeLeft > 32f)
-                projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.DirectionTo(Target.Center), 0.15f);
+                projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(Target.Center), 0.15f);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

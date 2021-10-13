@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Player closest = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
             if (!projectile.WithinRange(closest.Center, 200f))
-                projectile.velocity = (projectile.velocity * 40f + projectile.DirectionTo(closest.Center) * 19f) / 41f;
+                projectile.velocity = (projectile.velocity * 40f + projectile.SafeDirectionTo(closest.Center) * 19f) / 41f;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

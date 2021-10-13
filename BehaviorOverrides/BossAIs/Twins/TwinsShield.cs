@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 				if (proj.timeLeft > 10 && proj.damage > 0)
 				{
 					proj.friendly = false;
-					proj.velocity = Vector2.Reflect(proj.velocity, projectile.DirectionTo(Main.player[Player.FindClosest(proj.Center, 1, 1)].Center));
+					proj.velocity = Vector2.Reflect(proj.velocity, projectile.SafeDirectionTo(Main.player[Player.FindClosest(proj.Center, 1, 1)].Center));
 					proj.penetrate = 1;
 					proj.netUpdate = true;
 				}

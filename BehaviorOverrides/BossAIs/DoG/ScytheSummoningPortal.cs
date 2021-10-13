@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Player closestTarget = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
                 for (int i = 0; i < 4; i++)
                 {
-                    Vector2 scytheVelocity = projectile.DirectionTo(closestTarget.Center).RotatedByRandom(MathHelper.Pi / 6f) * 19f;
+                    Vector2 scytheVelocity = projectile.SafeDirectionTo(closestTarget.Center).RotatedByRandom(MathHelper.Pi / 6f) * 19f;
                     Utilities.NewProjectileBetter(projectile.Center, scytheVelocity, ModContent.ProjectileType<OtherworldlyScythe>(), 270, 0f, projectile.owner);
                 }
             }

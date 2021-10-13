@@ -60,7 +60,7 @@ namespace CalamityMod.Projectiles.Boss
 			{
 				Vector2 idealVelocity = projectile.velocity;
 				if (Main.npc.IndexInRange((int)projectile.ai[0]))
-					idealVelocity = projectile.DirectionTo(Target.Center) * (30f + Target.velocity.Length());
+					idealVelocity = projectile.SafeDirectionTo(Target.Center) * (30f + Target.velocity.Length());
 
                 if (projectile.Hitbox.Intersects(Target.Hitbox))
                 {

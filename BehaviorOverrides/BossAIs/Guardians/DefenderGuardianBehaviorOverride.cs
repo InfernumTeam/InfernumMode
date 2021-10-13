@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             npc.spriteDirection = thingToDefend.spriteDirection;
 
             Vector2 defenseCenter = thingToDefend.Center;
-            Vector2 destination = defenseCenter + thingToDefend.DirectionTo(target.Center).RotatedBy(MathHelper.PiOver2) * MathHelper.Min(300f, target.Distance(defenseCenter) + 30f);
+            Vector2 destination = defenseCenter + thingToDefend.SafeDirectionTo(target.Center).RotatedBy(MathHelper.PiOver2) * MathHelper.Min(300f, target.Distance(defenseCenter) + 30f);
 
             // Determine if there are any projectiles that are close to the main boss.
             // If there are, attempt to act as a meat shield.
@@ -86,13 +86,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                 Vector2 endingLocation = defenseCenter + Main.projectile[i].velocity / Main.projectile[i].Distance(defenseCenter);
 
                 // Ignore projectiles that are not of relative threat yet or are an inevitable threat.
-                bool aimingAtTarget = Vector2.Dot(Main.projectile[i].velocity.SafeNormalize(Vector2.Zero), Main.projectile[i].DirectionTo(endingLocation)) > 0.68f;
+                bool aimingAtTarget = Vector2.Dot(Main.projectile[i].velocity.SafeNormalize(Vector2.Zero), Main.projectile[i].SafeDirectionTo(endingLocation)) > 0.68f;
                 if (!aimingAtTarget || !Main.projectile[i].WithinRange(endingLocation, minDistance) || Main.projectile[i].WithinRange(endingLocation, 60f))
                     continue;
 
                 // If the above checks are passed, update the minimum distance, destination, and required movement speed.
                 minDistance = Main.projectile[i].Distance(endingLocation);
-                destination = endingLocation - Main.projectile[i].DirectionTo(endingLocation) * MathHelper.Min(300f, Main.projectile[i].Distance(endingLocation));
+                destination = endingLocation - Main.projectile[i].SafeDirectionTo(endingLocation) * MathHelper.Min(300f, Main.projectile[i].Distance(endingLocation));
                 requiredMoveSpeed = Main.projectile[i].Distance(endingLocation) / Main.projectile[i].velocity.Length();
             }
 
@@ -115,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             {
                 if (npc.justHit)
                     slowdownTimer = 18f;
-                npc.velocity = (npc.velocity * 2f + npc.DirectionTo(destination) * MathHelper.Max(requiredMoveSpeed * 2.3f, (thingToDefend.position - thingToDefend.oldPos[1]).Length() * 2.3f)) / 3f;
+                npc.velocity = (npc.velocity * 2f + npc.SafeDirectionTo(destination) * MathHelper.Max(requiredMoveSpeed * 2.3f, (thingToDefend.position - thingToDefend.oldPos[1]).Length() * 2.3f)) / 3f;
                 if (npc.WithinRange(destination, npc.velocity.Length() + 10f))
                 {
                     npc.Center = destination;

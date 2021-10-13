@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
             if (projectile.timeLeft > 60f)
-                projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.DirectionTo(target.Center) * 9f, 0.08f);
+                projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(target.Center) * 9f, 0.08f);
 			else
 			{
                 projectile.velocity.X *= 0.975f;

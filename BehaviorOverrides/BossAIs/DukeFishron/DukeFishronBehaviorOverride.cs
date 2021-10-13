@@ -278,10 +278,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         if (enraged)
                         {
                             float aimAheadFactor = 20f * Utils.InverseLerp(80f, 360f, npc.Distance(target.Center), true);
-                            npc.velocity = npc.DirectionTo(target.Center + target.velocity * aimAheadFactor) * chargeSpeed;
+                            npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor) * chargeSpeed;
                         }
                         else
-                            npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed;
+                            npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
 
                         npc.rotation = getAdjustedAngle(npc.velocity.ToRotation());
                         npc.netUpdate = true;
@@ -330,7 +330,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
                     }
 
-                    Vector2 hoverVelocity = npc.DirectionTo(target.Center + new Vector2(hoverDirection * 400f, -320f) - npc.velocity) * 8f;
+                    Vector2 hoverVelocity = npc.SafeDirectionTo(target.Center + new Vector2(hoverDirection * 400f, -320f) - npc.velocity) * 8f;
                     npc.SimpleFlyMovement(hoverVelocity, 0.42f);
                     npc.rotation = npc.rotation.AngleLerp(getAdjustedAngle(npc.AngleTo(target.Center), true), 0.32f);
 
@@ -342,7 +342,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
-                            Main.npc[bubble].velocity = Main.npc[bubble].DirectionTo(target.Center).RotatedByRandom(0.1f) * Main.rand.NextFloat(minBubbleSpeed, maxBubbleSpeed);
+                            Main.npc[bubble].velocity = Main.npc[bubble].SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * Main.rand.NextFloat(minBubbleSpeed, maxBubbleSpeed);
                         }
                     }
 
@@ -369,7 +369,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (attackTimer == 1f)
                     {
                         npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
-                        npc.velocity = npc.DirectionTo(target.Center) * spinSpeed;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * spinSpeed;
                         npc.rotation = getAdjustedAngle(npc.velocity.ToRotation());
                         npc.netUpdate = true;
 
@@ -383,7 +383,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         npc.velocity = npc.velocity.RotatedBy(rotationalSpeed);
 
                         if (!npc.WithinRange(target.Center, 200f))
-                            npc.Center += npc.DirectionTo(target.Center) * moveToTargetSpeed;
+                            npc.Center += npc.SafeDirectionTo(target.Center) * moveToTargetSpeed;
 
                         if (attackTimer % bubbleShootRate == bubbleShootRate - 1)
                         {
@@ -422,7 +422,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         hoverDirection = ((npc.Center - target.Center).X > 0).ToDirectionInt();
 
                         Vector2 destination = target.Center + new Vector2(hoverDirection * 555f, -150f);
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * (16f + target.velocity.Length() * 1.2f), 0.5f + target.velocity.Length() * 0.06f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * (16f + target.velocity.Length() * 1.2f), 0.5f + target.velocity.Length() * 0.06f);
                         npc.rotation = npc.rotation.AngleLerp(getAdjustedAngle(npc.AngleTo(target.Center), true), 0.32f);
 
                         if (npc.WithinRange(destination, 21f))
@@ -539,7 +539,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (attackTimer < redirectTime)
                     {
                         Vector2 destination = target.Center - Vector2.UnitY.RotatedBy(target.velocity.X / 20f * MathHelper.ToRadians(26f)) * 430f;
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * 15f, 0.5f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 15f, 0.5f);
                         npc.rotation = getAdjustedAngle(npc.AngleTo(target.Center), true);
                     }
                     if (attackTimer == redirectTime)
@@ -547,7 +547,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         // Roar.
                         Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
 
-                        npc.velocity = npc.DirectionTo(target.Center) * lungeSpeed;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * lungeSpeed;
                         npc.netUpdate = true;
                     }
 
@@ -591,7 +591,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (attackTimer < hoverTime)
                     {
                         Vector2 destination = target.Center + new Vector2(500f, -1000f);
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * 23f, 0.7f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 23f, 0.7f);
                         npc.rotation = getAdjustedAngle(npc.AngleTo(target.Center), true);
                     }
 
@@ -642,7 +642,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                             for (int i = 0; i < typhoonCount; i++)
                             {
                                 float offsetAngle = MathHelper.TwoPi * i / typhoonCount;
-                                Vector2 shootVelocity = npc.DirectionTo(target.Center).RotatedBy(offsetAngle) * typhoonBurstSpeed;
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * typhoonBurstSpeed;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), 105, 0f);
                             }
                         }
@@ -680,10 +680,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         if (enraged)
                         {
                             float aimAheadFactor = 20f * Utils.InverseLerp(80f, 360f, npc.Distance(target.Center), true);
-                            npc.velocity = npc.DirectionTo(target.Center + target.velocity * aimAheadFactor) * chargeSpeed;
+                            npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor) * chargeSpeed;
                         }
                         else
-                            npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed;
+                            npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
 
                         npc.rotation = getAdjustedAngle(npc.velocity.ToRotation());
                         npc.netUpdate = true;

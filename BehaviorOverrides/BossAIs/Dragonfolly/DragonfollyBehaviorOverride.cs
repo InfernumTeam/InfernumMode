@@ -448,7 +448,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                             Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * (float)Math.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
                             if (phase3)
                             {
-                                Vector2 baseShootVelocity = npc.DirectionTo(mouthPosition) * 7f;
+                                Vector2 baseShootVelocity = npc.SafeDirectionTo(mouthPosition) * 7f;
                                 Projectile.NewProjectile(mouthPosition, baseShootVelocity.RotatedBy(-0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                                 Projectile.NewProjectile(mouthPosition, baseShootVelocity.RotatedBy(0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                             }

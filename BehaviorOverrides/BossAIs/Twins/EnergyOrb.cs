@@ -66,13 +66,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                 // Have the orbs fire outward in a cone.
                 if (OwnerAttackTimer == 75f)
-                    npc.velocity = npc.DirectionTo(Target.Center).RotatedBy(MathHelper.ToRadians(-AngularDirection * Main.rand.NextFloat(38f, 48f))) * 22f;
+                    npc.velocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.ToRadians(-AngularDirection * Main.rand.NextFloat(38f, 48f))) * 22f;
                 if (OwnerAttackTimer >= 105f && OwnerAttackTimer <= 120f)
                     npc.velocity *= 0.86f;
 
                 // Have both orbs charge at the player.
                 if (OwnerAttackTimer == 120f || OwnerAttackTimer == 320f)
-                    npc.velocity = npc.DirectionTo(Target.Center) * 22f;
+                    npc.velocity = npc.SafeDirectionTo(Target.Center) * 22f;
 
                 // Perform collision/explosion logic and transition to the charge attack part.
                 if (OwnerAttackTimer > 120f && OwnerAttackTimer < 240f && AngularDirection == 1f)

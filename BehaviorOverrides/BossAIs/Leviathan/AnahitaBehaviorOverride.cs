@@ -398,7 +398,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         destination.Y -= 500f;
                         destination -= npc.velocity;
 
-                        npc.SimpleFlyMovement(npc.DirectionTo(destination) * 15f, 1.85f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 15f, 1.85f);
                         int idealDirection = Math.Sign(target.Center.X - npc.Center.X);
                         if (idealDirection != 0)
                         {
@@ -417,7 +417,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     // Do the actual charge.
                     if (attackTimer == hoverTime || attackTimer == hoverTime + spinTime / 2)
                     {
-                        npc.velocity = npc.DirectionTo(target.Center) * chargeSpeed;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         int idealDirection = Math.Sign(target.Center.X - npc.Center.X);
                         if (idealDirection != 0)
                         {
@@ -459,7 +459,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                             npc.velocity = npc.velocity.RotatedBy(spinAngularVelocity * npc.direction);
                             npc.rotation += spinAngularVelocity * npc.direction;
                             if (!npc.WithinRange(target.Center, 120f))
-                                npc.Center += npc.DirectionTo(target.Center) * chargeSpeed * 0.3f;
+                                npc.Center += npc.SafeDirectionTo(target.Center) * chargeSpeed * 0.3f;
                         }
 
                         Vector2 currentDirection = (npc.position - npc.oldPos[1]).SafeNormalize(Vector2.Zero);

@@ -16,6 +16,7 @@ using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.StormWeaver;
+using CalamityMod.NPCs.BrimstoneElemental;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -46,6 +47,7 @@ namespace InfernumMode.GlobalInstances
             [NPCID.Spazmatism] = 22223,
             [NPCID.Retinazer] = 21000,
             [NPCID.SkeletronPrime] = 44444,
+            [ModContent.NPCType<BrimstoneElemental>()] = 51515,
             [ModContent.NPCType<AureusSpawn>()] = 25000,
             [NPCID.CultistBoss] = 56000,
             [ModContent.NPCType<Bumblefuck>()] = 227550,

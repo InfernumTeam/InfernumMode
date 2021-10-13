@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             else
                 npc.Opacity = MathHelper.Lerp(1f, 0.05f, Utils.InverseLerp(45f, 30f, attackTimer, true));
 
-            if (attackTimer == 120f)
+            if (attackTimer == 120f || Main.npc[CalamityGlobalNPC.ghostBoss].Infernum().ExtraAI[6] > 0f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

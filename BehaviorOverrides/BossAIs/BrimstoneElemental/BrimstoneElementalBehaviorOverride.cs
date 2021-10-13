@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
-        public const float BaseDR = 0.25f;
+        public const float BaseDR = 0.12f;
         public const float InvincibleDR = 0.99999f;
         public const float RoseCircleRadius = 1279f;
 
@@ -218,7 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                             int skullDamage = shouldBeBuffed ? 310 : 125;
                             skullDamage += (int)((1f - lifeRatio) * 35);
 
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center);
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 7f;
                             int skull = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<HomingBrimstoneSkull>(), skullDamage, 0f);
                             if (Main.projectile.IndexInRange(skull))
                                 Main.projectile[skull].ai[0] = pissedOff ? -8f : (attackTimer - bombardTime) / 2;
@@ -252,7 +252,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             frameType = (int)BrimmyFrameType.TypicalFly;
 
             int totalRosesToSpawn = shouldBeBuffed ? 10 : 8;
-            int castingAnimationTime = shouldBeBuffed ? 70 : 110;
+            int castingAnimationTime = shouldBeBuffed ? 30 : 50;
             if (pissedOff)
                 totalRosesToSpawn += 5;
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
@@ -353,9 +353,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Use the open eye fly animation.
             frameType = (int)BrimmyFrameType.OpenEye;
 
-            int chargeTime = (int)MathHelper.Lerp(240f, 150f, 1f - lifeRatio);
+            int chargeTime = (int)MathHelper.Lerp(150f, 80f, 1f - lifeRatio);
             int totalBursts = 3;
-            int burstRate = 90;
+            int burstRate = 60;
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float burstCounter = ref npc.Infernum().ExtraAI[1];
@@ -441,7 +441,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                             for (int i = 0; i < skullCount / 2 + 2; i++)
                             {
                                 float offsetAngle = Main.rand.NextFloat(-0.89f, 0.89f);
-                                Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * Main.rand.NextFloat(2f, 3f);
+                                Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * Main.rand.NextFloat(1f, 2f);
                                 Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneHellblast>(), skullDamage, 0f);
                             }
                         }
@@ -467,15 +467,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             frameType = (int)BrimmyFrameType.ClosedShell;
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
 
-            int fireReleaseRate = lifeRatio < 0.5f ? 5 : 7;
-            int bulletHellTime = 480;
+            int fireReleaseRate = lifeRatio < 0.5f ? 3 : 6;
+            int bulletHellTime = 520;
             if (shouldBeBuffed)
             {
                 fireReleaseRate -= 1;
                 bulletHellTime += 60;
             }
             if (pissedOff)
-                fireReleaseRate = 3;
+                fireReleaseRate = 2;
 
             // Rapidly slow down.
             npc.velocity *= 0.8f;
@@ -493,7 +493,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             // Have a small delay prior to the bullet hell to allow the target to prepare.
-            if (attackTimer < 105f)
+            if (attackTimer < 185f)
                 return;
 
             // Release the bullet hell cinders.

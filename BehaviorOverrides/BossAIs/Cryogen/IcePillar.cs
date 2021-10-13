@@ -146,7 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 			{
 				Vector2 icicleSpawnPosition = projectile.Bottom - aimDirection * CurrentHeight * i / spikeCount;
 				icicleSpawnPosition -= aimDirection * Main.rand.NextFloatDirection() * 20f + Main.rand.NextVector2Circular(8f, 8f);
-				Vector2 icicleShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 10f);
+				Vector2 icicleShootVelocity = Main.rand.NextVector2Unit() * 4f;
 				Utilities.NewProjectileBetter(icicleSpawnPosition, icicleShootVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 145, 0f);
 			}
 		}

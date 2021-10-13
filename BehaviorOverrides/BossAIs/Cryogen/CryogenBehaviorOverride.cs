@@ -371,6 +371,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             int burstCreationRate = 120 - (int)(zeroBasedAttackPower * 25f);
             int icicleCount = 12 + (int)(zeroBasedAttackPower * 5f);
             Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -355f);
+
+            // Move to the side of the target instead of right on top of them if below the target to prevent
+            // EoL-esque bullshit hits.
+            if (npc.Center.Y > target.Center.Y - 60f)
+                destination.X = target.Center.X + (target.Center.X < npc.Center.X).ToDirectionInt() * 480f;
+
             if (!npc.WithinRange(destination, 90f))
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 15f, 1.4f);
             else
@@ -421,6 +427,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             int burstCreationRate = 120 - (int)(zeroBasedAttackPower * 12f);
             int icicleCount = 6 + (int)(zeroBasedAttackPower * 4f);
             Vector2 destination = target.Center - Vector2.UnitY * 325f;
+
+            // Move to the side of the target instead of right on top of them if below the target to prevent
+            // EoL-esque bullshit hits.
+            if (npc.Center.Y > target.Center.Y - 60f)
+                destination.X = target.Center.X + (target.Center.X < npc.Center.X).ToDirectionInt() * 480f;
+
             if (!npc.WithinRange(destination, 60f))
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 15f, 1.4f);
             else
@@ -531,10 +543,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             int burstCreationRate = 160 - (int)(zeroBasedAttackPower * 25f);
             int pillarCreationRate = 135 - (int)(zeroBasedAttackPower * 30f);
             int icicleCount = 5 + (int)(zeroBasedAttackPower * 3f);
-            float pillarHorizontalOffset = 630f - zeroBasedAttackPower * 130f;
+            float pillarHorizontalOffset = 750f - zeroBasedAttackPower * 130f;
             ref float icePillarCreationTimer = ref npc.Infernum().ExtraAI[0];
 
             Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -425f);
+
+            // Move to the side of the target instead of right on top of them if below the target to prevent
+            // EoL-esque bullshit hits.
+            if (npc.Center.Y > target.Center.Y - 60f)
+                destination.X = target.Center.X + (target.Center.X < npc.Center.X).ToDirectionInt() * 480f;
+
             if (!npc.WithinRange(destination, 90f))
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 15f, 1.4f);
             else
@@ -760,9 +778,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         public static void DoAttack_AuroraBulletHell(NPC npc, Player target, ref float attackTimer, ref float attackState, ref float blizzardIntensity, float attackPower)
         {
             float zeroBasedAttackPower = attackPower - 1f;
+            int shootDelay = 90;
             int spiritSummonTime = (int)(540 + zeroBasedAttackPower * 210f);
             int spiritSummonRate = (int)(16f - zeroBasedAttackPower * 3f);
             Vector2 destination = target.Center + new Vector2(target.velocity.X * 80f, -355f);
+
+            // Move to the side of the target instead of right on top of them if below the target to prevent
+            // EoL-esque bullshit hits.
+            if (npc.Center.Y > target.Center.Y - 60f)
+                destination.X = target.Center.X + (target.Center.X < npc.Center.X).ToDirectionInt() * 480f;
+
             if (!npc.WithinRange(destination, 90f))
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 12.5f, 1f);
             else
@@ -779,7 +804,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             if (attackTimer == 60f && Main.GetActiveSound(SlotId.FromFloat(blizzardSound)) == null && !shouldStopSound)
                 blizzardSound = Main.PlayTrackedSound(SoundID.BlizzardStrongLoop, npc.Center).ToFloat();
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 60f && attackTimer % spiritSummonRate == spiritSummonRate - 1f)
+            bool canShoot = attackTimer > shootDelay && attackTimer < spiritSummonTime;
+            if (Main.netMode != NetmodeID.MultiplayerClient && canShoot && attackTimer % spiritSummonRate == spiritSummonRate - 1f)
             {
                 Vector2 spiritSpawnPosition = target.Center - Vector2.UnitY * Main.rand.NextFloat(450f);
                 spiritSpawnPosition.X += Main.rand.NextBool(2).ToDirectionInt() * 825f;
@@ -787,7 +813,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 Utilities.NewProjectileBetter(spiritSpawnPosition, spiritVelocity, ModContent.ProjectileType<AuroraSpirit>(), 140, 0f);
             }
 
-            if (attackTimer >= spiritSummonTime)
+            if (attackTimer >= spiritSummonTime + 90f)
             {
                 attackTimer = 0f;
                 attackState++;

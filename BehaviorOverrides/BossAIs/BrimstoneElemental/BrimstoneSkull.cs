@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 StartingRotation = projectile.velocity.ToRotation();
 
             // Wave up and down over time.
-            Vector2 moveOffset = (StartingRotation + MathHelper.PiOver2).ToRotationVector2() * (float)Math.Sin(Time / 9f) * 8f;
+            Vector2 moveOffset = (StartingRotation + MathHelper.PiOver2).ToRotationVector2() * (float)Math.Sin(Time / 9f) * 6f;
             projectile.Center += moveOffset;
 
             projectile.spriteDirection = (projectile.velocity.X > 0f).ToDirectionInt();

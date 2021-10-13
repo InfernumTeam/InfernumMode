@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 if (CalamityWorld.downedProvidence)
                     return 17f;
-                return 10f;
+                return 13f;
             }
         }
         public override void SetStaticDefaults()
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             if (StartingVelocity == Vector2.Zero)
-                StartingVelocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * 0.85f;
+                StartingVelocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * 2f;
 
             if (Time < 0f)
 			{

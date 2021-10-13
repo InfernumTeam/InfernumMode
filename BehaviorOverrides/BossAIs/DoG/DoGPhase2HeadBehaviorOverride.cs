@@ -56,9 +56,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (!Main.player.IndexInRange(npc.target) || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 npc.TargetClosest(false);
 
-            if (npc.life > 10000)
-                npc.life = 10000;
-
             Player target = Main.player[npc.target];
 
             target.Calamity().normalityRelocator = false;

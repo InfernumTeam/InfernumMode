@@ -58,6 +58,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Timer effect.
             time++;
 
+            // Adjust scale.
+            npc.scale = 1.2f;
+
             npc.Calamity().DR = 0.15f;
 
             // whoAmI variable

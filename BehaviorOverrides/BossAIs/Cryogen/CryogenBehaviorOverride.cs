@@ -289,6 +289,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 case CryogenAttackState.IcicleCircleBurst:
                     DoAttack_IcicleCircleBurst(npc, target, ref attackTimer, ref attackState, attackPower);
                     break;
+                case CryogenAttackState.TeleportAndReleaseIceBombs:
+                    DoAttack_TeleportAndReleaseIceBombs(npc, target, ref attackTimer, ref attackState, attackPower);
+                    break;
                 case CryogenAttackState.ShatteringIcePillars:
                     DoAttack_ShatteringIcePillars(npc, target, ref attackTimer, ref attackState, attackPower);
                     break;

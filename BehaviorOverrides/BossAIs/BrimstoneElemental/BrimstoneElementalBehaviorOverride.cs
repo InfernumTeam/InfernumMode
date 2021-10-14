@@ -441,7 +441,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                             for (int i = 0; i < skullCount / 2 + 2; i++)
                             {
                                 float offsetAngle = Main.rand.NextFloat(-0.89f, 0.89f);
-                                Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * Main.rand.NextFloat(1f, 2f);
+                                Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * Main.rand.NextFloat(0.8f, 1.6f);
                                 Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneHellblast>(), skullDamage, 0f);
                             }
                         }
@@ -521,7 +521,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     {
                         Vector2 shootDirection = Main.rand.NextVector2Unit();
                         Vector2 fireSpawnPosition = npc.Center + npc.Size * shootDirection * 0.45f;
-                        Vector2 fireShootVelocity = shootDirection * 15f;
+                        Vector2 fireShootVelocity = shootDirection * 12f;
                         Utilities.NewProjectileBetter(fireSpawnPosition, fireShootVelocity, ModContent.ProjectileType<BrimstoneFireball>(), fireDamage, 0f);
                     }
 
@@ -643,7 +643,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         if (attackTimer >= (totalLaserbeamBursts - 0.02f) * 210f)
                         {
                             attackState = 0f;
+                            telegraphDirectionX = 0f;
+                            telegraphDirectionY = 0f;
                             SelectNewAttack(npc);
+                            return;
                         }
                     }
 

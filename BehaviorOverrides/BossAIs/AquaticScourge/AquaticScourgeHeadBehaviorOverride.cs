@@ -25,6 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             BelchParasites,
             BubbleSummon,
             CallForSeekers,
+            JustCharges
         }
 
         public override int NPCOverrideType => ModContent.NPCType<AquaticScourgeHead>();
@@ -134,6 +135,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                             case AquaticScourgeAttackType.CallForSeekers:
                                 DoAttack_CallForSeekers(npc, target, attackTimer, ref speedFactor);
                                 break;
+                            case AquaticScourgeAttackType.JustCharges:
+                                speedFactor = 1.2f;
+                                if (attackTimer > 300f)
+                                    GotoNextAttack(npc);
+                                break;
                         }
                         attackTimer++;
                     }
@@ -178,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                         Utilities.NewProjectileBetter(npc.Center + acidVelocity * 3f, acidVelocity, ModContent.ProjectileType<OldDukeSummonDrop>(), 110, 0f);
                     }
 
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < 4; i++)
                     {
                         Vector2 cloudVelocity = Main.rand.NextVector2Unit() * (Main.rand.NextFloat(7f, 9f) + enrageFactor * 2f);
                         Utilities.NewProjectileBetter(npc.Center + cloudVelocity * 3f, cloudVelocity, ModContent.ProjectileType<SulphurousPoisonCloud>(), 115, 0f);
@@ -207,7 +213,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                         Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SlowerSandTooth>(), 115, 0f);
                     }
 
-                    for (int i = 0; i < 9; i++)
+                    for (int i = 0; i < 5; i++)
                     {
                         Vector2 cloudVelocity;
                         do
@@ -238,7 +244,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                         Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandBlast>(), 110, 0f);
                     }
 
-                    for (int i = 0; i < 9; i++)
+                    for (int i = 0; i < 5; i++)
                     {
                         Vector2 cloudVelocity;
                         do
@@ -398,6 +404,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static void DoMovement_GeneralMovement(NPC npc, Player target, float speedFactor)
         {
+            AquaticScourgeAttackType attackType = (AquaticScourgeAttackType)(int)npc.ai[2];
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealRotation = npc.AngleTo(target.Center);
             float acceleration = MathHelper.Lerp(0.019f, 0.0265f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
@@ -405,7 +412,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             movementSpeed += MathHelper.Lerp(0f, 15f, Utils.InverseLerp(420f, 3000f, npc.Distance(target.Center), true));
             movementSpeed *= speedFactor;
 
-            if (!npc.WithinRange(target.Center, 320f))
+            if (attackType == AquaticScourgeAttackType.JustCharges)
+                acceleration *= (speedFactor - 1f) * 0.5f + 1f;
+
+            if (!npc.WithinRange(target.Center, attackType == AquaticScourgeAttackType.JustCharges ? 180f : 320f))
             {
                 float newSpeed = MathHelper.Lerp(npc.velocity.Length(), movementSpeed, acceleration * 3.2f);
                 npc.velocity = npc.velocity.RotateTowards(idealRotation, acceleration, true);
@@ -447,16 +457,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             AquaticScourgeAttackType nextAttack;
 
             WeightedRandom<AquaticScourgeAttackType> attackSelector = new WeightedRandom<AquaticScourgeAttackType>();
-            attackSelector.Add(AquaticScourgeAttackType.BelchAcid, 1f);
-            attackSelector.Add(AquaticScourgeAttackType.SpitTeeth, 1.1f);
-            attackSelector.Add(AquaticScourgeAttackType.ReleaseCircleOfSand, 0.9);
-            attackSelector.Add(AquaticScourgeAttackType.BelchParasites, lifeRatio < 0.7f && NPC.CountNPCS(ModContent.NPCType<AquaticParasite2>()) < 6 ? 1.2f : 0f);
-            attackSelector.Add(AquaticScourgeAttackType.BubbleSummon, lifeRatio < 0.5f ? 1.4f : 0f);
-            attackSelector.Add(AquaticScourgeAttackType.CallForSeekers, lifeRatio < 0.35f && NPC.CountNPCS(ModContent.NPCType<AquaticSeekerHead2>()) < 4 ? 1.6f : 0f);
 
-            do
-                nextAttack = attackSelector.Get();
-            while (nextAttack == currentAttack);
+            if (lifeRatio > 0.15f)
+            {
+                attackSelector.Add(AquaticScourgeAttackType.BelchAcid, 1f);
+                attackSelector.Add(AquaticScourgeAttackType.SpitTeeth, 1.1f);
+                attackSelector.Add(AquaticScourgeAttackType.ReleaseCircleOfSand, 0.9);
+                attackSelector.Add(AquaticScourgeAttackType.BelchParasites, lifeRatio < 0.7f && NPC.CountNPCS(ModContent.NPCType<AquaticParasite2>()) < 6 ? 1.2f : 0f);
+                attackSelector.Add(AquaticScourgeAttackType.BubbleSummon, lifeRatio < 0.5f ? 1.4f : 0f);
+                attackSelector.Add(AquaticScourgeAttackType.CallForSeekers, lifeRatio < 0.35f && NPC.CountNPCS(ModContent.NPCType<AquaticSeekerHead2>()) < 4 ? 1.6f : 0f);
+
+                do
+                    nextAttack = attackSelector.Get();
+                while (nextAttack == currentAttack);
+            }
+            else
+                nextAttack = AquaticScourgeAttackType.JustCharges;
 
             npc.ai[2] = (int)nextAttack;
             npc.ai[3] = 0f;

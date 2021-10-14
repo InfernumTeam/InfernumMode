@@ -49,13 +49,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 			{
                 DisappearTimer++;
                 npc.velocity.X *= 0.95f;
-                npc.Opacity = Utils.InverseLerp(360f, 210f, DisappearTimer, true);
-                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                npc.Opacity = Utils.InverseLerp(460f, 310f, DisappearTimer, true);
                 npc.noTileCollide = false;
                 npc.noGravity = false;
 
-                if (DisappearTimer > 360f)
+                if (DisappearTimer > 360f || npc.collideX || npc.collideY)
+                {
+                    if (npc.collideX || npc.collideY)
+					{
+                        for (int i = 1; i <= 5; i++)
+                            Gore.NewGore(npc.Center, Main.rand.NextVector2Circular(2f, 2f), mod.GetGoreSlot($"Gores/PlagueNuke{i}"));
+					}
                     npc.active = false;
+                }
+                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                 return;
 			}
 

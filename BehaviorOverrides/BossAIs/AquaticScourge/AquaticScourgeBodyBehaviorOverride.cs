@@ -34,9 +34,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.alpha = Utils.Clamp(npc.alpha - 42, 0, 255);
 
             npc.defense = aheadSegment.defense;
+            npc.damage = 50;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
 
-            npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.55f);
+            npc.Calamity().DR = MathHelper.Min(npc.Calamity().DR, 0.4f);
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

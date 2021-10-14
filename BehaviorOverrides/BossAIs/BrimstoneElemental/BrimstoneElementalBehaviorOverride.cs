@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -639,6 +640,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                                     Main.projectile[beam].ai[1] = npc.whoAmI;
                             }
                         }
+
+                        IEnumerable<Projectile> rays = Utilities.AllProjectilesByID(ModContent.ProjectileType<BrimstoneDeathray>());
+                        if (Main.netMode != NetmodeID.MultiplayerClient && rays.Count() > 0 && Main.rand.NextBool(2))
+						{
+                            Projectile deathray = rays.First();
+                            Utilities.NewProjectileBetter(npc.Center, -deathray.velocity.RotatedByRandom(MathHelper.PiOver2) * 18f, ModContent.ProjectileType<BrimstonePetal2>(), 150, 0f);
+						}
 
                         if (attackTimer >= (totalLaserbeamBursts - 0.02f) * 210f)
                         {

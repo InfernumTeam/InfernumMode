@@ -1,6 +1,5 @@
-﻿using CalamityMod.NPCs.Bumblebirb;
+﻿using CalamityMod.NPCs.BrimstoneElemental;
 using CalamityMod.NPCs.DesertScourge;
-using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.HiveMind;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
@@ -12,15 +11,10 @@ using CrabulonBoss = CalamityMod.NPCs.Crabulon.CrabulonIdle;
 using HiveMindP1Boss = CalamityMod.NPCs.HiveMind.HiveMind;
 using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
 using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
-using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
-using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
-using CalamityMod.NPCs.AstrumAureus;
-using CalamityMod.NPCs.StormWeaver;
-using CalamityMod.NPCs.BrimstoneElemental;
 
 namespace InfernumMode.GlobalInstances
 {
-	public static class InfernumNPCHPValues
+    public static class InfernumNPCHPValues
     {
         public static Dictionary<int, int> HPValues = new Dictionary<int, int>()
         {
@@ -44,18 +38,7 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<EbonianSGBig>()] = 4020,
             [NPCID.WallofFleshEye] = 3232,
             [NPCID.WallofFlesh] = 11875,
-            [NPCID.Spazmatism] = 22223,
-            [NPCID.Retinazer] = 21000,
-            [NPCID.SkeletronPrime] = 44444,
             [ModContent.NPCType<BrimstoneElemental>()] = 51515,
-            [ModContent.NPCType<AureusSpawn>()] = 25000,
-            [NPCID.CultistBoss] = 56000,
-            [ModContent.NPCType<Bumblefuck>()] = 227550,
-            [ModContent.NPCType<ProvidenceBoss>()] = 900000,
-            [ModContent.NPCType<StormWeaverHeadNaked>()] = 999998,
-            [ModContent.NPCType<OldDukeBoss>()] = 872444,
-            [ModContent.NPCType<DevourerofGodsHead>()] = 1400000,
-            [ModContent.NPCType<DevourerofGodsHeadS>()] = 4180000
         };
     }
 }

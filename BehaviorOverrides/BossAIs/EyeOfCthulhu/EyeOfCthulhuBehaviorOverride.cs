@@ -229,6 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         if (npc.DistanceSQ(destination) < 32f * 32f)
                         {
                             subState = 1f;
+
                             npc.velocity = npc.SafeDirectionTo(target.Center - Vector2.UnitY * 300f) * 15f;
                             npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                             npc.netUpdate = true;

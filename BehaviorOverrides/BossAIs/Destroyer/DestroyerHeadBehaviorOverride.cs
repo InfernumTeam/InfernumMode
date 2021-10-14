@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             DivingAttack,
             LaserBarrage,
             ProbeBombing,
-            ElectricPulses
+            SuperchargedProbes
         }
         #endregion
 
@@ -44,9 +44,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         {
             DestroyerAttackType.FlyAttack,
             DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.SuperchargedProbes,
             DestroyerAttackType.ProbeBombing,
             DestroyerAttackType.LaserBarrage,
-            DestroyerAttackType.ElectricPulses,
+            DestroyerAttackType.SuperchargedProbes,
             DestroyerAttackType.FlyAttack,
             DestroyerAttackType.ProbeBombing,
         };
@@ -234,8 +235,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     if (attackTimer >= 425f)
                         goToNextAIState();
                     break;
-                case DestroyerAttackType.ElectricPulses:
-                    goToNextAIState();
+                case DestroyerAttackType.SuperchargedProbes:
+                    destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
+                    npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
+                    if (npc.WithinRange(destination, 30f))
+                        npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    else
+                        npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 90f)
+                    {
+                        int probeCount = (int)Math.Round(MathHelper.Lerp(2f, 4f, 1f - lifeRatio));
+                        for (int i = 0; i < probeCount; i++)
+                        {
+                            int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());
+                            Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
+                        }
+                    }
+
+                    if (attackTimer >= SuperchargedProbe.Lifetime + 90f)
+                        goToNextAIState();
                     break;
             }
 

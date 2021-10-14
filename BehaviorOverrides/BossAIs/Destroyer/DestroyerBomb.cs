@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
 			projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-            projectile.tileCollide = projectile.timeLeft < 520;
+            projectile.tileCollide = projectile.timeLeft < 540;
 
             Tile tileAtPosition = CalamityUtils.ParanoidTileRetrieval((int)projectile.Center.X / 16, (int)projectile.Center.Y / 16);
             if (TileID.Sets.Platforms[tileAtPosition.type] && tileAtPosition.active() && projectile.tileCollide)
@@ -50,11 +50,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 		// Explode on death.
         public override void Kill(int timeLeft)
         {
-            projectile.damage = 32;
+            CalamityGlobalProjectile.ExpandHitboxBy(projectile, 84);
+            projectile.damage = 50;
             projectile.Damage();
 
 			Main.PlaySound(SoundID.Item14, projectile.position);
-            CalamityGlobalProjectile.ExpandHitboxBy(projectile, 54);
 
             Utils.PoofOfSmoke(projectile.Center);
 		}

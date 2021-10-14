@@ -218,10 +218,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                             int skullDamage = shouldBeBuffed ? 310 : 125;
                             skullDamage += (int)((1f - lifeRatio) * 35);
 
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 7f;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 11f;
                             int skull = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<HomingBrimstoneSkull>(), skullDamage, 0f);
                             if (Main.projectile.IndexInRange(skull))
-                                Main.projectile[skull].ai[0] = pissedOff ? -8f : (attackTimer - bombardTime) / 2;
+                                Main.projectile[skull].ai[0] = pissedOff ? -8f : (attackTimer - bombardTime) / 5f;
                         }
                     }
 
@@ -251,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             // Use the flying animation.
             frameType = (int)BrimmyFrameType.TypicalFly;
 
-            int totalRosesToSpawn = shouldBeBuffed ? 10 : 8;
+            int totalRosesToSpawn = shouldBeBuffed ? 14 : 10;
             int castingAnimationTime = shouldBeBuffed ? 30 : 50;
             if (pissedOff)
                 totalRosesToSpawn += 5;
@@ -354,8 +354,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             frameType = (int)BrimmyFrameType.OpenEye;
 
             int chargeTime = (int)MathHelper.Lerp(150f, 80f, 1f - lifeRatio);
-            int totalBursts = 3;
-            int burstRate = 60;
+            int totalBursts = 4;
+            int burstRate = 45;
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float burstCounter = ref npc.Infernum().ExtraAI[1];
@@ -479,7 +479,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             frameType = (int)BrimmyFrameType.ClosedShell;
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
 
-            int fireReleaseRate = lifeRatio < 0.5f ? 3 : 6;
+            int fireReleaseRate = lifeRatio < 0.5f ? 5 : 7;
             int bulletHellTime = 520;
             if (shouldBeBuffed)
             {
@@ -615,6 +615,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime == 1f)
                     {
+                        deathrayDirection = npc.SafeDirectionTo(target.Center);
                         int beam = Utilities.NewProjectileBetter(eyePosition, deathrayDirection, ModContent.ProjectileType<BrimstoneTelegraphRay>(), 0, 0f);
                         if (Main.npc.IndexInRange(beam))
                             Main.projectile[beam].ai[1] = npc.whoAmI;

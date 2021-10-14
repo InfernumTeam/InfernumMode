@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 using static InfernumMode.BehaviorOverrides.BossAIs.Destroyer.DestroyerHeadBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
@@ -61,12 +62,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 bool isMovingHorizontally = Math.Abs(Vector2.Dot(directionToNextSegment, Vector2.UnitX)) > 0.95f && headAttackTimer >= 230f;
                 if (Main.netMode != NetmodeID.MultiplayerClient && isMovingHorizontally && headAttackTimer % BodySegmentCount == segmentNumber && npc.whoAmI % 3 == 0)
                 {
-                    for (int i = -1; i <= 1; i += 2)
-                    {
-                        int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * i * 12f, ProjectileID.DeathLaser, 90, 0f);
-                        Main.projectile[laser].timeLeft = 250;
-                        Main.projectile[laser].tileCollide = false;
-                    }
+                    int telegraph = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(telegraph))
+                        Main.projectile[telegraph].ai[0] = npc.whoAmI;
                 }
             }
             return false;

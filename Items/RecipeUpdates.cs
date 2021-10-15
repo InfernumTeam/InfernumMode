@@ -66,6 +66,15 @@ namespace InfernumMode.Items
             // Make overloaded sludge's recipe give 4 summon items instead of 1.
             SetRecipeResultStack(ModContent.ItemType<OverloadedSludge>(), 4);
 
+            // Make cryo key's recipe give 6 summon items instead of 1.
+            SetRecipeResultStack(ModContent.ItemType<CryoKey>(), 6);
+
+            // Make charred idol's recipe give 6 summon items instead of 1.
+            SetRecipeResultStack(ModContent.ItemType<CharredIdol>(), 6);
+
+            // Make seafood's recipe give 4 summon items instead of 1.
+            SetRecipeResultStack(ModContent.ItemType<CharredIdol>(), 4);
+
             // Remove ingredients from boss summoners that require the boss be defeated.
             RemoveRecipeIngredient(ModContent.ItemType<Teratoma>(), ModContent.ItemType<TrueShadowScale>());
             RemoveRecipeIngredient(ModContent.ItemType<BloodyWormFood>(), ModContent.ItemType<BloodSample>());

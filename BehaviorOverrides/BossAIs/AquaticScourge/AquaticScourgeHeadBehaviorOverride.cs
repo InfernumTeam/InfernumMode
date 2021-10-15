@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
-                CreateSegments(npc, 42, ModContent.NPCType<AquaticScourgeBody>(), ModContent.NPCType<AquaticScourgeTail>());
+                CreateSegments(npc, 32, ModContent.NPCType<AquaticScourgeBody>(), ModContent.NPCType<AquaticScourgeTail>());
                 initializedFlag = 1f;
                 npc.netUpdate = true;
             }

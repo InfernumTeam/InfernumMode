@@ -35,6 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
+            npc.Calamity().DR = 0.5f;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

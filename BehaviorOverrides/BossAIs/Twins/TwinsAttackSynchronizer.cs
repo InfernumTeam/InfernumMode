@@ -627,6 +627,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                 Vector2 toAimTowards = Target.Center + Target.velocity * 30f;
                                 npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(toAimTowards) - MathHelper.PiOver2, MathHelper.TwoPi / 80f);
                             }
+
+                            if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % 50f == 49f)
+                                Projectile.NewProjectile(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 110, 0f);
                         }
                         else
                         {

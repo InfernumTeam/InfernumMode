@@ -94,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Hover near the target.
             if (horizontalHoverOffset == 0f)
                 horizontalHoverOffset = Math.Sign(Target.Center.X - npc.Center.X) * 500f;
-            Vector2 hoverDestination = Target.Center + new Vector2(horizontalHoverOffset, -350f) - npc.velocity;
+            Vector2 hoverDestination = Target.Center + new Vector2(horizontalHoverOffset, -350f) + (npc.whoAmI * MathHelper.TwoPi / 4f).ToRotationVector2() * 100f - npc.velocity;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 22f, 1.05f);
 
             // Look at the target.

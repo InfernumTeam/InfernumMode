@@ -10,8 +10,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
     public class DestroyerPierceLaserTelegraph : ModProjectile
     {
-        public int NPCToAttachToIndex => (int)projectile.ai[0];
-        public NPC NPCToAttachTo => Main.npc.IndexInRange(NPCToAttachToIndex) ? Main.npc[NPCToAttachToIndex] : null;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
         {
@@ -31,16 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public override void AI()
         {
-            // Die if the NPC to attach do is not valid.
-            if (NPCToAttachTo is null || !NPCToAttachTo.active)
-			{
-                projectile.Kill();
-                return;
-			}
-
             // Pulse in and out.
             projectile.scale = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 30f) * 6f;
-            projectile.Center = NPCToAttachTo.Center;
         }
 
         public override bool CanDamage() => false;

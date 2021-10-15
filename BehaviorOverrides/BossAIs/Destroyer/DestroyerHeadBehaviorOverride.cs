@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -180,7 +181,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                         if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= diveTime + ascendTime - 30f)
                         {
                             for (int i = 0; i < 4; i++)
-                                Utilities.NewProjectileBetter(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.8f) * 17f, ModContent.ProjectileType<DestroyerBomb>(), 0, 0f);
+                            {
+                                int type = Main.rand.NextBool(2) ? ModContent.ProjectileType<ScavengerLaser>() : ModContent.ProjectileType<DestroyerBomb>();
+                                int damage = type == ModContent.ProjectileType<ScavengerLaser>() ? 110 : 0;
+                                Utilities.NewProjectileBetter(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.8f) * 17f, type, damage, 0f);
+                            }
                         }
                     }
 

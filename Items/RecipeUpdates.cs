@@ -73,7 +73,7 @@ namespace InfernumMode.Items
             SetRecipeResultStack(ModContent.ItemType<CharredIdol>(), 6);
 
             // Make seafood's recipe give 4 summon items instead of 1.
-            SetRecipeResultStack(ModContent.ItemType<CharredIdol>(), 4);
+            SetRecipeResultStack(ModContent.ItemType<Seafood>(), 4);
 
             // Remove ingredients from boss summoners that require the boss be defeated.
             RemoveRecipeIngredient(ModContent.ItemType<Teratoma>(), ModContent.ItemType<TrueShadowScale>());

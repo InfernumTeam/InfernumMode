@@ -333,7 +333,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                             // Generate sets of points where the roses will be spawned.
                             Vector2 roseSpawnPosition = circleCenter + Main.rand.NextVector2Unit() * Main.rand.NextFloat(150f, 920f);
 
-                            Dust.QuickDustLine(eyePosition, roseSpawnPosition, 175f, Color.Red);
+                            Dust.QuickDustLine(eyePosition, roseSpawnPosition, 45f, Color.Red);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 int rose = Utilities.NewProjectileBetter(roseSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneRose>(), 0, 0f);

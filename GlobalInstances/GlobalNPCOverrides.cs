@@ -293,6 +293,19 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
+            if ((npc.type == ModContent.NPCType<DevourerofGodsHeadS>() || npc.type == ModContent.NPCType<DevourerofGodsBodyS>() || npc.type == ModContent.NPCType<DevourerofGodsTailS>()) &&
+                 life - realDamage <= 1000)
+            {
+                damage = 0;
+                npc.dontTakeDamage = true;
+                if (npc.Infernum().ExtraAI[20] == 0f)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    npc.Infernum().ExtraAI[20] = 1f;
+                }
+                return false;
+            }
+
             return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
         }
 

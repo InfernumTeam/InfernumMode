@@ -1,5 +1,7 @@
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -25,6 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override void AI()
         {
+            projectile.scale = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 45f);
             for (int i = 0; i < 16; i++)
 			{
                 Dust redLightning = Dust.NewDustPerfect(projectile.Center, 60, Main.rand.NextVector2Circular(3f, 3f));
@@ -36,7 +39,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             }
 		}
 
-		public override void Kill(int timeLeft)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            spriteBatch.DrawLineBetter(projectile.Center - Vector2.UnitY * 4000f, projectile.Center + Vector2.UnitY * 4000f, Color.Red, projectile.scale * 4f);
+            return false;
+        }
+
+        public override void Kill(int timeLeft)
         {
             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)

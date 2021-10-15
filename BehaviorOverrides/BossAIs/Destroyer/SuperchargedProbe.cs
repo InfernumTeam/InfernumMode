@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         }
         public ref float AttackTimer => ref npc.ai[1];
         public ref float GeneralTimer => ref npc.ai[2];
-        public const int Lifetime = 360;
+        public const int Lifetime = 480;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Supercharged Probe");
@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             if (npc.spriteDirection == 1)
                 npc.rotation += MathHelper.Pi;
 
-            if (AttackTimer > 50f)
+            if (AttackTimer > 40f)
 			{
                 horizontalHoverOffset = 0f;
                 AttackState = SuperchargedProbeAttackState.Charge;
@@ -114,11 +114,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public void DoBehavior_Charge()
         {
+            npc.damage = npc.defDamage;
+
             // Do the charge on the first frame.
             if (AttackTimer == 1f)
             {
                 int chargeDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
-                float chargeSpeed = 18f;
+                float chargeSpeed = 21f;
                 npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 35f) * chargeSpeed;
                 npc.spriteDirection = chargeDirection;
 
@@ -147,7 +149,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 laser.noGravity = true;
             }
 
-            if (AttackTimer >= 45f)
+            if (AttackTimer >= 40f)
             {
                 AttackState = SuperchargedProbeAttackState.ChargePreparation;
                 AttackTimer = 0f;

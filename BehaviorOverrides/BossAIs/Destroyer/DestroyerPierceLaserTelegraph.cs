@@ -23,14 +23,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             projectile.tileCollide = false;
             projectile.alpha = 255;
             projectile.penetrate = -1;
-            projectile.timeLeft = 30;
+            projectile.timeLeft = 20;
             cooldownSlot = 1;
         }
 
         public override void AI()
         {
             // Pulse in and out.
-            projectile.scale = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 30f) * 6f;
+            projectile.scale = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 20f) * 6f;
         }
 
         public override bool CanDamage() => false;
@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int laser = Utilities.NewProjectileBetter(projectile.Center, projectile.velocity * 14f, ProjectileID.DeathLaser, 120, 0f);
+            int laser = Utilities.NewProjectileBetter(projectile.Center, projectile.velocity * 18f, ProjectileID.DeathLaser, 120, 0f);
             if (Main.projectile.IndexInRange(laser))
                 Main.projectile[laser].tileCollide = false;
 		}

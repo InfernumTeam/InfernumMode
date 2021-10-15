@@ -29,6 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
         public const float BaseDR = 0.12f;
         public const float InvincibleDR = 0.99999f;
         public const float RoseCircleRadius = 1279f;
+        public const bool ReadyToUseBuffedAI = false;
 
         #region Enumerations
         public enum BrimmyAttackType
@@ -75,7 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
+            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
             bool pissedOff = target.Bottom.Y < (Main.maxTilesY - 200f) * 16f;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -279,7 +280,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             else if (!target.WithinRange(circleCenter, RoseCircleRadius - 8f))
 			{
                 int roseDamage = Main.rand.Next(120, 135);
-                if (CalamityWorld.downedProvidence)
+                if (CalamityWorld.downedProvidence && ReadyToUseBuffedAI)
                     roseDamage = (int)(roseDamage * 1.75);
 
                 target.Center = circleCenter + (target.Center - circleCenter).SafeNormalize(Vector2.Zero) * (RoseCircleRadius - 10f);
@@ -567,9 +568,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             switch ((int)attackState)
             {
                 // Teleport near the target and immediately go to the next attack state.
+                // This also deletes any leftover laserbeams.
                 case 0:
                     attackState++;
                     attackTimer = 0f;
+
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<BrimstoneDeathray>())
+                            Main.projectile[i].active = false;
+                    }
+
                     Vector2 teleportDestination = target.Center - Main.rand.NextVector2CircularEdge(300f, 300f);
                     CreateTeleportTelegraph(npc.Center, teleportDestination, 250);
                     npc.Center = teleportDestination;

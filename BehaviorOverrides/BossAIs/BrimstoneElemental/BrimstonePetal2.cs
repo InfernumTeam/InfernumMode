@@ -60,8 +60,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
 		public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-			if (CalamityWorld.downedProvidence || BossRushEvent.BossRushActive)
-				target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 120);
+            if ((CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
+                target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 120);
 			else
 				target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
 		}

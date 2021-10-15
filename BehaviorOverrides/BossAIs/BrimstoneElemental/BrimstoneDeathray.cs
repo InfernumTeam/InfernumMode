@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
     public class BrimstoneDeathray : BaseLaserbeamProjectile
     {
         public int OwnerIndex => (int)projectile.ai[1];
-        public override float Lifetime => 90;
+        public override float Lifetime => 85;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.Red;
         public override Texture2D LaserBeginTexture => Main.projectileTexture[projectile.type];
@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int petalDamage = CalamityWorld.downedProvidence || BossRushEvent.BossRushActive ? 310 : 140;
+            int petalDamage = (CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 310 : 140;
             for (float petalOffset = 20f; petalOffset < LaserLength; petalOffset += 165f)
             {
                 Vector2 petalSpawnPosition = OwnerEyePosition + projectile.velocity * petalOffset;
@@ -87,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             if (Time <= 50f)
                 return;
 
-            if (CalamityWorld.downedProvidence || BossRushEvent.BossRushActive)
+            if ((CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
                 target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 300);
             else
                 target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 300);

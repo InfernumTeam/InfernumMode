@@ -7,7 +7,9 @@ using InfernumMode.OverridingSystem;
 using InfernumMode.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
@@ -92,6 +94,31 @@ namespace InfernumMode
 
                 ghostlyShader = new Ref<Effect>(GetEffect("Effects/NecroplasmicRoarShader"));
                 GameShaders.Misc["Infernum:NecroplasmicRoar"] = new MiscShaderData(ghostlyShader, "BurstPass");
+
+                OverrideMusicBox(ItemID.MusicBoxBoss3, GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
+            }
+        }
+
+        internal static IDictionary<int, int> SoundLoaderMusicToItem => (IDictionary<int, int>)typeof(SoundLoader).GetField("musicToItem", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+        internal static IDictionary<int, int> SoundLoaderItemToMusic => (IDictionary<int, int>)typeof(SoundLoader).GetField("itemToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+        internal static IDictionary<int, IDictionary<int, int>> SoundLoaderTileToMusic => (IDictionary<int, IDictionary<int, int>>)typeof(SoundLoader).GetField("tileToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+
+        public static void OverrideMusicBox(int itemType, int musicSlot, int tileType, int tileFrameY)
+        {
+            SoundLoaderMusicToItem[musicSlot] = itemType;
+            SoundLoaderItemToMusic[itemType] = musicSlot;
+            if (!SoundLoaderTileToMusic.ContainsKey(tileType))
+                SoundLoaderTileToMusic[tileType] = new Dictionary<int, int>();
+
+            SoundLoaderTileToMusic[tileType][tileFrameY] = musicSlot;
+        }
+
+        public override void UpdateMusic(ref int music, ref MusicPriority priority)
+        {
+            if (NPC.AnyNPCs(NPCID.SkeletronHead))
+            {
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3");
+                priority = MusicPriority.BossLow;
             }
         }
 

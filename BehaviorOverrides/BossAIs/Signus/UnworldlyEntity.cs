@@ -87,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             // Charge after this.
             else
             {
-                Vector2 idealVelocity = npc.SafeDirectionTo(Target.Center) * 19f;
+                Vector2 idealVelocity = npc.SafeDirectionTo(Target.Center) * 17f;
                 npc.velocity = (npc.velocity * 29f + idealVelocity) / 30f;
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 0.15f);
                 npc.rotation = npc.rotation.AngleLerp(npc.velocity.X * 0.02f, 0.15f);

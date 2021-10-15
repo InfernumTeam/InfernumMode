@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             ref float attackState = ref npc.ai[1];
             ref float attackTimer = ref npc.ai[2];
             ref float fadeToBlack = ref npc.ai[3];
-            ref float attackDelay = ref npc.Infernum().ExtraAI[8];
+            ref float attackDelay = ref npc.Infernum().ExtraAI[9];
 
             if (attackDelay < 70f)
             {

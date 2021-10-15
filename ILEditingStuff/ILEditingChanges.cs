@@ -530,7 +530,7 @@ namespace InfernumMode.ILEditingStuff
             {
                 if (CalamityGlobalNPC.signus != -1)
                 {
-                    float fadeToBlack = Main.npc[CalamityGlobalNPC.signus].ai[3];
+                    float fadeToBlack = Main.npc[CalamityGlobalNPC.signus].Infernum().ExtraAI[9];
                     Color color = Color.Black * fadeToBlack;
                     Main.spriteBatch.Draw(Main.magicPixel, new Rectangle(-2, -2, Main.screenWidth + 4, Main.screenHeight + 4), new Rectangle(0, 0, 1, 1), color);
                 }

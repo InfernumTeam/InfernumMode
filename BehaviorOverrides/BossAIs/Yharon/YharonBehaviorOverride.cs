@@ -556,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         npc.velocity *= 0.97f;
                         npc.spriteDirection = (player.Center.X - npc.Center.X < 0).ToDirectionInt();
                         npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(player.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
-                        if (attackTimer == chargeDelay - 20f && (YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge)
+                        if (attackTimer == chargeDelay - 28f && (YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge)
                         {
                             int playerDirection = Math.Sign(player.velocity.X);
                             if (playerDirection == 0)

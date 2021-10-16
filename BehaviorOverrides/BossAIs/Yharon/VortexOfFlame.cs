@@ -11,6 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
     {
         public const int Lifetime = 600;
         public const int AuraCount = 4;
+        public ref float Timer => ref projectile.ai[0];
         public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Vortex of Flame");
@@ -28,13 +29,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override void AI()
         {
-            projectile.rotation += MathHelper.ToRadians(12f);
-            projectile.Opacity = MathHelper.Lerp(projectile.Opacity, 0.4f, 0.15f);
+            projectile.rotation += MathHelper.ToRadians(7f);
+            projectile.Opacity = Utils.InverseLerp(0f, 40f, Timer, true) * Utils.InverseLerp(0f, 40f, projectile.timeLeft, true) * 0.4f;
             if (projectile.owner == Main.myPlayer)
             {
                 Player player = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
-                if (projectile.timeLeft % 120 == 0)
+                int shootRate = projectile.timeLeft < 250 ? 80 : 125;
+                if (Timer > 150f && Timer % shootRate == shootRate - 1f)
                 {
                     for (int i = 0; i < 4; i++)
                     {
@@ -43,6 +45,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     }
                 }
             }
+
+            Timer++;
         }
 
         public override void Kill(int timeLeft)
@@ -51,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 for (int i = 0; i < 200; i++)
                 {
-                    Dust dust = Dust.NewDustPerfect(projectile.Center, DustID.Fire);
+                    Dust dust = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(200f, 200f), DustID.Fire);
                     dust.velocity = Main.rand.NextVector2Circular(15f, 15f);
                     dust.fadeIn = 1.4f;
                     dust.scale = 1.6f;
@@ -70,11 +74,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = ModContent.GetTexture(Texture);
-            for (int j = 0; j < 12f; j++)
+            for (int j = 0; j < 16f; j++)
             {
-                float angle = MathHelper.TwoPi / j * 12f;
-                Vector2 offset = angle.ToRotationVector2() * 40f;
-                spriteBatch.Draw(texture, projectile.Center + offset - Main.screenPosition, null, Color.White * projectile.Opacity * 0.125f, projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+                float angle = MathHelper.TwoPi / j * 16f;
+                Vector2 offset = angle.ToRotationVector2() * 32f;
+                Color drawColor = Color.White * projectile.Opacity * 0.2f;
+                drawColor.A = 0;
+                spriteBatch.Draw(texture, projectile.Center + offset - Main.screenPosition, null, drawColor, projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
             }
         }
     }

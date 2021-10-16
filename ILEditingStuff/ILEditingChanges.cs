@@ -100,9 +100,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.Player.ItemCheck += ItemCheckChange;
             IL.Terraria.Main.DrawTiles += WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += WoFLavaColorChange2;
-            On.Terraria.Rain.MakeRain += DisableRainDuringCryogenFight;
-            On.Terraria.Main.snowing += ForceSnowDuringCryogenFight;
-            IL.Terraria.Main.DoDraw += DrawSignusBlack;
+            // IL.Terraria.Main.DoDraw += DrawSignusBlack;
 			On.Terraria.Player.KillMe += RemoveTheDamnCancerousDoGInstakill;
             ModifyPreAINPC += NPCPreAIChange;
             ModifySetDefaultsNPC += NPCSetDefaultsChange;
@@ -121,9 +119,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.Player.ItemCheck -= ItemCheckChange;
             IL.Terraria.Main.DrawTiles -= WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw -= WoFLavaColorChange2;
-            On.Terraria.Rain.MakeRain -= DisableRainDuringCryogenFight;
-            On.Terraria.Main.snowing -= ForceSnowDuringCryogenFight;
-            IL.Terraria.Main.DoDraw -= DrawSignusBlack;
+            // IL.Terraria.Main.DoDraw -= DrawSignusBlack;
             On.Terraria.Player.KillMe -= RemoveTheDamnCancerousDoGInstakill;
             ModifyPreAINPC -= NPCPreAIChange;
             ModifySetDefaultsNPC -= NPCSetDefaultsChange;
@@ -496,27 +492,6 @@ namespace InfernumMode.ILEditingStuff
 
             cursor.Emit(OpCodes.Ldsfld, typeof(PoDWorld).GetField("InfernumMode"));
             cursor.Emit(OpCodes.Brtrue, endOfMethod);
-        }
-
-        private static void DisableRainDuringCryogenFight(On.Terraria.Rain.orig_MakeRain orig)
-        {
-            if (GlobalNPCOverrides.Cryogen == -1)
-                orig();
-        }
-
-
-        private static void ForceSnowDuringCryogenFight(On.Terraria.Main.orig_snowing orig)
-        {
-            if (GlobalNPCOverrides.Cryogen == -1)
-            {
-                orig();
-                return;
-            }
-
-            int realSnowTilesCount = Main.snowTiles;
-            Main.snowTiles = 1500;
-            orig();
-            Main.snowTiles = realSnowTilesCount;
         }
 
         private static void DrawSignusBlack(ILContext il)

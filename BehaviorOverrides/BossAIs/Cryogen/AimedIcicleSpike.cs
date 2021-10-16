@@ -57,6 +57,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             return Main.dayTime ? new Color(50, 50, 255, 255 - projectile.alpha) : new Color(255, 255, 255, projectile.alpha);
         }
 
-        public override bool CanDamage() => projectile.alpha < 20;
+        public override bool CanDamage() => Time >= 60f;
     }
 }

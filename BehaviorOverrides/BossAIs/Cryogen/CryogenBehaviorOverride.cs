@@ -83,8 +83,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             // Reset damage every frame.
             npc.damage = npc.defDamage;
 
-            float blizzardIntensity = MathHelper.SmoothStep(0.05f, 0.4f, 1f - npc.life / (float)npc.lifeMax);
-
             if (subphaseState == 0f)
                 DoWeakSubphase1Behavior(npc, target, ref attackTimer, ref attackState);
             else if (subphaseState == 1f)
@@ -94,25 +92,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             else if (subphaseState == 3f)
                 DoSubphase4Behavior(npc, target, ref attackTimer, ref attackState);
             else if (subphaseState == 4f)
-                DoSubphase5Behavior(npc, target, ref attackTimer, ref attackState, ref blizzardIntensity);
+                DoSubphase5Behavior(npc, target, ref attackTimer, ref attackState);
             else if (subphaseState == 5f)
-                DoSubphase6Behavior(npc, target, ref attackTimer, ref attackState, ref blizzardIntensity);
+                DoSubphase6Behavior(npc, target, ref attackTimer, ref attackState);
 
             if (npc.damage == 0)
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.55f, 0.1f);
             else
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.1f);
 
-            // Adjust blizzard intensity.
-            Main.cloudBGActive = blizzardIntensity;
-            Main.numCloudsTemp = (int)(Main.cloudLimit * blizzardIntensity);
-            Main.numClouds = Main.numCloudsTemp;
-            Main.windSpeedTemp = MathHelper.Lerp(0f, 0.82f, blizzardIntensity);
-            Main.windSpeedSet = Main.windSpeedTemp;
-            Main.maxRaining = blizzardIntensity * 0.9f;
-            Main.windSpeed = MathHelper.Lerp(Main.windSpeed, Main.windSpeedSet, 0.04f);
-            Main.rainTime = 480;
-            Main.raining = true;
+            CalamityMod.CalamityMod.StopRain();
             return false;
         }
 
@@ -305,7 +294,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             attackTimer++;
         }
 
-        public static void DoSubphase5Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState, ref float blizzardIntensity)
+        public static void DoSubphase5Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
         {
             CryogenAttackState[] attackCycle = new CryogenAttackState[]
             {
@@ -331,13 +320,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                     DoAttack_HorizontalDash(npc, target, ref attackTimer, ref attackState, attackPower);
                     break;
                 case CryogenAttackState.AuroraBulletHell:
-                    DoAttack_AuroraBulletHell(npc, target, ref attackTimer, ref attackState, ref blizzardIntensity, attackPower);
+                    DoAttack_AuroraBulletHell(npc, target, ref attackTimer, ref attackState, attackPower);
                     break;
             }
             attackTimer++;
         }
 
-        public static void DoSubphase6Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState, ref float blizzardIntensity)
+        public static void DoSubphase6Behavior(NPC npc, Player target, ref float attackTimer, ref float attackState)
         {
             CryogenAttackState[] attackCycle = new CryogenAttackState[]
             {
@@ -361,10 +350,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                     DoAttack_IcicleTeleportDashes(npc, target, ref attackTimer, ref attackState, attackPower);
                     break;
                 case CryogenAttackState.AuroraBulletHell:
-                    DoAttack_AuroraBulletHell(npc, target, ref attackTimer, ref attackState, ref blizzardIntensity, attackPower);
+                    DoAttack_AuroraBulletHell(npc, target, ref attackTimer, ref attackState, attackPower);
                     break;
                 case CryogenAttackState.EternalWinter:
-                    DoAttack_EternalWinter(npc, target, ref attackTimer, ref attackState, ref blizzardIntensity, attackPower);
+                    DoAttack_EternalWinter(npc, target, ref attackTimer, ref attackState, attackPower);
                     break;
             }
             attackTimer++;
@@ -658,13 +647,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 }
             }
 
+            Vector2 teleportOffset = Vector2.UnitY * (teleportCounter % 2f == 0f).ToDirectionInt() * verticalTeleportOffset;
+            EmitIceParticles(target.Center + teleportOffset, 3f, 6);
+
             // Reset opacity and teleport after the delay is finished.
             if (attackTimer == intialTeleportDelay || teleportTimer >= teleportDelay)
             {
                 teleportTimer = 0f;
                 teleportCounter++;
 
-                Vector2 teleportOffset = Vector2.UnitY * (teleportCounter % 2f == 0f).ToDirectionInt() * verticalTeleportOffset;
                 Vector2 flyOffset = teleportOffset.RotatedBy(MathHelper.PiOver2);
 
                 npc.Opacity = 1f;
@@ -781,7 +772,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             }
         }
 
-        public static void DoAttack_AuroraBulletHell(NPC npc, Player target, ref float attackTimer, ref float attackState, ref float blizzardIntensity, float attackPower)
+        public static void DoAttack_AuroraBulletHell(NPC npc, Player target, ref float attackTimer, ref float attackState, float attackPower)
         {
             float zeroBasedAttackPower = attackPower - 1f;
             int shootDelay = 90;
@@ -804,7 +795,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
             // Make the blizzard stronger when the aurora spirits appear.
             float intensityFactor = Utils.InverseLerp(60f, 120f, attackTimer, true) * Utils.InverseLerp(spiritSummonTime, spiritSummonTime - 60f, attackTimer, true);
-            blizzardIntensity = MathHelper.Lerp(intensityFactor, 1f, intensityFactor);
 
             bool shouldStopSound = Main.ambientVolume > 0f;
             if (attackTimer == 60f && Main.GetActiveSound(SlotId.FromFloat(blizzardSound)) == null && !shouldStopSound)
@@ -840,15 +830,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             }
         }
 
-        public static void DoAttack_EternalWinter(NPC npc, Player target, ref float attackTimer, ref float attackState, ref float blizzardIntensity, float attackPower)
+        public static void DoAttack_EternalWinter(NPC npc, Player target, ref float attackTimer, ref float attackState, float attackPower)
         {
             float zeroBasedAttackPower = attackPower - 1f;
             int chargeCount = 8;
             float chargeSpeed = MathHelper.Lerp(20f, 25f, zeroBasedAttackPower);
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
-
-            // Make the snow howl at max intensity.
-            blizzardIntensity = 1f;
 
             // Spin around and charge at the target periodically.
             if (attackTimer >= 60f)

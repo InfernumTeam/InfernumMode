@@ -29,6 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
         public override void Kill(int timeLeft)
         {
+            Main.PlaySound(SoundID.Item27, projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

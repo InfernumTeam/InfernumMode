@@ -1,7 +1,9 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod.Buffs.DamageOverTime;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 {
@@ -35,6 +37,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
+
+            // Make segments immune to crush depth.
+            npc.buffImmune[ModContent.BuffType<CrushDepth>()] = true;
         }
 
         public override bool PreAI(NPC npc)

@@ -29,6 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
         {
             projectile.width = projectile.height = 28;
             projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
             projectile.penetrate = -1;
             projectile.alpha = 255;
         }

@@ -163,7 +163,13 @@ namespace InfernumMode.GlobalInstances
                 }
 
                 if (OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type))
+                {
+                    // Use timed DR if enabled.
+                    if (npc.Calamity().KillTime > 0 && npc.Calamity().AITimer < npc.Calamity().KillTime)
+                        npc.Calamity().AITimer++;
+
                     return (bool)OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].DynamicInvoke(npc);
+                }
             }
             return base.PreAI(npc);
         }

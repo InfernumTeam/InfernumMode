@@ -223,10 +223,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             idealAngerStrength = MathHelper.Clamp(idealAngerStrength, 0f, 1f);
             angerStrength = MathHelper.Lerp(angerStrength, idealAngerStrength, 0.03f);
 
+            bool targetInHell = target.Center.Y > (Main.maxTilesY - 320f) * 16f;
             if (enrageAttackCountdown > 0)
             {
                 // Summon tentacles near the player.
-                if (Main.netMode != NetmodeID.MultiplayerClient && enrageAttackCountdown % 30 == 29)
+                if (Main.netMode != NetmodeID.MultiplayerClient && targetInHell && enrageAttackCountdown % 30f == 29f)
 				{
                     Vector2 spawnPosition = target.Center + Main.rand.NextVector2CircularEdge(320f, 320f);
                     for (int tries = 0; tries < 2500; tries++)
@@ -255,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             }
 
             // Roaring and preparing for enrage attack.
-            if (roarTimer <= 0f && enrageAttackCountdown <= 0f && idealAngerStrength >= 0.5f && angerStrength < idealAngerStrength)
+            if (roarTimer <= 0f && targetInHell && enrageAttackCountdown <= 0f && idealAngerStrength >= 0.5f && angerStrength < idealAngerStrength)
             {
                 if (Main.netMode != NetmodeID.Server)
 				{
@@ -298,6 +299,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         internal static void DoCeilingAndFloorAttack(NPC npc, Player target, bool inPhase2)
         {
             if (Main.myPlayer != npc.target)
+                return;
+
+            bool targetInHell = target.Center.Y > (Main.maxTilesY - 320f) * 16f;
+
+            if (!targetInHell)
                 return;
 
             for (float x = -1180f; x < 1180f; x += inPhase2 ? 200f : 256f)

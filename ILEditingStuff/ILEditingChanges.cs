@@ -100,7 +100,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.Player.ItemCheck += ItemCheckChange;
             IL.Terraria.Main.DrawTiles += WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += WoFLavaColorChange2;
-            // IL.Terraria.Main.DoDraw += DrawSignusBlack;
+            IL.Terraria.Main.DoDraw += DrawSignusBlack;
 			On.Terraria.Player.KillMe += RemoveTheDamnCancerousDoGInstakill;
             ModifyPreAINPC += NPCPreAIChange;
             ModifySetDefaultsNPC += NPCSetDefaultsChange;
@@ -119,7 +119,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.Player.ItemCheck -= ItemCheckChange;
             IL.Terraria.Main.DrawTiles -= WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw -= WoFLavaColorChange2;
-            // IL.Terraria.Main.DoDraw -= DrawSignusBlack;
+            IL.Terraria.Main.DoDraw -= DrawSignusBlack;
             On.Terraria.Player.KillMe -= RemoveTheDamnCancerousDoGInstakill;
             ModifyPreAINPC -= NPCPreAIChange;
             ModifySetDefaultsNPC -= NPCSetDefaultsChange;

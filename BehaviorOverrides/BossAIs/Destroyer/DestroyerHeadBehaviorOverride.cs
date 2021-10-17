@@ -253,7 +253,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 90f)
                     {
-                        int probeCount = (int)Math.Round(MathHelper.Lerp(2f, 4f, 1f - lifeRatio));
+                        int probeCount = (int)Math.Round(MathHelper.Lerp(3f, 6f, 1f - lifeRatio));
                         for (int i = 0; i < probeCount; i++)
                         {
                             int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());

@@ -359,7 +359,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 else if (Main.netMode == NetmodeID.Server)
                     NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Orange);
 
-                attackType = 0; // Reset the attack type.
+                // Reset the attack cycle index.
+                npc.Infernum().ExtraAI[0] = 0f;
+                GotoNextAttack(npc, ref attackType);
 
                 // And spawn some cool sparkles.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1337,7 +1339,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                             Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(280f, 280f);
                             Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(42f, 42f), ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
                         }
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
+
+                        if (Main.rand.NextBool(4))
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
                     }
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                 }
@@ -1412,7 +1416,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             bool patternExists = SubphaseTable.Any(table => table.Value(npc));
             YharonAttackType[] patternToUse = !patternExists ? SubphaseTable.First().Key : SubphaseTable.First(table => table.Value(npc)).Key;
             attackType = (int)patternToUse[(int)(attackTypeIndex % patternToUse.Length)];
-
 
             // Reset the attack timer and subphase specific variables.
             npc.ai[1] = 0f;

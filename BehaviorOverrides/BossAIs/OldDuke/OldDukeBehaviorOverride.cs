@@ -352,6 +352,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_SpawnEffects(NPC npc, Player target, float attackTimer, ref float frameType)
 		{
+            // Don't do damge during the spawn animation.
+            npc.damage = 0;
+
             if (attackTimer < 20f)
             {
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();

@@ -365,6 +365,13 @@ namespace InfernumMode.GlobalInstances
             if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
                 damage = (int)(damage * 0.55);
 
+            if ((projectile.type == ModContent.ProjectileType<Corrocloud1>() ||
+                projectile.type == ModContent.ProjectileType<Corrocloud2>() ||
+                projectile.type == ModContent.ProjectileType<Corrocloud3>()) && npc.type == ModContent.NPCType<Leviathan>())
+            {
+                damage = (int)(damage * 0.55);
+            }
+
             bool isPhantasmDragon = npc.type == NPCID.CultistDragonBody1 || npc.type == NPCID.CultistDragonBody2 || npc.type == NPCID.CultistDragonBody3 || npc.type == NPCID.CultistDragonBody4 || npc.type == NPCID.CultistDragonTail;
             if (isPhantasmDragon && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.24);

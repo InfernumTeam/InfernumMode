@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 600);
         }
 
-        public override bool CanDamage() => projectile.Opacity >= 0.35f;
+        public override bool CanDamage() => projectile.timeLeft < Lifetime - 60;
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {

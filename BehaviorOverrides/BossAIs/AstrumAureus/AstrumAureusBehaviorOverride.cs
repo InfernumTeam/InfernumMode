@@ -220,7 +220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(0.38f) * Main.rand.NextFloat(16.75f, 22f);
+                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(0.38f) * Main.rand.NextFloat(16f, 20f);
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
                     }
 
@@ -433,7 +433,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.66f) * Main.rand.NextFloat(14f, 18.5f);
+                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.66f) * Main.rand.NextFloat(16f, 19f);
                     Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 3f, rocketShootVelocity, ModContent.ProjectileType<AstralMissile>(), 165, 0f);
 
                     rocketShootTimer = 0f;
@@ -479,7 +479,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         {
             frameType = (int)AureusFrameType.Idle;
 
-            int cometShootRate = lifeRatio < Phase3LifeRatio ? 4 : 7;
+            int cometShootRate = lifeRatio < Phase3LifeRatio ? 3 : 6;
             ref float rainAngle = ref npc.Infernum().ExtraAI[0];
 
             // Slow down horziontally.
@@ -597,9 +597,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < 16; i++)
                     {
-                        Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 10f).ToRotationVector2() * 7.5f;
+                        Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 16f).ToRotationVector2() * 8f;
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
                     }
 

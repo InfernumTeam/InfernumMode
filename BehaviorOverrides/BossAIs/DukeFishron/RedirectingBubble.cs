@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             if (projectile.type == ModContent.ProjectileType<Corrocloud1>() || projectile.type == ModContent.ProjectileType<Corrocloud2>() || projectile.type == ModContent.ProjectileType<Corrocloud3>())
-                damage = (int)(damage * 0.45);
+                damage = (int)(damage * 0.225);
         }
 
         public override bool CheckActive() => false;

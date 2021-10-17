@@ -60,6 +60,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 180);
 
+        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
+
         public override void Kill(int timeLeft)
         {
             Main.PlaySound(SoundID.Zombie, (int)projectile.position.X, (int)projectile.position.Y, 103, 1f, 0f);

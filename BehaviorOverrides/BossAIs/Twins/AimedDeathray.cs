@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
@@ -48,6 +49,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
 
             projectile.velocity = (Main.npc[(int)projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2();
             projectile.Center = Main.npc[(int)projectile.ai[1]].Center + projectile.velocity * 96f;
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            for (float i = 0f; i < LaserLength; i += 180f)
+            {
+                for (int direction = -1; direction <= 1; direction += 2)
+                {
+                    Vector2 shootVelocity = projectile.velocity.RotatedBy(MathHelper.PiOver2 * direction) * 4.7f;
+                    Utilities.NewProjectileBetter(projectile.Center + projectile.velocity * i, shootVelocity, ProjectileID.DeathLaser, 130, 0f);
+                }
+            }
         }
 
         public override void DetermineScale()

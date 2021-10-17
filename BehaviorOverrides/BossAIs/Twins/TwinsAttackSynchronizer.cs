@@ -346,9 +346,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     npc.damage = 0;
 
-                    if (!npc.WithinRange(destination, 42f))
+                    if (!npc.WithinRange(destination, 72f))
                     {
-                        npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Lerp(npc.velocity.Length(), 27f, 0.065f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 24f, 0.6f);
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                     }
                     else
@@ -371,7 +371,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             }
                             else
                             {
-                                float shootSpeed = MathHelper.Lerp(8f, 14f, 1f - CombinedLifeRatio);
+                                float shootSpeed = MathHelper.Lerp(10.75f, 16f, 1f - CombinedLifeRatio);
                                 Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.DeathLaser, 90, 0f);
                             }
@@ -428,7 +428,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         {
                             npc.damage = npc.defDamage;
 
-                            float chargeSpeed = MathHelper.Lerp(16.5f, 23f, 1f - CombinedLifeRatio);
+                            float chargeSpeed = MathHelper.Lerp(19f, 24f, 1f - CombinedLifeRatio);
                             npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 6.6f) * chargeSpeed;
                             npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                             npc.netUpdate = true;
@@ -512,7 +512,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                 case TwinsAttackState.RedirectingLasers_And_FireRain:
                     redirectTime = 60;
-                    int shootRate = isSpazmatism ? 10 : 25;
+                    int shootRate = isSpazmatism ? 8 : 22;
 
                     // Spazmatism should point down; it shoots fire from above.
                     // Retinazer should point sideways; it shoots redirecting lasers while charging horizontally.
@@ -792,7 +792,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     {
                         Main.PlaySound(SoundID.Item33, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Projectile.NewProjectile(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 110, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 110, 0f);
                     }
 
                     npc.dontTakeDamage = npc.Opacity <= 0f;
@@ -1007,7 +1007,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 case SpazmatismAttackState.ShadowflameCarpetBomb:
                     int redirectTime = 240;
                     int carpetBombTime = 90;
-                    int carpetBombRate = 5;
+                    int carpetBombRate = 7;
                     float carpetBombSpeed = MathHelper.SmoothStep(13f, 19f, 1f - lifeRatio);
                     float carpetBombChargeSpeed = MathHelper.SmoothStep(17f, 22f, 1f - lifeRatio);
 

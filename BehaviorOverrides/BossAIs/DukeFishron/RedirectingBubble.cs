@@ -1,3 +1,4 @@
+using CalamityMod.Projectiles.Rogue;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -24,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             npc.aiStyle = aiType = -1;
             npc.damage = 70;
 			npc.width = npc.height = 36;
-            npc.lifeMax = 1300;
+            npc.lifeMax = 875;
             npc.knockBackResist = 0f;
             npc.noGravity = true;
             npc.noTileCollide = true;
@@ -62,6 +63,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public override void FindFrame(int frameHeight)
         {
             npc.frame.Y = frameHeight * (npc.whoAmI % 2);
+        }
+
+        public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (projectile.type == ModContent.ProjectileType<Corrocloud1>() || projectile.type == ModContent.ProjectileType<Corrocloud2>() || projectile.type == ModContent.ProjectileType<Corrocloud3>())
+                damage = (int)(damage * 0.45);
         }
 
         public override bool CheckActive() => false;

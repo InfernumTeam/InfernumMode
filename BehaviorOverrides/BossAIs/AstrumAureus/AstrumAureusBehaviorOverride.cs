@@ -125,10 +125,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Fall and cease horizontal movement.
             npc.velocity.X *= 0.9f;
             npc.noGravity = false;
-            npc.noTileCollide = false;
+            npc.noTileCollide = true;
 
             // Fade away.
-            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
+            npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.015f, 0f, 1f);
 
             // Despawn once invisible.
             if (npc.Opacity <= 0)

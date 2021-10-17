@@ -211,19 +211,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             int attackDelay = 45;
             int attackTime = 300;
-            int lavaShootRate = 24;
+            int lavaShootRate = 40;
             float hoverSpeed = 15f;
 
             if (lifeRatio < Phase2LifeRatio)
             {
                 attackTime += 25;
-                lavaShootRate -= 4;
+                lavaShootRate -= 5;
             }
 
             if (shouldBeBuffed)
             {
                 attackTime += 45;
-                lavaShootRate -= 10;
+                lavaShootRate -= 8;
                 hoverSpeed += 9f;
             }
 

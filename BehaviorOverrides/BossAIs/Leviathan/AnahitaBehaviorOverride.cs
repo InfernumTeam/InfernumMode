@@ -291,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     if (attackTimer % bubbleShootRate == bubbleShootRate - 1)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaBubble>(), 105, 0f);
+                            Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaBubble>(), 130, 0f);
                         Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
                     }
 
@@ -328,7 +328,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         Main.PlaySound(SoundID.Item26, target.Center);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * clefShootSpeed, ModContent.ProjectileType<SirenSong>(), 95, 0f);
+                            Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * clefShootSpeed, ModContent.ProjectileType<SirenSong>(), 130, 0f);
                     }
 
                     doSkeletronHeadMovementTo(destination, Vector2.One * 12f, 0.16f);
@@ -349,7 +349,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     if (attackTimer == 75f)
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaExpandingBubble>(), 130, 0f);
+                            Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaExpandingBubble>(), 135, 0f);
                         Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
                     }
 

@@ -190,9 +190,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.SplittingMeteors,
-            YharonAttackType.HeatFlash,
             YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.HeatFlash,
+            YharonAttackType.SplittingMeteors,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.InfernadoAndFireShotgunBreath,
@@ -204,13 +204,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.HeatFlash,
-            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.SplittingMeteors,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.InfernadoAndFireShotgunBreath,
+            YharonAttackType.SplittingMeteors,
             YharonAttackType.PhoenixSupercharge,
         };
 
@@ -222,14 +222,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.SplittingMeteors,
             YharonAttackType.HeatFlash,
+            YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.VortexOfFlame,
             YharonAttackType.HeatFlash,
-            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.VortexOfFlame,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
@@ -446,6 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             float heatFlashStartDelay = 60f;
             float heatFlashIdleDelay = 30f;
             float heatFlashFlashTime = 60f;
+            float heatFlashEndDelay = 32f;
             int heatFlashTotalFlames = 24;
 
             int totalFlameVortices = 3;
@@ -1066,7 +1067,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         }
                     }
 
-                    if (attackTimer >= heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime)
+                    if (attackTimer >= heatFlashIdleDelay + heatFlashStartDelay + heatFlashFlashTime + heatFlashEndDelay)
                         GotoNextAttack(npc, ref attackType);
                     specialFrameType = (int)YharonFrameDrawingType.FlapWings;
                     break;

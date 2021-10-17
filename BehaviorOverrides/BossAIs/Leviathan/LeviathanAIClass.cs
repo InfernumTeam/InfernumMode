@@ -63,6 +63,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             CalamityGlobalNPC.leviathan = npc.whoAmI;
 
+            // Send natural despawns into the sun.
+            npc.timeLeft = 3600;
+
             Vector2 mouthPosition = npc.Center + new Vector2(300f * npc.spriteDirection, -45f);
 
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 5600f))

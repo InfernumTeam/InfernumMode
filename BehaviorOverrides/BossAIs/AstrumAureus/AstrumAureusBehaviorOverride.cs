@@ -486,7 +486,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             npc.velocity.X *= 0.9f;
 
             if (rainAngle == 0f)
-                rainAngle = Main.rand.NextFloat(-MathHelper.PiOver2 / 6f, MathHelper.PiOver2 / 6f);
+                rainAngle = Main.rand.NextFloatDirection() * MathHelper.Pi / 12f;
 
             // Charge up astral energy and gain a good amount of extra defense.
             if (attackTimer < 90f)

@@ -305,7 +305,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             float distanceBelowTarget = npc.Top.Y - (target.Top.Y + 80f);
 
                             if (distanceBelowTarget > 0f)
-                                jumpIntensity = 1f + distanceBelowTarget * 0.00105f;
+                                jumpIntensity = 1f + distanceBelowTarget * 0.00115f;
 
                             if (jumpIntensity > 3.6f)
                                 jumpIntensity = 3.6f;
@@ -387,7 +387,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                             if (npc.Bottom.Y < target.position.Y)
                             {
-                                float fallSpeed = MathHelper.Lerp(0.87f, 1.35f, 1f - lifeRatio);
+                                float fallSpeed = MathHelper.Lerp(0.6f, 0.9f, 1f - lifeRatio);
 
                                 if (jumpIntensity > 1f)
                                     fallSpeed *= jumpIntensity;
@@ -397,14 +397,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         }
                         else
                         {
-                            float horizontalMovementSpeed = Math.Abs(npc.Center.X - target.Center.X) * 0.0001f + 0.12f;
+                            float horizontalMovementSpeed = Math.Abs(npc.Center.X - target.Center.X) * 0.0001f + 0.08f;
 
                             if (npc.spriteDirection < 0)
                                 npc.velocity.X -= horizontalMovementSpeed;
                             else if (npc.spriteDirection > 0)
                                 npc.velocity.X += horizontalMovementSpeed;
 
-                            npc.velocity.X = MathHelper.Clamp(npc.velocity.X, -25f, 25f);
+                            npc.velocity.X = MathHelper.Clamp(npc.velocity.X, -18f, 18f);
                         }
 
                         EnforceCustomGravity(npc);

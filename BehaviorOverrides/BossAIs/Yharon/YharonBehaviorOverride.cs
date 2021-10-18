@@ -386,6 +386,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if (oldSubphase != currentSubphase)
             {
                 subphaseTransitionTimer = transitionTimer;
+
+                // Reset the attack cycle index for Subphase 4.
+                if (currentSubphase == 3f)
+                {
+                    npc.Infernum().ExtraAI[0] = 0f;
+                    GotoNextAttack(npc, ref attackType);
+                }
             }
 
             YharonAttackType nextAttackType = patternToUse[(int)((attackType + 1) % patternToUse.Length)];

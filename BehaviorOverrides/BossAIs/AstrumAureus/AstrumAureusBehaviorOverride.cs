@@ -4,6 +4,7 @@ using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
+using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -78,6 +79,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Reset gravity affection and tile collision.
             npc.noGravity = false;
             npc.noTileCollide = false;
+
+            GlobalNPCOverrides.AstrumAureus = npc.whoAmI;
 
             // Despawn if necessary
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))

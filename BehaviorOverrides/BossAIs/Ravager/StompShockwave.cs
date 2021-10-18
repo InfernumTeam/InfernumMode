@@ -74,8 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            float width = Scale.X * 670f;
-            return Utils.CenteredRectangle(projectile.Center, new Vector2(width, Scale.Y * 185f)).Intersects(targetHitbox);
+            return Utils.CenteredRectangle(projectile.Center, Scale * new Vector2(670f, 440f)).Intersects(targetHitbox);
         }
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)

@@ -31,6 +31,7 @@ using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.Signus;
+using CalamityMod.NPCs.AstrumAureus;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -49,6 +50,7 @@ namespace InfernumMode.GlobalInstances
         internal bool canTelegraph = false;
 
         public static int Cryogen = -1;
+        public static int AstrumAureus = -1;
 
         #endregion
 
@@ -83,6 +85,7 @@ namespace InfernumMode.GlobalInstances
             }
 
             ResetSavedIndex(ref Cryogen, ModContent.NPCType<CryogenNPC>());
+            ResetSavedIndex(ref AstrumAureus, ModContent.NPCType<AstrumAureus>());
         }
         #endregion Reset Effects
 
@@ -370,6 +373,13 @@ namespace InfernumMode.GlobalInstances
                 projectile.type == ModContent.ProjectileType<Corrocloud3>()) && npc.type == ModContent.NPCType<Leviathan>())
             {
                 damage = (int)(damage * 0.55);
+            }
+
+            if ((projectile.type == ModContent.ProjectileType<Corrocloud1>() ||
+                projectile.type == ModContent.ProjectileType<Corrocloud2>() ||
+                projectile.type == ModContent.ProjectileType<Corrocloud3>()) && npc.type == ModContent.NPCType<AstrumAureus>())
+            {
+                damage = (int)(damage * 0.425);
             }
 
             bool isPhantasmDragon = npc.type == NPCID.CultistDragonBody1 || npc.type == NPCID.CultistDragonBody2 || npc.type == NPCID.CultistDragonBody3 || npc.type == NPCID.CultistDragonBody4 || npc.type == NPCID.CultistDragonTail;

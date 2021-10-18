@@ -3,6 +3,7 @@ using CalamityMod.CalPlayer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
@@ -64,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), 
                 targetHitbox.Size(), 
                 projectile.Bottom, 
-                projectile.Bottom - Vector2.UnitY * TornadoHeight,
+                projectile.Bottom - Vector2.UnitY * TornadoHeight * 0.8f,
                 (int)(projectile.width * 0.525), 
                 ref _);
         }
@@ -75,15 +76,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
 
             GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.GetTexture("Terraria/Misc/Perlin"));
-            Vector2[] drawPoints = new Vector2[5];
-            Vector2 upwardAscent = Vector2.UnitY * TornadoHeight * 0.65f;
+            Vector2 upwardAscent = Vector2.UnitY * TornadoHeight;
+            Vector2 top = projectile.Bottom - upwardAscent;
+            List<Vector2> drawPoints = new List<Vector2>()
+            {
+                top
+            };
+            for (int i = 0; i < 20; i++)
+                drawPoints.Add(Vector2.Lerp(top, projectile.Bottom, i / 19f));
 
-            Vector2 bottom = projectile.Bottom + Vector2.UnitY * 80f;
-            Vector2 top = bottom - upwardAscent;
-            for (int i = 0; i < drawPoints.Length - 1; i++)
-                drawPoints[i] = Vector2.Lerp(top, bottom, i / (float)(drawPoints.Length - 1));
-
-            drawPoints[drawPoints.Length - 1] = bottom;
             TornadoDrawer.Draw(drawPoints, -Main.screenPosition, 85);
             return false;
         }

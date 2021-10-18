@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -48,6 +49,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<LargePlagueExplosion>(), 160, 0f);
         }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueMissileGlowmask");
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+
+            // Draw afterimages.
+            for (int i = 0; i < 3; i++)
+            {
+                Vector2 afterimageOffset = projectile.velocity.SafeNormalize(Vector2.Zero) * i * -16f;
+                Color afterimageColor = Color.Lime * (1f - i / 3f) * 0.7f;
+                afterimageColor.A = 0;
+                spriteBatch.Draw(texture, drawPosition + afterimageOffset, null, projectile.GetAlpha(afterimageColor), projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+            }
+
+            spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glowmask, drawPosition, null, projectile.GetAlpha(Color.White), projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+
+            return false;
+        }
+
+        public override Color? GetAlpha(Color lightColor) => lightColor * projectile.Opacity;
 
         public override bool CanDamage() => projectile.Opacity >= 0.8f;
     }

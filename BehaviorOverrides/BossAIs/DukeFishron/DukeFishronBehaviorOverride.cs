@@ -507,15 +507,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                             int y = Utils.Clamp((int)target.Center.Y / 16 - 10, 10, Main.maxTilesY - 10);
                             WorldUtils.Find(new Point(x, y), Searches.Chain(new Searches.Down(150), new CustomTileConditions.IsWater()), out Point result);
                             Vector2 spawnPosition = result.ToWorldCoordinates();
-
-                            int shark = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y - 16, NPCID.Sharkron2);
+                            int summoner = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<SharkSummoner>(), 0, 0f);
                             float flySpeed = Math.Abs(npc.Center.Y - spawnPosition.Y) * 0.0125f + 5f;
                             flySpeed = MathHelper.Min(flySpeed, 27f);
-
-                            Main.npc[shark].velocity = Vector2.UnitY * -flySpeed;
-                            Main.npc[shark].direction = i;
-                            Main.npc[shark].spriteDirection = 1;
-                            Main.npc[shark].ai[0] = 1f;
+                            if (Main.projectile.IndexInRange(summoner))
+                            {
+                                Main.projectile[summoner].direction = i;
+                                Main.projectile[summoner].ai[1] = flySpeed;
+                            }
                         }
 
                         summonOutwardness += 200f;

@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Projectiles.BaseProjectiles;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -45,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         }
         public override void AttachToSomething()
         {
-            if (!Main.projectile.IndexInRange(OwnerIndex))
+            if (!Main.npc.IndexInRange(GlobalNPCOverrides.AstrumAureus))
             {
                 projectile.Kill();
                 return;
@@ -54,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             int index = (int)projectile.Infernum().ExtraAI[0] - 1;
             if (index == -1)
                 index = AstrumAureusBehaviorOverride.LaserbeamSpawnOffsets.Count - 1;
-            projectile.Center = Main.npc[OwnerIndex].Center + AstrumAureusBehaviorOverride.LaserbeamSpawnOffsets[index];
+            projectile.Center = Main.npc[GlobalNPCOverrides.AstrumAureus].Center + AstrumAureusBehaviorOverride.LaserbeamSpawnOffsets[index];
 
             if (RotationalSpeed == 0f)
                 RotationalSpeed = MathHelper.Pi / 180f * -0.84f;

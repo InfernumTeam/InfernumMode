@@ -18,6 +18,7 @@ using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.BrimstoneElemental;
 using CalamityMod.NPCs.Leviathan;
+using CalamityMod.NPCs.PlaguebringerGoliath;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -52,6 +53,7 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<Leviathan>()] = 103103,
             [ModContent.NPCType<Siren>()] = 39250,
             [ModContent.NPCType<AureusSpawn>()] = 25000,
+            [ModContent.NPCType<PlaguebringerGoliath>()] = 126500,
             [NPCID.CultistBoss] = 56000,
             [ModContent.NPCType<Bumblefuck>()] = 227550,
             [ModContent.NPCType<ProvidenceBoss>()] = 900000,

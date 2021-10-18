@@ -2,6 +2,8 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items.Ammo;
 using CalamityMod.Items.TreasureBags;
+using CalamityMod.Items.Weapons.Rogue;
+using CalamityMod.Items.Weapons.Summon;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using Microsoft.Xna.Framework;
@@ -30,6 +32,15 @@ namespace InfernumMode
 
             if (item.type == ItemID.StarCannon)
                 item.damage = 24;
+
+            if (item.type == ModContent.ItemType<HivePod>())
+                item.damage = 74;
+
+            if (item.type == ModContent.ItemType<AuroradicalThrow>())
+                item.damage = 25;
+
+            if (item.type == ModContent.ItemType<ResurrectionButterfly>())
+                item.damage = 44;
         }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)

@@ -1,31 +1,25 @@
 ﻿using CalamityMod;
-using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
-using CalamityMod.Projectiles.Boss;
+using CalamityMod.NPCs.Calamitas;
 using CalamityMod.World;
-using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Utilities;
 using Terraria.World.Generation;
-using CalamitasClownNPC = CalamityMod.NPCs.Calamitas.CalamitasRun3;
+using CalamitasCloneNPC = CalamityMod.NPCs.Calamitas.CalamitasRun3;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
     public class CalamitasCloneBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<CalamitasClownNPC>();
+        public override int NPCOverrideType => ModContent.NPCType<CalamitasCloneNPC>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public const bool ReadyToUseBuffedAI = true;
 
@@ -40,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         #region AI
 
-        public const float Phase2LifeRatio = 0.65f;
+        public const float Phase2LifeRatio = 0.7f;
 
         public override bool PreAI(NPC npc)
         {
@@ -63,9 +57,60 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
+            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
+            bool brotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun>()) || NPC.AnyNPCs(ModContent.NPCType<CalamitasRun2>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float transitionState = ref npc.ai[2];
+            ref float brotherFadeoutTime = ref npc.ai[3];
+
+            // Reset things.
+            npc.damage = npc.defDamage;
+            npc.dontTakeDamage = false;
+
+            // Prepare to fade out and summon brothers.
+            if (Main.netMode != NetmodeID.MultiplayerClient && transitionState == 0f && lifeRatio < Phase2LifeRatio)
+            {
+                transitionState = 1f;
+                brotherFadeoutTime = 1f;
+
+                // Set the ring radius and create a soul seeker ring.
+                npc.Infernum().ExtraAI[6] = shouldBeBuffed ? 950f : 750f;
+                for (int i = 0; i < 50; i++)
+                {
+                    float seekerAngle = MathHelper.TwoPi * i / 50f;
+                    int seeker = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker2>());
+                    if (Main.npc.IndexInRange(seeker))
+                        Main.npc[seeker].ai[0] = seekerAngle;
+                }
+
+                // Summon Catatrophe and Catacylsm.
+                NPC.SpawnOnPlayer(npc.target, ModContent.NPCType<CalamitasRun>());
+                NPC.SpawnOnPlayer(npc.target, ModContent.NPCType<CalamitasRun2>());
+
+                npc.netUpdate = true;
+                return false;
+            }
+
+            // Fade away and don't do damage if brothers are present.
+            if (brotherFadeoutTime > 0f)
+            {
+                // Reset the attack state for when the attack concludes.
+                attackType = (int)CloneAttackType.HorizontalDartRelease;
+
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
+                brotherFadeoutTime = MathHelper.Clamp(brotherFadeoutTime + brotherIsPresent.ToDirectionInt(), 0f, 90f);
+                npc.Opacity = 1f - brotherFadeoutTime / 90f;
+
+                Vector2 hoverDestination = target.Center;
+                if (!brotherIsPresent)
+                    hoverDestination.Y -= 350f;
+
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 8f, 0.25f);
+                npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                return false;
+            }
 
             switch ((CloneAttackType)(int)attackType)
             {
@@ -78,6 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     DoBehavior_BrimstoneMeteors(npc, target, lifeRatio, shouldBeBuffed, ref attackTimer);
                     break;
                 case CloneAttackType.BrimstoneVolcano:
+                    npc.damage = 0;
                     DoBehavior_BrimstoneVolcano(npc, target, lifeRatio, shouldBeBuffed, ref attackTimer);
                     break;
             }
@@ -281,6 +327,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
             npc.ai[1] = 0f;
             npc.netUpdate = true;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                spriteEffects = SpriteEffects.FlipHorizontally;
+
+            int afterimageCount = 7;
+            Texture2D texture = Main.npcTexture[npc.type];
+            Vector2 origin = npc.frame.Size() * 0.5f;
+
+            if (CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 1; i < afterimageCount; i += 2)
+                {
+                    Color afterimageColor = Color.Lerp(lightColor, Color.White, 0.5f) * ((afterimageCount - i) / 15f) * npc.Opacity;
+                    Vector2 afterimageDrawPosition = npc.oldPos[i] + origin - Main.screenPosition;
+                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+
+            Vector2 drawPosition = npc.position + origin - Main.screenPosition;
+            spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            texture = ModContent.GetTexture("CalamityMod/NPCs/Calamitas/CalamitasRun3Glow");
+            Color afterimageBaseColor = Color.Lerp(Color.White, Color.Red, 0.5f);
+
+            if (CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 1; i < afterimageCount; i++)
+                {
+                    Color afterimageColor = Color.Lerp(afterimageBaseColor, Color.White, 0.5f) * ((afterimageCount - i) / 15f) * npc.Opacity;
+                    Vector2 afterimageDrawPosition = npc.oldPos[i] + origin - Main.screenPosition;
+                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+
+            spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            return false;
         }
         #endregion AI
     }

@@ -1,6 +1,5 @@
 using CalamityMod.Dusts;
 using CalamityMod.Events;
-using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-    public class ExplodingBrimstoneFireball : ModProjectile
+    public class RisingBrimstoneFireball : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -27,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
-            projectile.timeLeft = 75;
+            projectile.timeLeft = 210;
             projectile.Opacity = 0f;
             cooldownSlot = 1;
         }
@@ -35,33 +34,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         public override void AI()
         {
             projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.075f, 0f, 1f);
-
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
+
+            if (projectile.velocity.Y > -16f)
+                projectile.velocity.Y -= 0.12f;
+
+            if (projectile.timeLeft < Main.rand.Next(0, 90))
+                projectile.Kill();
         }
 
 		public override void Kill(int timeLeft)
 		{
-            Main.PlaySound(SoundID.Item74, projectile.Center);
+            Main.PlaySound(SoundID.Item73, projectile.Center);
             Utilities.CreateGenericDustExplosion(projectile.Center, (int)CalamityDusts.Brimstone, 10, 7f, 1.25f);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
+            int fireDamage = shouldBeBuffed ? 380 : 160;
+
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 2; i++)
             {
-                int dartDamage = shouldBeBuffed ? 340 : 145;
-                Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedByRandom(0.91f) * projectile.velocity.Length() * Main.rand.NextFloat(0.45f, 0.7f);
-                int dart = Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f);
-                if (Main.projectile.IndexInRange(dart))
-                {
-                    Main.projectile[dart].ai[0] = 1f;
-                    Main.projectile[dart].tileCollide = false;
-                    Main.projectile[dart].netUpdate = true;
-                }
+                float offsetAngle = MathHelper.Lerp(-0.22f, 0.22f, i);
+                Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 14f;
+                Utilities.NewProjectileBetter(projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingBrimstoneBurst>(), fireDamage, 0f);
             }
         }
 

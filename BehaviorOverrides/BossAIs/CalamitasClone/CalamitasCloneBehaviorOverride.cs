@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
 using CalamityMod.World;
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -28,13 +29,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             HorizontalDartRelease,
             BrimstoneMeteors,
-            BrimstoneVolcano
+            BrimstoneVolcano,
+            BrimstoneLightning,
+            BrimstoneFireBurst,
+            DiagonalCharge,
+            RisingBrimstoneFireBursts,
+            HorizontalBurstCharge
         }
         #endregion
 
         #region AI
 
         public const float Phase2LifeRatio = 0.7f;
+        public const float Phase3LifeRatio = 0.3f;
+        public const int FinalPhaseTransitionTime = 180;
 
         public override bool PreAI(NPC npc)
         {
@@ -60,19 +68,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
             bool brotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun>()) || NPC.AnyNPCs(ModContent.NPCType<CalamitasRun2>());
             ref float attackType = ref npc.ai[0];
-            ref float attackTimer = ref npc.ai[1];
+            ref float attackTimer = ref npc.Infernum().ExtraAI[7];
             ref float transitionState = ref npc.ai[2];
             ref float brotherFadeoutTime = ref npc.ai[3];
+            ref float finalPhaseTransitionCountdown = ref npc.Infernum().ExtraAI[8];
+            ref float finalPhaseFireTimer = ref npc.Infernum().ExtraAI[9];
+
+            bool inFinalPhase = transitionState == 3f;
 
             // Reset things.
             npc.damage = npc.defDamage;
-            npc.dontTakeDamage = false;
+            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>());
 
             // Prepare to fade out and summon brothers.
             if (Main.netMode != NetmodeID.MultiplayerClient && transitionState == 0f && lifeRatio < Phase2LifeRatio)
             {
                 transitionState = 1f;
                 brotherFadeoutTime = 1f;
+                attackTimer = 0f;
 
                 // Set the ring radius and create a soul seeker ring.
                 npc.Infernum().ExtraAI[6] = shouldBeBuffed ? 950f : 750f;
@@ -90,6 +103,71 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                 npc.netUpdate = true;
                 return false;
+            }
+
+            // Create a seeker ring once at a low enough life.
+            if (transitionState == 1f && lifeRatio < Phase3LifeRatio)
+            {
+                int seekerCount = 6;
+                for (int i = 0; i < seekerCount; i++)
+                {
+                    int spawn = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker>(), npc.whoAmI, 0, 0, 0, -1);
+                    Main.npc[spawn].ai[0] = 360f / seekerCount * i;
+                }
+                transitionState = 2f;
+                npc.netUpdate = true;
+            }
+
+            // Begin transitioning to the final phase once the seekers have been spawned and then killed.
+            if (transitionState == 2f && !NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
+			{
+                transitionState = 3f;
+                attackTimer = 0f;
+                finalPhaseTransitionCountdown = FinalPhaseTransitionTime;
+                npc.netUpdate = true;
+                return false;
+			}
+
+            // Do phase transitions.
+            if (finalPhaseTransitionCountdown > 0f)
+			{
+                npc.dontTakeDamage = true;
+
+                finalPhaseTransitionCountdown--;
+                npc.velocity *= 0.97f;
+                npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+
+                if (finalPhaseTransitionCountdown == 60f)
+                    Main.NewText("I will not be defeated so easily.", Color.Orange);
+
+                if (finalPhaseTransitionCountdown == 0f)
+                {
+                    attackTimer = 0f;
+                    SelectNewAttack(npc);
+
+                    int explosion = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+                    Main.projectile[explosion].ai[0] = NPCID.Retinazer;
+                }
+
+                return false;
+			}
+
+            // Periodically release fire in the final phase.
+            if (inFinalPhase)
+                finalPhaseFireTimer++;
+
+            if (finalPhaseFireTimer % 240f == 239f)
+            {
+                Main.PlaySound(SoundID.Item74, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 6; i++)
+                    {
+                        Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 1300f;
+                        Vector2 burstVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 11f;
+                        Utilities.NewProjectileBetter(spawnPosition, burstVelocity, ModContent.ProjectileType<BrimstoneBurstTelegraph>(), 0, 0f);
+                    }
+                }
             }
 
             // Fade away and don't do damage if brothers are present.
@@ -126,6 +204,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     npc.damage = 0;
                     DoBehavior_BrimstoneVolcano(npc, target, lifeRatio, shouldBeBuffed, ref attackTimer);
                     break;
+                case CloneAttackType.BrimstoneLightning:
+                    npc.damage = 0;
+                    DoBehavior_BrimstoneLightning(npc, target, shouldBeBuffed, ref attackTimer);
+                    break;
+                case CloneAttackType.BrimstoneFireBurst:
+                    npc.damage = 0;
+                    DoBehavior_BrimstoneFireBurst(npc, target, lifeRatio, inFinalPhase, shouldBeBuffed, ref attackTimer);
+                    break;
+                case CloneAttackType.DiagonalCharge:
+                    DoBehavior_DiagonalCharge(npc, target, lifeRatio, shouldBeBuffed, ref attackTimer);
+                    break;
+                case CloneAttackType.RisingBrimstoneFireBursts:
+                    npc.damage = 0;
+                    DoBehavior_RisingBrimstoneFireBursts(npc, target, shouldBeBuffed, ref attackTimer);
+                    break;
+                case CloneAttackType.HorizontalBurstCharge:
+                    npc.damage = 0;
+                    DoBehavior_HorizontalBurstCharge(npc, target, shouldBeBuffed, ref attackTimer);
+                    break;
             }
 
             attackTimer++;
@@ -138,14 +235,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 530f;
             float hoverSpeed = 15f;
-            float initialFlameSpeed = 10.5f;
-            int flameReleaseRate = 6;
+            float initialFlameSpeed = 7.5f;
+            int flameReleaseRate = 9;
             int flameReleaseTime = 180;
             if (lifeRatio < Phase2LifeRatio)
             {
                 attackCycleCount--;
                 hoverHorizontalOffset -= 70f;
-                initialFlameSpeed += 4.5f;
+                initialFlameSpeed += 7.5f;
                 flameReleaseRate -= 2;
             }
 
@@ -269,7 +366,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (shouldBeBuffed)
             {
                 attackTime += 45;
-                lavaShootRate -= 8;
+                lavaShootRate -= 10;
                 hoverSpeed += 9f;
             }
 
@@ -307,6 +404,294 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (attackTimer > attackTime + attackDelay * 2f)
                 SelectNewAttack(npc);
         }
+        
+        public static void DoBehavior_BrimstoneLightning(NPC npc, Player target, bool shouldBeBuffed, ref float attackTimer)
+		{
+            int attackDelay = 45;
+            int attackTime = 330;
+            int lightningShootRate = 32;
+            float hoverSpeed = 15f;
+
+            if (shouldBeBuffed)
+            {
+                attackTime += 45;
+                lightningShootRate -= 8;
+                hoverSpeed += 9f;
+            }
+
+            // Attempt to hover above the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
+            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+
+            // Create a thunder sound and before the lightning comes down.
+            if (attackTimer == attackDelay - 25f)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
+                npc.netUpdate = true;
+            }
+
+            bool canFire = attackTimer > attackDelay && attackTimer < attackTime + attackDelay;
+
+            // Create lightning from the ground. This has a delay at the start and end of the attack.
+            if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lightningShootRate == lightningShootRate - 1f)
+            {
+                Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f + target.velocity.X * 32f, 40f);
+                Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneLightningTelegraph>(), 0, 0f);
+            }
+
+            if (attackTimer > attackTime + attackDelay * 2f)
+                SelectNewAttack(npc);
+		}
+        
+        public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, bool inFinalPhase, bool shouldBeBuffed, ref float attackTimer)
+        {
+            int attackCycleCount = 2;
+            int hoverTime = 210;
+            float hoverHorizontalOffset = 485f;
+            float hoverSpeed = 15f;
+            float fireballSpeed = MathHelper.Lerp(7f, 11f, 1f - lifeRatio);
+            int fireballReleaseRate = 65;
+            int fireballReleaseTime = 360;
+
+            if (inFinalPhase)
+			{
+                fireballReleaseRate -= 15;
+                fireballSpeed *= 1.2f;
+            }
+
+            if (shouldBeBuffed)
+            {
+                attackCycleCount--;
+                fireballReleaseRate /= 2;
+                hoverSpeed += 9f;
+                fireballSpeed += 8.5f;
+            }
+
+            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
+
+            // Attempt to hover to the side of the target.
+            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverHorizontalOffset;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
+            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+
+            // Prepare the attack after either enough time has passed or if sufficiently close to the hover destination.
+            // This is done to ensure that the attack begins once the boss is close to the target.
+            if (attackSubstate == 0f && (attackTimer > hoverTime || npc.WithinRange(hoverDestination, 60f)))
+            {
+                attackSubstate = 1f;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Release fireballs.
+            if (attackSubstate == 1f)
+            {
+                if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f)
+                {
+                    Main.PlaySound(SoundID.Item73, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int fireballDamage = shouldBeBuffed ? 345 : 150;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
+
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
+                    }
+                }
+
+                if (attackTimer > fireballReleaseTime)
+                {
+                    attackTimer = 0f;
+                    attackSubstate = 0f;
+                    attackCycleCounter++;
+
+                    if (attackCycleCounter > attackCycleCount)
+                        SelectNewAttack(npc);
+                    npc.netUpdate = true;
+                }
+            }
+        }
+
+        public static void DoBehavior_DiagonalCharge(NPC npc, Player target, float lifeRatio, bool shouldBeBuffed, ref float attackTimer)
+        {
+            float chargeOffset = 395f;
+            float redirectSpeed = 24f;
+            float chargeSpeed = MathHelper.Lerp(22f, 26f, 1f - lifeRatio);
+            int chargeTime = 50;
+            int chargeSlowdownTime = 15;
+            int chargeCount = 5;
+
+            if (shouldBeBuffed)
+            {
+                chargeSpeed *= 1.4f;
+                redirectSpeed += 7f;
+            }
+
+            ref float attackState = ref npc.Infernum().ExtraAI[0];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
+
+            switch ((int)attackState)
+            {
+                // Hover into position.
+                case 0:
+                    Vector2 hoverDestination = target.Center;
+                    hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * chargeOffset;
+                    hoverDestination.Y += (target.Center.Y < npc.Center.Y).ToDirectionInt() * chargeOffset;
+
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 20f);
+                    npc.rotation = npc.AngleTo(hoverDestination) - MathHelper.PiOver2;
+
+                    if (attackTimer > 240f || npc.WithinRange(hoverDestination, 120f))
+                    {
+                        Main.PlaySound(SoundID.Roar, npc.Center, 0);
+                        npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
+                        attackTimer = 0f;
+                        attackState = 1f;
+                    }
+                    break;
+
+                // Do the charge.
+                case 1:
+                    npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+
+                    // Slow down after the charge has ended and look at the target.
+                    if (attackTimer > chargeTime)
+                    {
+                        npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.1f) * 0.96f;
+                        float idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                        npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f).AngleTowards(idealRotation, 0.15f);
+                    }
+
+                    // Go to the next attack once done slowing down.
+                    if (attackTimer > chargeTime + chargeSlowdownTime)
+                    {
+                        chargeCounter++;
+                        attackTimer = 0f;
+                        attackState = 0f;
+                        if (chargeCounter >= chargeCount)
+                            SelectNewAttack(npc);
+                        npc.netUpdate = true;
+                    }
+                    break;
+            }
+        }
+
+        public static void DoBehavior_RisingBrimstoneFireBursts(NPC npc, Player target, bool shouldBeBuffed, ref float attackTimer)
+        {
+            int attackCycleCount = 2;
+            int hoverTime = 210;
+            float hoverHorizontalOffset = 485f;
+            float hoverSpeed = 19f;
+            float fireballSpeed = 9f;
+            int fireballReleaseRate = 20;
+            int fireballReleaseTime = 360;
+
+            if (shouldBeBuffed)
+            {
+                fireballReleaseRate -= 6;
+                hoverSpeed += 9f;
+                fireballSpeed += 8.5f;
+            }
+
+            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
+
+            // Attempt to hover to the side of the target.
+            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverHorizontalOffset;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
+            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+
+            // Prepare the attack after either enough time has passed or if sufficiently close to the hover destination.
+            // This is done to ensure that the attack begins once the boss is close to the target.
+            if (attackSubstate == 0f && (attackTimer > hoverTime || npc.WithinRange(hoverDestination, 110f)))
+            {
+                attackSubstate = 1f;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Release fireballs.
+            if (attackSubstate == 1f)
+            {
+                if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f && attackTimer % 180f < 60f)
+                {
+                    Main.PlaySound(SoundID.Item73, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int fireballDamage = shouldBeBuffed ? 320 : 140;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
+
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<RisingBrimstoneFireball>(), fireballDamage, 0f);
+                    }
+                }
+
+                if (attackTimer > fireballReleaseTime)
+                {
+                    attackTimer = 0f;
+                    attackSubstate = 0f;
+                    attackCycleCounter++;
+
+                    if (attackCycleCounter > attackCycleCount)
+                        SelectNewAttack(npc);
+                    npc.netUpdate = true;
+                }
+            }
+        }
+
+        public static void DoBehavior_HorizontalBurstCharge(NPC npc, Player target, bool shouldBeBuffed, ref float attackTimer)
+        {
+            int redirectTime = 60;
+            int chargeTime = 130;
+            float chargeSpeed = 19f;
+            float fireballSpeed = 8f;
+
+            if (shouldBeBuffed)
+			{
+                chargeSpeed += 7f;
+                fireballSpeed += 5.5f;
+            }
+
+			if (attackTimer < redirectTime)
+			{
+				Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 1500f, -350f);
+				Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 13f;
+				npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
+				if (npc.WithinRange(hoverDestination, 20f))
+					attackTimer = redirectTime - 1f;
+			}
+			else if (attackTimer == redirectTime)
+			{
+				Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center);
+				chargeVelocity.Y *= 0.25f;
+				chargeVelocity = chargeVelocity.SafeNormalize(Vector2.UnitX);
+                npc.rotation = chargeVelocity.ToRotation() - MathHelper.PiOver2;
+				npc.velocity = chargeVelocity * chargeSpeed;
+			}
+			else
+			{
+				npc.position.X += npc.SafeDirectionTo(target.Center).X * 9f;
+				npc.position.Y += npc.SafeDirectionTo(target.Center - Vector2.UnitY * 400f).Y * 7f;
+				if (attackTimer % 34f == 33f)
+                {
+                    Main.PlaySound(SoundID.Item73, target.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int fireballDamage = shouldBeBuffed ? 320 : 140;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY);
+                        shootVelocity = Vector2.Lerp(shootVelocity, npc.velocity.SafeNormalize(Vector2.Zero), 0.6f).SafeNormalize(Vector2.UnitY) * fireballSpeed;
+
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<RisingBrimstoneFireball>(), fireballDamage, 0f);
+                    }
+                }
+			}
+
+            if (attackTimer >= redirectTime + chargeTime)
+                SelectNewAttack(npc);
+        }
 
         public static void SelectNewAttack(NPC npc)
         {
@@ -318,8 +703,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 CloneAttackType.BrimstoneVolcano
             };
 
+            for (int i = 0; i < 3; i++)
+            {
+                possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneLightning, lifeRatio < Phase2LifeRatio);
+                possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneFireBurst, lifeRatio < Phase2LifeRatio);
+                possibleAttacks.AddWithCondition(CloneAttackType.DiagonalCharge, lifeRatio < Phase2LifeRatio);
+            }
+
+            if (npc.ai[2] == 3f)
+			{
+                possibleAttacks.Clear();
+                possibleAttacks.Add(CloneAttackType.BrimstoneFireBurst);
+                possibleAttacks.Add(CloneAttackType.RisingBrimstoneFireBursts);
+                possibleAttacks.Add(CloneAttackType.HorizontalBurstCharge);
+            }
+
             if (possibleAttacks.Count > 1)
-                possibleAttacks.Remove((CloneAttackType)(int)npc.ai[0]);
+                possibleAttacks.RemoveAll(a => a == (CloneAttackType)(int)npc.ai[0]);
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

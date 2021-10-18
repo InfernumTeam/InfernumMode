@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             if (Time > 18f && projectile.velocity.Length() < 25f)
-                projectile.velocity = Vector2.Lerp(projectile.velocity, IdealDirection.ToRotationVector2() * projectile.velocity.Length() * 1.17f, 0.08f);
+                projectile.velocity = Vector2.Lerp(projectile.velocity, IdealDirection.ToRotationVector2() * projectile.velocity.Length() * 1.12f, 0.08f);
 
             Lighting.AddLight(projectile.Center, projectile.Opacity * 0.9f, 0f, 0f);
 

@@ -368,6 +368,13 @@ namespace InfernumMode.GlobalInstances
             if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
                 damage = (int)(damage * 0.55);
 
+            if (projectile.type == ModContent.ProjectileType<Corrocloud1>() ||
+                projectile.type == ModContent.ProjectileType<Corrocloud2>() ||
+                projectile.type == ModContent.ProjectileType<Corrocloud3>())
+            {
+                damage = (int)(damage * 0.65);
+            }
+
             if ((projectile.type == ModContent.ProjectileType<Corrocloud1>() ||
                 projectile.type == ModContent.ProjectileType<Corrocloud2>() ||
                 projectile.type == ModContent.ProjectileType<Corrocloud3>()) && npc.type == ModContent.NPCType<Leviathan>())

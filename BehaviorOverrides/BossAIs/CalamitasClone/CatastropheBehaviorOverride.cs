@@ -27,8 +27,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         #region AI
 
-        public const float Phase2LifeRatio = 0.7f;
-
         public override bool PreAI(NPC npc)
         {
             // Do targeting.
@@ -178,7 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 // Hover into position.
                 case 0:
-                    Vector2 hoverDestination = target.Center + Vector2.UnitY * (target.Center.Y < npc.Center.X).ToDirectionInt() * verticalChargeOffset;
+                    Vector2 hoverDestination = target.Center + Vector2.UnitY * (target.Center.Y < npc.Center.Y).ToDirectionInt() * verticalChargeOffset;
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 40f);
 
                     float idealRotation = npc.AngleTo(hoverDestination) - MathHelper.PiOver2;

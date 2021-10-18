@@ -61,14 +61,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 AttackTimer++;
                 if (AttackTimer % 80f == 79f)
                 {
-                    int fireballDamage = shouldBeBuffed ? 350 : 150;
+                    int dartDamage = shouldBeBuffed ? 350 : 150;
                     Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * (shouldBeBuffed ? 31f : 24f);
-                    int fireball = Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), fireballDamage, 0f);
-                    if (Main.projectile.IndexInRange(fireball))
+                    int dart = Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f);
+                    if (Main.projectile.IndexInRange(dart))
                     {
-                        Main.projectile[fireball].ai[0] = 1f;
-                        Main.projectile[fireball].tileCollide = false;
-                        Main.projectile[fireball].netUpdate = true;
+                        Main.projectile[dart].ai[0] = 1f;
+                        Main.projectile[dart].tileCollide = false;
+                        Main.projectile[dart].netUpdate = true;
                     }
                 }
             }

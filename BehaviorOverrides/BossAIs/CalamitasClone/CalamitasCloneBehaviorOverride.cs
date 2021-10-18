@@ -134,7 +134,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static void DoBehavior_HorizontalDartRelease(NPC npc, Player target, float lifeRatio, bool shouldBeBuffed, ref float attackTimer)
         {
-            int attackCycleCount = 4;
+            int attackCycleCount = 3;
             int hoverTime = 210;
             float hoverHorizontalOffset = 530f;
             float hoverSpeed = 15f;
@@ -165,7 +165,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Prepare the attack after either enough time has passed or if sufficiently close to the hover destination.
             // This is done to ensure that the attack begins once the boss is close to the target.
-            if (attackSubstate == 0f && (attackTimer > hoverTime || npc.WithinRange(hoverDestination, 60f)))
+            if (attackSubstate == 0f && (attackTimer > hoverTime || npc.WithinRange(hoverDestination, 110f)))
             {
                 attackSubstate = 1f;
                 attackTimer = 0f;

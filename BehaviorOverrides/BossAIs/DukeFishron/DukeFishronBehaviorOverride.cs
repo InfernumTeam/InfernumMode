@@ -148,6 +148,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             ref float phaseTransitionTime = ref npc.Infernum().ExtraAI[8];
             ref float hasEyes01Flag = ref npc.Infernum().ExtraAI[9];
             ref float attackDelay = ref npc.Infernum().ExtraAI[10];
+            ref float teleportChargeCount = ref npc.Infernum().ExtraAI[11];
 
             bool enraged = target.position.Y < 300f || target.position.Y > Main.worldSurface * 16.0 ||
                            target.position.X > 6000f && target.position.X < (Main.maxTilesX * 16 - 6000);
@@ -156,6 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             if (attackDelay < 60f)
             {
+                npc.damage = 0;
                 if (attackDelay == 1f)
                     npc.velocity = Vector2.UnitY * -4.4f;
                 else
@@ -636,13 +638,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                             npc.netUpdate = true;
                         }
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % typhoonBurstRate == typhoonBurstRate - 1f)
+                        if (attackTimer % typhoonBurstRate == typhoonBurstRate - 1f)
                         {
-                            for (int i = 0; i < typhoonCount; i++)
+                            Main.PlaySound(SoundID.Item84, npc.Center);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                float offsetAngle = MathHelper.TwoPi * i / typhoonCount;
-                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * typhoonBurstSpeed;
-                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), 105, 0f);
+                                for (int i = 0; i < typhoonCount; i++)
+                                {
+                                    float offsetAngle = MathHelper.TwoPi * i / typhoonCount;
+                                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * typhoonBurstSpeed;
+                                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), 105, 0f);
+                                }
                             }
                         }
                     }
@@ -661,11 +667,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         hoverDirection = ref npc.Infernum().ExtraAI[0];
                         if (hoverDirection == 0f)
                             hoverDirection = Math.Sign((npc.Center - target.Center).X);
-                        npc.Center = Vector2.Lerp(npc.Center, target.Center + new Vector2(hoverDirection * 400f, -200f), 0.11f);
+                        Vector2 hoverDestination = target.Center + new Vector2(hoverDirection * 400f, -200f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 1.2f);
                         npc.alpha += 25;
                     }
-
-                    npc.rotation = npc.rotation.AngleTowards(getAdjustedAngle(npc.AngleTo(target.Center)), 0.065f);
 
                     // Charge.
                     if (attackTimer == 45f)
@@ -688,17 +693,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         npc.netUpdate = true;
                     }
 
-                    // Fade-in effects and rotation.
-                    if (npc.alpha > 0 && attackTimer > 45f)
+                    if (attackTimer > 45f)
+                        npc.alpha = Utils.Clamp(npc.alpha - 45, 0, 255);
+
+                    // Deceleration.
+                    if (npc.alpha > 0 && attackTimer > 85f)
                     {
-                        npc.velocity *= 0.98f;
-                        npc.alpha -= 45;
+                        npc.rotation = npc.rotation.AngleTowards(getAdjustedAngle(npc.AngleTo(target.Center), true), 0.15f);
+                        npc.velocity *= 0.95f;
                     }
 
                     npc.alpha = Utils.Clamp(npc.alpha, 0, 255);
 
-                    if (attackTimer >= 63f)
-                        goToNextAIState();
+                    if (attackTimer >= 100f)
+                    {
+                        teleportChargeCount++;
+
+                        if (teleportChargeCount > 3f)
+                            goToNextAIState();
+                        else
+                            attackTimer = 44f;
+                    }
                     break;
             }
 

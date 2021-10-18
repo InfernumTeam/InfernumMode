@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Vector2 top = projectile.Center - Vector2.UnitY * 3000f;
-            Vector2 bottom = projectile.Center - Vector2.UnitY * 3000f;
+            Vector2 bottom = projectile.Center + Vector2.UnitY * 3000f;
             spriteBatch.DrawLineBetter(top, bottom, Color.Turquoise, projectile.scale * 4f);
             return false;
         }

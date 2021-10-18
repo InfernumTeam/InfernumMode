@@ -94,6 +94,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(CalamityWorld).GetMethod("PostUpdate", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator CalamityPlayerOtherBuffEffects
+        {
+            add => HookEndpointManager.Modify(typeof(CalamityPlayerMiscEffects).GetMethod("OtherBuffEffects", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CalamityPlayerMiscEffects).GetMethod("OtherBuffEffects", Utilities.UniversalBindingFlags), value);
+        }
+
         public static void ILEditingLoad()
         {
             On.Terraria.Gore.NewGore += RemoveCultistGore;
@@ -111,6 +117,7 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreDrawProjectile += ProjectilePreDrawChange;
             ModeIndicatorUIDraw += DrawInfernumIcon;
             CalamityWorldPostUpdate += PermitODRain;
+            CalamityPlayerOtherBuffEffects += DisablePlagueDarkness;
         }
 
 		public static void ILEditingUnload()
@@ -130,6 +137,7 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreDrawProjectile -= ProjectilePreDrawChange;
             ModeIndicatorUIDraw -= DrawInfernumIcon;
             CalamityWorldPostUpdate -= PermitODRain;
+            CalamityPlayerOtherBuffEffects -= DisablePlagueDarkness;
         }
 
         // Why.
@@ -544,6 +552,20 @@ namespace InfernumMode.ILEditingStuff
             cursor.Goto(start);
             cursor.RemoveRange(end - start);
             cursor.Emit(OpCodes.Nop);
+        }
+
+        private static void DisablePlagueDarkness(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdfld<CalamityPlayer>("alchFlask")))
+                return;
+
+            cursor.Emit(OpCodes.Ldarg_0);
+            cursor.EmitDelegate<Action<Player>>(player =>
+            {
+                player.blind = false;
+            });
         }
     }
 }

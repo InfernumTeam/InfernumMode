@@ -22,13 +22,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             npc.damage = 0;
             npc.width = 40;
             npc.height = 150;
-            npc.lifeMax = 100;
             npc.alpha = 255;
             npc.aiStyle = -1;
             npc.knockBackResist = 0f;
             npc.LifeMaxNERB(4145, 4145, 96960);
             if (CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive)
-                npc.lifeMax = 38650;
+                npc.lifeMax = 22650;
 
             for (int k = 0; k < npc.buffImmune.Length; k++)
                 npc.buffImmune[k] = true;
@@ -77,7 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
 
             // Release bursts of dark flames.
-            if (attackTimer > 25f && attackTimer % 75f == 74f)
+            if (attackTimer > 25f && attackTimer % 55f == 54f)
             {
                 Main.PlaySound(SoundID.Item100, npc.Center);
 

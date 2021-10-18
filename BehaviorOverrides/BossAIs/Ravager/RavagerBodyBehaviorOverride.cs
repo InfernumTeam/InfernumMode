@@ -69,8 +69,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 shouldNotAttack = true;
             }
 
-            // Reset DR every frame.
+            // Reset things every frame.
             npc.Calamity().DR = BaseDR;
+            npc.damage = npc.defDamage;
 
             npc.noTileCollide = false;
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
@@ -125,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             bool anyLimbsArePresent = leftLegActive || rightLegActive || leftClawActive || rightClawActive || headActive;
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
 
-            int darkMagicFireballShootRate = 90;
+            int darkMagicFireballShootRate = 75;
             int jumpDelay = !leftClawActive || !rightClawActive ? 270 : 210;
             float gravity = 0.625f;
             if (!anyLimbsArePresent)
@@ -198,7 +199,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 {
                     int fireballsPerBurst = shouldBeBuffed ? 11 : 8;
                     int darkMagicFireballDamage = shouldBeBuffed ? 335 : 215;
-                    float darkMagicFireballSpeed = shouldBeBuffed ? 16f : 10f;
+                    float darkMagicFireballSpeed = shouldBeBuffed ? 16f : 11.5f;
                     for (int i = 0; i < fireballsPerBurst; i++)
                     {
                         Vector2 darkMagicFireballVelocity = (MathHelper.TwoPi * i / fireballsPerBurst).ToRotationVector2() * darkMagicFireballSpeed;
@@ -239,6 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         npc.velocity.Y -= 5f;
 
                     npc.velocity.X = (target.Center.X > npc.Center.X).ToDirectionInt() * 19.5f;
+                    npc.velocity *= 0.8f;
                     npc.netUpdate = true;
                 }
             }
@@ -495,6 +497,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 case 0:
                     // Negate gravity.
                     gravity = 0f;
+
+                    // Don't do damage.
+                    npc.damage = 0;
 
                     Vector2 hoverDestination = target.Center - Vector2.UnitY * verticalHoverOffset;
                     if (!npc.WithinRange(hoverDestination, 160f))

@@ -670,7 +670,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 attackSelector.Add(AureusAttackType.CelestialRain);
             }
 
-            if (lifeRatio < Phase3LifeRatio)
+            if (lifeRatio < Phase3LifeRatio && !NPC.AnyNPCs(ModContent.NPCType<AureusSpawn>()))
                 attackSelector.Add(AureusAttackType.AstralDrillLaser, 2D);
 
             do

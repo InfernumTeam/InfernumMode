@@ -53,11 +53,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 return;
             }
 
-            int index = (int)projectile.Infernum().ExtraAI[0] - 1;
-            if (index == -1)
-                index = AstrumAureusBehaviorOverride.LaserbeamSpawnOffsets.Count - 1;
-            projectile.Center = Main.npc[GlobalNPCOverrides.AstrumAureus].Center + AstrumAureusBehaviorOverride.LaserbeamSpawnOffsets[index];
+            projectile.Center = Main.npc[GlobalNPCOverrides.AstrumAureus].Center - Vector2.UnitY * 52f;
 
+            projectile.Opacity = 1f;
             if (RotationalSpeed == 0f)
                 RotationalSpeed = MathHelper.Pi / 180f * -0.84f;
         }

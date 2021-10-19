@@ -617,7 +617,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public static void DoSpecialAttack_SpikeBarrage(NPC npc, Player target, float lifeRatio, bool shouldBeBuffed, ref float gravity, ref float attackTimer, ref float specialAttackType, ref float specialAttackStartDelay)
         {
-            int spikeShootRate = (int)MathHelper.Lerp(10f, 5f, 1f - lifeRatio);
+            int spikeShootRate = (int)MathHelper.Lerp(12f, 8f, 1f - lifeRatio);
             int spikeShootTime = (int)MathHelper.Lerp(450f, 570f, 1f - lifeRatio);
             int spikeShootDelay = (int)MathHelper.Lerp(72f, 50f, 1f - lifeRatio);
             int spikeShootTransitionDelay = 145;
@@ -707,7 +707,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         {
                             for (int i = 0; i < 5; i++)
                             {
-                                int spikeDamage = shouldBeBuffed ? 333 : 223;
+                                int spikeDamage = shouldBeBuffed ? 305 : 200;
                                 Vector2 spikeVelocity = -Vector2.UnitY.RotatedByRandom(spikeShootAngularVariance) * spikeShootSpeed * Main.rand.NextFloat(0.65f, 1.1f);
                                 Utilities.NewProjectileBetter(npc.Center, spikeVelocity, ModContent.ProjectileType<RavagerSpike>(), spikeDamage, 0f);
                             }

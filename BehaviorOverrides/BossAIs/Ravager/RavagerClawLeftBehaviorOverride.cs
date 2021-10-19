@@ -52,6 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             float punchSpeed = 23.5f;
             Vector2 stickPosition = ravagerBody.Center + new Vector2(-120f * leftClaw.ToDirectionInt(), 50f);
 
+            float specialAttackDelay = ravagerBody.Infernum().ExtraAI[0];
             ref float attackState = ref npc.ai[0];
             ref float punchTimer = ref npc.ai[1];
 
@@ -151,6 +152,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     else
                         npc.velocity *= 0.965f;
                     npc.rotation = npc.AngleTo(target.Center);
+
+                    // Don't punch during a spike barrage.
+                    if (ravagerBody.Infernum().ExtraAI[1] == (int)RavagerBodyBehaviorOverride.RavagerAttackType.SpikeBarrage && specialAttackDelay >= 720f)
+                        punchTimer = 0f;
 
                     // Emit magic as a telegraph to signal that a punch will happen soon.
                     if (punchTimer >= 165f)

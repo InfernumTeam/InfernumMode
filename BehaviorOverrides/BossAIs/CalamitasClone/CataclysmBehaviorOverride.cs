@@ -110,6 +110,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                         npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
                         attackTimer = 0f;
                         attackState = 1f;
+
+                        if (!otherBrotherIsPresent)
+                        {
+                            int fireballDamage = shouldBeBuffed ? 340 : 145;
+                            for (int i = 0; i < 3; i++)
+                            {
+                                Vector2 shootVelocity = (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 8f;
+                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
+                            }
+						}
                     }
                     break;
 

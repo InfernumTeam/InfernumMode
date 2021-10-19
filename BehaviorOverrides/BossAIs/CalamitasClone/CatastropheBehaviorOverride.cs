@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int redirectTime = 240;
             float redirectSpeed = 16f;
             int carpetBombTime = 75;
-            int carpetBombRate = 10;
+            int carpetBombRate = 8;
             float carpetBombSpeed = MathHelper.SmoothStep(18f, 16f, 1f - lifeRatio);
             float carpetBombChargeSpeed = MathHelper.SmoothStep(20f, 23f, 1f - lifeRatio);
 
@@ -97,16 +97,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (attackTimer < redirectTime)
             {
-                Vector2 destination = target.Center - Vector2.UnitY * 380f;
+                Vector2 destination = target.Center - Vector2.UnitY * 480f;
                 float idealAngle = npc.AngleTo(destination) - MathHelper.PiOver2;
-                destination.X -= (target.Center.X > npc.Center.X).ToDirectionInt() * 870f;
+                destination.X -= (target.Center.X > npc.Center.X).ToDirectionInt() * 1050f;
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * redirectSpeed, redirectSpeed / 40f);
+
+                if (!otherBrotherIsPresent)
+                    npc.Center = npc.Center.MoveTowards(destination, 10f);
 
                 npc.rotation = npc.rotation.AngleLerp(idealAngle, 0.08f);
 
-                if (npc.WithinRange(destination, 24f) && attackTimer < redirectTime - 75f)
+                if (npc.WithinRange(destination, 50f) && attackTimer < redirectTime - 25f)
                 {
-                    attackTimer = redirectTime - 75f;
+                    attackTimer = redirectTime - 25f;
                     npc.netUpdate = true;
                 }
 
@@ -143,6 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 {
                     Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 120f;
                     Vector2 shootVelocity = npc.velocity.SafeNormalize((npc.rotation + MathHelper.PiOver2).ToRotationVector2()) * carpetBombSpeed;
+                    shootVelocity += Main.rand.NextVector2Circular(1.5f, 1.5f);
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), 140, 0f);
                 }
                 Main.PlaySound(SoundID.DD2_BetsyFireballShot, target.Center);

@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         #region AI
 
         public const float Phase2LifeRatio = 0.7f;
-        public const float Phase3LifeRatio = 0.3f;
+        public const float Phase3LifeRatio = 0.45f;
         public const int FinalPhaseTransitionTime = 180;
 
         public override bool PreAI(NPC npc)
@@ -157,7 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (inFinalPhase)
                 finalPhaseFireTimer++;
 
-            if (finalPhaseFireTimer % 240f == 239f)
+            if (finalPhaseFireTimer % 150f == 149f)
             {
                 Main.PlaySound(SoundID.Item74, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -166,6 +166,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     {
                         Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 1300f;
                         Vector2 burstVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 11f;
+                        if (shouldBeBuffed)
+                            burstVelocity *= 2.7f;
                         Utilities.NewProjectileBetter(spawnPosition, burstVelocity, ModContent.ProjectileType<BrimstoneBurstTelegraph>(), 0, 0f);
                     }
                 }
@@ -188,7 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                 // Stop moving if only one brother is alive.
                 if (brotherCount > 1)
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 8f, 0.25f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 4.5f, 0.2f);
                 else
                     npc.velocity *= 0.98f;
 
@@ -256,6 +258,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 attackCycleCount--;
                 hoverSpeed += 9f;
+                initialFlameSpeed *= 2.2f;
             }
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
@@ -463,7 +466,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (inFinalPhase)
 			{
                 fireballReleaseRate -= 15;
-                fireballSpeed *= 1.2f;
+                fireballSpeed *= 1.5f;
             }
 
             if (shouldBeBuffed)
@@ -652,12 +655,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int redirectTime = 60;
             int chargeTime = 130;
             float chargeSpeed = 19f;
-            float fireballSpeed = 8f;
+            float fireballSpeed = 10f;
 
             if (shouldBeBuffed)
 			{
                 chargeSpeed += 7f;
-                fireballSpeed += 5.5f;
+                fireballSpeed += 6f;
             }
 
 			if (attackTimer < redirectTime)
@@ -680,7 +683,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 			{
 				npc.position.X += npc.SafeDirectionTo(target.Center).X * 9f;
 				npc.position.Y += npc.SafeDirectionTo(target.Center - Vector2.UnitY * 400f).Y * 7f;
-				if (attackTimer % 34f == 33f)
+				if (attackTimer % 24f == 23f)
                 {
                     Main.PlaySound(SoundID.Item73, target.Center);
 
@@ -732,7 +735,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.Infernum().ExtraAI[i] = 0f;
 
             npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
-            npc.ai[1] = 0f;
+            npc.Infernum().ExtraAI[7] = 0f;
             npc.netUpdate = true;
         }
 

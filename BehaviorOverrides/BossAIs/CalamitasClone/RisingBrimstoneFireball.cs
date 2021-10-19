@@ -61,6 +61,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 float offsetAngle = MathHelper.Lerp(-0.22f, 0.22f, i);
                 Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 14f;
+                if (shouldBeBuffed)
+                    shootVelocity *= 1.7f;
+
                 Utilities.NewProjectileBetter(projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingBrimstoneBurst>(), fireDamage, 0f);
             }
         }

@@ -104,16 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             npc.dontTakeDamage = false;
-            // Fade effects.
-            if (NPC.AnyNPCs(ModContent.NPCType<CeaselessVoid>()) ||
-                NPC.AnyNPCs(ModContent.NPCType<StormWeaverHeadNaked>()) ||
-                NPC.AnyNPCs(ModContent.NPCType<CalamityMod.NPCs.Signus.Signus>()))
-            {
-                npc.dontTakeDamage = true;
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 0f, 0.25f);
-            }
-            else
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.25f);
+            npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.25f);
 
             // Percent life remaining
             float lifeRatio = npc.life / (float)npc.lifeMax;

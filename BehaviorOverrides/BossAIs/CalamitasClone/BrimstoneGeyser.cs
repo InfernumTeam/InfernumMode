@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             float _ = 0f;
             float width = WidthFunction(0.6f);
             Vector2 start = projectile.Center;
-            Vector2 end = projectile.Center - Vector2.UnitY * GeyserHeight * 0.8f;
+            Vector2 end = projectile.Center - Vector2.UnitY * GeyserHeight * 0.7f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 

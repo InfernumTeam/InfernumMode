@@ -76,10 +76,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             int redirectTime = 240;
             float redirectSpeed = 16f;
-            int carpetBombTime = 115;
-            int carpetBombRate = 7;
-            float carpetBombSpeed = MathHelper.SmoothStep(16f, 21f, 1f - lifeRatio);
+            int carpetBombTime = 75;
+            int carpetBombRate = 10;
+            float carpetBombSpeed = MathHelper.SmoothStep(18f, 16f, 1f - lifeRatio);
             float carpetBombChargeSpeed = MathHelper.SmoothStep(20f, 23f, 1f - lifeRatio);
+
+            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
 
             if (otherBrotherIsPresent)
             {
@@ -147,7 +149,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             if (attackTimer > redirectTime + carpetBombTime)
-                SelectNewAttack(npc);
+            {
+                attackCycleCounter++;
+                if (attackCycleCounter >= 3f)
+                    SelectNewAttack(npc);
+                else
+                    attackTimer = 0f;
+                npc.netUpdate = true;
+            }
         }
 
         public static void DoBehavior_VerticalCharges(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, bool shouldBeBuffed, ref float attackTimer)

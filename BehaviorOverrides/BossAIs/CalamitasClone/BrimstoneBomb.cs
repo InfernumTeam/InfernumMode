@@ -38,8 +38,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
-            if (projectile.velocity.Y < 20f)
-                projectile.velocity.Y += 0.9f;
+            if (projectile.velocity.Y < 10f)
+                projectile.velocity.Y += 0.15f;
             projectile.velocity.X *= 0.985f;
         }
 

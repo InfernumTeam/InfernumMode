@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
-            bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun>());
+            bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun2>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
 
@@ -101,10 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * horizontalChargeOffset;
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 20f);
 
-                    float idealRotation = npc.AngleTo(hoverDestination) - MathHelper.PiOver2;
-                    if (npc.WithinRange(hoverDestination, 250f))
-                        idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-
+                    float idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
                     npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f).AngleTowards(idealRotation, 0.15f);
 
                     if (attackTimer > 240f || npc.WithinRange(hoverDestination, 60f))
@@ -149,13 +146,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 15f;
             float fireballSpeed = MathHelper.Lerp(6.5f, 10f, 1f - lifeRatio);
-            int fireballReleaseRate = 75;
+            int fireballReleaseRate = 65;
             int fireballReleaseTime = 180;
 
             if (otherBrotherIsPresent)
 			{
                 hoverHorizontalOffset += 60f;
-                fireballReleaseRate += 60;
+                fireballReleaseRate += 40;
 			}
 
             if (shouldBeBuffed)
@@ -186,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Release fireballs.
             if (attackSubstate == 1f)
             {
-                if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f && attackTimer % 90f > 35f)
+                if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f)
                 {
                     Main.PlaySound(SoundID.Item73, target.Center);
 

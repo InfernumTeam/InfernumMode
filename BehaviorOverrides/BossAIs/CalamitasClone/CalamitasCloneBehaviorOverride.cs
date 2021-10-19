@@ -66,7 +66,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
-            bool brotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun>()) || NPC.AnyNPCs(ModContent.NPCType<CalamitasRun2>());
+            int brotherCount = NPC.CountNPCS(ModContent.NPCType<CalamitasRun>()) + NPC.CountNPCS(ModContent.NPCType<CalamitasRun2>());
+            bool brotherIsPresent = brotherCount > 0;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.Infernum().ExtraAI[7];
             ref float transitionState = ref npc.ai[2];
@@ -185,7 +186,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 if (!brotherIsPresent)
                     hoverDestination.Y -= 350f;
 
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 8f, 0.25f);
+                // Stop moving if only one brother is alive.
+                if (brotherCount > 1)
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 8f, 0.25f);
+                else
+                    npc.velocity *= 0.98f;
+
                 npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
                 return false;
             }
@@ -705,6 +711,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             for (int i = 0; i < 3; i++)
             {
+                possibleAttacks.Remove(CloneAttackType.HorizontalDartRelease);
                 possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneLightning, lifeRatio < Phase2LifeRatio);
                 possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneFireBurst, lifeRatio < Phase2LifeRatio);
                 possibleAttacks.AddWithCondition(CloneAttackType.DiagonalCharge, lifeRatio < Phase2LifeRatio);

@@ -84,9 +84,12 @@ namespace InfernumMode
                 causeLifeRegenLoss(player.controlLeft || player.controlRight ? 64 : 16);
 
             if (ShadowflameInferno)
-                causeLifeRegenLoss(40);
+                causeLifeRegenLoss(23);
             if (DarkFlames)
-                causeLifeRegenLoss(40);
+            {
+                causeLifeRegenLoss(30);
+                player.statDefense -= 8;
+            }
         }
         #endregion
         #region Drawing

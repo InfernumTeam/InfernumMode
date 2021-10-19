@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             bool free = npc.Infernum().ExtraAI[0] == 1f;
             float reelbackSpeed = ravagerBody.velocity.Length() + 24f;
-            float punchSpeed = 23f;
+            float punchSpeed = 23.5f;
             Vector2 stickPosition = ravagerBody.Center + new Vector2(-120f * leftClaw.ToDirectionInt(), 50f);
 
             ref float attackState = ref npc.ai[0];
@@ -176,6 +176,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     punchTimer++;
                     break;
                 case RavagerClawAttackState.AccelerationPunch:
+
+                    npc.damage = npc.defDamage + 45;
 
                     // Emit dust.
                     if (punchTimer % 12f == 11f)

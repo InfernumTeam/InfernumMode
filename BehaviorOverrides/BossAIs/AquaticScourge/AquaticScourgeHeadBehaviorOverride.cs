@@ -1,4 +1,5 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
@@ -70,6 +71,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             }
             else
                 npc.damage = 0;
+
+            npc.chaseable = angeredYet == 1f;
+            npc.Calamity().newAI[0] = angeredYet;
 
             // If there still was no valid target, swim away.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)

@@ -29,6 +29,7 @@ using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
+
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.AstrumAureus;

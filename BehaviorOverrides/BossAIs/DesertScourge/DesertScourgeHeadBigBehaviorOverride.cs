@@ -176,9 +176,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 burrowTime = 105;
 
             if (attackTimer < burrowTime)
+            {
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 14f, 0.04f);
-			else
-			{
+
+                if (attackTimer == burrowTime - 1f)
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
+            }
+            else
+            {
                 if (MathHelper.Distance(target.Center.X, npc.Center.X) > 125f)
                     npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 12f, 0.04f);
                 if (lungeFallTimer > 145f || target.Center.Y - npc.Center.Y < -720f)
@@ -188,35 +193,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 else if (npc.Center.Y < target.Top.Y - 100f && npc.velocity.Y < 21f)
                     npc.velocity.Y += 0.6f;
 
-                // Prepare to fall and play a sound.
+                // Prepare to fall.
                 if (lungeFallTimer == 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 255f)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
-
                     lungeFallTimer = 1f;
                     npc.netUpdate = true;
-				}
+                }
 
                 // If the fall timer has been initialized, increment it further.
                 if (lungeFallTimer > 0f)
                 {
                     // After a certain point, release a bunch of sand into the air.
                     if (Main.netMode != NetmodeID.MultiplayerClient && lungeFallTimer == 30f)
-					{
+                    {
                         for (int i = 0; i < (lifeRatio < 0.1f ? 38 : 25); i++)
-						{
+                        {
                             Vector2 spawnPosition = npc.Center;
-                            Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(1.61f) * Main.rand.NextFloat(11f, 13.5f);
+                            Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(2.61f) * Main.rand.NextFloat(11f, 13.5f);
                             spawnPosition += shootVelocity * 2.6f;
 
                             int sand = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SandBlast>(), 60, 0f);
                             if (Main.projectile.IndexInRange(sand))
                                 Main.projectile[sand].tileCollide = false;
-						}
-					}
+                        }
+                    }
                     lungeFallTimer++;
                 }
-			}
+            }
 		}
 
         public static void DoAttack_SandSlam(NPC npc, Player target, float attackTimer, float lifeRatio)

@@ -127,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             switch ((DestroyerAttackType)(int)npc.ai[1])
             {
                 case DestroyerAttackType.FlyAttack:
-                    float turnSpeed = (!npc.WithinRange(target.Center, 220f)).ToInt() * 0.039f;
+                    float turnSpeed = MathHelper.Lerp(0.039f, 0.07f, Utils.InverseLerp(350f, 200f, npc.Distance(target.Center), true));
                     float moveSpeed = npc.velocity.Length();
 
                     if (npc.WithinRange(target.Center, 285f))
@@ -276,10 +276,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 return;
 
             int previousSegmentIndex = head.whoAmI;
-            for (int i = 0; i < BodySegmentCount + 1; i++)
+            for (int i = 0; i < BodySegmentCount - 19; i++)
             {
                 int newSegment;
-                if (i >= 0 && i < BodySegmentCount)
+                if (i >= 0 && i < BodySegmentCount - 20)
                     newSegment = NPC.NewNPC((int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
                 else
                     newSegment = NPC.NewNPC((int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);

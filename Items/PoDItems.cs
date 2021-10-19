@@ -36,8 +36,8 @@ namespace InfernumMode
             if (item.type == ModContent.ItemType<HivePod>())
                 item.damage = 74;
 
-            if (item.type == ModContent.ItemType<AuroradicalThrow>())
-                item.damage = 25;
+            if (item.type == ModContent.ItemType<HeavenfallenStardisk>())
+                item.damage = 87;
 
             if (item.type == ModContent.ItemType<ResurrectionButterfly>())
                 item.damage = 44;

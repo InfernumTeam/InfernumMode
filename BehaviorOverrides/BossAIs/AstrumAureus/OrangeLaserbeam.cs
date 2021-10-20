@@ -54,10 +54,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             }
 
             projectile.Center = Main.npc[GlobalNPCOverrides.AstrumAureus].Center - Vector2.UnitY * 52f;
-
             projectile.Opacity = 1f;
-            if (RotationalSpeed == 0f)
-                RotationalSpeed = MathHelper.Pi / 180f * -0.84f;
+            RotationalSpeed = MathHelper.Pi / 180f * 0.84f;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;

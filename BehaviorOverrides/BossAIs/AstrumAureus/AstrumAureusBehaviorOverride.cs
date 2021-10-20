@@ -27,6 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             WalkAndShootLasers,
             LeapAtTarget,
             RocketBarrage,
+            AstralLaserBursts,
             CreateAureusSpawnRing,
             CelestialRain,
             AstralDrillLaser,
@@ -102,6 +103,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     break;
                 case AureusAttackType.RocketBarrage:
                     DoAttack_RocketBarrage(npc, target, lifeRatio, ref attackTimer, ref frameType);
+                    break;
+                case AureusAttackType.AstralLaserBursts:
+                    DoAttack_AstralLaserBursts(npc, target, lifeRatio, ref attackTimer, ref frameType);
                     break;
                 case AureusAttackType.CreateAureusSpawnRing:
                     DoAttack_CreateAureusSpawnRing(npc, lifeRatio, ref attackTimer, ref frameType);
@@ -448,6 +452,93 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 GotoNextAttackState(npc);
         }
 
+        public static void DoAttack_AstralLaserBursts(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float frameType)
+        {
+            // Adjust directioning.
+            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+
+            npc.noGravity = true;
+            npc.noTileCollide = true;
+
+            float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
+            bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
+
+            int laserShootDelay = 390;
+            float walkSpeed = MathHelper.Lerp(5f, 8.65f, 1f - lifeRatio);
+            walkSpeed += horizontalDistanceFromTarget * 0.0075f;
+            walkSpeed *= Utils.InverseLerp(laserShootDelay - 90f, 210f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
+
+            if (shouldSlowDown)
+            {
+                // Make the attack go by more quickly if close to the target horizontally.
+                if (attackTimer < 360f)
+                    attackTimer++;
+
+                npc.velocity.X *= 0.8f;
+                if (Math.Abs(npc.velocity.X) < 0.1f)
+                    npc.velocity.X = 0f;
+            }
+            else
+                npc.velocity.X = (npc.velocity.X * 15f + walkSpeed) / 16f;
+
+            // Adjust frames.
+            frameType = Math.Abs(walkSpeed) > 0f ? (int)AureusFrameType.Walk : (int)AureusFrameType.Idle;
+
+            // Release slow spreads of lasers.
+            if (attackTimer > laserShootDelay && attackTimer % 25f == 24f)
+            {
+                Main.PlaySound(SoundID.Item33, npc.Center);
+
+                float laserSpeed = npc.Distance(target.Center) * 0.018f + 8f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 25; i++)
+                    {
+                        Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 25f).ToRotationVector2() * Main.rand.NextFloat(0.8f, 1f) * laserSpeed;
+                        Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
+                    }
+
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Check if tile collision ignoral is necessary.
+            int horizontalCheckArea = 80;
+            int verticalCheckArea = 20;
+            Vector2 checkPosition = new Vector2(npc.Center.X - horizontalCheckArea * 0.5f, npc.Bottom.Y - verticalCheckArea);
+            if (Collision.SolidCollision(checkPosition, horizontalCheckArea, verticalCheckArea))
+            {
+                if (npc.velocity.Y > 0f)
+                    npc.velocity.Y = 0f;
+
+                if (npc.velocity.Y > -0.2)
+                    npc.velocity.Y -= 0.025f;
+                else
+                    npc.velocity.Y -= 0.2f;
+
+                if (npc.velocity.Y < -4f)
+                    npc.velocity.Y = -4f;
+
+                // Walk upwards to reach the target if below them.
+                if (npc.Center.Y > target.Bottom.Y && npc.velocity.Y > -14f)
+                    npc.velocity.Y -= 0.15f;
+
+            }
+            else
+            {
+                if (npc.velocity.Y < 0f)
+                    npc.velocity.Y = 0f;
+
+                if (npc.velocity.Y < 0.1)
+                    npc.velocity.Y += 0.025f;
+                else
+                    npc.velocity.Y += 0.5f;
+            }
+
+            if (attackTimer >= laserShootDelay + 270f)
+                GotoNextAttackState(npc);
+        }
+
         public static void DoAttack_CreateAureusSpawnRing(NPC npc, float lifeRatio, ref float attackTimer, ref float frameType)
         {
             frameType = (int)AureusFrameType.Idle;
@@ -576,15 +667,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < LaserbeamSpawnOffsets.Count; i++)
+                    for (int i = 0; i < 2; i++)
                     {
                         int laserbeamType = i == 0 ? ModContent.ProjectileType<OrangeLaserbeam>() : ModContent.ProjectileType<BlueLaserbeam>();
                         int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, laserbeamType, 280, 0f);
                         if (Main.projectile.IndexInRange(laser))
                         {
-                            int laserDirection = -1;
-                            if (LaserbeamSpawnOffsets[i].X > 0f)
-                                laserDirection = 1;
+                            int laserDirection = (i == 0).ToDirectionInt();
                             Main.projectile[i].Infernum().ExtraAI[0] = i;
                             Main.projectile[i].ai[0] = MathHelper.Pi / 180f * laserDirection * 0.84f;
                             Main.projectile[i].ai[1] = npc.whoAmI;
@@ -661,8 +750,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             AureusAttackType newAttackState;
             WeightedRandom<AureusAttackType> attackSelector = new WeightedRandom<AureusAttackType>();
             attackSelector.Add(AureusAttackType.WalkAndShootLasers, 1.5);
-            attackSelector.Add(AureusAttackType.LeapAtTarget, 1D + Utils.InverseLerp(640f, 1860f, npc.Center.Y - target.Center.Y) * 3f);
+            attackSelector.Add(AureusAttackType.LeapAtTarget, 1D + Utils.InverseLerp(640f, 1860f, npc.Center.Y - target.Center.Y) * 4f);
             attackSelector.Add(AureusAttackType.RocketBarrage);
+            attackSelector.Add(AureusAttackType.AstralLaserBursts);
 
             if (lifeRatio < Phase2LifeRatio)
             {

@@ -33,19 +33,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             projectile.Opacity = Utils.InverseLerp(0f, 8f, Time, true) * Utils.InverseLerp(0f, 24f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (Time == 32f)
-			{
-
-			}
-
             // Accelerate.
             if (projectile.velocity.Length() < 28f)
-                projectile.velocity *= 1.015f;
+                projectile.velocity *= 1.023f;
 
             Time++;
         }
 
-        public override Color? GetAlpha(Color lightColor) => new Color(1f, 1f, 1f, 0f) * projectile.Opacity * 0.6f;
+        public override Color? GetAlpha(Color lightColor)
+		{
+            float alpha = Utils.InverseLerp(0f, 30f, Time, true);
+            return new Color(1f, 1f, 1f, alpha) * projectile.Opacity * MathHelper.Lerp(0.6f, 1f, alpha);
+        }
 
         public override bool CanDamage() => projectile.Opacity >= 1f;
 

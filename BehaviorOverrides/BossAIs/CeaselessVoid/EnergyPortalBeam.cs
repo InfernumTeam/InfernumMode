@@ -24,7 +24,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public override void AI()
         {
             projectile.scale = Utils.InverseLerp(0f, 30f, Time, true) * Utils.InverseLerp(0f, 30f, projectile.timeLeft, true);
-            projectile.rotation -= MathHelper.TwoPi / 100f;
+            projectile.rotation -= MathHelper.TwoPi / 40f;
+
+            if (Time == 32f)
+            {
+                Main.PlaySound(SoundID.Item9, projectile.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+                    Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        float shootAngle = MathHelper.Lerp(-0.56f, 0.56f, i / 2f);
+                        Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(shootAngle) * 5f;
+                        Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<CeaselessEnergy>(), 250, 0f);
+                    }
+				}
+            }
 
             Time++;
         }

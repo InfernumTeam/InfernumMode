@@ -53,7 +53,7 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<Leviathan>()] = 103103,
             [ModContent.NPCType<Siren>()] = 39250,
             [ModContent.NPCType<AureusSpawn>()] = 25000,
-            [ModContent.NPCType<PlaguebringerGoliath>()] = 126500,
+            [ModContent.NPCType<PlaguebringerGoliath>()] = 99990,
             [NPCID.CultistBoss] = 56000,
             [ModContent.NPCType<Bumblefuck>()] = 227550,
             [ModContent.NPCType<ProvidenceBoss>()] = 900000,

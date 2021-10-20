@@ -54,23 +54,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 npc.active = false;
                 return false;
             }
-
-            float headAttackTimer = Main.npc[npc.realLife].ai[2];
-            DestroyerAttackType headAttackType = (DestroyerAttackType)(int)Main.npc[npc.realLife].ai[1];
-
-            if (headAttackType == DestroyerAttackType.LaserBarrage)
-            {
-                bool isMovingHorizontally = Math.Abs(Vector2.Dot(directionToNextSegment, Vector2.UnitX)) > 0.95f && headAttackTimer >= 230f;
-                if (Main.netMode != NetmodeID.MultiplayerClient && isMovingHorizontally && headAttackTimer % BodySegmentCount == segmentNumber && npc.whoAmI % 3 == 0)
-                {
-                    for (int i = -1; i <= 1; i += 2)
-                    {
-                        int telegraph = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * i, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(telegraph))
-                            Main.projectile[telegraph].ai[0] = npc.whoAmI;
-                    }
-                }
-            }
             return false;
         }
     }

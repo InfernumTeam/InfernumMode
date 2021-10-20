@@ -120,7 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             if (AttackTimer == 1f)
             {
                 int chargeDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
-                float chargeSpeed = 21f;
+                float chargeSpeed = 19.5f;
                 npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 35f) * chargeSpeed;
                 npc.spriteDirection = chargeDirection;
 

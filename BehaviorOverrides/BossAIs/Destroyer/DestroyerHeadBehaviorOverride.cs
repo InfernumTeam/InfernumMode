@@ -22,7 +22,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             DivingAttack,
             LaserBarrage,
             ProbeBombing,
-            SuperchargedProbes
+            SuperchargedProbes,
+            DiveBombing
         }
         #endregion
 
@@ -45,10 +46,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         {
             DestroyerAttackType.FlyAttack,
             DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.DiveBombing,
             DestroyerAttackType.SuperchargedProbes,
             DestroyerAttackType.ProbeBombing,
             DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.SuperchargedProbes,
+            DestroyerAttackType.DiveBombing,
             DestroyerAttackType.FlyAttack,
             DestroyerAttackType.ProbeBombing,
         };
@@ -97,7 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 }
             }
 
-            void goToNextAIState()
+            void SelectNextAttack()
             {
                 // You cannot use ref locals inside of a delegate context.
                 // You should be able to find most important, universal locals above, anyway.
@@ -119,9 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
                 // And the misc ai slots.
                 for (int i = 0; i < 5; i++)
-                {
                     npc.Infernum().ExtraAI[i] = 0f;
-                }
             }
 
             switch ((DestroyerAttackType)(int)npc.ai[1])
@@ -150,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     }
 
                     if (attackTimer >= 420f)
-                        goToNextAIState();
+                        SelectNextAttack();
                     break;
                 case DestroyerAttackType.DivingAttack:
                     int diveTime = 200;
@@ -195,7 +196,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
                     if (attackTimer >= diveTime + ascendTime + 40f)
-                        goToNextAIState();
+                        SelectNextAttack();
                     break;
                 case DestroyerAttackType.LaserBarrage:
                     Vector2 destination;
@@ -206,7 +207,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                         if (npc.WithinRange(destination, 23f))
                         {
                             npc.velocity.X = Math.Sign(target.Center.X - npc.Center.X) * MathHelper.Lerp(17f, 12f, 1f - lifeRatio);
-                            npc.velocity.Y = 11f;
+                            npc.velocity.Y = 8f;
                             attackTimer = 90f;
                         }
                         else
@@ -216,11 +217,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                         }
                     }
                     else
+                    {
                         npc.velocity.Y *= 0.98f;
+                        if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 120f && attackTimer % 60f == 59f)
+                        {
+                            float offset = Main.rand.NextFloat(120f);
+                            for (float dx = -1400f; dx < 1400f; dx += 120f)
+                            {
+                                Vector2 laserSpawnPosition = target.Center + new Vector2(dx + offset, 800f);
+                                int telegraph = Utilities.NewProjectileBetter(laserSpawnPosition, -Vector2.UnitY, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f);
+                                if (Main.projectile.IndexInRange(telegraph))
+                                    Main.projectile[telegraph].ai[0] = npc.whoAmI;
+                            }
+                        }
+                    }
 
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                     if (attackTimer >= 450f)
-                        goToNextAIState();
+                        SelectNextAttack();
                     break;
                 case DestroyerAttackType.ProbeBombing:
                     destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
@@ -241,7 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     }
 
                     if (attackTimer >= 425f)
-                        goToNextAIState();
+                        SelectNextAttack();
                     break;
                 case DestroyerAttackType.SuperchargedProbes:
                     destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
@@ -262,7 +276,57 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     }
 
                     if (attackTimer >= SuperchargedProbe.Lifetime + 90f)
-                        goToNextAIState();
+                        SelectNextAttack();
+                    break;
+                case DestroyerAttackType.DiveBombing:
+                    int slamCount = 30;
+                    ref float attackState = ref npc.Infernum().ExtraAI[0];
+                    ref float slamCounter = ref npc.Infernum().ExtraAI[1];
+
+                    // Rise upwards above the target in antipation of a charge.
+                    if (attackState == 0f)
+					{
+                        Vector2 flyDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 750f, -1600f);
+                        npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(flyDestination) * 20f, 0.08f);
+                        npc.Center = npc.Center.MoveTowards(flyDestination, 15f);
+
+                        if (npc.WithinRange(flyDestination, 70f))
+						{
+                            npc.Center = flyDestination;
+                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.66f);
+                            attackTimer = 0f;
+                            attackState = 1f;
+						}
+					}
+
+                    // Attempt to charge into the target.
+                    if (attackState == 1f)
+					{
+                        if (attackTimer < 20f)
+                        {
+                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center + target.velocity * 20f), 0.15f) * 1.018f;
+                            int type = ModContent.ProjectileType<ScavengerLaser>();
+                            int damage = 120;
+                            Vector2 laserVelocity = Vector2.Lerp(npc.velocity.SafeNormalize(Vector2.UnitY), -Vector2.UnitY, 0.5f);
+                            laserVelocity = laserVelocity.RotatedByRandom(0.8f) * Main.rand.NextFloat(14f, 17f);
+                            Utilities.NewProjectileBetter(npc.Center, laserVelocity, type, damage, 0f);
+                        }
+                        else if (npc.velocity.Length() < 33f)
+                            npc.velocity *= 1.018f;
+
+                        if (attackTimer > 115f)
+						{
+                            if (slamCounter < slamCount)
+                            {
+                                attackTimer = 0f;
+                                attackState = 0f;
+                                slamCounter++;
+                            }
+                            else
+                                SelectNextAttack();
+						}
+                    }
+                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                     break;
             }
 

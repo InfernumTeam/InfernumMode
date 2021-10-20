@@ -23,6 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         {
             ReleaseRealityTearPortals,
             DarkMagicCharge,
+            DarkEnergySummon,
         }
 		#endregion
 
@@ -33,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.width = 100;
             npc.height = 100;
             npc.defense = 0;
-            npc.lifeMax = 300000;
+            npc.lifeMax = 416000;
             Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
             if (calamityModMusic != null)
                 npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/ScourgeofTheUniverse");
@@ -102,6 +103,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     break;
                 case CeaselessVoidAttackType.DarkMagicCharge:
                     DoBehavior_DarkMagicCharge(npc, target, lifeRatio, ref attackTimer);
+                    break;
+                case CeaselessVoidAttackType.DarkEnergySummon:
+                    DoBehavior_DarkEnergySummon(npc, target, lifeRatio, ref attackTimer);
                     break;
             }
 
@@ -189,6 +193,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     }
                     break;
 			}
+		}
+
+        public static void DoBehavior_DarkEnergySummon(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+		{
+
 		}
 
         public static void SelectNewAttack(NPC npc)

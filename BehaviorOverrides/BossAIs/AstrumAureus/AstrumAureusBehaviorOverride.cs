@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         };
 
         public const float Phase2LifeRatio = 0.6f;
-        public const float Phase3LifeRatio = 0.3f;
+        public const float Phase3LifeRatio = 0.4f;
 
         public override bool PreAI(NPC npc)
         {
@@ -373,7 +373,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             }
                         }
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient && lifeRatio < Phase2LifeRatio)
+                        if (Main.netMode != NetmodeID.MultiplayerClient && lifeRatio < 0.7f)
                             Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 200, 0f);
                     }
                     else
@@ -489,12 +489,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             {
                 Main.PlaySound(SoundID.Item33, npc.Center);
 
-                float laserSpeed = npc.Distance(target.Center) * 0.018f + 8f;
+                float laserSpeed = npc.Distance(target.Center) * 0.01f + 7.4f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 25; i++)
                     {
                         Vector2 laserShootVelocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat()) / 25f).ToRotationVector2() * Main.rand.NextFloat(0.8f, 1f) * laserSpeed;
+                        if (!npc.WithinRange(target.Center, 1000f))
+                            laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.34f) * laserSpeed * 1.6f;
+
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
                     }
 
@@ -752,7 +755,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             attackSelector.Add(AureusAttackType.WalkAndShootLasers, 1.5);
             attackSelector.Add(AureusAttackType.LeapAtTarget, 1D + Utils.InverseLerp(640f, 1860f, npc.Center.Y - target.Center.Y) * 4f);
             attackSelector.Add(AureusAttackType.RocketBarrage);
-            attackSelector.Add(AureusAttackType.AstralLaserBursts);
+
+            if (lifeRatio >= Phase3LifeRatio)
+                attackSelector.Add(AureusAttackType.AstralLaserBursts);
 
             if (lifeRatio < Phase2LifeRatio)
             {

@@ -239,6 +239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 case DestroyerAttackType.ProbeBombing:
                     destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
                     npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
+                    npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
                     if (npc.WithinRange(destination, 30f))
                         npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                     else
@@ -260,6 +261,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 case DestroyerAttackType.SuperchargedProbes:
                     destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
                     npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
+                    npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
                     if (npc.WithinRange(destination, 30f))
                         npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                     else
@@ -279,7 +281,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                         SelectNextAttack();
                     break;
                 case DestroyerAttackType.DiveBombing:
-                    int slamCount = 30;
+                    int slamCount = 3;
                     ref float attackState = ref npc.Infernum().ExtraAI[0];
                     ref float slamCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -340,10 +342,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 return;
 
             int previousSegmentIndex = head.whoAmI;
-            for (int i = 0; i < BodySegmentCount - 19; i++)
+            for (int i = 0; i < BodySegmentCount; i++)
             {
                 int newSegment;
-                if (i >= 0 && i < BodySegmentCount - 20)
+                if (i >= 0 && i < BodySegmentCount)
                     newSegment = NPC.NewNPC((int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
                 else
                     newSegment = NPC.NewNPC((int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);

@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         #region Enumerations
         public enum DestroyerAttackType
         {
-            FlyAttack,
+            RegularCharge,
             DivingAttack,
             LaserBarrage,
             ProbeBombing,
@@ -31,12 +31,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         internal static readonly DestroyerAttackType[] Phase1AttackPattern = new DestroyerAttackType[]
         {
-            DestroyerAttackType.FlyAttack,
+            DestroyerAttackType.RegularCharge,
         };
 
         internal static readonly DestroyerAttackType[] Phase2AttackPattern = new DestroyerAttackType[]
         {
-            DestroyerAttackType.FlyAttack,
+            DestroyerAttackType.RegularCharge,
             DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.ProbeBombing,
             DestroyerAttackType.DivingAttack,
@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         internal static readonly DestroyerAttackType[] Phase3AttackPattern = new DestroyerAttackType[]
         {
-            DestroyerAttackType.FlyAttack,
+            DestroyerAttackType.RegularCharge,
             DestroyerAttackType.DivingAttack,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.SuperchargedProbes,
@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.SuperchargedProbes,
             DestroyerAttackType.DiveBombing,
-            DestroyerAttackType.FlyAttack,
+            DestroyerAttackType.RegularCharge,
             DestroyerAttackType.ProbeBombing,
         };
 
@@ -67,8 +67,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool phase2 = lifeRatio < 0.75f;
-            bool phase3 = lifeRatio < 0.4f;
 
             ref float attackTimer = ref npc.ai[2];
             ref float spawnedSegmentsFlag = ref npc.ai[3];
@@ -100,58 +98,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 }
             }
 
-            void SelectNextAttack()
-            {
-                // You cannot use ref locals inside of a delegate context.
-                // You should be able to find most important, universal locals above, anyway.
-                // Any others that don't have an explicit reference above are exclusively for
-                // AI state manipulation.
-
-                npc.ai[3]++;
-
-                DestroyerAttackType[] patternToUse = phase2 ? Phase2AttackPattern : Phase1AttackPattern;
-                if (phase3)
-                    patternToUse = Phase3AttackPattern;
-                DestroyerAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
-
-                // Going to the next AI state.
-                npc.ai[1] = (int)nextAttackType;
-
-                // Resetting the attack timer.
-                npc.ai[2] = 0f;
-
-                // And the misc ai slots.
-                for (int i = 0; i < 5; i++)
-                    npc.Infernum().ExtraAI[i] = 0f;
-            }
-
             switch ((DestroyerAttackType)(int)npc.ai[1])
             {
-                case DestroyerAttackType.FlyAttack:
-                    float turnSpeed = MathHelper.Lerp(0.039f, 0.07f, Utils.InverseLerp(350f, 200f, npc.Distance(target.Center), true));
-                    float moveSpeed = npc.velocity.Length();
-
-                    if (npc.WithinRange(target.Center, 285f))
-                        moveSpeed *= 1.02f;
-                    else if (npc.velocity.Length() > 14f)
-                        moveSpeed *= 0.98f;
-
-                    moveSpeed = MathHelper.Clamp(moveSpeed, 10f, 19f);
-
-                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 90f == 89f)
-                    {
-                        for (int i = 0; i < (phase2 ? 2 : 1); i++)
-                        {
-                            int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
-                            Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.52f) * 12f;
-                        }
-                    }
-
-                    if (attackTimer >= 420f)
-                        SelectNextAttack();
+                case DestroyerAttackType.RegularCharge:
+                    DoAttack_RegularCharge(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case DestroyerAttackType.DivingAttack:
                     int diveTime = 200;
@@ -196,7 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
                     if (attackTimer >= diveTime + ascendTime + 40f)
-                        SelectNextAttack();
+                        SelectNewAttack(npc);
                     break;
                 case DestroyerAttackType.LaserBarrage:
                     Vector2 destination;
@@ -234,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                     if (attackTimer >= 450f)
-                        SelectNextAttack();
+                        SelectNewAttack(npc);
                     break;
                 case DestroyerAttackType.ProbeBombing:
                     destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
@@ -256,7 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     }
 
                     if (attackTimer >= 425f)
-                        SelectNextAttack();
+                        SelectNewAttack(npc);
                     break;
                 case DestroyerAttackType.SuperchargedProbes:
                     destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
@@ -278,7 +228,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     }
 
                     if (attackTimer >= SuperchargedProbe.Lifetime + 90f)
-                        SelectNextAttack();
+                        SelectNewAttack(npc);
                     break;
                 case DestroyerAttackType.DiveBombing:
                     int slamCount = 3;
@@ -325,7 +275,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                                 slamCounter++;
                             }
                             else
-                                SelectNextAttack();
+                                SelectNewAttack(npc);
 						}
                     }
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
@@ -364,6 +314,114 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 previousSegmentIndex = newSegment;
             }
         }
+
+        public static void DoAttack_RegularCharge(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            int hoverRedirectTime = 240;
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt(), (target.Center.Y < npc.Center.Y).ToDirectionInt()) * 485f;
+            Vector2 hoverDestination = target.Center + hoverOffset;
+            int chargeRedirectTime = 40;
+            int chargeTime = 45;
+            int chargeSlowdownTime = 25;
+            int chargeCount = 2;
+            ref float idealChargeVelocityX = ref npc.Infernum().ExtraAI[0];
+            ref float idealChargeVelocityY = ref npc.Infernum().ExtraAI[1];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
+
+            // Attempt to get into position for a charge.
+            if (attackTimer < hoverRedirectTime)
+            {
+                float idealHoverSpeed = MathHelper.Lerp(20.5f, 39f, attackTimer / hoverRedirectTime);
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.08f);
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.064f, true) * idealVelocity.Length();
+
+                // Stop hovering if close to the hover destination
+                if (npc.WithinRange(hoverDestination, 40f))
+                {
+                    attackTimer = hoverRedirectTime;
+                    if (npc.velocity.Length() > 24f)
+                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 24f;
+
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Determine a charge velocity to adjust to.
+            if (attackTimer == hoverRedirectTime)
+            {
+                Vector2 idealChargeVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f) * MathHelper.Lerp(19.5f, 23f, 1f - lifeRatio);
+                idealChargeVelocityX = idealChargeVelocity.X;
+                idealChargeVelocityY = idealChargeVelocity.Y;
+                npc.netUpdate = true;
+            }
+
+            // Move into the charge.
+            if (attackTimer > hoverRedirectTime && attackTimer <= hoverRedirectTime + chargeRedirectTime)
+            {
+                Vector2 idealChargeVelocity = new Vector2(idealChargeVelocityX, idealChargeVelocityY);
+                npc.velocity = npc.velocity.RotateTowards(idealChargeVelocity.ToRotation(), 0.08f, true) * MathHelper.Lerp(npc.velocity.Length(), idealChargeVelocity.Length(), 0.15f);
+                npc.velocity = npc.velocity.MoveTowards(idealChargeVelocity, 5f);
+            }
+
+            // Slow down after charging.
+            if (attackTimer > hoverRedirectTime + chargeRedirectTime + chargeTime)
+                npc.velocity *= 0.95f;
+
+            // Release lightning from behind the worm once the charge has begun.
+            if (attackTimer == hoverRedirectTime + chargeRedirectTime / 2)
+            {
+                Main.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
+                    for (int i = 0; i < probeCount; i++)
+                    {
+                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                        Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
+                    }
+                }
+            }
+
+            // Prepare the next charge. If all charges are done, go to the next attack.
+            if (attackTimer > hoverRedirectTime + chargeRedirectTime + chargeTime + chargeSlowdownTime)
+            {
+                chargeCounter++;
+                idealChargeVelocityX = 0f;
+                idealChargeVelocityY = 0f;
+                attackTimer = 0f;
+                if (chargeCounter >= chargeCount)
+                    SelectNewAttack(npc);
+
+                npc.netUpdate = true;
+            }
+
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
+        public static void SelectNewAttack(NPC npc)
+        {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase2 = lifeRatio < 0.75f;
+            bool phase3 = lifeRatio < 0.4f;
+
+            npc.ai[3]++;
+
+            DestroyerAttackType[] patternToUse = phase2 ? Phase2AttackPattern : Phase1AttackPattern;
+            if (phase3)
+                patternToUse = Phase3AttackPattern;
+            DestroyerAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
+
+            // Going to the next AI state.
+            npc.ai[1] = (int)nextAttackType;
+
+            // Resetting the attack timer.
+            npc.ai[2] = 0f;
+
+            // And the misc ai slots.
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+        }
+
         #endregion
     }
 }

@@ -46,12 +46,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 switch (ownerAttackState)
                 {
                     case 0:
-                        Vector2 destination = owner.Center + new Vector2(armDirection * 200f, -230f);
+                        Vector2 destination = owner.Center + new Vector2(armDirection * 600f, 850f);
                         if (npc.Center.Y > destination.Y)
                         {
                             if (npc.velocity.Y > 0f)
                                 npc.velocity.Y *= 0.92f;
-                            npc.velocity.Y -= 0.125f;
+                            npc.velocity.Y -= 0.2f;
                             if (npc.velocity.Y > 1.5f)
                                 npc.velocity.Y = 1.5f;
                         }
@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         {
                             if (npc.velocity.Y < 0f)
                                 npc.velocity.Y *= 0.92f;
-                            npc.velocity.Y += 0.125f;
+                            npc.velocity.Y += 0.2f;
                             if (npc.velocity.Y < -1.5f)
                                 npc.velocity.Y = -1.5f;
                         }
@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         {
                             if (npc.velocity.X > 0f)
                                 npc.velocity.X *= 0.92f;
-                            npc.velocity.X -= 0.2f;
+                            npc.velocity.X -= 0.3f;
                             if (npc.velocity.X > 3.5f)
                                 npc.velocity.X = 3.5f;
                         }
@@ -77,9 +77,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         {
                             if (npc.velocity.X < 0f)
                                 npc.velocity.X *= 0.92f;
-                            npc.velocity.X += 0.2f;
+                            npc.velocity.X += 0.3f;
                             if (npc.velocity.X < -3.5f)
                                 npc.velocity.X = -3.5f;
+                        }
+
+                        if (npc.WithinRange(destination, 100f) && attackTimer % 10f == 9f)
+                        {
+                            Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                            for (int i = 0; i < 4; i++)
+                            {
+                                Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2().RotatedByRandom(0.1f) * Main.rand.NextFloat(10f, 16f);
+
+                                if (Main.netMode != NetmodeID.MultiplayerClient)
+                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 150, 0f);
+                            }
                         }
                         break;
                     case 1:

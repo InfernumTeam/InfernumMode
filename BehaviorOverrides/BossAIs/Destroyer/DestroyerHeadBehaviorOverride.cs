@@ -345,7 +345,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             for (int i = 0; i < BodySegmentCount; i++)
             {
                 int newSegment;
-                if (i >= 0 && i < BodySegmentCount)
+                if (i >= 0 && i < BodySegmentCount - 1f)
                     newSegment = NPC.NewNPC((int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
                 else
                     newSegment = NPC.NewNPC((int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);

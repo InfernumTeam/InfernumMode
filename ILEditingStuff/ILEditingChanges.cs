@@ -143,7 +143,7 @@ namespace InfernumMode.ILEditingStuff
         // Why.
         internal static void RemoveTheDamnCancerousDoGInstakill(On.Terraria.Player.orig_KillMe orig, Player self, PlayerDeathReason damageSource, double dmg, int hitDirection, bool pvp)
         {
-            if (damageSource.SourceCustomReason == self.name + "'s essence was consumed by the devourer.")
+            if (PoDWorld.InfernumMode && damageSource.SourceCustomReason == self.name + "'s essence was consumed by the devourer.")
                 return;
 
             orig(self, damageSource, dmg, hitDirection, pvp);

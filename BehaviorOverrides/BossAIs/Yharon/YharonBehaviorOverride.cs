@@ -256,8 +256,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static readonly Dictionary<YharonAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<YharonAttackType[], Func<NPC, bool>>()
         {
-            [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.8f && npc.Infernum().ExtraAI[2] == 0f,
-            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.55f && npc.life / (float)npc.lifeMax <= 0.8f && npc.Infernum().ExtraAI[2] == 0f,
+            [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.875f && npc.Infernum().ExtraAI[2] == 0f,
+            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.55f && npc.life / (float)npc.lifeMax <= 0.875f && npc.Infernum().ExtraAI[2] == 0f,
             [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.35f && npc.life / (float)npc.lifeMax <= 0.55f && npc.Infernum().ExtraAI[2] == 0f,
             [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.1f && npc.life / (float)npc.lifeMax <= 0.35f && npc.Infernum().ExtraAI[2] == 0f,
 
@@ -270,9 +270,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         };
         #endregion
 
-        #region Attack Specific Constants
         public const int SpawnEffectsTime = 48;
-        #endregion
+        public const int TransitionDRBoostTime = 360;
 
         // Attack Type = npc.ai[0]
         // Attack Timer = npc.ai[1]
@@ -289,6 +288,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         // Transition phase timer = npc.Infernum().ExtraAI[11]
         // Current subphase = npc.Infernum().ExtraAI[12]
         // Teleport dash count = npc.Infernum().ExtraAI[13]
+        // Attack transition DR countdown = npc.Infernum().ExtraAI[14]
 
         #region AI
 
@@ -308,9 +308,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 npc.life = npc.lifeMax;
                 npc.netUpdate = true;
             }
-
-            // Consistent DR throughout the fight (I think? and hope)
-            npc.Calamity().DR = 0.4f;
 
             // Aquire a new target if the current one is dead or inactive.
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
@@ -347,6 +344,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             ref float subphaseTransitionTimer = ref npc.Infernum().ExtraAI[11];
             ref float currentSubphase = ref npc.Infernum().ExtraAI[12];
             ref float teleportChargeCounter = ref npc.Infernum().ExtraAI[13];
+            ref float transitionDRCountdown = ref npc.Infernum().ExtraAI[14];
 
             // Go to phase 2 if at 10%.
             if (npc.Infernum().ExtraAI[2] == 0f && lifeRatio < 0.1f)
@@ -383,6 +381,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             float oldSubphase = currentSubphase;
             currentSubphase = SubphaseTable.Keys.ToList().IndexOf(patternToUse);
 
+            // Transition to the next subphase if necessary.
             if (oldSubphase != currentSubphase)
             {
                 subphaseTransitionTimer = transitionTimer;
@@ -393,7 +392,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.Infernum().ExtraAI[0] = 0f;
                     GotoNextAttack(npc, ref attackType);
                 }
+                transitionDRCountdown = TransitionDRBoostTime;
+                npc.netUpdate = true;
             }
+
+            // Determine DR. This becomes very powerful as Yharon transitions to a new attack.
+            npc.Calamity().DR = MathHelper.Lerp(0.4f, 0.9999f, (float)Math.Pow(transitionDRCountdown / TransitionDRBoostTime, 0.1));
+
+            if (transitionDRCountdown > 0f && !npc.dontTakeDamage)
+                transitionDRCountdown--;
 
             YharonAttackType nextAttackType = patternToUse[(int)((attackType + 1) % patternToUse.Length)];
 
@@ -424,10 +431,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if (nextAttackType != YharonAttackType.PhoenixSupercharge && nextAttackType != YharonAttackType.HeatFlash)
                 fireIntensity = MathHelper.Lerp(fireIntensity, 0f, 0.075f);
 
-            float chargeSpeed = 34.5f;
+            float chargeSpeed = 37f;
             float chargeDelay = 45;
             float chargeTime = 45f;
-            float fastChargeSpeedMultiplier = 1.5f;
+            float fastChargeSpeedMultiplier = 1.4f;
 
             float fireballBreathShootDelay = 34f;
             float totalFireballBreaths = 12f;

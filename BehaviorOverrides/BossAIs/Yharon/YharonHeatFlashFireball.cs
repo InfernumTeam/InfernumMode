@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public override void SetDefaults()
         {
             projectile.width = 36;
-            projectile.height = 80;
+            projectile.height = 46;
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;

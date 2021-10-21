@@ -29,8 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override void AI()
         {
-            projectile.rotation += MathHelper.ToRadians(7f);
-            projectile.Opacity = Utils.InverseLerp(0f, 40f, Timer, true) * Utils.InverseLerp(0f, 40f, projectile.timeLeft, true) * 0.4f;
+            projectile.rotation += MathHelper.ToRadians(14f);
+            projectile.Opacity = Utils.InverseLerp(0f, 40f, Timer, true) * Utils.InverseLerp(0f, 40f, projectile.timeLeft, true);
             if (projectile.owner == Main.myPlayer)
             {
                 Player player = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
@@ -71,17 +71,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override bool CanDamage() => Timer > 60f && projectile.timeLeft > 60f;
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDrawExtras(SpriteBatch spriteBatch)
         {
+            spriteBatch.SetBlendState(BlendState.Additive);
+
             Texture2D texture = ModContent.GetTexture(Texture);
             for (int j = 0; j < 16f; j++)
             {
                 float angle = MathHelper.TwoPi / j * 16f;
                 Vector2 offset = angle.ToRotationVector2() * 32f;
-                Color drawColor = Color.White * projectile.Opacity * 0.2f;
-                drawColor.A = 0;
+                Color drawColor = Color.White * projectile.Opacity * 0.08f;
+                drawColor.A = 127;
                 spriteBatch.Draw(texture, projectile.Center + offset - Main.screenPosition, null, drawColor, projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
             }
+
+            spriteBatch.ResetBlendState();
+            return false;
         }
     }
 }

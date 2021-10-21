@@ -1084,6 +1084,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.velocity *= 0.85f;
                     npc.spriteDirection = -1;
                     npc.rotation = npc.rotation.AngleTowards(0f, 0.185f);
+                    npc.damage = 0;
 
                     // Teleport above the player if somewhat far away from them.
                     if (attackTimer == 1f && !npc.WithinRange(player.Center, 360f))

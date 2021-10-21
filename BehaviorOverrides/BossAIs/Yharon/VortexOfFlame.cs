@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 Player player = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
                 int shootRate = projectile.timeLeft < 250 ? 80 : 125;
-                if (Timer > 150f && Timer % shootRate == shootRate - 1f)
+                if (Timer > 150f && Timer % shootRate == shootRate - 1f && projectile.timeLeft > 60f)
                 {
                     for (int i = 0; i < 4; i++)
                     {
@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 600);
         }
 
-        public override bool CanDamage() => projectile.timeLeft < Lifetime - 60;
+        public override bool CanDamage() => Timer > 60f && projectile.timeLeft > 60f;
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {

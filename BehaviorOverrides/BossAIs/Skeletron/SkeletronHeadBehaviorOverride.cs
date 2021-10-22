@@ -540,11 +540,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     if (attackTimer >= 385f)
                     {
+                        attackState = 4f;
+                        attackTimer = 0f;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Fire skulls at the player with hands.
+                case 4:
+                    adjustedTimer = attackTimer % 150f;
+                    destination = target.Center - Vector2.UnitY * 360f;
+                    acceleration = new Vector2(0.4f, 0.27f);
+                    if (adjustedTimer > 45f)
+                    {
+                        destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 100f;
+                        npc.Center = npc.Center.MoveTowards(destination, 10f);
+                    }
+
+                    DoHoverMovement(npc, destination, acceleration);
+                    npc.rotation = npc.velocity.X * 0.05f;
+
+                    if (attackTimer >= 520f)
+                    {
                         attackState = 0f;
                         attackTimer = 0f;
                         npc.netUpdate = true;
                     }
-
                     break;
             }
         }

@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -46,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 switch (ownerAttackState)
                 {
                     case 0:
-                        Vector2 destination = owner.Center + new Vector2(armDirection * 600f, 850f);
+                        Vector2 destination = owner.Center + new Vector2(armDirection * 600f, 950f);
                         if (npc.Center.Y > destination.Y)
                         {
                             if (npc.velocity.Y > 0f)
@@ -139,6 +140,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                                 {
                                     Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 5f) * 7.95f;
                                     Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 95, 0f);
+                                }
+                            }
+                        }
+                        break;
+                    case 4:
+                        adjustedTimer = attackTimer % 150f;
+                        bool shouldAttack = (int)(attackTimer / 150) % 2 == (armDirection == 1f).ToInt();
+                        destination = owner.Center + new Vector2(armDirection * 620f, 420f + (float)Math.Sin(attackTimer * MathHelper.Pi / 50f) * shouldAttack.ToInt() * 250f);
+                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.065f);
+                        npc.Center = npc.Center.MoveTowards(destination, 5f);
+
+                        if (attackTimer < 450f && adjustedTimer > 45f && adjustedTimer % 10f == 9f && shouldAttack)
+                        {
+                            Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
+
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                for (int i = 0; i < 5; i++)
+                                {
+                                    Vector2 flameShootVelocity = Vector2.UnitX * Math.Sign(npc.SafeDirectionTo(target.Center).X) * 13f;
+                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
                                 }
                             }
                         }

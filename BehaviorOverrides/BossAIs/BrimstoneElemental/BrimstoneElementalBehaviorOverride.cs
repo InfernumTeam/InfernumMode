@@ -284,7 +284,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     roseDamage = (int)(roseDamage * 1.75);
 
                 target.Center = circleCenter + (target.Center - circleCenter).SafeNormalize(Vector2.Zero) * (RoseCircleRadius - 10f);
-                target.Hurt(PlayerDeathReason.LegacyEmpty(), roseDamage, 0);
+                target.Hurt(PlayerDeathReason.ByCustomReason($"{target.name} was violently pricked by roses."), roseDamage, 0);
             }
 
             switch ((int)attackState)

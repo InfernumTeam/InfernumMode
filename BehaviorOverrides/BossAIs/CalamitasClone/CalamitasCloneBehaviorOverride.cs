@@ -397,7 +397,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lavaShootRate == lavaShootRate - 1f)
             {
                 int lavaDamage = shouldBeBuffed ? 325 : 150;
-                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f, 40f);
+                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f + target.velocity.X * 35f, 40f);
                 if (WorldUtils.Find(lavaSpawnPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(1500), new Conditions.IsSolid()), out Point result))
                 {
                     lavaSpawnPosition = result.ToWorldCoordinates();

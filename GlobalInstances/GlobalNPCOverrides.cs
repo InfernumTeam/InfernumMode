@@ -203,6 +203,19 @@ namespace InfernumMode.GlobalInstances
                 return npc.ai[2] >= 2f;
             }
 
+            if (npc.type == NPCID.WallofFleshEye)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < Main.rand.Next(11, 15 + 1); i++)
+                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
+                    if (Main.npc.IndexInRange(Main.wof))
+                        Main.npc[Main.wof].StrikeNPC(1550, 0f, 0);
+                }
+
+                return false;
+            }
+
             if (npc.type == InfernumMode.CalamityMod.NPCType("Providence"))
             {
                 // Drops pre-scal, cannot be sold, does nothing aka purely vanity. Requires at least expert for consistency with other post scal dev items.
@@ -227,14 +240,6 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return;
             
-            if (npc.type == NPCID.WallofFleshEye)
-			{
-                for (int i = 0; i < Main.rand.Next(11, 15 + 1); i++)
-                    Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
-                if (Main.npc.IndexInRange(Main.wof))
-                    Main.npc[Main.wof].StrikeNPC(1550, 0f, 0);
-            }
-
             if (npc.type == NPCID.WallofFlesh)
             {
                 for (int i = 0; i < Main.rand.Next(18, 29 + 1); i++)

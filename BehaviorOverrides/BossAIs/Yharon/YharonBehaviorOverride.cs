@@ -935,7 +935,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     {
                         Vector2 flareSpawnPosition = npc.Center + ((attackTimer - flareRingSpawnRate + 1) / flareRingSpawnRate * MathHelper.TwoPi / totalFlaresInRing).ToRotationVector2() * 665f;
 
-                        if (!player.WithinRange(flareSpawnPosition, 450f))
+                        if (!player.WithinRange(flareSpawnPosition, 700f))
                         {
                             NPC.NewNPC((int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
 

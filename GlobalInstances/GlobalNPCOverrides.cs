@@ -371,6 +371,12 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == ModContent.NPCType<AquaticScourgeBody>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.45);
 
+            if (npc.type == NPCID.TheDestroyerBody && (projectile.penetrate == -1 || projectile.penetrate > 1))
+                damage = (int)(damage * 0.6);
+
+            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<Stormfrontspark>())
+                damage = (int)(damage * 0.3);
+
             if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
                 damage = (int)(damage * 0.55);
 

@@ -17,7 +17,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Player target = Main.player[npc.target];
             Vector2 destination = target.Center - Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.97f, 0.97f, npc.whoAmI % 16f / 16f)) * 300f;
 
+            ref float generalTimer = ref npc.ai[2];
             Lighting.AddLight(npc.Center, Color.Red.ToVector3() * 1.6f);
+
+            // Have a brief moment of no damage.
+            npc.damage = generalTimer > 60f ? npc.defDamage : 0;
 
             if (npc.ai[0] == 0f)
             {
@@ -66,6 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             }
 
             npc.rotation += MathHelper.Pi;
+            generalTimer++;
             return false;
         }
     }

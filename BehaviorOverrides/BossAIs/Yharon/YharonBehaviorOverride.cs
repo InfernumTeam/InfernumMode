@@ -301,14 +301,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Stop rain if it's happen so it doesn't obstruct the fight (also because Yharon is heat oriented).
             CalamityMod.CalamityMod.StopRain();
 
-            // Reset total HP.
-            if (npc.lifeMax != 5000000)
-            {
-                npc.lifeMax = 5000000;
-                npc.life = npc.lifeMax;
-                npc.netUpdate = true;
-            }
-
             // Aquire a new target if the current one is dead or inactive.
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
             {
@@ -583,15 +575,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                             int playerDirection = Math.Sign(player.velocity.X);
                             if (playerDirection == 0)
                                 playerDirection = Main.rand.NextBool(2).ToDirectionInt();
-                            Vector2 offsetDirection = player.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 560f;
+                            Vector2 offsetDirection = player.velocity.SafeNormalize(Main.rand.NextVector2Unit());
 
                             // If a teleport charge was done beforehand randomize the offset direction if the
                             // player is descending. This still has an uncommon chance to end up in a similar direction as the one
                             // initially chosen.
                             if (teleportChargeCounter > 0f && offsetDirection.AngleBetween(Vector2.UnitY) < MathHelper.Pi / 15f)
-                                offsetDirection = Main.rand.NextVector2Unit() * offsetDirection.Length();
+                            {
+                                do
+                                {
+                                    offsetDirection = Main.rand.NextVector2Unit();
+                                }
+                                while (Math.Abs(Vector2.Dot(offsetDirection, Vector2.UnitY)) > 0.6f);
+                            }
 
-                            npc.Center = player.Center + offsetDirection;
+                            npc.Center = player.Center + offsetDirection * 560f;
                             npc.velocity = Vector2.Zero;
                             npc.netUpdate = true;
 

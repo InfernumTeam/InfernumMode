@@ -64,6 +64,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             // Explode if enough time has passed.
             GeneralTimer++;
+
+            // Have a brief moment of no damage.
+            npc.damage = GeneralTimer > 60f ? npc.defDamage : 0;
+
             if (GeneralTimer > Lifetime)
             {
                 npc.life = 0;

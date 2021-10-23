@@ -49,7 +49,7 @@ namespace InfernumMode.GlobalInstances
             [NPCID.Spazmatism] = 22223,
             [NPCID.Retinazer] = 21000,
             [NPCID.SkeletronPrime] = 44444,
-            [NPCID.TheDestroyer] = 123456,
+            [NPCID.TheDestroyer] = 111000,
             [ModContent.NPCType<BrimstoneElemental>()] = 51515,
             [ModContent.NPCType<Leviathan>()] = 103103,
             [ModContent.NPCType<Siren>()] = 39250,

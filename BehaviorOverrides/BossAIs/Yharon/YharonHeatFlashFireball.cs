@@ -28,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             if (projectile.frameCounter++ % 5 == 4)
                 projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
+            projectile.gfxOffY = -36;
         }
 
         public override bool CanDamage() => projectile.timeLeft < Lifetime - 30;

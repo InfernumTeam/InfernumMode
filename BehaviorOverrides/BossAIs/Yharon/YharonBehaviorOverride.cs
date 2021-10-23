@@ -271,7 +271,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         #endregion
 
         public const int SpawnEffectsTime = 48;
-        public const int TransitionDRBoostTime = 360;
+        public const int TransitionDRBoostTime = 120;
 
         // Attack Type = npc.ai[0]
         // Attack Timer = npc.ai[1]
@@ -397,7 +397,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
 
             // Determine DR. This becomes very powerful as Yharon transitions to a new attack.
-            npc.Calamity().DR = MathHelper.Lerp(0.4f, 0.9999f, (float)Math.Pow(transitionDRCountdown / TransitionDRBoostTime, 0.1));
+            npc.Calamity().DR = MathHelper.Lerp(0.4f, 0.9999f, (float)Math.Pow(transitionDRCountdown / TransitionDRBoostTime, 0.3));
 
             if (transitionDRCountdown > 0f && !npc.dontTakeDamage)
                 transitionDRCountdown--;
@@ -408,7 +408,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.15f);
                 npc.velocity *= 0.96f;
-                fireIntensity = MathHelper.Lerp(0.275f, 1f, Utils.InverseLerp(transitionTimer, transitionTimer - 75f, subphaseTransitionTimer, true));
+                fireIntensity = Utils.InverseLerp(transitionTimer, transitionTimer - 75f, subphaseTransitionTimer, true);
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
 
                 if (subphaseTransitionTimer < 18f)
@@ -422,6 +422,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 subphaseTransitionTimer--;
                 return false;
             }
+
+            if (transitionDRCountdown > 0f)
+                fireIntensity = transitionDRCountdown / TransitionDRBoostTime;
 
             // Adjust various values before doing anything else. If these need to be changed later, they will be,
             npc.dontTakeDamage = false;
@@ -931,13 +934,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % flareRingSpawnRate == flareRingSpawnRate - 1)
                     {
                         Vector2 flareSpawnPosition = npc.Center + ((attackTimer - flareRingSpawnRate + 1) / flareRingSpawnRate * MathHelper.TwoPi / totalFlaresInRing).ToRotationVector2() * 665f;
-                        NPC.NewNPC((int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
 
-                        for (int i = 0; i < 4; i++)
+                        if (!player.WithinRange(flareSpawnPosition, 450f))
                         {
-                            float angle = MathHelper.TwoPi / 4f * i;
-                            int fire = Utilities.NewProjectileBetter(flareSpawnPosition, angle.ToRotationVector2() * 8.5f, ProjectileID.CultistBossFireBall, 470, 0f, Main.myPlayer);
-                            Main.projectile[fire].tileCollide = false;
+                            NPC.NewNPC((int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
+
+                            for (int i = 0; i < 4; i++)
+                            {
+                                float angle = MathHelper.TwoPi / 4f * i;
+                                int fire = Utilities.NewProjectileBetter(flareSpawnPosition, angle.ToRotationVector2() * 7f, ProjectileID.CultistBossFireBall, 470, 0f, Main.myPlayer);
+                                Main.projectile[fire].tileCollide = false;
+                            }
                         }
                     }
                     if (attackTimer >= flareRingSpawnRate * totalFlaresInRing)
@@ -1515,13 +1522,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     attackType == YharonAttackType.HeatFlash ||
                     doingMajesticCharge ||
                     npc.Infernum().ExtraAI[3] > 0f ||
+                    npc.Infernum().ExtraAI[9] > 0.01f ||
                     npc.Infernum().ExtraAI[11] > 0f)
                 {
                     // Determine the intensity of the effect. This varies based the conditions by which is started but in certain cases
                     // depends on ExtraAI[9];
                     float fireIntensity = npc.Infernum().ExtraAI[9];
-                    if (attackType != YharonAttackType.PhoenixSupercharge && attackType != YharonAttackType.HeatFlash)
-                        fireIntensity = 0.75f;
 
                     if (inLastSubphases)
                         fireIntensity = MathHelper.Max(fireIntensity, 0.8f);

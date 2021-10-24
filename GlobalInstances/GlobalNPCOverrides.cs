@@ -381,7 +381,10 @@ namespace InfernumMode.GlobalInstances
                 damage = (int)(damage * 0.5);
 
             if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<SkyfinNuke>())
-                damage = (int)(damage * 0.65);
+                damage = (int)(damage * 0.5);
+
+            if (npc.type == NPCID.TheDestroyerBody && (projectile.type == ModContent.ProjectileType<BileExplosion>() || projectile.type == ModContent.ProjectileType<SkyBomberGas>()))
+                damage = (int)(damage * 0.6);
 
             if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<Stormfrontspark>())
                 damage = (int)(damage * 0.3);

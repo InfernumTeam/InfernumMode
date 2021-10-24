@@ -417,7 +417,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     bool willCharge;
                     float xOffsetDirection = UniversalAttackTimer % ((redirectTime + chargeTime) * 2) > redirectTime + chargeTime ? -1f : 1f;
 
-                    destination = Target.Center - Vector2.UnitY * 480f;
+                    destination = Target.Center;
                     if (UniversalAttackTimer % ((redirectTime + chargeTime) * 2) > redirectTime + chargeTime)
                     {
                         willCharge = isRetinazer;
@@ -431,8 +431,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     if (UniversalAttackTimer % (redirectTime + chargeTime) <= redirectTime)
                     {
-                        destination = Target.Center;
-
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.055f);
                         npc.Center = npc.Center.MoveTowards(destination, 4f);
                         npc.velocity = Vector2.Zero;

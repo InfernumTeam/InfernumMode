@@ -231,7 +231,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             npc.rotation = npc.velocity.X * 0.04f;
 
             frameType = (int)PrimeFrameType.ClosedMouth;
-            if (wrappedTime > cycleTime - rocketCountPerCycle * 2f)
+            if (wrappedTime > cycleTime - rocketCountPerCycle * 2f && attackTimer > 60f)
             {
                 frameType = (int)PrimeFrameType.OpenMouth;
                 npc.velocity *= 0.87f;

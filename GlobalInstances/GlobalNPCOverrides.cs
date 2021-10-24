@@ -33,6 +33,7 @@ using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.AstrumAureus;
+using CalamityMod.Projectiles.Melee;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -381,13 +382,17 @@ namespace InfernumMode.GlobalInstances
                 damage = (int)(damage * 0.5);
 
             if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<SkyfinNuke>())
-                damage = (int)(damage * 0.5);
+                damage = (int)(damage * 0.7);
 
             if (npc.type == NPCID.TheDestroyerBody && (projectile.type == ModContent.ProjectileType<BileExplosion>() || projectile.type == ModContent.ProjectileType<SkyBomberGas>()))
-                damage = (int)(damage * 0.6);
+                damage = (int)(damage * 0.8);
 
             if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<Stormfrontspark>())
                 damage = (int)(damage * 0.3);
+
+            bool skeletronPrime = npc.type == NPCID.SkeletronPrime || npc.type == NPCID.PrimeCannon || npc.type == NPCID.PrimeSaw || npc.type == NPCID.PrimeVice || npc.type == NPCID.PrimeLaser;
+            if (skeletronPrime && (projectile.type == ModContent.ProjectileType<UltimusCleaverDust>() || projectile.type == ModContent.ProjectileType<GacruxianHome>()))
+                damage = (int)(damage * 0.7);
 
             if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
                 damage = (int)(damage * 0.55);

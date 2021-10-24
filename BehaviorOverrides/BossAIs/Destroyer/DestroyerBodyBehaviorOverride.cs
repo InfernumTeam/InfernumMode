@@ -32,10 +32,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // This code will go upstream across every segment, until it reaches the head.
             npc.scale = aheadSegment.scale;
             npc.Opacity = aheadSegment.Opacity;
-
+            npc.chaseable = true;
+            npc.friendly = false;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
             npc.Calamity().DR = 0.5f;
+            npc.defense = 12;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
@@ -46,8 +48,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment * npc.width * npc.scale * 0.725f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
-
-            float segmentNumber = npc.localAI[0];
 
             if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active)
             {

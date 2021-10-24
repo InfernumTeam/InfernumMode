@@ -88,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 				scale,
 				SpriteEffects.None, 0);
 
-			GameShaders.Misc["ForceField"].UseColor(Owner.type == NPCID.Spazmatism ? Color.MediumPurple : Color.Red);
+			GameShaders.Misc["ForceField"].UseColor(Owner.type == NPCID.Spazmatism ? Color.LimeGreen : Color.Red);
 			GameShaders.Misc["ForceField"].Apply(drawData);
 			drawData.Draw(spriteBatch);
 

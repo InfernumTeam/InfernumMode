@@ -79,6 +79,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Don't allow further damage to happen when below 65% life if any arms remain.
             npc.dontTakeDamage = lifeRatio < 0.65f && AnyArms;
 
+            if (!target.active || target.dead)
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 20f, 0.08f);
+                if (!npc.WithinRange(target.Center, 1560f))
+                    npc.active = false;
+
+                return false;
+            }
+
             switch ((PrimeAttackType)(int)attackType)
             {
                 case PrimeAttackType.SpawnEffects:
@@ -230,7 +239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 3f == 2f)
                 {
-                    float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.52f : 1f);
+                    float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.7f : 1f);
                     Vector2 rocketVelocity = Main.rand.NextVector2CircularEdge(rocketSpeed, rocketSpeed);
                     if (rocketVelocity.Y < -1f)
                         rocketVelocity.Y = -1f;
@@ -307,7 +316,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             ref float laserRayRotation = ref npc.Infernum().ExtraAI[0];
 
-            float angularOffset = MathHelper.ToRadians(36f);
+            float angularOffset = MathHelper.ToRadians(54f);
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
             float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.InverseLerp(45f, 90f, attackTimer, true));
             npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), movementSpeed)) / 8f;
@@ -335,7 +344,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         int beam = Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<LaserRay>(), 230, 0f);
                         if (Main.projectile.IndexInRange(beam))
                         {
-                            Main.projectile[beam].ai[0] = i * angularOffset / 120f * 0.385f;
+                            Main.projectile[beam].ai[0] = i * angularOffset / 120f * 0.4f;
                             Main.projectile[beam].ai[1] = npc.whoAmI;
                             Main.projectile[beam].netUpdate = true;
                         }

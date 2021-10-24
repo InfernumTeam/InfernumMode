@@ -47,7 +47,7 @@ namespace InfernumMode.GlobalInstances
             [NPCID.WallofFleshEye] = 3232,
             [NPCID.WallofFlesh] = 11875,
             [NPCID.Spazmatism] = 22223,
-            [NPCID.Retinazer] = 21000,
+            [NPCID.Retinazer] = 24500,
             [NPCID.SkeletronPrime] = 44444,
             [NPCID.TheDestroyer] = 111000,
             [ModContent.NPCType<BrimstoneElemental>()] = 51515,

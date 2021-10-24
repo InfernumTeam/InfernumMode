@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 case TwinsAttackState.SuperAttack:
                     return 420;
                 case TwinsAttackState.LazilyObserve:
-                    return InPhase2 ? 240 : 360;
+                    return InPhase2 ? 1 : 150;
             }
             return 1;
         }
@@ -190,6 +190,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool inPhase2 = PersonallyInPhase2(npc);
+            bool otherMechIsInPhase2 = true;
+            if (isSpazmatism && NPC.AnyNPCs(NPCID.Retinazer))
+                otherMechIsInPhase2 = PersonallyInPhase2(Main.npc[NPC.FindFirstNPC(NPCID.Retinazer)]);
+            if (isRetinazer && NPC.AnyNPCs(NPCID.Spazmatism))
+                otherMechIsInPhase2 = PersonallyInPhase2(Main.npc[NPC.FindFirstNPC(NPCID.Spazmatism)]);
 
             ref float phase2Timer = ref npc.Infernum().ExtraAI[0];
             ref float phase2TransitionSpin = ref npc.Infernum().ExtraAI[1];
@@ -250,7 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             npc.damage = npc.defDamage;
 
             // As well as tile collision and immortality logic.
-            npc.dontTakeDamage = false;
+            npc.dontTakeDamage = !otherMechIsInPhase2 && inPhase2;
             npc.noTileCollide = true;
 
             bool alone = (!NPC.AnyNPCs(NPCID.Spazmatism) && isRetinazer) || (!NPC.AnyNPCs(NPCID.Retinazer) && isSpazmatism);
@@ -280,7 +285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     int shield = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, 255);
                     Main.projectile[shield].ai[0] = npc.whoAmI;
                 }
-                Main.NewText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: DEFENSES PENETRATED. INITIATING PROCEDURE SHLD-17ECF9.", npc.type == NPCID.Spazmatism ? Color.MediumPurple : Color.IndianRed);
+                Main.NewText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: DEFENSES PENETRATED. INITIATING PROCEDURE SHLD-17ECF9.", npc.type == NPCID.Spazmatism ? Color.LimeGreen : Color.IndianRed);
                 hasStartedHealFlag = 1f;
             }
 
@@ -290,7 +295,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 {
                     npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.05f, npc.lifeMax * 0.3f, 1f - healCountdown / TwinsShield.HealTime);
                     if (healCountdown == TwinsShield.HealTime - 5)
-                        Main.NewText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: ERROR DETECTING SECONDARY UNIT. BURNING EXCESS FUEL RESERVES.", npc.type == NPCID.Spazmatism ? Color.MediumPurple : Color.IndianRed);
+                        Main.NewText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: ERROR DETECTING SECONDARY UNIT. BURNING EXCESS FUEL RESERVES.", npc.type == NPCID.Spazmatism ? Color.LimeGreen : Color.IndianRed);
                     healCountdown--;
                 }
                 else
@@ -348,7 +353,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     if (!npc.WithinRange(destination, 72f))
                     {
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 24f, 0.6f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 24f, 0.8f);
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                     }
                     else
@@ -387,7 +392,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     }
                     if (UniversalAttackTimer == 30)
                     {
-                        float chargeSpeed = MathHelper.Lerp(10f, 16f, 1f - CombinedLifeRatio);
+                        float chargeSpeed = MathHelper.Lerp(14.5f, 20.5f, 1f - CombinedLifeRatio);
                         npc.velocity = npc.SafeDirectionTo(Target.Center) * chargeSpeed;
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                         Main.PlaySound(SoundID.Roar, npc.Center, 0);
@@ -397,7 +402,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     break;
 
                 case TwinsAttackState.MatisLordEsqueCharge:
-                    int redirectTime = 35;
+                    int redirectTime = 50;
                     int chargeTime = 55;
                     if (UniversalAttackTimer % (redirectTime + chargeTime) <= redirectTime)
                     {
@@ -417,7 +422,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             destination += isSpazmatism ? Vector2.UnitX * 480f * xOffsetDirection : Vector2.UnitY * -780f;
                         }
 
-                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.045f);
+                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.055f);
+                        npc.Center = npc.Center.MoveTowards(destination, 4f);
                         npc.velocity = Vector2.Zero;
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
 
@@ -428,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         {
                             npc.damage = npc.defDamage;
 
-                            float chargeSpeed = MathHelper.Lerp(19f, 24f, 1f - CombinedLifeRatio);
+                            float chargeSpeed = MathHelper.Lerp(21f, 26f, 1f - CombinedLifeRatio);
                             npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 6.6f) * chargeSpeed;
                             npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                             npc.netUpdate = true;
@@ -503,7 +509,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     // And charge.
                     if (UniversalAttackTimer == 330)
                     {
-                        float chargeSpeed = MathHelper.Lerp(16f, 24f, 1f - CombinedLifeRatio);
+                        float chargeSpeed = MathHelper.Lerp(19.5f, 25f, 1f - CombinedLifeRatio);
                         npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 6f) * chargeSpeed;
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                         Main.PlaySound(SoundID.Roar, npc.Center, 0);
@@ -594,10 +600,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
 								{
-                                    int totalProjectiles = 15;
+                                    int totalProjectiles = 18;
                                     for (int i = 0; i < totalProjectiles; i++)
 									{
-                                        Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.TwoPi * i / totalProjectiles) * 12.5f;
+                                        Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.TwoPi * i / totalProjectiles) * 14.5f;
                                         int fire = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ProjectileID.CursedFlameHostile, 100, 0f);
                                         Main.projectile[fire].ignoreWater = true;
                                     }
@@ -1083,9 +1089,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public static bool PersonallyInPhase2(NPC npc)
         {
-            if (npc.whoAmI != SpazmatismIndex && npc.whoAmI != RetinazerIndex)
-                return false;
-
             return npc.Infernum().ExtraAI[0] >= Phase2TransitionTime * 0.5f;
         }
 
@@ -1187,7 +1190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 }
             }
 
-            if (UniversalStateIndex % 5 == 4)
+            if (UniversalStateIndex % 5 == 4 && !InPhase2)
                 CurrentAttackState = TwinsAttackState.LazilyObserve;
         }
 

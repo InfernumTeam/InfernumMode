@@ -34,6 +34,7 @@ using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.Projectiles.Melee;
+using CalamityMod.Projectiles.Magic;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -382,6 +383,15 @@ namespace InfernumMode.GlobalInstances
                 damage = (int)(damage * 0.5);
 
             if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<SkyfinNuke>())
+                damage = (int)(damage * 0.7);
+
+            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<AcidicSaxMist>())
+                damage = (int)(damage * 0.475);
+            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<AcidicSaxBubble>())
+                damage = (int)(damage * 0.6);
+            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<AcidicReed>())
+                damage = (int)(damage * 0.6);
+            if (npc.type == NPCID.TheDestroyerBody && (projectile.type == ProjectileID.QuarterNote || projectile.type == ProjectileID.EighthNote || projectile.type == ProjectileID.TiedEighthNote))
                 damage = (int)(damage * 0.7);
 
             if (npc.type == NPCID.TheDestroyerBody && (projectile.type == ModContent.ProjectileType<BileExplosion>() || projectile.type == ModContent.ProjectileType<SkyBomberGas>()))

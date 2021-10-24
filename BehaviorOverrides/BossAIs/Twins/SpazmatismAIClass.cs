@@ -52,16 +52,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 			float overdriveTimer = npc.Infernum().ExtraAI[4];
 			if (TwinsAttackSynchronizer.CurrentAttackState == TwinsAttackSynchronizer.TwinsAttackState.SuperAttack || overdriveTimer > 0f)
 			{
+				color = Color.YellowGreen;
 				float fadeCompletion = Utils.InverseLerp(0f, 60f, TwinsAttackSynchronizer.UniversalAttackTimer, true);
 				if (overdriveTimer > 0f)
 					fadeCompletion = overdriveTimer / TwinsShield.HealTime;
 
 				totalInstancesToDraw += (int)MathHelper.Lerp(1f, 20f, fadeCompletion);
 
-				Color endColor = Color.GreenYellow;
+				Color endColor = Color.LimeGreen;
 				if (overdriveTimer > 0f)
 				{
-					endColor = Color.Lerp(Color.White, Color.MediumPurple, overdriveTimer / TwinsShield.HealTime);
+					endColor = Color.Lerp(Color.White, Color.Green, overdriveTimer / TwinsShield.HealTime);
 					endColor.A = 0;
 				}
 

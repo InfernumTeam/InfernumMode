@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-	public class ShadowflameBurstTelegraph : ModProjectile
+	public class CursedFlameBurstTelegraph : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -39,14 +39,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public Color ColorFunction(float completionRatio)
 		{
-            Color color = Color.Lerp(Color.Purple, Color.DarkMagenta, (float)Math.Pow(completionRatio, 2D));
+            Color color = Color.Lerp(Color.Green, Color.LimeGreen, (float)Math.Pow(completionRatio, 2D));
             color *= 1f - 0.5f * (float)Math.Pow(completionRatio, 3D);
             return color * projectile.Opacity;
 		}
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utils.DrawLine(spriteBatch, projectile.Center - Vector2.UnitX * 1600f, projectile.Center + Vector2.UnitX * 1600f, Color.MediumPurple, Color.MediumPurple, projectile.Opacity * 1.6f + 0.1f);
+            Utils.DrawLine(spriteBatch, projectile.Center - Vector2.UnitX * 1600f, projectile.Center + Vector2.UnitX * 1600f, Color.LimeGreen, Color.LimeGreen, projectile.Opacity * 1.6f + 0.1f);
             return false;
         }
 
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Utilities.NewProjectileBetter(projectile.Center, projectile.velocity, ModContent.ProjectileType<ShadowflameBurst>(), 115, 0f);
+            Utilities.NewProjectileBetter(projectile.Center, projectile.velocity, ModContent.ProjectileType<CursedFlameBurst>(), 115, 0f);
         }
 
         public override bool ShouldUpdatePosition() => false;

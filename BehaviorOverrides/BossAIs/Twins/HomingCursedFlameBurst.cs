@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-	public class HomingShadowflameBurst : ModProjectile
+	public class HomingCursedFlameBurst : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
         public const int HomeTime = 90;
@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         public const int TimeBeforeSwirl = 170;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shadowflame");
+            DisplayName.SetDefault("Cursed Flame");
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 34;
         }
@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 projectile.Opacity = 1f;
 
             projectile.rotation = projectile.velocity.ToRotation();
-            Lighting.AddLight(projectile.Center, Color.Magenta.ToVector3() * 1.45f);
+            Lighting.AddLight(projectile.Center, Color.Green.ToVector3() * 1.45f);
 
             if (projectile.timeLeft >= Lifetime - HomeTime)
 			{
@@ -85,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public Color ColorFunction(float completionRatio)
 		{
-            Color color = Color.Lerp(Color.Purple, Color.White, (float)Math.Pow(completionRatio, 2D));
+            Color color = Color.Lerp(Color.GreenYellow, Color.White, (float)Math.Pow(completionRatio, 2D));
             color *= 1f - 0.67f * (float)Math.Pow(completionRatio, 3D);
             return color * projectile.Opacity;
 		}

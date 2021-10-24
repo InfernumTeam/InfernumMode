@@ -328,7 +328,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                 NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyOrb>(), 0, npc.whoAmI, -1f);
                             }
                             else if (npc.type == NPCID.Spazmatism)
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ShadowflameOrb>(), 0, npc.whoAmI);
+                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CursedOrb>(), 0, npc.whoAmI);
                         }
 
                         overdriveTimer++;
@@ -835,19 +835,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             int fireballShootRate = (int)MathHelper.Lerp(300, 120, Utils.InverseLerp(0.5f, 0.1f, lifeRatio));
             if (Main.netMode != NetmodeID.MultiplayerClient && fireballShootTimer >= fireballShootRate)
             {
-                Utilities.NewProjectileBetter(Target.Center - Vector2.UnitX * 1300f, Vector2.UnitX * 11f, ModContent.ProjectileType<ShadowflameBurstTelegraph>(), 0, 0f);
-                Utilities.NewProjectileBetter(Target.Center + Vector2.UnitX * 1300f, Vector2.UnitX * -11f, ModContent.ProjectileType<ShadowflameBurstTelegraph>(), 0, 0f);
+                Utilities.NewProjectileBetter(Target.Center - Vector2.UnitX * 1300f, Vector2.UnitX * 11f, ModContent.ProjectileType<CursedFlameBurstTelegraph>(), 0, 0f);
+                Utilities.NewProjectileBetter(Target.Center + Vector2.UnitX * 1300f, Vector2.UnitX * -11f, ModContent.ProjectileType<CursedFlameBurstTelegraph>(), 0, 0f);
                 fireballShootTimer = 0f;
             }
 
-            if (!NPC.AnyNPCs(ModContent.NPCType<ShadowflameOrb>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<CursedOrb>()))
                 orbResummonTimer++;
             else
                 orbResummonTimer = 0f;
 
             if (Main.netMode != NetmodeID.MultiplayerClient && orbResummonTimer > 900f)
             {
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ShadowflameOrb>(), 0, npc.whoAmI);
+                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CursedOrb>(), 0, npc.whoAmI);
                 orbResummonTimer = 0f;
             }
 
@@ -916,7 +916,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                 for (int i = 0; i < 6; i++)
                                 {
                                     Vector2 shootDirection = (MathHelper.TwoPi * i / 6f).ToRotationVector2();
-                                    Utilities.NewProjectileBetter(npc.Center + shootDirection * 50f, shootDirection * 16f, ModContent.ProjectileType<ShadowflameBurst>(), 100, 0f);
+                                    Utilities.NewProjectileBetter(npc.Center + shootDirection * 50f, shootDirection * 16f, ModContent.ProjectileType<CursedFlameBurst>(), 100, 0f);
                                 }
                             }
 
@@ -1001,7 +1001,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                     {
                                         float offsetAngle = MathHelper.Lerp(-0.87f, 0.87f, i / (float)fireballsPerBurst);
                                         Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(offsetAngle) * 16f;
-                                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingShadowflameBurst>(), 115, 0f);
+                                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingCursedFlameBurst>(), 115, 0f);
                                     }
                                 }
 
@@ -1032,11 +1032,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             npc.netUpdate = true;
                         }
 
-                        // Create shadowflame dust at the mouth.
+                        // Create cursed dust at the mouth.
                         if (attackTimer > redirectTime - 75f)
                         {
                             Dust shadowflame = Dust.NewDustPerfect(npc.Center + (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * 45f, 267);
-                            shadowflame.color = Color.Lerp(Color.Purple, Color.DarkViolet, Main.rand.NextFloat());
+                            shadowflame.color = Color.Lerp(Color.Green, Color.GreenYellow, Main.rand.NextFloat());
                             shadowflame.velocity = (npc.rotation + MathHelper.PiOver2 + Main.rand.NextFloat(-0.5f, 0.5f)).ToRotationVector2();
                             shadowflame.velocity *= Main.rand.NextFloat(2f, 5f);
                             shadowflame.scale *= 1.2f;
@@ -1065,7 +1065,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         {
                             Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 120f;
                             Vector2 shootVelocity = npc.velocity.SafeNormalize((npc.rotation + MathHelper.PiOver2).ToRotationVector2()) * carpetBombSpeed;
-                            Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<ShadowflameBomb>(), 115, 0f);
+                            Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<CursedBomb>(), 115, 0f);
                         }
                         Main.PlaySound(SoundID.DD2_BetsyFireballShot, Target.Center);
                     }

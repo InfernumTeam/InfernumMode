@@ -6,11 +6,11 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-    public class ShadowflameBomb : ModProjectile
+    public class CursedBomb : ModProjectile
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shadowflame");
+            DisplayName.SetDefault("Cursed Flame Bomb");
             Main.projFrames[projectile.type] = 6;
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 projectile.Opacity = 1f;
 
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            Lighting.AddLight(projectile.Center, Color.Magenta.ToVector3() * 1.45f);
+            Lighting.AddLight(projectile.Center, Color.Green.ToVector3() * 1.45f);
 
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];

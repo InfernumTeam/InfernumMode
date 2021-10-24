@@ -6,9 +6,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-    public class ShadowflameCinder : ModProjectile
+    public class CursedCinder : ModProjectile
     {
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Shadowflame Cinder");
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Cursed Cinder");
 
         public override void SetDefaults()
         {

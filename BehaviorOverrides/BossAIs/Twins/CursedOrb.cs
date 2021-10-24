@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-	public class ShadowflameOrb : ModNPC
+	public class CursedOrb : ModNPC
     {
         public PrimitiveTrailCopy FireDrawer;
         public Player Target => Main.player[npc.target];
@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 {
                     float offsetAngle = MathHelper.Lerp(-0.51f, 0.51f, Utils.InverseLerp(85f, 95f, attackWrappedTimer, true));
                     Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(offsetAngle) * 10f;
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ShadowflameCinder>(), 120, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<CursedCinder>(), 120, 0f);
                 }
             }
 
@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public Color ColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.White, Color.DarkMagenta, 0.25f);
+            Color color = Color.Lerp(Color.White, Color.LimeGreen, 0.25f);
             color *= 1f - 0.5f * (float)Math.Pow(completionRatio, 6D);
             return color * npc.Opacity;
         }
@@ -135,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
 		public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            target.AddBuff(ModContent.BuffType<Shadowflame>(), 150);
+            target.AddBuff(BuffID.CursedInferno, 150);
         }
 
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)

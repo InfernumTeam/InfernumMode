@@ -297,7 +297,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 case 0:
                     int totalShots = 10;
                     Vector2 destination = target.Center - Vector2.UnitY * 360f;
-                    Vector2 acceleration = new Vector2(0.18f, 0.12f);
+                    Vector2 acceleration = new Vector2(0.08f, 0.06f);
                     DoHoverMovement(npc, destination, acceleration);
 
                     npc.rotation = npc.velocity.X * 0.05f;
@@ -432,7 +432,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 case 0:
                     int totalShots = 10;
                     Vector2 destination = target.Center - Vector2.UnitY * 450f;
-                    Vector2 acceleration = new Vector2(0.18f, 0.12f);
+                    Vector2 acceleration = new Vector2(0.08f, 0.06f);
                     DoHoverMovement(npc, destination, acceleration);
 
                     npc.rotation = npc.velocity.X * 0.05f;

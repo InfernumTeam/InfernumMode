@@ -533,6 +533,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             npc.rotation = npc.rotation.AngleTowards(isRetinazer ? MathHelper.PiOver2 : 0f, MathHelper.TwoPi / 20f);
 
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.05f);
+                        npc.damage = 0;
                     }
 
                     if (UniversalAttackTimer == redirectTime)
@@ -588,6 +589,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             chargingTime++;
                             if (chargingTime >= chargeTime)
                                 chargingTime = 0f;
+
+                            npc.damage += 35;
 
                             Tile tile = CalamityUtils.ParanoidTileRetrieval((int)npc.Center.X / 16, (int)npc.Center.Y / 16);
                             bool platformFuck = (TileID.Sets.Platforms[tile.type] || Main.tileSolidTop[tile.type]) && tile.nactive() && npc.Center.Y > Target.Center.Y;

@@ -30,6 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             npc.damage = 0;
             npc.Calamity().DR = 0.4f;
             npc.dontTakeDamage = true;
+            npc.timeLeft = 3600;
 
             if (animationTime < 200f || phaseChangeCountdown > 0f)
             {
@@ -83,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                                 npc.velocity.X = -3.5f;
                         }
 
-                        if (npc.WithinRange(destination, 100f) && attackTimer % 10f == 9f)
+                        if (npc.WithinRange(destination, 100f) && attackTimer % 10f == 9f && owner.life < owner.lifeMax * 0.825f)
                         {
                             Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
                             for (int i = 0; i < 4; i++)

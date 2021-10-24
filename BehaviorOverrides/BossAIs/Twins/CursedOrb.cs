@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         internal TwinsAttackSynchronizer.SpazmatismAttackState OwnerAttackState => (TwinsAttackSynchronizer.SpazmatismAttackState)(int)Owner.Infernum().ExtraAI[11];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Shadowflame Orb");
+            DisplayName.SetDefault("Cursed Flame Orb");
 			NPCID.Sets.TrailingMode[npc.type] = 0;
             NPCID.Sets.TrailCacheLength[npc.type] = 7;
         }

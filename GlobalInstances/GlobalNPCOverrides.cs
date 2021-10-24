@@ -614,6 +614,8 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == NPCID.KingSlime)
                 return false;
+            if (npc.type == NPCID.SkeletronHand)
+                return false;
             if (npc.type == NPCID.AncientCultistSquidhead)
                 return false;
             if (npc.type == NPCID.MoonLordFreeEye)

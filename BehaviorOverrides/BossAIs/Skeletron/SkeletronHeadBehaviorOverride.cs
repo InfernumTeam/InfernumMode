@@ -350,9 +350,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     else
                         npc.velocity *= 0.94f;
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f && attackTimer >= 90f)
                     {
-                        Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(1.15f) * Main.rand.NextFloat(8f, 12.65f);
+                        Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(0.75f) * Main.rand.NextFloat(8f, 12.65f);
                         if (Main.rand.NextBool(2))
                             shootVelocity.Y *= -1f;
                         Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
@@ -389,9 +389,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         Main.PlaySound(SoundID.Item8, target.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            for (int i = 0; i < 4; i++)
+                            for (int i = 0; i < 3; i++)
                             {
-                                Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 4f) * 7f;
+                                Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 3f) * 7f;
                                 Utilities.NewProjectileBetter(npc.Center, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 95, 0f);
                             }
                         }
@@ -487,8 +487,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     if (attackTimer >= 30f && attackTimer % 45f == 0f)
                     {
                         Main.PlaySound(SoundID.Item8, target.Center);
-                        float skullSpeed = 4.25f;
-                        int skullCount = 4;
+                        float skullSpeed = 5.6f;
+                        int skullCount = 5;
 
                         for (int i = 0; i < skullCount; i++)
                         {
@@ -518,7 +518,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     if (attackTimer >= 320f)
                     {
-                        attackState = 3f;
+                        attackState = Main.rand.Next(3, 5);
                         attackTimer = 0f;
                         npc.netUpdate = true;
                     }

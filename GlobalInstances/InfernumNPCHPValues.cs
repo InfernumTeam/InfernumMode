@@ -41,7 +41,7 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<PerforatorBodyMedium>()] = 160,
             [ModContent.NPCType<PerforatorHeadLarge>()] = 4055,
             [NPCID.QueenBee] = 7550,
-            [NPCID.SkeletronHead] = 5517,
+            [NPCID.SkeletronHead] = 7600,
             [ModContent.NPCType<CrimulanSGBig>()] = 4020,
             [ModContent.NPCType<EbonianSGBig>()] = 4020,
             [NPCID.WallofFleshEye] = 3232,

@@ -400,6 +400,9 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<Stormfrontspark>())
                 damage = (int)(damage * 0.3);
 
+            if ((npc.type == NPCID.Spazmatism || npc.type == NPCID.Retinazer) && projectile.minion)
+                damage = (int)(damage * 1.45);
+
             bool skeletronPrime = npc.type == NPCID.SkeletronPrime || npc.type == NPCID.PrimeCannon || npc.type == NPCID.PrimeSaw || npc.type == NPCID.PrimeVice || npc.type == NPCID.PrimeLaser;
             if (skeletronPrime && (projectile.type == ModContent.ProjectileType<UltimusCleaverDust>() || projectile.type == ModContent.ProjectileType<GacruxianHome>()))
                 damage = (int)(damage * 0.7);

@@ -635,7 +635,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             }
 
                             if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % 50f == 49f)
-                                Projectile.NewProjectile(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 110, 0f);
+                                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 110, 0f);
                         }
                         else
                         {
@@ -821,7 +821,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         {
             MobileChargePhase,
             HellfireBursts,
-            ShadowflameCarpetBomb
+            CursedFlameCarpetBomb
         }
 
         internal static void DoAI_SpazmatismAlone(NPC npc)
@@ -988,7 +988,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 							{
                                 burstTimer = burstCount = 0f;
                                 attackTimer = 0;
-                                attackState = (int)SpazmatismAttackState.ShadowflameCarpetBomb;
+                                attackState = (int)SpazmatismAttackState.CursedFlameCarpetBomb;
                                 npc.netUpdate = true;
                             }
 
@@ -1010,7 +1010,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         }
                     }
                     break;
-                case SpazmatismAttackState.ShadowflameCarpetBomb:
+                case SpazmatismAttackState.CursedFlameCarpetBomb:
                     int redirectTime = 240;
                     int carpetBombTime = 90;
                     int carpetBombRate = 7;
@@ -1035,12 +1035,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         // Create cursed dust at the mouth.
                         if (attackTimer > redirectTime - 75f)
                         {
-                            Dust shadowflame = Dust.NewDustPerfect(npc.Center + (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * 45f, 267);
-                            shadowflame.color = Color.Lerp(Color.Green, Color.GreenYellow, Main.rand.NextFloat());
-                            shadowflame.velocity = (npc.rotation + MathHelper.PiOver2 + Main.rand.NextFloat(-0.5f, 0.5f)).ToRotationVector2();
-                            shadowflame.velocity *= Main.rand.NextFloat(2f, 5f);
-                            shadowflame.scale *= 1.2f;
-                            shadowflame.noGravity = true;
+                            Dust cursedflame = Dust.NewDustPerfect(npc.Center + (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * 45f, 267);
+                            cursedflame.color = Color.Lerp(Color.Green, Color.GreenYellow, Main.rand.NextFloat());
+                            cursedflame.velocity = (npc.rotation + MathHelper.PiOver2 + Main.rand.NextFloat(-0.5f, 0.5f)).ToRotationVector2();
+                            cursedflame.velocity *= Main.rand.NextFloat(2f, 5f);
+                            cursedflame.scale *= 1.2f;
+                            cursedflame.noGravity = true;
                         }
 					}
                     

@@ -85,12 +85,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 if (!target.active || target.dead || Main.dayTime)
                 {
                     npc.velocity.X *= 0.98f;
-                    npc.velocity.Y += 0.22f;
+                    npc.velocity.Y += 0.35f;
 
                     if (npc.timeLeft > 240)
                         npc.timeLeft = 240;
 
-                    if (!npc.WithinRange(target.Center, 3600f))
+                    if (!npc.WithinRange(target.Center, 2400f))
                         npc.active = false;
 
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;

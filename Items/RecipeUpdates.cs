@@ -75,6 +75,11 @@ namespace InfernumMode.Items
             // Make seafood's recipe give 4 summon items instead of 1.
             SetRecipeResultStack(ModContent.ItemType<Seafood>(), 4);
 
+            // Make mechanical summoner's recipes give 8 summon items instead of 1.
+            SetRecipeResultStack(ItemID.MechanicalEye, 8);
+            SetRecipeResultStack(ItemID.MechanicalSkull, 8);
+            SetRecipeResultStack(ItemID.MechanicalWorm, 8);
+
             // Remove ingredients from boss summoners that require the boss be defeated.
             RemoveRecipeIngredient(ModContent.ItemType<Teratoma>(), ModContent.ItemType<TrueShadowScale>());
             RemoveRecipeIngredient(ModContent.ItemType<BloodyWormFood>(), ModContent.ItemType<BloodSample>());

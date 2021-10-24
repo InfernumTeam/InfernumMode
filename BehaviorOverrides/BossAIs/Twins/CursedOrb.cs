@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             npc.aiStyle = aiType = -1;
             npc.width = npc.height = 22;
             npc.damage = 5;
-            npc.lifeMax = 2300;
+            npc.lifeMax = 1600;
             npc.knockBackResist = 0f;
             npc.noGravity = true;
             npc.noTileCollide = true;
@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (!npc.WithinRange(flyDestination, 105f))
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(flyDestination) * flySpeed, 0.08f);
 
-            npc.rotation += MathHelper.ToRadians(10f * Math.Sign(npc.velocity.X));
+            npc.rotation += MathHelper.ToRadians(Math.Sign(npc.velocity.X) * 10f);
 
             float attackWrappedTimer = Time % 150f;
             if (attackWrappedTimer >= 85f && attackWrappedTimer <= 95f && attackWrappedTimer % 2f == 0f)

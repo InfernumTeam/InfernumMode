@@ -183,14 +183,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         
         public static void DoAttack_MetalBurst(NPC npc, Player target, float attackTimer, ref float frameType)
         {
-            int shootRate = AnyArms ? 95 : 45;
+            int shootRate = AnyArms ? 125 : 45;
             int shootCount = AnyArms ? 4 : 5;
             int spikesPerBurst = AnyArms ? 7 : 16;
             float hoverSpeed = AnyArms ? 15f : 36f;
             float wrappedTime = attackTimer % shootRate;
 
-            Vector2 destination = target.Center - Vector2.UnitY * (AnyArms ? 510f : 380f);
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, 0.4f);
+            Vector2 destination = target.Center - Vector2.UnitY * (AnyArms ? 510f : 435f);
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 37.5f);
             npc.rotation = npc.velocity.X * 0.04f;
 
             // Open the mouth a little bit before shooting.

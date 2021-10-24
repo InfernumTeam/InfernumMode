@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -38,6 +39,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
             npc.Calamity().DR = 0.5f;
             npc.defense = 12;
+
+            npc.buffImmune[ModContent.BuffType<CrushDepth>()] = true;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

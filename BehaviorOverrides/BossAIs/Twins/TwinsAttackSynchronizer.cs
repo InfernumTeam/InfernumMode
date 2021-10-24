@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Guardians;
 using Microsoft.Xna.Framework;
@@ -186,6 +187,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 return false;
             }
 
+            npc.buffImmune[ModContent.BuffType<CrushDepth>()] = true;
+
             bool shouldDespawn = Main.dayTime || _targetIndex == -1 || !Target.active || Target.dead;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -201,6 +204,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             ref float healCountdown = ref npc.Infernum().ExtraAI[2];
             ref float hasStartedHealFlag = ref npc.Infernum().ExtraAI[3];
             ref float overdriveTimer = ref npc.Infernum().ExtraAI[4];
+            ref float chargingFlag = ref npc.Infernum().ExtraAI[5];
+            ref float chargeFlameTimer = ref npc.Infernum().ExtraAI[6];
+            ref float chargeFlameRotation = ref npc.Infernum().ExtraAI[7];
+
+            chargeFlameRotation = chargeFlameRotation.AngleLerp(npc.rotation, 0.05f).AngleTowards(npc.rotation, 0.1f);
 
             // Entering phase 2 effect.
             if (lifeRatio < Phase2LifeRatioThreshold && phase2Timer < Phase2TransitionTime)
@@ -251,10 +259,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 return false;
             }
 
-            // Reset the boss' damage every frame. It can be changed later as necessary.
+            // Reset the boss' stuff every frame. It can be changed later as necessary.
+            chargingFlag = 0f;
             npc.damage = npc.defDamage;
-
-            // As well as tile collision and immortality logic.
             npc.dontTakeDamage = !otherMechIsInPhase2 && inPhase2;
             npc.noTileCollide = true;
 
@@ -337,9 +344,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 }
 
                 if (npc.type == NPCID.Spazmatism)
-                    DoAI_SpazmatismAlone(npc);
+                    DoAI_SpazmatismAlone(npc, ref chargingFlag);
                 else
-                    DoAI_RetinazerAlone(npc);
+                    DoAI_RetinazerAlone(npc, ref chargingFlag);
+
+                // Progress with the charge animation.
+                chargeFlameTimer = MathHelper.Clamp(chargeFlameTimer + (chargingFlag == 1f ? 1f : -3f), 0f, 15f);
                 return false;
             }
 
@@ -404,23 +414,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 case TwinsAttackState.MatisLordEsqueCharge:
                     int redirectTime = 50;
                     int chargeTime = 55;
+                    bool willCharge;
+                    float xOffsetDirection = UniversalAttackTimer % ((redirectTime + chargeTime) * 2) > redirectTime + chargeTime ? -1f : 1f;
+
+                    destination = Target.Center - Vector2.UnitY * 480f;
+                    if (UniversalAttackTimer % ((redirectTime + chargeTime) * 2) > redirectTime + chargeTime)
+                    {
+                        willCharge = isRetinazer;
+                        destination += isRetinazer ? Vector2.UnitX * 480f * xOffsetDirection : Vector2.UnitY * -780f;
+                    }
+                    else
+                    {
+                        willCharge = isSpazmatism;
+                        destination += isSpazmatism ? Vector2.UnitX * 480f * xOffsetDirection : Vector2.UnitY * -780f;
+                    }
+
                     if (UniversalAttackTimer % (redirectTime + chargeTime) <= redirectTime)
                     {
                         destination = Target.Center;
-
-                        bool willCharge;
-                        float xOffsetDirection = UniversalAttackTimer % ((redirectTime + chargeTime) * 2) > redirectTime + chargeTime ? -1f : 1f;
-
-                        if (UniversalAttackTimer % ((redirectTime + chargeTime) * 2) > redirectTime + chargeTime)
-                        {
-                            willCharge = isRetinazer;
-                            destination += isRetinazer ? Vector2.UnitX * 480f * xOffsetDirection : Vector2.UnitY * -780f;
-                        }
-                        else
-                        {
-                            willCharge = isSpazmatism;
-                            destination += isSpazmatism ? Vector2.UnitX * 480f * xOffsetDirection : Vector2.UnitY * -780f;
-                        }
 
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.055f);
                         npc.Center = npc.Center.MoveTowards(destination, 4f);
@@ -442,6 +453,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             Main.PlaySound(SoundID.Roar, npc.Center, 0);
                         }
                     }
+                    else if (willCharge)
+                        chargingFlag = 1f;
 
                     break;
                 case TwinsAttackState.Spin:
@@ -514,6 +527,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                         Main.PlaySound(SoundID.Roar, npc.Center, 0);
                     }
+
+                    if (UniversalAttackTimer >= 330 && UniversalAttackTimer < 385)
+                        chargingFlag = 1f;
+
                     break;
 
                 case TwinsAttackState.RedirectingLasers_And_FireRain:
@@ -589,6 +606,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             chargingTime++;
                             if (chargingTime >= chargeTime)
                                 chargingTime = 0f;
+                            chargingFlag = 1f;
 
                             npc.damage += 35;
 
@@ -657,6 +675,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     break;
             }
 
+            // Progress with the charge animation.
+            chargeFlameTimer = MathHelper.Clamp(chargeFlameTimer + (chargingFlag == 1f ? 1f : -3f), 0f, 15f);
+
             return false;
         }
 
@@ -668,12 +689,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             DanceOfLightnings
         }
 
-        internal static void DoAI_RetinazerAlone(NPC npc)
+        internal static void DoAI_RetinazerAlone(NPC npc, ref float chargingFlag)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackTimer = ref npc.Infernum().ExtraAI[10];
             ref float attackState = ref npc.Infernum().ExtraAI[11];
             ref float lightningAttackTimer = ref npc.Infernum().ExtraAI[12];
+            ref float burstCounter = ref npc.Infernum().ExtraAI[13];
 
             int lightningShootRate = (int)MathHelper.Lerp(300, 150, Utils.InverseLerp(0.5f, 0.1f, lifeRatio));
             if (Main.netMode != NetmodeID.MultiplayerClient && lightningAttackTimer >= lightningShootRate)
@@ -687,7 +709,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             switch ((RetinazerAttackState)(int)attackState) 
             {
                 case RetinazerAttackState.LaserBurstHover:
-                    ref float burstCounter = ref npc.Infernum().ExtraAI[6];
                     List<Vector2> potentialDestinations = new List<Vector2>()
                     {
                         Target.Center + Vector2.UnitX * -600f,
@@ -797,11 +818,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                         npc.netUpdate = true;
                     }
-                    if (attackTimer >= 270f && attackTimer < 400f && attackTimer % 20f == 19f && npc.velocity.Length() > 13f)
+                    if (attackTimer >= 270f)
                     {
-                        Main.PlaySound(SoundID.Item33, npc.Center);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 110, 0f);
+                        chargingFlag = 1f;
+                        if (attackTimer < 400f && attackTimer % 20f == 19f && npc.velocity.Length() > 13f)
+                        {
+                            Main.PlaySound(SoundID.Item33, npc.Center);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 110, 0f);
+                        }
                     }
 
                     npc.dontTakeDamage = npc.Opacity <= 0f;
@@ -827,7 +852,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             CursedFlameCarpetBomb
         }
 
-        internal static void DoAI_SpazmatismAlone(NPC npc)
+        internal static void DoAI_SpazmatismAlone(NPC npc, ref float chargingFlag)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackTimer = ref npc.Infernum().ExtraAI[10];
@@ -938,6 +963,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             npc.netUpdate = true;
                         }
                     }
+                    else if (attackTimer >= hoverTime + chargeDelayTime)
+                        chargingFlag = 1f;
                     break;
                 case SpazmatismAttackState.HellfireBursts:
                     hoverTime = 60;

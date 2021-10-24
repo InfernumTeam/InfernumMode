@@ -100,6 +100,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(CalamityPlayerMiscEffects).GetMethod("OtherBuffEffects", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator CalamityNPCLifeRegen
+        {
+            add => HookEndpointManager.Modify(typeof(CalamityGlobalNPC).GetMethod("UpdateLifeRegen", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CalamityGlobalNPC).GetMethod("UpdateLifeRegen", Utilities.UniversalBindingFlags), value);
+        }
+
         public static void ILEditingLoad()
         {
             On.Terraria.Gore.NewGore += RemoveCultistGore;
@@ -118,6 +124,7 @@ namespace InfernumMode.ILEditingStuff
             ModeIndicatorUIDraw += DrawInfernumIcon;
             CalamityWorldPostUpdate += PermitODRain;
             CalamityPlayerOtherBuffEffects += DisablePlagueDarkness;
+            CalamityNPCLifeRegen += NerfShellfishStaff;
         }
 
 		public static void ILEditingUnload()
@@ -138,6 +145,7 @@ namespace InfernumMode.ILEditingStuff
             ModeIndicatorUIDraw -= DrawInfernumIcon;
             CalamityWorldPostUpdate -= PermitODRain;
             CalamityPlayerOtherBuffEffects -= DisablePlagueDarkness;
+            CalamityNPCLifeRegen -= NerfShellfishStaff;
         }
 
         // Why.
@@ -566,6 +574,26 @@ namespace InfernumMode.ILEditingStuff
             {
                 player.blind = false;
             });
+        }
+
+        private static void NerfShellfishStaff(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+
+            for (int j = 0; j < 2; j++)
+            {
+                if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(250)))
+                    return;
+            }
+
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldc_I4, 150);
+
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(50)))
+                return;
+
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldc_I4, 30);
         }
     }
 }

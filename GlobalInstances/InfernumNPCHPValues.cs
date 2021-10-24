@@ -19,12 +19,15 @@ using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.BrimstoneElemental;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.PlaguebringerGoliath;
+using CalamityMod.NPCs.Calamitas;
+using CalamityMod.World;
+using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
 
 namespace InfernumMode.GlobalInstances
 {
 	public static class InfernumNPCHPValues
     {
-        public static Dictionary<int, int> HPValues = new Dictionary<int, int>()
+        public static Dictionary<int, int> HPValues => new Dictionary<int, int>()
         {
             [ModContent.NPCType<DesertScourgeHead>()] = 5550,
             [NPCID.KingSlime] = 4200,
@@ -51,6 +54,7 @@ namespace InfernumMode.GlobalInstances
             [NPCID.SkeletronPrime] = 44444,
             [NPCID.TheDestroyer] = 111000,
             [ModContent.NPCType<BrimstoneElemental>()] = 51515,
+            [ModContent.NPCType<CalamitasRun3>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 444444 : 82800,
             [ModContent.NPCType<Leviathan>()] = 103103,
             [ModContent.NPCType<Siren>()] = 39250,
             [ModContent.NPCType<AureusSpawn>()] = 25000,

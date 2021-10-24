@@ -1,8 +1,10 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
@@ -15,7 +17,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override bool PreAI(NPC npc) => TwinsAttackSynchronizer.DoAI(npc);
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+		public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio)
+		{
+			return MathHelper.SmoothStep(60f, 22f, completionRatio) * npc.Infernum().ExtraAI[6] / 15f;
+		}
+
+		public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
+		{
+			float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * 0.9f;
+			Color startingColor = Color.Lerp(Color.White, Color.LightGreen, 0.25f);
+			Color middleColor = Color.Lerp(Color.Lime, Color.White, 0.35f);
+			Color endColor = Color.Lerp(Color.ForestGreen, Color.White, 0.47f);
+			Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * (npc.Infernum().ExtraAI[6] / 15f) * trailOpacity;
+			color.A = 0;
+			return color;
+		}
+
+		public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
 		{
 			for (int i = 0; i < Main.maxNPCs; i++)
 			{
@@ -38,6 +56,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 					Color chainColor = npc.GetAlpha(lightColor);
 					spriteBatch.Draw(chainTexture, currentChainPosition - Main.screenPosition, null, chainColor, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 				}
+			}
+
+			if (npc.Infernum().OptionalPrimitiveDrawer is null)
+			{
+				npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => FlameTrailWidthFunctionBig(npc, completionRatio), 
+					completionRatio => FlameTrailColorFunctionBig(npc, completionRatio), 
+					null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+			}
+			else if (npc.Infernum().ExtraAI[6] > 0f)
+			{
+				GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage("Images/Misc/Perlin");
+
+				Vector2 drawStart = npc.Center;
+				Vector2 drawEnd = drawStart - (npc.Infernum().ExtraAI[7] + MathHelper.PiOver2).ToRotationVector2() * npc.Infernum().ExtraAI[6] / 15f * 560f;
+				Vector2[] drawPositions = new Vector2[]
+				{
+					drawStart,
+					Vector2.Lerp(drawStart, drawEnd, 0.2f),
+					Vector2.Lerp(drawStart, drawEnd, 0.4f),
+					Vector2.Lerp(drawStart, drawEnd, 0.6f),
+					Vector2.Lerp(drawStart, drawEnd, 0.8f),
+					drawEnd
+				};
+				npc.Infernum().OptionalPrimitiveDrawer.Draw(drawPositions, -Main.screenPosition, 70);
 			}
 
 			Texture2D texture = Main.npcTexture[npc.type];

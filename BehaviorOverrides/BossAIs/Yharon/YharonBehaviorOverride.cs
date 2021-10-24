@@ -217,13 +217,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public static readonly YharonAttackType[] Subphase8Pattern = new YharonAttackType[]
         {
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.VortexOfFlame,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.InfernadoAndFireShotgunBreath,
-            YharonAttackType.SplittingMeteors,
-            YharonAttackType.HeatFlash,
-            YharonAttackType.InfernadoAndFireShotgunBreath,
-            YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
@@ -233,15 +226,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
             YharonAttackType.HeatFlash,
+            YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.VortexOfFlame,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.SplittingMeteors,
             YharonAttackType.VortexOfFlame,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.VortexOfFlame,
             YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.HeatFlash,
+            YharonAttackType.SplittingMeteors,
         };
 
         public static readonly YharonAttackType[] Subphase9Pattern = new YharonAttackType[]

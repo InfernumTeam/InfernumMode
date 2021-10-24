@@ -35,6 +35,7 @@ using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Magic;
+using CalamityMod.Projectiles.Summon;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -47,20 +48,15 @@ namespace InfernumMode.GlobalInstances
         public const int TotalExtraAISlots = 100;
 
         // I'll be fucking damned if this isn't enough
-        internal float[] ExtraAI = new float[TotalExtraAISlots];
-        internal Vector2 angleTarget = default;
-        internal Rectangle arenaRectangle = default;
-        internal bool canTelegraph = false;
+        public float[] ExtraAI = new float[TotalExtraAISlots];
+        public Vector2 angleTarget = default;
+        public Rectangle arenaRectangle = default;
+        public bool canTelegraph = false;
+        public PrimitiveTrailCopy OptionalPrimitiveDrawer;
 
         public static int Cryogen = -1;
         public static int AstrumAureus = -1;
 
-        #endregion
-
-        #region Helper Properties
-
-        public static bool IsDoGAlive => NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()) ||
-                                         NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHeadS>());
         #endregion
 
         #region Reset Effects
@@ -142,6 +138,8 @@ namespace InfernumMode.GlobalInstances
             angleTarget = default;
             for (int i = 0; i < ExtraAI.Length; i++)
                 ExtraAI[i] = 0f;
+
+            OptionalPrimitiveDrawer = null;
 
             if (InfernumMode.CanUseCustomAIs)
             {
@@ -401,7 +399,14 @@ namespace InfernumMode.GlobalInstances
                 damage = (int)(damage * 0.3);
 
             if ((npc.type == NPCID.Spazmatism || npc.type == NPCID.Retinazer) && projectile.minion)
-                damage = (int)(damage * 1.45);
+            {
+                float damageFactor = 1.45f;
+                if (projectile.type == ModContent.ProjectileType<MountedScannerLaser>())
+                    damageFactor = 0.85f;
+                if (projectile.type == ModContent.ProjectileType<DormantBrimseekerBab>())
+                    damageFactor = 1.3f;
+                damage = (int)(damage * damageFactor);
+            }
 
             bool skeletronPrime = npc.type == NPCID.SkeletronPrime || npc.type == NPCID.PrimeCannon || npc.type == NPCID.PrimeSaw || npc.type == NPCID.PrimeVice || npc.type == NPCID.PrimeLaser;
             if (skeletronPrime && (projectile.type == ModContent.ProjectileType<UltimusCleaverDust>() || projectile.type == ModContent.ProjectileType<GacruxianHome>()))

@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (GeyserHeight < 2f)
                 GeyserHeight = 2f;
 
-            if (Time > 55f)
+            if (Time > 35f)
                 GeyserHeight = MathHelper.Lerp(GeyserHeight, GeyserHeight * 1.45f, 0.127f) + 2f;
             else
                 projectile.timeLeft++;
@@ -63,16 +63,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             float _ = 0f;
             float width = WidthFunction(0.6f);
-            Vector2 start = projectile.Center;
+            Vector2 start = projectile.Center - Vector2.UnitY * GeyserHeight * 0.15f;
             Vector2 end = projectile.Center - Vector2.UnitY * GeyserHeight * 0.7f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            if (Time < 55f)
+            if (Time < 35f)
 			{
-                float telegraphFade = Utils.InverseLerp(0f, 8f, Time, true) * Utils.InverseLerp(55f, 45f, Time, true);
+                float telegraphFade = Utils.InverseLerp(0f, 8f, Time, true) * Utils.InverseLerp(35f, 25f, Time, true);
                 float telegraphWidth = telegraphFade * 4f;
                 Color telegraphColor = Color.Lerp(Color.Purple, Color.DarkRed, 0.375f) * telegraphFade;
                 Vector2 start = projectile.Center - Vector2.UnitY * 2000f;
@@ -88,12 +88,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             GameShaders.Misc["Infernum:WoFGeyserTexture"].SetShaderTexture(ModContent.GetTexture("Terraria/Misc/Perlin"));
 
             List<Vector2> points = new List<Vector2>();
-            for (int i = 0; i <= 8; i++)
-                points.Add(Vector2.Lerp(projectile.Center, projectile.Center - Vector2.UnitY * GeyserHeight, i / 8f));
-            LavaDrawer.Draw(new BezierCurveCopy(points.ToArray()).GetPoints(20), Vector2.UnitX * 10f - Main.screenPosition, 35);
+            for (int i = 0; i < 25; i++)
+                points.Add(Vector2.Lerp(projectile.Center, projectile.Center - Vector2.UnitY * GeyserHeight, i / 24f));
+            LavaDrawer.Draw(points, Vector2.UnitX * 10f - Main.screenPosition, 35);
 
             GameShaders.Misc["Infernum:WoFGeyserTexture"].UseSaturation(1f);
-            LavaDrawer.Draw(new BezierCurveCopy(points.ToArray()).GetPoints(20), Vector2.UnitX * -10f - Main.screenPosition, 35);
+            LavaDrawer.Draw(points, Vector2.UnitX * -10f - Main.screenPosition, 35);
 
             return false;
         }

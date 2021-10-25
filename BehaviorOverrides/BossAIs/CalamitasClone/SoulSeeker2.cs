@@ -59,10 +59,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 idealRotation = npc.AngleTo(Target.Center);
 
                 AttackTimer++;
-                if (AttackTimer % 80f == 79f)
+                if (AttackTimer % 38f == 37f)
                 {
                     int dartDamage = shouldBeBuffed ? 350 : 150;
-                    Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * (shouldBeBuffed ? 31f : 24f);
+                    Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 15f) * (shouldBeBuffed ? 31f : 24f);
                     int dart = Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f);
                     if (Main.projectile.IndexInRange(dart))
                     {

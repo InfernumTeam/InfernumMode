@@ -55,6 +55,8 @@ namespace InfernumMode.GlobalInstances
             [NPCID.TheDestroyer] = 111000,
             [ModContent.NPCType<BrimstoneElemental>()] = 51515,
             [ModContent.NPCType<CalamitasRun3>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 444444 : 82800,
+            [ModContent.NPCType<CalamitasRun>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 92000 : 18000,
+            [ModContent.NPCType<CalamitasRun2>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 77000 : 13000,
             [ModContent.NPCType<Leviathan>()] = 103103,
             [ModContent.NPCType<Siren>()] = 39250,
             [ModContent.NPCType<AureusSpawn>()] = 25000,

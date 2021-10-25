@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             DisplayName.SetDefault("Brimstone Flame");
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 34;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 24;
         }
 
         public override void SetDefaults()
@@ -99,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(projectile.velocity.Length() / 13f);
             GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"));
-            FireDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 32);
+            FireDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 26);
             return false;
         }
     }

@@ -2,8 +2,6 @@
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Items.Placeables.Banners;
-using CalamityMod.NPCs;
-using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -81,6 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public override bool PreAI(NPC npc)
         {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
 
@@ -110,23 +109,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             switch ((GreatSandSharkAttackState)(int)attackState)
             {
                 case GreatSandSharkAttackState.SwimSandRush:
-                    DoAttack_SwimSandRush(npc, target);
+                    DoAttack_SwimSandRush(npc, target, lifeRatio);
                     break;
             }
 
             return false;
         }
 
-        public static void DoAttack_SwimSandRush(NPC npc, Player target)
+        public static void DoAttack_SwimSandRush(NPC npc, Player target, float lifeRatio)
         {
             bool inTiles = Collision.SolidCollision(npc.Center - Vector2.One * 36f, 72, 72);
             bool canCharge = inTiles && npc.WithinRange(target.Center, 750f);
-            float swimAcceleration = 0.9f;
-            float chargeSpeed = npc.Distance(target.Center) * 0.02f + 23f;
+            float swimAcceleration = MathHelper.Lerp(0.85f, 1.05f, 1f - lifeRatio);
+            float chargeSpeed = npc.Distance(target.Center) * 0.02f + MathHelper.Lerp(22f, 25.5f, 1f - lifeRatio);
 
             ref float chargingFlag = ref npc.Infernum().ExtraAI[0];
             ref float chargeCountdown = ref npc.Infernum().ExtraAI[1];
             ref float chargeInterpolantTimer = ref npc.Infernum().ExtraAI[2];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[3];
 
             if (!canCharge && chargeCountdown <= 0f)
             {
@@ -154,17 +154,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 {
                     chargeCountdown = 35f;
                     chargeInterpolantTimer = 1f;
+                    chargeCounter++;
 
+                    // Release a radial spread of sand. There is a lot, but is is slow, and is supposed to be maneuvered through.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 36; i++)
                         {
-                            Vector2 sandVelocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 8f;
+                            Vector2 sandVelocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 6f;
                             int sand = Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandBlast>(), 155, 0f);
                             if (Main.projectile.IndexInRange(sand))
                                 Main.projectile[sand].tileCollide = false;
                         }
                     }
+
+                    // Roar.
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GreatSandSharkRoar"), npc.Center);
 
                     npc.netUpdate = true;
                     chargingFlag = 1f;

@@ -36,6 +36,7 @@ using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Magic;
 using CalamityMod.Projectiles.Summon;
+using CalamityMod.NPCs.GreatSandShark;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -620,6 +621,8 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.KingSlime)
                 return false;
             if (npc.type == NPCID.SkeletronHand)
+                return false;
+            if (npc.type == ModContent.NPCType<GreatSandShark>())
                 return false;
             if (npc.type == NPCID.AncientCultistSquidhead)
                 return false;

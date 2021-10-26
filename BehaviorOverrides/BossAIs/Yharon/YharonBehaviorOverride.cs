@@ -292,6 +292,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         #region AI
 
+        private bool berserkChargeMode = false;
         public override bool PreAI(NPC npc)
         {
             // Fuck you and your reactive DR
@@ -465,7 +466,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             float flameVortexSpawnDelay = 60f;
 
             bool phase2 = npc.Infernum().ExtraAI[2] == 1f;
-            bool berserkChargeMode = phase2 && lifeRatio < 0.3f && lifeRatio >= 0.05f;
+            if (!berserkChargeMode)
+                berserkChargeMode = phase2 && lifeRatio < 0.3f && lifeRatio >= 0.05f && attackType != (float)YharonAttackType.PhoenixSupercharge;
+            if (berserkChargeMode)
+                berserkChargeMode = lifeRatio >= 0.05f;
 
             Vector2 offsetCenter = npc.SafeDirectionTo(player.Center) * (npc.width * 0.5f + 10) + npc.Center;
             Vector2 mouthPosition = new Vector2(offsetCenter.X + npc.direction * 60f, offsetCenter.Y - 15);

@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             npc.defense = npc.defDefense;
 
             // Don't allow further damage to happen when below 65% life if any arms remain.
-            npc.dontTakeDamage = lifeRatio < 0.65f && AnyArms;
+            npc.dontTakeDamage = lifeRatio < 0.8f && AnyArms;
 
             if (!target.active || target.dead)
             {
@@ -185,12 +185,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             int shootRate = AnyArms ? 125 : 45;
             int shootCount = AnyArms ? 4 : 5;
-            int spikesPerBurst = AnyArms ? 7 : 16;
+            int spikesPerBurst = AnyArms ? 7 : 23;
             float hoverSpeed = AnyArms ? 15f : 36f;
             float wrappedTime = attackTimer % shootRate;
 
             Vector2 destination = target.Center - Vector2.UnitY * (AnyArms ? 510f : 435f);
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 37.5f);
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 45f);
             npc.rotation = npc.velocity.X * 0.04f;
 
             // Open the mouth a little bit before shooting.
@@ -316,7 +316,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             ref float laserRayRotation = ref npc.Infernum().ExtraAI[0];
 
-            float angularOffset = MathHelper.ToRadians(54f);
+            float angularOffset = MathHelper.ToRadians(46f);
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
             float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.InverseLerp(45f, 90f, attackTimer, true));
             npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), movementSpeed)) / 8f;

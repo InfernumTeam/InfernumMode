@@ -7,6 +7,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -243,14 +244,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 530f;
             float hoverSpeed = 15f;
-            float initialFlameSpeed = 7.5f;
+            float initialFlameSpeed = 10f;
             int flameReleaseRate = 9;
             int flameReleaseTime = 180;
             if (lifeRatio < Phase2LifeRatio)
             {
                 attackCycleCount--;
                 hoverHorizontalOffset -= 70f;
-                initialFlameSpeed += 7.5f;
+                initialFlameSpeed += 5f;
                 flameReleaseRate -= 2;
             }
 
@@ -314,13 +315,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             int attackDelay = 90;
             int attackTime = 480;
-            int meteorShootRate = 12;
-            float meteorShootSpeed = 9f;
+            int meteorShootRate = 9;
+            float meteorShootSpeed = 10.5f;
             float hoverSpeed = 15f;
             if (shouldBeBuffed)
             {
                 attackTime += 60;
-                meteorShootRate -= 4;
+                meteorShootRate -= 3;
                 meteorShootSpeed += 4f;
                 hoverSpeed += 9f;
             }
@@ -397,7 +398,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lavaShootRate == lavaShootRate - 1f)
             {
                 int lavaDamage = shouldBeBuffed ? 325 : 150;
-                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f + target.velocity.X * 35f, 40f);
+                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f + target.velocity.X * 42f, 40f);
                 if (WorldUtils.Find(lavaSpawnPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(1500), new Conditions.IsSolid()), out Point result))
                 {
                     lavaSpawnPosition = result.ToWorldCoordinates();
@@ -445,7 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Create lightning from the ground. This has a delay at the start and end of the attack.
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lightningShootRate == lightningShootRate - 1f)
             {
-                Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f + target.velocity.X * 32f, 40f);
+                Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f + target.velocity.X * 42f, 40f);
                 Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneLightningTelegraph>(), 0, 0f);
             }
 
@@ -475,6 +476,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 fireballReleaseRate /= 2;
                 hoverSpeed += 9f;
                 fireballSpeed += 8.5f;
+            }
+
+            if (Math.Abs(Vector2.Dot(target.velocity, Vector2.UnitX)) > 0.91f)
+            {
+                hoverSpeed += 8f;
+                fireballReleaseRate = (int)(fireballReleaseRate * 0.65f);
+                fireballSpeed *= 1.4f;
             }
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
@@ -526,15 +534,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         public static void DoBehavior_DiagonalCharge(NPC npc, Player target, float lifeRatio, bool shouldBeBuffed, ref float attackTimer)
         {
             float chargeOffset = 395f;
-            float redirectSpeed = 24f;
-            float chargeSpeed = MathHelper.Lerp(22f, 26f, 1f - lifeRatio);
+            float redirectSpeed = 29f;
+            float chargeSpeed = MathHelper.Lerp(25f, 30.5f, 1f - lifeRatio);
             int chargeTime = 50;
             int chargeSlowdownTime = 15;
             int chargeCount = 5;
 
             if (shouldBeBuffed)
             {
-                chargeSpeed *= 1.4f;
+                chargeSpeed *= 1.5f;
                 redirectSpeed += 7f;
             }
 

@@ -1125,6 +1125,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         {
                             float angle = MathHelper.TwoPi * i / totalFlameVortices;
                             Utilities.NewProjectileBetter(player.Center + angle.ToRotationVector2() * 1780f, Vector2.Zero, ModContent.ProjectileType<VortexOfFlame>(), 800, 0f, Main.myPlayer);
+                            int telegraph = Utilities.NewProjectileBetter(player.Center, angle.ToRotationVector2(), ModContent.ProjectileType<VortexTelegraphBeam>(), 0, 0f, Main.myPlayer);
+                            if (Main.projectile.IndexInRange(telegraph))
+                            {
+                                Main.projectile[telegraph].velocity = angle.ToRotationVector2();
+                                Main.projectile[telegraph].ai[1] = 1780f;
+							}
                         }
                     }
 

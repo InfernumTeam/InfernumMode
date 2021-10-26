@@ -289,10 +289,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         // Current subphase = npc.Infernum().ExtraAI[12]
         // Teleport dash count = npc.Infernum().ExtraAI[13]
         // Attack transition DR countdown = npc.Infernum().ExtraAI[14]
+        // Berserk charges = npc.Infernum().ExtraAI[15]
 
         #region AI
 
-        private bool berserkChargeMode = false;
         public override bool PreAI(NPC npc)
         {
             // Fuck you and your reactive DR
@@ -338,6 +338,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             ref float currentSubphase = ref npc.Infernum().ExtraAI[12];
             ref float teleportChargeCounter = ref npc.Infernum().ExtraAI[13];
             ref float transitionDRCountdown = ref npc.Infernum().ExtraAI[14];
+            ref float berserkCharges = ref npc.Infernum().ExtraAI[15];
 
             // Go to phase 2 if at 10%.
             if (npc.Infernum().ExtraAI[2] == 0f && lifeRatio < 0.1f)
@@ -466,10 +467,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             float flameVortexSpawnDelay = 60f;
 
             bool phase2 = npc.Infernum().ExtraAI[2] == 1f;
+            bool berserkChargeMode = berserkCharges == 1f;
             if (!berserkChargeMode)
+            {
                 berserkChargeMode = phase2 && lifeRatio < 0.3f && lifeRatio >= 0.05f && attackType != (float)YharonAttackType.PhoenixSupercharge;
+                berserkCharges = berserkChargeMode ? 1f : 0f;
+            }
             if (berserkChargeMode)
+            {
                 berserkChargeMode = lifeRatio >= 0.05f;
+                berserkCharges = berserkChargeMode ? 1f : 0f;
+            }
 
             Vector2 offsetCenter = npc.SafeDirectionTo(player.Center) * (npc.width * 0.5f + 10) + npc.Center;
             Vector2 mouthPosition = new Vector2(offsetCenter.X + npc.direction * 60f, offsetCenter.Y - 15);

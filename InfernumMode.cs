@@ -58,9 +58,9 @@ namespace InfernumMode
 			{
                 CryogenBehaviorOverride.SetupCustomBossIcon();
 
-                Ref<Effect> distortionShader = new Ref<Effect>(GetEffect("Effects/DistortionEffect"));
-                Filters.Scene["Infernum:DistortionShader"] = new Filter(new ScreenShaderData(distortionShader, "DistortionPass"), EffectPriority.High);
-                Filters.Scene["Infernum:DistortionShader"].Load();
+                Ref<Effect> portalShader = new Ref<Effect>(GetEffect("Effects/DoGPortalShader"));
+                Filters.Scene["Infernum:DoGPortal"] = new Filter(new ScreenShaderData(portalShader, "ScreenPass"), EffectPriority.High);
+                Filters.Scene["Infernum:DoGPortal"].Load();
 
                 Ref<Effect> gradientShader = new Ref<Effect>(GetEffect("Effects/GradientWingShader"));
                 GameShaders.Misc["Infernum:GradientWingShader"] = new MiscShaderData(gradientShader, "GradientPass");

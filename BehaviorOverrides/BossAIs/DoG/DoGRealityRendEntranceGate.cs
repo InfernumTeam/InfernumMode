@@ -32,18 +32,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             if (projectile.localAI[1] == 0f)
             {
-                Filters.Scene.Activate("Infernum:DistortionShader", projectile.Center).GetShader().UseColor(10, 2, 10).UseTargetPosition(projectile.Center);
+                Filters.Scene.Activate("Infernum:DoGPortal", projectile.Center).GetShader().UseTargetPosition(projectile.Center);
                 projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
                 projectile.localAI[1] = 1f;
             }
 
             Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
 
-            float fade = Utils.InverseLerp(280, 230, projectile.timeLeft, true);
-            if (projectile.timeLeft <= 30)
-                fade = Utils.InverseLerp(0, 30, projectile.timeLeft, true);
+            float fade = Utils.InverseLerp(280f, 235f, projectile.timeLeft, true);
+            if (projectile.timeLeft <= 45f)
+                fade = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
 
-            Filters.Scene["Infernum:DistortionShader"].GetShader().UseProgress(0.42f * fade).UseOpacity(720f * fade);
+            if (Main.netMode != NetmodeID.Server)
+            {
+                Filters.Scene["Infernum:DoGPortal"].GetShader().UseProgress(fade * 1.1f);
+                Filters.Scene["Infernum:DoGPortal"].GetShader().UseColor(Color.Cyan);
+                Filters.Scene["Infernum:DoGPortal"].GetShader().UseSecondaryColor(Color.Fuchsia);
+                Filters.Scene["Infernum:DoGPortal"].GetShader().UseImage(ModContent.GetTexture("InfernumMode/ExtraTextures/VoronoiShapes"));
+            }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && Time > 150f && Time % 20f == 19f)
                 Utilities.NewProjectileBetter(projectile.Center, Main.rand.NextVector2CircularEdge(18f, 18f), ModContent.ProjectileType<DoGFire>(), 300, 0f);
@@ -112,8 +118,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(projectile.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
-                if (Filters.Scene["Infernum:DistortionShader"].IsActive())
-                    Filters.Scene["Infernum:DistortionShader"].Deactivate();
+                if (Filters.Scene["Infernum:DoGPortal"].IsActive())
+                    Filters.Scene["Infernum:DoGPortal"].Deactivate();
 
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {

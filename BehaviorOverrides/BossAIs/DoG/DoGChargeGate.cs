@@ -39,22 +39,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             if (projectile.localAI[1] == 0f)
             {
-                Filters.Scene.Activate("Infernum:DistortionShader", projectile.Center).GetShader().UseColor(10, 2, 10).UseTargetPosition(projectile.Center);
+                Filters.Scene.Activate("Infernum:DoGPortal", projectile.Center).GetShader().UseColor(10, 2, 10).UseTargetPosition(projectile.Center);
                 projectile.localAI[1] = 1f;
             }
-            float fade = Utils.InverseLerp(280, 230, projectile.timeLeft, true);
-            if (projectile.timeLeft <= 30)
-                fade = Utils.InverseLerp(0, 50, projectile.timeLeft, true);
+            float fade = Utils.InverseLerp(280f, 235f, projectile.timeLeft, true);
+            if (projectile.timeLeft <= 45f)
+                fade = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
 
-            Filters.Scene["Infernum:DistortionShader"].GetShader().UseProgress(0.42f * fade).UseOpacity(480f * fade);
+            Filters.Scene["Infernum:DoGPortal"].GetShader().UseProgress(fade);
+            Filters.Scene["Infernum:DoGPortal"].GetShader().UseColor(Color.Cyan);
+            Filters.Scene["Infernum:DoGPortal"].GetShader().UseSecondaryColor(Color.Fuchsia);
 
-            for (int i = 0; i < 10; i++)
-			{
-                Vector2 offsetDirection = Main.rand.NextVector2Unit();
-                Dust cosmicFire = Dust.NewDustPerfect(projectile.Center + offsetDirection * Main.rand.NextFloat(20f, 300f), 173);
-                cosmicFire.velocity = offsetDirection.RotatedBy(MathHelper.PiOver2) * 4f;
-                cosmicFire.scale = 1.3f + Utils.InverseLerp(20f, 300f, projectile.Distance(cosmicFire.position)) * 0.45f;
-                cosmicFire.noGravity = true;
+            if (Main.netMode != NetmodeID.Server)
+            {
+                Filters.Scene["Infernum:DoGPortal"].GetShader().UseProgress(fade);
+                Filters.Scene["Infernum:DoGPortal"].GetShader().UseColor(Color.Cyan);
+                Filters.Scene["Infernum:DoGPortal"].GetShader().UseSecondaryColor(Color.Fuchsia);
+                Filters.Scene["Infernum:DoGPortal"].GetShader().UseImage(ModContent.GetTexture("InfernumMode/ExtraTextures/VoronoiShapes"));
             }
 
             TelegraphDelay++;
@@ -96,8 +97,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override void Kill(int timeLeft)
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient && Filters.Scene["Infernum:DistortionShader"].IsActive())
-                Filters.Scene["Infernum:DistortionShader"].Deactivate();
+            if (Main.netMode != NetmodeID.MultiplayerClient && Filters.Scene["Infernum:DoGPortal"].IsActive())
+                Filters.Scene["Infernum:DoGPortal"].Deactivate();
         }   
     }
 }

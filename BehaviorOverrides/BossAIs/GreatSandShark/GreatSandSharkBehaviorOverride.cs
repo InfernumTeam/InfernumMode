@@ -109,23 +109,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.damage = npc.defDamage;
             npc.timeLeft = 3600;
 
+            int desertTextureVariant = 0;
+            if (target.ZoneDesert || target.ZoneUndergroundDesert)
+            {
+                if (target.ZoneCorrupt)
+                    desertTextureVariant = 1;
+                if (target.ZoneCrimson)
+                    desertTextureVariant = 2;
+                if (target.ZoneHoly)
+                    desertTextureVariant = 3;
+                if (target.Calamity().ZoneAstral)
+                    desertTextureVariant = 4;
+            }
+
             switch ((GreatSandSharkAttackState)(int)attackState)
             {
                 case GreatSandSharkAttackState.SandSwimChargeRush:
-                    DoAttack_SandSwimChargeRush(npc, target, lifeRatio);
+                    DoAttack_SandSwimChargeRush(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case GreatSandSharkAttackState.DustDevils:
-                    DoAttack_DustDevils(npc, target, lifeRatio, ref attackTimer);
+                    DoAttack_DustDevils(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
                     break;
             }
+            attackTimer++;
 
             return false;
         }
 
-        public static void DoAttack_SandSwimChargeRush(NPC npc, Player target, float lifeRatio)
+        public static void DoAttack_SandSwimChargeRush(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             bool inTiles = Collision.SolidCollision(npc.Center - Vector2.One * 36f, 72, 72);
-            bool canCharge = inTiles && npc.WithinRange(target.Center, 750f);
+            bool canCharge = inTiles && npc.WithinRange(target.Center, 750f) && attackTimer >= 60f;
             float swimAcceleration = MathHelper.Lerp(0.85f, 1.05f, 1f - lifeRatio);
             float chargeSpeed = npc.Distance(target.Center) * 0.02f + MathHelper.Lerp(22f, 25.5f, 1f - lifeRatio);
             int chargeCount = 4;
@@ -187,9 +201,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 else if (npc.velocity.Y < 15f)
                     npc.velocity.Y += 0.3f;
 
-                if (chargeInterpolantTimer > 0f && chargeInterpolantTimer < 10f)
+                if (chargeInterpolantTimer > 0f && chargeInterpolantTimer < 15f)
                 {
-                    npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection * chargeSpeed, 0.2f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection * chargeSpeed, chargeInterpolantTimer / 15f);
                     chargeInterpolantTimer++;
                 }
 
@@ -201,19 +215,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.rotation = MathHelper.Clamp(npc.velocity.Y * npc.spriteDirection * 0.1f, -0.15f, 0.15f);
         }
 
-        public static void DoAttack_DustDevils(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        public static void DoAttack_DustDevils(NPC npc, Player target, int desertTextureVariant, float lifeRatio, ref float attackTimer)
         {
-            int dustDevilReleaseRate = (int)MathHelper.Lerp(11f, 8f, 1f - lifeRatio);
+            int dustDevilReleaseRate = (int)MathHelper.Lerp(10f, 7f, 1f - lifeRatio);
+            float swimAcceleration = MathHelper.Lerp(0.4f, 0.65f, 1f - lifeRatio);
 
             ref float verticalSwimDirection = ref npc.Infernum().ExtraAI[0];
-
+            DefaultJumpMovement(npc, ref target, swimAcceleration, swimAcceleration * 30f, ref verticalSwimDirection);
 
             // Idly release dust devils.
+            if (attackTimer % dustDevilReleaseRate == dustDevilReleaseRate - 1f && attackTimer < 540f)
+			{
+                Vector2 spawnPosition = target.Center + Vector2.UnitY * Main.rand.NextFloatDirection() * 850f;
+                spawnPosition.X += Main.rand.NextBool(2).ToDirectionInt() * 800f;
+                Vector2 shootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 8f;
+                int dustDevil = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<DustDevil>(), 160, 0f);
+
+                if (Main.projectile.IndexInRange(dustDevil))
+                    Main.projectile[dustDevil].ai[1] = desertTextureVariant;
+			}
+
+            if (attackTimer > 620f)
+                SelectNextAttack(npc);
         }
 
         public static void DefaultJumpMovement(NPC npc, ref Player target, float swimAcceleration, float jumpSpeed, ref float verticalSwimDirection)
         {
-            bool inTiles = Collision.SolidCollision(npc.Center - Vector2.One * 36f, 72, 72);
+            bool inTiles = Collision.SolidCollision(npc.Center - Vector2.One * 16f - Vector2.UnitY * 24f, 32, 32);
             bool eligableToCharge = inTiles && !npc.WithinRange(target.Center, 150f) && target.velocity.Y > -2f;
 
             // Rapidly approach the target and attempt to charge at them if eligable.
@@ -261,6 +289,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 if (Math.Abs(npc.velocity.Y) > 6.5f)
                     npc.velocity.Y *= 0.95f;
             }
+
+            // Define rotation and direction.
+            npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
+            npc.rotation = MathHelper.Clamp(npc.velocity.Y * npc.spriteDirection * 0.1f, -0.15f, 0.15f);
         }
 
         public static void SelectNextAttack(NPC npc)
@@ -270,7 +302,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             List<GreatSandSharkAttackState> possibleNextAttacks = new List<GreatSandSharkAttackState>()
             {
                 GreatSandSharkAttackState.SandSwimChargeRush,
-                GreatSandSharkAttackState.DustDevils
+                GreatSandSharkAttackState.DustDevils,
             };
 
             if (possibleNextAttacks.Count > 1)

@@ -97,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     DoAttack_MetalBurst(npc, target, attackTimer, ref frameType);
                     break;
                 case PrimeAttackType.RocketRelease:
-                    DoAttack_RocketRelease(npc, target, attackTimer, ref frameType);
+                    DoAttack_RocketRelease(npc, target, lifeRatio, attackTimer, ref frameType);
                     break;
                 case PrimeAttackType.HoverCharge:
                     DoAttack_HoverCharge(npc, target, lifeRatio, attackTimer, ref frameType);

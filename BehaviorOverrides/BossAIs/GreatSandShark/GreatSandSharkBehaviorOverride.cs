@@ -6,6 +6,8 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -18,7 +20,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
     {
         public enum GreatSandSharkAttackState
         {
-            SwimSandRush
+            SandSwimChargeRush,
+            DustDevils
         }
 
         public override int NPCOverrideType => ModContent.NPCType<GreatSandSharkNPC>();
@@ -108,20 +111,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             switch ((GreatSandSharkAttackState)(int)attackState)
             {
-                case GreatSandSharkAttackState.SwimSandRush:
-                    DoAttack_SwimSandRush(npc, target, lifeRatio);
+                case GreatSandSharkAttackState.SandSwimChargeRush:
+                    DoAttack_SandSwimChargeRush(npc, target, lifeRatio);
+                    break;
+                case GreatSandSharkAttackState.DustDevils:
+                    DoAttack_DustDevils(npc, target, lifeRatio, ref attackTimer);
                     break;
             }
 
             return false;
         }
 
-        public static void DoAttack_SwimSandRush(NPC npc, Player target, float lifeRatio)
+        public static void DoAttack_SandSwimChargeRush(NPC npc, Player target, float lifeRatio)
         {
             bool inTiles = Collision.SolidCollision(npc.Center - Vector2.One * 36f, 72, 72);
             bool canCharge = inTiles && npc.WithinRange(target.Center, 750f);
             float swimAcceleration = MathHelper.Lerp(0.85f, 1.05f, 1f - lifeRatio);
             float chargeSpeed = npc.Distance(target.Center) * 0.02f + MathHelper.Lerp(22f, 25.5f, 1f - lifeRatio);
+            int chargeCount = 4;
 
             ref float chargingFlag = ref npc.Infernum().ExtraAI[0];
             ref float chargeCountdown = ref npc.Infernum().ExtraAI[1];
@@ -144,6 +151,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
                 chargingFlag = 0f;
                 chargeInterpolantTimer = 0f;
+
+                if (chargeCounter > chargeCount)
+                    SelectNextAttack(npc);
             }
             else
             {
@@ -189,6 +199,89 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             // Define rotation and direction.
             npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
             npc.rotation = MathHelper.Clamp(npc.velocity.Y * npc.spriteDirection * 0.1f, -0.15f, 0.15f);
+        }
+
+        public static void DoAttack_DustDevils(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            int dustDevilReleaseRate = (int)MathHelper.Lerp(11f, 8f, 1f - lifeRatio);
+
+            ref float verticalSwimDirection = ref npc.Infernum().ExtraAI[0];
+
+
+            // Idly release dust devils.
+        }
+
+        public static void DefaultJumpMovement(NPC npc, ref Player target, float swimAcceleration, float jumpSpeed, ref float verticalSwimDirection)
+        {
+            bool inTiles = Collision.SolidCollision(npc.Center - Vector2.One * 36f, 72, 72);
+            bool eligableToCharge = inTiles && !npc.WithinRange(target.Center, 150f) && target.velocity.Y > -2f;
+
+            // Rapidly approach the target and attempt to charge at them if eligable.
+            if (eligableToCharge)
+            {
+                // Continuously check for a new target.
+                npc.TargetClosest();
+                target = Main.player[npc.target];
+
+                // Accelerate towards the target.
+                npc.velocity.X = MathHelper.Clamp(npc.velocity.X + npc.direction * swimAcceleration, -15f, 15f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + npc.directionY * swimAcceleration, -10f, 10f);
+
+                Point aheadTilePosition = (npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * npc.Size.Length() * 0.5f + npc.velocity).ToTileCoordinates();
+                Tile aheadTile = CalamityUtils.ParanoidTileRetrieval(aheadTilePosition.X, aheadTilePosition.Y);
+                bool aheadTileIsSolid = aheadTile.nactive();
+
+                // Charge at the target if doing so would lead to exiting tiles and it'd be in the same direction as the current velocity.
+                if (!aheadTileIsSolid && Math.Sign(npc.velocity.X) == npc.direction)
+                {
+                    npc.velocity = npc.SafeDirectionTo(target.Center - Vector2.UnitY * 80f, -Vector2.UnitY) * jumpSpeed;
+                    npc.netUpdate = true;
+                }
+            }
+
+            else
+            {
+                if (inTiles)
+                {
+                    verticalSwimDirection = -1f;
+                    npc.velocity.X += npc.direction * swimAcceleration * 0.7f;
+
+                    // Slow down dramatically if over the horizontal speed limit.
+                    if (Math.Abs(npc.velocity.X) > 10f)
+                        npc.velocity.X *= 0.95f;
+                }
+                else
+                    verticalSwimDirection = 1f;
+
+                if (Math.Abs(npc.velocity.Y) > 6f && Math.Sign(npc.velocity.Y) == verticalSwimDirection)
+                    verticalSwimDirection *= -1f;
+                npc.velocity.Y += verticalSwimDirection * swimAcceleration * 0.4f;
+
+                // Slow down dramatically if over the vertical speed limit.
+                if (Math.Abs(npc.velocity.Y) > 6.5f)
+                    npc.velocity.Y *= 0.95f;
+            }
+        }
+
+        public static void SelectNextAttack(NPC npc)
+		{
+            GreatSandSharkAttackState previousAttackState = (GreatSandSharkAttackState)(int)npc.ai[0];
+
+            List<GreatSandSharkAttackState> possibleNextAttacks = new List<GreatSandSharkAttackState>()
+            {
+                GreatSandSharkAttackState.SandSwimChargeRush,
+                GreatSandSharkAttackState.DustDevils
+            };
+
+            if (possibleNextAttacks.Count > 1)
+                possibleNextAttacks.Remove(previousAttackState);
+
+            npc.ai[0] = (int)Main.rand.Next(possibleNextAttacks);
+            npc.ai[1] = 0f;
+
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+            npc.netUpdate = true;
         }
 
         public override void FindFrame(NPC npc, int frameHeight)

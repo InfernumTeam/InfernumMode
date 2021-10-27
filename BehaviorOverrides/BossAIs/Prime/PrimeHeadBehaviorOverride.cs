@@ -100,7 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     DoAttack_RocketRelease(npc, target, attackTimer, ref frameType);
                     break;
                 case PrimeAttackType.HoverCharge:
-                    DoAttack_HoverCharge(npc, target, attackTimer, ref frameType);
+                    DoAttack_HoverCharge(npc, target, lifeRatio, attackTimer, ref frameType);
                     break;
                 case PrimeAttackType.LaserRay:
                     DoAttack_LaserRay(npc, target, lifeRatio, attackTimer, ref frameType);
@@ -216,7 +216,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 GotoNextAttackState(npc);
         }
 
-        public static void DoAttack_RocketRelease(NPC npc, Player target, float attackTimer, ref float frameType)
+        public static void DoAttack_RocketRelease(NPC npc, Player target, float lifeRatio, float attackTimer, ref float frameType)
         {
             int cycleTime = 36;
             int rocketCountPerCycle = 7;
@@ -240,6 +240,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 3f == 2f)
                 {
                     float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.7f : 1f);
+                    if (!AnyArms)
+                        rocketSpeed += (1f - lifeRatio) * 4f;
                     Vector2 rocketVelocity = Main.rand.NextVector2CircularEdge(rocketSpeed, rocketSpeed);
                     if (rocketVelocity.Y < -1f)
                         rocketVelocity.Y = -1f;
@@ -253,7 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 GotoNextAttackState(npc);
         }
 
-        public static void DoAttack_HoverCharge(NPC npc, Player target, float attackTimer, ref float frameType)
+        public static void DoAttack_HoverCharge(NPC npc, Player target, float lifeRatio, float attackTimer, ref float frameType)
         {
             int chargeCount = 7;
             int hoverTime = AnyArms ? 120 : 60;
@@ -261,6 +263,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             float hoverSpeed = AnyArms ? 14f : 33f;
             float chargeSpeed = AnyArms ? 15f : 22.5f;
             float wrappedTime = attackTimer % (hoverTime + chargeTime);
+
+            if (!AnyArms)
+                chargeSpeed += (1f - lifeRatio) * 6f;
 
             if (wrappedTime < hoverTime - 15f)
             {
@@ -316,7 +321,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             ref float laserRayRotation = ref npc.Infernum().ExtraAI[0];
 
-            float angularOffset = MathHelper.ToRadians(46f);
+            float angularOffset = MathHelper.ToRadians(39f);
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
             float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.InverseLerp(45f, 90f, attackTimer, true));
             npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), movementSpeed)) / 8f;

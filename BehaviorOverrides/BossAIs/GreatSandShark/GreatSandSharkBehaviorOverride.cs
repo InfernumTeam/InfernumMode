@@ -21,7 +21,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public enum GreatSandSharkAttackState
         {
             SandSwimChargeRush,
-            DustDevils
+            DustDevils,
+            ODSandSharkSummon
         }
 
         public override int NPCOverrideType => ModContent.NPCType<GreatSandSharkNPC>();
@@ -43,6 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.defense = 20;
             npc.DR_NERD(0.25f);
             npc.LifeMaxNERB(84720, 84720);
+            npc.lifeMax /= 2;
             npc.aiStyle = -1;
             npc.modNPC.aiType = -1;
             npc.knockBackResist = 0f;
@@ -130,6 +132,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 case GreatSandSharkAttackState.DustDevils:
                     DoAttack_DustDevils(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
                     break;
+                case GreatSandSharkAttackState.ODSandSharkSummon:
+                    DoAttack_ODSandSharkSummon(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
+                    break;
             }
             attackTimer++;
 
@@ -141,7 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             bool inTiles = Collision.SolidCollision(npc.Center - Vector2.One * 36f, 72, 72);
             bool canCharge = inTiles && npc.WithinRange(target.Center, 750f) && attackTimer >= 60f;
             float swimAcceleration = MathHelper.Lerp(0.85f, 1.05f, 1f - lifeRatio);
-            float chargeSpeed = npc.Distance(target.Center) * 0.02f + MathHelper.Lerp(22f, 25.5f, 1f - lifeRatio);
+            float chargeSpeed = npc.Distance(target.Center) * 0.01f + MathHelper.Lerp(18.5f, 21f, 1f - lifeRatio);
             int chargeCount = 4;
 
             ref float chargingFlag = ref npc.Infernum().ExtraAI[0];
@@ -201,9 +206,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 else if (npc.velocity.Y < 15f)
                     npc.velocity.Y += 0.3f;
 
-                if (chargeInterpolantTimer > 0f && chargeInterpolantTimer < 15f)
+                if (chargeInterpolantTimer > 0f && chargeInterpolantTimer < 25f)
                 {
-                    npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection * chargeSpeed, chargeInterpolantTimer / 15f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection * chargeSpeed, chargeInterpolantTimer / 45f);
                     chargeInterpolantTimer++;
                 }
 
@@ -236,6 +241,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 			}
 
             if (attackTimer > 620f)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoAttack_ODSandSharkSummon(NPC npc, Player target, int desertTextureVariant, float lifeRatio, ref float attackTimer)
+        {
+            int sharkSummonRate = (int)MathHelper.Lerp(30f, 16f, 1f - lifeRatio);
+            float swimAcceleration = 0.4f;
+
+            ref float verticalSwimDirection = ref npc.Infernum().ExtraAI[0];
+            DefaultJumpMovement(npc, ref target, swimAcceleration, swimAcceleration * 30f, ref verticalSwimDirection);
+
+            // Summon sand sharks.
+            if (attackTimer % sharkSummonRate == sharkSummonRate - 1f && attackTimer < 120f)
+            {
+                float spawnOffsetFactor = MathHelper.Lerp(100f, 540f, attackTimer / 120f);
+                for (int i = -1; i <= 1; i += 2)
+				{
+                    int shark = NPC.NewNPC((int)(npc.Center.X + spawnOffsetFactor * i), (int)npc.Center.Y, ModContent.NPCType<FlyingSandShark>());
+                    if (Main.npc.IndexInRange(shark))
+                        Main.npc[shark].ai[2] = desertTextureVariant;
+				}
+            }
+
+            if (attackTimer > 150f)
                 SelectNextAttack(npc);
         }
 
@@ -296,14 +325,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         }
 
         public static void SelectNextAttack(NPC npc)
-		{
+        {
+            Player target = Main.player[npc.target];
             GreatSandSharkAttackState previousAttackState = (GreatSandSharkAttackState)(int)npc.ai[0];
 
             List<GreatSandSharkAttackState> possibleNextAttacks = new List<GreatSandSharkAttackState>()
             {
                 GreatSandSharkAttackState.SandSwimChargeRush,
-                GreatSandSharkAttackState.DustDevils,
+                GreatSandSharkAttackState.DustDevils
             };
+            possibleNextAttacks.AddWithCondition(GreatSandSharkAttackState.ODSandSharkSummon, npc.WithinRange(target.Center, 750f));
 
             if (possibleNextAttacks.Count > 1)
                 possibleNextAttacks.Remove(previousAttackState);

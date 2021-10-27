@@ -22,6 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             projectile.width = projectile.height = 38;
             projectile.alpha = 255;
             projectile.penetrate = -1;
+            projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
         }

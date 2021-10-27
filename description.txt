@@ -7,3 +7,4 @@ Possible plans to add custom music, items, and exclusive bosses in the future...
 Some bosses may gain (unnecessary) extra phases for maximum "It's not over yet!" energy.
 
 NOTE: As of now, only Pre-HM (along with some HM) boss AIs are included, and bosses may be subject to rebalancing.
+Furthermore, the mod is not supported for multiplayer at this time.

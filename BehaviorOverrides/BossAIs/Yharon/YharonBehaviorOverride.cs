@@ -470,13 +470,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             bool berserkChargeMode = berserkCharges == 1f;
             if (!berserkChargeMode)
             {
-                berserkChargeMode = phase2 && lifeRatio < 0.3f && lifeRatio >= 0.05f && attackType != (float)YharonAttackType.PhoenixSupercharge;
-                berserkCharges = berserkChargeMode ? 1f : 0f;
+                berserkChargeMode = phase2 && lifeRatio < 0.3f && lifeRatio >= 0.05f && attackType != (float)YharonAttackType.PhoenixSupercharge && invincibilityTime <= 0f;
+                berserkCharges = berserkChargeMode.ToInt();
             }
             if (berserkChargeMode)
             {
                 berserkChargeMode = lifeRatio >= 0.05f;
-                berserkCharges = berserkChargeMode ? 1f : 0f;
+                berserkCharges = berserkChargeMode.ToInt();
             }
 
             Vector2 offsetCenter = npc.SafeDirectionTo(player.Center) * (npc.width * 0.5f + 10) + npc.Center;

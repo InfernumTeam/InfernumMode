@@ -108,7 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
 				npc.dontTakeDamage = false;
 
-				if (Collision.SolidCollision(npc.position, npc.width, npc.height) || AttackTimer >= 360f)
+				if (AttackTimer >= 360f)
 				{
 					if (npc.DeathSound != null)
 						Main.PlaySound(npc.DeathSound, npc.position);

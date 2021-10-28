@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
+using Terraria.Utilities;
 using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
@@ -23,12 +23,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             SandSwimChargeRush,
             DustDevils,
             ODSandSharkSummon,
-            FastCharges
+            FastCharges,
+            DuststormBurst
         }
 
         public override int NPCOverrideType => ModContent.NPCType<GreatSandSharkNPC>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
+
+        public const float Phase2LifeRatio = 0.6f;
 
         public override void SetDefaults(NPC npc)
         {
@@ -138,6 +141,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 case GreatSandSharkAttackState.FastCharges:
                     DoAttack_FastCharges(npc, target, lifeRatio, ref attackTimer);
                     break;
+                case GreatSandSharkAttackState.DuststormBurst:
+                    DoAttack_DuststormBurst(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
+                    break;
             }
             attackTimer++;
 
@@ -176,7 +182,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 chargeInterpolantTimer = 0f;
                 chargeDirectionRotation = -1000f;
 
-                if (chargeCounter > chargeCount)
+                if (chargeCounter >= chargeCount)
                     SelectNextAttack(npc);
             }
             else
@@ -279,8 +285,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int hoverTime = 28;
             float hoverSpeed = 28f;
             int chargeTime = 35;
-            float chargeSpeed = 22f;
-            int chargeCount = 4;
+            float chargeSpeed = MathHelper.Lerp(21.5f, 25.5f, 1f - lifeRatio);
+            int chargeCount = 5;
             float idealRotation = npc.AngleTo(target.Center);
 
             ref float horizontalChargeOffset = ref npc.Infernum().ExtraAI[0];
@@ -371,12 +377,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     attackTimer = 0f;
                     chargeState = 0f;
 
-                    if (chargeCounter > chargeCount)
+                    if (chargeCounter >= chargeCount)
                         SelectNextAttack(npc);
 
                     npc.netUpdate = true;
                 }
 			}
+        }
+
+        public static void DoAttack_DuststormBurst(NPC npc, Player target, int desertTextureVariant, float lifeRatio, ref float attackTimer)
+        {
+            int dustCreationCount = (int)MathHelper.Lerp(25f, 40f, 1f - lifeRatio);
+            float swimAcceleration = 1.7f;
+
+            ref float verticalSwimDirection = ref npc.Infernum().ExtraAI[0];
+            DefaultJumpMovement(npc, ref target, swimAcceleration, swimAcceleration * 10f, ref verticalSwimDirection);
+
+            // Create a burst of sand dust.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 120f)
+            {
+                for (int i = 0; i < dustCreationCount; i++)
+                {
+                    Vector2 shootVelocity = Main.rand.NextVector2Circular(15f, 35f);
+                    int dustDevil = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<DustCloud>(), 160, 0f);
+
+                    if (Main.projectile.IndexInRange(dustDevil))
+                        Main.projectile[dustDevil].ai[1] = desertTextureVariant;
+                }
+            }
+
+            if (attackTimer > 170f)
+                SelectNextAttack(npc);
         }
 
         public static void DefaultJumpMovement(NPC npc, ref Player target, float swimAcceleration, float jumpSpeed, ref float verticalSwimDirection)
@@ -438,20 +469,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public static void SelectNextAttack(NPC npc)
         {
             Player target = Main.player[npc.target];
+            float lifeRatio = npc.life / (float)npc.lifeMax;
             GreatSandSharkAttackState previousAttackState = (GreatSandSharkAttackState)(int)npc.ai[0];
 
-            List<GreatSandSharkAttackState> possibleNextAttacks = new List<GreatSandSharkAttackState>()
-            {
-                GreatSandSharkAttackState.SandSwimChargeRush,
-                GreatSandSharkAttackState.DustDevils,
-                GreatSandSharkAttackState.FastCharges
-            };
-            possibleNextAttacks.AddWithCondition(GreatSandSharkAttackState.ODSandSharkSummon, npc.WithinRange(target.Center, 750f));
+            WeightedRandom<GreatSandSharkAttackState> attackSelector = new WeightedRandom<GreatSandSharkAttackState>(Main.rand);
+            attackSelector.Add(GreatSandSharkAttackState.SandSwimChargeRush);
+            attackSelector.Add(GreatSandSharkAttackState.DustDevils);
+            attackSelector.Add(GreatSandSharkAttackState.FastCharges);
 
-            if (possibleNextAttacks.Count > 1)
-                possibleNextAttacks.Remove(previousAttackState);
+            if (npc.WithinRange(target.Center, 850f))
+                attackSelector.Add(GreatSandSharkAttackState.ODSandSharkSummon);
+            if (lifeRatio < Phase2LifeRatio)
+                attackSelector.Add(GreatSandSharkAttackState.DuststormBurst, 24.5);
 
-            npc.ai[0] = (int)Main.rand.Next(possibleNextAttacks);
+            do
+                npc.ai[0] = (int)attackSelector.Get();
+            while ((int)npc.ai[0] == (int)previousAttackState);
+
             npc.ai[1] = 0f;
 
             for (int i = 0; i < 5; i++)

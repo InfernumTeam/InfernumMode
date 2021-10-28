@@ -101,6 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                         bool facingPlayer = armDirection == (target.Center.X > npc.Center.X).ToDirectionInt();
                         float adjustedTimer = attackTimer % 160f;
+                        int waveCounter = (int)(attackTimer / 160) % 2;
                         if (facingPlayer && adjustedTimer > 65f && adjustedTimer < 140f)
                         {
                             float swipeAngularOffset = MathHelper.Lerp(-0.6f, 1.22f, Utils.InverseLerp(90f, 140f, adjustedTimer, true));
@@ -111,12 +112,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         npc.Center = npc.Center.MoveTowards(idealPosition, 5f);
                         npc.velocity = Vector2.Zero;
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient && facingPlayer && adjustedTimer > 90f && adjustedTimer < 140f && adjustedTimer % 5f == 4f)
+                        int shootDelay = waveCounter == 1 ? 2 : 4;
+                        if (Main.netMode != NetmodeID.MultiplayerClient && facingPlayer && adjustedTimer > 90f && adjustedTimer < 140f && adjustedTimer % 5f == shootDelay)
                         {
                             Vector2 skullSpawnPosition = npc.Center;
-                            Vector2 skullShootVelocity = (skullSpawnPosition - owner.Center).SafeNormalize(Vector2.UnitY) * 6f;
+                            Vector2 skullShootVelocity = (skullSpawnPosition - owner.Center).SafeNormalize(Vector2.UnitY) * 7.5f;
                             skullSpawnPosition += skullShootVelocity * 4f;
-                            Utilities.NewProjectileBetter(skullSpawnPosition, skullShootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 105, 0f);
+                            Utilities.NewProjectileBetter(skullSpawnPosition, skullShootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 115, 0f);
                         }
 
                         break;

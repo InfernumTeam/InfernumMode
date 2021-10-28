@@ -37,7 +37,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             Vector2 start = projectile.Center - projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
             Vector2 end = projectile.Center + projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
-            spriteBatch.DrawLineBetter(start, end, Color.DarkRed, projectile.Opacity * 1.6f + 0.1f);
+            spriteBatch.DrawLineBetter(start, end, Color.DarkRed, projectile.Opacity * 6f + 0.5f);
+            spriteBatch.DrawLineBetter(start, end, Color.Red, (projectile.Opacity * 6f + 0.5f) * 0.5f);
             return false;
         }
 

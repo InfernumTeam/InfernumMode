@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 PrimeHeadBehaviorOverride.ArmHoverAI(npc);
                 return false;
             }
-            npc.damage = npc.defDamage;
+            npc.damage = npc.defDamage + 35;
 
             attackTimer++;
 

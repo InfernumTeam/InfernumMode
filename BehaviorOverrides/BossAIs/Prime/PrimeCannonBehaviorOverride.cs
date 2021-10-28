@@ -72,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         for (int i = 0; i < (canShootNukes ? 10 : 4); i++)
                         {
                             Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.78f) * Main.rand.NextFloat(9f, 9f);
-                            Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 6f, rocketShootVelocity, ProjectileID.SaucerMissile, 115, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 6f, rocketShootVelocity, ProjectileID.SaucerMissile, 135, 0f);
                         }
                     }
                     attackTimer = 0f;

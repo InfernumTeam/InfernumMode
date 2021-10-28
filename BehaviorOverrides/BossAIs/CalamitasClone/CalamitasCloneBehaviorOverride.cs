@@ -158,7 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (inFinalPhase)
                 finalPhaseFireTimer++;
 
-            if (finalPhaseFireTimer % 150f == 149f)
+            if (finalPhaseFireTimer % 170f == 169f)
             {
                 Main.PlaySound(SoundID.Item74, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -290,7 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     {
                         int dartDamage = shouldBeBuffed ? 310 : 145;
                         float idealDirection = npc.AngleTo(target.Center);
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedByRandom(0.72f) * initialFlameSpeed;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f, -Vector2.UnitY).RotatedByRandom(0.72f) * initialFlameSpeed;
 
                         int cinder = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AdjustingCinder>(), dartDamage, 0f);
                         if (Main.projectile.IndexInRange(cinder))
@@ -364,7 +364,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             int attackDelay = 45;
             int attackTime = 300;
-            int lavaShootRate = 40;
+            int lavaShootRate = 30;
             float hoverSpeed = 15f;
 
             if (lifeRatio < Phase2LifeRatio)
@@ -398,7 +398,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lavaShootRate == lavaShootRate - 1f)
             {
                 int lavaDamage = shouldBeBuffed ? 325 : 150;
-                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f + target.velocity.X * 42f, 40f);
+                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 50f + target.velocity.X * Main.rand.NextFloat(35f, 60f), 40f);
                 if (WorldUtils.Find(lavaSpawnPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(1500), new Conditions.IsSolid()), out Point result))
                 {
                     lavaSpawnPosition = result.ToWorldCoordinates();
@@ -535,7 +535,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             float chargeOffset = 395f;
             float redirectSpeed = 29f;
-            float chargeSpeed = MathHelper.Lerp(25f, 30.5f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(23.5f, 27.5f, 1f - lifeRatio);
             int chargeTime = 50;
             int chargeSlowdownTime = 15;
             int chargeCount = 5;
@@ -563,7 +563,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     if (attackTimer > 240f || npc.WithinRange(hoverDestination, 120f))
                     {
                         Main.PlaySound(SoundID.Roar, npc.Center, 0);
-                        npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
+                        npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f, -Vector2.UnitY) * chargeSpeed;
                         attackTimer = 0f;
                         attackState = 1f;
                     }
@@ -602,7 +602,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 19f;
             float fireballSpeed = 9f;
-            int fireballReleaseRate = 20;
+            int fireballReleaseRate = 25;
             int fireballReleaseTime = 360;
 
             if (shouldBeBuffed)
@@ -691,7 +691,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 			{
 				npc.position.X += npc.SafeDirectionTo(target.Center).X * 9f;
 				npc.position.Y += npc.SafeDirectionTo(target.Center - Vector2.UnitY * 400f).Y * 7f;
-				if (attackTimer % 24f == 23f)
+				if (attackTimer % 30f == 29f)
                 {
                     Main.PlaySound(SoundID.Item73, target.Center);
 

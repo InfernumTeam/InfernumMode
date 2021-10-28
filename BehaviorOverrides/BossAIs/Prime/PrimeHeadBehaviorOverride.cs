@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Don't allow further damage to happen when below 65% life if any arms remain.
             npc.dontTakeDamage = lifeRatio < 0.8f && AnyArms;
 
-            if (!target.active || target.dead)
+            if (!target.active || target.dead || !Main.dayTime)
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 20f, 0.08f);
                 if (!npc.WithinRange(target.Center, 1560f))
@@ -123,17 +123,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             bool canHover = attackTimer < 90f;
 
+            // Focus on the boss as it spawns.
+            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 3700f))
+            {
+                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(0f, 15f, attackTimer, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(210f, 202f, attackTimer, true);
+            }
+
             if (canHover)
             {
-                Vector2 hoverDestination = target.Center - Vector2.UnitY * 400f;
-                hoverDestination.Y += MathHelper.Lerp(-600f, 600f, attackTimer / 90f);
-                hoverDestination.X += MathHelper.Lerp(-700f, 700f, attackTimer / 90f);
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 500f;
 
                 npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 32f);
                 npc.rotation = npc.rotation.AngleLerp(npc.velocity.X * 0.04f, 0.1f);
 
                 if (npc.WithinRange(target.Center, 90f))
+                {
                     npc.Center = target.Center - npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 90f;
+                    npc.ai[1] = 89f;
+                    npc.netUpdate = true;
+                }
 
                 frameType = (int)PrimeFrameType.ClosedMouth;
             }
@@ -221,6 +231,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int cycleTime = 36;
             int rocketCountPerCycle = 7;
             int shootCycleCount = AnyArms ? 4 : 6;
+            int rocketShootDelay = AnyArms ? 60 : 30;
 
             // The attack lasts longer when only the laser and cannon are around so you can focus them down.
             if (!NPC.AnyNPCs(NPCID.PrimeVice) && !NPC.AnyNPCs(NPCID.PrimeSaw) && NPC.AnyNPCs(NPCID.PrimeLaser) && NPC.AnyNPCs(NPCID.PrimeCannon))
@@ -231,10 +242,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             npc.rotation = npc.velocity.X * 0.04f;
 
             frameType = (int)PrimeFrameType.ClosedMouth;
-            if (wrappedTime > cycleTime - rocketCountPerCycle * 2f && attackTimer > 60f)
+            if (wrappedTime > cycleTime - rocketCountPerCycle * 2f && attackTimer > rocketShootDelay)
             {
                 frameType = (int)PrimeFrameType.OpenMouth;
-                npc.velocity *= 0.87f;
+
+                if (!npc.WithinRange(target.Center, 250f))
+                    npc.velocity *= 0.87f;
 
                 Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 3f == 2f)
@@ -249,6 +262,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     rocketVelocity = rocketVelocity.SafeNormalize(-Vector2.UnitY) * rocketSpeed;
                     Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ProjectileID.SaucerMissile, 115, 0f);
                 }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 12f == 11f && !AnyArms)
+                {
+                    Vector2 idealVelocity = npc.SafeDirectionTo(target.Center + Main.rand.NextVector2Circular(100f, 100f)) * 8f;
+                    idealVelocity += Main.rand.NextVector2Circular(2f, 2f);
+                    Vector2 spawnPosition = npc.Center + idealVelocity * 3f;
+
+                    int skull = Utilities.NewProjectileBetter(spawnPosition, idealVelocity, ProjectileID.Skull, 130, 0f, Main.myPlayer, -1f, 0f);
+                    Main.projectile[skull].ai[0] = -1f;
+                    Main.projectile[skull].timeLeft = 300;
+                }
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= cycleTime * (shootCycleCount + 0.4f))
@@ -257,15 +281,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public static void DoAttack_HoverCharge(NPC npc, Player target, float lifeRatio, float attackTimer, ref float frameType)
         {
-            int chargeCount = 7;
+            int chargeCount = 4;
             int hoverTime = AnyArms ? 120 : 60;
             int chargeTime = AnyArms ? 72 : 45;
             float hoverSpeed = AnyArms ? 14f : 33f;
-            float chargeSpeed = AnyArms ? 15f : 22.5f;
+            float chargeSpeed = AnyArms ? 15f : 24.5f;
             float wrappedTime = attackTimer % (hoverTime + chargeTime);
 
             if (!AnyArms)
                 chargeSpeed += (1f - lifeRatio) * 6f;
+
+            // Have a bit longer of a delay for the first charge.
+            if (attackTimer < hoverTime + chargeTime)
+                hoverTime += 45;
 
             if (wrappedTime < hoverTime - 15f)
             {
@@ -297,9 +325,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            for (int i = 0; i < 4; i++)
+                            for (int i = 0; i < 7; i++)
                             {
-                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.56f, 0.56f, i / 3f)) * 8f;
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.56f, 0.56f, i / 6f)) * 8f;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, ModContent.ProjectileType<MetallicSpike>(), 115, 0f);
                             }
                         }
@@ -458,10 +486,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 9; i++)
+                        for (int i = 0; i < 12; i++)
                         {
                             Vector2 laserFirePosition = npc.Center - Vector2.UnitY * 16f;
-                            Vector2 laserDirection = (target.Center - laserFirePosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 9f);
+                            Vector2 laserDirection = (target.Center - laserFirePosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 12f);
 
                             int beam = Utilities.NewProjectileBetter(laserFirePosition, laserDirection, ModContent.ProjectileType<LaserRayIdle>(), 230, 0f);
                             if (Main.projectile.IndexInRange(beam))

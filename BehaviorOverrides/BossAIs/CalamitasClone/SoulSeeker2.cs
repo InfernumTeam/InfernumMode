@@ -14,7 +14,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         public Player Target => Main.player[npc.target];
         public float RingRadius => Main.npc[CalamityGlobalNPC.calamitas].Infernum().ExtraAI[6];
         public ref float RingAngle => ref npc.ai[0];
-        public ref float AttackTimer => ref npc.ai[1];
+        public ref float AngerTimer => ref npc.ai[1];
+        public ref float AttackTimer => ref npc.ai[2];
 
         public override void SetStaticDefaults()
         {
@@ -58,11 +59,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 idealRotation = npc.AngleTo(Target.Center);
 
+                AngerTimer++;
                 AttackTimer++;
-                if (AttackTimer % 38f == 37f)
+                if (AttackTimer >= MathHelper.Lerp(90f, 30f, Utils.InverseLerp(30f, 520f, AngerTimer, true)))
                 {
                     int dartDamage = shouldBeBuffed ? 350 : 150;
-                    Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 15f) * (shouldBeBuffed ? 31f : 24f);
+                    Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 15f) * (shouldBeBuffed ? 30f : 20f);
                     int dart = Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f);
                     if (Main.projectile.IndexInRange(dart))
                     {
@@ -70,7 +72,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                         Main.projectile[dart].tileCollide = false;
                         Main.projectile[dart].netUpdate = true;
                     }
+                    AttackTimer = 0f;
+                    npc.netUpdate = true;
                 }
+            }
+            else
+            {
+                AngerTimer = 0f;
+                AttackTimer = 0f;
             }
             npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.1f);
         }

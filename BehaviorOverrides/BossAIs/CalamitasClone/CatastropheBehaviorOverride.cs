@@ -99,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 480f;
                 float idealAngle = npc.AngleTo(destination) - MathHelper.PiOver2;
-                destination.X -= (target.Center.X > npc.Center.X).ToDirectionInt() * 1050f;
+                destination.X -= (target.Center.X > npc.Center.X).ToDirectionInt() * 1350f;
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * redirectSpeed, redirectSpeed / 40f);
 
                 if (!otherBrotherIsPresent)
@@ -191,6 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 case 0:
                     Vector2 hoverDestination = target.Center + Vector2.UnitY * (target.Center.Y < npc.Center.Y).ToDirectionInt() * verticalChargeOffset;
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 40f);
+                    npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
 
                     float idealRotation = npc.AngleTo(hoverDestination) - MathHelper.PiOver2;
                     if (npc.WithinRange(hoverDestination, 250f))
@@ -198,10 +199,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f).AngleTowards(idealRotation, 0.15f);
 
-                    if (attackTimer > 240f || npc.WithinRange(hoverDestination, 60f))
+                    if (attackTimer > 240f || npc.WithinRange(hoverDestination, 80f))
                     {
                         Main.PlaySound(SoundID.Roar, npc.Center, 0);
                         npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
+
+                        // Release fireballs upward if alone and charging down.
+                        if (!otherBrotherIsPresent && Vector2.Dot(npc.velocity, Vector2.UnitY) > 0f)
+						{
+                            for (int i = 0; i < 8; i++)
+                            {
+                                Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(0.76f) * Main.rand.NextFloat(9f, 12f);
+                                shootVelocity += Main.rand.NextVector2Circular(1.5f, 1.5f);
+                                Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), 140, 0f);
+                            }
+						}
+
                         attackTimer = 0f;
                         attackState = 1f;
                     }

@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         #region Enumerations
         public enum CataclysmAttackType
         {
-            VerticalCharges,
+            HorizontalCharges,
             BrimstoneFireBurst
         }
         #endregion
@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             switch ((CataclysmAttackType)(int)attackType)
             {
-                case CataclysmAttackType.VerticalCharges:
+                case CataclysmAttackType.HorizontalCharges:
                     DoBehavior_HorizontalCharges(npc, target, lifeRatio, otherBrotherIsPresent, shouldBeBuffed, ref attackTimer);
                     break;
                 case CataclysmAttackType.BrimstoneFireBurst:
@@ -100,11 +100,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 case 0:
                     Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * horizontalChargeOffset;
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 20f);
+                    npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
 
                     float idealRotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
                     npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f).AngleTowards(idealRotation, 0.15f);
 
-                    if (attackTimer > 240f || npc.WithinRange(hoverDestination, 60f))
+                    if (attackTimer > 240f || npc.WithinRange(hoverDestination, 80f))
                     {
                         Main.PlaySound(SoundID.Roar, npc.Center, 0);
                         npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
@@ -224,7 +225,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             List<CataclysmAttackType> possibleAttacks = new List<CataclysmAttackType>
             {
                 CataclysmAttackType.BrimstoneFireBurst,
-                CataclysmAttackType.VerticalCharges
+                CataclysmAttackType.HorizontalCharges
             };
 
             if (possibleAttacks.Count > 1)

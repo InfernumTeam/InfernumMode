@@ -69,13 +69,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         for (int i = 0; i < 3; i++)
                         {
                             Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.49f, 0.49f, i / 2f)) * 6f;
-                            Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 7f, laserShootVelocity, ModContent.ProjectileType<LaserBolt>(), 115, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 7f, laserShootVelocity, ModContent.ProjectileType<LaserBolt>(), 135, 0f);
                         }
                     }
                     else
                     {
                         Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center) * 6f;
-                        Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 7f, laserShootVelocity, ModContent.ProjectileType<LaserBolt>(), 110, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 7f, laserShootVelocity, ModContent.ProjectileType<LaserBolt>(), 130, 0f);
                     }
                     attackTimer = 0f;
                     npc.netUpdate = true;

@@ -37,6 +37,8 @@ using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Magic;
 using CalamityMod.Projectiles.Summon;
 using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.Projectiles.Typeless;
+using CalamityMod.Projectiles.Hybrid;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -412,6 +414,9 @@ namespace InfernumMode.GlobalInstances
             bool skeletronPrime = npc.type == NPCID.SkeletronPrime || npc.type == NPCID.PrimeCannon || npc.type == NPCID.PrimeSaw || npc.type == NPCID.PrimeVice || npc.type == NPCID.PrimeLaser;
             if (skeletronPrime && (projectile.type == ModContent.ProjectileType<UltimusCleaverDust>() || projectile.type == ModContent.ProjectileType<GacruxianHome>()))
                 damage = (int)(damage * 0.7);
+
+            if (npc.type == ModContent.NPCType<SoulSeeker>() && (projectile.type == ModContent.ProjectileType<KelvinCatalystStar>() || projectile.type == ModContent.ProjectileType<KelvinCatalystBoomerang>()))
+                damage = (int)(damage * 0.5);
 
             if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
                 damage = (int)(damage * 0.55);

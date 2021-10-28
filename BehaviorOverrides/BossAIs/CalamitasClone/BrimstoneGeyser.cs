@@ -41,8 +41,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (GeyserHeight < 2f)
                 GeyserHeight = 2f;
 
-            if (Time > 35f)
-                GeyserHeight = MathHelper.Lerp(GeyserHeight, GeyserHeight * 1.45f, 0.127f) + 2f;
+            if (Time > 20f)
+                GeyserHeight = MathHelper.Lerp(GeyserHeight, GeyserHeight * 1.45f, 0.2f) + 2f;
             else
                 projectile.timeLeft++;
 
@@ -70,9 +70,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            if (Time < 35f)
+            if (Time < 20f)
 			{
-                float telegraphFade = Utils.InverseLerp(0f, 8f, Time, true) * Utils.InverseLerp(35f, 25f, Time, true);
+                float telegraphFade = Utils.InverseLerp(0f, 8f, Time, true) * Utils.InverseLerp(20f, 10f, Time, true);
                 float telegraphWidth = telegraphFade * 4f;
                 Color telegraphColor = Color.Lerp(Color.Purple, Color.DarkRed, 0.375f) * telegraphFade;
                 Vector2 start = projectile.Center - Vector2.UnitY * 2000f;

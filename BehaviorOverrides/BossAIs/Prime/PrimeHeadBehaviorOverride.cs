@@ -79,9 +79,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Don't allow further damage to happen when below 65% life if any arms remain.
             npc.dontTakeDamage = lifeRatio < 0.8f && AnyArms;
 
-            if (!target.active || target.dead || !Main.dayTime)
+            if (!target.active || target.dead || Main.dayTime)
             {
-                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 20f, 0.08f);
+                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 26f, 0.08f);
                 if (!npc.WithinRange(target.Center, 1560f))
                     npc.active = false;
 

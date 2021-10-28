@@ -72,19 +72,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 			// Fade in.
 			npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.04f, 0f, 1f);
 
-			float idealSpeed = 19f;
+			float idealSpeed = 14f;
 
 			// Fly in a single direction for a while before arcing towards the nearest target.
 			if (AttackState == 0f)
 			{
 				if (AttackTimer == 0f)
 				{
-					npc.velocity = -Vector2.UnitY.RotatedByRandom(0.72f) * (idealSpeed - 5f);
+					npc.velocity = -Vector2.UnitY.RotatedByRandom(0.42f) * (idealSpeed - 5f);
 					Main.PlaySound(SoundID.NPCDeath19, npc.position);
 				}
 
 				AttackTimer++;
-				if (AttackTimer >= 90f)
+				if (AttackTimer >= 60f)
 				{
 					if (!Collision.SolidCollision(npc.position, npc.width, npc.height) && AttackTimer >= 150f)
 					{
@@ -93,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 					}
 
 					float oldSpeed = npc.velocity.Length();
-					npc.velocity = (npc.velocity * 15f + npc.SafeDirectionTo(Main.player[npc.target].Center) * oldSpeed) / 16f;
+					npc.velocity = (npc.velocity * 14f + npc.SafeDirectionTo(Main.player[npc.target].Center) * oldSpeed) / 15f;
 					npc.velocity.Normalize();
 					npc.velocity *= oldSpeed;
 				}
@@ -161,6 +161,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
 		public override void FindFrame(int frameHeight)
 		{
+			if (Variant >= 4f)
+				Variant = 0f;
+
 			npc.frameCounter++;
 			npc.frame.Width = 122;
 			npc.frame.Height = 74;
@@ -173,7 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 			Texture2D texture = Main.npcTexture[npc.type];
 			Vector2 origin = npc.frame.Size() * 0.5f;
 			Vector2 drawPosition = npc.Center - Main.screenPosition;
-			SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+			SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 			spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor), npc.rotation, origin, npc.scale, direction, 0f);
 			return false;
 		}

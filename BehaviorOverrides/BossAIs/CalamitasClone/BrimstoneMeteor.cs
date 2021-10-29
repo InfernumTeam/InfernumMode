@@ -4,6 +4,7 @@ using CalamityMod.Events;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -37,8 +38,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
-            projectile.Opacity = Utils.InverseLerp(0f, 12f, Time, true) * Utils.InverseLerp(0f, 12f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.InverseLerp(30f, 42f, Time, true) * Utils.InverseLerp(0f, 12f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+
+            if (Time == 30f)
+                Main.PlaySound(SoundID.DD2_BetsyFireballShot, projectile.Center);
 
             Time++;
         }
@@ -57,10 +61,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            if (Time < 30f)
+            {
+                Vector2 lineDirection = projectile.velocity.SafeNormalize(Vector2.UnitY);
+                float lineWidth = (float)Math.Sin(MathHelper.Pi * Time / 30f) * 4f + 1f;
+                spriteBatch.DrawLineBetter(projectile.Center - lineDirection * 3400f, projectile.Center + lineDirection * 3400f, Color.Red, lineWidth);
+                return false;
+            }
+
             lightColor.R = (byte)(255 * projectile.Opacity);
             Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
             return false;
         }
+
+        public override bool ShouldUpdatePosition() => Time >= 30f;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
         {

@@ -249,14 +249,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 530f;
             float hoverSpeed = 15f;
-            float initialFlameSpeed = 10f;
+            float initialFlameSpeed = 9f;
+            float flameAngularVariance = 0.72f;
             int flameReleaseRate = 9;
             int flameReleaseTime = 180;
             if (lifeRatio < Phase2LifeRatio)
             {
                 attackCycleCount--;
                 hoverHorizontalOffset -= 70f;
-                initialFlameSpeed += 5f;
+                initialFlameSpeed += 4f;
+                flameAngularVariance *= 1.35f;
                 flameReleaseRate -= 2;
             }
 
@@ -264,7 +266,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 attackCycleCount--;
                 hoverSpeed += 9f;
-                initialFlameSpeed *= 2.2f;
+                initialFlameSpeed *= 1.9f;
             }
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
@@ -295,7 +297,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     {
                         int dartDamage = shouldBeBuffed ? 310 : 145;
                         float idealDirection = npc.AngleTo(target.Center);
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 32f, -Vector2.UnitY).RotatedByRandom(0.72f) * initialFlameSpeed;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 32f, -Vector2.UnitY).RotatedByRandom(flameAngularVariance) * initialFlameSpeed;
 
                         int cinder = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AdjustingCinder>(), dartDamage, 0f);
                         if (Main.projectile.IndexInRange(cinder))
@@ -321,13 +323,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int attackDelay = 90;
             int attackTime = 480;
             int meteorShootRate = 9;
-            float meteorShootSpeed = 10.5f;
+            float meteorShootSpeed = 14f;
             float hoverSpeed = 15f;
             if (shouldBeBuffed)
             {
                 attackTime += 60;
                 meteorShootRate -= 3;
-                meteorShootSpeed += 4f;
+                meteorShootSpeed += 5f;
                 hoverSpeed += 9f;
             }
             meteorShootSpeed *= MathHelper.Lerp(1f, 1.35f, 1f - lifeRatio);
@@ -571,7 +573,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 20f);
                     npc.rotation = npc.AngleTo(hoverDestination) - MathHelper.PiOver2;
 
-                    if (attackTimer > 240f || npc.WithinRange(hoverDestination, 120f))
+                    if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 120f) && attackTimer > 50f))
                     {
                         Main.PlaySound(SoundID.Roar, npc.Center, 0);
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f, -Vector2.UnitY) * chargeSpeed;

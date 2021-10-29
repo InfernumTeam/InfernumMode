@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeMechGaussRifle"), projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
-                Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearExplosion>(), 200, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearExplosion>(), 220, 0f);
         }
 
         public override bool CanDamage() => false;

@@ -156,7 +156,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             bool canCharge = inTiles && npc.WithinRange(target.Center, 750f) && !npc.WithinRange(target.Center, 280f) && attackTimer >= 60f;
             float swimAcceleration = MathHelper.Lerp(0.85f, 1.05f, 1f - lifeRatio);
             float chargeSpeed = npc.Distance(target.Center) * 0.01f + MathHelper.Lerp(18.5f, 21f, 1f - lifeRatio);
-            int chargeCount = 4;
+            int chargeCount = 3;
 
             ref float chargingFlag = ref npc.Infernum().ExtraAI[0];
             ref float chargeCountdown = ref npc.Infernum().ExtraAI[1];
@@ -245,7 +245,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             {
                 Vector2 spawnPosition = target.Center + Vector2.UnitY * Main.rand.NextFloatDirection() * 850f;
                 spawnPosition.X += Main.rand.NextBool(2).ToDirectionInt() * 800f;
-                Vector2 shootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 8f;
+                Vector2 shootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 6f;
                 int dustDevil = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<DustDevil>(), 160, 0f);
 
                 if (Main.projectile.IndexInRange(dustDevil))
@@ -285,13 +285,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int hoverTime = 28;
             float hoverSpeed = 28f;
             int chargeTime = 35;
-            float chargeSpeed = MathHelper.Lerp(21.5f, 25.5f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(19f, 23f, 1f - lifeRatio);
             int chargeCount = 5;
             float idealRotation = npc.AngleTo(target.Center);
 
             ref float horizontalChargeOffset = ref npc.Infernum().ExtraAI[0];
             ref float chargeState = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
+
+            if (chargeCounter == 0f)
+                hoverTime += 35;
 
             if (npc.spriteDirection == 1)
                 idealRotation += MathHelper.Pi;

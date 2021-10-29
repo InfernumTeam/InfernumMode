@@ -41,11 +41,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.075f, 0f, 1f);
 
             // Bob up and down vertically.
-            float idealVerticalVelocity = (float)Math.Sin(Time / 30f + projectile.identity) * 7.5f;
+            float idealVerticalVelocity = (float)Math.Sin(Time / 30f + projectile.identity) * 6f;
             projectile.velocity.Y = MathHelper.Lerp(projectile.velocity.Y, idealVerticalVelocity, 0.04f);
 
             // Speed up horizontally.
-            if (Math.Abs(projectile.velocity.X) < 12f)
+            if (Math.Abs(projectile.velocity.X) < 11f)
                 projectile.velocity.X *= 1.01f;
 
             // Determine frames.

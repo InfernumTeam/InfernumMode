@@ -99,9 +99,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                         Main.npc[seeker].ai[0] = seekerAngle;
                 }
 
-                // Summon Catatrophe and Catacylsm.
-                NPC.SpawnOnPlayer(npc.target, ModContent.NPCType<CalamitasRun>());
-                NPC.SpawnOnPlayer(npc.target, ModContent.NPCType<CalamitasRun2>());
+                // Summon Catatrophe and Cataclysm.
+                int cataclysm = NPC.NewNPC((int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun>());
+                CalamityUtils.BossAwakenMessage(cataclysm);
+
+                int catastrophe = NPC.NewNPC((int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun2>());
+                CalamityUtils.BossAwakenMessage(catastrophe);
 
                 npc.netUpdate = true;
                 return false;
@@ -116,6 +119,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     int spawn = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker>(), npc.whoAmI, 0, 0, 0, -1);
                     Main.npc[spawn].ai[0] = 360f / seekerCount * i;
                 }
+                SelectNewAttack(npc);
+
                 transitionState = 2f;
                 npc.netUpdate = true;
             }
@@ -485,6 +490,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 fireballSpeed *= 1.4f;
             }
 
+            if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
+                fireballSpeed *= 0.675f;
+
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
 
@@ -545,6 +553,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 chargeSpeed *= 1.5f;
                 redirectSpeed += 7f;
             }
+
+            if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
+                chargeSpeed *= 0.7f;
 
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
@@ -726,6 +737,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneLightning, lifeRatio < Phase2LifeRatio);
                 possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneFireBurst, lifeRatio < Phase2LifeRatio);
                 possibleAttacks.AddWithCondition(CloneAttackType.DiagonalCharge, lifeRatio < Phase2LifeRatio);
+            }
+            
+            if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
+            {
+                possibleAttacks.Clear();
+                possibleAttacks.Add(CloneAttackType.BrimstoneFireBurst);
+                possibleAttacks.Add(CloneAttackType.DiagonalCharge);
             }
 
             if (npc.ai[2] == 3f)

@@ -290,7 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     {
                         int dartDamage = shouldBeBuffed ? 310 : 145;
                         float idealDirection = npc.AngleTo(target.Center);
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f, -Vector2.UnitY).RotatedByRandom(0.72f) * initialFlameSpeed;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 32f, -Vector2.UnitY).RotatedByRandom(0.72f) * initialFlameSpeed;
 
                         int cinder = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AdjustingCinder>(), dartDamage, 0f);
                         if (Main.projectile.IndexInRange(cinder))
@@ -398,7 +398,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lavaShootRate == lavaShootRate - 1f)
             {
                 int lavaDamage = shouldBeBuffed ? 325 : 150;
-                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 50f + target.velocity.X * Main.rand.NextFloat(35f, 60f), 40f);
+                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 50f + target.velocity.X * Main.rand.NextFloat(35f, 60f), 160f);
                 if (WorldUtils.Find(lavaSpawnPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(1500), new Conditions.IsSolid()), out Point result))
                 {
                     lavaSpawnPosition = result.ToWorldCoordinates();

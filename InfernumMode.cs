@@ -123,6 +123,12 @@ namespace InfernumMode
                 music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3");
                 priority = MusicPriority.BossLow;
             }
+
+            if (NPC.AnyNPCs(NPCID.SkeletronPrime) || NPC.AnyNPCs(NPCID.Retinazer) || NPC.AnyNPCs(NPCID.Spazmatism) || NPC.AnyNPCs(NPCID.TheDestroyer))
+            {
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/MechBosses");
+                priority = MusicPriority.BossLow;
+            }
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);

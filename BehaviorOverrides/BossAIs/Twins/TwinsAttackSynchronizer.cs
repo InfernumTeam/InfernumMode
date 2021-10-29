@@ -776,7 +776,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     }
                     if (attackTimer == 30f && Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 200, 0f);
+                        int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 100, 0f);
                         Main.projectile[deathRay].ai[1] = npc.whoAmI;
                     }
 

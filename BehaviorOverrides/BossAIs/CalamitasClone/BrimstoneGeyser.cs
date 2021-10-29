@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         internal Color ColorFunction(float completionRatio) => Color.Red * projectile.Opacity;
 
-        internal float WidthFunction(float completionRatio) => MathHelper.Lerp(56f, 63f, (float)Math.Abs(Math.Cos(Main.GlobalTime * 2f))) * projectile.Opacity;
+        internal float WidthFunction(float completionRatio) => MathHelper.Lerp(56f, 63f, (float)Math.Abs(Math.Cos(Main.GlobalTime * 2f))) * Utils.InverseLerp(20f, 270f, GeyserHeight, true) * projectile.Opacity;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {

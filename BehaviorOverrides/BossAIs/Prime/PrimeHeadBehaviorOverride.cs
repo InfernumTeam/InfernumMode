@@ -199,14 +199,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             float hoverSpeed = AnyArms ? 15f : 36f;
             float wrappedTime = attackTimer % shootRate;
 
-            Vector2 destination = target.Center - Vector2.UnitY * (AnyArms ? 510f : 435f);
+            Vector2 destination = target.Center - Vector2.UnitY * (AnyArms ? 550f : 435f);
             npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 45f);
             npc.rotation = npc.velocity.X * 0.04f;
 
             // Open the mouth a little bit before shooting.
             frameType = wrappedTime >= shootRate * 0.7f ? (int)PrimeFrameType.OpenMouth : (int)PrimeFrameType.ClosedMouth;
 
-            if (wrappedTime == shootRate - 1f)
+            // Only shoot projectiles if above and not extremely close to the player.
+            if (wrappedTime == shootRate - 1f && npc.Center.Y < target.Center.Y - 150f && !npc.WithinRange(target.Center, 200f))
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

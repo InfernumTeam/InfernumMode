@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             for (int i = 0; i < 4; i++)
             {
                 int dartDamage = shouldBeBuffed ? 340 : 145;
-                Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedByRandom(0.91f) * projectile.velocity.Length() * Main.rand.NextFloat(0.55f, 0.85f);
+                Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedByRandom(0.67f) * projectile.velocity.Length() * Main.rand.NextFloat(0.65f, 0.85f);
                 int dart = Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f);
                 if (Main.projectile.IndexInRange(dart))
                 {

@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         #region AI
 
         public const float Phase2LifeRatio = 0.7f;
-        public const float Phase3LifeRatio = 0.45f;
+        public const float Phase3LifeRatio = 0.375f;
         public const int FinalPhaseTransitionTime = 180;
 
         public override bool PreAI(NPC npc)
@@ -249,7 +249,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 530f;
             float hoverSpeed = 15f;
-            float initialFlameSpeed = 9f;
+            float initialFlameSpeed = 8f;
             float flameAngularVariance = 0.72f;
             int flameReleaseRate = 9;
             int flameReleaseTime = 180;

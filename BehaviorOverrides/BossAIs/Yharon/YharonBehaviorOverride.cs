@@ -1247,7 +1247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         offsetAngle = MathHelper.Lerp(0f, MathHelper.ToRadians(25f), Utils.InverseLerp(20f, 45f, attackTimer % 90f));
 
                     Vector2 destination = player.Center + new Vector2(xAimOffset, -890f).RotatedBy(offsetAngle) - npc.Center;
-                    Vector2 idealVelocity = Vector2.Normalize(destination - npc.velocity) * 23f;
+                    Vector2 idealVelocity = Vector2.Normalize(destination - npc.velocity) * 29.5f;
                     npc.SimpleFlyMovement(idealVelocity, 1f);
                     npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(player.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
                     specialFrameType = (int)YharonFrameDrawingType.FlapWings;
@@ -1371,7 +1371,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 }
             }
 
-            // After all final charges are complete, slow down, emit many sparkles and fart explosions, and die.
+            // After all final charges are complete, slow down, emit many sparkles/flames and fart explosions, and die.
             else
             {
                 ref float pulseDeathEffectCooldown = ref npc.Infernum().ExtraAI[5];
@@ -1399,13 +1399,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 80; i++)
+                        for (int i = 0; i < 50; i++)
                         {
                             Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(280f, 280f);
                             Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(42f, 42f), ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
                         }
 
-                        if (Main.rand.NextBool(8))
+                        if (Main.rand.NextBool(12))
                             Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
                     }
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
@@ -1414,6 +1414,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 {
                     specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
                     pulseDeathEffectCooldown--;
+                }
+
+                // Emit very strong fireballs.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        int fireball = Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(17f, 17f), ModContent.ProjectileType<FlareDust>(), 640, 0f);
+                        if (Main.projectile.IndexInRange(fireball))
+                        {
+                            Main.projectile[fireball].owner = player.whoAmI;
+                            Main.projectile[fireball].ai[0] = 2f;
+                        }
+                    }
                 }
 
                 if (npc.life <= 0)

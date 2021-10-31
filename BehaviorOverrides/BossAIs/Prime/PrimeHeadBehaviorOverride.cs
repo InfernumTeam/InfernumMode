@@ -465,7 +465,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
                 float movementSpeed = MathHelper.Lerp(6f, 4.5f, Utils.InverseLerp(45f, 90f, attackTimer, true));
-                movementSpeed += npc.Distance(target.Center) * 0.0065f;
+                movementSpeed += npc.Distance(target.Center) * 0.003f;
                 npc.velocity = (npc.velocity * 6f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), movementSpeed)) / 7f;
                 npc.rotation = npc.velocity.X * 0.04f;
 

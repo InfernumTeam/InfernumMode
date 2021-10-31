@@ -73,8 +73,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             float lifeRatio = npc.life / (float)npc.lifeMax;
             Player target = Main.player[npc.target];
 
-            // Continuously reset defense.
+            // Continuously reset defense and damage.
             npc.defense = npc.defDefense;
+            npc.damage = npc.defDamage;
 
             // Don't allow further damage to happen when below 65% life if any arms remain.
             npc.dontTakeDamage = lifeRatio < 0.8f && AnyArms;
@@ -199,6 +200,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             float hoverSpeed = AnyArms ? 15f : 36f;
             float wrappedTime = attackTimer % shootRate;
 
+            // Don't do contact damage, to prevent cheap hits.
+            npc.damage = 0;
+
             Vector2 destination = target.Center - Vector2.UnitY * (AnyArms ? 550f : 435f);
             npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 45f);
             npc.rotation = npc.velocity.X * 0.04f;
@@ -207,7 +211,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             frameType = wrappedTime >= shootRate * 0.7f ? (int)PrimeFrameType.OpenMouth : (int)PrimeFrameType.ClosedMouth;
 
             // Only shoot projectiles if above and not extremely close to the player.
-            if (wrappedTime == shootRate - 1f && npc.Center.Y < target.Center.Y - 150f && !npc.WithinRange(target.Center, 200f))
+            if (wrappedTime == shootRate - 1f && npc.Center.Y < target.Center.Y - 150f && !npc.WithinRange(target.Center, 200f) && attackTimer > 75f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -294,7 +298,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             // Have a bit longer of a delay for the first charge.
             if (attackTimer < hoverTime + chargeTime)
-                hoverTime += 45;
+                hoverTime += 20;
 
             if (wrappedTime < hoverTime - 15f)
             {
@@ -461,6 +465,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
                 float movementSpeed = MathHelper.Lerp(6f, 4.5f, Utils.InverseLerp(45f, 90f, attackTimer, true));
+                movementSpeed += npc.Distance(target.Center) * 0.0065f;
                 npc.velocity = (npc.velocity * 6f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), movementSpeed)) / 7f;
                 npc.rotation = npc.velocity.X * 0.04f;
 

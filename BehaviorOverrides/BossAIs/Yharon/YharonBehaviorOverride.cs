@@ -386,6 +386,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.Infernum().ExtraAI[0] = 0f;
                     GotoNextAttack(npc, ref attackType);
                 }
+
+                // Clear away projectiles in Subphase 9.
+                if (Main.netMode != NetmodeID.MultiplayerClient && currentSubphase == 8f)
+                {
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
+
+                    int[] projectilesToDelete = new int[]
+                    {
+                        ProjectileID.CultistBossFireBall,
+                        ModContent.ProjectileType<YharonFireball>(),
+                        ModContent.ProjectileType<YharonFireball2>(),
+                        ModContent.ProjectileType<Infernado>(),
+                        ModContent.ProjectileType<Infernado2>(),
+                        ModContent.ProjectileType<Flare>(),
+                        ModContent.ProjectileType<BigFlare>(),
+                        ModContent.ProjectileType<BigFlare2>(),
+                        ModContent.ProjectileType<VortexOfFlame>()
+                    };
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        if (Main.projectile[i].active && projectilesToDelete.Contains(Main.projectile[i].type))
+                        {
+                            Main.projectile[i].active = false;
+                            Main.projectile[i].netUpdate = true;
+                        }
+                    }
+                }
                 transitionDRCountdown = TransitionDRBoostTime;
                 npc.netUpdate = true;
             }
@@ -1378,7 +1405,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                             Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(42f, 42f), ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
                         }
 
-                        if (Main.rand.NextBool(4))
+                        if (Main.rand.NextBool(8))
                             Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
                     }
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);

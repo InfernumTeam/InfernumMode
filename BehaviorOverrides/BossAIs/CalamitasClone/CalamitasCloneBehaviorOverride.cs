@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
@@ -10,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.World.Generation;
@@ -89,6 +91,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 brotherFadeoutTime = 1f;
                 attackTimer = 0f;
 
+                Main.NewText($"Destroy {(target.Male ? "him" : "her")}, my brothers.", Color.Orange);
+
                 // Set the ring radius and create a soul seeker ring.
                 npc.Infernum().ExtraAI[6] = shouldBeBuffed ? 950f : 750f;
                 for (int i = 0; i < 50; i++)
@@ -99,13 +103,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                         Main.npc[seeker].ai[0] = seekerAngle;
                 }
 
-                // Summon Catatrophe and Cataclysm.
-                int cataclysm = NPC.NewNPC((int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun>());
-                CalamityUtils.BossAwakenMessage(cataclysm);
-
-                int catastrophe = NPC.NewNPC((int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun2>());
-                CalamityUtils.BossAwakenMessage(catastrophe);
-
                 npc.netUpdate = true;
                 return false;
             }
@@ -113,7 +110,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Create a seeker ring once at a low enough life.
             if (transitionState == 1f && lifeRatio < Phase3LifeRatio)
             {
-                int seekerCount = 6;
+                Main.NewText("You will suffer.", Color.Orange);
+
+                int seekerCount = 7;
                 for (int i = 0; i < seekerCount; i++)
                 {
                     int spawn = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker>(), npc.whoAmI, 0, 0, 0, -1);
@@ -189,6 +188,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.dontTakeDamage = true;
                 brotherFadeoutTime = MathHelper.Clamp(brotherFadeoutTime + brotherIsPresent.ToDirectionInt(), 0f, 90f);
                 npc.Opacity = 1f - brotherFadeoutTime / 90f;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && brotherFadeoutTime == 30f)
+                {
+                    // Summon Catatrophe and Cataclysm.
+                    int cataclysm = NPC.NewNPC((int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun>());
+                    CalamityUtils.BossAwakenMessage(cataclysm);
+
+                    int catastrophe = NPC.NewNPC((int)target.Center.X + 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun2>());
+                    CalamityUtils.BossAwakenMessage(catastrophe);
+                }
 
                 Vector2 hoverDestination = target.Center;
                 if (!brotherIsPresent)
@@ -467,7 +476,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 15f;
-            float fireballSpeed = MathHelper.Lerp(7f, 11f, 1f - lifeRatio);
+            float fireballSpeed = MathHelper.Lerp(6.5f, 10f, 1f - lifeRatio);
             int fireballReleaseRate = 65;
             int fireballReleaseTime = 360;
 
@@ -557,7 +566,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
-                chargeSpeed *= 0.7f;
+                chargeSpeed *= 0.825f;
 
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
@@ -614,7 +623,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 19f;
-            float fireballSpeed = 9f;
+            float fireballSpeed = 10.5f;
             int fireballReleaseRate = 25;
             int fireballReleaseTime = 360;
 

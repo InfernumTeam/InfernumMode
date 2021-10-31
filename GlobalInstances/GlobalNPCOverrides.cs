@@ -416,7 +416,7 @@ namespace InfernumMode.GlobalInstances
                 damage = (int)(damage * 0.7);
 
             if (npc.type == ModContent.NPCType<SoulSeeker>() && (projectile.type == ModContent.ProjectileType<KelvinCatalystStar>() || projectile.type == ModContent.ProjectileType<KelvinCatalystBoomerang>()))
-                damage = (int)(damage * 0.5);
+                damage = (int)(damage * 0.575);
 
             if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
                 damage = (int)(damage * 0.55);

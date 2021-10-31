@@ -199,7 +199,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f).AngleTowards(idealRotation, 0.15f);
 
-                    if (attackTimer > 240f || npc.WithinRange(hoverDestination, 80f))
+                    if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 80f) && attackTimer > 45f))
                     {
                         Main.PlaySound(SoundID.Roar, npc.Center, 0);
                         npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;

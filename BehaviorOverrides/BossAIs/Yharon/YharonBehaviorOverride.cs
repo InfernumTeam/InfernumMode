@@ -290,6 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         // Teleport dash count = npc.Infernum().ExtraAI[13]
         // Attack transition DR countdown = npc.Infernum().ExtraAI[14]
         // Berserk charges = npc.Infernum().ExtraAI[15]
+        // Explosion creation flag = npc.Infernum().ExtraAI[16]
 
         #region AI
 
@@ -1217,6 +1218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             ref float finalAttackCompletionState = ref npc.Infernum().ExtraAI[6];
             ref float totalMeteorBomings = ref npc.Infernum().ExtraAI[7];
             ref float fireIntensity = ref npc.Infernum().ExtraAI[9];
+            ref float hasCreatedExplosionFlag = ref npc.Infernum().ExtraAI[16];
 
             // First, create two heat mirages that circle the target and charge at them multiple times.
             // This is intended to confuse them.
@@ -1389,11 +1391,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.1f);
                 npc.life = (int)MathHelper.Lerp(npc.life, 0, 0.01f);
 
-                if (npc.life <= 3100 && npc.life > 1)
+                if (npc.life <= 2000 && npc.life > 1)
                     npc.life = 1;
 
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
-                if (lifeRatio < 0.005f && pulseDeathEffectCooldown <= 0)
+                if (lifeRatio < 0.004f && pulseDeathEffectCooldown <= 0)
                 {
                     pulseDeathEffectCooldown = 8f;
 
@@ -1407,6 +1409,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                         if (Main.rand.NextBool(12))
                             Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
+
+                        if (hasCreatedExplosionFlag == 0f)
+                        {
+                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlameExplosion>(), 0, 0f);
+                            hasCreatedExplosionFlag = 1f;
+                            npc.netUpdate = true;
+                        }
                     }
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                 }

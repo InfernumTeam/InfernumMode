@@ -3,6 +3,7 @@ using CalamityMod.CalPlayer;
 using CalamityMod.Items.Ammo;
 using CalamityMod.Items.Fishing.AstralCatches;
 using CalamityMod.Items.TreasureBags;
+using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Rogue;
 using CalamityMod.Items.Weapons.Summon;
 using CalamityMod.NPCs.DevourerofGods;
@@ -42,6 +43,9 @@ namespace InfernumMode
 
             if (item.type == ModContent.ItemType<GacruxianMollusk>())
                 item.damage = 9;
+
+            if (item.type == ModContent.ItemType<SeasSearing>())
+                item.damage = 39;
 
             if (item.type == ModContent.ItemType<HeavenfallenStardisk>())
                 item.damage = 87;

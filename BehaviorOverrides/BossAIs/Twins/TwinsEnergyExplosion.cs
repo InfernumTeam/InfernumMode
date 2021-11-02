@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 			}
 			Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 14f + 2f;
 
-			Radius = MathHelper.Lerp(Radius, 2516f, 0.15f);
+			Radius = MathHelper.Lerp(Radius, 3516f, 0.15f);
 			projectile.scale = MathHelper.Lerp(1.2f, 5f, Utils.InverseLerp(Lifetime, 0f, projectile.timeLeft, true));
 			CalamityGlobalProjectile.ExpandHitboxBy(projectile, (int)(Radius * projectile.scale), (int)(Radius * projectile.scale));
 		}

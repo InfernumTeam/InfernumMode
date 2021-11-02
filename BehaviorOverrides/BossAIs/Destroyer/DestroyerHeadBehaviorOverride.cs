@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -23,7 +24,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             LaserBarrage,
             ProbeBombing,
             SuperchargedProbes,
-            DiveBombing
+            DiveBombing,
+            EnergyBlasts
         }
         #endregion
 
@@ -46,11 +48,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         {
             DestroyerAttackType.RegularCharge,
             DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.EnergyBlasts,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.SuperchargedProbes,
             DestroyerAttackType.ProbeBombing,
             DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.SuperchargedProbes,
+            DestroyerAttackType.EnergyBlasts,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.RegularCharge,
             DestroyerAttackType.ProbeBombing,
@@ -278,6 +282,70 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                                 SelectNewAttack(npc);
 						}
                     }
+                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    break;
+                case DestroyerAttackType.EnergyBlasts:
+                    attackState = ref npc.Infernum().ExtraAI[0];
+
+                    if (attackState == 0f)
+                    {
+                        // Move away from the target.
+                        if (attackTimer < 80f)
+                            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -24f, 0.3f);
+                        else
+                        {
+                            float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 19f, 0.1f);
+                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.035f, true) * newSpeed;
+
+                            if (attackTimer < 140f)
+                            {
+                                Dust energy = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2CircularEdge(45f, 45f), 182);
+                                energy.velocity = (npc.Center - energy.position) * 0.08f;
+                                energy.noGravity = true;
+                                energy.scale *= 1.1f;
+                            }
+
+                            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 140f)
+                                Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+
+                            if (attackTimer > 140f && attackTimer <= 285f && attackTimer % 45f == 44f)
+                            {
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
+                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 135, 0f);
+                            }
+                        }
+
+                        if (attackTimer >= 360f)
+                        {
+                            attackState = 1f;
+                            attackTimer = 0f;
+                            npc.netUpdate = true;
+                        }
+                    }
+
+                    // Rise upwards above the target in antipation of a charge.
+                    if (attackState == 1f)
+                    {
+                        Vector2 flyDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 750f, -1600f);
+                        npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(flyDestination) * 20f, 0.08f);
+                        npc.Center = npc.Center.MoveTowards(flyDestination, 15f);
+
+                        if (npc.WithinRange(flyDestination, 70f))
+                        {
+                            npc.Center = flyDestination;
+                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.66f);
+                            attackTimer = 0f;
+                            attackState = 2f;
+                        }
+                    }
+
+                    // Attempt to charge into the target.
+                    if (attackState == 2f)
+                    {
+                        if (attackTimer > 115f)
+                            SelectNewAttack(npc);
+                    }
+
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                     break;
             }

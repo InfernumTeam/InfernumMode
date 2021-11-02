@@ -391,6 +391,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 // Clear away projectiles in Subphase 9.
                 if (Main.netMode != NetmodeID.MultiplayerClient && currentSubphase == 8f)
                 {
+                    attackTimer = 0f;
+                    berserkCharges = 1f;
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
 
                     int[] projectilesToDelete = new int[]
@@ -1219,6 +1221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             ref float totalMeteorBomings = ref npc.Infernum().ExtraAI[7];
             ref float fireIntensity = ref npc.Infernum().ExtraAI[9];
             ref float hasCreatedExplosionFlag = ref npc.Infernum().ExtraAI[16];
+            ref float hasTeleportedFlag = ref npc.Infernum().ExtraAI[17];
 
             // First, create two heat mirages that circle the target and charge at them multiple times.
             // This is intended to confuse them.
@@ -1335,6 +1338,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 finalAttackCompletionState = 0f;
 
+                if (hasTeleportedFlag == 0f)
+                {
+                    npc.Center = player.Center - Vector2.UnitY * 1500f;
+                    npc.velocity *= 0.3f;
+                    hasTeleportedFlag = 1f;
+                    npc.netUpdate = true;
+                }
+
                 // Fade into magic sparkles more heavily.
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.3f, 0.15f);
                 npc.life = (int)MathHelper.Lerp(npc.life, npc.lifeMax * 0.01f, 0.025f);
@@ -1387,8 +1398,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     finalAttackCompletionState = 1f;
                 }
                 npc.damage = 0;
-                npc.velocity *= 0.97f;
-                npc.rotation = npc.rotation.AngleTowards(0f, 0.1f);
+                npc.velocity *= 0.985f;
+                npc.rotation = npc.rotation.AngleTowards(0f, 0.04f);
                 npc.life = (int)MathHelper.Lerp(npc.life, 0, 0.01f);
 
                 if (npc.life <= 2000 && npc.life > 1)
@@ -1409,13 +1420,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                         if (Main.rand.NextBool(12))
                             Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
-
-                        if (hasCreatedExplosionFlag == 0f)
-                        {
-                            Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlameExplosion>(), 0, 0f);
-                            hasCreatedExplosionFlag = 1f;
-                            npc.netUpdate = true;
-                        }
                     }
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
                 }
@@ -1425,12 +1429,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     pulseDeathEffectCooldown--;
                 }
 
+                if (npc.life < 2400 && hasCreatedExplosionFlag == 0f)
+                {
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlameExplosion>(), 0, 0f);
+                    hasCreatedExplosionFlag = 1f;
+                    npc.netUpdate = true;
+                }
+
                 // Emit very strong fireballs.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 2; i++)
+                    for (int i = 0; i < 3; i++)
                     {
-                        int fireball = Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(17f, 17f), ModContent.ProjectileType<FlareDust>(), 640, 0f);
+                        int fireball = Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(19f, 19f), ModContent.ProjectileType<FlareDust>(), 640, 0f);
                         if (Main.projectile.IndexInRange(fireball))
                         {
                             Main.projectile[fireball].owner = player.whoAmI;

@@ -77,9 +77,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             ref float finalPhaseTransitionCountdown = ref npc.Infernum().ExtraAI[8];
             ref float finalPhaseFireTimer = ref npc.Infernum().ExtraAI[9];
 
-            bool brotherIsPresent = brotherCount > 0 || (brotherFadeoutTime > 0f && brotherFadeoutTime < 50f);
+            bool brotherIsPresent = brotherCount > 0 || (brotherFadeoutTime > 0f && brotherFadeoutTime < 50f && transitionState < 2f);
 
-            bool inFinalPhase = transitionState == 3f;
+            bool inFinalPhase = transitionState == 4f;
 
             // Reset things.
             npc.damage = npc.defDamage;
@@ -108,8 +108,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 return false;
             }
 
+            if (transitionState == 1f && brotherCount <= 0 && brotherFadeoutTime > 40f)
+            {
+                transitionState = 2f;
+                npc.netUpdate = true;
+            }
+
             // Create a seeker ring once at a low enough life.
-            if (transitionState == 1f && lifeRatio < Phase3LifeRatio)
+            if (transitionState == 2f && lifeRatio < Phase3LifeRatio)
             {
                 Main.NewText("You will suffer.", Color.Orange);
 
@@ -121,14 +127,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 }
                 SelectNewAttack(npc);
 
-                transitionState = 2f;
+                transitionState = 3f;
                 npc.netUpdate = true;
             }
 
             // Begin transitioning to the final phase once the seekers have been spawned and then killed.
-            if (transitionState == 2f && !NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
+            if (transitionState == 3f && !NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
 			{
-                transitionState = 3f;
+                transitionState = 4f;
                 attackTimer = 0f;
                 finalPhaseTransitionCountdown = FinalPhaseTransitionTime;
                 npc.netUpdate = true;
@@ -190,7 +196,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 brotherFadeoutTime = MathHelper.Clamp(brotherFadeoutTime + brotherIsPresent.ToDirectionInt(), 0f, 90f);
                 npc.Opacity = 1f - brotherFadeoutTime / 90f;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && brotherFadeoutTime == 30f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && brotherFadeoutTime == 30f && transitionState == 1f)
                 {
                     // Summon Catatrophe and Cataclysm.
                     int cataclysm = NPC.NewNPC((int)target.Center.X - 1000, (int)target.Center.Y - 1000, ModContent.NPCType<CalamitasRun>());

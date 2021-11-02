@@ -339,7 +339,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int attackDelay = 90;
             int attackTime = 480;
             int meteorShootRate = 9;
-            float meteorShootSpeed = 14f;
+            float meteorShootSpeed = 16f;
             float hoverSpeed = 15f;
             if (shouldBeBuffed)
             {
@@ -371,7 +371,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % meteorShootRate == meteorShootRate - 1f)
             {
                 int meteorDamage = shouldBeBuffed ? 325 : 150;
-                Vector2 meteorSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-1050, 1050f), -780f);
+                float horizontalOffsetMax = MathHelper.Lerp(450f, 1050f, Utils.InverseLerp(0f, 8f, target.velocity.Length(), true));
+                Vector2 meteorSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-horizontalOffsetMax, horizontalOffsetMax), -780f);
                 Vector2 shootDirection = Vector2.UnitY.RotatedBy(meteorAngle);
                 Vector2 shootVelocity = shootDirection * meteorShootSpeed;
 
@@ -421,7 +422,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lavaShootRate == lavaShootRate - 1f)
             {
                 int lavaDamage = shouldBeBuffed ? 325 : 150;
-                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 50f + target.velocity.X * Main.rand.NextFloat(35f, 60f), 160f);
+                Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 50f + target.velocity.X * Main.rand.NextFloat(35f, 60f), 420f);
                 if (WorldUtils.Find(lavaSpawnPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(1500), new Conditions.IsSolid()), out Point result))
                 {
                     lavaSpawnPosition = result.ToWorldCoordinates();
@@ -587,7 +588,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     hoverDestination.Y += (target.Center.Y < npc.Center.Y).ToDirectionInt() * chargeOffset;
 
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * redirectSpeed, redirectSpeed / 20f);
-                    npc.rotation = npc.AngleTo(hoverDestination) - MathHelper.PiOver2;
+                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
                     if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 120f) && attackTimer > 50f))
                     {
@@ -764,7 +765,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 possibleAttacks.Add(CloneAttackType.DiagonalCharge);
             }
 
-            if (npc.ai[2] == 3f)
+            if (npc.ai[2] == 4f)
 			{
                 possibleAttacks.Clear();
                 possibleAttacks.Add(CloneAttackType.BrimstoneFireBurst);

@@ -1,4 +1,6 @@
 ﻿using InfernumMode.OverridingSystem;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 
@@ -12,6 +14,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreAI(NPC npc)
         {
+            // If not doing anything don't do anything
+            if (npc.dontTakeDamage)
+                return false;
+
+
+            return false;
+        }
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            GolemHeadBehaviorOverride.DoEyeDrawing(npc);
             return false;
         }
     }

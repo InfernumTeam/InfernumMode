@@ -199,13 +199,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     else
                         npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 45f == 44f)
+                    if (attackTimer % 45f == 44f)
                     {
-                        int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
-                        for (int i = 0; i < probeCount; i++)
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
-                            Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
+                            int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
+                            for (int i = 0; i < probeCount; i++)
+                            {
+                                int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                                Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
+                            }
                         }
                     }
 
@@ -221,13 +225,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     else
                         npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 90f)
+                    if (attackTimer == 90f)
                     {
-                        int probeCount = (int)Math.Round(MathHelper.Lerp(3f, 6f, 1f - lifeRatio));
-                        for (int i = 0; i < probeCount; i++)
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());
-                            Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
+                            int probeCount = (int)Math.Round(MathHelper.Lerp(3f, 6f, 1f - lifeRatio));
+                            for (int i = 0; i < probeCount; i++)
+                            {
+                                int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());
+                                Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
+                                Main.npc[probe].ai[3] = (i == 0f).ToInt();
+                            }
                         }
                     }
 
@@ -291,11 +300,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     {
                         // Move away from the target.
                         if (attackTimer < 80f)
-                            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -24f, 0.3f);
+                            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -21f, 0.3f);
                         else
                         {
-                            float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 19f, 0.1f);
-                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.035f, true) * newSpeed;
+                            float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 19f, 0.15f);
+                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.045f, true) * newSpeed;
 
                             if (attackTimer < 140f)
                             {
@@ -310,8 +319,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
                             if (attackTimer > 140f && attackTimer <= 285f && attackTimer % 45f == 44f)
                             {
-                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
-                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 135, 0f);
+                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                                if (Main.netMode != NetmodeID.MultiplayerClient)
+                                {
+                                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
+                                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 135, 0f);
+                                }
                             }
                         }
 
@@ -438,7 +451,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Release lightning from behind the worm once the charge has begun.
             if (attackTimer == hoverRedirectTime + chargeRedirectTime / 2)
             {
-                Main.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);

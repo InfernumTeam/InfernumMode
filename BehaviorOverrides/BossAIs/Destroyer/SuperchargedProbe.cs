@@ -22,6 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         }
         public ref float AttackTimer => ref npc.ai[1];
         public ref float GeneralTimer => ref npc.ai[2];
+        public bool SoundCreator => npc.ai[3] == 1f;
         public const int Lifetime = 480;
         public override void SetStaticDefaults()
         {
@@ -123,6 +124,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Do the charge on the first frame.
             if (AttackTimer == 1f)
             {
+                if (SoundCreator)
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
+
                 int chargeDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
                 float chargeSpeed = 16.5f;
                 npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 35f) * chargeSpeed;

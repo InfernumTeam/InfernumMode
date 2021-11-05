@@ -5,6 +5,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.UI;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs;
+using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -106,6 +107,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(CalamityGlobalNPC).GetMethod("UpdateLifeRegen", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator CalamityGenNewTemple
+        {
+            add => HookEndpointManager.Modify(typeof(CustomTemple).GetMethod("GenNewTemple", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CustomTemple).GetMethod("GenNewTemple", Utilities.UniversalBindingFlags), value);
+        }
+
         public static void ILEditingLoad()
         {
             On.Terraria.Gore.NewGore += RemoveCultistGore;
@@ -125,6 +132,7 @@ namespace InfernumMode.ILEditingStuff
             CalamityWorldPostUpdate += PermitODRain;
             CalamityPlayerOtherBuffEffects += DisablePlagueDarkness;
             CalamityNPCLifeRegen += NerfShellfishStaff;
+            CalamityGenNewTemple += MakeGolemRoomInvariable;
         }
 
 		public static void ILEditingUnload()
@@ -146,6 +154,7 @@ namespace InfernumMode.ILEditingStuff
             CalamityWorldPostUpdate -= PermitODRain;
             CalamityPlayerOtherBuffEffects -= DisablePlagueDarkness;
             CalamityNPCLifeRegen -= NerfShellfishStaff;
+            CalamityGenNewTemple -= MakeGolemRoomInvariable;
         }
 
         // Why.
@@ -595,5 +604,21 @@ namespace InfernumMode.ILEditingStuff
             cursor.Remove();
             cursor.Emit(OpCodes.Ldc_I4, 30);
         }
+
+        private static void MakeGolemRoomInvariable(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(106)))
+                return;
+
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchStloc(29)))
+                return;
+
+            cursor.Emit(OpCodes.Ldsfld, typeof(GolemBodyBehaviorOverride).GetField("ArenaWidth", Utilities.UniversalBindingFlags));
+            cursor.Emit(OpCodes.Stloc, 31);
+            cursor.Emit(OpCodes.Ldsfld, typeof(GolemBodyBehaviorOverride).GetField("ArenaHeight", Utilities.UniversalBindingFlags));
+            cursor.Emit(OpCodes.Stloc, 32);
+        }        
     }
 }

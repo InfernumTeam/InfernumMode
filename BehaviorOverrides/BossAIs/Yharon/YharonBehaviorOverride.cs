@@ -1338,14 +1338,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 finalAttackCompletionState = 0f;
 
-                if (hasTeleportedFlag == 0f)
-                {
-                    npc.Center = player.Center - Vector2.UnitY * 1500f;
-                    npc.velocity *= 0.3f;
-                    hasTeleportedFlag = 1f;
-                    npc.netUpdate = true;
-                }
-
                 // Fade into magic sparkles more heavily.
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.3f, 0.15f);
                 npc.life = (int)MathHelper.Lerp(npc.life, npc.lifeMax * 0.01f, 0.025f);
@@ -1387,7 +1379,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // After all final charges are complete, slow down, emit many sparkles/flames and fart explosions, and die.
             else
             {
+                if (Main.netMode != NetmodeID.MultiplayerClient && hasTeleportedFlag == 0f)
+                {
+                    Vector2 oldPosition = npc.Center;
+                    for (int i = 0; i < 50; i++)
+                    {
+                        Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(280f, 280f);
+                        Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(42f, 42f), ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
+                    }
+
+                    npc.Center = player.Center - Vector2.UnitY * 1500f;
+                    Dust.QuickDustLine(oldPosition, npc.Center, 275, Color.Orange);
+                    npc.velocity *= 0.3f;
+                    hasTeleportedFlag = 1f;
+                    npc.netUpdate = true;
+                }
+
+                int preAttackTime = totalCharges * 90 + totalTimeSpentPerCarpetBomb + totalBerserkCharges * 45;
                 ref float pulseDeathEffectCooldown = ref npc.Infernum().ExtraAI[5];
+
+                // Release a burst of very strong fireballs
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == preAttackTime + 60f)
+                {
+                    for (int i = 0; i < 45; i++)
+                    {
+                        Vector2 fireallVelocity = (MathHelper.TwoPi * i / 45f).ToRotationVector2() * 11f;
+                        int fireball = Utilities.NewProjectileBetter(npc.Center, fireallVelocity, ModContent.ProjectileType<FlareDust>(), 640, 0f);
+                        if (Main.projectile.IndexInRange(fireball))
+                        {
+                            Main.projectile[fireball].owner = player.whoAmI;
+                            Main.projectile[fireball].ai[0] = 2f;
+                        }
+                    }
+                }
+
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.035f, 0.2f);
                 if (finalAttackCompletionState != 1f)
                 {
@@ -1397,8 +1422,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.netUpdate = true;
                     finalAttackCompletionState = 1f;
                 }
+
                 npc.damage = 0;
-                npc.velocity *= 0.985f;
+                npc.velocity *= 0.95f;
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.04f);
                 npc.life = (int)MathHelper.Lerp(npc.life, 0, 0.01f);
 

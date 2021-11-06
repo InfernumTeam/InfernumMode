@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public const float Phase2LifeRatio = 0.95f;
         public const float Phase3LifeRatio = 0.55f;
-        public const float Phase4LifeRatio = 0.2f;
+        public const float Phase4LifeRatio = 0.25f;
 
         #region Enumerations
         internal enum PlanteraAttackState
@@ -29,7 +29,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             PetalBurst,
             PoisonousGasRelease,
             TentacleSnap,
-            SporeGrowth,
+            NettleBorders,
+            RoseGrowth,
             Charge,
         }
         #endregion
@@ -90,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 phase2TransitionTimer = 180f;
                 phaseTransitionCounter++;
 
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
                 DeleteHostileThings();
 
                 npc.netUpdate = true;
@@ -100,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 phase3TransitionTimer = 180f;
                 phaseTransitionCounter++;
 
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
                 DeleteHostileThings();
 
                 npc.netUpdate = true;
@@ -137,8 +138,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 case PlanteraAttackState.TentacleSnap:
                     DoAttack_TentacleSnap(npc, target, inPhase4, ref attackTimer);
                     break;
-                case PlanteraAttackState.SporeGrowth:
-                    DoAttack_SporeGrowth(npc, target, inPhase4, ref attackTimer);
+                case PlanteraAttackState.NettleBorders:
+                    DoAttack_NettleBorders(npc, target, ref attackTimer);
+                    break;
+                case PlanteraAttackState.RoseGrowth:
+                    DoAttack_RoseGrowth(npc, target, inPhase4, ref attackTimer);
                     break;
                 case PlanteraAttackState.Charge:
                     DoAttack_Charge(npc, target, lifeRatio, enraged, ref attackTimer);
@@ -266,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             }
 
             if (attackTimer > 360f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_PetalBurst(NPC npc, Player target, bool inPhase4, bool enraged, ref float attackTimer)
@@ -316,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             // Go to the next attack after a burst of 8 petals has been shot.
             if (petalCount >= 6f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_PoisonousGasRelease(NPC npc, Player target, bool enraged, ref float attackTimer)
@@ -338,7 +342,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 32f;
-                    for (int i = 0; i < 24; i++)
+                    for (int i = 0; i < 30; i++)
                     {
                         Vector2 gasSporeVelocity;
                         do
@@ -354,7 +358,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             }
 
             if (attackTimer >= 250f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_TentacleSnap(NPC npc, Player target, bool inPhase4, ref float attackTimer)
@@ -415,11 +419,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 attackTimer = 0f;
                 snapCount++;
                 if (snapCount >= 2f)
-                    GotoNextAttackState(npc);
+                    SelectNextAttack(npc);
             }
         }
 
-        public static void DoAttack_SporeGrowth(NPC npc, Player target, bool inPhase4, ref float attackTimer)
+        public static void DoAttack_NettleBorders(NPC npc, Player target, ref float attackTimer)
+        {
+            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+
+            // Slow down prior to firing the bursts.
+            float idealSpeed = Utils.InverseLerp(120f, 70f, attackTimer, true) * 6f;
+            if (!npc.WithinRange(target.Center, 85f) && idealSpeed > 0f)
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * idealSpeed, 0.15f);
+            else
+                npc.velocity *= 0.9f;
+
+            // Release a burst of nettle vines. These do not do damage for a moment and linger, splitting the arena
+            // into sections.
+            if (attackTimer >= 135f)
+			{
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+                    for (int i = 0; i < 3; i++)
+					{
+                        Vector2 thornVelocity = (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 12f;
+                        Utilities.NewProjectileBetter(npc.Center, thornVelocity, ModContent.ProjectileType<NettlevineArenaSeparator>(), 215, 0f);
+					}
+				}
+                SelectNextAttack(npc);
+			}
+        }
+
+        public static void DoAttack_RoseGrowth(NPC npc, Player target, bool inPhase4, ref float attackTimer)
         {
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
@@ -459,11 +490,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
                 // Create the flowers.
                 foreach (Vector2 flowerSpawnPosition in flowerSpawnPositions)
-                    Utilities.NewProjectileBetter(flowerSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SporeFlower>(), 0, 0f);
+                    Utilities.NewProjectileBetter(flowerSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ExplodingFlower>(), 0, 0f);
             }
 
             if (attackTimer > 70f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_Charge(NPC npc, Player target, float lifeRatio, bool enraged, ref float attackTimer)
@@ -494,7 +525,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 npc.velocity *= 0.93f;
 
                 if (chargeCounter > chargeCount)
-                    GotoNextAttackState(npc);
+                    SelectNextAttack(npc);
             }
 
             // Do the charge and release a burst of petals.
@@ -574,7 +605,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         #region AI Utility Methods
 
-        public static void GotoNextAttackState(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float phase3TransitionTimer = npc.Infernum().ExtraAI[7];
@@ -596,9 +627,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     newAttackType = PlanteraAttackState.TentacleSnap;
                     break;
                 case PlanteraAttackState.TentacleSnap:
-                    newAttackType = PlanteraAttackState.SporeGrowth;
+                    newAttackType = PlanteraAttackState.RoseGrowth;
                     break;
-                case PlanteraAttackState.SporeGrowth:
+                case PlanteraAttackState.RoseGrowth:
+                    newAttackType = PlanteraAttackState.NettleBorders;
+                    break;
+                case PlanteraAttackState.NettleBorders:
                     newAttackType = PlanteraAttackState.Charge;
                     break;
                 case PlanteraAttackState.Charge:

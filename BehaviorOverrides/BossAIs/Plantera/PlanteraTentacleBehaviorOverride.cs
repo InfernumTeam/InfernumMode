@@ -19,9 +19,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override bool PreAI(NPC npc)
 		{
-            // Die if Plantera is absent.
-            if (!Main.npc.IndexInRange(NPC.plantBoss))
-			{
+            // Die if Plantera is absent or not using tentacles.
+            if (!Main.npc.IndexInRange(NPC.plantBoss) || Main.npc[NPC.plantBoss].ai[0] != (int)PlanteraBehaviorOverride.PlanteraAttackState.TentacleSnap)
+            {
                 npc.life = 0;
                 npc.HitEffect();
                 npc.checkDead();
@@ -47,9 +47,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             if (time == 70f)
                 Main.PlaySound(SoundID.Item74, npc.Center);
 
-            if (time > 125f)
+            if (time > 110f)
             {
-                npc.scale *= 0.9f;
+                npc.scale *= 0.85f;
 
                 // Die once small enough.
                 npc.Opacity = npc.scale;

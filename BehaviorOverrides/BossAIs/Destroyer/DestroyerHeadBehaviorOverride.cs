@@ -304,7 +304,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                         else
                         {
                             float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 19f, 0.15f);
-                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.045f, true) * newSpeed;
+                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
 
                             if (attackTimer < 140f)
                             {

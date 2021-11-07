@@ -415,6 +415,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                             Main.projectile[i].netUpdate = true;
                         }
                     }
+                    GotoNextAttack(npc, ref attackType);
                 }
                 transitionDRCountdown = TransitionDRBoostTime;
                 npc.netUpdate = true;

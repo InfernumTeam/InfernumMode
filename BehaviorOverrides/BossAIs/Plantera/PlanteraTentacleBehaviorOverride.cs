@@ -1,13 +1,7 @@
-﻿using CalamityMod;
-using CalamityMod.Projectiles.Boss;
-using InfernumMode.OverridingSystem;
+﻿using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 {

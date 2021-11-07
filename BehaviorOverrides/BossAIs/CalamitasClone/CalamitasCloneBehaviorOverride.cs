@@ -273,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 attackCycleCount--;
                 hoverHorizontalOffset -= 70f;
-                initialFlameSpeed += 4f;
+                initialFlameSpeed += 5f;
                 flameAngularVariance *= 1.35f;
                 flameReleaseRate -= 2;
             }
@@ -394,7 +394,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (lifeRatio < Phase2LifeRatio)
             {
                 attackTime += 25;
-                lavaShootRate -= 5;
+                lavaShootRate -= 9;
             }
 
             if (shouldBeBuffed)
@@ -443,7 +443,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 		{
             int attackDelay = 45;
             int attackTime = 330;
-            int lightningShootRate = 32;
+            int lightningShootRate = 28;
             float hoverSpeed = 15f;
 
             if (shouldBeBuffed)
@@ -484,14 +484,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 15f;
-            float fireballSpeed = MathHelper.Lerp(6.5f, 10f, 1f - lifeRatio);
-            int fireballReleaseRate = 65;
+            float fireballSpeed = MathHelper.Lerp(7.8f, 12f, 1f - lifeRatio);
+            int fireballReleaseRate = 60;
             int fireballReleaseTime = 360;
 
             if (inFinalPhase)
 			{
-                fireballReleaseRate -= 15;
-                fireballSpeed *= 1.5f;
+                fireballReleaseRate -= 10;
+                fireballSpeed *= 1.25f;
             }
 
             if (shouldBeBuffed)

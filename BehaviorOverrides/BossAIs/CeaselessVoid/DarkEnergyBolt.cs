@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             projectile.tileCollide = Time > 45f;
 
             // Thin out and disappear once collision has happened.
-            if (projectile.position == projectile.oldPos.Last() && HasCollidedWithSomething)
+            if (projectile.timeLeft == 1 && HasCollidedWithSomething)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<MysteriousMatter>(), 250, 0f);
@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             float width = projectile.width;
             if (completionRatio <= arrowheadCutoff)
                 width = MathHelper.Lerp(0.02f, width, Utils.InverseLerp(0f, arrowheadCutoff, completionRatio, true));
-            return width * projectile.scale + 0.01f;
+            return width * projectile.scale + 1f;
         }
 
         public Color PrimitiveColorFunction(float completionRatio)
@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (TrailDrawer is null)
-                TrailDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+                TrailDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
 
             if (Time < 30f)
 			{
@@ -106,10 +106,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 Vector2.Lerp(drawPositions.First(), drawPositions.Last(), 1f),
             };
 
-            if (drawPositions.First() == drawPositions.Last())
-                return false;
+            if (projectile.timeLeft >= 2)
+                TrailDrawer.Draw(drawPositions, projectile.Size * 0.5f - Main.screenPosition, 43);
 
-            TrailDrawer.Draw(drawPositions, projectile.Size * 0.5f - Main.screenPosition, 73);
+            // This state reset is necessary to ensure that the backbuffer is flushed immediately and the
+            // trail is drawn before anything else. Not doing this may cause problems with vertex/index buffers down the line.
+            spriteBatch.ResetBlendState();
             return false;
         }
 
@@ -121,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             if (!HasCollidedWithSomething)
             {
                 HasCollidedWithSomething = true;
-                projectile.timeLeft = 12;
+                projectile.timeLeft = ProjectileID.Sets.TrailCacheLength[projectile.type] - 2;
                 projectile.netUpdate = true;
             }
             return false;

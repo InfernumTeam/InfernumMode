@@ -32,11 +32,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public override void AI()
         {
             projectile.Opacity = Utils.InverseLerp(0f, 20f, Time, true) * Utils.InverseLerp(0f, 20f, projectile.timeLeft, true);
-            projectile.scale = projectile.Opacity;
+            projectile.scale = projectile.Opacity * 0.7f;
 
             // Accelerate.
-            if (projectile.velocity.Length() < 21f)
-                projectile.velocity *= 1.0175f;
+            if (projectile.velocity.Length() < 20f)
+                projectile.velocity *= 1.0145f;
 
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
@@ -67,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return Utilities.CircularCollision(projectile.Center, targetHitbox, projectile.Size.Length() * projectile.scale);
+            return Utilities.CircularCollision(projectile.Center, targetHitbox, projectile.Size.Length() * projectile.scale * 0.5f);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)

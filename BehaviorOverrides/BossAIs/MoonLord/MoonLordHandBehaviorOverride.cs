@@ -14,7 +14,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
     public class MoonLordHandBehaviorOverride : NPCBehaviorOverride
     {
-        public const int HandLifeMax = 43390;
         public override int NPCOverrideType => NPCID.MoonLordHand;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
@@ -32,16 +31,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         // ExtraAI[2] = see head
         public override bool PreAI(NPC npc)
         {
-            // Adjust lifeMax
-            if (npc.lifeMax != HandLifeMax)
-            {
-                npc.life = npc.lifeMax = HandLifeMax;
-                npc.netUpdate = true;
-            }
             CalamityGlobalNPC calamityGlobalNPC = npc.Calamity();
+
             // Hands life ratio
-            NPC[] hands = Main.npc.Where(entity => entity.type == npc.type && entity.active).ToArray();
-            float handsRatio = hands.Sum(entity => entity.life) / (float)hands.Sum(entity => entity.lifeMax);
+            NPC[] hands = Main.npc.Where(n => n.type == npc.type && n.active).ToArray();
+            float handsRatio = hands.Sum(h => h.life / (float)h.lifeMax);
 
             if ((calamityGlobalNPC.newAI[0] == 1f || npc.life < 1700) && npc.Infernum().ExtraAI[2] != -2f)
             {
@@ -57,13 +51,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Variables
-
             int idealFrame = 0;
             bool leftHand = npc.ai[2] == 0f;
             float handSign = -leftHand.ToDirectionInt();
             bool enrage = Main.npc[(int)npc.ai[3]].Infernum().ExtraAI[0] == 0f;
-            npc.spriteDirection = (int)handSign;
 
+            npc.spriteDirection = (int)handSign;
             npc.dontTakeDamage = npc.frameCounter >= 21.0 || !Main.npc[NPC.FindFirstNPC(NPCID.MoonLordHead)].dontTakeDamage || calamityGlobalNPC.newAI[0] == 1f;
 
             // Go to die

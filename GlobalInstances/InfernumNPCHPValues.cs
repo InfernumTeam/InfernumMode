@@ -3,6 +3,14 @@ using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.HiveMind;
+using CalamityMod.NPCs.AstrumAureus;
+using CalamityMod.NPCs.StormWeaver;
+using CalamityMod.NPCs.BrimstoneElemental;
+using CalamityMod.NPCs.Leviathan;
+using CalamityMod.NPCs.PlaguebringerGoliath;
+using CalamityMod.NPCs.Calamitas;
+using CalamityMod.World;
+using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using System.Collections.Generic;
 using Terraria.ID;
@@ -14,14 +22,6 @@ using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
 using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
-using CalamityMod.NPCs.AstrumAureus;
-using CalamityMod.NPCs.StormWeaver;
-using CalamityMod.NPCs.BrimstoneElemental;
-using CalamityMod.NPCs.Leviathan;
-using CalamityMod.NPCs.PlaguebringerGoliath;
-using CalamityMod.NPCs.Calamitas;
-using CalamityMod.World;
-using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -57,11 +57,15 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<CalamitasRun3>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 444444 : 82800,
             [ModContent.NPCType<CalamitasRun>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 95000 : 19500,
             [ModContent.NPCType<CalamitasRun2>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 77000 : 13000,
+            [NPCID.Plantera] = 110500,
             [ModContent.NPCType<Leviathan>()] = 103103,
             [ModContent.NPCType<Siren>()] = 39250,
             [ModContent.NPCType<AureusSpawn>()] = 25000,
             [ModContent.NPCType<PlaguebringerGoliath>()] = 111776,
             [NPCID.CultistBoss] = 56000,
+            [NPCID.MoonLordHand] = 43390,
+            [NPCID.MoonLordHead] = 52525,
+            [NPCID.MoonLordCore] = 99990,
             [ModContent.NPCType<Bumblefuck>()] = 227550,
             [ModContent.NPCType<ProvidenceBoss>()] = 900000,
             [ModContent.NPCType<StormWeaverHeadNaked>()] = 999998,

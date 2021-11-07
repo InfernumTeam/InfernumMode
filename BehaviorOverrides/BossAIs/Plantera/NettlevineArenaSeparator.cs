@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override void AI()
         {
-            if (projectile.timeLeft < 510)
+            if (projectile.timeLeft < 480)
                 projectile.velocity *= 0.985f;
             else
                 projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;

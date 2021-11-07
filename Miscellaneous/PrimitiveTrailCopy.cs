@@ -211,6 +211,10 @@ namespace InfernumMode
 			if (trailPoints.Any(point => point.HasNaNs()))
 				return;
 
+			// If the trail points are all equal, don't draw anything.
+			if (trailPoints.All(point => point == trailPoints[0]))
+				return;
+
 			UpdateBaseEffect(out Matrix projection, out Matrix view);
 			VertexPosition2DColor[] vertices = GetVerticesFromTrailPoints(trailPoints, directionOverride);
 			short[] triangleIndices = GetIndicesFromTrailPoints(trailPoints.Count);
@@ -227,7 +231,6 @@ namespace InfernumMode
 				BaseEffect.CurrentTechnique.Passes[0].Apply();
 
 			Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, vertices.Length, triangleIndices, 0, triangleIndices.Length / 3);
-
 			Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 		}
 	}

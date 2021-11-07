@@ -7,7 +7,6 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,7 +23,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             DustDevils,
             ODSandSharkSummon,
             FastCharges,
-            DuststormBurst
+            DuststormBurst,
+            SandFlames
         }
 
         public override int NPCOverrideType => ModContent.NPCType<GreatSandSharkNPC>();
@@ -143,6 +143,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     break;
                 case GreatSandSharkAttackState.DuststormBurst:
                     DoAttack_DuststormBurst(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
+                    break;
+                case GreatSandSharkAttackState.SandFlames:
+                    DoAttack_SandFlames(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -412,6 +415,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (attackTimer > 170f)
                 SelectNextAttack(npc);
         }
+
+        public static void DoAttack_SandFlames(NPC npc, Player target, int desertTextureVariant, float lifeRatio, ref float attackTimer)
+		{
+
+		}
 
         public static void DefaultJumpMovement(NPC npc, ref Player target, float swimAcceleration, float jumpSpeed, ref float verticalSwimDirection)
         {

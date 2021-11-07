@@ -76,7 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             float horizontalChargeOffset = 450f;
             float redirectSpeed = 19f;
-            float chargeSpeed = MathHelper.Lerp(21f, 25f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(22.5f, 27f, 1f - lifeRatio);
             int chargeTime = 40;
             int chargeSlowdownTime = 15;
             int chargeCount = 3;

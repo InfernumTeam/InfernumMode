@@ -106,6 +106,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
                 npc.netUpdate = true;
             }
+            if (phaseTransitionCounter == 2f && lifeRatio < Phase4LifeRatio)
+            {
+                phaseTransitionCounter++;
+                npc.netUpdate = true;
+            }
 
             if (phase2TransitionTimer > 0f)
             {
@@ -374,7 +379,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             int tentacleSummonTime = 45;
             bool canCreateTentacles = attackTimer >= tentacleSpawnDelay && attackTimer < tentacleSpawnDelay + tentacleSummonTime;
             ref float freeAreaAngle = ref npc.Infernum().ExtraAI[0];
-            ref float snapCount = ref npc.Infernum().ExtraAI[1];
+            ref float freeAreaAngle2 = ref npc.Infernum().ExtraAI[1];
+            ref float snapCount = ref npc.Infernum().ExtraAI[2];
 
             if (attackTimer == 1f)
             {
@@ -390,23 +396,42 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     tries++;
                 }
                 while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle.ToRotationVector2() * 200f, 1, 1) && tries < 100);
+                do
+                {
+                    if (freeAreaAngle2 == 0f)
+                        freeAreaAngle2 = Main.rand.NextFloat(MathHelper.TwoPi);
+                    else
+                        freeAreaAngle2 = (freeAreaAngle2 + Main.rand.NextFloat(2.28f)) % MathHelper.TwoPi;
+                    tries++;
+                }
+                while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle2.ToRotationVector2() * 200f, 1, 1) && tries < 100);
 
                 npc.netUpdate = true;
             }
 
             if (canCreateTentacles)
             {
+                // Time is relative to when the tentacle was created and as such is synchronized.
+                float time = attackTimer - (tentacleSpawnDelay + tentacleSummonTime) - 85f;
+                if (inPhase4)
+                    time += 30f;
+
                 float tentacleAngle = Utils.InverseLerp(tentacleSpawnDelay, tentacleSpawnDelay + tentacleSummonTime, attackTimer, true) * MathHelper.TwoPi;
                 if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle) > MathHelper.Pi * 0.16f)
                 {
-                    // Time is relative to when the tentacle was created and as such is synchronized.
-                    float time = attackTimer - (tentacleSpawnDelay + tentacleSummonTime) - 85f;
-                    if (inPhase4)
-                        time += 30f;
                     for (int i = 0; i < 2; i++)
                     {
                         float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
                         NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PlanterasTentacle, npc.whoAmI, tentacleAngle + angularStep, 128f, time);
+                    }
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle2) > MathHelper.Pi * 0.16f && inPhase4)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float angularStep = MathHelper.TwoPi * i / tentacleSummonTime / 2f;
+                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<PlanteraPinkTentacle>(), npc.whoAmI, tentacleAngle + angularStep + 0.01f, 76f, time);
                     }
                 }
             }
@@ -414,7 +439,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             if (attackTimer == tentacleSpawnDelay + 45f)
                 Main.PlaySound(SoundID.Item73, target.Center);
 
-            if (attackTimer > tentacleSpawnDelay + tentacleSummonTime + 45f && !NPC.AnyNPCs(NPCID.PlanterasTentacle))
+            if (attackTimer > tentacleSpawnDelay + tentacleSummonTime + 45f && !NPC.AnyNPCs(NPCID.PlanterasTentacle) && !NPC.AnyNPCs(ModContent.NPCType<PlanteraPinkTentacle>()))
             {
                 attackTimer = 0f;
                 snapCount++;

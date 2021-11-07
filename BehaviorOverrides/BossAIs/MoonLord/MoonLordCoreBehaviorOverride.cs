@@ -24,7 +24,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Despawn
         }
 
-        public const int CoreLifeMax = 99990;
         public const int ArenaWidth = 200;
         public const int ArenaHeight = 150;
         public const int ArenaHorizontalStandSpace = 70;
@@ -49,12 +48,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             // Stop rain.
             CalamityMod.CalamityMod.StopRain();
-
-            if (npc.lifeMax != CoreLifeMax)
-            {
-                npc.life = npc.lifeMax = CoreLifeMax;
-                npc.netUpdate = true;
-            }
 
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];

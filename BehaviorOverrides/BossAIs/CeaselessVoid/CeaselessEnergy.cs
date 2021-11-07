@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Accelerate.
-            if (projectile.velocity.Length() < 28f)
+            if (projectile.velocity.Length() < 23f)
                 projectile.velocity *= 1.023f;
 
             Time++;

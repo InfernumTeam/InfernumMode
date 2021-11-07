@@ -22,7 +22,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Reset = 4
         }
 
-        public const int HeadLifeMax = 52525;
         public override int NPCOverrideType => NPCID.MoonLordHead;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
@@ -63,13 +62,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             ref float pupilOutwardness = ref npc.localAI[1];
             ref float pupilScale = ref npc.localAI[2];
             ref float eyeAnimationFrameCounter = ref npc.localAI[3];
-
-            // Adjust lifeMax
-            if (npc.lifeMax != HeadLifeMax)
-            {
-                npc.life = npc.lifeMax = HeadLifeMax;
-                npc.netUpdate = true;
-            }
 
             // Kill and spawn true eyes
             if ((calamityGlobalNPC.newAI[0] == 1f || npc.life < 1700) && npc.Infernum().ExtraAI[2] != -2f)

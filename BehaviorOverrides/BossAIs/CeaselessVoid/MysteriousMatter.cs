@@ -61,8 +61,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            lightColor.A = 0;
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Vector2 origin = texture.Size() * 0.5f;
+            float scale = projectile.scale;
+            spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             return false;
         }
 

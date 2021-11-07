@@ -18,8 +18,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
         public const float Phase2LifeRatio = 0.95f;
-        public const float Phase3LifeRatio = 0.55f;
-        public const float Phase4LifeRatio = 0.25f;
+        public const float Phase3LifeRatio = 0.65f;
+        public const float Phase4LifeRatio = 0.3f;
 
         #region Enumerations
         internal enum PlanteraAttackState
@@ -139,7 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     DoAttack_TentacleSnap(npc, target, inPhase4, ref attackTimer);
                     break;
                 case PlanteraAttackState.NettleBorders:
-                    DoAttack_NettleBorders(npc, target, ref attackTimer);
+                    DoAttack_NettleBorders(npc, target, inPhase4, ref attackTimer);
                     break;
                 case PlanteraAttackState.RoseGrowth:
                     DoAttack_RoseGrowth(npc, target, inPhase4, ref attackTimer);
@@ -255,7 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             }
 
             // Release seeds.
-            int seedFireRate = enraged ? 15 : 27;
+            int seedFireRate = enraged ? 10 : 16;
             if (inPhase4)
                 seedFireRate -= 2;
             if (attackTimer % seedFireRate == seedFireRate - 1f)
@@ -423,7 +423,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             }
         }
 
-        public static void DoAttack_NettleBorders(NPC npc, Player target, ref float attackTimer)
+        public static void DoAttack_NettleBorders(NPC npc, Player target, bool inPhase4, ref float attackTimer)
         {
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
@@ -437,17 +437,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             // Release a burst of nettle vines. These do not do damage for a moment and linger, splitting the arena
             // into sections.
             if (attackTimer >= 135f)
-			{
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-				{
-                    for (int i = 0; i < 3; i++)
-					{
-                        Vector2 thornVelocity = (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 12f;
+                {
+                    int vineCount = inPhase4 ? 5 : 4;
+                    for (int i = 0; i < vineCount; i++)
+                    {
+                        Vector2 thornVelocity = (MathHelper.TwoPi * i / (float)vineCount).ToRotationVector2() * 12f;
                         Utilities.NewProjectileBetter(npc.Center, thornVelocity, ModContent.ProjectileType<NettlevineArenaSeparator>(), 215, 0f);
-					}
-				}
+                    }
+                }
                 SelectNextAttack(npc);
-			}
+            }
         }
 
         public static void DoAttack_RoseGrowth(NPC npc, Player target, bool inPhase4, ref float attackTimer)

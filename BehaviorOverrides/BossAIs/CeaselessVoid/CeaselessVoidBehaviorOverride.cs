@@ -3,6 +3,7 @@ using CalamityMod.NPCs;
 using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -18,17 +19,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults;
 
+        public const int BulletHellTime = 900;
+
         #region Enumerations
         public enum CeaselessVoidAttackType
         {
             ReleaseRealityTearPortals,
             DarkMagicCharge,
-            DarkEnergySummon,
+            DarkEnergyBolts
         }
-		#endregion
+        #endregion
 
-		#region Set Defaults
-		public override void SetDefaults(NPC npc)
+        #region Set Defaults
+        public override void SetDefaults(NPC npc)
         {
             npc.npcSlots = 36f;
             npc.width = 100;
@@ -65,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public const float Phase2LifeRatio = 0.65f;
 
-		public override bool PreAI(NPC npc)
+        public override bool PreAI(NPC npc)
         {
             // Reset DR.
             npc.Calamity().DR = 0.2f;
@@ -91,10 +94,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float bulletHellTimer = ref npc.ai[2];
+            ref float bulletHellCounter = ref npc.ai[3];
 
             // Reset things.
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = target.Center.Y < Main.worldSurface * 16f;
+
+            // Do bullet hells.
+            if (bulletHellTimer > 0f && bulletHellTimer < BulletHellTime)
+			{
+                DoBehavior_DarkEnergyBulletHell(npc, target, lifeRatio, ref bulletHellTimer);
+                bulletHellTimer++;
+                return false;
+			}
+
+            // Handle bullet hell triggers.
+            if (bulletHellCounter == 0f && lifeRatio < 0.75f)
+			{
+                bulletHellCounter = 1f;
+                bulletHellTimer = 1f;
+                npc.netUpdate = true;
+            }
+            if (bulletHellCounter == 1f && lifeRatio < 0.4f)
+            {
+                bulletHellCounter = 2f;
+                bulletHellTimer = 1f;
+                npc.netUpdate = true;
+            }
+            if (bulletHellCounter == 2f && lifeRatio < 0.1f)
+            {
+                bulletHellCounter = 3f;
+                bulletHellTimer = 1f;
+                npc.netUpdate = true;
+            }
 
             switch ((CeaselessVoidAttackType)(int)attackType)
             {
@@ -104,8 +137,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 case CeaselessVoidAttackType.DarkMagicCharge:
                     DoBehavior_DarkMagicCharge(npc, target, lifeRatio, ref attackTimer);
                     break;
-                case CeaselessVoidAttackType.DarkEnergySummon:
-                    DoBehavior_DarkEnergySummon(npc, target, lifeRatio, ref attackTimer);
+                case CeaselessVoidAttackType.DarkEnergyBolts:
+                    DoBehavior_DarkEnergyBolts(npc, target, lifeRatio, ref attackTimer);
                     break;
             }
 
@@ -124,29 +157,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Fly to the side of the target.
             if (!npc.WithinRange(hoverDestination, 150f) || npc.WithinRange(target.Center, 200f))
-			{
+            {
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeed;
                 npc.SimpleFlyMovement(idealVelocity, hoverSpeed / 22f);
-			}
+            }
 
             // Create rifts around the void.
             if (attackTimer % 20f == 19f && attackTimer < 300f)
-			{
+            {
                 Main.PlaySound(SoundID.Item8, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-				{
+                {
                     Vector2 portalSpawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.6f;
                     Utilities.NewProjectileBetter(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EnergyPortalBeam>(), 0, 0f);
-				}
-			}
+                }
+            }
 
             if (attackTimer > 375f)
                 SelectNewAttack(npc);
         }
 
         public static void DoBehavior_DarkMagicCharge(NPC npc, Player target, float lifeRatio, ref float attackTimer)
-		{
+        {
             int chargeTime = 35;
             int chargeCount = 3;
             float chargeSpeed = MathHelper.Lerp(23f, 29f, 1f - lifeRatio);
@@ -155,7 +188,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
 
             switch ((int)attackState)
-			{
+            {
                 // Hover into position for the charge.
                 case 0:
                     Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, -300f);
@@ -163,11 +196,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     npc.Center = npc.Center.MoveTowards(hoverDestination, 10f);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && npc.WithinRange(hoverDestination, 50f))
-					{
+                    {
                         npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
 
                         for (int i = 0; i < 4; i++)
-						{
+                        {
                             Vector2 portalSpawnPosition = npc.Center + (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 135f;
                             Utilities.NewProjectileBetter(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EnergyPortalBeam>(), 0, 0f);
                         }
@@ -176,6 +209,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                         attackState = 1f;
                     }
                     break;
+
                 // Do the charge.
                 case 1:
                     if (attackTimer > chargeTime)
@@ -192,20 +226,128 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                         npc.netUpdate = true;
                     }
                     break;
-			}
-		}
+            }
+        }
 
-        public static void DoBehavior_DarkEnergySummon(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        public static void DoBehavior_DarkEnergyBolts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            int burstCount = 3;
+            int projectilesPerBurst = 5;
+
+            ref float attackState = ref npc.Infernum().ExtraAI[0];
+            ref float burstCounter = ref npc.Infernum().ExtraAI[1];
+
+            switch ((int)attackState)
+            {
+                // Hover into position.
+                case 0:
+                    npc.damage = 0;
+                    Vector2 hoverDestination = target.Center - Vector2.UnitY * 370f;
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 0.8f);
+                    npc.Center = npc.Center.MoveTowards(hoverDestination, 10f);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && npc.WithinRange(hoverDestination, 50f))
+                    {
+                        attackTimer = 0f;
+                        attackState = 1f;
+                    }
+                    break;
+
+                // Do the burst.
+                case 1:
+                    npc.velocity *= 0.92f;
+                    if (attackTimer == 60f)
+                    {
+                        Main.PlaySound(SoundID.Item43, npc.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            for (int i = 0; i < projectilesPerBurst; i++)
+                            {
+                                Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / projectilesPerBurst) * 26f;
+                                Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<DarkEnergyBolt>(), 260, 0f);
+                            }
+                        }
+                    }
+
+                    if (attackTimer > 105f)
+                    {
+                        attackTimer = 0f;
+                        attackState = 0f;
+
+                        if (burstCounter < burstCount)
+                            burstCounter++;
+                        else
+                            SelectNewAttack(npc);
+                        npc.netUpdate = true;
+                    }
+                    break;
+            }
+        }
+
+        public static void DoBehavior_DarkEnergyBulletHell(NPC npc, Player target, float lifeRatio, ref float attackTimer)
 		{
+            int burstFireRate = (int)MathHelper.Lerp(32f, 20f, 1f - lifeRatio);
+            int circleFireRate = (int)MathHelper.Lerp(72f, 50f, 1f - lifeRatio);
+            int energyPerBurst = (int)MathHelper.Lerp(10f, 14f, 1f - lifeRatio);
+            int energyPerCircle = (int)MathHelper.Lerp(16f, 25f, 1f - lifeRatio);
+            float burstBaseSpeed = MathHelper.Lerp(7f, 9.5f, 1f - lifeRatio);
 
-		}
+            // Slow down and don't do damage.
+            npc.velocity *= 0.965f;
+            npc.damage = 0;
+
+            // Don't take damage.
+            npc.dontTakeDamage = true;
+
+            // Don't fire near the start/end of the attack.
+            if (attackTimer < 90f || attackTimer > BulletHellTime - 120f)
+                return;
+
+            // Create bursts.
+            if (attackTimer % burstFireRate == burstFireRate - 1f)
+			{
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float burstAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < energyPerBurst; i++)
+                    {
+                        float burstInterpolant = i / (float)(energyPerBurst - 1f);
+                        float burstAngle = burstAngleOffset + burstInterpolant * (i + i * i) / 2f + 32f * i;
+                        Vector2 burstVelocity = burstAngle.ToRotationVector2() * burstBaseSpeed * Main.rand.NextFloat(0.7f, 1f);
+                        Utilities.NewProjectileBetter(npc.Center, burstVelocity, ModContent.ProjectileType<DarkEnergy>(), 260, 0f);
+                    }
+                }
+
+                for (int i = 0; i < 60; i++)
+				{
+                    Dust magic = Dust.NewDustPerfect(npc.Center, 267);
+                    magic.color = Color.Lerp(Color.Purple, Color.Pink, Main.rand.NextFloat());
+                    magic.scale *= 1.45f;
+                    magic.velocity = (MathHelper.TwoPi * (i + Main.rand.NextFloat(-0.5f, 0.5f)) / 60f).ToRotationVector2() * Main.rand.NextFloat(20f, 30f);
+                    magic.velocity += Main.rand.NextVector2Circular(3f, 3f);
+                    magic.noLight = true;
+                    magic.noGravity = true;
+				}
+			}
+
+            // Create circles of energy.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % circleFireRate == circleFireRate - 1f)
+            {
+                for (int i = 0; i < energyPerCircle; i++)
+                {
+                    Vector2 burstVelocity = (MathHelper.TwoPi * i / energyPerCircle).ToRotationVector2() * burstBaseSpeed * 1.1f;
+                    Utilities.NewProjectileBetter(npc.Center, burstVelocity, ModContent.ProjectileType<DarkEnergy>(), 260, 0f);
+                }
+            }
+        }
 
         public static void SelectNewAttack(NPC npc)
         {
             List<CeaselessVoidAttackType> possibleAttacks = new List<CeaselessVoidAttackType>
             {
                 CeaselessVoidAttackType.ReleaseRealityTearPortals,
-                CeaselessVoidAttackType.DarkMagicCharge
+                CeaselessVoidAttackType.DarkMagicCharge,
+                CeaselessVoidAttackType.DarkEnergyBolts
             };
 
             if (possibleAttacks.Count > 1)

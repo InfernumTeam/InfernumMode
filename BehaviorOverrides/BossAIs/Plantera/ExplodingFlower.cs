@@ -28,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
+            Main.NewText(projectile.scale);
             Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             for (int i = 0; i < 2; i++)
 			{

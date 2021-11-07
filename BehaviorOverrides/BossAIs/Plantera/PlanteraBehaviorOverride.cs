@@ -402,6 +402,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                         freeAreaAngle2 = Main.rand.NextFloat(MathHelper.TwoPi);
                     else
                         freeAreaAngle2 = (freeAreaAngle2 + Main.rand.NextFloat(2.28f)) % MathHelper.TwoPi;
+
                     tries++;
                 }
                 while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle2.ToRotationVector2() * 200f, 1, 1) && tries < 100);

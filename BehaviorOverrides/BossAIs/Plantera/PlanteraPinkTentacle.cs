@@ -56,13 +56,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 attachOffset = MathHelper.Lerp(attachOffset, 60f, 0.05f);
 
             // Reach outward swiftly in hopes of hitting a target.
-            if (time > 155f)
+            if (time > 180f)
                 attachOffset = MathHelper.Lerp(attachOffset, 2500f, 0.021f);
 
-            if (time == 155f)
+            if (time == 180f)
                 Main.PlaySound(SoundID.Item74, npc.Center);
 
-            if (time > 195f)
+            if (time > 220f)
             {
                 npc.scale *= 0.85f;
 

@@ -207,11 +207,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 45f);
             npc.rotation = npc.velocity.X * 0.04f;
 
+            bool canFire = attackTimer <= shootRate * shootCount && attackTimer > 75f;
+
             // Open the mouth a little bit before shooting.
             frameType = wrappedTime >= shootRate * 0.7f ? (int)PrimeFrameType.OpenMouth : (int)PrimeFrameType.ClosedMouth;
 
             // Only shoot projectiles if above and not extremely close to the player.
-            if (wrappedTime == shootRate - 1f && npc.Center.Y < target.Center.Y - 150f && !npc.WithinRange(target.Center, 200f) && attackTimer > 75f)
+            if (wrappedTime == shootRate - 1f && npc.Center.Y < target.Center.Y - 150f && !npc.WithinRange(target.Center, 200f) && canFire)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -227,7 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Main.PlaySound(SoundID.Item101, target.Center);
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= shootRate * (shootCount + 0.65f))
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= shootRate * shootCount + 90f)
                 GotoNextAttackState(npc);
         }
 
@@ -568,6 +570,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 while (nextAttack == currentAttack);
             }
 
+            npc.velocity *= MathHelper.Lerp(1f, 0.25f, Utils.InverseLerp(14f, 30f, npc.velocity.Length()));
             npc.ai[0] = (int)nextAttack;
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)

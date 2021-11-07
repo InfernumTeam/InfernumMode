@@ -1399,7 +1399,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 ref float pulseDeathEffectCooldown = ref npc.Infernum().ExtraAI[5];
 
                 // Release a burst of very strong fireballs
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == preAttackTime + 60f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == preAttackTime + 100f)
                 {
                     for (int i = 0; i < 45; i++)
                     {
@@ -1428,7 +1428,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.04f);
                 npc.life = (int)MathHelper.Lerp(npc.life, 0, 0.01f);
 
-                if (npc.life <= 2000 && npc.life > 1)
+                if (npc.life <= 1500 && npc.life > 1)
                     npc.life = 1;
 
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
@@ -1463,7 +1463,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 }
 
                 // Emit very strong fireballs.
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > preAttackTime + 100f)
                 {
                     for (int i = 0; i < 3; i++)
                     {

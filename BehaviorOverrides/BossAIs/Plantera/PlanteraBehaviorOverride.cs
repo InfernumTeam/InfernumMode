@@ -129,18 +129,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             {
                 // The constitutes the first phase.
                 case PlanteraAttackState.UnripeFakeout:
+                    npc.damage = npc.defDamage;
                     DoAttack_UnripeFakeout(npc, target, enraged, ref attackTimer);
                     break;
                 case PlanteraAttackState.RedBlossom:
+                    npc.damage = npc.defDamage;
                     DoAttack_RedBlossom(npc, target, inPhase4, enraged, ref attackTimer);
                     break;
                 case PlanteraAttackState.PetalBurst:
+                    npc.damage = npc.defDamage;
                     DoAttack_PetalBurst(npc, target, inPhase4, enraged, ref attackTimer);
                     break;
                 case PlanteraAttackState.PoisonousGasRelease:
                     DoAttack_PoisonousGasRelease(npc, target, enraged, ref attackTimer);
                     break;
                 case PlanteraAttackState.TentacleSnap:
+                    npc.damage = npc.defDamage;
                     DoAttack_TentacleSnap(npc, target, inPhase4, ref attackTimer);
                     break;
                 case PlanteraAttackState.NettleBorders:
@@ -371,7 +375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * 2f, 0.1f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * 1.35f, 0.1f);
             else
                 npc.velocity *= 0.9f;
 

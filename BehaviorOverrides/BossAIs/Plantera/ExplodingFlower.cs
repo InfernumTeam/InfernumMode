@@ -23,21 +23,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             projectile.scale = Utils.InverseLerp(0f, 20f, projectile.timeLeft, true) * Utils.InverseLerp(150f, 130f, projectile.timeLeft, true);
         }
 
-		public override void Kill(int timeLeft)
-		{
+        public override void Kill(int timeLeft)
+        {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Main.NewText(projectile.scale);
             Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             for (int i = 0; i < 2; i++)
-			{
+            {
                 float offsetAngle = MathHelper.Lerp(-0.38f, 0.38f, i);
                 Vector2 petalShootVelocity = projectile.SafeDirectionTo(closestPlayer.Center, -Vector2.UnitY).RotatedBy(offsetAngle) * 6.5f;
                 Utilities.NewProjectileBetter(projectile.Center, petalShootVelocity, ModContent.ProjectileType<Petal>(), 150, 0f);
-			}
-		}
+            }
+        }
 
-		public override Color? GetAlpha(Color lightColor) => Color.White;
+        public override Color? GetAlpha(Color lightColor) => Color.White;
     }
 }

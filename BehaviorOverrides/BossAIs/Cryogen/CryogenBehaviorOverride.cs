@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             ref float attackState = ref npc.ai[2];
             ref float enrageTimer = ref npc.ai[3];
 
-            enrageTimer = Utils.Clamp(enrageTimer - target.ZoneSnow.ToDirectionInt(), 0, 300);
+            enrageTimer = Utils.Clamp(enrageTimer - target.ZoneSnow.ToDirectionInt(), 0, 480);
 
             // Make a blizzard happen.
             CalamityUtils.StartRain();

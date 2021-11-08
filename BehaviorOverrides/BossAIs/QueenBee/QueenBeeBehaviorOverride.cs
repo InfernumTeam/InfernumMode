@@ -48,13 +48,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
             Player target = Main.player[npc.target];
 
-            npc.defense = target.ZoneJungle ? npc.defDefense : 70;
-
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float finalPhaseTransitionTimer = ref npc.ai[2];
             ref float frameType = ref npc.localAI[0];
             ref float hasBegunFinalPhaseTransition = ref npc.localAI[1];
+            ref float enrageTimer = ref npc.Infernum().ExtraAI[6];
+
+            enrageTimer = MathHelper.Clamp(enrageTimer - target.ZoneJungle.ToDirectionInt(), 0f, 480f);
+            npc.defense = enrageTimer >= 300f ? npc.defDefense : 70;
 
             if (npc.life < npc.lifeMax * 0.1f && Main.netMode != NetmodeID.MultiplayerClient && hasBegunFinalPhaseTransition == 0f)
             {

@@ -52,13 +52,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             }
 
             Player target = Main.player[npc.target];
-
-            npc.dontTakeDamage = !target.ZoneCrimson && !target.ZoneCorrupt;
-
             int creeperCount = 8;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float enrageTimer = ref npc.Infernum().ExtraAI[6];
             ref float hasCreatedCreepersFlag = ref npc.localAI[0];
+
+            enrageTimer = MathHelper.Clamp(enrageTimer - (target.ZoneCrimson || target.ZoneCorrupt).ToDirectionInt(), 0f, 480f);
+            npc.dontTakeDamage = enrageTimer >= 300f;
 
             // Summon creepers.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedCreepersFlag == 0f)

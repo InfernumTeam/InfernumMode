@@ -39,6 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             ref float boneToothShootCounter = ref npc.Infernum().ExtraAI[8];
             ref float sandSlamTimer = ref npc.Infernum().ExtraAI[10];
             ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
+            ref float enrageTimer = ref npc.Infernum().ExtraAI[12];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
@@ -58,9 +59,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             }
 
             Player target = Main.player[npc.target];
+            enrageTimer = MathHelper.Clamp(enrageTimer - target.ZoneDesert.ToDirectionInt(), 0f, 420f);
+
             bool inTiles = Collision.SolidCollision(npc.position, npc.width, npc.height);
             npc.defense = npc.defDefense;
-            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<DesertScourgeHeadSmall>()) || !target.ZoneDesert;
+            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<DesertScourgeHeadSmall>()) || enrageTimer > 300f;
 
             // Idly release bone teeth.
             boneToothShootCounter++;

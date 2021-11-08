@@ -56,6 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             ref float afterimagePulse = ref npc.Infernum().ExtraAI[7];
             ref float finalPhaseInvinciblityTime = ref npc.Infernum().ExtraAI[11];
             ref float flameColumnCountdown = ref npc.Infernum().ExtraAI[12];
+            ref float enrageTimer = ref npc.Infernum().ExtraAI[14];
 
             // Act as though the boss is at 20% life if that amount of life has already been reached.
             // This is done to ensure that the regeneration doesn't weaken attacks.
@@ -63,7 +64,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 lifeRatio = 0.1995f;
 
             Player target = Main.player[npc.target];
-            npc.defense = target.ZoneCorrupt ? -5 : 9999;
+            enrageTimer = MathHelper.Clamp(enrageTimer - (target.ZoneCrimson || target.ZoneCorrupt).ToDirectionInt(), 0f, 480f);
+            npc.defense = enrageTimer >= 300f ? -5 : 9999;
             npc.Calamity().DR = 0f;
 
             CalamityGlobalNPC.hiveMind = npc.whoAmI;

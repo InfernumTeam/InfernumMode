@@ -204,7 +204,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             npc.damage = 0;
 
             Vector2 destination = target.Center - Vector2.UnitY * (AnyArms ? 550f : 435f);
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 45f);
+            if (!npc.WithinRange(destination, 40f))
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 65f);
+            else
+                npc.velocity *= 1.02f;
             npc.rotation = npc.velocity.X * 0.04f;
 
             bool canFire = attackTimer <= shootRate * shootCount && attackTimer > 75f;

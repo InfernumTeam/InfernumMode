@@ -24,7 +24,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             ODSandSharkSummon,
             FastCharges,
             DuststormBurst,
-            SandFlames
+            SandFlames,
+            SharkWaves
         }
 
         public override int NPCOverrideType => ModContent.NPCType<GreatSandSharkNPC>();
@@ -32,6 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public const float Phase2LifeRatio = 0.6f;
+        public const float Phase3LifeRatio = 0.3f;
 
         public override void SetDefaults(NPC npc)
         {
@@ -90,11 +92,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float enrageTimer = ref npc.ai[2];
 
             npc.TargetClosest();
 
             Player target = Main.player[npc.target];
-            bool pissedOff = !(Main.sandTiles > 1000 && target.Center.Y > (Main.worldSurface - 180f) * 16D);
+
+            if (!(Main.sandTiles > 1000 && target.Center.Y > (Main.worldSurface - 180f) * 16D))
+                enrageTimer++;
+            else
+                enrageTimer++;
+            enrageTimer = MathHelper.Clamp(enrageTimer, 0f, 480f);
+
+            bool pissedOff = enrageTimer >= 300f;
 
             if ((!target.active || target.dead || !npc.WithinRange(target.Center, pissedOff ? 2250f : 4200f)) && npc.target != 255)
             {
@@ -145,7 +155,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     DoAttack_DuststormBurst(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
                     break;
                 case GreatSandSharkAttackState.SandFlames:
-                    DoAttack_SandFlames(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
+                    DoAttack_SandFlames(npc, target, lifeRatio, ref attackTimer);
+                    break;
+                case GreatSandSharkAttackState.SharkWaves:
+                    DoAttack_SharkWaves(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -416,10 +429,51 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_SandFlames(NPC npc, Player target, int desertTextureVariant, float lifeRatio, ref float attackTimer)
-		{
+        public static void DoAttack_SandFlames(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            int sandBallReleaseRate = (int)MathHelper.Lerp(45f, 35f, 1f - lifeRatio);
+            float swimAcceleration = MathHelper.Lerp(0.4f, 0.65f, 1f - lifeRatio);
 
-		}
+            ref float verticalSwimDirection = ref npc.Infernum().ExtraAI[0];
+            DefaultJumpMovement(npc, ref target, swimAcceleration, swimAcceleration * 30f, ref verticalSwimDirection);
+
+            // Idly release dust devils.
+            if (attackTimer % sandBallReleaseRate == sandBallReleaseRate - 1f && attackTimer < 420f)
+            {
+                Vector2 spawnPosition = target.Center + Main.rand.NextVector2CircularEdge(750f, 750f);
+                Vector2 shootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 9f;
+                Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SandFlameBall>(), 160, 0f);
+            }
+
+            if (attackTimer > 540f)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoAttack_SharkWaves(NPC npc, Player target, int desertTextureVariant, float lifeRatio, ref float attackTimer)
+        {
+            int sharkSummonRate = (int)MathHelper.Lerp(75f, 55f, 1f - lifeRatio);
+            float swimAcceleration = 0.45f;
+
+            ref float verticalSwimDirection = ref npc.Infernum().ExtraAI[0];
+            DefaultJumpMovement(npc, ref target, swimAcceleration, swimAcceleration * 30f, ref verticalSwimDirection);
+
+            // Summon sand sharks.
+            if (attackTimer % sharkSummonRate == sharkSummonRate - 1f && attackTimer < 320f)
+            {
+                for (float dx = -1100f; dx < 1100f; dx += 175f)
+				{
+                    Vector2 spawnPosition = target.Center + new Vector2(dx, -850f);
+                    Vector2 shootVelocity = Vector2.UnitY * 8f;
+                    int shark = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SwervingSandShark>(), 165, 0f);
+
+                    if (Main.projectile.IndexInRange(shark))
+                        Main.projectile[shark].ai[1] = desertTextureVariant;
+                }
+            }
+
+            if (attackTimer > 430f)
+                SelectNextAttack(npc);
+        }
 
         public static void DefaultJumpMovement(NPC npc, ref Player target, float swimAcceleration, float jumpSpeed, ref float verticalSwimDirection)
         {
@@ -491,7 +545,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (npc.WithinRange(target.Center, 850f))
                 attackSelector.Add(GreatSandSharkAttackState.ODSandSharkSummon);
             if (lifeRatio < Phase2LifeRatio)
-                attackSelector.Add(GreatSandSharkAttackState.DuststormBurst, 24.5);
+            {
+                attackSelector.Add(GreatSandSharkAttackState.DuststormBurst, 2D);
+                attackSelector.Add(GreatSandSharkAttackState.SandFlames, 2D);
+            }
+            if (lifeRatio < Phase3LifeRatio)
+                attackSelector.Add(GreatSandSharkAttackState.SharkWaves, 992.5D);
 
             do
                 npc.ai[0] = (int)attackSelector.Get();

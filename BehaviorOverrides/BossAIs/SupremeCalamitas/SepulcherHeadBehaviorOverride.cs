@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetDefaults(NPC npc)
         {
-            npc.damage = 640;
+            npc.damage = 550;
             npc.npcSlots = 5f;
             npc.width = npc.height = 64;
             npc.defense = 0;
@@ -208,7 +208,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     NPC segmentToFireFrom = Main.rand.Next(segments);
                     Vector2 soulShootVelocity = (segmentToFireFrom.rotation - MathHelper.PiOver2).ToRotationVector2();
                     soulShootVelocity = Vector2.Lerp(soulShootVelocity, segmentToFireFrom.SafeDirectionTo(target.Center + target.velocity * 50f), 0.75f) * 9f;
-                    int spirit = Utilities.NewProjectileBetter(segmentToFireFrom.Center, soulShootVelocity, ModContent.ProjectileType<SepulcherSpirit2>(), 640, 0f);
+                    int spirit = Utilities.NewProjectileBetter(segmentToFireFrom.Center, soulShootVelocity, ModContent.ProjectileType<SepulcherSpirit2>(), 540, 0f);
 
                     if (Main.projectile.IndexInRange(spirit))
                     {
@@ -280,7 +280,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     for (int i = 0; i < 17; i++)
                     {
                         Vector2 hellblastVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-1.1f, 1.1f, i / 16f)) * 6f;
-                        Utilities.NewProjectileBetter(npc.Center, hellblastVelocity, ModContent.ProjectileType<BrimstoneHellblast>(), 640, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, hellblastVelocity, ModContent.ProjectileType<BrimstoneHellblast>(), 540, 0f);
                     }
                 }
             }
@@ -319,7 +319,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 35f == 34f && !npc.WithinRange(target.Center, 100f) && attackTimer < 400f && attackTimer > 60f)
 			{
                 Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 17f;
-                Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<DarkMagicBurst>(), 640, 0f);
+                Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<DarkMagicBurst>(), 540, 0f);
 			}
 
             if (attackTimer > 460f)

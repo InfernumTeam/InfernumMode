@@ -79,6 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             List<Vector2> points = new List<Vector2>()
             {
                 npc.Center,
+                Vector2.Lerp(npc.Center, sepulcher.Center, 0.5f),
                 sepulcher.Center
             };
             npc.Infernum().OptionalPrimitiveDrawer.Draw(points, -Main.screenPosition, 40);

@@ -8,8 +8,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class DarkMagicBurst : ModProjectile
     {
-        public ref float TimeCountdown => ref projectile.ai[0];
-        public ref float SpiritHue => ref projectile.localAI[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Magic Burst");
@@ -48,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             for (int i = 0; i < 10; i++)
             {
-                int dartDamage = 640;
+                int dartDamage = 540;
                 Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedByRandom(0.77f) * projectile.velocity.Length() * Main.rand.NextFloat(0.65f, 0.85f);
                 int dart = Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f);
                 if (Main.projectile.IndexInRange(dart))

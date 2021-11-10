@@ -27,6 +27,8 @@ namespace InfernumMode
 
         internal static readonly Color HiveMindSkyColor = new Color(53, 42, 81);
 
+        public static float BlackFade = 0f;
+
         public override void Load()
         {
             OverridingListManager.Load();
@@ -167,6 +169,7 @@ namespace InfernumMode
 
         public override void PreUpdateEntities()
         {
+            BlackFade = MathHelper.Clamp(BlackFade - 0.025f, 0f, 1f);
             TwinsAttackSynchronizer.DoUniversalUpdate();
             TwinsAttackSynchronizer.PostUpdateEffects();
         }

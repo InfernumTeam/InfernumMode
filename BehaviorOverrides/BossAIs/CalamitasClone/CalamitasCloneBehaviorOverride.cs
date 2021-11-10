@@ -467,7 +467,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             bool canFire = attackTimer > attackDelay && attackTimer < attackTime + attackDelay;
 
-            // Create lightning from the ground. This has a delay at the start and end of the attack.
+            // Create lightning from the sky. This has a delay at the start and end of the attack.
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lightningShootRate == lightningShootRate - 1f)
             {
                 Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f + target.velocity.X * 42f, 40f);

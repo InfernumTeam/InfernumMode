@@ -553,9 +553,14 @@ namespace InfernumMode.ILEditingStuff
 
             cursor.EmitDelegate<Action>(() =>
             {
+                float fadeToBlack = 0f;
                 if (CalamityGlobalNPC.signus != -1)
+                    fadeToBlack = Main.npc[CalamityGlobalNPC.signus].Infernum().ExtraAI[9];
+                if (InfernumMode.BlackFade > 0f)
+                    fadeToBlack = InfernumMode.BlackFade;
+
+                if (fadeToBlack > 0f)
                 {
-                    float fadeToBlack = Main.npc[CalamityGlobalNPC.signus].Infernum().ExtraAI[9];
                     Color color = Color.Black * fadeToBlack;
                     Main.spriteBatch.Draw(Main.magicPixel, new Rectangle(-2, -2, Main.screenWidth + 4, Main.screenHeight + 4), new Rectangle(0, 0, 1, 1), color);
                 }

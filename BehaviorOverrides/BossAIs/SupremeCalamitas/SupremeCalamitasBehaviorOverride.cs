@@ -51,10 +51,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Set the whoAmI index.
             CalamityGlobalNPC.SCal = npc.whoAmI;
 
+            // Reset things.
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = false;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool sepulcherIsPresent = NPC.AnyNPCs(ModContent.NPCType<SCalWormHead>());
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float attackDelay = ref npc.ai[2];
@@ -64,6 +66,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Handle initializations.
             if (npc.localAI[1] == 0f)
             {
+                // Define the arena.
+                Vector2 arenaArea = new Vector2(250f, 250f);
+                npc.Infernum().arenaRectangle = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
+                int left = (int)(npc.Center.X / 16 - arenaArea.X * 0.5f);
+                int right = (int)(npc.Center.X / 16 + arenaArea.X * 0.5f);
+                int top = (int)(npc.Center.Y / 16 - arenaArea.Y * 0.5f);
+                int bottom = (int)(npc.Center.Y / 16 + arenaArea.Y * 0.5f);
+
+                for (int i = left; i <= right; i++)
+                {
+                    for (int j = top; j <= bottom; j++)
+                    {
+                        // Create arena tiles.
+                        if ((i == left || i == right || j == top || j == bottom) && !Main.tile[i, j].active())
+                        {
+                            Main.tile[i, j].type = (ushort)ModContent.TileType<CalamityMod.Tiles.ArenaTile>();
+                            Main.tile[i, j].active(true);
+                            if (Main.netMode == NetmodeID.Server)
+                                NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
+                            else
+                                WorldGen.SquareTileFrame(i, j, true);
+                        }
+                    }
+                }
+
                 attackDelay = 180f;
                 npc.localAI[1] = 1f;
             }
@@ -71,6 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Handle text attack delays. These are used specifically for things like dialog.
             if (attackDelay > 0f)
             {
+                npc.damage = 0;
                 npc.dontTakeDamage = true;
                 DoBehavior_HandleAttackDelaysAndText(npc, target, ref textState, ref attackDelay);
 
@@ -83,8 +111,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (initialChargeupTime > 0f)
             {
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
                 DoBehavior_HandleInitialChargeup(npc, target, ref initialChargeupTime);
                 initialChargeupTime--;
+                return false;
+            }
+
+            // Hover to the side of the target and watch if Sepulcher is present.
+            if (sepulcherIsPresent)
+            {
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
+
+                float hoverSpeed = 31f;
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 375f;
+                hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 450f;
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
+                npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+
+                return false;
             }
 
             attackTimer++;
@@ -109,7 +155,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Main.NewText("... So it's you.", Color.Orange);
 
                     if (attackDelay == 60f)
-                        Main.NewText("After all you've done, I will make you suffer.", Color.Orange);
+                        Main.NewText("After all you've done, you will suffer.", Color.Orange);
                     break;
             }
         }
@@ -147,7 +193,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Summon spirits from below the player that congregate above their head.
             // They transform into sepulcher after a certain amount of time has passed.
-            if (initialChargeupTime % 15f == 14f && initialChargeupTime >= 45f)
+            if (initialChargeupTime % 9f == 8f && initialChargeupTime >= 45f)
             {
                 Main.PlaySound(SoundID.NPCHit36, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -167,14 +213,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Create some dust to accompany the spirits.
             Vector2 sepulcherSpawnPosition = target.Center + SepulcherSpawnOffset;
-            Vector2 dustSpawnDirection = Main.rand.NextVector2Unit();
-            Vector2 dustSpawnOffset = dustSpawnDirection.RotatedBy(-MathHelper.PiOver2) * Main.rand.NextFloat(50f);
+            for (int i = 0; i < 5; i++)
+            {
+                Vector2 dustSpawnDirection = Main.rand.NextVector2Unit();
+                Vector2 dustSpawnOffset = dustSpawnDirection.RotatedBy(-MathHelper.PiOver2) * Main.rand.NextFloat(50f);
 
-            magic = Dust.NewDustPerfect(sepulcherSpawnPosition + dustSpawnOffset, 264);
-            magic.scale = Main.rand.NextFloat(1f, 1.3f);
-            magic.color = Color.Lerp(Color.Red, Color.Orange, Main.rand.NextFloat());
-            magic.noLight = true;
-            magic.noGravity = true;
+                magic = Dust.NewDustPerfect(sepulcherSpawnPosition + dustSpawnOffset, 267);
+                magic.scale = Main.rand.NextFloat(1f, 1.5f);
+                magic.color = Color.Lerp(Color.Red, Color.Orange, Main.rand.NextFloat());
+                magic.velocity = dustSpawnDirection * Main.rand.NextFloat(10f);
+                magic.noGravity = true;
+            }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initialChargeupTime == 1f)
             {

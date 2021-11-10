@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.UI;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs;
@@ -113,6 +114,24 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(CustomTemple).GetMethod("GenNewTemple", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator SepulcherHeadModifyProjectile
+        {
+            add => HookEndpointManager.Modify(typeof(SCalWormHead).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(SCalWormHead).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator SepulcherBodyModifyProjectile
+        {
+            add => HookEndpointManager.Modify(typeof(SCalWormBody).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(SCalWormBody).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+        }
+
+        public static event ILContext.Manipulator SepulcherTailModifyProjectile
+        {
+            add => HookEndpointManager.Modify(typeof(SCalWormTail).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(SCalWormTail).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+        }
+
         public static void ILEditingLoad()
         {
             On.Terraria.Gore.NewGore += RemoveCultistGore;
@@ -133,6 +152,9 @@ namespace InfernumMode.ILEditingStuff
             CalamityPlayerOtherBuffEffects += DisablePlagueDarkness;
             CalamityNPCLifeRegen += NerfShellfishStaff;
             CalamityGenNewTemple += MakeGolemRoomInvariable;
+            SepulcherHeadModifyProjectile += FuckYou;
+            SepulcherBodyModifyProjectile += FuckYou;
+            SepulcherTailModifyProjectile += FuckYou;
         }
 
 		public static void ILEditingUnload()
@@ -155,6 +177,9 @@ namespace InfernumMode.ILEditingStuff
             CalamityPlayerOtherBuffEffects -= DisablePlagueDarkness;
             CalamityNPCLifeRegen -= NerfShellfishStaff;
             CalamityGenNewTemple -= MakeGolemRoomInvariable;
+            SepulcherHeadModifyProjectile -= FuckYou;
+            SepulcherBodyModifyProjectile -= FuckYou;
+            SepulcherTailModifyProjectile -= FuckYou;
         }
 
         // Why.
@@ -620,5 +645,11 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ldsfld, typeof(GolemBodyBehaviorOverride).GetField("ArenaHeight", Utilities.UniversalBindingFlags));
             cursor.Emit(OpCodes.Stloc, 32);
         }        
+
+        private static void FuckYou(ILContext il)
+		{
+            ILCursor cursor = new ILCursor(il);
+            cursor.Emit(OpCodes.Ret);
+		}
     }
 }

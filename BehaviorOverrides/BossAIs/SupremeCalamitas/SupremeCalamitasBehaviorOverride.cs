@@ -66,6 +66,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Handle initializations.
             if (npc.localAI[1] == 0f)
             {
+                // Teleport above the player.
+                Vector2 oldPosition = npc.Center;
+                npc.Center = target.Center - Vector2.UnitY * 160f;
+                Dust.QuickDustLine(oldPosition, npc.Center, 300f, Color.Red);
+
                 // Define the arena.
                 Vector2 arenaArea = new Vector2(250f, 250f);
                 npc.Infernum().arenaRectangle = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
@@ -78,6 +83,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     for (int j = top; j <= bottom; j++)
                     {
+                        if (!WorldGen.InWorld(i, j))
+                            continue;
+
                         // Create arena tiles.
                         if ((i == left || i == right || j == top || j == bottom) && !Main.tile[i, j].active())
                         {

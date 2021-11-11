@@ -142,9 +142,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             YharonAttackType.RingOfFire,
             YharonAttackType.SplittingMeteors,
-            YharonAttackType.SpinCharge,
             YharonAttackType.InfernadoAndFireShotgunBreath,
-            YharonAttackType.MassiveInfernadoSummon,
+            YharonAttackType.SpinCharge,
             YharonAttackType.FastCharge,
             YharonAttackType.TeleportingCharge,
             YharonAttackType.FastCharge,
@@ -898,7 +897,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                int fireballCount = Main.rand.Next(10, 15 + 1);
+                                int fireballCount = Main.rand.Next(7, 12 + 1);
                                 float angleSpread = Main.rand.NextFloat(0.3f, 0.55f);
                                 for (int i = 0; i < fireballCount; i++)
                                 {

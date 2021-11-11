@@ -2,7 +2,6 @@
 using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
-using CalamityMod.Projectiles.Boss;
 using CalamityMod.Tiles;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -25,7 +24,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             AcceleratingRedirectingSkulls,
             MagicChargeBlasts,
             DarkMagicFireballFan,
-            SwervingBlasts
+            SwervingBlasts,
+            RedirectingFlames,
+            LightningLines
         }
         public override int NPCOverrideType => ModContent.NPCType<SCalBoss>();
 
@@ -53,16 +54,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         };
         public static readonly SCalAttackType[] Subphase2Pattern = new SCalAttackType[]
         {
-            SCalAttackType.AcceleratingRedirectingSkulls,
-            SCalAttackType.DarkMagicFireballFan,
+            SCalAttackType.LightningLines,
+            SCalAttackType.RedirectingFlames,
             SCalAttackType.SwervingBlasts,
             SCalAttackType.MagicChargeBlasts,
             SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.DarkMagicFireballFan,
+            SCalAttackType.RedirectingFlames,
+            SCalAttackType.LightningLines,
             SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.SwervingBlasts,
             SCalAttackType.MagicChargeBlasts,
+            SCalAttackType.LightningLines,
             SCalAttackType.DarkMagicFireballFan,
+            SCalAttackType.SwervingBlasts,
         };
         public static readonly Dictionary<SCalAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<SCalAttackType[], Func<NPC, bool>>()
         {
@@ -236,6 +241,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case SCalAttackType.SwervingBlasts:
                     npc.damage = 0;
                     DoBehavior_SwervingBlasts(npc, target, ref attackTimer);
+                    break;
+                case SCalAttackType.RedirectingFlames:
+                    npc.damage = 0;
+                    DoBehavior_RedirectingFlames(npc, target, ref attackTimer);
+                    break;
+                case SCalAttackType.LightningLines:
+                    npc.damage = 0;
+                    DoBehavior_LightningLines(npc, target, ref attackTimer);
                     break;
             }
 
@@ -540,7 +553,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Fire the fan.
             if (firing)
 			{
-                float shootRotationalOffset = MathHelper.Lerp(-1.33f, 1.33f, Utils.InverseLerp(attackDelay, attackDelay + shootTime, wrappedAttackTimer, true));
+                float shootRotationalOffset = MathHelper.Lerp(-1.53f, 1.53f, Utils.InverseLerp(attackDelay, attackDelay + shootTime, wrappedAttackTimer, true));
                 Vector2 shootVelocity = (shootRotationalOffset + shootDirection).ToRotationVector2() * 9f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 540, 0f);
@@ -617,81 +630,92 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_BrimstoneLightningBlasts(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_RedirectingFlames(NPC npc, Player target, ref float attackTimer)
         {
-            int lightningShootRate = 38;
-            Vector2[] potentialHoverPositions = new Vector2[]
+            int attackCycleCount = 3;
+            int attackDelay = 25;
+            int shootTime = 75;
+            int afterShootDelay = 35;
+            int shootRate = 4;
+            float hoverSpeed = 29f;
+            float wrappedAttackTimer = attackTimer % (attackDelay + shootTime + afterShootDelay);
+
+            // Hover to the top left/right of the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 270f;
+            hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 450f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
+
+            // Release flames upwards. They will redirect and accelerate towards targets after a short period of time.
+            if (wrappedAttackTimer >= attackDelay && wrappedAttackTimer < attackDelay + shootTime && wrappedAttackTimer % shootRate == shootRate - 1f)
             {
-                target.Center + new Vector2(480f, 350f),
-                target.Center + new Vector2(-480f, 350f),
-                target.Center + new Vector2(480f, -350f),
-                target.Center + new Vector2(-480f, -350f),
-            };
-            float minDistance = 1000000f;
-            Vector2 hoverPosition = potentialHoverPositions[0];
-            for (int i = 0; i < potentialHoverPositions.Length; i++)
-			{
-                if (npc.Distance(potentialHoverPositions[i]) < minDistance)
-				{
-                    minDistance = npc.Distance(potentialHoverPositions[i]);
-                    hoverPosition = potentialHoverPositions[i];
+                Main.PlaySound(SoundID.Item73, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center);
+                    flameShootVelocity = Vector2.Lerp(flameShootVelocity, -Vector2.UnitY.RotatedByRandom(0.92f), 0.7f) * 13f;
+                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 550, 0f);
                 }
 			}
 
-            hoverPosition.Y += (float)Math.Cos(attackTimer / 20f) * 75f;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverPosition) * 27f, 0.8f);
+            // Look at the target.
             npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
-            if (attackTimer > 520f)
+            if (attackTimer > attackCycleCount * (attackDelay + shootTime + afterShootDelay))
+                SelectNewAttack(npc);
+		}
+
+        public static void DoBehavior_LightningLines(NPC npc, Player target, ref float attackTimer)
+        {
+            int attackCycleCount = 5;
+            int attackDelay = attackTimer < 105f ? 105 : 40;
+            int telegraphTime = 32;
+            int afterShootDelay = 12;
+            int lightningCount = 13;
+            float lightningAngleArea = 0.94f;
+            float hoverSpeed = 29f;
+            float wrappedAttackTimer = attackTimer % (attackDelay + telegraphTime + afterShootDelay);
+
+            // Slow down prior to creating lines.
+            if (wrappedAttackTimer > attackDelay)
 			{
-                if (attackTimer > 580f)
-                    SelectNewAttack(npc);
-                return;
-			}
+                hoverSpeed = 0f;
+                npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, hoverSpeed / 30f);
+            }
 
-            if (attackTimer > 75f && attackTimer % 4f == 3f && attackTimer % 90f > 45f)
+            // Hover to the top left/right of the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
+            hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 470f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
+            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.05f);
+
+            // Look at the target.
+            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+
+            // Create telegraphs that turn into lightning.
+            if (wrappedAttackTimer == attackDelay)
 			{
-                if (npc.velocity.Length() > 8f)
-                    npc.velocity *= 0.95f;
-
-                Vector2 lightningSpawnPosition = npc.Center + Vector2.UnitX * npc.spriteDirection * 20f;
-
-                // Release hand electric dust.
-                for (int j = 0; j < 2; j++)
-                {
-                    Dust electricity = Dust.NewDustPerfect(lightningSpawnPosition, 264);
-                    electricity.velocity = Vector2.UnitX.RotatedByRandom(0.2f) * npc.spriteDirection * 2.6f;
-                    electricity.scale = Main.rand.NextFloat(1.3f, 1.425f);
-                    electricity.fadeIn = 0.9f;
-                    electricity.color = Color.Red;
-                    electricity.noLight = true;
-                    electricity.noGravity = true;
-                }
-
-                lightningSpawnPosition += Main.rand.NextVector2Circular(18f, 18f);
-                Vector2 lightningVelocity = (target.Center - lightningSpawnPosition + target.velocity * 13f).SafeNormalize(Vector2.UnitY) * 1.15f;
-                lightningVelocity += Main.rand.NextVector2Circular(0.125f, 0.125f);
-
-                npc.spriteDirection = (lightningVelocity.X > 0f).ToDirectionInt();
-                Main.PlaySound(SoundID.Item72, target.Center);
+                Main.PlaySound(SoundID.Item8, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int lightning = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<RedLightning2>(), 540, 0f);
-                    if (Main.projectile.IndexInRange(lightning))
+                    float baseOffsetAngle = Main.rand.NextFloatDirection() * lightningAngleArea / lightningCount * 0.6f;
+                    for (int i = 0; i < lightningCount; i++)
                     {
-                        Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
-                        Main.projectile[lightning].ai[1] = Main.rand.Next(100);
+                        float lightningOffsetAngle = MathHelper.Lerp(-lightningAngleArea, lightningAngleArea, i / (float)(lightningCount - 1f));
+                        Vector2 lightningDirection = npc.SafeDirectionTo(target.Center).RotatedBy(lightningOffsetAngle + baseOffsetAngle);
+                        int telegraph = Utilities.NewProjectileBetter(npc.Center, lightningDirection, ModContent.ProjectileType<RedLightningTelegraph>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(telegraph))
+                            Main.projectile[telegraph].ai[0] = telegraphTime;
                     }
                 }
-            }
+                npc.velocity = Vector2.Zero;
+			}
 
-            // Create lightning from the sky. This has a delay at the start and end of the attack.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lightningShootRate == lightningShootRate - 1f && attackTimer > 70f)
-            {
-                Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(300f, 400f) * Main.rand.NextBool(2).ToDirectionInt(), 40f);
-                Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.Zero, ModContent.ProjectileType<RedLightningTelegraph>(), 0, 0f);
-            }
+            if (wrappedAttackTimer == attackDelay + telegraphTime)
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+
+            if (attackTimer >= attackCycleCount * (attackDelay + telegraphTime + afterShootDelay))
+                SelectNewAttack(npc);
         }
 
         public static void SelectNewAttack(NPC npc)

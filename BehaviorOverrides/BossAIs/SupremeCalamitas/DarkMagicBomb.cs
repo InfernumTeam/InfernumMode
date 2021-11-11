@@ -24,6 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             projectile.penetrate = -1;
             projectile.Opacity = 0f;
             projectile.timeLeft = 40;
+            cooldownSlot = 1;
         }
 
         public override void AI()

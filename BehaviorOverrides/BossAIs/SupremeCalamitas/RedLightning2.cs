@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 			ProjectileID.Sets.TrailCacheLength[projectile.type] = TrailPointCount;
 		}
 
-		public override int Lifetime => 90;
+		public override int Lifetime => 60;
 		public override int TrailPointCount => 150;
 
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -39,7 +39,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 		public override float PrimitiveWidthFunction(float completionRatio)
 		{
 			projectile.hostile = true;
-			float baseWidth = MathHelper.Lerp(1.5f, 4f, (float)Math.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * projectile.scale;
+			cooldownSlot = 1;
+			float baseWidth = MathHelper.Lerp(0.25f, 3.5f, (float)Math.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * projectile.scale;
 			return baseWidth * (float)Math.Sin(MathHelper.Pi * completionRatio) + 1f;
 		}
 

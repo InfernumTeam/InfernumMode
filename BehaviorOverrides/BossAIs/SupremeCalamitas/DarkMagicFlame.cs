@@ -11,7 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Magic Flame");
+            DisplayName.SetDefault("Dark Flame");
             Main.projFrames[projectile.type] = 4;
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[projectile.type] = 0;
@@ -25,6 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 360;
+            cooldownSlot = 1;
         }
 
         public override void AI()
@@ -46,8 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 projectile.velocity *= 1.035f;
                 if (Time < 45f)
                     projectile.velocity = projectile.velocity.RotateTowards(projectile.AngleTo(destination), 0.03f);
-                projectile.tileCollide = true;
             }
+            projectile.tileCollide = Time > 60f;
 
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 

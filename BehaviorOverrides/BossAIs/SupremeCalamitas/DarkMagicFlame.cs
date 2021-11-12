@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 projectile.velocity *= 1.035f;
                 if (Time < 45f)
-                    projectile.velocity = projectile.velocity.RotateTowards(projectile.AngleTo(destination), 0.03f);
+                    projectile.velocity = projectile.velocity.RotateTowards(projectile.AngleTo(destination), 0.04f);
             }
             projectile.tileCollide = Time > 60f;
 

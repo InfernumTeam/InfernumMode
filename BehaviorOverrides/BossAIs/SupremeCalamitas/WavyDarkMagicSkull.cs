@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class AdjustingDarkMagicSkull : ModProjectile
+    public class WavyDarkMagicSkull : ModProjectile
     {
         public ref float IdealDirection => ref projectile.ai[0];
         public ref float Time => ref projectile.ai[1];
@@ -37,14 +37,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
+            projectile.velocity.Y = (float)Math.Sin(Time / 33f) * 10f;
             projectile.Opacity = Utils.InverseLerp(0f, 12f, Time, true) * Utils.InverseLerp(0f, 12f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation();
             projectile.spriteDirection = (Math.Cos(projectile.rotation) > 0f).ToDirectionInt();
             if (projectile.spriteDirection == -1)
                 projectile.rotation += MathHelper.Pi;
-
-            if (Time > 15f && projectile.velocity.Length() < 32f)
-                projectile.velocity = Vector2.Lerp(projectile.velocity, IdealDirection.ToRotationVector2() * projectile.velocity.Length() * 1.4f, 0.12f);
 
             Lighting.AddLight(projectile.Center, projectile.Opacity * 0.9f, 0f, 0f);
 

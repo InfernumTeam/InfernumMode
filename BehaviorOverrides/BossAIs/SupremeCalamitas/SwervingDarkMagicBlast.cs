@@ -100,6 +100,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             Main.PlaySound(SoundID.Item74, projectile.Center);
             Utilities.CreateGenericDustExplosion(projectile.Center, 242, 10, 7f, 1.25f);
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 7f);
+                    Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast>(), 550, 0f);
+                }
+            }
         }
     }
 }

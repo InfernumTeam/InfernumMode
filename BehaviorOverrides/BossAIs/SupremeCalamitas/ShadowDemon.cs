@@ -1,4 +1,5 @@
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.SupremeCalamitas;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -62,6 +63,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.damage = AttackTimer > 20f ? npc.defDamage : 0;
             npc.spriteDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
             npc.rotation = Math.Abs(npc.velocity.Y * 0.02f);
+
+            // Fade away and stop attacking if brothers are present.
+            if (NPC.AnyNPCs(ModContent.NPCType<SupremeCataclysm>()) || NPC.AnyNPCs(ModContent.NPCType<SupremeCatastrophe>()))
+            {
+                npc.damage = 0;
+                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.035f, 0f, 1f);
+                Vector2 hoverDestination = Main.npc[CalamityGlobalNPC.SCal].Center;
+                if (!npc.WithinRange(hoverDestination, 100f))
+                {
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 26f, 0.75f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * 29f, 0.05f);
+                }
+                return;
+            }
+
+            // Fade in.
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
             // Release shadow particles.
             if (Main.rand.NextBool(20))

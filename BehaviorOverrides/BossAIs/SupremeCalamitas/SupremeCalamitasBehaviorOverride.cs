@@ -72,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static readonly Dictionary<SCalAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<SCalAttackType[], Func<NPC, bool>>()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax >= Phase2LifeRatio,
-            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio,
+            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio * 0.1f,
         };
 
         public static SCalAttackType CurrentAttack(NPC npc)
@@ -224,7 +224,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 textState++;
                 attackTextDelay = 300f;
                 npc.netUpdate = true;
-			}
+            }
+            if (currentPhase == 1f && lifeRatio < Phase3LifeRatio)
+            {
+                attackTimer = 0f;
+                attackCycleIndex = 0f;
+                currentPhase++;
+                textState = 5f;
+                attackTextDelay = 300f;
+                npc.netUpdate = true;
+            }
 
             switch (CurrentAttack(npc))
 			{
@@ -319,14 +328,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         npc.Center + Vector2.UnitX * 600f,
                     };
 
-                    if (attackTextDelay >= 60f && attackTextDelay < 150f)
+                    if (attackTextDelay >= 45f && attackTextDelay < 150f)
                     {
                         for (int i = 0; i < brotherSpawnPositions.Length; i++)
                         {
-                            Vector2 castDustPosition = Vector2.CatmullRom(npc.Center + Vector2.UnitY * 500f,
+                            Vector2 castDustPosition = Vector2.CatmullRom(npc.Center + Vector2.UnitY * 800f,
                                 npc.Center, brotherSpawnPositions[i],
-                                brotherSpawnPositions[i] + Vector2.UnitY * 500f, 
-                                Utils.InverseLerp(150f, 60f, attackTextDelay, true));
+                                brotherSpawnPositions[i] + Vector2.UnitY * 800f, 
+                                Utils.InverseLerp(150f, 75f, attackTextDelay, true));
                             Dust fire = Dust.NewDustPerfect(castDustPosition, 267);
                             fire.color = Color.Orange;
                             fire.scale = 1.35f;
@@ -346,8 +355,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                                 int npcType = i == 0 ? ModContent.NPCType<SupremeCatastrophe>() : ModContent.NPCType<SupremeCataclysm>();
                                 NPC.NewNPC((int)brotherSpawnPositions[i].X, (int)brotherSpawnPositions[i].Y, npcType);
 							}
-						}
-					}
+                        }
+
+                        // Transition to the Lament section of the track.
+                        Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
+                        if (calamityModMusic != null)
+                            npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCL");
+                        else
+                            npc.modNPC.music = MusicID.Boss3;
+                    }
                     break;
             }
         }
@@ -547,7 +563,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 					{
                         for (int i = 0; i < bombCount; i++)
 						{
-                            Vector2 bombSpawnPosition = (npc.Center + target.Center) * 0.5f + Main.rand.NextVector2Circular(180f, 180f);
+                            Vector2 bombSpawnPosition = (npc.Center + target.Center) * 0.5f + Main.rand.NextVector2Circular(480f, 480f);
                             Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkMagicBomb>(), 550, 0f);
 						}
 					}
@@ -738,8 +754,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static void DoBehavior_LightningLines(NPC npc, Player target, ref float attackTimer)
         {
-            int attackCycleCount = 5;
-            int attackDelay = attackTimer < 105f ? 105 : 40;
+            int attackCycleCount = 4;
+            int attackDelay = attackTimer < 185f ? 185 : 40;
             int telegraphTime = 32;
             int afterShootDelay = 12;
             int lightningCount = 13;

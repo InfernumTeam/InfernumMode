@@ -44,7 +44,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 projectile.rotation += MathHelper.Pi;
 
             if (Time > 15f && projectile.velocity.Length() < 32f)
-                projectile.velocity = Vector2.Lerp(projectile.velocity, IdealDirection.ToRotationVector2() * projectile.velocity.Length() * 1.4f, 0.12f);
+                projectile.velocity = Vector2.Lerp(projectile.velocity, IdealDirection.ToRotationVector2() * projectile.velocity.Length() * 2.2f, 0.09f);
+            else
+                projectile.velocity.Y *= 1.016f;
 
             Lighting.AddLight(projectile.Center, projectile.Opacity * 0.9f, 0f, 0f);
 

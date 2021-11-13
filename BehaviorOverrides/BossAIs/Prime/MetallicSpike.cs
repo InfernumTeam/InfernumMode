@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
-            Color afterimageColor = new Color(0.1f, 0f, 0f, 0f);
+            Color afterimageColor = new Color(0.3f, 0f, 0f, 0f);
 
             for (int i = 0; i < 6; i++)
             {

@@ -25,8 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override void SetDefaults()
         {
-            projectile.width = 48;
-            projectile.height = 48;
+            projectile.width = projectile.height = 14;
             projectile.hostile = true;
             projectile.alpha = 255;
             projectile.penetrate = -1;

@@ -40,9 +40,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (projectile.timeLeft > 270)
                 return;
 
-            projectile.velocity.Y = (float)Math.Sin(Time / 33f) * 10f;
-            projectile.velocity.X *= 1.02f;
-            projectile.Opacity = Utils.InverseLerp(0f, 12f, Time, true) * Utils.InverseLerp(0f, 12f, projectile.timeLeft, true);
+            projectile.velocity.Y = (float)Math.Sin(Time / 13F + projectile.identity) * 10f;
+            projectile.Opacity = Utils.InverseLerp(0f, 5f, Time, true) * Utils.InverseLerp(0f, 5f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation();
             projectile.spriteDirection = (Math.Cos(projectile.rotation) > 0f).ToDirectionInt();
             if (projectile.spriteDirection == -1)
@@ -66,7 +65,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             if (projectile.timeLeft > 270)
             {
-                Vector2 start = projectile.velocity = 
+                Vector2 start = projectile.Center;
+                Vector2 end = projectile.Center + projectile.velocity.SafeNormalize(Vector2.Zero) * 4000f;
+                float width = Utils.InverseLerp(300f, 285f, projectile.timeLeft, true) * Utils.InverseLerp(270f, 285f, projectile.timeLeft, true) * 4f + 1f;
+                spriteBatch.DrawLineBetter(start, end, Color.Red, width);
                 return false;
             }    
 

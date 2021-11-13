@@ -152,13 +152,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, bool otherBrotherIsPresent, bool shouldBeBuffed, ref float attackTimer)
         {
-            int attackCycleCount = 3;
+            int attackCycleCount = 2;
             int hoverTime = 210;
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 15f;
             float fireballSpeed = MathHelper.Lerp(6.5f, 10f, 1f - lifeRatio);
             int fireballReleaseRate = 65;
-            int fireballReleaseTime = 180;
+            int fireballReleaseTime = 135;
 
             if (otherBrotherIsPresent)
 			{

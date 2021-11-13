@@ -26,7 +26,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             DarkMagicFireballFan,
             SwervingBlasts,
             RedirectingFlames,
-            LightningLines
+            LightningLines,
+            SkullWalls
         }
         public override int NPCOverrideType => ModContent.NPCType<SCalBoss>();
 
@@ -38,6 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public const float Phase2LifeRatio = 0.75f;
         public const float Phase3LifeRatio = 0.5f;
+        public const float Phase4LifeRatio = 0.25f;
 
         public static readonly SCalAttackType[] Subphase1Pattern = new SCalAttackType[]
         {
@@ -69,10 +71,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.DarkMagicFireballFan,
             SCalAttackType.SwervingBlasts,
         };
+        public static readonly SCalAttackType[] Subphase3Pattern = new SCalAttackType[]
+        {
+            SCalAttackType.SkullWalls,
+            SCalAttackType.RedirectingFlames,
+            SCalAttackType.SwervingBlasts,
+            SCalAttackType.AcceleratingRedirectingSkulls,
+            SCalAttackType.MagicChargeBlasts,
+            SCalAttackType.LightningLines,
+            SCalAttackType.AcceleratingRedirectingSkulls,
+            SCalAttackType.RedirectingFlames,
+            SCalAttackType.DarkMagicFireballFan,
+            SCalAttackType.AcceleratingRedirectingSkulls,
+            SCalAttackType.SkullWalls,
+            SCalAttackType.RedirectingFlames,
+            SCalAttackType.AcceleratingRedirectingSkulls,
+            SCalAttackType.MagicChargeBlasts,
+            SCalAttackType.SwervingBlasts,
+            SCalAttackType.AcceleratingRedirectingSkulls,
+        };
         public static readonly Dictionary<SCalAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<SCalAttackType[], Func<NPC, bool>>()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax >= Phase2LifeRatio,
-            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio * 0.1f,
+            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio,
+            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase3LifeRatio && npc.life / (float)npc.lifeMax >= Phase4LifeRatio * 0.1f,
         };
 
         public static SCalAttackType CurrentAttack(NPC npc)
@@ -212,7 +234,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Handle text and phase triggers.
             if (!sepulcherIsPresent && textState == 1f)
 			{
-                textState++;
+                textState = 2f;
                 attackTextDelay = 180f;
                 npc.netUpdate = true;
 			}
@@ -221,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
                 currentPhase++;
-                textState++;
+                textState = 4f;
                 attackTextDelay = 300f;
                 npc.netUpdate = true;
             }
@@ -268,6 +290,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case SCalAttackType.LightningLines:
                     npc.damage = 0;
                     DoBehavior_LightningLines(npc, target, (int)currentPhase, ref attackTimer);
+                    break;
+                case SCalAttackType.SkullWalls:
+                    DoBehavior_SkullWalls(npc, target, (int)currentPhase, ref attackTimer);
+                    npc.damage = 0;
                     break;
             }
 
@@ -844,6 +870,51 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
 
             if (attackTimer >= attackCycleCount * (attackDelay + telegraphTime + afterShootDelay))
+                SelectNewAttack(npc);
+        }
+
+        public static void DoBehavior_SkullWalls(NPC npc, Player target, int currentPhase, ref float attackTimer)
+        {
+            int attackCycleCount = 6;
+            int redirectTime = 65;
+            int shootDelay = 18;
+            float hoverSpeed = 29f;
+            float wrappedAttackTimer = attackTimer % (redirectTime + shootDelay);
+
+            if (wrappedAttackTimer < redirectTime)
+            {
+                // Hover to the top left/right of the target.
+                Vector2 hoverDestination = target.Center - Vector2.UnitY *380f;
+                hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 500f;
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.05f);
+            }
+            else
+            {
+                npc.velocity *= 0.97f;
+                if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == redirectTime  + (int)(shootDelay * 0.5f))
+                {
+                    for (float verticalOffset = -450f; verticalOffset < 450f; verticalOffset += 125f)
+                    {
+                        Vector2 spawnPosition = target.Center + new Vector2(1100f, verticalOffset);
+                        Vector2 shootVelocity = Vector2.UnitX * -16f;
+
+                        Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 580, 0f);
+
+                        spawnPosition = target.Center + new Vector2(-1100f, verticalOffset);
+                        Utilities.NewProjectileBetter(spawnPosition, -shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 580, 0f);
+                    }
+
+                    for (int i = 0; i < 9; i++)
+                    {
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.79f, 0.79f, i / 8f)) * 10.5f;
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 580, 0f);
+                    }
+                }
+            }
+            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+
+            if (attackTimer >= attackCycleCount * (redirectTime + shootDelay) + redirectTime * 0.9f)
                 SelectNewAttack(npc);
         }
 

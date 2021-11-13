@@ -469,8 +469,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             else if (struckByLightningFlag == 1f)
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
-                float movementSpeed = MathHelper.Lerp(6f, 4.5f, Utils.InverseLerp(45f, 90f, attackTimer, true));
-                movementSpeed += npc.Distance(target.Center) * 0.003f;
+                float movementSpeed = MathHelper.Lerp(1f, 0.7f, Utils.InverseLerp(45f, 90f, attackTimer, true)) * npc.Distance(target.Center) * 0.0074f;
+                if (movementSpeed < 4.25f)
+                    movementSpeed = 0f;
+
                 npc.velocity = (npc.velocity * 6f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), movementSpeed)) / 7f;
                 npc.rotation = npc.velocity.X * 0.04f;
 
@@ -523,9 +525,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     Main.PlaySound(SoundID.Item12, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                         for (int i = 0; i < 12; i++)
                         {
-                            Vector2 electricityVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 12f) * (shootSpeedAdditive + 9f);
+                            Vector2 electricityVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 12f + offsetAngle) * (shootSpeedAdditive + 9f);
                             Utilities.NewProjectileBetter(mouthPosition, electricityVelocity, ProjectileID.MartianTurretBolt, 135, 0f);
                         }
                     }

@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         #region AI
 
         public const float Phase2LifeRatio = 0.7f;
-        public const float Phase3LifeRatio = 0.375f;
+        public const float Phase3LifeRatio = 0.3f;
         public const int FinalPhaseTransitionTime = 180;
 
         public override bool PreAI(NPC npc)
@@ -133,17 +133,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             // Begin transitioning to the final phase once the seekers have been spawned and then killed.
             if (transitionState == 3f && !NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
-			{
+            {
                 transitionState = 4f;
                 attackTimer = 0f;
                 finalPhaseTransitionCountdown = FinalPhaseTransitionTime;
                 npc.netUpdate = true;
                 return false;
-			}
+            }
 
             // Do phase transitions.
             if (finalPhaseTransitionCountdown > 0f)
-			{
+            {
                 npc.dontTakeDamage = true;
 
                 finalPhaseTransitionCountdown--;
@@ -163,7 +163,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 }
 
                 return false;
-			}
+            }
 
             // Periodically release fire in the final phase.
             if (inFinalPhase)
@@ -438,9 +438,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (attackTimer > attackTime + attackDelay * 2f)
                 SelectNewAttack(npc);
         }
-        
+
         public static void DoBehavior_BrimstoneLightning(NPC npc, Player target, bool shouldBeBuffed, ref float attackTimer)
-		{
+        {
             int attackDelay = 45;
             int attackTime = 330;
             int lightningShootRate = 28;
@@ -476,8 +476,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (attackTimer > attackTime + attackDelay * 2f)
                 SelectNewAttack(npc);
-		}
-        
+        }
+
         public static void DoBehavior_BrimstoneFireBurst(NPC npc, Player target, float lifeRatio, bool inFinalPhase, bool shouldBeBuffed, ref float attackTimer)
         {
             int attackCycleCount = 2;
@@ -489,7 +489,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int fireballReleaseTime = 360;
 
             if (inFinalPhase)
-			{
+            {
                 fireballReleaseRate -= 10;
                 fireballSpeed *= 1.25f;
             }
@@ -696,32 +696,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             float fireballSpeed = 10f;
 
             if (shouldBeBuffed)
-			{
+            {
                 chargeSpeed += 7f;
                 fireballSpeed += 6f;
             }
 
-			if (attackTimer < redirectTime)
-			{
-				Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 1500f, -350f);
-				Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 13f;
-				npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
-				if (npc.WithinRange(hoverDestination, 20f))
-					attackTimer = redirectTime - 1f;
-			}
-			else if (attackTimer == redirectTime)
-			{
-				Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center);
-				chargeVelocity.Y *= 0.25f;
-				chargeVelocity = chargeVelocity.SafeNormalize(Vector2.UnitX);
+            if (attackTimer < redirectTime)
+            {
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 1500f, -350f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 13f;
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.04f);
+                if (npc.WithinRange(hoverDestination, 20f))
+                    attackTimer = redirectTime - 1f;
+            }
+            else if (attackTimer == redirectTime)
+            {
+                Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center);
+                chargeVelocity.Y *= 0.25f;
+                chargeVelocity = chargeVelocity.SafeNormalize(Vector2.UnitX);
                 npc.rotation = chargeVelocity.ToRotation() - MathHelper.PiOver2;
-				npc.velocity = chargeVelocity * chargeSpeed;
-			}
-			else
-			{
-				npc.position.X += npc.SafeDirectionTo(target.Center).X * 9f;
-				npc.position.Y += npc.SafeDirectionTo(target.Center - Vector2.UnitY * 400f).Y * 7f;
-				if (attackTimer % 30f == 29f)
+                npc.velocity = chargeVelocity * chargeSpeed;
+            }
+            else
+            {
+                npc.position.X += npc.SafeDirectionTo(target.Center).X * 9f;
+                npc.position.Y += npc.SafeDirectionTo(target.Center - Vector2.UnitY * 400f).Y * 7f;
+                if (attackTimer % 30f == 29f)
                 {
                     Main.PlaySound(SoundID.Item73, target.Center);
 
@@ -734,7 +734,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                         Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<RisingBrimstoneFireball>(), fireballDamage, 0f);
                     }
                 }
-			}
+            }
 
             if (attackTimer >= redirectTime + chargeTime)
                 SelectNewAttack(npc);
@@ -752,12 +752,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             for (int i = 0; i < 3; i++)
             {
-                possibleAttacks.Remove(CloneAttackType.HorizontalDartRelease);
+                if (lifeRatio < Phase2LifeRatio)
+                    possibleAttacks.Remove(CloneAttackType.HorizontalDartRelease);
                 possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneLightning, lifeRatio < Phase2LifeRatio);
                 possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneFireBurst, lifeRatio < Phase2LifeRatio);
                 possibleAttacks.AddWithCondition(CloneAttackType.DiagonalCharge, lifeRatio < Phase2LifeRatio);
             }
-            
+
+            // If seekers are present.
             if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
             {
                 possibleAttacks.Clear();
@@ -765,8 +767,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 possibleAttacks.Add(CloneAttackType.DiagonalCharge);
             }
 
+            // Final phase.
             if (npc.ai[2] == 4f)
-			{
+            {
                 possibleAttacks.Clear();
                 possibleAttacks.Add(CloneAttackType.BrimstoneFireBurst);
                 possibleAttacks.Add(CloneAttackType.RisingBrimstoneFireBursts);

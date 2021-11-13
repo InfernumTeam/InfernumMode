@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             if (Main.npc[npc.realLife].ai[1] == (int)DestroyerAttackType.EnergyBlasts && Main.npc[npc.realLife].Infernum().ExtraAI[0] == 2f && headAttackTimer - 45f == segmentNumber)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 23.5f, ModContent.ProjectileType<EnergySpark2>(), 130, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 42f, ModContent.ProjectileType<EnergySpark2>(), 130, 0f);
             }
             return false;
         }

@@ -8,6 +8,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class DarkMagicBurst : ModProjectile
     {
+        public ref float DartCountFactor => ref projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Magic Burst");
@@ -29,6 +30,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void AI()
         {
+            if (DartCountFactor <= 0f)
+                DartCountFactor = 1f;
+
             projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.075f, 0f, 1f);
 
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
@@ -45,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return;
 
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < DartCountFactor * 10f; i++)
             {
                 int dartDamage = 540;
                 Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedByRandom(0.77f) * projectile.velocity.Length() * Main.rand.NextFloat(0.65f, 0.85f);

@@ -234,6 +234,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 attackTextDelay = 300f;
                 npc.netUpdate = true;
             }
+            if (textState == 5f && !brotherIsPresent)
+            {
+                attackTimer = 0f;
+                attackCycleIndex = 0f;
+                currentPhase++;
+                textState = 6f;
+                attackTextDelay = 180f;
+                npc.netUpdate = true;
+            }
 
             switch (CurrentAttack(npc))
 			{
@@ -254,11 +263,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
                 case SCalAttackType.RedirectingFlames:
                     npc.damage = 0;
-                    DoBehavior_RedirectingFlames(npc, target, ref attackTimer);
+                    DoBehavior_RedirectingFlames(npc, target, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.LightningLines:
                     npc.damage = 0;
-                    DoBehavior_LightningLines(npc, target, ref attackTimer);
+                    DoBehavior_LightningLines(npc, target, (int)currentPhase, ref attackTimer);
                     break;
             }
 
@@ -319,7 +328,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Main.NewText("You are an anomaly. An unforeseen deviation..", Color.Orange);
 
                     if (attackTextDelay == 150f)
-                        Main.NewText("...And yet, the bloodshed continues.", Color.Orange);
+                        Main.NewText("...And in the end, the bloodshed continues.", Color.Orange);
 
                     // Do a cast animation.
                     Vector2[] brotherSpawnPositions = new Vector2[]
@@ -341,6 +350,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             fire.scale = 1.35f;
                             fire.velocity *= 0.1f;
                             fire.noGravity = true;
+
+                            if (attackTextDelay <= 75f)
+                                fire.velocity = Main.rand.NextVector2Circular(4f, 4f);
                         }
                     }
 
@@ -364,6 +376,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         else
                             npc.modNPC.music = MusicID.Boss3;
                     }
+                    break;
+
+                // After brothers.
+                case 6:
+                    if (attackTextDelay == 90f)
+                        Main.NewText("...This world bears many scars of the past. The calamities of the Tyrant.", Color.Orange);
                     break;
             }
         }
@@ -450,17 +468,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int hoverTime = 210;
             float hoverHorizontalOffset = 600f;
             float hoverSpeed = 28f;
-            float initialFlameSpeed = 14.5f;
+            float initialFlameSpeed = 12.5f;
             float flameAngularVariance = 1.08f;
             int flameReleaseRate = 9;
             int flameReleaseTime = 180;
 
             if (currentPhase >= 1)
 			{
-                initialFlameSpeed += 2f;
+                initialFlameSpeed += 2.5f;
                 flameAngularVariance += 0.11f;
                 flameReleaseTime -= 30;
             }
+            
+            if (currentPhase >= 2)
+                initialFlameSpeed += 2.5f;
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
@@ -522,9 +543,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             hoverDestination.Y += (target.Center.Y < npc.Center.Y).ToDirectionInt() * 375f;
 
             if (currentPhase >= 1)
-			{
                 bombCount++;
-			}
+            if (currentPhase >= 2)
+            {
+                chargeCount--;
+                bombCount += 2;
+            }
 
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
@@ -599,6 +623,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 shootTime -= 5;
                 angularVariance -= 0.135f;
             }
+            if (currentPhase >= 2)
+            {
+                shootTime -= 3;
+                shootRate--;
+                angularVariance -= 0.07f;
+            }
 
             float wrappedAttackTimer = attackTimer % attackCycleTime;
             bool aboutToFire = wrappedAttackTimer > attackDelay - 15f && wrappedAttackTimer < attackDelay + shootTime;
@@ -662,6 +692,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int fireBurstAttackDelay = 160;
 
             if (currentPhase >= 1)
+                fireBurstCount += 5;
+
+            if (currentPhase >= 2)
                 fireBurstCount += 6;
 
             bool inDelay = attackTimer >= 20f + fireBurstCount * fireBurstShootRate && attackTimer < 20 + fireBurstCount * fireBurstShootRate + fireBurstAttackDelay;
@@ -718,7 +751,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_RedirectingFlames(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_RedirectingFlames(NPC npc, Player target, int currentPhase, ref float attackTimer)
         {
             int attackCycleCount = 3;
             int attackDelay = 25;
@@ -726,6 +759,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int afterShootDelay = 35;
             int shootRate = 4;
             float hoverSpeed = 29f;
+
+            if (currentPhase >= 2)
+                shootRate--;
+
             float wrappedAttackTimer = attackTimer % (attackDelay + shootTime + afterShootDelay);
 
             // Hover to the top left/right of the target.
@@ -752,15 +789,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNewAttack(npc);
 		}
 
-        public static void DoBehavior_LightningLines(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_LightningLines(NPC npc, Player target, int currentPhase, ref float attackTimer)
         {
             int attackCycleCount = 4;
             int attackDelay = attackTimer < 185f ? 185 : 40;
             int telegraphTime = 32;
             int afterShootDelay = 12;
-            int lightningCount = 13;
+            int lightningCount = 11;
             float lightningAngleArea = 0.94f;
             float hoverSpeed = 29f;
+
+            if (currentPhase >= 2)
+                lightningCount += 3;
+
             float wrappedAttackTimer = attackTimer % (attackDelay + telegraphTime + afterShootDelay);
 
             // Slow down prior to creating lines.

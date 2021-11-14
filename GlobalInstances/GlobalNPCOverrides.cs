@@ -279,7 +279,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool StrikeNPC(NPC npc, ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
         {
-            if (!PoDWorld.InfernumMode)
+            if (!InfernumMode.CanUseCustomAIs)
                 return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
 
             if (npc.type == InfernumMode.CalamityMod.NPCType("Yharon"))
@@ -461,7 +461,7 @@ namespace InfernumMode.GlobalInstances
 
         public override void BossHeadRotation(NPC npc, ref float rotation)
         {
-            if (!PoDWorld.InfernumMode)
+            if (!InfernumMode.CanUseCustomAIs)
                 return;
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>() ||
@@ -501,7 +501,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool CheckDead(NPC npc)
         {
-            if (!PoDWorld.InfernumMode)
+            if (!InfernumMode.CanUseCustomAIs)
                 return base.CheckDead(npc);
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>())

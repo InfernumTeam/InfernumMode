@@ -46,8 +46,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, shouldBeInactive ? 0.07f : 0.18f);
             if (!npc.WithinRange(hoverDestination, 450f))
             {
-                npc.velocity *= 0.8f;
-                npc.Center = hoverDestination + (npc.Center - hoverDestination).SafeNormalize(Vector2.Zero) * 450f;
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * 20f, 0.1f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 2f);
             }
 
             shouldBeInactiveFlag = shouldBeInactive.ToInt();

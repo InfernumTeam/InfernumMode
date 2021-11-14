@@ -141,15 +141,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
                 // Reset everything and sync.
                 npc.frame.Y = 0;
+
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    var sound = Main.GetActiveSound(SlotId.FromFloat(npc.Infernum().ExtraAI[0]));
+                    sound?.Stop();
+                }
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     attackState = 0f;
                     attackTimer = 0f;
                     subphaseState++;
-
-                    var sound = Main.GetActiveSound(SlotId.FromFloat(npc.Infernum().ExtraAI[0]));
-                    if (sound != null)
-                        sound.Stop();
 
                     for (int i = 0; i < 5; i++)
                         npc.Infernum().ExtraAI[i] = 0f;
@@ -797,7 +800,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             float intensityFactor = Utils.InverseLerp(60f, 120f, attackTimer, true) * Utils.InverseLerp(spiritSummonTime, spiritSummonTime - 60f, attackTimer, true);
 
             bool shouldStopSound = Main.ambientVolume > 0f;
-            if (attackTimer == 60f && Main.GetActiveSound(SlotId.FromFloat(blizzardSound)) == null && !shouldStopSound)
+            if (attackTimer == 60f && Main.netMode != NetmodeID.Server && Main.GetActiveSound(SlotId.FromFloat(blizzardSound)) == null && !shouldStopSound)
                 blizzardSound = Main.PlayTrackedSound(SoundID.BlizzardStrongLoop, npc.Center).ToFloat();
 
             bool canShoot = attackTimer > shootDelay && attackTimer < spiritSummonTime;
@@ -817,16 +820,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 npc.netUpdate = true;
             }
 
-            var sound = Main.GetActiveSound(SlotId.FromFloat(blizzardSound));
-            if (sound != null)
+            if (Main.netMode != NetmodeID.Server)
             {
-                if (shouldStopSound)
+                var sound = Main.GetActiveSound(SlotId.FromFloat(blizzardSound));
+                if (sound != null)
                 {
-                    blizzardSound = 0f;
-                    sound.Stop();
+                    if (shouldStopSound)
+                    {
+                        blizzardSound = 0f;
+                        sound.Stop();
+                    }
+                    else
+                        sound.Sound.Volume = Main.soundVolume * intensityFactor;
                 }
-                else
-                    sound.Sound.Volume = Main.soundVolume * intensityFactor;
             }
         }
 

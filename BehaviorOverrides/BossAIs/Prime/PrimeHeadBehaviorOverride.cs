@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             // Continuously reset defense and damage.
             npc.defense = npc.defDefense;
-            npc.damage = npc.defDamage;
+            npc.damage = npc.defDamage + 24;
 
             // Don't allow further damage to happen when below 65% life if any arms remain.
             npc.dontTakeDamage = lifeRatio < 0.8f && AnyArms;
@@ -262,7 +262,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 3f == 2f)
                 {
-                    float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.7f : 1f);
+                    float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.825f : 1f);
                     if (!AnyArms)
                         rocketSpeed += (1f - lifeRatio) * 4f;
                     Vector2 rocketVelocity = Main.rand.NextVector2CircularEdge(rocketSpeed, rocketSpeed);

@@ -91,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 2.5f) * 0.85f;
                         if (attackTimer < 75f)
-                            attackTimer += alone ? 8f : 4f;
+                            attackTimer += alone ? 5f : 3f;
                     }
                     else
                     {

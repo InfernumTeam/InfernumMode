@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -112,6 +113,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.TargetClosest();
             Player target = Main.player[npc.target];
 
+            // TEST FEATURE.
+            if (npc.life > npc.lifeMax / 4)
+                npc.life = npc.lifeMax / 4;
+
             // Vanish if the target is gone.
             if (!target.active || target.dead)
             {
@@ -141,6 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool sepulcherIsPresent = NPC.AnyNPCs(ModContent.NPCType<SCalWormHead>());
             bool brotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<SupremeCatastrophe>()) || NPC.AnyNPCs(ModContent.NPCType<SupremeCataclysm>());
+            bool seekerIsPresent = NPC.AnyNPCs(ModContent.NPCType<SoulSeekerSupreme>());
             ref float attackCycleIndex = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float attackTextDelay = ref npc.ai[2];
@@ -216,8 +222,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return false;
             }
 
-            // Hover to the side of the target and watch if Sepulcher or brothers are present.
-            if (sepulcherIsPresent || brotherIsPresent)
+            // Hover to the side of the target and watch if Sepulcher, brothers, or seekers are present.
+            if (sepulcherIsPresent || brotherIsPresent || seekerIsPresent)
             {
                 npc.damage = 0;
                 npc.dontTakeDamage = true;
@@ -232,7 +238,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Handle text and phase triggers.
-            if (!sepulcherIsPresent && textState == 1f)
+            if (!sepulcherIsPresent && textState == 0f)
 			{
                 textState = 2f;
                 attackTextDelay = 180f;
@@ -242,8 +248,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 			{
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
-                currentPhase++;
-                textState = 4f;
+                currentPhase = 1f;
+                textState = 3f;
                 attackTextDelay = 300f;
                 npc.netUpdate = true;
             }
@@ -251,16 +257,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
-                currentPhase++;
-                textState = 5f;
+                currentPhase = 2f;
+                textState = 4f;
                 attackTextDelay = 300f;
                 npc.netUpdate = true;
             }
-            if (textState == 5f && !brotherIsPresent)
+            if (textState == 4f && !brotherIsPresent && attackTextDelay <= 0f)
             {
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
-                currentPhase++;
+                textState = 5f;
+                attackTextDelay = 180f;
+                npc.netUpdate = true;
+            }
+            if (currentPhase == 2f && lifeRatio < Phase4LifeRatio && attackTextDelay <= 0f)
+            {
+                attackTimer = 0f;
+                attackCycleIndex = 0f;
+                currentPhase = 3f;
                 textState = 6f;
                 attackTextDelay = 180f;
                 npc.netUpdate = true;
@@ -292,8 +306,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     DoBehavior_LightningLines(npc, target, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.SkullWalls:
-                    DoBehavior_SkullWalls(npc, target, (int)currentPhase, ref attackTimer);
                     npc.damage = 0;
+                    DoBehavior_SkullWalls(npc, target, (int)currentPhase, ref attackTimer);
                     break;
             }
 
@@ -303,10 +317,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static void DoBehavior_HandleAttackDelaysAndText(NPC npc, Player target, ref float textState, ref float attackTextDelay)
         {
-            // Go to the next text state for later once the delay concludes.
-            if (attackTextDelay == 1f)
-                textState++;
-
             // Slow down and look at the target.
             npc.velocity *= 0.95f;
             npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
@@ -329,7 +339,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
 
                 // Phase 2.
-                case 4:
+                case 3:
                     if (attackTextDelay == 240f)
                         Main.NewText("The powers you wield. The strength you've amassed.", Color.Orange);
 
@@ -349,7 +359,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
 
                 // After Phase 2; Brothers Summoning.
-                case 5:
+                case 4:
                     if (attackTextDelay == 240f)
                         Main.NewText("You are an anomaly. An unforeseen deviation..", Color.Orange);
 
@@ -405,9 +415,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
 
                 // After brothers.
+                case 5:
+                    if (attackTextDelay == 90f)
+                        Main.NewText("...This world bears the many scars of the past. The calamities of the Tyrant.", Color.Orange);
+                    break;
+
+                // After phase 3; Seekers Summoning.
                 case 6:
                     if (attackTextDelay == 90f)
-                        Main.NewText("...This world bears many scars of the past. The calamities of the Tyrant.", Color.Orange);
+                    {
+                        Main.NewText("...And yet...", Color.Orange);
+
+                        // Transition to the Epiphany section of the track.
+                        Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
+                        if (calamityModMusic != null)
+                            npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCE");
+                        else
+                            npc.modNPC.music = MusicID.LunarBoss;
+
+                        // Summon seekers.
+                        Utilities.CreateGenericDustExplosion(npc.Center, (int)CalamityDusts.Brimstone, 30, 10f, 1.45f);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            // The four arena huggers.
+                            Vector2 seekerPosition = new Vector2(npc.Infernum().arenaRectangle.Left, npc.Infernum().arenaRectangle.Center.Y);
+                            NPC.NewNPC((int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 1f);
+                            int fuck = NPC.NewNPC((int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 3f);
+                            Main.npc[fuck].velocity = Vector2.UnitY;
+                            seekerPosition = new Vector2(npc.Infernum().arenaRectangle.Right, npc.Infernum().arenaRectangle.Center.Y);
+                            NPC.NewNPC((int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 1f);
+                            fuck = NPC.NewNPC((int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 3f);
+                            Main.npc[fuck].velocity = Vector2.UnitY;
+
+                            for (int i = 0; i < 4; i++)
+                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 1f, 0f, MathHelper.TwoPi * i / 4f);
+
+                            for (int i = 0; i < 2; i++)
+                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y + Main.rand.Next(-180, 180), ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 2f, 0f, 0f);
+                        }
+                    }
+
                     break;
             }
         }

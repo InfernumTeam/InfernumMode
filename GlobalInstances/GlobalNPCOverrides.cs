@@ -39,6 +39,7 @@ using CalamityMod.Projectiles.Summon;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.Projectiles.Typeless;
 using CalamityMod.Projectiles.Hybrid;
+using CalamityMod.NPCs.SupremeCalamitas;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -611,6 +612,16 @@ namespace InfernumMode.GlobalInstances
                 npc.life = 1;
 
                 Main.PlaySound(SoundID.NPCDeath59, npc.Center);
+
+                return false;
+            }
+
+            if (npc.type == ModContent.NPCType<SupremeCalamitas>())
+            {
+                npc.netUpdate = true;
+                npc.active = true;
+                npc.dontTakeDamage = true;
+                npc.life = 1;
 
                 return false;
             }

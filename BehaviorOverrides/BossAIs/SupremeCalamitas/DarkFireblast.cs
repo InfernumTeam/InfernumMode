@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             projectile.width = projectile.height = 50;
             projectile.hostile = true;
             projectile.ignoreWater = true;
-            projectile.tileCollide = false;
+            projectile.tileCollide = true;
             projectile.penetrate = -1;
             projectile.timeLeft = 90;
             cooldownSlot = 1;

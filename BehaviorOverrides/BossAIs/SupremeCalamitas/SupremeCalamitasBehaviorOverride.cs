@@ -3,14 +3,13 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
-using CalamityMod.Projectiles.Boss;
 using CalamityMod.Tiles;
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -32,8 +31,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             LightningLines,
             SkullWalls,
             LightningLines2,
-            DanceOfHell
+            DanceOfHell,
+            FinalPhase
         }
+
         public override int NPCOverrideType => ModContent.NPCType<SCalBoss>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
@@ -126,12 +127,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.SwervingBlasts,
             SCalAttackType.LightningLines2
         };
+
+        public static readonly SCalAttackType[] Funny = new SCalAttackType[]
+        {
+            SCalAttackType.FinalPhase
+        };
+
         public static readonly Dictionary<SCalAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<SCalAttackType[], Func<NPC, bool>>()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax >= Phase2LifeRatio,
             [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio,
             [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase3LifeRatio && npc.life / (float)npc.lifeMax >= Phase4LifeRatio,
             [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase4LifeRatio && npc.life / (float)npc.lifeMax >= Phase5LifeRatio,
+            [Funny] = (npc) => npc.life / (float)npc.lifeMax < Phase5LifeRatio,
         };
 
         public static SCalAttackType CurrentAttack(NPC npc)
@@ -356,6 +364,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 attackTextDelay = 420f;
                 npc.netUpdate = true;
             }
+            if (currentPhase == 3f && lifeRatio < Phase5LifeRatio && attackTextDelay <= 0f)
+            {
+                attackTimer = 0f;
+                attackCycleIndex = 0f;
+                currentPhase = 4f;
+                textState = 8f;
+                attackTextDelay = 180f;
+                npc.netUpdate = true;
+            }
 
             switch (CurrentAttack(npc))
             {
@@ -392,6 +409,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
                 case SCalAttackType.DanceOfHell:
                     DoBehavior_DanceOfHell(npc, target, enrageFactor, ref attackTimer);
+                    break;
+                case SCalAttackType.FinalPhase:
+                    DoBehavior_FinalPhase(npc, target, enrageFactor, ref attackTimer);
                     break;
             }
 
@@ -498,10 +518,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
                     break;
 
-                // After brothers.
-                case 5:
-                    break;
-
                 // After phase 3; Seekers Summoning.
                 case 6:
                     if (attackTextDelay == 90f)
@@ -583,6 +599,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             fire.velocity += Vector2.UnitY.RotatedByRandom(0.45f) * Main.rand.NextFloat(3f, 7f);
                         }
                     }
+                    break;
+
+                // Final phase.
+                case 8:
+                    if (attackTextDelay == 150f)
+                        Main.NewText("Just stop!", Color.Orange);
+
+                    // Release a bunch of energy explosions.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTextDelay == 150f || attackTextDelay == 120f || attackTextDelay == 90f || attackTextDelay == 60f)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
                     break;
             }
         }
@@ -1173,9 +1199,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (attackTimer % blastShootRate == blastShootRate - 1f && currentPhase >= 3)
                 {
-                    Vector2 hellblastSpawnPosition = target.Center + Vector2.UnitX * Main.rand.NextBool().ToDirectionInt() * 1000f;
-                    Vector2 hellbastShootVelocity = (target.Center - hellblastSpawnPosition).SafeNormalize(Vector2.UnitY) * 8.5f;
-                    Utilities.NewProjectileBetter(hellblastSpawnPosition, hellbastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 600, 0f, Main.myPlayer);
+                    Vector2 blastSpawnPosition = target.Center + Vector2.UnitX * Main.rand.NextBool().ToDirectionInt() * 1000f;
+                    Vector2 blastShootVelocity = (target.Center - blastSpawnPosition).SafeNormalize(Vector2.UnitY) * 8.5f;
+                    Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 600, 0f, Main.myPlayer);
                 }
             }
 
@@ -1268,6 +1294,208 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         else
                             SelectNewAttack(npc);
                         npc.netUpdate = true;
+                    }
+                    break;
+            }
+        }
+
+        public static void DoBehavior_FinalPhase(NPC npc, Player target, float enrageFactor, ref float attackTimer)
+        {
+            int darkFlameShootDelay = 20;
+            int darkFlameReleaseTime = 60;
+            int totalDarkFlameCycles = 3;
+            int teleportShootDelay = 32;
+            float teleportShootSpeed = enrageFactor * 6f + 13f;
+            int totalTeleportFlameCycles = 16;
+            int finalBulletHellTime = 1200;
+            int bulletHellBlastShootRate = 12;
+            float blastShootSpeed = (enrageFactor + 1f) * 8f;
+            float wrappedAttackTimer;
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
+
+            npc.dontTakeDamage = true;
+
+            switch ((int)attackSubstate)
+            {
+                // Release circles of redirecting magic flames.
+                case 0:
+                    if (attackTimer < totalDarkFlameCycles * (darkFlameShootDelay + darkFlameReleaseTime))
+                    {
+                        wrappedAttackTimer = attackTimer % (darkFlameShootDelay + darkFlameReleaseTime);
+                        if (wrappedAttackTimer < darkFlameShootDelay)
+                            npc.velocity *= 0.925f;
+                        else
+                        {
+                            float shootAngle = Utils.InverseLerp(darkFlameShootDelay, darkFlameShootDelay + darkFlameReleaseTime, wrappedAttackTimer, true) * MathHelper.TwoPi;
+                            if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer % 2f == 1f)
+                            {
+                                Vector2 flameShootVelocity = shootAngle.ToRotationVector2() * 16f;
+                                Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 600, 0f);
+                            }
+                        }
+
+                        npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    }
+                    else
+                    {
+                        attackTimer = 0f;
+                        attackSubstate++;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Teleport in a square around the target and fire accelerating dark magic inward.
+                case 1:
+                    wrappedAttackTimer = attackTimer % teleportShootDelay;
+                    int teleportCounter = (int)(attackTimer / teleportShootDelay);
+                    if (wrappedAttackTimer == 1f)
+                    {
+                        Vector2 teleportPosition = target.Center + (MathHelper.PiOver2 * (teleportCounter + 0.5f)).ToRotationVector2() * 400f;
+                        Dust.QuickDustLine(npc.Center, teleportPosition, 200f, Color.OrangeRed);
+                        npc.Center = teleportPosition;
+                        npc.netUpdate = true;
+
+                        Main.PlaySound(SoundID.Item72, target.Center);
+                    }
+                    
+                    if (wrappedAttackTimer == (int)(teleportShootDelay / 2))
+                    {
+                        for (int i = 0; i < 5; i++)
+                        {
+                            float shootOffsetAngle = MathHelper.Lerp(-0.71f, 0.71f, i / 4f);
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * teleportShootSpeed;
+                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 600, 0f);
+                        }
+                    }
+
+                    if (attackTimer > totalTeleportFlameCycles * teleportShootDelay)
+                    {
+                        attackTimer = 0f;
+                        attackSubstate++;
+                        npc.netUpdate = true;
+                    }
+
+                    npc.velocity *= 0.9f;
+                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    break;
+
+                // Do a final, grand bullet hell as a conclusion to the battle.
+                case 2:
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer < finalBulletHellTime)
+                    {
+                        // Release blasts from above.
+                        if (attackTimer % bulletHellBlastShootRate == bulletHellBlastShootRate - 1f)
+                        {
+                            if (attackTimer < finalBulletHellTime / 3f)
+                            {
+                                Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
+                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                            }
+
+                            // Release blasts from both horizontal sides.
+                            else if (attackTimer < finalBulletHellTime * 2f / 3f)
+                            {
+                                Vector2 blastSpawnPosition = target.Center + new Vector2(1000f, Main.rand.NextFloatDirection() * 1000f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+
+                                blastSpawnPosition = target.Center + new Vector2(-1000f, Main.rand.NextFloatDirection() * 1000f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                            }
+
+                            // Release blasts from above and both horizontal sides.
+                            else
+                            {
+                                Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
+                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+
+                                blastSpawnPosition = target.Center + new Vector2(1000f, Main.rand.NextFloatDirection() * 1000f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+
+                                blastSpawnPosition = target.Center + new Vector2(-1000f, Main.rand.NextFloatDirection() * 1000f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                            }
+                        }
+
+                        // Periodically release sinusoidal skulls and blasts.
+                        if (attackTimer % 25f == 24f)
+                        {
+                            Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloatDirection() * 1000f);
+                            Vector2 blastShootVelocity = Vector2.UnitX * Math.Sign(target.Center.X - blastSpawnPosition.X) * blastShootSpeed * 1.6f;
+                            int skull = Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 600, 0f, Main.myPlayer);
+                            Main.projectile[skull].timeLeft = 270;
+                        }
+
+                        if (attackTimer % 120f == 119f)
+                        {
+                            Vector2 blastSpawnPosition = target.Center + Main.rand.NextVector2Circular(1050f, 1050f);
+                            Vector2 blastShootVelocity = (target.Center - blastSpawnPosition).SafeNormalize(Vector2.UnitY) * blastShootSpeed * 1.8f;
+                            Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 600, 0f, Main.myPlayer);
+                        }
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > finalBulletHellTime && attackTimer % 35f == 34f)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > finalBulletHellTime && attackTimer % 2f == 0f)
+                    {
+                        for (int i = 0; i < 6; i++)
+                        {
+                            Vector2 sparkleVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 27f);
+                            Utilities.NewProjectileBetter(npc.Center, sparkleVelocity, ModContent.ProjectileType<BehaviorOverrides.BossAIs.Yharon.MajesticSparkleBig>(), 0, 0f);
+                        }
+                    }
+
+                    if (attackTimer > finalBulletHellTime)
+                        npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.05f, 0f, 1f);
+
+                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    npc.velocity *= 0.96f;
+
+                    if (attackTimer > finalBulletHellTime + 240f)
+                    {
+                        attackTimer = 0f;
+                        attackSubstate++;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Final text and end of battle.
+                case 3:
+                    npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
+
+                    // Transition to the Acceptance section of the track.
+                    Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
+                    if (calamityModMusic != null)
+                        npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCL");
+                    else
+                        npc.modNPC.music = MusicID.Boss3;
+
+                    // Descend downward and look at the target.
+                    npc.noGravity = false;
+                    npc.noTileCollide = false;
+                    npc.velocity.X *= 0.97f;
+                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    npc.damage = 0;
+
+                    if (attackTimer == 60f)
+                        Main.NewText("So...This is how it ends.", Color.Orange);
+
+                    if (attackTimer == 210f)
+                        Main.NewText("...I have no energy left to resent you.", Color.Orange);
+
+                    if (attackTimer == 360f)
+                        Main.NewText("Yet perhaps... from this, a new age will begin.", Color.Orange);
+
+                    if (attackTimer == 510f)
+                        Main.NewText("Whatever awaits you, I am certain the consequences will be felt.", Color.Orange);
+
+                    if (attackTimer == 640f)
+                        Main.NewText("It will all be in your hands now.", Color.Orange);
+
+                    if (attackTimer == 760f)
+                    {
+                        npc.NPCLoot();
+                        npc.active = false;
                     }
                     break;
             }

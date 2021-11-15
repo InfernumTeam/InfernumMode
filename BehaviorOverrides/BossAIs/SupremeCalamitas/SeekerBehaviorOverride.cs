@@ -26,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return false;
             }
 
+            npc.knockBackResist = 0f;
             npc.target = Main.npc[CalamityGlobalNPC.SCal].target;
             Player target = Main.player[npc.target];
             Rectangle arena = Main.npc[CalamityGlobalNPC.SCal].Infernum().arenaRectangle;
@@ -67,7 +68,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         fuck = 1f;
                     }
 
-                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 13f;
+                    int totalArenaHuggers = 0;
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].active && Main.npc[i].type == npc.type && Main.npc[i].ai[0] == 0f)
+                            totalArenaHuggers++;
+                    }
+                    float moveSpeed = 11f;
+                    float shootSpeed = MathHelper.Lerp(9f, 20f, 1f - totalArenaHuggers / 4f);
+
+                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * moveSpeed;
                     npc.Center = Vector2.Clamp(npc.Center, arena.TopLeft() - Vector2.One * 4f, arena.BottomRight() + Vector2.One * 4f);
 
                     // Release fire cyclicly.
@@ -76,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Vector2 shootVelocity = npc.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.Zero);
                         if (Vector2.Dot(npc.SafeDirectionTo(arena.Center.ToVector2()), shootVelocity) < 0f)
                             shootVelocity *= -1f;
-                        shootVelocity *= 9f;
+                        shootVelocity *= shootSpeed;
                         Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast2>(), 575, 0f);
                     }
                     break;

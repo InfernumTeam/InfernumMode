@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
@@ -21,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     public class SupremeCalamitasBehaviorOverride : NPCBehaviorOverride
     {
         public enum SCalAttackType
-		{
+        {
             AcceleratingRedirectingSkulls,
             MagicChargeBlasts,
             DarkMagicFireballFan,
@@ -153,6 +154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float textState = ref npc.ai[3];
             ref float initialChargeupTime = ref npc.Infernum().ExtraAI[5];
             ref float currentPhase = ref npc.Infernum().ExtraAI[6];
+            ref float seekersFlameArea = ref npc.Infernum().ExtraAI[7];
 
             // Handle initializations.
             if (npc.localAI[1] == 0f)
@@ -222,7 +224,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return false;
             }
 
-            // Hover to the side of the target and watch if Sepulcher, brothers, or seekers are present.
+            // Hover and watch if Sepulcher, brothers, or seekers are present.
             if (sepulcherIsPresent || brotherIsPresent || seekerIsPresent)
             {
                 npc.damage = 0;
@@ -231,6 +233,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 float hoverSpeed = 31f;
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 375f;
                 hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 450f;
+                if (seekerIsPresent)
+                {
+                    hoverDestination = npc.Infernum().arenaRectangle.Center.ToVector2();
+
+                    // Light the center of the arena ablaze.
+                    if (NPC.CountNPCS(ModContent.NPCType<SoulSeekerSupreme>()) <= 6)
+                        seekersFlameArea = MathHelper.Clamp(seekersFlameArea + 3f, 0f, 720f);
+
+                    if (seekersFlameArea > 0f)
+                    {
+                        for (int i = 0; i < seekersFlameArea / 10f; i++)
+                        {
+                            Dust fire = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(seekersFlameArea, seekersFlameArea), 267);
+                            fire.velocity = -Vector2.UnitY.RotatedByRandom(0.31f) * Main.rand.NextFloat(2f, 6f);
+                            fire.scale *= Main.rand.NextFloat(0.7f, 1.4f);
+                            fire.color = Color.Orange;
+                            fire.noGravity = true;
+                        }
+
+                        if (npc.WithinRange(target.Center, seekersFlameArea * 0.9f))
+                            target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 120);
+                    }
+                }
+
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
                 npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
@@ -239,13 +265,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Handle text and phase triggers.
             if (!sepulcherIsPresent && textState == 0f)
-			{
+            {
                 textState = 2f;
                 attackTextDelay = 180f;
                 npc.netUpdate = true;
-			}
+            }
             if (currentPhase == 0f && lifeRatio < Phase2LifeRatio)
-			{
+            {
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
                 currentPhase = 1f;
@@ -281,7 +307,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             switch (CurrentAttack(npc))
-			{
+            {
                 case SCalAttackType.AcceleratingRedirectingSkulls:
                     npc.damage = 0;
                     DoBehavior_AcceleratingRedirectingSkulls(npc, target, (int)currentPhase, ref attackTimer);
@@ -348,12 +374,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                     // Summon the shadow demon.
                     if (attackTextDelay == 75f)
-					{
+                    {
                         Vector2 demonSpawnPosition = npc.Center + Main.rand.NextVector2Circular(150f, 75f);
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/BrimstoneMonsterSpawn"), demonSpawnPosition);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             NPC.NewNPC((int)demonSpawnPosition.X, (int)demonSpawnPosition.Y, ModContent.NPCType<ShadowDemon>(), npc.whoAmI);
-					}
+                    }
 
                     InfernumMode.BlackFade = Utils.InverseLerp(300f, 125f, attackTextDelay, true) * 0.6f;
                     break;
@@ -394,15 +420,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                     // Summon brothers.
                     if (attackTextDelay == 60f)
-					{
+                    {
                         for (int i = 0; i < brotherSpawnPositions.Length; i++)
-						{
+                        {
                             Utilities.CreateGenericDustExplosion(brotherSpawnPositions[i], (int)CalamityDusts.Brimstone, 35, 10f, 1.55f);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
-							{
+                            {
                                 int npcType = i == 0 ? ModContent.NPCType<SupremeCatastrophe>() : ModContent.NPCType<SupremeCataclysm>();
                                 NPC.NewNPC((int)brotherSpawnPositions[i].X, (int)brotherSpawnPositions[i].Y, npcType);
-							}
+                            }
                         }
 
                         // Transition to the Lament section of the track.
@@ -547,7 +573,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int flameReleaseTime = 180;
 
             if (currentPhase >= 1)
-			{
+            {
                 initialFlameSpeed += 2.5f;
                 flameAngularVariance += 0.11f;
                 flameReleaseTime -= 30;
@@ -657,16 +683,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                     // Create brimstone bombs.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == fadeoutTime + chargeTime + 10f)
-					{
+                    {
                         for (int i = 0; i < bombCount; i++)
-						{
+                        {
                             Vector2 bombSpawnPosition = (npc.Center + target.Center) * 0.5f + Main.rand.NextVector2Circular(480f, 480f);
                             Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkMagicBomb>(), 550, 0f);
-						}
-					}
+                        }
+                    }
 
                     if (attackTimer > fadeoutTime + chargeTime + 25f)
-					{
+                    {
                         if (chargeCounter < chargeCount - 1f)
                         {
                             attackTimer = 0f;
@@ -675,7 +701,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         }
                         else
                             SelectNewAttack(npc);
-					}
+                    }
 
                     if (npc.Opacity < 0.4f)
                         npc.damage = 0;
@@ -716,17 +742,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Decide an initial rotation direction.
             if (rotationDirection == 0f)
-			{
+            {
                 rotationDirection = Main.rand.NextBool(2).ToDirectionInt();
                 npc.netUpdate = true;
-			}
+            }
 
             // Decide the shoot direction.
             if (wrappedAttackTimer == attackDelay - 1f)
-			{
+            {
                 shootDirection = npc.AngleTo(target.Center);
                 npc.netUpdate = true;
-			}
+            }
 
             float rotationalOffset = rotationDirection * rotationIncrementCounter * MathHelper.PiOver2;
 
@@ -740,7 +766,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Fire the fan.
             if (firing)
-			{
+            {
                 float shootRotationalOffset = MathHelper.Lerp(-angularVariance, angularVariance, Utils.InverseLerp(attackDelay, attackDelay + shootTime, wrappedAttackTimer, true));
                 Vector2 shootVelocity = (shootRotationalOffset + shootDirection).ToRotationVector2() * 9f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -751,11 +777,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Switch to the next position after an attack cycle.
             if (wrappedAttackTimer == attackCycleTime - 1f)
-			{
+            {
                 rotationIncrementCounter += rotationDirection;
                 if (Math.Abs(rotationIncrementCounter) >= 4f)
                     SelectNewAttack(npc);
-			}
+            }
         }
 
         public static void DoBehavior_SwervingBlasts(NPC npc, Player target, int currentPhase, ref float attackTimer)
@@ -853,14 +879,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     flameShootVelocity = Vector2.Lerp(flameShootVelocity, -Vector2.UnitY.RotatedByRandom(0.92f), 0.7f) * 13f;
                     Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 550, 0f);
                 }
-			}
+            }
 
             // Look at the target.
             npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
             if (attackTimer > attackCycleCount * (attackDelay + shootTime + afterShootDelay))
                 SelectNewAttack(npc);
-		}
+        }
 
         public static void DoBehavior_LightningLines(NPC npc, Player target, int currentPhase, ref float attackTimer)
         {
@@ -879,7 +905,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Slow down prior to creating lines.
             if (wrappedAttackTimer > attackDelay)
-			{
+            {
                 hoverSpeed = 0f;
                 npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, hoverSpeed / 30f);
             }
@@ -895,7 +921,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             // Create telegraphs that turn into lightning.
             if (wrappedAttackTimer == attackDelay)
-			{
+            {
                 Main.PlaySound(SoundID.Item8, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -911,7 +937,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
                 }
                 npc.velocity = Vector2.Zero;
-			}
+            }
 
             if (wrappedAttackTimer == attackDelay + telegraphTime)
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);

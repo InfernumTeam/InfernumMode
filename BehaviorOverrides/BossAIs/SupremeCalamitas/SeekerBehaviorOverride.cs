@@ -37,6 +37,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 // Arena huggers.
                 case 0:
+                    // Explode if few seekers remain, to prevent dragging out the fight.
+                    if (NPC.CountNPCS(npc.type) <= 4)
+                    {
+                        Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
+                        Utilities.CreateGenericDustExplosion(npc.Center, (int)CalamityDusts.Brimstone, 25, 8f, 1.45f);
+                        npc.active = false;
+                    }
+
                     ref float fuck = ref npc.ai[2];
                     if (npc.velocity == Vector2.Zero)
                     {
@@ -113,6 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Explode if other seekers are gone.
                     if (NPC.CountNPCS(npc.type) <= 2)
                     {
+                        Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
                         Utilities.CreateGenericDustExplosion(npc.Center, (int)CalamityDusts.Brimstone, 25, 8f, 1.45f);
                         npc.active = false;
                     }

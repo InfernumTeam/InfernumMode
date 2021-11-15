@@ -3,6 +3,7 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
+using CalamityMod.Projectiles.Boss;
 using CalamityMod.Tiles;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -29,7 +30,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SwervingBlasts,
             RedirectingFlames,
             LightningLines,
-            SkullWalls
+            SkullWalls,
+            LightningLines2,
+            DanceOfHell
         }
         public override int NPCOverrideType => ModContent.NPCType<SCalBoss>();
 
@@ -42,6 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public const float Phase2LifeRatio = 0.75f;
         public const float Phase3LifeRatio = 0.5f;
         public const float Phase4LifeRatio = 0.25f;
+        public const float Phase5LifeRatio = 0.01f;
 
         public static readonly SCalAttackType[] Subphase1Pattern = new SCalAttackType[]
         {
@@ -77,11 +81,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             SCalAttackType.SkullWalls,
             SCalAttackType.RedirectingFlames,
+            SCalAttackType.LightningLines2,
             SCalAttackType.SwervingBlasts,
             SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.MagicChargeBlasts,
             SCalAttackType.LightningLines,
             SCalAttackType.AcceleratingRedirectingSkulls,
+            SCalAttackType.LightningLines2,
             SCalAttackType.RedirectingFlames,
             SCalAttackType.DarkMagicFireballFan,
             SCalAttackType.AcceleratingRedirectingSkulls,
@@ -90,13 +96,42 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.MagicChargeBlasts,
             SCalAttackType.SwervingBlasts,
+            SCalAttackType.LightningLines2,
             SCalAttackType.AcceleratingRedirectingSkulls,
+        };
+        public static readonly SCalAttackType[] Subphase4Pattern = new SCalAttackType[]
+        {
+            SCalAttackType.DanceOfHell,
+            SCalAttackType.SkullWalls,
+            SCalAttackType.RedirectingFlames,
+            SCalAttackType.LightningLines2,
+            SCalAttackType.DanceOfHell,
+            SCalAttackType.SwervingBlasts,
+            SCalAttackType.AcceleratingRedirectingSkulls,
+            SCalAttackType.MagicChargeBlasts,
+            SCalAttackType.DanceOfHell,
+            SCalAttackType.LightningLines,
+            SCalAttackType.AcceleratingRedirectingSkulls,
+            SCalAttackType.LightningLines2,
+            SCalAttackType.DanceOfHell,
+            SCalAttackType.RedirectingFlames,
+            SCalAttackType.DarkMagicFireballFan,
+            SCalAttackType.AcceleratingRedirectingSkulls,
+            SCalAttackType.DanceOfHell,
+            SCalAttackType.SkullWalls,
+            SCalAttackType.RedirectingFlames,
+            SCalAttackType.AcceleratingRedirectingSkulls,
+            SCalAttackType.DanceOfHell,
+            SCalAttackType.MagicChargeBlasts,
+            SCalAttackType.SwervingBlasts,
+            SCalAttackType.LightningLines2
         };
         public static readonly Dictionary<SCalAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<SCalAttackType[], Func<NPC, bool>>()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax >= Phase2LifeRatio,
             [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio,
-            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase3LifeRatio && npc.life / (float)npc.lifeMax >= Phase4LifeRatio * 0.1f,
+            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase3LifeRatio && npc.life / (float)npc.lifeMax >= Phase4LifeRatio,
+            [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase4LifeRatio && npc.life / (float)npc.lifeMax >= Phase5LifeRatio,
         };
 
         public static SCalAttackType CurrentAttack(NPC npc)
@@ -113,10 +148,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Do targeting.
             npc.TargetClosest();
             Player target = Main.player[npc.target];
-
-            // TEST FEATURE.
-            if (npc.life > npc.lifeMax / 4)
-                npc.life = npc.lifeMax / 4;
 
             // Vanish if the target is gone.
             if (!target.active || target.dead)
@@ -155,6 +186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float initialChargeupTime = ref npc.Infernum().ExtraAI[5];
             ref float currentPhase = ref npc.Infernum().ExtraAI[6];
             ref float seekersFlameArea = ref npc.Infernum().ExtraAI[7];
+            ref float enrageFactor = ref npc.Infernum().ExtraAI[8];
 
             // Handle initializations.
             if (npc.localAI[1] == 0f)
@@ -200,6 +232,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 attackTextDelay = 180f;
                 npc.localAI[1] = 1f;
             }
+
+            // Determine the enrage factor.
+            npc.Calamity().unbreakableDR = false;
+            npc.Calamity().DR = 0.15f;
+            if (!npc.Infernum().arenaRectangle.Intersects(target.Hitbox))
+            {
+                enrageFactor = MathHelper.Clamp(enrageFactor + 0.02f, 0f, 3f);
+                npc.Calamity().DR = 0.999f;
+                npc.Calamity().unbreakableDR = true;
+            }
+            else
+                enrageFactor = MathHelper.Clamp(enrageFactor - 0.01f, 0f, 3f);
 
             // Handle text attack delays. These are used specifically for things like dialog.
             if (attackTextDelay > 0f)
@@ -296,13 +340,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 attackTextDelay = 180f;
                 npc.netUpdate = true;
             }
-            if (currentPhase == 2f && lifeRatio < Phase4LifeRatio && attackTextDelay <= 0f)
+            if (textState == 5f && lifeRatio < Phase4LifeRatio && attackTextDelay <= 0f)
+            {
+                attackTimer = 0f;
+                textState = 6f;
+                attackTextDelay = 180f;
+                npc.netUpdate = true;
+            }
+            if (currentPhase == 2f && lifeRatio < Phase4LifeRatio && !seekerIsPresent && attackTextDelay <= 0f)
             {
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
                 currentPhase = 3f;
-                textState = 6f;
-                attackTextDelay = 180f;
+                textState = 7f;
+                attackTextDelay = 420f;
                 npc.netUpdate = true;
             }
 
@@ -310,30 +361,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 case SCalAttackType.AcceleratingRedirectingSkulls:
                     npc.damage = 0;
-                    DoBehavior_AcceleratingRedirectingSkulls(npc, target, (int)currentPhase, ref attackTimer);
+                    DoBehavior_AcceleratingRedirectingSkulls(npc, target, enrageFactor,(int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.MagicChargeBlasts:
-                    DoBehavior_MagicChargeBlasts(npc, target, (int)currentPhase, ref attackTimer);
+                    DoBehavior_MagicChargeBlasts(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.DarkMagicFireballFan:
                     npc.damage = 0;
-                    DoBehavior_DarkMagicFireballFan(npc, target, (int)currentPhase, ref attackTimer);
+                    DoBehavior_DarkMagicFireballFan(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.SwervingBlasts:
                     npc.damage = 0;
-                    DoBehavior_SwervingBlasts(npc, target, (int)currentPhase, ref attackTimer);
+                    DoBehavior_SwervingBlasts(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.RedirectingFlames:
                     npc.damage = 0;
-                    DoBehavior_RedirectingFlames(npc, target, (int)currentPhase, ref attackTimer);
+                    DoBehavior_RedirectingFlames(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.LightningLines:
                     npc.damage = 0;
-                    DoBehavior_LightningLines(npc, target, (int)currentPhase, ref attackTimer);
+                    DoBehavior_LightningLines(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.SkullWalls:
                     npc.damage = 0;
-                    DoBehavior_SkullWalls(npc, target, (int)currentPhase, ref attackTimer);
+                    DoBehavior_SkullWalls(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
+                    break;
+                case SCalAttackType.LightningLines2:
+                    npc.damage = 0;
+                    DoBehavior_LightningLines2(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
+                    break;
+                case SCalAttackType.DanceOfHell:
+                    DoBehavior_DanceOfHell(npc, target, enrageFactor, ref attackTimer);
                     break;
             }
 
@@ -442,15 +500,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // After brothers.
                 case 5:
-                    if (attackTextDelay == 90f)
-                        Main.NewText("...This world bears the many scars of the past. The calamities of the Tyrant.", Color.Orange);
                     break;
 
                 // After phase 3; Seekers Summoning.
                 case 6:
                     if (attackTextDelay == 90f)
                     {
-                        Main.NewText("...And yet...", Color.Orange);
+                        Main.NewText("When the ashes fall, what will all of this have been for?", Color.Orange);
 
                         // Transition to the Epiphany section of the track.
                         Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
@@ -481,6 +537,52 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         }
                     }
 
+                    break;
+
+                // After seeker summoning.
+                case 7:
+                    // Begin absorbing the shadow demon.
+                    bool shadowDemonIsPresent = NPC.AnyNPCs(ModContent.NPCType<ShadowDemon>());
+                    if (attackTextDelay < 360f)
+                        npc.Infernum().ExtraAI[8] = 1f;
+                    if (!shadowDemonIsPresent && attackTextDelay > 151f)
+                        attackTextDelay = 151f;
+
+                    if (attackTextDelay == 150f)
+                    {
+                        Main.NewText("I have no future if I lose here!", Color.Orange);
+
+                        // Create a lot of fire dust.
+                        for (int i = 0; i < 80; i++)
+                        {
+                            Dust fire = Dust.NewDustDirect(npc.Center, npc.width, npc.height, 174, 0f, 0f, 200, default, 2.45f);
+                            fire.position = npc.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * Main.rand.NextFloat(npc.width * 0.5f);
+                            fire.noGravity = true;
+                            fire.velocity.Y -= 6f;
+                            fire.velocity *= 3f;
+                            fire.velocity -= Vector2.UnitY.RotatedByRandom(0.45f) * Main.rand.NextFloat(5f);
+
+                            fire = Dust.NewDustDirect(npc.Center, npc.width, npc.height, 174, 0f, 0f, 100, default, 1.4f);
+                            fire.position = npc.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * Main.rand.NextFloat(npc.width * 0.5f);
+                            fire.velocity.Y -= 6f;
+                            fire.velocity *= 2f;
+                            fire.noGravity = true;
+                            fire.fadeIn = 1f;
+                            fire.color = Color.Crimson * 0.5f;
+                            fire.velocity -= Vector2.UnitY.RotatedByRandom(0.45f) * Main.rand.NextFloat(5f);
+                        }
+
+                        for (int i = 0; i < 40; i++)
+                        {
+                            Dust fire = Dust.NewDustDirect(npc.Center, npc.width, npc.height, 267, 0f, 0f, 0, default, 2.9f);
+                            fire.position = npc.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi) * npc.width * Main.rand.NextFloatDirection() * 0.5f;
+                            fire.color = Color.Lerp(Color.Magenta, Color.Black, 0.6f);
+                            fire.noGravity = true;
+                            fire.velocity.Y -= 6f;
+                            fire.velocity *= 0.5f;
+                            fire.velocity += Vector2.UnitY.RotatedByRandom(0.45f) * Main.rand.NextFloat(3f, 7f);
+                        }
+                    }
                     break;
             }
         }
@@ -561,7 +663,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_AcceleratingRedirectingSkulls(NPC npc, Player target, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_AcceleratingRedirectingSkulls(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int attackCycleCount = 2;
             int hoverTime = 210;
@@ -578,9 +680,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 flameAngularVariance += 0.11f;
                 flameReleaseTime -= 30;
             }
-            
+
             if (currentPhase >= 2)
+            {
                 initialFlameSpeed += 2.5f;
+                flameReleaseRate -= 1;
+            }
+
+            if (currentPhase >= 3)
+            {
+                initialFlameSpeed += 5f;
+                flameReleaseRate -= 3;
+            }
+            initialFlameSpeed *= enrageFactor * 0.45f + 1f;
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
@@ -631,12 +743,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_MagicChargeBlasts(NPC npc, Player target, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_MagicChargeBlasts(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int chargeCount = 3;
             int fadeoutTime = 30;
             int chargeTime = 15;
-            int bombCount = 4;
+            int bombCount = 4 + (int)(enrageFactor * 3f);
+            float chargeSpeed = 35f + enrageFactor * 10f;
+            float spawnOffsetMax = 480f;
             Vector2 hoverDestination = target.Center;
             hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 450f;
             hoverDestination.Y += (target.Center.Y < npc.Center.Y).ToDirectionInt() * 375f;
@@ -647,6 +761,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 chargeCount--;
                 bombCount += 2;
+            }
+            if (currentPhase >= 3)
+            {
+                bombCount += 3;
+                spawnOffsetMax += 150f;
             }
 
             ref float attackState = ref npc.Infernum().ExtraAI[0];
@@ -663,7 +782,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         attackState = 1f;
                         attackTimer = 0f;
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * 35f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         npc.netUpdate = true;
 
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/SCalDash"), npc.Center);
@@ -686,7 +805,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         for (int i = 0; i < bombCount; i++)
                         {
-                            Vector2 bombSpawnPosition = (npc.Center + target.Center) * 0.5f + Main.rand.NextVector2Circular(480f, 480f);
+                            Vector2 bombSpawnPosition = (npc.Center + target.Center) * 0.5f + Main.rand.NextVector2Circular(spawnOffsetMax, spawnOffsetMax);
                             Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkMagicBomb>(), 550, 0f);
                         }
                     }
@@ -709,12 +828,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_DarkMagicFireballFan(NPC npc, Player target, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_DarkMagicFireballFan(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int attackCycleTime = 110;
             int attackDelay = 50;
             int shootTime = 50;
-            int shootRate = 3;
+            int shootRate = 2;
+            float shootSpeed = enrageFactor * 3f + 9f;
             float angularVariance = 1.53f;
 
             if (currentPhase >= 1)
@@ -727,6 +847,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 shootTime -= 3;
                 shootRate--;
                 angularVariance -= 0.07f;
+            }
+            if (currentPhase >= 3)
+            {
+                shootTime -= 8;
+                shootSpeed += 4f;
+                angularVariance += 0.18f;
             }
 
             float wrappedAttackTimer = attackTimer % attackCycleTime;
@@ -768,7 +894,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (firing)
             {
                 float shootRotationalOffset = MathHelper.Lerp(-angularVariance, angularVariance, Utils.InverseLerp(attackDelay, attackDelay + shootTime, wrappedAttackTimer, true));
-                Vector2 shootVelocity = (shootRotationalOffset + shootDirection).ToRotationVector2() * 9f;
+                Vector2 shootVelocity = (shootRotationalOffset + npc.AngleTo(target.Center)).ToRotationVector2() * shootSpeed;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 540, 0f);
 
@@ -784,8 +910,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_SwervingBlasts(NPC npc, Player target, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_SwervingBlasts(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
         {
+            if (enrageFactor >= 3f)
+                SelectNewAttack(npc);
+
             int fireBurstCount = 30;
             int fireBurstShootRate = 2;
             int fireBurstAttackDelay = 160;
@@ -796,7 +925,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (currentPhase >= 2)
                 fireBurstCount += 6;
 
-            bool inDelay = attackTimer >= 20f + fireBurstCount * fireBurstShootRate && attackTimer < 20 + fireBurstCount * fireBurstShootRate + fireBurstAttackDelay;
+            if (currentPhase >= 3)
+                fireBurstCount += 5;
+
+            bool inDelay = attackTimer >= 45f + fireBurstCount * fireBurstShootRate && attackTimer < 45f + fireBurstCount * fireBurstShootRate + fireBurstAttackDelay;
             ref float shotCounter = ref npc.Infernum().ExtraAI[0];
 
             // Teleport above the player.
@@ -814,9 +946,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Release a burst of light.
-            if (attackTimer > 15f && !inDelay)
+            if (attackTimer > 45f && !inDelay)
             {
-                if (attackTimer > 20f && attackTimer % fireBurstShootRate == fireBurstShootRate - 1f)
+                if (attackTimer > 50f && attackTimer % fireBurstShootRate == fireBurstShootRate - 1f)
                 {
                     // Release a burst of dark magic.
                     for (int i = 0; i < 16; i++)
@@ -846,14 +978,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
-            if (attackTimer > fireBurstCount * fireBurstShootRate + fireBurstAttackDelay + 75f)
+            if (attackTimer > fireBurstCount * fireBurstShootRate + fireBurstAttackDelay + 105f)
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_RedirectingFlames(NPC npc, Player target, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_RedirectingFlames(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int attackCycleCount = 3;
-            int attackDelay = 25;
+            int attackDelay = attackTimer < 100f ? 100 : 25;
             int shootTime = 75;
             int afterShootDelay = 35;
             int shootRate = 4;
@@ -861,6 +993,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (currentPhase >= 2)
                 shootRate--;
+
+            if (currentPhase >= 3)
+            {
+                attackCycleCount--;
+                shootTime -= 18;
+                shootRate--;
+            }
+
+            if (enrageFactor > 0f)
+                shootRate = (int)MathHelper.Lerp(3f, 1f, enrageFactor / 3f);
 
             float wrappedAttackTimer = attackTimer % (attackDelay + shootTime + afterShootDelay);
 
@@ -888,11 +1030,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_LightningLines(NPC npc, Player target, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_LightningLines(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int attackCycleCount = 4;
             int attackDelay = attackTimer < 185f ? 185 : 40;
-            int telegraphTime = 32;
+            int telegraphTime = 32 - (int)(enrageFactor * 6f);
             int afterShootDelay = 12;
             int lightningCount = 11;
             float lightningAngleArea = 0.94f;
@@ -900,6 +1042,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (currentPhase >= 2)
                 lightningCount += 3;
+
+            if (currentPhase >= 3)
+                lightningCount += 6;
 
             float wrappedAttackTimer = attackTimer % (attackDelay + telegraphTime + afterShootDelay);
 
@@ -946,18 +1091,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_SkullWalls(NPC npc, Player target, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_SkullWalls(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int attackCycleCount = 6;
-            int redirectTime = 65;
+            int redirectTime = 65 - (int)(enrageFactor * 8f);
             int shootDelay = 18;
+            float spawnOffsetMax = 450f;
             float hoverSpeed = 29f;
+
+            if (currentPhase >= 3)
+            {
+                redirectTime -= 20;
+                shootDelay -= 4;
+                spawnOffsetMax = 640f;
+            }
+
             float wrappedAttackTimer = attackTimer % (redirectTime + shootDelay);
 
             if (wrappedAttackTimer < redirectTime)
             {
                 // Hover to the top left/right of the target.
-                Vector2 hoverDestination = target.Center - Vector2.UnitY *380f;
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 380f;
                 hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 500f;
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.05f);
@@ -967,7 +1121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.velocity *= 0.97f;
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == redirectTime  + (int)(shootDelay * 0.5f))
                 {
-                    for (float verticalOffset = -450f; verticalOffset < 450f; verticalOffset += 125f)
+                    for (float verticalOffset = -spawnOffsetMax; verticalOffset < spawnOffsetMax; verticalOffset += 125f)
                     {
                         Vector2 spawnPosition = target.Center + new Vector2(1100f, verticalOffset);
                         Vector2 shootVelocity = Vector2.UnitX * -16f;
@@ -989,6 +1143,134 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (attackTimer >= attackCycleCount * (redirectTime + shootDelay) + redirectTime * 0.9f)
                 SelectNewAttack(npc);
+        }
+
+        public static void DoBehavior_LightningLines2(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
+        {
+            int lightningShootRate = 45;
+            int blastShootRate = 90 - (int)(enrageFactor * 16f);
+            float hoverSpeed = 29f;
+
+            // Hover to the top left/right of the target.
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 380f;
+            hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 500f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
+            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.05f);
+            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+
+            // Periodically release lightning and gigablasts.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 150f && attackTimer < 540f)
+            {
+                if (attackTimer % lightningShootRate == lightningShootRate - 1f)
+                {
+                    float lightningUniversalOffset = Main.rand.NextFloatDirection() * 200f;
+                    for (float x = -1250f; x < 1250f; x += 320f)
+                    {
+                        Vector2 lightningSpawnPosition = target.Center + Vector2.UnitX * (x + lightningUniversalOffset);
+                        Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.Zero, ModContent.ProjectileType<RedLightningTelegraph2>(), 0, 0f);
+                    }
+                }
+
+                if (attackTimer % blastShootRate == blastShootRate - 1f && currentPhase >= 3)
+                {
+                    Vector2 hellblastSpawnPosition = target.Center + Vector2.UnitX * Main.rand.NextBool().ToDirectionInt() * 1000f;
+                    Vector2 hellbastShootVelocity = (target.Center - hellblastSpawnPosition).SafeNormalize(Vector2.UnitY) * 8.5f;
+                    Utilities.NewProjectileBetter(hellblastSpawnPosition, hellbastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 600, 0f, Main.myPlayer);
+                }
+            }
+
+            if (attackTimer > 630f)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoBehavior_DanceOfHell(NPC npc, Player target, float enrageFactor, ref float attackTimer)
+        {
+            float predictivenessFactor = 8f;
+            float chargeSpeed = enrageFactor * 8f + 48f;
+            int chargeTime = 24;
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
+            int hoverDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+            switch ((int)attackSubstate)
+            {
+                // Hover into position for a brief moment.
+                case 0:
+                    npc.damage = 0;
+                    npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.45f, 0.08f);
+                    Vector2 hoverDestination = target.Center - Vector2.UnitY * 200f;
+                    hoverDestination.X += hoverDirection * 480f;
+                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+
+                    // After a sufficient amount of time has passed or if close to the destination, grind to a halt.
+                    if (npc.WithinRange(hoverDestination, 100f) || attackTimer >= 75f)
+                    {
+                        npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 2.5f) * 0.5f;
+                        if (attackTimer < 75f)
+                            attackTimer += 4f;
+                    }
+                    else
+                    {
+                        npc.Center = npc.Center.MoveTowards(hoverDestination, 8f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * chargeSpeed * 0.85f, 1.8f);
+                    }
+
+                    // Charge at the target after slowing down and release a burst of dark magic blasts that accelerate.
+                    if (attackTimer >= 85f)
+                    {
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/SCalDash"), npc.Center);
+                        npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor, -Vector2.UnitY) * chargeSpeed;
+                        npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                        attackSubstate = 1f;
+                        attackTimer = 0f;
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int projectileType = ModContent.ProjectileType<AcceleratingDarkMagicBurst>();
+                            int damage = 640;
+
+                            for (int i = 0; i < 12; i++)
+                            {
+                                Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 11f;
+                                Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, projectileType, damage, 0f);
+                            }
+
+                            for (int i = 0; i < 5; i++)
+                            {
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.8f, 0.8f, i / 4f)) * 15f;
+                                Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, projectileType, damage, 0f);
+                            }
+
+                            Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(10f, 10f), ModContent.ProjectileType<DarkFireblast>(), damage, 0f);
+                        }
+
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Charge.
+                case 1:
+                    npc.damage = npc.defDamage + 100;
+                    npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.08f);
+
+                    // Look at the player again after a bit of time charging.
+                    if (attackTimer >= chargeTime)
+                    {
+                        npc.velocity *= 0.9f;
+                        npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.33f);
+                    }
+                    if (attackTimer >= chargeTime + 8f)
+                    {
+                        attackTimer = 0f;
+                        attackSubstate = 0f;
+                        if (chargeCounter <= 8f)
+                            chargeCounter++;
+                        else
+                            SelectNewAttack(npc);
+                        npc.netUpdate = true;
+                    }
+                    break;
+            }
         }
 
         public static void SelectNewAttack(NPC npc)

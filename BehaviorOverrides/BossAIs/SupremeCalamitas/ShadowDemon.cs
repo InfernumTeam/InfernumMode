@@ -78,6 +78,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return;
             }
 
+            // Disappear and be absorbed as necessary.
+            if (Main.npc[CalamityGlobalNPC.SCal].Infernum().ExtraAI[8] == 1f)
+            {
+                npc.damage = 0;
+                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.01f, 0f, 1f);
+                Vector2 hoverDestination = Main.npc[CalamityGlobalNPC.SCal].Center;
+                hoverDestination.X += (Main.npc[CalamityGlobalNPC.SCal].Center.X < npc.Center.X).ToDirectionInt() * 250f;
+                if (!npc.WithinRange(hoverDestination, 100f))
+                {
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 26f, 0.75f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * 29f, 0.05f);
+                }
+                else
+                    npc.velocity *= 0.92f;
+
+                if (npc.Opacity <= 0f)
+                    npc.active = false;
+
+                for (int i = 0; i < 5; i++)
+                {
+                    if (Main.rand.NextFloat() < 1f - npc.Opacity)
+                    {
+                        Dust shadow = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(75f, 75f), 267);
+                        shadow.color = Color.Lerp(Color.White, Color.Black, Main.rand.NextFloat(0.7f, 1f));
+                        shadow.velocity = Vector2.Lerp(Main.rand.NextVector2Unit(), npc.SafeDirectionTo(Main.npc[CalamityGlobalNPC.SCal].Center), 0.7f);
+                        shadow.velocity *= Main.rand.NextFloat(10f, 19f);
+                        shadow.scale *= Main.rand.NextFloat(1f, 1.3f);
+                        shadow.noGravity = true;
+                    }
+                }
+                return;
+            }
+
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
@@ -95,10 +128,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Fly near the target and release blasts of shadow.
             if (WrappedAttackTimer < 40f)
             {
-                Vector2 hoverDestination = Target.Center - Vector2.UnitY * 350f;
+                Vector2 hoverDestination = Target.Center - Vector2.UnitY * 420f;
                 if (!npc.WithinRange(hoverDestination, 100f))
                 {
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 0.7f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 1.3f);
                     npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * 29f, 0.05f);
                 }
             }

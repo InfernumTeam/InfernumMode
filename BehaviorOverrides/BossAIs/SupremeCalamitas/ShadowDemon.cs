@@ -76,6 +76,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return;
             }
 
+            if (Main.npc[CalamityGlobalNPC.SCal].ai[2] > 0f || SupremeCalamitasBehaviorOverride.CurrentAttack(Main.npc[CalamityGlobalNPC.SCal]) == SupremeCalamitasBehaviorOverride.SCalAttackType.LightningLines)
+                AttackTimer = 0f;
+
             // Disappear and be absorbed as necessary.
             if (Main.npc[CalamityGlobalNPC.SCal].Infernum().ExtraAI[8] == 1f)
             {

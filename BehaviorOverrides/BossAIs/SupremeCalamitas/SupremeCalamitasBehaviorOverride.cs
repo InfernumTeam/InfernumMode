@@ -695,27 +695,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int hoverTime = 210;
             float hoverHorizontalOffset = 600f;
             float hoverSpeed = 28f;
-            float initialFlameSpeed = 11f;
+            float initialFlameSpeed = 10f;
             float flameAngularVariance = 1.08f;
             int flameReleaseRate = 9;
             int flameReleaseTime = 180;
 
             if (currentPhase >= 1)
             {
-                initialFlameSpeed += 2f;
+                initialFlameSpeed += 1.75f;
                 flameAngularVariance += 0.11f;
                 flameReleaseTime -= 30;
             }
 
             if (currentPhase >= 2)
             {
-                initialFlameSpeed += 2f;
+                initialFlameSpeed += 1.75f;
                 flameReleaseRate -= 1;
             }
 
             if (currentPhase >= 3)
             {
-                initialFlameSpeed += 3.5f;
+                initialFlameSpeed += 3.2f;
                 flameReleaseRate -= 3;
             }
             initialFlameSpeed *= enrageFactor * 0.45f + 1f;

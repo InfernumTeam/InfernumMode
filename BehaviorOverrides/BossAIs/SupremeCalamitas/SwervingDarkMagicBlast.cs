@@ -54,14 +54,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (projectile.WithinRange(target.Center, 700f))
                 {
                     bool canNoLongerHome = attackTimer >= swerveTime + 125f;
-                    float newSpeed = MathHelper.Clamp(projectile.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 13f, canNoLongerHome ? 32f : 25f);
+                    float newSpeed = MathHelper.Clamp(projectile.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 13f, canNoLongerHome ? 28.5f : 23f);
                     if (!target.dead && target.active && !projectile.WithinRange(target.Center, 220f) && !canNoLongerHome)
                         projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(target.Center) * projectile.velocity.Length(), 0.075f);
 
                     projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * newSpeed;
                 }
                 else
-                    projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(target.Center) * projectile.velocity.Length(), 0.2f).SafeNormalize(Vector2.UnitY) * 24f;
+                    projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(target.Center) * projectile.velocity.Length(), 0.2f).SafeNormalize(Vector2.UnitY) * 21f;
 
                 // Die on tile collision or after enough time.
                 bool shouldDie = (Collision.SolidCollision(projectile.position, projectile.width, projectile.height) && attackTimer >= swerveTime + 95f) || attackTimer >= swerveTime + 240f;

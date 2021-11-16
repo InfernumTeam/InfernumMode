@@ -369,28 +369,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     }
                     else
                     {
-                        npc.velocity = Vector2.Zero;
-                        npc.Center = destination;
+                        npc.velocity *= 0.925f;
                         npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(Target.Center) - MathHelper.PiOver2, MathHelper.Pi / 12f);
+                    }
 
-                        // Relase some projectiles while hovering to pass the time.
-                        if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % 30 == 29)
+                    // Relase some projectiles while hovering to pass the time.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % 30 == 29 && npc.WithinRange(destination, 160f))
+                    {
+                        if (isSpazmatism)
                         {
-                            if (isSpazmatism)
+                            float shootSpeed = MathHelper.Lerp(9f, 15.7f, 1f - CombinedLifeRatio);
+                            for (int i = 0; i < 4; i++)
                             {
-                                float shootSpeed = MathHelper.Lerp(9f, 15.7f, 1f - CombinedLifeRatio);
-                                for (int i = 0; i < 4; i++)
-                                {
-                                    Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.45f, 0.45f, i / 3f)) * shootSpeed;
-                                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.CursedFlameHostile, 95, 0f);
-                                }
+                                Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.45f, 0.45f, i / 3f)) * shootSpeed;
+                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.CursedFlameHostile, 95, 0f);
                             }
-                            else
-                            {
-                                float shootSpeed = MathHelper.Lerp(10.75f, 16f, 1f - CombinedLifeRatio);
-                                Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
-                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.DeathLaser, 90, 0f);
-                            }
+                        }
+                        else
+                        {
+                            float shootSpeed = MathHelper.Lerp(10.75f, 16f, 1f - CombinedLifeRatio);
+                            Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.DeathLaser, 90, 0f);
                         }
                     }
                     break;
@@ -432,9 +431,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     if (UniversalAttackTimer % (redirectTime + chargeTime) <= redirectTime)
                     {
-                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.055f);
-                        npc.Center = npc.Center.MoveTowards(destination, 4f);
-                        npc.velocity = Vector2.Zero;
+                        if (npc.WithinRange(destination, 120f))
+                        {
+                            Vector2 idealVelocity = npc.SafeDirectionTo(destination) * MathHelper.Min(16f, npc.Distance(destination));
+                            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f);
+                            npc.velocity = npc.velocity.MoveTowards(idealVelocity, 0.75f);
+                        }
+                        else
+                        {
+                            npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 36f, 3.7f);
+                            npc.Center = npc.Center.MoveTowards(destination, 10f);
+                        }
+
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
 
                         npc.damage = 0;
@@ -548,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         else
                             npc.rotation = npc.rotation.AngleTowards(isRetinazer ? MathHelper.PiOver2 : 0f, MathHelper.TwoPi / 20f);
 
-                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.05f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 33f, 2.1f);
                         npc.damage = 0;
                     }
 

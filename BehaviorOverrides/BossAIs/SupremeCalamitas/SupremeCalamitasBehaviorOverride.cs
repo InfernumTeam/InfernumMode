@@ -695,27 +695,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int hoverTime = 210;
             float hoverHorizontalOffset = 600f;
             float hoverSpeed = 28f;
-            float initialFlameSpeed = 12.5f;
+            float initialFlameSpeed = 11f;
             float flameAngularVariance = 1.08f;
             int flameReleaseRate = 9;
             int flameReleaseTime = 180;
 
             if (currentPhase >= 1)
             {
-                initialFlameSpeed += 2.5f;
+                initialFlameSpeed += 2f;
                 flameAngularVariance += 0.11f;
                 flameReleaseTime -= 30;
             }
 
             if (currentPhase >= 2)
             {
-                initialFlameSpeed += 2.5f;
+                initialFlameSpeed += 2f;
                 flameReleaseRate -= 1;
             }
 
             if (currentPhase >= 3)
             {
-                initialFlameSpeed += 5f;
+                initialFlameSpeed += 3.5f;
                 flameReleaseRate -= 3;
             }
             initialFlameSpeed *= enrageFactor * 0.45f + 1f;
@@ -960,7 +960,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Teleport above the player.
             if (attackTimer == 15f)
             {
-                Vector2 teleportPosition = target.Center - Vector2.UnitY * 270f;
+                Vector2 teleportPosition = target.Center - target.velocity.SafeNormalize(Vector2.UnitY) * 300f;
                 Dust.QuickDustLine(npc.Center, teleportPosition, 250f, Color.Red);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

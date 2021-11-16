@@ -416,6 +416,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     }
                     GotoNextAttack(npc, ref attackType);
                 }
+
+                if (currentSubphase == 9f)
+                {
+                    attackTimer = 0f;
+                    GotoNextAttack(npc, ref attackType);
+                }
                 transitionDRCountdown = TransitionDRBoostTime;
                 npc.netUpdate = true;
             }
@@ -1172,7 +1178,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                             {
                                 Main.projectile[telegraph].velocity = angle.ToRotationVector2();
                                 Main.projectile[telegraph].ai[1] = 1780f;
-							}
+                            }
                         }
                     }
 
@@ -1222,6 +1228,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             ref float fireIntensity = ref npc.Infernum().ExtraAI[9];
             ref float hasCreatedExplosionFlag = ref npc.Infernum().ExtraAI[16];
             ref float hasTeleportedFlag = ref npc.Infernum().ExtraAI[17];
+            ref float attackDelay = ref npc.Infernum().ExtraAI[18];
+
+            npc.damage = npc.defDamage;
+
+            if (attackDelay < 45f)
+            {
+                npc.damage = 0;
+                attackTimer = 0f;
+                if (attackDelay == 1f)
+                {
+                    npc.velocity = Vector2.Zero;
+                    npc.rotation = 0f;
+                    Vector2 teleportPosition = player.Center - Vector2.UnitY * 445f;
+                    Dust.QuickDustLine(npc.Center, teleportPosition, 250f, Color.Orange);
+                    npc.Center = teleportPosition;
+                    npc.netUpdate = true;
+                }
+                attackDelay++;
+                return;
+            }
 
             // First, create two heat mirages that circle the target and charge at them multiple times.
             // This is intended to confuse them.

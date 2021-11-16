@@ -103,11 +103,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                for (int i = 0; i < 2; i++)
-                {
-                    Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2.25f, 4.25f);
-                    Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast>(), 550, 0f);
-                }
+                Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2.25f, 4.25f);
+                Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast>(), 550, 0f);
             }
         }
     }

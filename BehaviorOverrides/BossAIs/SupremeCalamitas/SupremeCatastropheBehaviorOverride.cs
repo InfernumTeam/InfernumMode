@@ -36,6 +36,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Player target = Main.player[npc.target];
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float attackDelay = ref npc.Infernum().ExtraAI[0];
+
+            if (attackDelay < 60f)
+            {
+                npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                attackDelay++;
+            }
 
             CalamityGlobalNPC.SCalCatastrophe = npc.whoAmI;
 

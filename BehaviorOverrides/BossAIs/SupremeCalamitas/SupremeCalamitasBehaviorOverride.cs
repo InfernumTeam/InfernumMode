@@ -1082,10 +1082,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Hover to the top left/right of the target.
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
-            hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 470f;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.05f);
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * 385f;
+            hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 540f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 35f);
+            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.085f);
 
             // Look at the target.
             npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
@@ -1147,10 +1147,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.velocity *= 0.97f;
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == redirectTime  + (int)(shootDelay * 0.5f))
                 {
-                    for (float verticalOffset = -spawnOffsetMax; verticalOffset < spawnOffsetMax; verticalOffset += 125f)
+                    for (float verticalOffset = -spawnOffsetMax; verticalOffset < spawnOffsetMax; verticalOffset += 150f)
                     {
-                        Vector2 spawnPosition = target.Center + new Vector2(1100f, verticalOffset);
-                        Vector2 shootVelocity = Vector2.UnitX * -16f;
+                        Vector2 spawnPosition = target.Center + new Vector2(1400f, verticalOffset);
+                        Vector2 shootVelocity = Vector2.UnitX * -12f;
 
                         Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 580, 0f);
 
@@ -1158,9 +1158,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Utilities.NewProjectileBetter(spawnPosition, -shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 580, 0f);
                     }
 
-                    for (int i = 0; i < 9; i++)
+                    for (int i = 0; i < 7; i++)
                     {
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.79f, 0.79f, i / 8f)) * 10.5f;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.79f, 0.79f, i / 6f)) * 3f;
                         Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 580, 0f);
                     }
                 }

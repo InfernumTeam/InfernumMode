@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (projectile.timeLeft > 270)
                 return;
 
-            projectile.velocity.Y = (float)Math.Sin(Time / 13f + projectile.identity) * 10f;
+            projectile.velocity.Y = (float)Math.Sin(Time / 18f + projectile.identity) * 10f;
             projectile.Opacity = Utils.InverseLerp(0f, 5f, Time, true) * Utils.InverseLerp(0f, 5f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation();
             projectile.spriteDirection = (Math.Cos(projectile.rotation) > 0f).ToDirectionInt();

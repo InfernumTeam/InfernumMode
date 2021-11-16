@@ -1,6 +1,7 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.OverridingSystem;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -33,6 +34,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Player target = Main.player[npc.target];
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float attackDelay = ref npc.Infernum().ExtraAI[0];
+
+            if (attackDelay < 60f)
+            {
+                npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                attackDelay++;
+            }
 
             CalamityGlobalNPC.SCalCataclysm = npc.whoAmI;
 

@@ -461,9 +461,12 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<SCalWormBody>())
                 damage = (int)(damage * 0.3);
-
+            
             if (npc.type == ModContent.NPCType<SCalWormBody>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.4);
+
+            if (npc.type == ModContent.NPCType<SupremeCalamitas>() && projectile.type == ModContent.ProjectileType<InfernadoFriendly>())
+                damage = (int)(damage * 0.55);
         }
 
         public override void BossHeadRotation(NPC npc, ref float rotation)

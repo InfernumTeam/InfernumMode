@@ -460,10 +460,10 @@ namespace InfernumMode.GlobalInstances
                 damage = (int)(damage * 0.6);
 
             if (npc.type == ModContent.NPCType<SCalWormBody>())
-                damage = (int)(damage * 0.3);
+                damage = (int)(damage * 0.15);
             
             if (npc.type == ModContent.NPCType<SCalWormBody>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.4);
+                damage = (int)(damage * 0.3);
 
             if (npc.type == ModContent.NPCType<SupremeCalamitas>() && projectile.type == ModContent.ProjectileType<InfernadoFriendly>())
                 damage = (int)(damage * 0.55);

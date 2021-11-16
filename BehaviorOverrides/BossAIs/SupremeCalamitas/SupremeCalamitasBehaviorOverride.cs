@@ -205,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Dust.QuickDustLine(oldPosition, npc.Center, 300f, Color.Red);
 
                 // Define the arena.
-                Vector2 arenaArea = new Vector2(225f, 225f);
+                Vector2 arenaArea = new Vector2(164f, 164f);
                 npc.Infernum().arenaRectangle = Utils.CenteredRectangle(target.Center, arenaArea * 16f);
                 int left = (int)(npc.Infernum().arenaRectangle.Center().X / 16 - arenaArea.X * 0.5f);
                 int right = (int)(npc.Infernum().arenaRectangle.Center().X / 16 + arenaArea.X * 0.5f);

@@ -20,7 +20,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetDefaults()
         {
-            npc.damage = 0;
             npc.npcSlots = 0f;
             npc.width = npc.height = 124;
             npc.scale = 0.7f;
@@ -60,14 +59,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.target = Main.npc[CalamityGlobalNPC.SCal].target;
 
             // Have a brief moment of no damage.
-            npc.damage = AttackTimer > 20f ? npc.defDamage : 0;
+            npc.damage = 0;
             npc.spriteDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
             npc.rotation = Math.Abs(npc.velocity.Y * 0.02f);
 
             // Fade away and stop attacking if brothers are present.
             if (NPC.AnyNPCs(ModContent.NPCType<SupremeCataclysm>()) || NPC.AnyNPCs(ModContent.NPCType<SupremeCatastrophe>()))
             {
-                npc.damage = 0;
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.035f, 0f, 1f);
                 Vector2 hoverDestination = Main.npc[CalamityGlobalNPC.SCal].Center;
                 if (!npc.WithinRange(hoverDestination, 100f))
@@ -81,7 +79,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Disappear and be absorbed as necessary.
             if (Main.npc[CalamityGlobalNPC.SCal].Infernum().ExtraAI[8] == 1f)
             {
-                npc.damage = 0;
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.01f, 0f, 1f);
                 Vector2 hoverDestination = Main.npc[CalamityGlobalNPC.SCal].Center;
                 hoverDestination.X += (Main.npc[CalamityGlobalNPC.SCal].Center.X < npc.Center.X).ToDirectionInt() * 250f;

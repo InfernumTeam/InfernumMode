@@ -810,6 +810,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         attackState = 1f;
                         attackTimer = 0f;
                         npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                        npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
                         npc.netUpdate = true;
 
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/SCalDash"), npc.Center);
@@ -1247,7 +1248,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/SCalDash"), npc.Center);
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor, -Vector2.UnitY) * chargeSpeed;
-                        npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                        npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
                         attackSubstate = 1f;
                         attackTimer = 0f;
 

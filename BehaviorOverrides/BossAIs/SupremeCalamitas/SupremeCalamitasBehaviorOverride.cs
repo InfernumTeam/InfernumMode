@@ -35,9 +35,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             FinalPhase
         }
 
+        public enum SCalFrameType
+        {
+            UpwardDraft,
+            FasterUpwardDraft,
+            Casting,
+            BlastCast,
+            BlastPunchCast,
+            OutwardHandCast,
+            PunchHandCast,
+            Count
+        }
+
         public override int NPCOverrideType => ModContent.NPCType<SCalBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 
         public static readonly Vector2 SepulcherSpawnOffset = new Vector2(0f, -350f);
 
@@ -192,13 +204,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float attackTimer = ref npc.ai[1];
             ref float attackTextDelay = ref npc.ai[2];
             ref float textState = ref npc.ai[3];
+            ref float frameChangeSpeed = ref npc.localAI[1];
+            ref float frameType = ref npc.localAI[2];
             ref float initialChargeupTime = ref npc.Infernum().ExtraAI[5];
             ref float currentPhase = ref npc.Infernum().ExtraAI[6];
             ref float seekersFlameArea = ref npc.Infernum().ExtraAI[7];
             ref float enrageFactor = ref npc.Infernum().ExtraAI[8];
 
             // Handle initializations.
-            if (npc.localAI[1] == 0f)
+            if (npc.localAI[0] == 0f)
             {
                 // Teleport above the player.
                 Vector2 oldPosition = npc.Center;
@@ -239,8 +253,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 attackTextDelay = 180f;
-                npc.localAI[1] = 1f;
+                npc.localAI[0] = 1f;
             }
+
+            // Reset frames.
+            frameType = (int)SCalFrameType.UpwardDraft;
+            frameChangeSpeed = 0.15f;
 
             // Determine the enrage factor.
             npc.Calamity().unbreakableDR = false;
@@ -259,7 +277,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 npc.damage = 0;
                 npc.dontTakeDamage = true;
-                DoBehavior_HandleAttackDelaysAndText(npc, target, ref textState, ref attackTextDelay);
+                DoBehavior_HandleAttackDelaysAndText(npc, target, ref frameType, ref frameChangeSpeed, ref textState, ref attackTextDelay);
 
                 if (textState == 0f && attackTextDelay == 2f)
                     initialChargeupTime = 240f;
@@ -272,7 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 npc.damage = 0;
                 npc.dontTakeDamage = true;
-                DoBehavior_HandleInitialChargeup(npc, target, ref initialChargeupTime);
+                DoBehavior_HandleInitialChargeup(npc, target, ref frameType, ref frameChangeSpeed, ref initialChargeupTime);
                 initialChargeupTime--;
                 return false;
             }
@@ -286,6 +304,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 float hoverSpeed = 31f;
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 375f;
                 hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 450f;
+
                 if (seekerIsPresent)
                 {
                     hoverDestination = npc.Infernum().arenaRectangle.Center.ToVector2();
@@ -379,40 +398,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 case SCalAttackType.AcceleratingRedirectingSkulls:
                     npc.damage = 0;
-                    DoBehavior_AcceleratingRedirectingSkulls(npc, target, enrageFactor,(int)currentPhase, ref attackTimer);
+                    DoBehavior_AcceleratingRedirectingSkulls(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.MagicChargeBlasts:
-                    DoBehavior_MagicChargeBlasts(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
+                    DoBehavior_MagicChargeBlasts(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.DarkMagicFireballFan:
                     npc.damage = 0;
-                    DoBehavior_DarkMagicFireballFan(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
+                    DoBehavior_DarkMagicFireballFan(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.SwervingBlasts:
                     npc.damage = 0;
-                    DoBehavior_SwervingBlasts(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
+                    DoBehavior_SwervingBlasts(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.RedirectingFlames:
                     npc.damage = 0;
-                    DoBehavior_RedirectingFlames(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
+                    DoBehavior_RedirectingFlames(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.LightningLines:
                     npc.damage = 0;
-                    DoBehavior_LightningLines(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
+                    DoBehavior_LightningLines(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.SkullWalls:
                     npc.damage = 0;
-                    DoBehavior_SkullWalls(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
+                    DoBehavior_SkullWalls(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.LightningLines2:
                     npc.damage = 0;
-                    DoBehavior_LightningLines2(npc, target, enrageFactor, (int)currentPhase, ref attackTimer);
+                    DoBehavior_LightningLines2(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
                 case SCalAttackType.DanceOfHell:
-                    DoBehavior_DanceOfHell(npc, target, enrageFactor, ref attackTimer);
+                    DoBehavior_DanceOfHell(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, ref attackTimer);
                     break;
                 case SCalAttackType.FinalPhase:
-                    DoBehavior_FinalPhase(npc, target, enrageFactor, ref attackTimer);
+                    DoBehavior_FinalPhase(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, ref attackTimer);
                     break;
             }
 
@@ -420,7 +439,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             return false;
         }
 
-        public static void DoBehavior_HandleAttackDelaysAndText(NPC npc, Player target, ref float textState, ref float attackTextDelay)
+        public static void DoBehavior_HandleAttackDelaysAndText(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float textState, ref float attackTextDelay)
         {
             // Slow down and look at the target.
             npc.velocity *= 0.95f;
@@ -445,6 +464,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // Phase 2.
                 case 3:
+                    frameType = (int)SCalFrameType.Casting;
+                    frameChangeSpeed = 0.15f;
                     if (attackTextDelay == 240f)
                         Main.NewText("The powers you wield. The strength you've amassed.", Color.Orange);
 
@@ -465,6 +486,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // After Phase 2; Brothers Summoning.
                 case 4:
+                    frameType = (int)SCalFrameType.Casting;
+                    frameChangeSpeed = 0.15f;
                     if (attackTextDelay == 240f)
                         Main.NewText("You are an anomaly. An unforeseen deviation..", Color.Orange);
 
@@ -558,6 +581,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // After seeker summoning.
                 case 7:
+                    frameType = (int)SCalFrameType.Casting;
+                    frameChangeSpeed = 0.15f;
+
                     // Begin absorbing the shadow demon.
                     bool shadowDemonIsPresent = NPC.AnyNPCs(ModContent.NPCType<ShadowDemon>());
                     if (attackTextDelay < 360f)
@@ -614,7 +640,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_HandleInitialChargeup(NPC npc, Player target, ref float initialChargeupTime)
+        public static void DoBehavior_HandleInitialChargeup(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, ref float initialChargeupTime)
         {
             // Slow down and look at the target.
             npc.velocity *= 0.95f;
@@ -644,6 +670,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     magic.noGravity = true;
                 }
             }
+
+            frameType = (int)SCalFrameType.Casting;
+            frameChangeSpeed = 0.15f;
 
             // Summon spirits from below the player that congregate above their head.
             // They transform into sepulcher after a certain amount of time has passed.
@@ -690,7 +719,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_AcceleratingRedirectingSkulls(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_AcceleratingRedirectingSkulls(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int attackCycleCount = 2;
             int hoverTime = 210;
@@ -741,6 +770,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Release skulls.
             if (attackSubstate == 1f)
             {
+                frameType = (int)SCalFrameType.OutwardHandCast;
+                frameChangeSpeed = 0.2f;
+
                 if (attackTimer % flameReleaseRate == flameReleaseRate - 1f && attackTimer % 90f > 20f && attackTimer > 45f)
                 {
                     Main.PlaySound(SoundID.Item73, target.Center);
@@ -767,10 +799,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         SelectNewAttack(npc);
                     npc.netUpdate = true;
                 }
+			}
+			else
+			{
+                frameType = (int)SCalFrameType.UpwardDraft;
+                frameChangeSpeed = 0.15f;
             }
         }
 
-        public static void DoBehavior_MagicChargeBlasts(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_MagicChargeBlasts(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int chargeCount = 3;
             int fadeoutTime = 30;
@@ -821,12 +858,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case 1:
                     if (attackTimer < fadeoutTime)
                         npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.065f, 0f, 1f);
+
                     if (attackTimer > fadeoutTime + chargeTime)
                     {
                         npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.065f, 0f, 1f);
                         npc.velocity *= 0.825f;
                         npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.25f);
-                    }
+					}
+					else
+					{
+                        frameType = (int)SCalFrameType.FasterUpwardDraft;
+                        frameChangeSpeed = 0.225f;
+					}
 
                     // Create brimstone bombs.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == fadeoutTime + chargeTime + 10f)
@@ -856,7 +899,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_DarkMagicFireballFan(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_DarkMagicFireballFan(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int attackCycleTime = 110;
             int attackDelay = 50;
@@ -921,6 +964,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Fire the fan.
             if (firing)
             {
+                frameType = (int)SCalFrameType.BlastCast;
+                frameChangeSpeed = 0.25f;
+
                 float shootRotationalOffset = MathHelper.Lerp(-angularVariance, angularVariance, Utils.InverseLerp(attackDelay, attackDelay + shootTime, wrappedAttackTimer, true));
                 Vector2 shootVelocity = (shootRotationalOffset + npc.AngleTo(target.Center)).ToRotationVector2() * shootSpeed;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -938,7 +984,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_SwervingBlasts(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_SwervingBlasts(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             if (enrageFactor >= 3f)
                 SelectNewAttack(npc);
@@ -973,9 +1019,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
             }
 
-            // Release a burst of light.
+            // Release a burst of dark blasts.
             if (attackTimer > 45f && !inDelay)
             {
+                frameType = (int)SCalFrameType.Casting;
+                frameChangeSpeed = 0.15f;
+
                 if (attackTimer > 50f && attackTimer % fireBurstShootRate == fireBurstShootRate - 1f)
                 {
                     // Release a burst of dark magic.
@@ -1010,7 +1059,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_RedirectingFlames(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_RedirectingFlames(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int attackCycleCount = 3;
             int attackDelay = attackTimer < 100f ? 100 : 25;
@@ -1039,6 +1088,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 450f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
 
+            frameType = (int)SCalFrameType.OutwardHandCast;
+            frameChangeSpeed = 0.2f;
+
             // Release flames upwards. They will redirect and accelerate towards targets after a short period of time.
             if (wrappedAttackTimer >= attackDelay && wrappedAttackTimer < attackDelay + shootTime && wrappedAttackTimer % shootRate == shootRate - 1f)
             {
@@ -1058,7 +1110,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_LightningLines(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_LightningLines(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int attackCycleCount = 4;
             int attackDelay = attackTimer < 185f ? 185 : 40;
@@ -1090,7 +1142,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.085f);
 
             // Look at the target.
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+            // Determine frames.
+            frameType = (int)SCalFrameType.OutwardHandCast;
+            frameChangeSpeed = 0.2f;
 
             // Create telegraphs that turn into lightning.
             if (wrappedAttackTimer == attackDelay)
@@ -1119,7 +1175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_SkullWalls(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_SkullWalls(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int attackCycleCount = 6;
             int redirectTime = 65 - (int)(enrageFactor * 8f);
@@ -1143,6 +1199,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 500f;
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.05f);
+
+                // Determine frames.
+                frameType = (int)SCalFrameType.FasterUpwardDraft;
+                frameChangeSpeed = 0.2f;
             }
             else
             {
@@ -1173,7 +1233,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_LightningLines2(NPC npc, Player target, float enrageFactor, int currentPhase, ref float attackTimer)
+        public static void DoBehavior_LightningLines2(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int lightningShootRate = 45;
             int blastShootRate = 90 - (int)(enrageFactor * 16f);
@@ -1185,6 +1245,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
             npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.05f);
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+
+            // Determine frames.
+            frameType = (int)SCalFrameType.FasterUpwardDraft;
+            frameChangeSpeed = 0.2f;
 
             // Periodically release lightning and gigablasts.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 150f && attackTimer < 540f)
@@ -1211,7 +1275,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_DanceOfHell(NPC npc, Player target, float enrageFactor, ref float attackTimer)
+        public static void DoBehavior_DanceOfHell(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, ref float attackTimer)
         {
             float predictivenessFactor = 8f;
             float chargeSpeed = enrageFactor * 8f + 48f;
@@ -1286,7 +1350,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         npc.velocity *= 0.9f;
                         npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.33f);
+					}
+					else
+                    {
+                        // Determine frames.
+                        frameType = (int)SCalFrameType.FasterUpwardDraft;
+                        frameChangeSpeed = 0.2f;
                     }
+
                     if (attackTimer >= chargeTime + 8f)
                     {
                         attackTimer = 0f;
@@ -1301,7 +1372,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_FinalPhase(NPC npc, Player target, float enrageFactor, ref float attackTimer)
+        public static void DoBehavior_FinalPhase(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, ref float attackTimer)
         {
             int darkFlameShootDelay = 20;
             int darkFlameReleaseTime = 60;
@@ -1321,6 +1392,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 // Release circles of redirecting magic flames.
                 case 0:
+                    // Determine frames.
+                    frameType = (int)SCalFrameType.Casting;
+                    frameChangeSpeed = 0.15f;
+
                     if (attackTimer < totalDarkFlameCycles * (darkFlameShootDelay + darkFlameReleaseTime))
                     {
                         wrappedAttackTimer = attackTimer % (darkFlameShootDelay + darkFlameReleaseTime);
@@ -1383,6 +1458,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // Do a final, grand bullet hell as a conclusion to the battle.
                 case 2:
+                    // Determine frames.
+                    frameType = (int)SCalFrameType.Casting;
+                    frameChangeSpeed = 0.175f;
+
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer < finalBulletHellTime)
                     {
                         // Release blasts from above.
@@ -1516,5 +1595,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.netUpdate = true;
         }
         #endregion AI
+
+        #region Frames and Drawcode
+        public override void FindFrame(NPC npc, int frameHeight)
+        {
+            SCalFrameType frameType = (SCalFrameType)(int)npc.localAI[2];
+            npc.frameCounter += npc.localAI[1];
+            npc.frameCounter %= 6;
+            npc.frame.Y = (int)npc.frameCounter + (int)frameType * 6;
+        }
+        #endregion Frames and Drawcode
     }
 }

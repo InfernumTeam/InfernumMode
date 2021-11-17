@@ -38,6 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float attackTimer = ref npc.ai[1];
             ref float attackDelay = ref npc.Infernum().ExtraAI[0];
 
+            npc.localAI[0] = 150f;
             if (attackDelay < 60f)
             {
                 npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
@@ -70,7 +71,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 		public override void FindFrame(NPC npc, int frameHeight)
         {
             int currentFrame = 0;
-            float slashCounter = Main.GlobalTime * 220f % 120f;
+            float frameUpdateSpeed = npc.ai[0] == (int)SupremeCatastropheAttackState.SliceTarget ? 260f : 130f;
+            float slashCounter = Main.GlobalTime * frameUpdateSpeed % 120f;
             float slashInterpolant = Utils.InverseLerp(0f, 120f, slashCounter, true);
             if (npc.localAI[0] < 120f)
             {
@@ -117,7 +119,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     hoverDestination.X += hoverDirection * 480f;
                     npc.rotation = npc.velocity.X * 0.01f;
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                    npc.localAI[0] = 0f;
 
                     // After a sufficient amount of time has passed or if close to the destination, grind to a halt.
                     if (npc.WithinRange(hoverDestination, 100f) || attackTimer >= 75f)
@@ -159,7 +160,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case 1:
                     npc.damage = npc.defDamage;
                     npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.08f);
-                    npc.localAI[0] = 150f;
 
                     // Look at the player again after a bit of time charging.
                     if (attackTimer >= chargeTime)
@@ -212,7 +212,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             npc.damage = 0;
             npc.rotation = 0f;
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
             npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.45f, 0.08f);
 
             if (attackTimer < hoverTime)
@@ -285,7 +285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.netUpdate = true;
             }
 
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
             npc.rotation = 0f;
         }
 
@@ -300,14 +300,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
             Vector2 hoverDestination = target.Center;
             hoverDestination.X += hoverDirection * 475f;
-            hoverDestination.Y += (npc.type == ModContent.NPCType<SupremeCatastrophe>()).ToDirectionInt() * (float)Math.Sin(attackTimer / 42f) * 300f;
+            hoverDestination.Y += (float)Math.Sin(attackTimer / 42f) * 300f;
             float distanceFromDestination = npc.Distance(hoverDestination);
-            Vector2 closeMoveVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(distanceFromDestination, 29f);
-            npc.velocity = Vector2.Lerp(closeMoveVelocity, (hoverDestination - npc.Center) * 0.02f, Utils.InverseLerp(360f, 1080f, distanceFromDestination, true));
+            npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(distanceFromDestination, 29f);
 
             npc.damage = 0;
             npc.rotation = 0f;
-            npc.localAI[0] = 0f;
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
             npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.45f, 0.08f);
 

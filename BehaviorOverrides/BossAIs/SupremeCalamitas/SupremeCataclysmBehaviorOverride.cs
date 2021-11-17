@@ -37,6 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float attackTimer = ref npc.ai[1];
             ref float attackDelay = ref npc.Infernum().ExtraAI[0];
 
+            npc.localAI[0] = 150f;
             if (attackDelay < 60f)
             {
                 npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
@@ -67,7 +68,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override void FindFrame(NPC npc, int frameHeight)
         {
             int currentFrame = 0;
-            float punchCounter = Main.GlobalTime * 220f % 120f;
+            float frameUpdateSpeed = npc.ai[0] == (int)SupremeCatastropheBehaviorOverride.SupremeCatastropheAttackState.SliceTarget ? 260f : 130f;
+            float punchCounter = Main.GlobalTime * frameUpdateSpeed % 120f;
             float punchInterpolant = Utils.InverseLerp(0f, 120f, punchCounter, true);
             if (npc.localAI[0] < 120f)
             {

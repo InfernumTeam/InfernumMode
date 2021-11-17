@@ -89,7 +89,7 @@ namespace InfernumMode
 
         public override bool CanUseItem(Item item, Player player)
         {
-            if (item.type == ItemID.RodofDiscord && (NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()) || NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHeadS>())))
+            if (item.type == ItemID.RodofDiscord && (NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>())))
             {
                 if (PoDWorld.InfernumMode)
                 {

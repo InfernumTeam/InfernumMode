@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class BrimstoneHeartBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<SCalWormHeart>();
+        public override int NPCOverrideType => ModContent.NPCType<BrimstoneHeart>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCPreDraw;
 

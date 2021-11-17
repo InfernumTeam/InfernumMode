@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.npcSlots = 5f;
             npc.width = npc.height = 24;
             npc.defense = 0;
-            npc.lifeMax = 1776000;
+            npc.lifeMax = 266400;
             npc.aiStyle = npc.modNPC.aiType = -1;
             npc.knockBackResist = 0f;
             npc.scale = 1.3f;
@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             directionToNextSegment = directionToNextSegment.SafeNormalize(Vector2.Zero);
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
-            npc.Center = aheadSegment.Center - directionToNextSegment * npc.scale * 30f;
+            npc.Center = aheadSegment.Center - directionToNextSegment * npc.scale * 60f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
         }
 

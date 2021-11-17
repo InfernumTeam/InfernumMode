@@ -3,6 +3,8 @@ using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,11 +13,11 @@ using HiveMindBoss = CalamityMod.NPCs.HiveMind.HiveMind;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
-	public class HiveMindBehaviorOverrideP1 : NPCBehaviorOverride
+    public class HiveMindBehaviorOverrideP1 : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<HiveMindBoss>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc)
         {
@@ -28,6 +30,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             ref float hiveBlobSummonTimer = ref npc.localAI[1];
             ref float digTime = ref npc.localAI[3];
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
+            ref float phase2 = ref npc.Infernum().ExtraAI[20];
+
+            if (lifeRatio < 0.8f)
+            {
+                if (phase2 == 0f)
+                {
+                    for (int i = 0; i < 4; i++)
+                        npc.ai[i] = 0f;
+                    for (int i = 0; i < 20; i++)
+                        npc.Infernum().ExtraAI[i] = 0f;
+                    phase2 = 1f;
+                    npc.netUpdate = true;
+                }
+                return HiveMindBehaviorOverrideP2.PreAI(npc);
+            }
 
             // Despawn if the target is dead or gone.
             if (!target.active || target.dead)
@@ -219,6 +236,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 }
             }
             return false;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            if (npc.Infernum().ExtraAI[20] == 1f)
+                return HiveMindBehaviorOverrideP2.PreDraw(npc, spriteBatch, lightColor);
+            return true;
         }
     }
 }

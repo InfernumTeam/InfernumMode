@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
             bool inTiles = Collision.SolidCollision(npc.position, npc.width, npc.height);
             npc.defense = npc.defDefense;
-            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<DesertScourgeHeadSmall>()) || enrageTimer > 300f;
+            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<DesertNuisanceHead>()) || enrageTimer > 300f;
 
             // Idly release bone teeth.
             boneToothShootCounter++;
@@ -365,9 +365,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
         public static void SummonSmallerWorms(NPC npc)
 		{
-            int headType = ModContent.NPCType<DesertScourgeHeadSmall>();
-            int bodyType = ModContent.NPCType<DesertScourgeBodySmall>();
-            int tailType = ModContent.NPCType<DesertScourgeTailSmall>();
+            int headType = ModContent.NPCType<DesertNuisanceHead>();
+            int bodyType = ModContent.NPCType<DesertNuisanceBody>();
+            int tailType = ModContent.NPCType<DesertNuisanceTail>();
 
             // Clear the initial worms spawned by the item.
             for (int i = 0; i < Main.maxNPCs; i++)

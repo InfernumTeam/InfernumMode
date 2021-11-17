@@ -3,10 +3,12 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.StormWeaver;
+using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -34,19 +36,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         #region AI
         public override bool PreAI(NPC npc)
         {
-            // npc.Infernum().ExtraAI[0] = Phase Switch Timer
-            // npc.Infernum().ExtraAI[1] = 60% Life Boolean
-            // npc.Infernum().ExtraAI[2] = Tail spawned boolean
-            // npc.Infernum().ExtraAI[3] = Fire burst timer
-            // npc.Infernum().ExtraAI[4] = Sentinel attack copy counter
-            // npc.Infernum().ExtraAI[5] = Idle Timer
-            // npc.Infernum().ExtraAI[6] = Fly Acceleration
-            // npc.Infernum().ExtraAI[7] = Jaw Angle
-            // npc.Infernum().ExtraAI[8] = Chomp time
-            // npc.Infernum().ExtraAI[9] = Sentinel summon index
-            // npc.Infernum().ExtraAI[10] = Death portal state
-            // npc.Infernum().ExtraAI[11] = Death portal projectile index
-
             Main.player[npc.target].Calamity().normalityRelocator = false;
             Main.player[npc.target].Calamity().spectralVeil = false;
 
@@ -54,6 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ref float flyAcceleration = ref npc.Infernum().ExtraAI[6];
             ref float jawAngle = ref npc.Infernum().ExtraAI[7];
             ref float chompTime = ref npc.Infernum().ExtraAI[8];
+            ref float inPhase2 = ref npc.Infernum().ExtraAI[33];
 
             // Timer effect.
             time++;
@@ -70,9 +60,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Main.raining)
                 Main.raining = false;
 
+            if (inPhase2 == 1f)
+            {
+                typeof(DoGHead).GetField("phase2Started", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, true);
+                return DoGPhase2HeadBehaviorOverride.Phase2AI(npc);
+            }
+
             if (npc.Infernum().ExtraAI[10] > 0f)
             {
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), 28f, 0.065f);
+                npc.Calamity().CanHaveBossHealthBar = false;
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), 48f, 0.065f);
                 if (npc.Infernum().ExtraAI[10] == 1f)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -82,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         Main.projectile[(int)npc.Infernum().ExtraAI[11]].localAI[0] = 1f;
                     }
 
-                    int headType = ModContent.NPCType<DevourerofGodsHead>();
+                    int headType = ModContent.NPCType<DoGHead>();
                     int bodyType = ModContent.NPCType<DevourerofGodsBody>();
                     int tailType = ModContent.NPCType<DevourerofGodsTail>();
 
@@ -100,6 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 if (Main.projectile[(int)npc.Infernum().ExtraAI[11]].Hitbox.Intersects(npc.Hitbox))
                     npc.alpha = Utils.Clamp(npc.alpha + 140, 0, 255);
+
                 return false;
             }
 
@@ -157,6 +155,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         Main.npc[segment].ai[2] = npc.whoAmI;
                         Main.npc[segment].ai[1] = Previous;
                         Main.npc[Previous].ai[0] = segment;
+                        Main.npc[segment].Infernum().ExtraAI[34] = 80f - segmentSpawn;
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, segment, 0f, 0f, 0f, 0);
                         Previous = segment;
                     }
@@ -168,7 +167,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             DoPhase1SentinelAttacks(npc);
 
             // Chomping after attempting to eat the player.
-            bool chomping = npc.dontTakeDamage ? false : DoChomp(npc, ref chompTime, ref jawAngle);
+            bool chomping = !npc.dontTakeDamage && DoChomp(npc, ref chompTime, ref jawAngle);
 
             // Despawn.
             if (Main.player[npc.target].dead)
@@ -398,6 +397,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            if (npc.Infernum().ExtraAI[33] == 1f)
+                return DoGPhase2HeadBehaviorOverride.PreDraw(npc, spriteBatch, lightColor);
+
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;

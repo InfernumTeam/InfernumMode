@@ -2,6 +2,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -18,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override int NPCOverrideType => ModContent.NPCType<SupremeCataclysm>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 
         public override bool PreAI(NPC npc)
         {
@@ -39,6 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (attackDelay < 60f)
             {
                 npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                npc.localAI[0] = 0f;
                 attackDelay++;
             }
 
@@ -59,6 +61,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
             attackTimer++;
             return false;
+        }
+
+
+        public override void FindFrame(NPC npc, int frameHeight)
+        {
+            int currentFrame = 0;
+            float punchCounter = Main.GlobalTime * 220f % 120f;
+            float punchInterpolant = Utils.InverseLerp(0f, 120f, punchCounter, true);
+            if (npc.localAI[0] < 120f)
+            {
+                npc.frameCounter += 0.15f;
+                if (npc.frameCounter >= 1f)
+                    currentFrame = (currentFrame + 1) % 12;
+            }
+            else
+                currentFrame = (int)Math.Round(MathHelper.Lerp(12f, 21f, punchInterpolant));
+
+            int xFrame = currentFrame / Main.npcFrameCount[npc.type];
+            int yFrame = currentFrame % Main.npcFrameCount[npc.type];
+
+            npc.frame.Width = 212;
+            npc.frame.Height = 208;
+            npc.frame.X = xFrame * npc.frame.Width;
+            npc.frame.Y = yFrame * npc.frame.Height;
         }
     }
 }

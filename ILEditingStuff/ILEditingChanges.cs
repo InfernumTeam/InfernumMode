@@ -78,12 +78,6 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(CalamityUtils).GetMethod("DisplayLocalizedText", Utilities.UniversalBindingFlags), value);
         }
 
-        public static event ILContext.Manipulator DevourerOfGodsPhase2SkyFade
-        {
-            add => HookEndpointManager.Modify(typeof(DoGSkyS).GetMethod("GetIntensity", Utilities.UniversalBindingFlags), value);
-            remove => HookEndpointManager.Unmodify(typeof(DoGSkyS).GetMethod("GetIntensity", Utilities.UniversalBindingFlags), value);
-        }
-
         public static event ILContext.Manipulator ModeIndicatorUIDraw
         {
             add => HookEndpointManager.Modify(typeof(ModeIndicatorUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);

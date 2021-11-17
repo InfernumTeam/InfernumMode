@@ -31,10 +31,7 @@ namespace InfernumMode.GlobalInstances
         {
             if ((npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead>() ||
                 npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsBody>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTail>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsHeadS>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsBodyS>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTailS>()) &&
+                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTail>()) &&
                 PoDWorld.InfernumMode && npc.alpha >= 252)
             {
                 index = -1;
@@ -50,10 +47,7 @@ namespace InfernumMode.GlobalInstances
                 // DoG alpha effects
                 if (npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead>() ||
                     npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsBody>() ||
-                    npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTail>() ||
-                    npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsHeadS>() ||
-                    npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsBodyS>() ||
-                    npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTailS>())
+                    npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTail>())
                 {
                     if (npc.alpha >= 252)
                         return false;
@@ -74,10 +68,7 @@ namespace InfernumMode.GlobalInstances
 
             if ((npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead>() ||
                 npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsBody>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTail>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsHeadS>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsBodyS>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTailS>()) && npc.alpha >= 252)
+                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTail>()) && npc.alpha >= 252)
             {
                 return false;
             }

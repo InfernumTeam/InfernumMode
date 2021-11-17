@@ -1,3 +1,4 @@
+using CalamityMod.NPCs.DevourerofGods;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -26,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
 		public override void AI()
 		{
-			if (!NPC.AnyNPCs(ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsHeadS>()))
+			if (!NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
 				projectile.Kill();
 
 			if (projectile.localAI[0] == 0f)

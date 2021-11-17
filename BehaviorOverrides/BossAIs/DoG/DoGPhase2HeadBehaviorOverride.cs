@@ -14,11 +14,9 @@ using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-using DoGHead = CalamityMod.NPCs.DevourerofGods.DevourerofGodsHeadS;
-
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-    public class DoGPhase2HeadBehaviorOverride : NPCBehaviorOverride
+    public static class DoGPhase2HeadBehaviorOverride
     {
         public enum SpecialAttackType
         {
@@ -26,32 +24,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             CircularLaserBurst,
             LaserRays
         }
-        public override int NPCOverrideType => ModContent.NPCType<DoGHead>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         #region AI
-        public override bool PreAI(NPC npc)
+        public static bool Phase2AI(NPC npc)
         {
-            ref float specialAttackState = ref npc.Infernum().ExtraAI[1];
-            ref float specialAttackTimer = ref npc.Infernum().ExtraAI[3];
-            ref float nearDeathFlag = ref npc.Infernum().ExtraAI[4];
-            ref float spawnedSegmentsFlag = ref npc.Infernum().ExtraAI[5];
-            ref float sentinelAttackTimer = ref npc.Infernum().ExtraAI[6];
-            ref float signusAttackState = ref npc.Infernum().ExtraAI[7];
-            ref float jawRotation = ref npc.Infernum().ExtraAI[8];
-            ref float chompTime = ref npc.Infernum().ExtraAI[9];
-            ref float time = ref npc.Infernum().ExtraAI[10];
-            ref float flyAcceleration = ref npc.Infernum().ExtraAI[11];
-            ref float horizontalRunAnticheeseCounter = ref npc.Infernum().ExtraAI[12];
-            ref float trapChargeTimer = ref npc.Infernum().ExtraAI[13];
-            ref float trapChargePortalIndex = ref npc.Infernum().ExtraAI[14];
-            ref float totalCharges = ref npc.Infernum().ExtraAI[15];
-            ref float fadeinTimer = ref npc.Infernum().ExtraAI[16];
-            ref float fadeinPortalIndex = ref npc.Infernum().ExtraAI[17];
-            ref float specialAttackPortalIndex = ref npc.Infernum().ExtraAI[18];
-            ref float fireballShootTimer = ref npc.Infernum().ExtraAI[19];
-            ref float deathTimer = ref npc.Infernum().ExtraAI[20];
+            npc.Calamity().CanHaveBossHealthBar = true;
+            ref float specialAttackState = ref npc.Infernum().ExtraAI[14];
+            ref float specialAttackTimer = ref npc.Infernum().ExtraAI[15];
+            ref float nearDeathFlag = ref npc.Infernum().ExtraAI[16];
+            ref float spawnedSegmentsFlag = ref npc.Infernum().ExtraAI[17];
+            ref float sentinelAttackTimer = ref npc.Infernum().ExtraAI[18];
+            ref float signusAttackState = ref npc.Infernum().ExtraAI[19];
+            ref float jawRotation = ref npc.Infernum().ExtraAI[20];
+            ref float chompTime = ref npc.Infernum().ExtraAI[21];
+            ref float time = ref npc.Infernum().ExtraAI[22];
+            ref float flyAcceleration = ref npc.Infernum().ExtraAI[23];
+            ref float horizontalRunAnticheeseCounter = ref npc.Infernum().ExtraAI[24];
+            ref float trapChargeTimer = ref npc.Infernum().ExtraAI[25];
+            ref float trapChargePortalIndex = ref npc.Infernum().ExtraAI[26];
+            ref float totalCharges = ref npc.Infernum().ExtraAI[27];
+            ref float fadeinTimer = ref npc.Infernum().ExtraAI[28];
+            ref float fadeinPortalIndex = ref npc.Infernum().ExtraAI[29];
+            ref float specialAttackPortalIndex = ref npc.Infernum().ExtraAI[30];
+            ref float fireballShootTimer = ref npc.Infernum().ExtraAI[31];
+            ref float deathTimer = ref npc.Infernum().ExtraAI[32];
 
             if (!Main.player.IndexInRange(npc.target) || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 npc.TargetClosest(false);
@@ -105,33 +101,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Stay in the world.
             npc.position.Y = MathHelper.Clamp(npc.position.Y, 100f, Main.maxTilesY * 16f - 100f);
-
-            // Spawn segments.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                if (spawnedSegmentsFlag == 0f && npc.ai[0] == 0f)
-                {
-                    int previousSegment = npc.whoAmI;
-                    for (int segmentSpawn = 0; segmentSpawn < 81; segmentSpawn++)
-                    {
-                        int segment;
-                        if (segmentSpawn >= 0 && segmentSpawn < 80)
-                            segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsBodyS"), npc.whoAmI);
-                        else
-                            segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsTailS"), npc.whoAmI);
-
-                        Main.npc[segment].realLife = npc.whoAmI;
-                        Main.npc[segment].ai[2] = npc.whoAmI;
-                        Main.npc[segment].ai[1] = previousSegment;
-                        Main.npc[previousSegment].ai[0] = segment;
-                        Main.npc[segment].Infernum().ExtraAI[13] = 80f - segmentSpawn;
-                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, segment, 0f, 0f, 0f, 0);
-                        previousSegment = segment;
-                    }
-                    spawnedSegmentsFlag = 1f;
-                    npc.netUpdate = true;
-                }
-            }
 
             if (deathTimer > 0f)
             {
@@ -217,11 +186,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             // Despawn
-            if (!NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DevourerofGodsTailS")))
+            if (!NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DevourerofGodsTail")))
                 npc.active = false;
 
             // Chomping after attempting to eat the player.
-            bool chomping = npc.Infernum().ExtraAI[1] == 0f && DoChomp(npc, target, ref chompTime, ref jawRotation);
+            bool chomping = npc.Infernum().ExtraAI[14] == 0f && DoChomp(npc, target, ref chompTime, ref jawRotation);
 
             // Do movement and barrier sneak attack anticheese.
             if (!target.dead && target.active)
@@ -257,9 +226,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 for (int a = 0; a < Main.maxNPCs; a++)
                 {
-                    if (Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsHeadS") ||
-                        Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsBodyS") ||
-                        Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsTailS"))
+                    if (Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsHead") ||
+                        Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsBody") ||
+                        Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsTail"))
                     {
                         Main.npc[a].active = false;
                         Main.npc[a].netUpdate = true;
@@ -345,6 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public static void DoDeathEffects(NPC npc, float deathTimer)
         {
+            npc.Calamity().CanHaveBossHealthBar = false;
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
             npc.dontTakeDamage = true;
             npc.damage = 0;
@@ -356,12 +326,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 List<int> segments = new List<int>()
                 {
-                    ModContent.NPCType<DevourerofGodsBodyS>(),
-                    ModContent.NPCType<DevourerofGodsTailS>()
+                    ModContent.NPCType<DevourerofGodsBody>(),
+                    ModContent.NPCType<DevourerofGodsTail>()
                 };
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (segments.Contains(Main.npc[i].type) && Main.npc[i].active && Main.npc[i].Infernum().ExtraAI[13] == index)
+                    if (segments.Contains(Main.npc[i].type) && Main.npc[i].active && Main.npc[i].Infernum().ExtraAI[34] == index)
                     {
                         for (int j = 0; j < 20; j++)
                         {
@@ -382,7 +352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             float idealSpeed = MathHelper.Lerp(9f, 4.75f, Utils.InverseLerp(15f, 210f, deathTimer, true));
-            ref float destroyedSegmentsCounts = ref npc.Infernum().ExtraAI[21];
+            ref float destroyedSegmentsCounts = ref npc.Infernum().ExtraAI[34];
             if (npc.velocity.Length() != idealSpeed)
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealSpeed, 0.08f);
 
@@ -494,7 +464,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBodyS>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTailS>()))
+                    if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
                     {
                         Main.npc[i].Center = npc.Center;
                         Main.npc[i].netUpdate = true;
@@ -545,7 +515,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                     for (int i = 0; i < Main.maxNPCs; i++)
                     {
-                        if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBodyS>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTailS>()))
+                        if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
                         {
                             Main.npc[i].Center = npc.Center;
                             Main.npc[i].netUpdate = true;
@@ -824,7 +794,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBodyS>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTailS>()))
+                    if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
                     {
                         Main.npc[i].Center = npc.Center;
                         Main.npc[i].netUpdate = true;
@@ -843,17 +813,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         #endregion AI
 
         #region Drawing
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public static bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            npc.scale = 1f;
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            float jawRotation = npc.Infernum().ExtraAI[8];
+            float jawRotation = npc.Infernum().ExtraAI[20];
 
             Texture2D headTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/DevourerofGodsHeadS");
+            npc.frame = new Rectangle(0, 0, headTexture.Width, headTexture.Height);
+            if (npc.Size != headTexture.Size())
+                npc.Size = headTexture.Size();
+
             Vector2 drawPosition = npc.Center - Main.screenPosition;
-            Vector2 headTextureOrigin = Main.npcTexture[npc.type].Size() * 0.5f;
+            Vector2 headTextureOrigin = headTexture.Size() * 0.5f;
             drawPosition -= headTexture.Size() * npc.scale * 0.5f;
             drawPosition += headTextureOrigin * npc.scale + new Vector2(0f, 4f + npc.gfxOffY);
 

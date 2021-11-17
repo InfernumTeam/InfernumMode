@@ -26,7 +26,7 @@ namespace InfernumMode
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            bool useHIV = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("HiveMindP2")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].Infernum().ExtraAI[10] == 1f || Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].life < Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMindP2"))].lifeMax * 0.2f);
+            bool useHIV = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("HiveMind")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].Infernum().ExtraAI[10] == 1f || Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].life < Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].lifeMax * 0.2f);
             player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", useHIV);
 
             bool useFolly = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("Bumblefuck")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("Bumblefuck"))].Infernum().ExtraAI[8] > 0f);

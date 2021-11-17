@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.World;
 using InfernumMode.OverridingSystem;
@@ -34,9 +35,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // This code will go upstream across every segment, until it reaches the head.
             npc.scale = aheadSegment.scale;
 
-            if (head.type == ModContent.NPCType<DevourerofGodsHeadS>() && head.Infernum().ExtraAI[1] == 0f && head.Infernum().ExtraAI[3] >= 1200f)
+            // Reset sizes.
+            if (npc.Infernum().ExtraAI[33] == 0f && head.Infernum().ExtraAI[33] == 1f)
+			{
+                if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
+                {
+                    npc.width = 70;
+                    npc.height = 70;
+                    npc.frame = new Rectangle(0, 0, 114, 88);
+                    typeof(DevourerofGodsBody).GetField("phase2Started", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, true);
+                }
+				else
+                {
+                    npc.width = 80;
+                    npc.height = 140;
+                    npc.frame = new Rectangle(0, 0, 86, 148);
+                    typeof(DevourerofGodsTail).GetField("phase2Started", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, true);
+                }
+            }
+            npc.Infernum().ExtraAI[33] = head.Infernum().ExtraAI[33];
+
+            if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[1] == 0f && head.Infernum().ExtraAI[15] >= 1200f)
             {
-                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[18]].Hitbox))
+                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[30]].Hitbox))
                 {
                     npc.alpha += 70;
                     if (npc.alpha > 255)
@@ -44,16 +65,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
             }
 
-            else if (head.type == ModContent.NPCType<DevourerofGodsHeadS>() && head.Infernum().ExtraAI[13] > 381f)
+            else if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[25] > 381f)
             {
-                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[14]].Hitbox))
+                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[26]].Hitbox))
                 {
                     npc.alpha += 70;
                     if (npc.alpha > 255)
                         npc.alpha = 255;
                 }
             }
-            else if (head.type == ModContent.NPCType<DevourerofGodsHead>() && head.Infernum().ExtraAI[11] > 0f)
+            else if (head.Infernum().ExtraAI[33] == 0f && head.Infernum().ExtraAI[11] > 0f)
             {
                 if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[11]].Hitbox))
                 {
@@ -62,19 +83,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     {
                         npc.alpha = 255;
 
-                        int headType = ModContent.NPCType<DevourerofGodsHead>();
-                        int bodyType = ModContent.NPCType<DevourerofGodsBody>();
                         int tailType = ModContent.NPCType<DevourerofGodsTail>();
                         if (npc.type == tailType)
                         {
-                            for (int i = 0; i < Main.maxNPCs; i++)
-                            {
-                                if (Main.npc[i].active && (Main.npc[i].type == headType || Main.npc[i].type == bodyType || Main.npc[i].type == tailType))
-                                {
-                                    Main.npc[i].active = false;
-                                    Main.npc[i].netUpdate = true;
-                                }
-                            }
+                            Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[10] = 0f;
+                            Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] = 1f;
+                            Main.npc[CalamityGlobalNPC.DoGHead].netUpdate = true;
                         }
 
                         CalamityWorld.DoGSecondStageCountdown = 305;
@@ -92,13 +106,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             else
                 npc.Opacity = aheadSegment.Opacity;
 
-            if (npc.type == ModContent.NPCType<DevourerofGodsBodyS>())
-                typeof(DevourerofGodsBodyS).GetField("invinceTime", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(npc.modNPC, 0);
+            if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
+                typeof(DevourerofGodsBody).GetField("invinceTime", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(npc.modNPC, 0);
 
             Vector2 size = npc.Size;
-            if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
+            if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && head.Infernum().ExtraAI[33] == 0f)
                 size = new Vector2(102f);
-            if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
+            if (npc.type == ModContent.NPCType<DevourerofGodsTail>() && head.Infernum().ExtraAI[33] == 0f)
                 size = new Vector2(82f, 110f);
 
             if (npc.Size != size)
@@ -106,7 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             npc.dontTakeDamage = head.dontTakeDamage;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
-            if (head.Infernum().ExtraAI[20] > 0f)
+            if (head.Infernum().ExtraAI[32] > 0f)
                 npc.life = npc.lifeMax;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
@@ -126,6 +140,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            if (npc.Infernum().ExtraAI[33] == 1f)
+            {
+                npc.scale = 1f;
+                Texture2D bodyTexture2 = ModContent.GetTexture("CalamityMod/NPCs/DevourerofGods/DevourerofGodsBodyS");
+                Texture2D glowmaskTexture2 = ModContent.GetTexture("CalamityMod/NPCs/DevourerofGods/DevourerofGodsBodySGlow");
+                Vector2 drawPosition2 = npc.Center - Main.screenPosition;
+                Vector2 origin2 = bodyTexture2.Size() * 0.5f;
+                spriteBatch.Draw(bodyTexture2, drawPosition2, null, npc.GetAlpha(lightColor), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                return false;
+            }
+
             Texture2D bodyTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Body");
             Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1BodyGlowmask");
             Vector2 drawPosition = npc.Center - Main.screenPosition;
@@ -150,38 +176,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            if (npc.Infernum().ExtraAI[33] == 1f)
+            {
+                npc.scale = 1f;
+                Texture2D bodyTexture2 = ModContent.GetTexture("CalamityMod/NPCs/DevourerofGods/DevourerofGodsTailS");
+                Texture2D glowmaskTexture2 = ModContent.GetTexture("CalamityMod/NPCs/DevourerofGods/DevourerofGodsTailSGlow");
+                Vector2 drawPosition2 = npc.Center - Main.screenPosition;
+                Vector2 origin2 = bodyTexture2.Size() * 0.5f;
+                spriteBatch.Draw(bodyTexture2, drawPosition2, null, npc.GetAlpha(lightColor), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                return false;
+            }
+
             Texture2D tailTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Tail");
             Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1TailGlowmask");
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = tailTexture.Size() * 0.5f;
             spriteBatch.Draw(tailTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-            return false;
-        }
-    }
-
-    public class DoGPhase2BodyBehaviorOverride : NPCBehaviorOverride
-    {
-        public override int NPCOverrideType => ModContent.NPCType<DevourerofGodsBodyS>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
-        public override bool PreAI(NPC npc)
-        {
-            DoGPhase1BodyBehaviorOverride.DoGSegmentAI(npc);
-            return false;
-        }
-    }
-
-    public class DoGPhase2TailBehaviorOverride : NPCBehaviorOverride
-    {
-        public override int NPCOverrideType => ModContent.NPCType<DevourerofGodsTailS>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
-        public override bool PreAI(NPC npc)
-        {
-            DoGPhase1BodyBehaviorOverride.DoGSegmentAI(npc);
             return false;
         }
     }

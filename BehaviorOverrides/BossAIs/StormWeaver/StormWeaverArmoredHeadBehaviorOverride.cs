@@ -1,7 +1,9 @@
-﻿using CalamityMod.NPCs.StormWeaver;
+﻿using CalamityMod;
+using CalamityMod.NPCs.StormWeaver;
 using InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -31,6 +33,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Do targeting.
             npc.TargetClosest();
             Player target = Main.player[npc.target];
+
+            ref float phase2 = ref npc.Infernum().ExtraAI[20];
+
+            if (npc.life < npc.lifeMax * 0.9f)
+			{
+                if (phase2 == 0f)
+                {
+                    Main.PlaySound(SoundID.NPCDeath14, (int)npc.Center.X, (int)npc.Center.Y);
+
+                    npc.Calamity().DR = 0f;
+                    npc.Calamity().unbreakableDR = false;
+                    npc.chaseable = true;
+                    npc.HitSound = SoundID.NPCHit13;
+                    npc.DeathSound = SoundID.NPCDeath13;
+                    npc.frame = new Rectangle(0, 0, 62, 86);
+                    phase2 = 1f;
+                }
+                return StormWeaverHeadBehaviorOverride.PreAI(npc);
+			}
 
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.2f, 0f, 1f);

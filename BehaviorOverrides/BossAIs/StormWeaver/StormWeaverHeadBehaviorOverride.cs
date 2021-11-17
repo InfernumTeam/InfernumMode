@@ -1,7 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.NPCs.StormWeaver;
-using InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge;
-using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -11,12 +8,8 @@ using Terraria.Utilities;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {
-    public class StormWeaverHeadBehaviorOverride : NPCBehaviorOverride
+    public static class StormWeaverHeadBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<StormWeaverHeadNaked>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
         #region Enumerations
         public enum StormWeaverAttackType
         {
@@ -30,20 +23,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
         #region AI
 
-        public override bool PreAI(NPC npc)
+        public static bool PreAI(NPC npc)
         {
             // Do targeting.
             npc.TargetClosest();
             Player target = Main.player[npc.target];
 
+            // Reset the hit sound.
+            npc.HitSound = SoundID.NPCHit13;
+
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.2f, 0f, 1f);
 
-            // Create segments and start rain.
+            // Start rain.
             if (npc.localAI[0] == 0f)
             {
-                AquaticScourgeHeadBehaviorOverride.CreateSegments(npc, 15, ModContent.NPCType<StormWeaverBodyNaked>(), ModContent.NPCType<StormWeaverTailNaked>());
-
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     CalamityUtils.StartRain(true);

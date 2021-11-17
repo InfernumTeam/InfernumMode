@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.npcSlots = 5f;
             npc.width = npc.height = 64;
             npc.defense = 0;
-            npc.lifeMax = 1776000;
+            npc.lifeMax = 266400;
             npc.aiStyle = npc.modNPC.aiType = -1;
             npc.knockBackResist = 0f;
             npc.scale = 1.3f;
@@ -89,6 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 int segmentCount = 30;
                 int previousSegment = npc.whoAmI;
+                float rotationalOffset = 0f;
                 for (int i = 0; i < segmentCount; i++)
                 {
                     int lol;
@@ -99,6 +100,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
                     else
                         lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SCalWormTail>(), npc.whoAmI);
+
+                    // Create arms.
+                    if (i >= 3 && i % 4 == 0)
+                    {
+                        NPC segment = Main.npc[lol];
+                        int arm = NPC.NewNPC((int)segment.Center.X, (int)segment.Center.Y, ModContent.NPCType<SCalWormArm>(), lol);
+                        if (Main.npc.IndexInRange(arm))
+                        {
+                            Main.npc[arm].ai[0] = lol;
+                            Main.npc[arm].direction = 1;
+                            Main.npc[arm].rotation = rotationalOffset;
+                        }
+
+                        rotationalOffset += MathHelper.Pi / 6f;
+
+                        arm = NPC.NewNPC((int)segment.Center.X, (int)segment.Center.Y, ModContent.NPCType<SCalWormArm>(), lol);
+                        if (Main.npc.IndexInRange(arm))
+                        {
+                            Main.npc[arm].ai[0] = lol;
+                            Main.npc[arm].direction = -1;
+                            Main.npc[arm].rotation = rotationalOffset + MathHelper.Pi;
+                        }
+
+                        rotationalOffset += MathHelper.Pi / 6f;
+                        rotationalOffset = MathHelper.WrapAngle(rotationalOffset);
+                    }
 
                     Main.npc[lol].realLife = npc.whoAmI;
                     Main.npc[lol].ai[2] = npc.whoAmI;
@@ -117,7 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 Main.PlaySound(SoundID.DD2_SkyDragonsFuryShot, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SCalWormHeart>());
+                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrimstoneHeart>());
 
                 heartState++;
                 npc.netUpdate = true;
@@ -127,7 +154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Define whether this NPC can be homed in on.
-            npc.canGhostHeal = npc.chaseable = !NPC.AnyNPCs(ModContent.NPCType<SCalWormHeart>());
+            npc.canGhostHeal = npc.chaseable = !NPC.AnyNPCs(ModContent.NPCType<BrimstoneHeart>());
 
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);

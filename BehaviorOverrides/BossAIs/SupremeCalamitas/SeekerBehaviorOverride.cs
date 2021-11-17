@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
             }
             npc.timeLeft = 3600;
-            npc.rotation = npc.AngleTo(target.Center);
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             attackTimer++;
             return false;
         }

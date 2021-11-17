@@ -9,7 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {
     public class StormWeaverBodyBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<StormWeaverBodyNaked>();
+        public override int NPCOverrideType => ModContent.NPCType<StormWeaverBody>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
@@ -26,6 +26,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 return;
             }
 
+            if (head.Infernum().ExtraAI[20] == 1f)
+            {
+                if (npc.type == ModContent.NPCType<StormWeaverBody>())
+                    npc.frame = new Rectangle(0, 0, 54, 52);
+                npc.HitSound = head.HitSound;
+            }
+
             // Inherit various attributes from the head segment.
             // This code will go upstream across every segment, until it reaches the head.
             npc.scale = aheadSegment.scale;
@@ -33,6 +40,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             npc.lifeMax = head.lifeMax;
             npc.Opacity = head.Opacity;
             npc.Calamity().DR = head.Calamity().DR;
+            npc.Calamity().unbreakableDR = head.Calamity().unbreakableDR;
+
+            if (npc.type == ModContent.NPCType<StormWeaverTail>())
+			{
+                npc.Calamity().DR = 0f;
+                npc.Calamity().unbreakableDR = false;
+            }
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
@@ -48,9 +62,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             return false;
         }
     }
+    
     public class StormWeaverTailBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<StormWeaverTailNaked>();
+        public override int NPCOverrideType => ModContent.NPCType<StormWeaverTail>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 

@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using Terraria.ID;
 using CalamityMod.Projectiles.Boss;
 using System;
+using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
@@ -32,24 +33,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             if (projectile.localAI[1] == 0f)
             {
-                Filters.Scene.Activate("Infernum:DoGPortal", projectile.Center).GetShader().UseTargetPosition(projectile.Center);
                 projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
                 projectile.localAI[1] = 1f;
             }
 
             Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
-
-            float fade = Utils.InverseLerp(280f, 235f, projectile.timeLeft, true);
-            if (projectile.timeLeft <= 45f)
-                fade = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
-
-            if (Main.netMode != NetmodeID.Server)
-            {
-                Filters.Scene["Infernum:DoGPortal"].GetShader().UseProgress(fade * 1.1f);
-                Filters.Scene["Infernum:DoGPortal"].GetShader().UseColor(Color.Cyan);
-                Filters.Scene["Infernum:DoGPortal"].GetShader().UseSecondaryColor(Color.Fuchsia);
-                Filters.Scene["Infernum:DoGPortal"].GetShader().UseImage(ModContent.GetTexture("InfernumMode/ExtraTextures/VoronoiShapes"));
-            }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && Time > 150f && Time % 20f == 19f)
                 Utilities.NewProjectileBetter(projectile.Center, Main.rand.NextVector2CircularEdge(18f, 18f), ModContent.ProjectileType<DoGFire>(), 300, 0f);
@@ -110,6 +98,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
             }
 
+            spriteBatch.EnterShaderRegion();
+
+            float fade = Utils.InverseLerp(280f, 235f, projectile.timeLeft, true);
+            if (projectile.timeLeft <= 45f)
+                fade = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
+            Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
+            Vector2 drawPosition2 = projectile.Center - Main.screenPosition;
+            Vector2 origin = noiseTexture.Size() * 0.5f;
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Cyan);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Fuchsia);
+            GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
+
+            spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 3.5f, SpriteEffects.None, 0f);
+            spriteBatch.ExitShaderRegion();
+
             return false;
         }
 
@@ -117,10 +121,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Projectile.NewProjectile(projectile.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
-                if (Filters.Scene["Infernum:DoGPortal"].IsActive())
-                    Filters.Scene["Infernum:DoGPortal"].Deactivate();
-
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
                     Player player = Main.player[i];

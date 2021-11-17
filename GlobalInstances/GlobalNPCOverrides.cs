@@ -270,7 +270,7 @@ namespace InfernumMode.GlobalInstances
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
         {
-            if (npc.type == ModContent.NPCType<DevourerofGodsBodyS>())
+            if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
             {
                 cooldownSlot = 0;
                 return npc.alpha == 0;
@@ -304,7 +304,7 @@ namespace InfernumMode.GlobalInstances
             double realDamage = crit ? damage * 2 : damage;
             int life = npc.realLife > 0 ? Main.npc[npc.realLife].life : npc.life;
             if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                 life - realDamage <= 1000)
+                 life - realDamage <= npc.lifeMax * 0.6 && npc.Infernum().ExtraAI[33] == 0f)
             {
                 damage = 0;
                 npc.dontTakeDamage = true;
@@ -312,15 +312,15 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if ((npc.type == ModContent.NPCType<DevourerofGodsHeadS>() || npc.type == ModContent.NPCType<DevourerofGodsBodyS>() || npc.type == ModContent.NPCType<DevourerofGodsTailS>()) &&
-                 life - realDamage <= 1000)
+            if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
+                 life - realDamage <= 1000 && npc.Infernum().ExtraAI[33] == 1f)
             {
                 damage = 0;
                 npc.dontTakeDamage = true;
-                if (npc.Infernum().ExtraAI[20] == 0f)
+                if (npc.Infernum().ExtraAI[32] == 0f)
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
-                    npc.Infernum().ExtraAI[20] = 1f;
+                    npc.Infernum().ExtraAI[32] = 1f;
                 }
                 return false;
             }
@@ -334,8 +334,8 @@ namespace InfernumMode.GlobalInstances
                 return;
 
             bool isDesertScourge = npc.type == ModContent.NPCType<DesertScourgeHead>() || npc.type == ModContent.NPCType<DesertScourgeBody>();
-            isDesertScourge |= npc.type == ModContent.NPCType<DesertScourgeTail>() || npc.type == ModContent.NPCType<DesertScourgeHeadSmall>();
-            isDesertScourge |= npc.type == ModContent.NPCType<DesertScourgeBodySmall>() || npc.type == ModContent.NPCType<DesertScourgeTailSmall>();
+            isDesertScourge |= npc.type == ModContent.NPCType<DesertScourgeTail>() || npc.type == ModContent.NPCType<DesertNuisanceHead>();
+            isDesertScourge |= npc.type == ModContent.NPCType<DesertNuisanceBody>() || npc.type == ModContent.NPCType<DesertNuisanceTail>();
             bool isSplitEoW = npc.type == NPCID.EaterofWorldsBody && npc.realLife >= 0 && Main.npc[npc.realLife].ai[2] >= 1f;
 
             if (isDesertScourge && (projectile.type == ProjectileID.JestersArrow || projectile.type == ProjectileID.UnholyArrow || projectile.type == ProjectileID.WaterBolt))
@@ -447,7 +447,7 @@ namespace InfernumMode.GlobalInstances
             if (isPhantasmDragon && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.24);
 
-            if (npc.type == ModContent.NPCType<DevourerofGodsHeadS>() || npc.type == ModContent.NPCType<DevourerofGodsTailS>() &&
+            if (npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsTail>() &&
                 (projectile.type == ModContent.ProjectileType<PhantasmalRuinGhost>() || projectile.type == ModContent.ProjectileType<PhantasmalRuinProj>()) || projectile.type == ProjectileID.LostSoulFriendly)
             {
                 damage = (int)(damage * 0.6);
@@ -479,9 +479,7 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>() ||
                 npc.type == ModContent.NPCType<DevourerofGodsTail>() ||
-                npc.type == ModContent.NPCType<DevourerofGodsTailS>() ||
-                npc.type == ModContent.NPCType<DevourerofGodsBodyS>() ||
-                npc.type == ModContent.NPCType<DevourerofGodsHeadS>())
+                npc.type == ModContent.NPCType<DevourerofGodsBody>())
             {
                 if (npc.Opacity < 0.1f)
                     rotation = float.NaN;
@@ -517,10 +515,7 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.CheckDead(npc);
 
-            if (npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>())
-                return false;
-
-            if (npc.type == ModContent.NPCType<DevourerofGodsHeadS>())
+            if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
             {
                 npc.life = 1;
                 npc.dontTakeDamage = true;

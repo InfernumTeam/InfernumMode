@@ -10,7 +10,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 {
 	public class DesertScourgeHeadSmallBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<DesertScourgeHeadSmall>();
+        public override int NPCOverrideType => ModContent.NPCType<DesertNuisanceHead>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
-                DesertScourgeHeadBigBehaviorOverride.CreateSegments(npc, 16, ModContent.NPCType<DesertScourgeBodySmall>(), ModContent.NPCType<DesertScourgeTailSmall>());
+                DesertScourgeHeadBigBehaviorOverride.CreateSegments(npc, 16, ModContent.NPCType<DesertNuisanceBody>(), ModContent.NPCType<DesertNuisanceTail>());
                 initializedFlag = 1f;
                 npc.netUpdate = true;
             }

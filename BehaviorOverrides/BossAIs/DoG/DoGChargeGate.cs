@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 using Terraria.ID;
+using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
@@ -37,27 +38,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override void AI()
         {
-            if (projectile.localAI[1] == 0f)
-            {
-                Filters.Scene.Activate("Infernum:DoGPortal", projectile.Center).GetShader().UseColor(10, 2, 10).UseTargetPosition(projectile.Center);
-                projectile.localAI[1] = 1f;
-            }
-            float fade = Utils.InverseLerp(280f, 235f, projectile.timeLeft, true);
-            if (projectile.timeLeft <= 45f)
-                fade = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
-
-            Filters.Scene["Infernum:DoGPortal"].GetShader().UseProgress(fade);
-            Filters.Scene["Infernum:DoGPortal"].GetShader().UseColor(Color.Cyan);
-            Filters.Scene["Infernum:DoGPortal"].GetShader().UseSecondaryColor(Color.Fuchsia);
-
-            if (Main.netMode != NetmodeID.Server)
-            {
-                Filters.Scene["Infernum:DoGPortal"].GetShader().UseProgress(fade);
-                Filters.Scene["Infernum:DoGPortal"].GetShader().UseColor(Color.Cyan);
-                Filters.Scene["Infernum:DoGPortal"].GetShader().UseSecondaryColor(Color.Fuchsia);
-                Filters.Scene["Infernum:DoGPortal"].GetShader().UseImage(ModContent.GetTexture("InfernumMode/ExtraTextures/VoronoiShapes"));
-            }
-
             TelegraphDelay++;
             if (TelegraphDelay > TelegraphTotalTime)
                 projectile.alpha = Utils.Clamp(projectile.alpha - 25, 0, 255);
@@ -68,7 +48,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (NoTelegraph)
+            {
+                float fade = Utils.InverseLerp(280f, 235f, projectile.timeLeft, true);
+                if (projectile.timeLeft <= 45f)
+                    fade = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
+
+                spriteBatch.EnterShaderRegion();
+
+                Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
+                Vector2 drawPosition = projectile.Center - Main.screenPosition;
+                Vector2 origin2 = noiseTexture.Size() * 0.5f;
+                GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);
+                GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Cyan);
+                GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Fuchsia);
+                GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
+
+                spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin2, 3.5f, SpriteEffects.None, 0f);
+                spriteBatch.ExitShaderRegion();
                 return false;
+            }
 
             Texture2D laserTelegraph = ModContent.GetTexture("CalamityMod/ExtraTextures/LaserWallTelegraphBeam");
             float yScale = 2f;
@@ -92,13 +90,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             spriteBatch.Draw(laserTelegraph, projectile.Center - Main.screenPosition, null, colorInner, projectile.AngleTo(Destination), origin, scaleInner, SpriteEffects.None, 0f);
             spriteBatch.Draw(laserTelegraph, projectile.Center - Main.screenPosition, null, colorOuter, projectile.AngleTo(Destination), origin, scaleOuter, SpriteEffects.None, 0f);
+
             return false;
         }
-
-        public override void Kill(int timeLeft)
-        {
-            if (Main.netMode != NetmodeID.MultiplayerClient && Filters.Scene["Infernum:DoGPortal"].IsActive())
-                Filters.Scene["Infernum:DoGPortal"].Deactivate();
-        }   
     }
 }

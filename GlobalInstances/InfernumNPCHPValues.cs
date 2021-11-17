@@ -37,8 +37,7 @@ namespace InfernumMode.GlobalInstances
             [NPCID.EaterofWorldsHead] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsBody] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsTail] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
-            [ModContent.NPCType<HiveMindP1Boss>()] = 1312,
-            [ModContent.NPCType<HiveMindP2>()] = 4695,
+            [ModContent.NPCType<HiveMindP1Boss>()] = 6007,
             [ModContent.NPCType<PerforatorHive>()] = 6132,
             [ModContent.NPCType<PerforatorHeadSmall>()] = 2280,
             [ModContent.NPCType<PerforatorBodyMedium>()] = 160,
@@ -54,9 +53,9 @@ namespace InfernumMode.GlobalInstances
             [NPCID.SkeletronPrime] = 53333,
             [NPCID.TheDestroyer] = 111000,
             [ModContent.NPCType<BrimstoneElemental>()] = 51515,
-            [ModContent.NPCType<CalamitasRun3>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 444444 : 82800,
-            [ModContent.NPCType<CalamitasRun>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 95000 : 19500,
-            [ModContent.NPCType<CalamitasRun2>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 77000 : 13000,
+            [ModContent.NPCType<CalamitasRun3>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 244444 : 82800,
+            [ModContent.NPCType<CalamitasRun>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 55000 : 19500,
+            [ModContent.NPCType<CalamitasRun2>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 41000 : 13000,
             [NPCID.Plantera] = 110500,
             [ModContent.NPCType<Leviathan>()] = 103103,
             [ModContent.NPCType<Siren>()] = 39250,
@@ -66,12 +65,11 @@ namespace InfernumMode.GlobalInstances
             [NPCID.MoonLordHand] = 43390,
             [NPCID.MoonLordHead] = 52525,
             [NPCID.MoonLordCore] = 99990,
-            [ModContent.NPCType<Bumblefuck>()] = 227550,
-            [ModContent.NPCType<ProvidenceBoss>()] = 900000,
-            [ModContent.NPCType<StormWeaverHeadNaked>()] = 999998,
+            [ModContent.NPCType<Bumblefuck>()] = 177550,
+            [ModContent.NPCType<ProvidenceBoss>()] = 430000,
+            [ModContent.NPCType<StormWeaverHead>()] = 515432,
             [ModContent.NPCType<OldDukeBoss>()] = 872444,
-            [ModContent.NPCType<DevourerofGodsHead>()] = 1400000,
-            [ModContent.NPCType<DevourerofGodsHeadS>()] = 4180000
+            [ModContent.NPCType<DevourerofGodsHead>()] = 1116000
         };
     }
 }

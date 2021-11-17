@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             }
 
             if (Main.rand.NextBool(4))
-                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmolite, 0f, 0f);
+                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f);
         }
 
         public override void Kill(int timeLeft)
@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             for (int i = 0; i < 30; i++)
             {
-                Dust purpleSlime = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmolite, 0f, 0f, 100, default, 1.2f);
+                Dust purpleSlime = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f, 100, default, 1.2f);
                 purpleSlime.velocity *= 3f;
                 if (Main.rand.NextBool(2))
                 {
@@ -52,10 +52,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             }
             for (int i = 0; i < 60; i++)
             {
-                Dust purpleSlime = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmolite, 0f, 0f, 100, default, 1.7f);
+                Dust purpleSlime = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f, 100, default, 1.7f);
                 purpleSlime.velocity *= 5f;
 
-                purpleSlime = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmolite, 0f, 0f, 100, default, 1f);
+                purpleSlime = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f, 100, default, 1f);
                 purpleSlime.velocity *= 2f;
             }
         }

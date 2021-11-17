@@ -182,6 +182,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Reset things.
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = false;
+            typeof(SCalBoss).GetField("shieldOpacity", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(npc.modNPC, 0f);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool sepulcherIsPresent = NPC.AnyNPCs(ModContent.NPCType<SCalWormHead>());
@@ -310,7 +311,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-                npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
                 return false;
             }
@@ -423,7 +424,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             // Slow down and look at the target.
             npc.velocity *= 0.95f;
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
             switch ((int)textState)
             {
@@ -617,7 +618,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             // Slow down and look at the target.
             npc.velocity *= 0.95f;
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
             // Charge up power.
             Vector2 dustSpawnPosition = npc.Center + Main.rand.NextVector2Unit(40f, 60f);
@@ -726,7 +727,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Attempt to hover to the side of the target.
             Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverHorizontalOffset;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
             // Prepare the attack after either enough time has passed or if sufficiently close to the hover destination.
             // This is done to ensure that the attack begins once the boss is close to the target.
@@ -802,7 +803,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Hover in place.
                 case 0:
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 31f, 0.75f);
-                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
                     if (npc.WithinRange(hoverDestination, 45f))
                     {
@@ -914,7 +915,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed);
             npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f);
             npc.SimpleFlyMovement(idealVelocity, hoverSpeed / 50f);
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
             // Fire the fan.
             if (firing)
@@ -1002,7 +1003,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
             }
 
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
             if (attackTimer > fireBurstCount * fireBurstShootRate + fireBurstAttackDelay + 105f)
                 SelectNewAttack(npc);
@@ -1050,7 +1051,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Look at the target.
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
             if (attackTimer > attackCycleCount * (attackDelay + shootTime + afterShootDelay))
                 SelectNewAttack(npc);
@@ -1088,7 +1089,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.085f);
 
             // Look at the target.
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
             // Create telegraphs that turn into lightning.
             if (wrappedAttackTimer == attackDelay)
@@ -1165,7 +1166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
                 }
             }
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
             if (attackTimer >= attackCycleCount * (redirectTime + shootDelay) + redirectTime * 0.9f)
                 SelectNewAttack(npc);
@@ -1182,7 +1183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 500f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
             npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.05f);
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
             // Periodically release lightning and gigablasts.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 150f && attackTimer < 540f)
@@ -1226,7 +1227,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.45f, 0.08f);
                     Vector2 hoverDestination = target.Center - Vector2.UnitY * 200f;
                     hoverDestination.X += hoverDirection * 480f;
-                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
 
                     // After a sufficient amount of time has passed or if close to the destination, grind to a halt.
                     if (npc.WithinRange(hoverDestination, 100f) || attackTimer >= 75f)
@@ -1334,7 +1335,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             }
                         }
 
-                        npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                        npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
                     }
                     else
                     {
@@ -1376,7 +1377,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
 
                     npc.velocity *= 0.9f;
-                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
                     break;
 
                 // Do a final, grand bullet hell as a conclusion to the battle.
@@ -1448,7 +1449,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (attackTimer > finalBulletHellTime)
                         npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.05f, 0f, 1f);
 
-                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
                     npc.velocity *= 0.96f;
 
                     if (attackTimer > finalBulletHellTime + 240f)
@@ -1474,7 +1475,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.noGravity = false;
                     npc.noTileCollide = false;
                     npc.velocity.X *= 0.97f;
-                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
                     npc.damage = 0;
 
                     if (attackTimer == 60f)

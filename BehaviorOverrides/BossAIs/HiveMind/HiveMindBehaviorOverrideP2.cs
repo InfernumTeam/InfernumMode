@@ -13,7 +13,7 @@ using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
-	public class HiveMindBehaviorOverrideP2 : NPCBehaviorOverride
+	public static class HiveMindBehaviorOverrideP2
     {
         public enum HiveMindP2AttackState
         {
@@ -30,10 +30,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         }
 
         internal const float HiveMindFadeoutTime = 25f;
-        public override int NPCOverrideType => ModContent.NPCType<HiveMindP2>();
-
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
-
         public const float SpinRadius = 300f;
         public const float NPCSpawnArcSpinTime = 25f;
         public const float NPCSpawnArcRotationalOffset = MathHelper.Pi / NPCSpawnArcSpinTime;
@@ -46,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         public const float EaterWallSummoningTime = 60f;
         public const float EaterWallTotalHeight = 1900f;
         public const float MaxSlowdownTime = 60f;
-        public override bool PreAI(NPC npc)
+        public static bool PreAI(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool below20 = lifeRatio < 0.2f || npc.Infernum().ExtraAI[10] == 1f;
@@ -66,6 +62,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             Player target = Main.player[npc.target];
             enrageTimer = MathHelper.Clamp(enrageTimer - (target.ZoneCrimson || target.ZoneCorrupt).ToDirectionInt(), 0f, 480f);
             npc.defense = enrageTimer >= 300f ? -5 : 9999;
+            npc.noTileCollide = true;
+            npc.noGravity = true;
             npc.Calamity().DR = 0f;
 
             CalamityGlobalNPC.hiveMind = npc.whoAmI;
@@ -732,10 +730,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             Main.PlaySound(SoundID.Roar, npc.Center, 0);
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public static bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             NPCID.Sets.TrailingMode[npc.type] = 1;
             NPCID.Sets.TrailCacheLength[npc.type] = 8;
+            Texture2D texture = ModContent.GetTexture("CalamityMod/NPCs/HiveMind/HiveMindP2");
+            int frame = (int)(Main.GlobalTime * 10f) % 16;
+            Rectangle frameRectangle = texture.Frame(2, 8, frame / 8, frame % 8);
 
             for (int i = 1; i < npc.oldPos.Length; i++)
             {
@@ -752,8 +753,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 drawColor *= npc.Opacity;
 
                 Vector2 drawPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * -MathHelper.Lerp(8f, trailLength, i / (float)npc.oldPos.Length);
-                spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), drawPosition - Main.screenPosition + new Vector2(0, npc.gfxOffY),
-                    npc.frame, drawColor, npc.rotation, npc.frame.Size() / 2f, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, drawPosition - Main.screenPosition + new Vector2(0, npc.gfxOffY),
+                    frameRectangle, drawColor, npc.rotation, frameRectangle.Size() / 2f, scale, SpriteEffects.None, 0f);
             }
 
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
@@ -761,15 +762,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             // If performing the blob snipe attack
             if (npc.Infernum().ExtraAI[0] == 8f)
             {
-                spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY),
-                    npc.frame, Color.White, npc.rotation, npc.frame.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY),
+                    frameRectangle, Color.White, npc.rotation, frameRectangle.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
             }
 
             // If in the middle of a special attack (such as the Eater of Soul wall), or in the middle of its invincibility period after
             // going below 20% life.
             if (npc.Infernum().ExtraAI[0] >= 4f || npc.Infernum().ExtraAI[11] > 0f)
             {
-                spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), baseDrawPosition, npc.frame, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, npc.frame.Size() / 2f, Utilities.AngularSmoothstep(npc.Infernum().ExtraAI[7], 1f, 1.5f), SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, frameRectangle.Size() / 2f, Utilities.AngularSmoothstep(npc.Infernum().ExtraAI[7], 1f, 1.5f), SpriteEffects.None, 0f);
                 npc.Infernum().ExtraAI[6] = HiveMindFadeoutTime;
             }
 
@@ -777,11 +778,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             else if (npc.Infernum().ExtraAI[6] > 0f)
             {
                 float scale = npc.Infernum().ExtraAI[6] / HiveMindFadeoutTime / Utilities.AngularSmoothstep(npc.Infernum().ExtraAI[7], 1f, 1.5f);
-                spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), baseDrawPosition, npc.frame, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, npc.frame.Size() / 2f, MathHelper.Clamp(scale, 1f, 1000f), SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, frameRectangle.Size() / 2f, MathHelper.Clamp(scale, 1f, 1000f), SpriteEffects.None, 0f);
                 npc.Infernum().ExtraAI[6] -= 1f;
             }
 
-            spriteBatch.Draw(ModContent.GetTexture(npc.modNPC.Texture), baseDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, npc.GetAlpha(lightColor), npc.rotation, frameRectangle.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
 
             return false;
         }

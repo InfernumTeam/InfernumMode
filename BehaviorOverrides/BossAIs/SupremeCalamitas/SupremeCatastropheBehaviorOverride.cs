@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override int NPCOverrideType => ModContent.NPCType<SupremeCatastrophe>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 
         public override bool PreAI(NPC npc)
         {
@@ -41,6 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (attackDelay < 60f)
             {
                 npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                npc.localAI[0] = 0f;
                 attackDelay++;
             }
 
@@ -66,7 +67,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             return false;
         }
 
-        public static void DoBehavior_SliceTarget(NPC npc, Player target, bool alone, ref float attackTimer)
+		public override void FindFrame(NPC npc, int frameHeight)
+        {
+            int currentFrame = 0;
+            float slashCounter = Main.GlobalTime * 220f % 120f;
+            float slashInterpolant = Utils.InverseLerp(0f, 120f, slashCounter, true);
+            if (npc.localAI[0] < 120f)
+            {
+                npc.frameCounter += 0.15f;
+                if (npc.frameCounter >= 1f)
+                    currentFrame = (currentFrame + 1) % 6;
+            }
+            else
+                currentFrame = (int)Math.Round(MathHelper.Lerp(6f, 15f, slashInterpolant));
+
+            int xFrame = currentFrame / Main.npcFrameCount[npc.type];
+            int yFrame = currentFrame % Main.npcFrameCount[npc.type];
+
+            npc.frame.Width = 400;
+            npc.frame.Height = 230;
+            npc.frame.X = xFrame * npc.frame.Width;
+            npc.frame.Y = yFrame * npc.frame.Height;
+        }
+
+		public static void DoBehavior_SliceTarget(NPC npc, Player target, bool alone, ref float attackTimer)
         {
             float predictivenessFactor = 0f;
             float chargeSpeed = 36f;
@@ -91,7 +115,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.45f, 0.08f);
                     Vector2 hoverDestination = target.Center - Vector2.UnitY * 200f;
                     hoverDestination.X += hoverDirection * 480f;
-                    npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+                    npc.rotation = npc.velocity.X * 0.01f;
+                    npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                    npc.localAI[0] = 0f;
 
                     // After a sufficient amount of time has passed or if close to the destination, grind to a halt.
                     if (npc.WithinRange(hoverDestination, 100f) || attackTimer >= 75f)
@@ -111,7 +137,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor, -Vector2.UnitY) * chargeSpeed;
-                        npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                        npc.rotation = npc.velocity.X * 0.01f;
+                        npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
                         attackSubstate = 1f;
                         attackTimer = 0f;
 
@@ -132,12 +159,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case 1:
                     npc.damage = npc.defDamage;
                     npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.08f);
+                    npc.localAI[0] = 150f;
 
                     // Look at the player again after a bit of time charging.
                     if (attackTimer >= chargeTime)
                     {
                         npc.velocity *= 0.9f;
-                        npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.33f);
                     }
                     if (attackTimer >= chargeTime + 8f)
                     {
@@ -152,6 +179,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         }
                         npc.netUpdate = true;
                     }
+                    npc.rotation = npc.velocity.X * 0.01f;
+                    npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
                     break;
             }
         }
@@ -182,6 +211,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float attackCycleCounter = ref npc.ai[2];
 
             npc.damage = 0;
+            npc.rotation = 0f;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.45f, 0.08f);
 
             if (attackTimer < hoverTime)
@@ -254,7 +285,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.netUpdate = true;
             }
 
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            npc.rotation = 0f;
         }
 
         public static void DoBehavior_SinusoidalDarkMagicFlames(NPC npc, Player target, bool alone, ref float attackTimer)
@@ -274,6 +306,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.velocity = Vector2.Lerp(closeMoveVelocity, (hoverDestination - npc.Center) * 0.02f, Utils.InverseLerp(360f, 1080f, distanceFromDestination, true));
 
             npc.damage = 0;
+            npc.rotation = 0f;
+            npc.localAI[0] = 0f;
+            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
             npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.45f, 0.08f);
 
             if (attackTimer % shootRate == shootRate - 1f)
@@ -285,8 +320,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull>(), 550, 0f);
                 }
             }
-
-            npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
             if (attackTimer >= 440f || alone)
             {

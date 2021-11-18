@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
-	public class AresPlasmaFireball : ModProjectile
+	public class AresPlasmaFireball2 : ModProjectile
 	{
 		public override void SetStaticDefaults()
 		{
@@ -25,11 +25,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			projectile.height = 36;
 			projectile.hostile = true;
 			projectile.ignoreWater = true;
-			projectile.tileCollide = false;
+			projectile.tileCollide = true;
 			projectile.penetrate = -1;
 			projectile.Opacity = 0f;
+			projectile.timeLeft = 90;
 			cooldownSlot = 1;
-			projectile.timeLeft = 95;
 		}
 
 		public override void SendExtraAI(BinaryWriter writer)
@@ -127,53 +127,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			Main.PlaySound(SoundID.Item93, projectile.Center);
 
-			// Release plasma bolts.
+			// Release plasma bolts and gas.
 			if (Main.netMode != NetmodeID.MultiplayerClient && projectile.ai[1] != -1f)
 			{
-				int totalProjectiles = 10;
-				int type = ModContent.ProjectileType<AresPlasmaBolt>();
+				int type = ModContent.ProjectileType<PlasmaGas>();
+				for (int i = 0; i < 80; i++)
+				{
+					Vector2 plasmaVelocity = Main.rand.NextVector2Circular(10f, 10f);
+					Projectile.NewProjectile(projectile.Center, plasmaVelocity, type, projectile.damage, 0f, Main.myPlayer);
+				}
+
+				int totalProjectiles = 6;
+				type = ModContent.ProjectileType<AresPlasmaBolt>();
 				Vector2 spinningPoint = Main.rand.NextVector2Circular(0.5f, 0.5f);
 				for (int i = 0; i < totalProjectiles; i++)
 				{
 					Vector2 shootVelocity = spinningPoint.RotatedBy(MathHelper.TwoPi / totalProjectiles * i);
 					Utilities.NewProjectileBetter(projectile.Center, shootVelocity, type, 445, 0f, Main.myPlayer);
 				}
-			}
-
-			for (int i = 0; i < 120; i++)
-			{
-				float dustSpeed = 16f;
-				if (i < 150)
-					dustSpeed = 12f;
-				if (i < 100)
-					dustSpeed = 8f;
-				if (i < 50)
-					dustSpeed = 4f;
-
-				float scale = 1f;
-				Dust plasma = Dust.NewDustDirect(projectile.Center, 6, 6, Main.rand.NextBool(2) ? 107 : 110, 0f, 0f, 100, default, 1f);
-				switch ((int)dustSpeed)
-				{
-					case 4:
-						scale = 1.2f;
-						break;
-					case 8:
-						scale = 1.1f;
-						break;
-					case 12:
-						scale = 1f;
-						break;
-					case 16:
-						scale = 0.9f;
-						break;
-					default:
-						break;
-				}
-
-				plasma.velocity *= 0.5f;
-				plasma.velocity += plasma.velocity.SafeNormalize(Vector2.UnitY) * dustSpeed;
-				plasma.scale = scale;
-				plasma.noGravity = true;
 			}
 		}
 

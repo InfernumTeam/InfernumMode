@@ -12,9 +12,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
-	public class AresPlasmaCannonBehaviorOverride : NPCBehaviorOverride
+	public class AresGaussNukeBehaviorOverride : NPCBehaviorOverride
 	{
-		public override int NPCOverrideType => ModContent.NPCType<AresPlasmaFlamethrower>();
+		public override int NPCOverrideType => ModContent.NPCType<AresGaussNuke>();
 
 		public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
@@ -43,27 +43,44 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			// Define attack variables.
 			int shootTime = 150;
-			int totalFlamesPerBurst = 2;
-			int shootRate = shootTime / totalFlamesPerBurst;
-			float aimPredictiveness = 20f;
+			float aimPredictiveness = 10f;
 			ref float attackTimer = ref npc.ai[0];
 			ref float chargeDelay = ref npc.ai[1];
+			ref float rechargeTime = ref npc.ai[2];
 
 			// Initialize delays and other timers.
-			if (chargeDelay == 0f)
-				chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
+			float idealChargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime * 2.3f;
+			float idealRechargeTime = AresBodyBehaviorOverride.Phase1ArmChargeupTime * 2.3f;
+
+			if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
+			{
+				idealChargeDelay *= 0.7f;
+				idealRechargeTime *= 0.7f;
+			}
+			if (AresBodyBehaviorOverride.CurrentAresPhase >= 3)
+			{
+				idealChargeDelay *= 0.7f;
+				idealRechargeTime *= 0.7f;
+			}
+
+			if (chargeDelay != idealChargeDelay || rechargeTime != idealRechargeTime)
+			{
+				chargeDelay = idealChargeDelay;
+				rechargeTime = idealRechargeTime;
+				npc.netUpdate = true;
+			}
 
 			// Don't do anything if this arm should be disabled.
-			if (AresBodyBehaviorOverride.ArmIsDisabled(npc) && attackTimer >= chargeDelay)
-				attackTimer = chargeDelay;
+			if (AresBodyBehaviorOverride.ArmIsDisabled(npc) && attackTimer >= chargeDelay - 50f)
+				attackTimer = 0f;
 
 			// Hover near Ares.
-			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(375f, 160f), 32f, 75f);
+			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center - Vector2.UnitX * 575f, 32f, 75f);
 
 			// Choose a direction and rotation.
 			// Rotation is relative to predictiveness.
 			Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
-			Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 66f + Vector2.UnitY * 16f;
+			Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 40f;
 			float idealRotation = aimDirection.ToRotation();
 			if (npc.spriteDirection == 1)
 				idealRotation += MathHelper.Pi;
@@ -84,41 +101,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				npc.spriteDirection = -npc.direction;
 			}
 
-			// Create a dust telegraph before firing.
-			if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)
+			// Fire the nuke.
+			if (attackTimer == chargeDelay)
 			{
-				Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
-				Dust plasma = Dust.NewDustPerfect(dustSpawnPosition, 107);
-				plasma.velocity = (endOfCannon - plasma.position) * 0.04f;
-				plasma.scale = 1.25f;
-				plasma.noGravity = true;
-			}
-
-			// Fire plasma.
-			if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
-			{
-				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
 
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
-					int fireballCount = AresBodyBehaviorOverride.CurrentAresPhase >= 3 ? 2 : 1;
-
-					for (int i = 0; i < fireballCount; i++)
-					{
-						float flameShootSpeed = 10f;
-						Vector2 flameShootVelocity = aimDirection * flameShootSpeed;
-						int fireballType = ModContent.ProjectileType<AresPlasmaFireball>();
-						if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
-							fireballType = ModContent.ProjectileType<AresPlasmaFireball2>();
-						if (fireballCount > 1)
-						{
-							flameShootVelocity = flameShootVelocity.RotatedByRandom(0.34f);
-							if (i > 0)
-								flameShootVelocity *= Main.rand.NextFloat(0.6f, 0.9f);
-						}
-
-						Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, 550, 0f);
-					}
+					float nukeShootSpeed = 13.5f;
+					Utilities.NewProjectileBetter(endOfCannon, aimDirection * nukeShootSpeed, ModContent.ProjectileType<AresGaussNukeProjectile>(), 1225, 0f, npc.target);
 
 					npc.netUpdate = true;
 				}
@@ -139,19 +130,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		#region Frames and Drawcode
 		public override void FindFrame(NPC npc, int frameHeight)
 		{
-			int currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / npc.ai[1]));
-
-			if (npc.ai[0] > npc.ai[1])
-			{
-				npc.frameCounter++;
-				if (npc.frameCounter >= 66f)
-					npc.frameCounter = 0D;
-				currentFrame = (int)Math.Round(MathHelper.Lerp(36f, 47f, (float)npc.frameCounter / 66f));
-			}
+			int currentFrame;
+			if (npc.ai[0] < npc.ai[1] - 30f)
+				currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / (npc.ai[1] - 30f)));
+			else if (npc.ai[0] <= npc.ai[1] + 30f)
+				currentFrame = (int)Math.Round(MathHelper.Lerp(35f, 47f, Utils.InverseLerp(npc.ai[1] - 30f, npc.ai[1] + 30f, npc.ai[0], true)));
 			else
-				npc.frameCounter = 0D;
+				currentFrame = (int)Math.Round(MathHelper.Lerp(49f, 107f, Utils.InverseLerp(npc.ai[1] + 30f, npc.ai[1] + npc.ai[2], npc.ai[0], true)));
 
-			npc.frame = new Rectangle(npc.width * (currentFrame / 8), npc.height * (currentFrame % 8), npc.width, npc.height);
+			npc.frame = new Rectangle(npc.width * (currentFrame / 12), npc.height * (currentFrame % 12), npc.width, npc.height);
 		}
 
 		public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -179,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Vector2 center = npc.Center - Main.screenPosition;
 			spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-			texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresPlasmaFlamethrowerGlow");
+			texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresGaussNukeGlow");
 
 			if (CalamityConfig.Instance.Afterimages)
 			{

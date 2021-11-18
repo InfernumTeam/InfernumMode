@@ -83,8 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (CalamityGlobalNPC.draedonExoMechPrime < 0 || !Main.npc[CalamityGlobalNPC.draedonExoMechPrime].active)
 				return null;
 
-			// Difficulty modes
-			float detachDistance = 1720f;
+			float detachDistance = 1420f;
 			for (int i = 0; i < Main.maxProjectiles; i++)
 			{
 				if (Main.projectile[i].type != projectile.type || Main.projectile[i].ai[0] != Identity + 1f || !Main.projectile[i].active)

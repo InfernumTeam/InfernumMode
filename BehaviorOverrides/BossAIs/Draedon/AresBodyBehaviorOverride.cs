@@ -27,6 +27,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
+		public const float Phase2LifeRatio = 0.75f;
+		public const float Phase3LifeRatio = 0.45f;
+		public const float Phase1ArmChargeupTime = 150f;
+
 		#region AI
 		public override bool PreAI(NPC npc)
 		{
@@ -44,6 +48,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float attackState = ref npc.ai[0];
 			ref float attackTimer = ref npc.ai[1];
 			ref float armsHasBeenSummoned = ref npc.ai[3];
+			ref float armCycleCounter = ref npc.Infernum().ExtraAI[5];
+			ref float armCycleTimer = ref npc.Infernum().ExtraAI[6];
+
+			// Go through the attack cycle.
+			if (armCycleTimer >= 600f)
+			{
+				armCycleCounter++;
+				armCycleTimer = 0f;
+			}
+			else
+				armCycleTimer++;
 
 			if (armsHasBeenSummoned == 0f)
 			{
@@ -97,8 +112,53 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Fade in.
 			npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
-			Vector2 hoverDestination = target.Center - Vector2.UnitY * 400f;
+			Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
 			DoHoverMovement(npc, hoverDestination, 24f, 75f);
+		}
+
+		public static bool ArmIsDisabled(NPC npc)
+		{
+			if (CalamityGlobalNPC.draedonExoMechPrime == -1)
+				return false;
+
+			NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+			if (aresBody.life > aresBody.lifeMax * Phase2LifeRatio)
+				return false;
+
+			switch ((int)aresBody.Infernum().ExtraAI[5] % 4)
+			{
+				// Disable the nuke and laser.
+				case 0:
+					return npc.type == ModContent.NPCType<AresGaussNuke>() || npc.type == ModContent.NPCType<AresLaserCannon>();
+				// Disable the nuke and tesla cannon.
+				case 1:
+					return npc.type == ModContent.NPCType<AresGaussNuke>() || npc.type == ModContent.NPCType<AresTeslaCannon>();
+				// Disable the tesla cannon and plasma flamethrower.
+				case 2:
+					return npc.type == ModContent.NPCType<AresTeslaCannon>() || npc.type == ModContent.NPCType<AresPlasmaFlamethrower>();
+				// Disable the plasma flamethrower and laser.
+				case 3:
+					return npc.type == ModContent.NPCType<AresPlasmaFlamethrower>() || npc.type == ModContent.NPCType<AresLaserCannon>();
+			}
+
+			return false;
+		}
+
+		public static int CurrentAresPhase
+		{
+			get
+			{
+				if (CalamityGlobalNPC.draedonExoMechPrime == -1)
+					return 0;
+
+				NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+				if (aresBody.life <= aresBody.lifeMax * Phase3LifeRatio)
+					return 3;
+				if (aresBody.life <= aresBody.lifeMax * Phase2LifeRatio)
+					return 2;
+
+				return 1;
+			}
 		}
 
 		public static void DoHoverMovement(NPC npc, Vector2 destination, float flySpeed, float hyperSpeedCap)

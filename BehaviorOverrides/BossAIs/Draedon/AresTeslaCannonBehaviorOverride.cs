@@ -5,6 +5,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -42,14 +43,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			// Define attack variables.
 			int shootTime = 150;
-			int totalOrbsPerBurst = 4;
-			int shootRate = shootTime / totalOrbsPerBurst;
+			int totalOrbsPerBurst = 3;
 			float aimPredictiveness = 25f;
+			float orbShootSpeed = 8.4f;
+
+			if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
+			{
+				totalOrbsPerBurst = 6;
+				orbShootSpeed *= 0.75f;
+			}
+
+			int shootRate = shootTime / totalOrbsPerBurst;
 			ref float attackTimer = ref npc.ai[0];
 			ref float chargeDelay = ref npc.ai[1];
 			ref float orbCounter = ref npc.ai[2];
+
+			// Initialize delays and other timers.
 			if (chargeDelay == 0f)
-				chargeDelay = 140f;
+				chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
+
+			// Don't do anything if this arm should be disabled.
+			if (AresBodyBehaviorOverride.ArmIsDisabled(npc) && attackTimer >= chargeDelay)
+				attackTimer = chargeDelay;
 
 			// Hover near Ares.
 			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(-375f, 160f), 32f, 75f);
@@ -95,7 +110,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
-					float orbShootSpeed = 8.4f;
 					int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), 550, 0f);
 					if (Main.projectile.IndexInRange(electricOrb))
 						Main.projectile[electricOrb].ai[0] = orbCounter;
@@ -108,6 +122,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Reset the attack and orb timer after an attack cycle ends.
 			if (attackTimer >= chargeDelay + shootTime)
 			{
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					// Release sparks once Ares is in the second phase.
+					if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
+					{
+						float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+						for (int i = 0; i < 7; i++)
+						{
+							Vector2 sparkVelocity = (MathHelper.TwoPi * i / 7f + offsetAngle).ToRotationVector2() * 6.5f;
+							Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 6f, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), 560, 0f);
+						}
+					}
+
+					// As well as a of electric clouds in the third phase.
+					if (AresBodyBehaviorOverride.CurrentAresPhase >= 3)
+					{
+						for (int i = 0; i < 85; i++)
+						{
+							Vector2 cloudShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 14f) - npc.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
+							Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<ElectricGas>(), 580, 0f);
+						}
+					}
+				}
+
 				attackTimer = 0f;
 				orbCounter = 0f;
 				npc.netUpdate = true;
@@ -145,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Texture2D texture = Main.npcTexture[npc.type];
 			Rectangle frame = npc.frame;
 			Vector2 origin = frame.Size() * 0.5f;
-			Color afterimageBaseColor = Main.npc[(int)npc.ai[2]].localAI[1] == (float)AresBody.Enraged.Yes ? Color.Red : Color.White;
+			Color afterimageBaseColor = Color.White;
 			int numAfterimages = 5;
 
 			if (CalamityConfig.Instance.Afterimages)

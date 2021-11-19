@@ -5,7 +5,6 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -39,19 +38,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Shamelessly steal variables from Ares.
 			npc.target = aresBody.target;
 			npc.Opacity = aresBody.Opacity;
+			int projectileDamageBoost = (int)aresBody.Infernum().ExtraAI[8];
 			Player target = Main.player[npc.target];
 
 			// Define attack variables.
+			bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
 			int shootTime = 150;
 			int totalOrbsPerBurst = 3;
 			float aimPredictiveness = 25f;
-			float orbShootSpeed = 8.4f;
+			float orbShootSpeed = 9f;
+			Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
+
+			// Shoot slower if pointing downward.
+			orbShootSpeed *= MathHelper.Lerp(1f, 0.75f, Utils.InverseLerp(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
 
 			if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
 			{
 				totalOrbsPerBurst = 6;
 				orbShootSpeed *= 0.75f;
 			}
+
+			// Nerf things while Ares' complement mech is present.
+			if (AresBodyBehaviorOverride.ComplementMechIsPresent(aresBody))
+				totalOrbsPerBurst = 4;
 
 			int shootRate = shootTime / totalOrbsPerBurst;
 			ref float attackTimer = ref npc.ai[0];
@@ -63,17 +72,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
 
 			// Don't do anything if this arm should be disabled.
-			if (AresBodyBehaviorOverride.ArmIsDisabled(npc) && attackTimer >= chargeDelay)
+			if (currentlyDisabled && attackTimer >= chargeDelay)
 				attackTimer = chargeDelay;
-
-			// Hover near Ares.
-			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(-375f, 160f), 32f, 75f);
 
 			// Choose a direction and rotation.
 			// Rotation is relative to predictiveness.
-			Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
 			Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 84f + Vector2.UnitY * 8f;
 			float idealRotation = aimDirection.ToRotation();
+			if (currentlyDisabled)
+				idealRotation = MathHelper.Clamp(npc.velocity.X * -0.016f, -0.81f, 0.81f) + MathHelper.PiOver2;
+
 			if (npc.spriteDirection == 1)
 				idealRotation += MathHelper.Pi;
 			if (idealRotation < 0f)
@@ -93,6 +101,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				npc.spriteDirection = -npc.direction;
 			}
 
+			// Hover near Ares.
+			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(-375f, 100f), 32f, 75f);
+
 			// Create a dust telegraph before firing.
 			if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)
 			{
@@ -110,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
-					int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), 550, 0f);
+					int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), projectileDamageBoost + 550, 0f);
 					if (Main.projectile.IndexInRange(electricOrb))
 						Main.projectile[electricOrb].ai[0] = orbCounter;
 
@@ -131,7 +142,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 						for (int i = 0; i < 7; i++)
 						{
 							Vector2 sparkVelocity = (MathHelper.TwoPi * i / 7f + offsetAngle).ToRotationVector2() * 6.5f;
-							Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 6f, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), 560, 0f);
+							Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 6f, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), projectileDamageBoost + 560, 0f);
 						}
 					}
 
@@ -141,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 						for (int i = 0; i < 85; i++)
 						{
 							Vector2 cloudShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 14f) - npc.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
-							Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<ElectricGas>(), 580, 0f);
+							Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<ElectricGas>(), projectileDamageBoost + 580, 0f);
 						}
 					}
 				}

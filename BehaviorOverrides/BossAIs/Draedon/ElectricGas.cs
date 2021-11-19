@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			projectile.velocity *= 0.985f;
 
 			// Release electric sparks.
-			if (Main.rand.NextBool(8))
+			if (Main.rand.NextFloat() < (float)Math.Pow(projectile.Opacity, 2D) * 0.05f)
 			{
 				Dust spark = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(60f, 60f), 226);
 				spark.velocity = Main.rand.NextVector2Circular(7f, 7f);
@@ -71,9 +71,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Vector2 origin = texture.Size() * 0.5f;
 			Vector2 drawPosition = projectile.Center - Main.screenPosition;
 			float opacity = Utils.InverseLerp(0f, 0.08f, LightPower, true) * projectile.Opacity * 0.8f;
-			Color drawColor = Color.Cyan * opacity;
+			Color drawColor = Color.Lerp(Color.Cyan, Color.White, 0.5f) * opacity;
 			Vector2 scale = projectile.Size / texture.Size() * projectile.scale;
-			spriteBatch.Draw(texture, drawPosition, null, drawColor, projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+
+			for (int i = 0; i < 2; i++)
+				spriteBatch.Draw(texture, drawPosition, null, drawColor, projectile.rotation, origin, scale, SpriteEffects.None, 0f);
 
 			spriteBatch.SetBlendState(BlendState.AlphaBlend);
 			return false;

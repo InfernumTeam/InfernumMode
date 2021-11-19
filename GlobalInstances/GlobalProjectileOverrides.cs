@@ -23,7 +23,7 @@ namespace InfernumMode.GlobalInstances
             {
                 ExtraAI[i] = 0f;
             }
-            if (PoDWorld.InfernumMode && projectile.type == ModContent.ProjectileType<HolyAura>())
+            if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>())
                 projectile.timeLeft = ProvidenceBehaviorOverride.AuraTime;
         }
 
@@ -39,7 +39,7 @@ namespace InfernumMode.GlobalInstances
 
 		public override bool PreDraw(Projectile projectile, SpriteBatch spriteBatch, Color lightColor)
 		{
-            if (PoDWorld.InfernumMode && projectile.type == ModContent.ProjectileType<HolyAura>())
+            if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>())
 			{
                 Texture2D texture = Main.projectileTexture[projectile.type];
                 float clampedTime = Main.GlobalTime % 5f / 5f;
@@ -138,7 +138,7 @@ namespace InfernumMode.GlobalInstances
 
         public override void Kill(Projectile projectile, int timeLeft)
         {
-            if (projectile.type == ProjectileID.PhantasmalEye && projectile.localAI[0] >= 70f && PoDWorld.InfernumMode)
+            if (projectile.type == ProjectileID.PhantasmalEye && projectile.localAI[0] >= 70f && InfernumMode.CanUseCustomAIs)
             {
                 for (int k = 0; k < 25; k++)
                 {
@@ -152,7 +152,7 @@ namespace InfernumMode.GlobalInstances
         }
         public override bool OnTileCollide(Projectile projectile, Vector2 oldVelocity)
         {
-            if (PoDWorld.InfernumMode)
+            if (InfernumMode.CanUseCustomAIs)
             {
                 if (projectile.type == ProjectileID.PhantasmalBolt)
                 {
@@ -183,7 +183,7 @@ namespace InfernumMode.GlobalInstances
         }
         public override bool CanHitPlayer(Projectile projectile, Player target)
         {
-            if (PoDWorld.InfernumMode)
+            if (InfernumMode.CanUseCustomAIs)
             {
                 if (projectile.type == ProjectileID.PhantasmalSphere)
                 {

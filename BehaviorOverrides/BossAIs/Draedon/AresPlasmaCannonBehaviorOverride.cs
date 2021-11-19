@@ -39,13 +39,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Shamelessly steal variables from Ares.
 			npc.target = aresBody.target;
 			npc.Opacity = aresBody.Opacity;
+			int projectileDamageBoost = (int)aresBody.Infernum().ExtraAI[8];
 			Player target = Main.player[npc.target];
 
 			// Define attack variables.
+			bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
 			int shootTime = 150;
 			int totalFlamesPerBurst = 2;
-			int shootRate = shootTime / totalFlamesPerBurst;
+			float flameShootSpeed = 10f;
 			float aimPredictiveness = 20f;
+
+			// Nerf things while Ares' complement mech is present.
+			if (AresBodyBehaviorOverride.ComplementMechIsPresent(aresBody))
+				flameShootSpeed *= 0.75f;
+
+			int shootRate = shootTime / totalFlamesPerBurst;
 			ref float attackTimer = ref npc.ai[0];
 			ref float chargeDelay = ref npc.ai[1];
 
@@ -54,17 +62,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
 
 			// Don't do anything if this arm should be disabled.
-			if (AresBodyBehaviorOverride.ArmIsDisabled(npc) && attackTimer >= chargeDelay)
+			if (currentlyDisabled && attackTimer >= chargeDelay)
 				attackTimer = chargeDelay;
 
 			// Hover near Ares.
-			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(375f, 160f), 32f, 75f);
+			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(375f, 100f), 32f, 75f);
 
 			// Choose a direction and rotation.
-			// Rotation is relative to predictiveness.
+			// Rotation is relative to predictiveness, unless disabled.
 			Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
 			Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 66f + Vector2.UnitY * 16f;
 			float idealRotation = aimDirection.ToRotation();
+			if (currentlyDisabled)
+				idealRotation = MathHelper.Clamp(npc.velocity.X * -0.016f, -0.81f, 0.81f) + MathHelper.PiOver2;
+
 			if (npc.spriteDirection == 1)
 				idealRotation += MathHelper.Pi;
 			if (idealRotation < 0f)
@@ -105,7 +116,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 					for (int i = 0; i < fireballCount; i++)
 					{
-						float flameShootSpeed = 10f;
 						Vector2 flameShootVelocity = aimDirection * flameShootSpeed;
 						int fireballType = ModContent.ProjectileType<AresPlasmaFireball>();
 						if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
@@ -117,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 								flameShootVelocity *= Main.rand.NextFloat(0.6f, 0.9f);
 						}
 
-						Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, 550, 0f);
+						Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, projectileDamageBoost + 550, 0f);
 					}
 
 					npc.netUpdate = true;

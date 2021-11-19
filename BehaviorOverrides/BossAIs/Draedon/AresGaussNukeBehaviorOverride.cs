@@ -42,6 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Player target = Main.player[npc.target];
 
 			// Define attack variables.
+			bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
 			int shootTime = 150;
 			float aimPredictiveness = 10f;
 			ref float attackTimer = ref npc.ai[0];
@@ -63,15 +64,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				idealRechargeTime *= 0.7f;
 			}
 
+			// Nerf things while Ares' complement mech is present.
+			if (AresBodyBehaviorOverride.ComplementMechIsPresent(aresBody))
+			{
+				idealChargeDelay += 125f;
+				idealRechargeTime += 125f;
+			}
+
 			if (chargeDelay != idealChargeDelay || rechargeTime != idealRechargeTime)
 			{
 				chargeDelay = idealChargeDelay;
 				rechargeTime = idealRechargeTime;
+				attackTimer = 0f;
 				npc.netUpdate = true;
 			}
 
 			// Don't do anything if this arm should be disabled.
-			if (AresBodyBehaviorOverride.ArmIsDisabled(npc) && attackTimer >= chargeDelay - 50f)
+			if (currentlyDisabled && attackTimer >= chargeDelay - 50f)
 				attackTimer = 0f;
 
 			// Hover near Ares.
@@ -82,6 +91,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
 			Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 40f;
 			float idealRotation = aimDirection.ToRotation();
+			if (currentlyDisabled)
+				idealRotation = MathHelper.Clamp(npc.velocity.X * -0.016f, -0.81f, 0.81f) + MathHelper.PiOver2;
+
 			if (npc.spriteDirection == 1)
 				idealRotation += MathHelper.Pi;
 			if (idealRotation < 0f)
@@ -102,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			}
 
 			// Fire the nuke.
-			if (attackTimer == chargeDelay)
+			if (attackTimer == (int)chargeDelay)
 			{
 				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
 

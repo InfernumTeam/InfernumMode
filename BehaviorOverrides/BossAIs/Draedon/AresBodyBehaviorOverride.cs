@@ -1,11 +1,15 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
@@ -20,7 +24,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public enum AresBodyAttackType
 		{
-			IdleHover
+			IdleHover,
+			RadianceLaserBursts
 		}
 
 		public override int NPCOverrideType => ModContent.NPCType<AresBody>();
@@ -28,7 +33,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
 		public const float Phase2LifeRatio = 0.75f;
-		public const float Phase3LifeRatio = 0.45f;
+		public const float Phase3LifeRatio = 0.5f;
+		public const float Phase4LifeRatio = 0.3f;
+
 		public const float Phase1ArmChargeupTime = 150f;
 
 		#region AI
@@ -47,23 +54,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Define attack variables.
 			ref float attackState = ref npc.ai[0];
 			ref float attackTimer = ref npc.ai[1];
-			ref float armsHasBeenSummoned = ref npc.ai[3];
+			ref float armsHaveBeenSummoned = ref npc.ai[3];
 			ref float armCycleCounter = ref npc.Infernum().ExtraAI[5];
 			ref float armCycleTimer = ref npc.Infernum().ExtraAI[6];
+			ref float canSummonComplementMech = ref npc.Infernum().ExtraAI[7];
+			ref float projectileDamageBoost = ref npc.Infernum().ExtraAI[8];
 
 			// Go through the attack cycle.
 			if (armCycleTimer >= 600f)
 			{
 				armCycleCounter++;
 				armCycleTimer = 0f;
+				attackTimer = 0f;
+				attackState = (int)AresBodyAttackType.IdleHover;
 			}
 			else
 				armCycleTimer++;
 
-			if (armsHasBeenSummoned == 0f)
+			// Summon the complement mech and reset things.
+			if (canSummonComplementMech == 0f && lifeRatio < Phase4LifeRatio)
+			{
+				SummonComplementMech(npc);
+				canSummonComplementMech = 1f;
+				armCycleTimer = 0f;
+				npc.netUpdate = true;
+			}
+
+			if (Main.netMode != NetmodeID.MultiplayerClient && armsHaveBeenSummoned == 0f)
 			{
 				int totalArms = 4;
-				int previous = npc.whoAmI;
 				for (int i = 0; i < totalArms; i++)
 				{
 					int lol = 0;
@@ -86,34 +105,159 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					}
 
 					Main.npc[lol].realLife = npc.whoAmI;
-					Main.npc[previous].netUpdate = true;
-					previous = lol;
+					Main.npc[lol].netUpdate = true;
 				}
-				armsHasBeenSummoned = 1f;
+				armsHaveBeenSummoned = 1f;
+				npc.netUpdate = true;
 			}
+
+			// Reset things.
+			projectileDamageBoost = ComplementMechIsPresent(npc) ? 50f : 0f;
 
 			// Get a target.
 			npc.TargetClosest(false);
 			Player target = Main.player[npc.target];
 
+			// Despawn if the target is gone.
+			if (!target.active || target.dead)
+			{
+				npc.TargetClosest(false);
+				target = Main.player[npc.target];
+				if (!target.active || target.dead)
+					npc.active = false;
+			}
+
 			// Perform specific behaviors.
 			switch ((AresBodyAttackType)(int)attackState)
 			{
 				case AresBodyAttackType.IdleHover:
-					DoBehavior_IdleHover(npc, target);
+					DoBehavior_IdleHover(npc, target, ref attackTimer);
+					break;
+				case AresBodyAttackType.RadianceLaserBursts:
+					DoBehavior_RadianceLaserBursts(npc, target, ref attackTimer, ref frameType);
 					break;
 			}
 
+			attackTimer++;
 			return false;
 		}
 
-		public static void DoBehavior_IdleHover(NPC npc, Player target)
+		public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
 		{
 			// Fade in.
 			npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
 			Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
 			DoHoverMovement(npc, hoverDestination, 24f, 75f);
+
+			if (attackTimer > 1200f)
+				SelectNextAttack(npc);
+		}
+
+		public static void DoBehavior_RadianceLaserBursts(NPC npc, Player target, ref float attackTimer, ref float frameType)
+		{
+			int totalBursts = 8;
+			int shootTime = 450;
+			int shootDelay = 125;
+			int telegraphTime = 35;
+			int laserLifetime = shootTime / totalBursts - telegraphTime;
+			int totalLasers = 20;
+			int totalSparks = 25;
+
+			if (ComplementMechIsPresent(npc))
+			{
+				totalBursts -= 2;
+				telegraphTime += 10;
+				shootDelay += 25;
+				shootTime += 100;
+				totalLasers -= 10;
+				totalSparks -= 8;
+			}
+
+			float wrappedAttackTimer = (attackTimer - shootDelay) % (shootTime / totalBursts);
+
+			ref float generalAngularOffset = ref npc.Infernum().ExtraAI[0];
+
+			// Slow down.
+			npc.velocity *= 0.935f;
+
+			// Do the initial delay.
+			if (attackTimer < shootDelay)
+				return;
+
+			// Laugh.
+			frameType = (int)AresBodyFrameType.Laugh;
+
+			// Create telegraphs.
+			if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == 0f)
+			{
+				generalAngularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+				for (int i = 0; i < totalLasers; i++)
+				{
+					Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
+					int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f);
+					if (Main.projectile.IndexInRange(telegraph))
+					{
+						Main.projectile[telegraph].ai[1] = npc.whoAmI;
+						Main.projectile[telegraph].localAI[0] = telegraphTime;
+						Main.projectile[telegraph].netUpdate = true;
+					}
+				}
+				npc.netUpdate = true;
+			}
+
+			// Create laser bursts and tesla sparks.
+			if (wrappedAttackTimer == telegraphTime - 1f)
+			{
+				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
+
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					for (int i = 0; i < totalLasers; i++)
+					{
+						Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
+						int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeam>(), 800, 0f);
+						if (Main.projectile.IndexInRange(deathray))
+						{
+							Main.projectile[deathray].ai[1] = npc.whoAmI;
+							Main.projectile[deathray].ModProjectile<AresDeathBeam>().LifetimeThing = laserLifetime;
+							Main.projectile[deathray].netUpdate = true;
+						}
+					}
+					for (int i = 0; i < totalSparks; i++)
+					{
+						float sparkShootSpeed = npc.Distance(target.Center) * 0.01f + 20f;
+						Vector2 sparkVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / totalSparks) * sparkShootSpeed;
+						Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), 600, 0f);
+					}
+					npc.netUpdate = true;
+				}
+			}
+
+			if (attackTimer >= shootTime + shootDelay + 1f)
+			{
+				// Destroy all lasers and telegraphs.
+				for (int i = 0; i < Main.maxProjectiles; i++)
+				{
+					if ((Main.projectile[i].type == ModContent.ProjectileType<AresDeathBeamTelegraph>() || Main.projectile[i].type == ModContent.ProjectileType<AresDeathBeam>()) && Main.projectile[i].active)
+						Main.projectile[i].Kill();
+				}
+				SelectNextAttack(npc);
+			}
+		}
+
+		public static void SelectNextAttack(NPC npc)
+		{
+			AresBodyAttackType oldAttackType = (AresBodyAttackType)(int)npc.ai[0];
+			npc.ai[0] = (int)AresBodyAttackType.IdleHover;
+			if (oldAttackType == AresBodyAttackType.IdleHover && CurrentAresPhase >= 3)
+				npc.ai[0] = (int)AresBodyAttackType.RadianceLaserBursts;
+
+			npc.ai[1] = 0f;
+			for (int i = 0; i < 5; i++)
+				npc.Infernum().ExtraAI[i] = 0f;
+
+			npc.netUpdate = true;
 		}
 
 		public static bool ArmIsDisabled(NPC npc)
@@ -124,6 +268,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
 			if (aresBody.life > aresBody.lifeMax * Phase2LifeRatio)
 				return false;
+
+			if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts)
+				return true;
 
 			switch ((int)aresBody.Infernum().ExtraAI[5] % 4)
 			{
@@ -144,6 +291,49 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			return false;
 		}
 
+		public static bool ComplementMechIsPresent(NPC npc)
+		{
+			// Ares summons Thanatos.
+			if (npc.type == ModContent.NPCType<AresBody>())
+				return CalamityGlobalNPC.draedonExoMechWorm != -1;
+
+			// Thanatos summons Ares.
+			if (npc.type == ModContent.NPCType<ThanatosHead>())
+				return CalamityGlobalNPC.draedonExoMechTwinRed != -1 || CalamityGlobalNPC.draedonExoMechTwinGreen != -1;
+
+			// The twins summon Thanatos.
+			if (npc.type == ModContent.NPCType<Apollo>() || npc.type == ModContent.NPCType<Artemis>())
+				return CalamityGlobalNPC.draedonExoMechWorm != -1;
+
+			return false;
+		}
+
+		public static void SummonComplementMech(NPC npc)
+		{
+			// Don't summon NPCs clientside.
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				return;
+
+			// Ares and twins summons Thanatos.
+			// Only Apollo does the summoning.
+			if (npc.type == ModContent.NPCType<AresBody>() || npc.type == ModContent.NPCType<Apollo>())
+			{
+				Vector2 thanatosSpawnPosition = Main.player[npc.target].Center + Vector2.UnitY * 2100f;
+				NPC thanatos = CalamityUtils.SpawnBossBetter(thanatosSpawnPosition, ModContent.NPCType<ThanatosHead>());
+				if (thanatos != null)
+					thanatos.velocity = thanatos.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
+			}
+
+			// Thanatos summons Ares.
+			if (npc.type == ModContent.NPCType<ThanatosHead>())
+			{
+				Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
+				NPC ares = CalamityUtils.SpawnBossBetter(aresSpawnPosition, ModContent.NPCType<AresBody>());
+				ares.Infernum().ExtraAI[7] = 1f;
+				ares.netUpdate = true;
+			}
+		}
+
 		public static int CurrentAresPhase
 		{
 			get
@@ -152,6 +342,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					return 0;
 
 				NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+				if (ComplementMechIsPresent(aresBody))
+					return 4;
 				if (aresBody.life <= aresBody.lifeMax * Phase3LifeRatio)
 					return 3;
 				if (aresBody.life <= aresBody.lifeMax * Phase2LifeRatio)

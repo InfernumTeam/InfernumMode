@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				if (laserCount > 4)
 					laserCount = 4;
 				laserCount--;
-				laserShootSpeed *= 0.75f;
+				laserShootSpeed *= 0.6f;
 			}
 
 			int shootRate = shootTime / totalLasersPerBurst;

@@ -1,14 +1,9 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.ExoMechs.Apollo;
-using CalamityMod.NPCs.ExoMechs.Ares;
-using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
@@ -18,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
 	public class ThanatosHeadBehaviorOverride : NPCBehaviorOverride
 	{
-		public enum ThanatosHeadFrameType
+		public enum ThanatosFrameType
 		{
 			Closed,
 			Open
@@ -34,6 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 
+		public const int SegmentCount = 100;
 		public const float OpenSegmentDR = 0f;
 		public const float ClosedSegmentDR = 0.98f;
 
@@ -47,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			// Reset frame states.
 			ref float frameType = ref npc.localAI[0];
-			frameType = (int)ThanatosHeadFrameType.Closed;
+			frameType = (int)ThanatosFrameType.Closed;
 
 			// Define attack variables.
 			ref float attackState = ref npc.ai[0];
@@ -67,12 +63,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Create segments.
 			if (Main.netMode != NetmodeID.MultiplayerClient && segmentsSpawned == 0f)
 			{
-				int segmentCount = 100;
 				int previous = npc.whoAmI;
-				for (int i = 0; i < segmentCount; i++)
+				for (int i = 0; i < SegmentCount; i++)
 				{
 					int lol;
-					if (i < segmentCount - 1)
+					if (i < SegmentCount - 1)
 					{
 						if (i % 2 == 0)
 							lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ThanatosBody1>(), npc.whoAmI);
@@ -83,10 +78,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 						lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ThanatosTail>(), npc.whoAmI);
 
 					Main.npc[lol].realLife = npc.whoAmI;
-					Main.npc[lol].ai[2] = npc.whoAmI;
+					Main.npc[lol].ai[0] = i;
 					Main.npc[lol].ai[1] = previous;
-					if (i > 0)
-						Main.npc[previous].ai[0] = lol;
 					NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, lol, 0f, 0f, 0f, 0);
 					previous = lol;
 				}
@@ -113,6 +106,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				case ThanatosHeadAttackType.AggressiveCharge:
 					DoBehavior_AggressiveCharge(npc, target, ref attackTimer, ref frameType);
 					break;
+				case ThanatosHeadAttackType.ProjectileShooting_RedLaser:
+					DoBehavior_ProjectileShooting_RedLaser(npc, target, ref attackTimer, ref frameType);
+					break;
 			}
 
 			// Handle smoke venting and open/closed DR.
@@ -122,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			npc.defense = 0;
 			npc.takenDamageMultiplier = 1f;
 			npc.ModNPC<ThanatosHead>().SmokeDrawer.ParticleSpawnRate = 9999999;
-			if (frameType == (int)ThanatosHeadFrameType.Open)
+			if (frameType == (int)ThanatosFrameType.Open)
 			{
 				// Emit light.
 				Lighting.AddLight(npc.Center, 0.35f * npc.Opacity, 0.05f * npc.Opacity, 0.05f * npc.Opacity);
@@ -140,7 +136,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				Lighting.AddLight(npc.Center, 0.05f * npc.Opacity, 0.2f * npc.Opacity, 0.2f * npc.Opacity);
 
 			// Become vulnerable on the map.
-			typeof(ThanatosHead).GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, frameType == (int)ThanatosHeadFrameType.Open);
+			typeof(ThanatosHead).GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, frameType == (int)ThanatosFrameType.Open);
 
 			npc.ModNPC<ThanatosHead>().SmokeDrawer.Update();
 			attackTimer++;
@@ -151,11 +147,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		public static void DoBehavior_AggressiveCharge(NPC npc, Player target, ref float attackTimer, ref float frameType)
 		{
 			// Decide frames.
-			frameType = (int)ThanatosHeadFrameType.Open;
+			frameType = (int)ThanatosFrameType.Open;
 
 			float lifeRatio = npc.life / (float)npc.lifeMax;
-			float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.03f, lifeRatio);
+			float flyAcceleration = MathHelper.Lerp(0.045f, 0.03f, lifeRatio);
 			float idealFlySpeed = MathHelper.Lerp(13f, 9.6f, lifeRatio);
+			float generalSpeedFactor = 1.5f;
 
 			Vector2 destination = target.Center;
 
@@ -163,7 +160,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (!npc.WithinRange(destination, 550f))
 			{
 				distanceFromDestination = npc.Distance(destination);
-				idealFlyAcceleration *= 1.45f;
+				flyAcceleration *= 1.45f;
 			}
 
 			// Charge if the player is far away.
@@ -172,39 +169,128 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (distanceFromDestination > 1500f && attackTimer > 90f)
 				idealFlySpeed = 22f;
 
+			if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+            {
+				generalSpeedFactor *= 0.7f;
+				flyAcceleration *= 0.7f;
+			}
+
 			float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(destination));
 
 			// Adjust the speed based on how the direction towards the target compares to the direction of the
 			// current velocity. This check is unnecessary once close to the target, which would prompt a snap/charge.
 			if (!npc.WithinRange(destination, 250f))
 			{
-				float speed = npc.velocity.Length();
-				if (speed < 9f)
-					speed += 0.06f;
+				float flySpeed = npc.velocity.Length();
+				if (flySpeed < 9f)
+					flySpeed += 0.06f;
 
-				if (speed > 15f)
-					speed -= 0.065f;
+				if (flySpeed > 15f)
+					flySpeed -= 0.065f;
 
 				if (directionToPlayerOrthogonality < 0.85f && directionToPlayerOrthogonality > 0.5f)
-					speed += 0.16f;
+					flySpeed += 0.16f;
 
 				if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
-					speed -= 0.1f;
+					flySpeed -= 0.1f;
 
-				speed = MathHelper.Clamp(speed, 8f, 18f) * 1.5f;
-				npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), idealFlyAcceleration, true) * speed;
+				flySpeed = MathHelper.Clamp(flySpeed, 8f, 18f) * generalSpeedFactor;
+				npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * flySpeed;
 			}
 
+			if (npc.WithinRange(target.Center, 500f) && !npc.WithinRange(target.Center, 200f))
+				npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 1f);
+
 			// Lunge if near the player.
-			if (distanceFromDestination < 400f && directionToPlayerOrthogonality > 0.45f && npc.velocity.Length() < idealFlySpeed * 2.4f)
+			if (distanceFromDestination < 400f && directionToPlayerOrthogonality > 0.75f && npc.velocity.Length() < idealFlySpeed * 2.4f)
 				npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.3f;
+
+			if (attackTimer > 720f)
+				SelectNextAttack(npc);
+		}
+
+		public static void DoBehavior_ProjectileShooting_RedLaser(NPC npc, Player target, ref float attackTimer, ref float frameType)
+		{
+			// Decide frames.
+			frameType = (int)ThanatosFrameType.Closed;
+
+			// Attempt to intercept the target.
+			Vector2 hoverDestination = target.Center + target.velocity.SafeNormalize(Vector2.UnitX * target.direction) * new Vector2(675f, 950f);
+			hoverDestination.Y -= 650f;
+
+			int segmentShootDelay = 110;
+			float idealFlySpeed = 13f;
+
+			if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+			{
+				segmentShootDelay += 60;
+				idealFlySpeed *= 0.7f;
+			}
+
+			ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
+			ref float segmentSelectionOffset = ref npc.Infernum().ExtraAI[1];
+			ref float segmentFireTime = ref npc.Infernum().ExtraAI[2];
+			ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[3];
+
+			// Move towards the target if far away from them.
+			if (!npc.WithinRange(target.Center, 1600f))
+				hoverDestination = target.Center;
+
+			if (!npc.WithinRange(hoverDestination, 210f))
+			{
+				float flySpeed = MathHelper.Lerp(npc.velocity.Length(), idealFlySpeed, 0.05f);
+				npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(hoverDestination), flySpeed / 580f, true) * flySpeed;
+			}
+
+			// Select segment shoot attributes.
+			if (attackTimer % segmentShootDelay == segmentShootDelay - 1f)
+			{
+				totalSegmentsToFire = 24f;
+				segmentSelectionOffset = Main.rand.Next(8);
+				segmentFireTime = 75f;
+
+				if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+                {
+					totalSegmentsToFire *= 0.625f;
+					segmentFireTime += 10f;
+				}
+
+				segmentFireCountdown = segmentFireTime;
+				npc.netUpdate = true;
+			}
+
+			if (segmentFireCountdown > 0f)
+				segmentFireCountdown--;
+		}
+
+		public static void SelectNextAttack(NPC npc)
+		{
+			// TODO: Incorporate intelligent attack selection into the projectile shot choosing.
+			ThanatosHeadAttackType oldAttackType = (ThanatosHeadAttackType)(int)npc.ai[0];
+			ThanatosHeadAttackType newAttackType;
+
+			if (oldAttackType == ThanatosHeadAttackType.AggressiveCharge)
+			{
+				newAttackType = ThanatosHeadAttackType.ProjectileShooting_RedLaser;
+			}
+			else
+			{
+				newAttackType = ThanatosHeadAttackType.AggressiveCharge;
+			}
+
+			for (int i = 0; i < 5; i++)
+				npc.Infernum().ExtraAI[i] = 0f;
+
+			npc.ai[0] = (int)newAttackType;
+			npc.ai[1] = 0f;
+			npc.netUpdate = true;
 		}
 
 		public override void FindFrame(NPC npc, int frameHeight)
 		{
 			// Swap between venting and non-venting frames.
 			npc.frameCounter++;
-			if (npc.localAI[0] == (int)ThanatosHeadFrameType.Closed)
+			if (npc.localAI[0] == (int)ThanatosFrameType.Closed)
 			{
 				if (npc.frameCounter >= 6D)
 				{
@@ -235,5 +321,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					npc.frame.Y = frameHeight * finalFrame;
 			}
 		}
-    }
+	}
 }

@@ -38,6 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Shamelessly steal variables from Ares.
 			npc.target = aresBody.target;
 			npc.Opacity = aresBody.Opacity;
+			npc.dontTakeDamage = aresBody.dontTakeDamage;
 			int projectileDamageBoost = (int)aresBody.Infernum().ExtraAI[8];
 			Player target = Main.player[npc.target];
 

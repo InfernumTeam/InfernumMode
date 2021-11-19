@@ -39,6 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Shamelessly steal variables from Ares.
 			npc.target = aresBody.target;
 			npc.Opacity = aresBody.Opacity;
+			npc.dontTakeDamage = aresBody.dontTakeDamage;
 			Player target = Main.player[npc.target];
 
 			// Define attack variables.

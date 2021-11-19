@@ -35,6 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		public const float Phase2LifeRatio = 0.75f;
 		public const float Phase3LifeRatio = 0.5f;
 		public const float Phase4LifeRatio = 0.3f;
+		public const float ComplementMechInvincibilityThreshold = 0.6f;
 
 		public const float Phase1ArmChargeupTime = 150f;
 
@@ -59,6 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float armCycleTimer = ref npc.Infernum().ExtraAI[6];
 			ref float canSummonComplementMech = ref npc.Infernum().ExtraAI[7];
 			ref float projectileDamageBoost = ref npc.Infernum().ExtraAI[8];
+			ref float finalComplementMech = ref npc.Infernum().ExtraAI[10];
 
 			// Go through the attack cycle.
 			if (armCycleTimer >= 600f)
@@ -107,9 +109,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					Main.npc[lol].realLife = npc.whoAmI;
 					Main.npc[lol].netUpdate = true;
 				}
+				finalComplementMech = -1f;
 				armsHaveBeenSummoned = 1f;
 				npc.netUpdate = true;
 			}
+
+			// Become invincible if the complement mech is at high enough health.
+			npc.dontTakeDamage = false;
+			if (finalComplementMech >= 0 && Main.npc[(int)finalComplementMech].active && Main.npc[(int)finalComplementMech].life > Main.npc[(int)finalComplementMech].lifeMax * ComplementMechInvincibilityThreshold)
+				npc.dontTakeDamage = true;
 
 			// Reset things.
 			projectileDamageBoost = ComplementMechIsPresent(npc) ? 50f : 0f;
@@ -319,7 +327,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (npc.type == ModContent.NPCType<AresBody>() || npc.type == ModContent.NPCType<Apollo>())
 			{
 				Vector2 thanatosSpawnPosition = Main.player[npc.target].Center + Vector2.UnitY * 2100f;
-				NPC thanatos = CalamityUtils.SpawnBossBetter(thanatosSpawnPosition, ModContent.NPCType<ThanatosHead>());
+				int complementMech = NPC.NewNPC((int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
+				NPC thanatos = Main.npc[complementMech];
+				npc.Infernum().ExtraAI[10] = complementMech;
 				if (thanatos != null)
 					thanatos.velocity = thanatos.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
 			}
@@ -328,7 +338,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (npc.type == ModContent.NPCType<ThanatosHead>())
 			{
 				Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-				NPC ares = CalamityUtils.SpawnBossBetter(aresSpawnPosition, ModContent.NPCType<AresBody>());
+				int complementMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
+				NPC ares = Main.npc[complementMech];
+				npc.Infernum().ExtraAI[10] = complementMech;
 				ares.Infernum().ExtraAI[7] = 1f;
 				ares.netUpdate = true;
 			}

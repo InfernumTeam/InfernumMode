@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -51,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			float aimPredictiveness = 20f;
 
 			// Nerf things while Ares' complement mech is present.
-			if (AresBodyBehaviorOverride.ComplementMechIsPresent(aresBody))
+			if (ExoMechManagement.CurrentAresPhase == 4)
 				flameShootSpeed *= 0.75f;
 
 			int shootRate = shootTime / totalFlamesPerBurst;
@@ -113,13 +112,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
-					int fireballCount = AresBodyBehaviorOverride.CurrentAresPhase >= 3 ? 2 : 1;
+					int fireballCount = ExoMechManagement.CurrentAresPhase >= 3 ? 2 : 1;
 
 					for (int i = 0; i < fireballCount; i++)
 					{
 						Vector2 flameShootVelocity = aimDirection * flameShootSpeed;
 						int fireballType = ModContent.ProjectileType<AresPlasmaFireball>();
-						if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
+						if (ExoMechManagement.CurrentAresPhase >= 2)
 							fireballType = ModContent.ProjectileType<AresPlasmaFireball2>();
 						if (fireballCount > 1)
 						{

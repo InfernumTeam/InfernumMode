@@ -51,6 +51,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float attackState = ref npc.ai[0];
 			ref float attackTimer = ref npc.ai[1];
 			ref float segmentsSpawned = ref npc.ai[2];
+			ref float hasSummonedComplementMech = ref npc.Infernum().ExtraAI[7];
+			ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
+			ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[11];
+			ref float finalMechIndex = ref npc.Infernum().ExtraAI[12];
+			NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
+			NPC finalMech = ExoMechManagement.FindFinalMech();
 
 			// Define rotation and direction.
 			int oldDirection = npc.direction;
@@ -58,9 +64,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			npc.direction = npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 			if (oldDirection != npc.direction)
 				npc.netUpdate = true;
-
-			// Fade in.
-			npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
 			// Create segments.
 			if (Main.netMode != NetmodeID.MultiplayerClient && segmentsSpawned == 0f)
@@ -86,13 +89,50 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					previous = lol;
 				}
 
+				finalMechIndex = -1f;
+				complementMechIndex = -1f;
 				segmentsSpawned++;
+				npc.netUpdate = true;
+			}
+
+			// Summon the complement mech and reset things once ready.
+			if (hasSummonedComplementMech == 0f && lifeRatio < ExoMechManagement.Phase4LifeRatio)
+			{
+				ExoMechManagement.SummonComplementMech(npc);
+				hasSummonedComplementMech = 1f;
+				attackTimer = 0f;
+				npc.netUpdate = true;
+			}
+
+			// Summon the final mech once ready.
+			if (wasNotInitialSummon == 0f && finalMechIndex == -1f && complementMech != null && complementMech.life / (float)complementMech?.lifeMax < ExoMechManagement.ComplementMechInvincibilityThreshold)
+			{
+				ExoMechManagement.SummonFinalMech(npc);
+				finalMechIndex = 1f;
 				npc.netUpdate = true;
 			}
 
 			// Get a target.
 			npc.TargetClosest(false);
 			Player target = Main.player[npc.target];
+
+			// Become invincible if the complement mech is at high enough health.
+			npc.dontTakeDamage = false;
+			if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
+				npc.dontTakeDamage = true;
+
+			// Become invincible and disappear if the final mech is present.
+			npc.Calamity().newAI[1] = 0f;
+			if (finalMech != null && finalMech != npc)
+			{
+				npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
+				attackTimer = 0f;
+				attackState = (int)ThanatosHeadAttackType.AggressiveCharge;
+				npc.Calamity().newAI[1] = (int)ThanatosHead.SecondaryPhase.PassiveAndImmune;
+				npc.dontTakeDamage = true;
+			}
+			else
+				npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
 			// Despawn if the target is gone.
 			if (!target.active || target.dead)
@@ -132,9 +172,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				Lighting.AddLight(npc.Center, 0.35f * npc.Opacity, 0.05f * npc.Opacity, 0.05f * npc.Opacity);
 
 				// Emit smoke.
-				npc.takenDamageMultiplier = 18.115f;
-				npc.ModNPC<ThanatosHead>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
-				npc.ModNPC<ThanatosHead>().SmokeDrawer.ParticleSpawnRate = 5;
+				npc.takenDamageMultiplier = 33.184f;
+				if (npc.Opacity > 0.6f)
+				{
+					npc.ModNPC<ThanatosHead>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
+					npc.ModNPC<ThanatosHead>().SmokeDrawer.ParticleSpawnRate = 5;
+				}
 				npc.Calamity().DR = OpenSegmentDR;
 				npc.Calamity().unbreakableDR = false;
 				npc.chaseable = true;
@@ -158,7 +201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			frameType = (int)ThanatosFrameType.Open;
 
 			float lifeRatio = npc.life / (float)npc.lifeMax;
-			float flyAcceleration = MathHelper.Lerp(0.045f, 0.03f, lifeRatio);
+			float flyAcceleration = MathHelper.Lerp(0.042f, 0.03f, lifeRatio);
 			float idealFlySpeed = MathHelper.Lerp(13f, 9.6f, lifeRatio);
 			float generalSpeedFactor = 1.5f;
 
@@ -168,20 +211,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (!npc.WithinRange(destination, 550f))
 			{
 				distanceFromDestination = npc.Distance(destination);
-				flyAcceleration *= 1.45f;
+				flyAcceleration *= 1.2f;
 			}
 
 			// Charge if the player is far away.
 			// Don't do this at the start of the fight though. Doing so might lead to an unfair
 			// charge.
-			if (distanceFromDestination > 1500f && attackTimer > 90f)
+			if (distanceFromDestination > 1750f && attackTimer > 90f)
 				idealFlySpeed = 22f;
 
-			if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+			if (ExoMechManagement.CurrentThanatosPhase == 4)
 			{
-				generalSpeedFactor *= 0.6f;
-				flyAcceleration *= 0.7f;
+				generalSpeedFactor *= 0.5f;
+				flyAcceleration *= 0.5f;
 			}
+			else
+			{
+				if (ExoMechManagement.CurrentThanatosPhase >= 2)
+					generalSpeedFactor *= 1.1f;
+				if (ExoMechManagement.CurrentThanatosPhase >= 3)
+				{
+					generalSpeedFactor *= 1.1f;
+					flyAcceleration *= 1.1f;
+				}
+			}
+
+			// Enforce a lower bound on the speed factor.
+			if (generalSpeedFactor < 1f)
+				generalSpeedFactor = 1f;
 
 			float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(destination));
 
@@ -190,7 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (!npc.WithinRange(destination, 250f))
 			{
 				float flySpeed = npc.velocity.Length();
-				if (flySpeed < 9f)
+				if (flySpeed < 13f)
 					flySpeed += 0.06f;
 
 				if (flySpeed > 15f)
@@ -202,16 +259,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
 					flySpeed -= 0.1f;
 
-				flySpeed = MathHelper.Clamp(flySpeed, 8f, 18f) * generalSpeedFactor;
+				flySpeed = MathHelper.Clamp(flySpeed, 12f, 19f) * generalSpeedFactor;
 				npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * flySpeed;
 			}
 
 			if (npc.WithinRange(target.Center, 500f) && !npc.WithinRange(target.Center, 200f))
-				npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 1f);
+				npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), generalSpeedFactor);
 
 			// Lunge if near the player.
-			if (distanceFromDestination < 400f && directionToPlayerOrthogonality > 0.75f && npc.velocity.Length() < idealFlySpeed * generalSpeedFactor * 1.8f)
-				npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.3f;
+			bool canCharge = ExoMechManagement.CurrentThanatosPhase != 4 && directionToPlayerOrthogonality > 0.75f && distanceFromDestination < 400f;
+			if (canCharge && npc.velocity.Length() < idealFlySpeed * generalSpeedFactor * 1.8f)
+				npc.velocity *= 1.2f;
 
 			if (attackTimer > 720f)
 				SelectNextAttack(npc);
@@ -227,7 +285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
 			ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
 
-			if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+			if (ExoMechManagement.CurrentThanatosPhase == 4)
 				segmentShootDelay += 60;
 
 			// Do movement.
@@ -239,11 +297,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				totalSegmentsToFire = 20f;
 				segmentFireTime = 75f;
 
-				if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+				if (ExoMechManagement.CurrentThanatosPhase == 4)
 				{
-					totalSegmentsToFire *= 0.625f;
+					totalSegmentsToFire -= 4f;
 					segmentFireTime += 10f;
 				}
+				else
+				{
+					if (ExoMechManagement.CurrentThanatosPhase >= 2)
+						totalSegmentsToFire += 6f;
+				}
+				if (ExoMechManagement.CurrentThanatosPhase >= 3)
+					totalSegmentsToFire += 4f;
 
 				segmentFireCountdown = segmentFireTime;
 				npc.netUpdate = true;
@@ -266,7 +331,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
 			ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
 
-			if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+			if (ExoMechManagement.CurrentThanatosPhase == 4)
 				segmentShootDelay += 60;
 
 			// Do movement.
@@ -278,11 +343,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				totalSegmentsToFire = 20f;
 				segmentFireTime = 60f;
 
-				if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+				if (ExoMechManagement.CurrentThanatosPhase == 4)
 				{
-					totalSegmentsToFire *= 0.65f;
+					totalSegmentsToFire -= 4f;
 					segmentFireTime += 10f;
 				}
+				else
+				{
+					if (ExoMechManagement.CurrentThanatosPhase >= 2)
+						totalSegmentsToFire += 6f;
+				}
+				if (ExoMechManagement.CurrentThanatosPhase >= 3)
+					totalSegmentsToFire += 4f;
 
 				segmentFireCountdown = segmentFireTime;
 				npc.netUpdate = true;
@@ -305,7 +377,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
 			ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
 
-			if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+			if (ExoMechManagement.CurrentThanatosPhase == 4)
 				segmentShootDelay += 75;
 
 			// Do movement.
@@ -317,11 +389,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				totalSegmentsToFire = 30f;
 				segmentFireTime = 80f;
 
-				if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+				if (ExoMechManagement.CurrentThanatosPhase == 4)
 				{
-					totalSegmentsToFire *= 0.6f;
+					totalSegmentsToFire -= 6f;
 					segmentFireTime += 10f;
 				}
+				else
+				{
+					if (ExoMechManagement.CurrentThanatosPhase >= 2)
+						totalSegmentsToFire += 6f;
+				}
+				if (ExoMechManagement.CurrentThanatosPhase >= 3)
+					totalSegmentsToFire += 4f;
 
 				segmentFireCountdown = segmentFireTime;
 				npc.netUpdate = true;
@@ -330,7 +409,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (segmentFireCountdown > 0f)
 				segmentFireCountdown--;
 
-			if (attackTimer > 9600f)
+			if (attackTimer > 600f)
 				SelectNextAttack(npc);
 		}
 
@@ -342,8 +421,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			float idealFlySpeed = 13f;
 
-			if (AresBodyBehaviorOverride.ComplementMechIsPresent(npc))
+			if (ExoMechManagement.CurrentThanatosPhase == 4)
 				idealFlySpeed *= 0.7f;
+			else
+			{
+				if (ExoMechManagement.CurrentThanatosPhase >= 2)
+					idealFlySpeed *= 1.2f;
+			}
+			if (ExoMechManagement.CurrentThanatosPhase >= 3)
+				idealFlySpeed *= 1.25f;
+
+			idealFlySpeed += npc.Distance(target.Center) * 0.004f;
 
 			// Move towards the target if far away from them.
 			if (!npc.WithinRange(target.Center, 1600f))
@@ -364,7 +452,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			if (oldAttackType == ThanatosHeadAttackType.AggressiveCharge)
 			{
-				newAttackType = Main.rand.NextBool() ? ThanatosHeadAttackType.ProjectileShooting_GreenLaser : ThanatosHeadAttackType.ProjectileShooting_GreenLaser;
+				newAttackType = Utils.SelectRandom(Main.rand, ThanatosHeadAttackType.ProjectileShooting_RedLaser, ThanatosHeadAttackType.ProjectileShooting_PurpleLaser, ThanatosHeadAttackType.ProjectileShooting_GreenLaser);
 			}
 			else
 			{

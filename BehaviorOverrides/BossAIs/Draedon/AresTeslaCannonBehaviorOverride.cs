@@ -53,14 +53,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Shoot slower if pointing downward.
 			orbShootSpeed *= MathHelper.Lerp(1f, 0.75f, Utils.InverseLerp(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
 
-			if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
+			if (ExoMechManagement.CurrentAresPhase >= 2)
 			{
 				totalOrbsPerBurst = 6;
 				orbShootSpeed *= 0.75f;
 			}
 
 			// Nerf things while Ares' complement mech is present.
-			if (AresBodyBehaviorOverride.ComplementMechIsPresent(aresBody))
+			if (ExoMechManagement.CurrentAresPhase == 4)
 				totalOrbsPerBurst = 4;
 
 			int shootRate = shootTime / totalOrbsPerBurst;
@@ -137,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				if (Main.netMode != NetmodeID.MultiplayerClient)
 				{
 					// Release sparks once Ares is in the second phase.
-					if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
+					if (ExoMechManagement.CurrentAresPhase >= 2)
 					{
 						float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
 						for (int i = 0; i < 7; i++)
@@ -148,7 +148,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					}
 
 					// As well as a of electric clouds in the third phase.
-					if (AresBodyBehaviorOverride.CurrentAresPhase >= 3)
+					if (ExoMechManagement.CurrentAresPhase >= 3)
 					{
 						for (int i = 0; i < 85; i++)
 						{

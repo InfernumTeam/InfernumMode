@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float currentDirection = ref npc.ai[3];
 			int laserCount = laserCounter % 3f == 2f ? 3 : 1;
 
-			if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
+			if (ExoMechManagement.CurrentAresPhase >= 2)
 			{
 				laserCount += 2;
 				totalLasersPerBurst = 12;
@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				laserShootSpeed *= 1.1f;
 			}
 
-			if (AresBodyBehaviorOverride.CurrentAresPhase >= 3)
+			if (ExoMechManagement.CurrentAresPhase >= 3)
 			{
 				laserShootSpeed *= 0.85f;
 
@@ -72,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 
 			// Nerf things while Ares' complement mech is present.
-			if (AresBodyBehaviorOverride.ComplementMechIsPresent(aresBody))
+			if (ExoMechManagement.CurrentAresPhase == 4)
 			{
 				shootTime += 70;
 				if (laserCount > 4)
@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				attackTimer = chargeDelay;
 
 			// Hover near Ares.
-			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + Vector2.UnitX * 575f, 32f, 75f);
+			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center - Vector2.UnitX * 575f, 32f, 75f);
 
 			// Choose a direction and rotation.
 			// Rotation is relative to predictiveness.

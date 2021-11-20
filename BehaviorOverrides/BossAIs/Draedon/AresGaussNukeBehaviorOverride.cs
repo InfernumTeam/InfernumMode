@@ -54,19 +54,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			float idealChargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime * 2.3f;
 			float idealRechargeTime = AresBodyBehaviorOverride.Phase1ArmChargeupTime * 2.3f;
 
-			if (AresBodyBehaviorOverride.CurrentAresPhase >= 2)
+			if (ExoMechManagement.CurrentAresPhase >= 2)
 			{
 				idealChargeDelay *= 0.7f;
 				idealRechargeTime *= 0.7f;
 			}
-			if (AresBodyBehaviorOverride.CurrentAresPhase >= 3)
+			if (ExoMechManagement.CurrentAresPhase >= 3)
 			{
 				idealChargeDelay *= 0.7f;
 				idealRechargeTime *= 0.7f;
 			}
 
 			// Nerf things while Ares' complement mech is present.
-			if (AresBodyBehaviorOverride.ComplementMechIsPresent(aresBody))
+			if (ExoMechManagement.CurrentAresPhase == 4)
 			{
 				idealChargeDelay += 125f;
 				idealRechargeTime += 125f;
@@ -85,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				attackTimer = 0f;
 
 			// Hover near Ares.
-			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center - Vector2.UnitX * 575f, 32f, 75f);
+			AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + Vector2.UnitX * 575f, 32f, 75f);
 
 			// Choose a direction and rotation.
 			// Rotation is relative to predictiveness.

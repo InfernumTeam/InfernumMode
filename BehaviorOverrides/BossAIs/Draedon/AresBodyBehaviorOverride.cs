@@ -1,9 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
-using CalamityMod.NPCs.ExoMechs.Artemis;
-using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,11 +29,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
-		public const float Phase2LifeRatio = 0.75f;
-		public const float Phase3LifeRatio = 0.5f;
-		public const float Phase4LifeRatio = 0.3f;
-		public const float ComplementMechInvincibilityThreshold = 0.6f;
-
 		public const float Phase1ArmChargeupTime = 150f;
 
 		#region AI
@@ -58,9 +50,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float armsHaveBeenSummoned = ref npc.ai[3];
 			ref float armCycleCounter = ref npc.Infernum().ExtraAI[5];
 			ref float armCycleTimer = ref npc.Infernum().ExtraAI[6];
-			ref float canSummonComplementMech = ref npc.Infernum().ExtraAI[7];
+			ref float hasSummonedComplementMech = ref npc.Infernum().ExtraAI[7];
 			ref float projectileDamageBoost = ref npc.Infernum().ExtraAI[8];
-			ref float finalComplementMech = ref npc.Infernum().ExtraAI[10];
+			ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
+			ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[11];
+			ref float finalMechIndex = ref npc.Infernum().ExtraAI[12];
+			NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
+			NPC finalMech = ExoMechManagement.FindFinalMech();
 
 			// Go through the attack cycle.
 			if (armCycleTimer >= 600f)
@@ -72,15 +68,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			}
 			else
 				armCycleTimer++;
-
-			// Summon the complement mech and reset things.
-			if (canSummonComplementMech == 0f && lifeRatio < Phase4LifeRatio)
-			{
-				SummonComplementMech(npc);
-				canSummonComplementMech = 1f;
-				armCycleTimer = 0f;
-				npc.netUpdate = true;
-			}
 
 			if (Main.netMode != NetmodeID.MultiplayerClient && armsHaveBeenSummoned == 0f)
 			{
@@ -109,18 +96,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					Main.npc[lol].realLife = npc.whoAmI;
 					Main.npc[lol].netUpdate = true;
 				}
-				finalComplementMech = -1f;
+				complementMechIndex = -1f;
+				finalMechIndex = -1f;
 				armsHaveBeenSummoned = 1f;
+				npc.netUpdate = true;
+			}
+
+			// Summon the complement mech and reset things once ready.
+			if (hasSummonedComplementMech == 0f && lifeRatio < ExoMechManagement.Phase4LifeRatio)
+			{
+				ExoMechManagement.SummonComplementMech(npc);
+				hasSummonedComplementMech = 1f;
+				attackTimer = 0f;
+				npc.netUpdate = true;
+			}
+
+			// Summon the final mech once ready.
+			if (wasNotInitialSummon == 0f && finalMechIndex == -1f && complementMech != null && complementMech.life / (float)complementMech?.lifeMax < ExoMechManagement.ComplementMechInvincibilityThreshold)
+			{
+				ExoMechManagement.SummonFinalMech(npc);
 				npc.netUpdate = true;
 			}
 
 			// Become invincible if the complement mech is at high enough health.
 			npc.dontTakeDamage = false;
-			if (finalComplementMech >= 0 && Main.npc[(int)finalComplementMech].active && Main.npc[(int)finalComplementMech].life > Main.npc[(int)finalComplementMech].lifeMax * ComplementMechInvincibilityThreshold)
+			if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
 				npc.dontTakeDamage = true;
 
+			// Become invincible and disappear if the final mech is present.
+			npc.Calamity().newAI[1] = 0f;
+			if (finalMech != null && finalMech != npc)
+			{
+				npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
+				attackTimer = 0f;
+				attackState = (int)AresBodyAttackType.IdleHover;
+				npc.Calamity().newAI[1] = (int)AresBody.SecondaryPhase.PassiveAndImmune;
+				npc.dontTakeDamage = true;
+			}
+			else
+				npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
+
 			// Reset things.
-			projectileDamageBoost = ComplementMechIsPresent(npc) ? 50f : 0f;
+			projectileDamageBoost = ExoMechManagement.ComplementMechIsPresent(npc) ? 50f : 0f;
 
 			// Get a target.
 			npc.TargetClosest(false);
@@ -152,9 +169,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
 		{
-			// Fade in.
-			npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
-
 			Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
 			DoHoverMovement(npc, hoverDestination, 24f, 75f);
 
@@ -172,7 +186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int totalLasers = 20;
 			int totalSparks = 25;
 
-			if (ComplementMechIsPresent(npc))
+			if (ExoMechManagement.ComplementMechIsPresent(npc))
 			{
 				totalBursts -= 2;
 				telegraphTime += 10;
@@ -258,7 +272,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		{
 			AresBodyAttackType oldAttackType = (AresBodyAttackType)(int)npc.ai[0];
 			npc.ai[0] = (int)AresBodyAttackType.IdleHover;
-			if (oldAttackType == AresBodyAttackType.IdleHover && CurrentAresPhase >= 3)
+			if (oldAttackType == AresBodyAttackType.IdleHover && ExoMechManagement.CurrentAresPhase >= 3)
 				npc.ai[0] = (int)AresBodyAttackType.RadianceLaserBursts;
 
 			npc.ai[1] = 0f;
@@ -274,7 +288,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				return false;
 
 			NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-			if (aresBody.life > aresBody.lifeMax * Phase2LifeRatio)
+
+			if (aresBody.Opacity <= 0f)
+				return true;
+
+			if (aresBody.life > aresBody.lifeMax * ExoMechManagement.Phase2LifeRatio)
 				return false;
 
 			if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts)
@@ -297,72 +315,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			}
 
 			return false;
-		}
-
-		public static bool ComplementMechIsPresent(NPC npc)
-		{
-			// Ares summons Thanatos.
-			if (npc.type == ModContent.NPCType<AresBody>())
-				return CalamityGlobalNPC.draedonExoMechWorm != -1;
-
-			// Thanatos summons Ares.
-			if (npc.type == ModContent.NPCType<ThanatosHead>())
-				return CalamityGlobalNPC.draedonExoMechTwinRed != -1 || CalamityGlobalNPC.draedonExoMechTwinGreen != -1;
-
-			// The twins summon Thanatos.
-			if (npc.type == ModContent.NPCType<Apollo>() || npc.type == ModContent.NPCType<Artemis>())
-				return CalamityGlobalNPC.draedonExoMechWorm != -1;
-
-			return false;
-		}
-
-		public static void SummonComplementMech(NPC npc)
-		{
-			// Don't summon NPCs clientside.
-			if (Main.netMode == NetmodeID.MultiplayerClient)
-				return;
-
-			// Ares and twins summons Thanatos.
-			// Only Apollo does the summoning.
-			if (npc.type == ModContent.NPCType<AresBody>() || npc.type == ModContent.NPCType<Apollo>())
-			{
-				Vector2 thanatosSpawnPosition = Main.player[npc.target].Center + Vector2.UnitY * 2100f;
-				int complementMech = NPC.NewNPC((int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
-				NPC thanatos = Main.npc[complementMech];
-				npc.Infernum().ExtraAI[10] = complementMech;
-				if (thanatos != null)
-					thanatos.velocity = thanatos.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
-			}
-
-			// Thanatos summons Ares.
-			if (npc.type == ModContent.NPCType<ThanatosHead>())
-			{
-				Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-				int complementMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
-				NPC ares = Main.npc[complementMech];
-				npc.Infernum().ExtraAI[10] = complementMech;
-				ares.Infernum().ExtraAI[7] = 1f;
-				ares.netUpdate = true;
-			}
-		}
-
-		public static int CurrentAresPhase
-		{
-			get
-			{
-				if (CalamityGlobalNPC.draedonExoMechPrime == -1)
-					return 0;
-
-				NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-				if (ComplementMechIsPresent(aresBody))
-					return 4;
-				if (aresBody.life <= aresBody.lifeMax * Phase3LifeRatio)
-					return 3;
-				if (aresBody.life <= aresBody.lifeMax * Phase2LifeRatio)
-					return 2;
-
-				return 1;
-			}
 		}
 
 		public static void DoHoverMovement(NPC npc, Vector2 destination, float flySpeed, float hyperSpeedCap)
@@ -443,11 +395,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			(int, bool)[] armProperties = new (int, bool)[]
 			{
-				// Gauss arm.
-				(1, true),
-
 				// Laser arm.
 				(-1, true),
+
+				// Gauss arm.
+				(1, true),
 
 				// Telsa arm.
 				(-1, false),

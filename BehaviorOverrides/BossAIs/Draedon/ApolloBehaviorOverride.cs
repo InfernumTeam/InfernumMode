@@ -104,6 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				attackState = (int)TwinsAttackType.VanillaShots;
 				npc.Calamity().newAI[1] = (int)Apollo.SecondaryPhase.PassiveAndImmune;
 				npc.ModNPC<Apollo>().ChargeComboFlash = 0f;
+				npc.Calamity().ShouldCloseHPBar = true;
 				npc.dontTakeDamage = true;
 			}
 			else
@@ -128,6 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				if (phaseTransitionAnimationTime == 1f)
 					SelectNextAttack(npc);
 
+				npc.ModNPC<Apollo>().ChargeComboFlash = 0f;
 				attackState = (int)TwinsAttackType.VanillaShots;
 				phaseTransitionAnimationTime++;
 				npc.dontTakeDamage = true;
@@ -172,6 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			// Create the pupil gore thing.
 			int pupilPopoffTime = (int)(Phase2TransitionTime * Utils.InverseLerp(startingFrame, endingFrame, 37.5f));
+			int chargeupSoundTime = (int)(Phase2TransitionTime * Utils.InverseLerp(startingFrame, endingFrame, 46.5f));
 			if (phaseTransitionAnimationTime == pupilPopoffTime)
 			{
 				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
@@ -187,6 +190,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					npc.netUpdate = true;
 				}
 			}
+
+			if (phaseTransitionAnimationTime >= chargeupSoundTime && phaseTransitionAnimationTime <= chargeupSoundTime + 40f && phaseTransitionAnimationTime % 16f == 15f)
+				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireStart"), npc.Center);
+
+			if (phaseTransitionAnimationTime == chargeupSoundTime + 75f)
+				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireEnd"), npc.Center);
 		}
 
 		public static void DoBehavior_ReleaseSplittingPlasmaShots(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
@@ -276,8 +285,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					// Once sufficiently close, go to the next attack substate.
 					if (npc.WithinRange(hoverDestination, 50f))
 					{
-						Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
-
 						npc.velocity = Vector2.Zero;
 						attackSubstate = 1f;
 						attackTimer = 0f;
@@ -299,8 +306,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					else
 						npc.ModNPC<Apollo>().ChargeComboFlash = MathHelper.Clamp(attackTimer / waitTime, 0f, 1f);
 
-					if (attackTimer >= waitTime && attackDelay >= 60f)
+					if (attackTimer >= waitTime && attackDelay >= 45f)
 					{
+						Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
 						npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * chargePredictiveness) * chargeSpeed;
 						attackSubstate = 2f;
 						attackTimer = 0f;
@@ -347,7 +355,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			}
 
 			// Update frames for the second phase.
-			if (ExoMechManagement.CurrentTwinsPhase >= 2)
+			if (ExoMechManagement.CurrentTwinsPhase >= 2 && frame <= 30f)
 				frame += 60f;
 			attackDelay++;
 		}
@@ -366,7 +374,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int waitTime = 8;
 			int chargeTime = 40;
 			int totalCharges = 6;
-			int sparkCount = 20;
+			int sparkCount = 32;
+			int homingSparkCount = 4;
 			float chargeSpeed = 44f;
 			float chargePredictiveness = 10f;
 			ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
@@ -414,7 +423,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					npc.ModNPC<Apollo>().ChargeComboFlash = MathHelper.Clamp(attackTimer / waitTime, 0f, 1f);
 
 					// Charge and release sparks.
-					if (attackTimer >= waitTime && attackDelay >= 60f)
+					if (attackTimer >= waitTime && attackDelay >= 45f)
 					{
 						Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
 
@@ -422,10 +431,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 						if (Main.netMode != NetmodeID.MultiplayerClient)
 						{
+							float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
 							for (int i = 0; i < sparkCount; i++)
 							{
-								Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / sparkCount).ToRotationVector2() * 12f;
+								Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / sparkCount + offsetAngle).ToRotationVector2() * 12f;
 								Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<AcceleratingPlasmaSpark>(), 580, 0f);
+							}
+
+							for (int i = 0; i < homingSparkCount; i++)
+							{
+								Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / homingSparkCount + offsetAngle).ToRotationVector2() * 10f;
+								Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<PlasmaSpark>(), 580, 0f);
 							}
 						}
 
@@ -464,22 +480,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		public static void DoBehavior_LaserRayScarletBursts(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
 		{
 			// Make Apollo go away so Artemis can do its attack without interference.
-			if (npc.type == ModContent.NPCType<Artemis>())
+			if (npc.type == ModContent.NPCType<Apollo>())
 			{
 				npc.dontTakeDamage = true;
 				npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.16f, 0f, 1f);
+				npc.ai[1] = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Artemis>())].ai[1];
 				npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center - Vector2.UnitY * 450f) * 40f, 1.25f);
 				return;
 			}
 
 			int shootDelay = 25;
 			float spinRadius = 540f;
-			int spinTime = 75;
+			float spinArc = MathHelper.Pi * 1.5f;
 			ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
 			ref float hoverPosition = ref npc.Infernum().ExtraAI[1];
 			ref float spinDirection = ref npc.Infernum().ExtraAI[2];
-			ref float spinVelocityX = ref npc.Infernum().ExtraAI[3];
-			ref float spinVelocityY = ref npc.Infernum().ExtraAI[4];
+			ref float spinningPointX = ref npc.Infernum().ExtraAI[3];
+			ref float spinningPointY = ref npc.Infernum().ExtraAI[4];
 
 			// Decide to either fly above or below the target.
 			if (hoverPosition == 0f)
@@ -491,13 +508,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			Vector2 hoverDestination = target.Center - Vector2.UnitY * hoverPosition * spinRadius;
 
-			// Define the spin direction and velocity.
+			// Define the spin direction.
 			if (spinDirection == 0f)
 			{
-				spinDirection = (target.Center.X < npc.Center.X).ToDirectionInt() * hoverPosition;
-				Vector2 spinVelocity = Vector2.UnitX * MathHelper.Pi * spinRadius / spinTime * -spinDirection * hoverPosition;
-				spinVelocityX = spinVelocity.X;
-				spinVelocityY = spinVelocity.Y;
+				spinDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 				npc.netUpdate = true;
 			}
 
@@ -514,13 +528,56 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 						npc.velocity = Vector2.Zero;
 						npc.Center = hoverDestination;
 						npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+						spinningPointX = target.Center.X;
+						spinningPointY = target.Center.Y;
+						attackTimer = 0f;
 						attackSubstate = 1f;
+						npc.netUpdate = true;
 					}
 					break;
 
 				// Stay in place for a brief moment.
 				case 1:
+					// Fire the laser.
+					if (attackTimer >= shootDelay)
+					{
+						attackTimer = 0f;
+						attackSubstate = 2f;
+						npc.netUpdate = true;
+
+						// Play the moon lord laser sound (cringe).
+						Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 104);
+
+						if (Main.netMode != NetmodeID.MultiplayerClient)
+						{
+							int type = ModContent.ProjectileType<ArtemisSpinLaser>();
+							int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, type, 1100, 0f, Main.myPlayer, npc.whoAmI);
+							if (Main.projectile.IndexInRange(laser))
+							{
+								Main.projectile[laser].ai[0] = npc.whoAmI;
+								Main.projectile[laser].ai[1] = spinDirection;
+							}
+						}
+					}
 					break;
+
+				// Spin 2 win.
+				case 2:
+					float spinAngle = attackTimer / ArtemisSpinLaser.LaserLifetime * spinArc * spinDirection * hoverPosition;
+					npc.velocity = spinAngle.ToRotationVector2() * MathHelper.TwoPi * spinRadius / ArtemisSpinLaser.LaserLifetime * spinDirection;
+					npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + MathHelper.PiOver2;
+
+					if (attackTimer >= ArtemisSpinLaser.LaserLifetime)
+						SelectNextAttack(npc);
+					break;
+			}
+
+			// Release orange explosions everywhere periodically.
+			if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 25f == 24f)
+			{
+				Vector2 targetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
+				Vector2 spawnPosition = target.Center - targetDirection.RotatedByRandom(1.1f) * Main.rand.NextFloat(325f, 725f) * new Vector2(1f, 0.6f);
+				Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<ArtemisChargeFlameExplosion>(), 575, 0f);
 			}
 		}
 
@@ -528,24 +585,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		{
 			// Reset the frame counter, in case it was used in the previous attack.
 			npc.frameCounter = 0f;
-
+			
 			TwinsAttackType oldAttackType = (TwinsAttackType)(int)npc.ai[0];
 			npc.ai[0] = (int)TwinsAttackType.VanillaShots;
 			if (oldAttackType == TwinsAttackType.VanillaShots)
 			{
 				npc.ai[0] = (int)TwinsAttackType.FireCharge;
-				if (ExoMechManagement.CurrentTwinsPhase >= 2)
-					npc.ai[0] = (int)TwinsAttackType.SpecialAttack_PlasmaCharges;
+				if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
+				{
+					npc.ai[0] = Main.rand.NextBool() ? (int)TwinsAttackType.SpecialAttack_PlasmaCharges : (int)TwinsAttackType.SpecialAttack_LaserRayScarletBursts;
+				}
 			}
-
 			npc.ai[1] = 0f;
 			for (int i = 0; i < 5; i++)
 				npc.Infernum().ExtraAI[i] = 0f;
 
 			// Increment the attack counter. It is used when determining if the mechs should swap sides.
 			npc.Infernum().ExtraAI[5]++;
-			if (npc.Infernum().ExtraAI[5] % 6f == 2f)
-				npc.ai[2] *= -1f;
+
+			// Inform Apollo of the attack state change ff Artemis calls this method, as Artemis' state relies on Apollo's.
+			if (npc.type == ModContent.NPCType<Artemis>() && Main.npc.IndexInRange(npc.realLife) && Main.npc[npc.realLife].active && Main.npc[npc.realLife].type != ModContent.NPCType<Artemis>())
+				SelectNextAttack(Main.npc[npc.realLife]);
+			else
+			{
+				NPC artemis = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Artemis>())];
+				artemis.ai[1] = 0f;
+				for (int i = 0; i < 5; i++)
+					artemis.Infernum().ExtraAI[i] = 0f;
+
+				if (npc.Infernum().ExtraAI[5] % 6f == 2f)
+					npc.ai[2] *= -1f;
+			}
 
 			npc.netUpdate = true;
 		}

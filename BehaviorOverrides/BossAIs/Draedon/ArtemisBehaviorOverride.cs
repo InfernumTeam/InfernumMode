@@ -48,7 +48,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
 			ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[11];
 			ref float finalMechIndex = ref npc.Infernum().ExtraAI[12];
-			NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
 			NPC finalMech = ExoMechManagement.FindFinalMech();
 			NPC apollo = Main.npc[npc.realLife];
 
@@ -63,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Reset things and use variables from Apollo.
 			npc.damage = 0;
 			npc.defDamage = 640;
-			npc.dontTakeDamage = false;
+			npc.dontTakeDamage = apollo.dontTakeDamage;
 			npc.target = apollo.target;
 			npc.life = apollo.life;
 			npc.lifeMax = apollo.lifeMax;
@@ -77,8 +76,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			npc.Infernum().ExtraAI[12] = apollo.Infernum().ExtraAI[12];
 			npc.Calamity().newAI[0] = (int)Artemis.Phase.Charge;
 
-			// Fade in.
-			npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
+			// Become invincible and disappear if the final mech is present.
+			npc.Calamity().newAI[1] = 0f;
+			if (finalMech != null && finalMech != npc)
+			{
+				npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
+				attackTimer = 0f;
+				attackState = (int)TwinsAttackType.VanillaShots;
+				npc.Calamity().newAI[1] = (int)Artemis.SecondaryPhase.PassiveAndImmune;
+				npc.ModNPC<Artemis>().ChargeFlash = 0f;
+				npc.Calamity().ShouldCloseHPBar = true;
+				npc.dontTakeDamage = true;
+			}
+			else
+				npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
 			// Get a target.
 			Player target = Main.player[npc.target];
@@ -96,6 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (phaseTransitionAnimationTime < Phase2TransitionTime && lifeRatio < ExoMechManagement.Phase2LifeRatio)
 			{
 				npc.dontTakeDamage = true;
+				npc.ModNPC<Artemis>().ChargeFlash = 0f;
 				DoBehavior_DoPhaseTransition(npc, target, ref frame, hoverSide, phaseTransitionAnimationTime);
 				return false;
 			}
@@ -153,7 +165,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				{
 					int laser = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, aimDirection * laserShootSpeed, ModContent.ProjectileType<ArtemisLaser>(), 550, 0f);
 					if (Main.projectile.IndexInRange(laser))
-                    {
+					{
 						Main.projectile[laser].ModProjectile<ArtemisLaser>().InitialDestination = aimDestination;
 						Main.projectile[laser].ai[1] = npc.whoAmI;
 						Main.projectile[laser].netUpdate = true;

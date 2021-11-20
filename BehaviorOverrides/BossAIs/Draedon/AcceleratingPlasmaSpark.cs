@@ -27,8 +27,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.1f, 0f, 1f);
             projectile.rotation += projectile.velocity.X * 0.025f;
-            if (projectile.velocity.Length() < 32f)
-                projectile.velocity *= 1.0125f;
+            if (projectile.velocity.Length() < 35f)
+                projectile.velocity *= 1.024f;
 
             // Emit dust.
             for (int i = 0; i < 2; i++)

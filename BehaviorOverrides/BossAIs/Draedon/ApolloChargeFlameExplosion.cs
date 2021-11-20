@@ -46,6 +46,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public override bool CanHitPlayer(Player target) => projectile.Opacity == 1f;
 
+		public override Color? GetAlpha(Color lightColor) => Color.White;
+
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{
 			if (projectile.Opacity != 1f)

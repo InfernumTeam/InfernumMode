@@ -129,6 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				attackTimer = 0f;
 				attackState = (int)ThanatosHeadAttackType.AggressiveCharge;
 				npc.Calamity().newAI[1] = (int)ThanatosHead.SecondaryPhase.PassiveAndImmune;
+				npc.Calamity().ShouldCloseHPBar = true;
 				npc.dontTakeDamage = true;
 			}
 			else
@@ -172,7 +173,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				Lighting.AddLight(npc.Center, 0.35f * npc.Opacity, 0.05f * npc.Opacity, 0.05f * npc.Opacity);
 
 				// Emit smoke.
-				npc.takenDamageMultiplier = 33.184f;
+				npc.takenDamageMultiplier = 47.184f;
 				if (npc.Opacity > 0.6f)
 				{
 					npc.ModNPC<ThanatosHead>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;

@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (segmentFireCountdown == (int)(segmentFireTime / 2) + fireDelay)
                 {
-                    bool willShootLaser = headAttackType != ThanatosHeadBehaviorOverride.ThanatosHeadAttackType.ProjectileShooting_GreenLaser || segmentAttackIndex % 3f == 0f;
+                    bool willShootLaser = headAttackType != ThanatosHeadBehaviorOverride.ThanatosHeadAttackType.ProjectileShooting_GreenLaser || segmentAttackIndex % 2f == 0f;
 
                     if (willShootLaser)
                     {

@@ -205,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
 			Vector2 scaleOuter = scaleInner * new Vector2(1f, 2.2f);
 
-			Color colorOuter = Color.Lerp(Color.Red, Color.Crimson, TelegraphDelay / TelegraphTotalTime * 2f % 1f); // Iterate through crimson and red once and then flash.
+			Color colorOuter = Color.Lerp(Color.Orange, Color.OrangeRed, TelegraphDelay / TelegraphTotalTime * 2f % 1f);
 			Color colorInner = Color.Lerp(colorOuter, Color.White, 0.75f);
 
 			colorOuter *= 0.6f;

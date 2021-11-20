@@ -67,6 +67,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			{
 				if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
 					continue;
+				if (!Main.npc[i].active)
+					continue;
 
 				if (initialMech.Infernum().ExtraAI[12] == i)
 					return Main.npc[i];
@@ -159,7 +161,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					return 0;
 
 				NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-				if (ComplementMechIsPresent(aresBody))
+				if (ComplementMechIsPresent(aresBody) || aresBody.Infernum().ExtraAI[7] == 1f)
 					return 4;
 				if (aresBody.life <= aresBody.lifeMax * Phase3LifeRatio)
 					return 3;
@@ -178,7 +180,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					return 0;
 
 				NPC thanatosHead = Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
-				if (ComplementMechIsPresent(thanatosHead))
+				if (ComplementMechIsPresent(thanatosHead) || thanatosHead.Infernum().ExtraAI[7] == 1f)
 					return 4;
 				if (thanatosHead.life <= thanatosHead.lifeMax * Phase3LifeRatio)
 					return 3;
@@ -193,16 +195,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		{
 			get
 			{
-				if (CalamityGlobalNPC.draedonExoMechTwinGreen == -1)
+				if (!NPC.AnyNPCs(ModContent.NPCType<Apollo>()))
 					return 0;
 
-				NPC apollo = Main.npc[CalamityGlobalNPC.draedonExoMechTwinGreen];
+				NPC apollo = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Apollo>())];
 
 				// Check to ensure that Apollo's phase 2 animation has finished.
 				if (apollo.ai[3] < ApolloBehaviorOverride.Phase2TransitionTime)
 					return 1;
 
-				if (ComplementMechIsPresent(apollo))
+				if (ComplementMechIsPresent(apollo) || apollo.Infernum().ExtraAI[7] == 1f)
 					return 4;
 				if (apollo.life <= apollo.lifeMax * Phase3LifeRatio)
 					return 3;

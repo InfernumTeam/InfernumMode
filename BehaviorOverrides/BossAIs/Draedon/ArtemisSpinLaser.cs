@@ -17,9 +17,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			get => (int)projectile.ai[0];
 			set => projectile.ai[0] = value;
 		}
+
+		public const int LaserLifetime = 135;
 		public override float MaxScale => 1f;
 		public override float MaxLaserLength => 4800f;
-		public override float Lifetime => 600;
+		public override float Lifetime => LaserLifetime;
 		public override Color LaserOverlayColor => new Color(250, 180, 100, 100);
 		public override Color LightCastColor => Color.White;
 		public override Texture2D LaserBeginTexture => Main.projectileTexture[projectile.type];
@@ -76,6 +78,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				projectile.Kill();
 				return;
 			}
+
+			Time = Main.npc[OwnerIndex].ai[1];
 		}
 
 		public override float DetermineLaserLength()

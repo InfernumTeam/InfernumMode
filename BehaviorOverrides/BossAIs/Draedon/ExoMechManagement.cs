@@ -188,5 +188,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				return 1;
 			}
 		}
+
+		public static int CurrentTwinsPhase
+		{
+			get
+			{
+				if (CalamityGlobalNPC.draedonExoMechTwinGreen == -1)
+					return 0;
+
+				NPC apollo = Main.npc[CalamityGlobalNPC.draedonExoMechTwinGreen];
+
+				// Check to ensure that Apollo's phase 2 animation has finished.
+				if (apollo.ai[3] < ApolloBehaviorOverride.Phase2TransitionTime)
+					return 1;
+
+				if (ComplementMechIsPresent(apollo))
+					return 4;
+				if (apollo.life <= apollo.lifeMax * Phase3LifeRatio)
+					return 3;
+				if (apollo.life <= apollo.lifeMax * Phase2LifeRatio)
+					return 2;
+
+				return 1;
+			}
+		}
 	}
 }

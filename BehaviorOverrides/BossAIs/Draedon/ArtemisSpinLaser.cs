@@ -79,6 +79,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				return;
 			}
 
+			if (Main.npc[OwnerIndex].Opacity <= 0f)
+			{
+				projectile.Kill();
+				return;
+			}
+
 			Time = Main.npc[OwnerIndex].ai[1];
 		}
 

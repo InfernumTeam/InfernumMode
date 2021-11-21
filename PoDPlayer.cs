@@ -1,11 +1,14 @@
 ﻿using CalamityMod.World;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Dusts;
+using InfernumMode.MachineLearning;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace InfernumMode
 {
@@ -19,6 +22,18 @@ namespace InfernumMode
 
         public Vector2 ScreenFocusPosition;
         public float ScreenFocusInterpolant = 0f;
+
+        private MLAttackSelector thanatosLaserTypeSelector = null;
+        public MLAttackSelector ThanatosLaserTypeSelector
+        {
+            get
+            {
+                if (thanatosLaserTypeSelector is null)
+                    thanatosLaserTypeSelector = new MLAttackSelector(3, "ThanatosLaser");
+                return thanatosLaserTypeSelector;
+            }
+            set => thanatosLaserTypeSelector = value;
+        }
 
         #region Skies
         public override void UpdateBiomeVisuals()
@@ -70,6 +85,12 @@ namespace InfernumMode
             return base.PreKill(damage, hitDirection, pvp, ref playSound, ref genGore, ref damageSource);
         }
         #endregion
+        #region Kill
+        public override void Kill(double damage, int hitDirection, bool pvp, PlayerDeathReason damageSource)
+        {
+            ExoMechManagement.RecordAttackDeath(player);
+        }
+        #endregion Kill
         #region Life Regen
         public override void UpdateLifeRegen()
         {
@@ -142,9 +163,22 @@ namespace InfernumMode
 
             Main.screenPosition += Main.rand.NextVector2CircularEdge(CurrentScreenShakePower, CurrentScreenShakePower);
         }
-		#endregion
-		#region Misc Effects
-		public override void PostUpdateMiscEffects()
+        #endregion
+        #region Saving and Loading
+        public override TagCompound Save()
+        {
+            TagCompound tag = new TagCompound();
+            ThanatosLaserTypeSelector?.Save(tag);
+            return tag;
+        }
+
+        public override void Load(TagCompound tag)
+        {
+            ThanatosLaserTypeSelector = MLAttackSelector.Load(tag, "ThanatosLaser");
+        }
+        #endregion Saving and Loading
+        #region Misc Effects
+        public override void PostUpdateMiscEffects()
         {
             NPC.MoonLordCountdown = 0;
             if (player.mount.Active && player.mount.Type == Mount.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DesertScourgeHead")))

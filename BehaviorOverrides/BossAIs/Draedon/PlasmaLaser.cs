@@ -201,7 +201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		public override void OnHitPlayer(Player target, int damage, bool crit)
 		{
 			if (TelegraphDelay > TelegraphTotalTime)
-				target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 180);
+				target.AddBuff(BuffID.CursedInferno, 180);
 		}
 
 		public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)

@@ -55,6 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
 			ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[11];
 			ref float finalMechIndex = ref npc.Infernum().ExtraAI[12];
+			NPC initialMech = ExoMechManagement.FindInitialMech();
 			NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
 			NPC finalMech = ExoMechManagement.FindFinalMech();
 
@@ -135,6 +136,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			else
 				npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
+			// Become invincible if the complement and the final mech was killed.
+			if (initialMech != null && initialMech.Infernum().ExtraAI[12] >= 0f && wasNotInitialSummon == 1f && finalMech != npc)
+				npc.dontTakeDamage = true;
+
 			// Reset things.
 			projectileDamageBoost = ExoMechManagement.CurrentAresPhase >= 4 ? 50f : 0f;
 
@@ -186,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int totalLasers = 20;
 			int totalSparks = 25;
 
-			if (ExoMechManagement.CurrentAresPhase == 4)
+			if (ExoMechManagement.CurrentAresPhase <= 4)
 			{
 				totalBursts -= 2;
 				telegraphTime += 10;

@@ -80,6 +80,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				return;
 			}
 
+			if (ThingToAttachTo.Opacity <= 0f)
+			{
+				projectile.Kill();
+				return;
+			}
+
 			if (InitialSpeed == 0f)
 				InitialSpeed = projectile.velocity.Length();
 

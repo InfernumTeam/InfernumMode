@@ -4,13 +4,12 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
-using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+
+using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -88,6 +87,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public static void SummonComplementMech(NPC npc)
 		{
+			MakeDraedonSayThings(1);
+
 			// Don't summon NPCs clientside.
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				return;
@@ -127,6 +128,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public static void SummonFinalMech(NPC npc)
 		{
+			MakeDraedonSayThings(3);
+
 			// Don't summon NPCs clientside.
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				return;
@@ -262,5 +265,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				return 1;
 			}
 		}
+
+		public static void MakeDraedonSayThings(int statementType)
+        {
+			if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedon))
+				return;
+
+			Main.npc[CalamityGlobalNPC.draedon].localAI[0] = statementType;
+			Main.npc[CalamityGlobalNPC.draedon].ai[0] = DraedonNPC.ExoMechPhaseDialogueTime;
+		}
+
+		public static void RecordAttackDeath(Player player)
+        {
+			int thanatos = CalamityGlobalNPC.draedonExoMechWorm;
+			if (thanatos != -1)
+            {
+				var attack = (ThanatosHeadBehaviorOverride.ThanatosHeadAttackType)(int)Main.npc[thanatos].ai[0];
+
+				int attackToReinforce = -1;
+				if (attack == ThanatosHeadBehaviorOverride.ThanatosHeadAttackType.ProjectileShooting_RedLaser)
+					attackToReinforce = 0;
+				if (attack == ThanatosHeadBehaviorOverride.ThanatosHeadAttackType.ProjectileShooting_PurpleLaser)
+					attackToReinforce = 1;
+				if (attack == ThanatosHeadBehaviorOverride.ThanatosHeadAttackType.ProjectileShooting_GreenLaser)
+					attackToReinforce = 2;
+
+				if (attackToReinforce != -1)
+					player.Infernum().ThanatosLaserTypeSelector.BiasInFavorOf(attackToReinforce);
+			}
+        }
 	}
 }

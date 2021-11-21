@@ -40,6 +40,7 @@ using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.Projectiles.Typeless;
 using CalamityMod.Projectiles.Hybrid;
 using CalamityMod.NPCs.SupremeCalamitas;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -632,6 +633,11 @@ namespace InfernumMode.GlobalInstances
 
                 return false;
             }
+
+            if (ExoMechManagement.FindFinalMech() == npc)
+                ExoMechManagement.MakeDraedonSayThings(4);
+            else if (ExoMechManagement.TotalMechs - 1 == 1)
+                ExoMechManagement.MakeDraedonSayThings(5);
 
             return base.CheckDead(npc);
         }

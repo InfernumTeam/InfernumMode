@@ -52,6 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
 			ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[11];
 			ref float finalMechIndex = ref npc.Infernum().ExtraAI[12];
+			NPC initialMech = ExoMechManagement.FindInitialMech();
 			NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
 			NPC finalMech = ExoMechManagement.FindFinalMech();
 			
@@ -94,6 +95,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Become invincible if the complement mech is at high enough health.
 			npc.dontTakeDamage = false;
 			if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
+				npc.dontTakeDamage = true;
+
+			// Become invincible if the complement and the final mech was killed.
+			if (initialMech != null && initialMech.Infernum().ExtraAI[12] >= 0f && wasNotInitialSummon == 1f && finalMech != npc)
 				npc.dontTakeDamage = true;
 
 			// Become invincible and disappear if the final mech is present.
@@ -530,6 +535,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int burstReleaseRate = 30;
 			float spinRadius = 540f;
 			float spinArc = MathHelper.Pi * 1.2f;
+
+			npc.dontTakeDamage = false;
 
 			if (ExoMechManagement.CurrentTwinsPhase >= 3)
 				spinArc *= 1.1f;

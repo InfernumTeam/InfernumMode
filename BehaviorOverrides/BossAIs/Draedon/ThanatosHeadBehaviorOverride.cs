@@ -56,6 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
 			ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[11];
 			ref float finalMechIndex = ref npc.Infernum().ExtraAI[12];
+			NPC initialMech = ExoMechManagement.FindInitialMech();
 			NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
 			NPC finalMech = ExoMechManagement.FindFinalMech();
 
@@ -134,6 +135,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			}
 			else
 				npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
+
+			// Become invincible if the complement and the final mech was killed.
+			if (initialMech != null && initialMech.Infernum().ExtraAI[12] >= 0f && wasNotInitialSummon == 1f && finalMech != npc)
+				npc.dontTakeDamage = true;
 
 			// Despawn if the target is gone.
 			if (!target.active || target.dead)
@@ -529,13 +534,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public static void SelectNextAttack(NPC npc)
 		{
-			// TODO: Incorporate intelligent attack selection into the projectile shot choosing.
 			ThanatosHeadAttackType oldAttackType = (ThanatosHeadAttackType)(int)npc.ai[0];
 			ThanatosHeadAttackType newAttackType;
 
 			if (oldAttackType == ThanatosHeadAttackType.AggressiveCharge)
 			{
-				newAttackType = Utils.SelectRandom(Main.rand, ThanatosHeadAttackType.ProjectileShooting_RedLaser, ThanatosHeadAttackType.ProjectileShooting_PurpleLaser, ThanatosHeadAttackType.ProjectileShooting_GreenLaser);
+				newAttackType = (ThanatosHeadAttackType)(Main.player[npc.target].Infernum().ThanatosLaserTypeSelector.MakeSelection() + 1);
 				if (Main.rand.NextBool(4) && ExoMechManagement.CurrentThanatosPhase >= 3)
 					newAttackType = ThanatosHeadAttackType.VomitNuke;
 			}

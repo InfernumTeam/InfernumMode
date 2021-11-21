@@ -76,6 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
             // Become invincible if the target has been outside of the snow biome for too long.
             npc.dontTakeDamage = enrageTimer >= 300f;
+            npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             // Handle subphase transitions.
             HandleSubphaseTransitions(npc, ref subphaseState, ref attackState, ref attackTimer);

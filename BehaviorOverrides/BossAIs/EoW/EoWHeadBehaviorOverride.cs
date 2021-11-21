@@ -62,6 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 enrageTimer = MathHelper.Clamp(enrageTimer + 1f, 0f, 480f);
 
             bool enraged = enrageTimer >= 300f;
+            npc.Calamity().CurrentlyEnraged = enraged;
 
             switch ((EoWAttackState)(int)attackState)
             {

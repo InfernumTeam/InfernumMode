@@ -115,7 +115,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 npc.position = Main.npc[(int)npc.ai[3]].Center + npc.Infernum().ExtraAI[0].ToRotationVector2() * radius;
                 Main.LocalPlayer.Calamity().adrenaline = 0;
-                npc.Calamity().DR = 0.999999f;
             }
             else
             {
@@ -202,6 +201,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
         {
             hitCounter = 15;
+
+            if (npc.ai[0] != 3f)
+                damage = 1D;
             crit = false;
             return base.StrikeNPC(ref damage, defense, ref knockback, hitDirection, ref crit);
         }

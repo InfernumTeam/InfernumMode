@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Polterghast;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -73,6 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase3 = lifeRatio < Phase3LifeRatio;
             bool enraged = npc.Bottom.Y < Main.worldSurface * 16f;
+            npc.Calamity().CurrentlyEnraged = enraged;
 
             // Store the enraged field so that the limbs can check it more easily.
             npc.ai[3] = enraged.ToInt();

@@ -1,4 +1,5 @@
-﻿using CalamityMod.Buffs.StatDebuffs;
+﻿using CalamityMod;
+using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -74,6 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             // Save the beacon anger factor in a variable.
             npc.Infernum().ExtraAI[6] = beaconAngerFactor;
+            npc.Calamity().CurrentlyEnraged = beaconAngerFactor > 0.7f;
 
             // Create segments and initialize on the first frame.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedSegments == 0f)

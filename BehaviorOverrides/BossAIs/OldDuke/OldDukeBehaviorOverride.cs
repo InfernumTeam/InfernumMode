@@ -236,6 +236,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             // Reset variables. They may be changed by behaviors below.
             npc.Calamity().DR = 0.05f;
             npc.dontTakeDamage = outOfOcean;
+            npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
             npc.damage = npc.defDamage;
 
             // Handle phase transitions.

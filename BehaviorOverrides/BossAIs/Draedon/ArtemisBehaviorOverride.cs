@@ -66,8 +66,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			npc.target = apollo.target;
 			npc.life = apollo.life;
 			npc.lifeMax = apollo.lifeMax;
-			attackState = (int)apollo.ai[0];
-			attackTimer = apollo.ai[1];
+
+			TwinsAttackType apolloAttackType = (TwinsAttackType)(int)apollo.ai[0];
+			if (apolloAttackType != TwinsAttackType.SpecialAttack_LaserRayScarletBursts && apolloAttackType != TwinsAttackType.SpecialAttack_PlasmaCharges)
+			{
+				attackState = (int)apollo.ai[0];
+				attackTimer = apollo.ai[1];
+			}
 			hoverSide = -apollo.ai[2];
 			phaseTransitionAnimationTime = apollo.ai[3];
 			npc.Infernum().ExtraAI[7] = apollo.Infernum().ExtraAI[7];
@@ -147,7 +152,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (ExoMechManagement.CurrentTwinsPhase == 3)
 				shootRate -= 8f;
 			if (ExoMechManagement.CurrentTwinsPhase >= 5)
+			{
+				laserShootSpeed *= 0.8f;
 				shootRate -= 20f;
+			}
 
 			ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
 			ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];

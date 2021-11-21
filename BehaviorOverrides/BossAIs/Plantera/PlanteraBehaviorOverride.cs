@@ -72,6 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             // Determine if should be invincible.
             npc.dontTakeDamage = enraged;
+            npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             // Summon weird leg tentacle hook things.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedHooksFlag == 0f)

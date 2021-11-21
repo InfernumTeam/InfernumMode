@@ -1,4 +1,5 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.Miscellaneous;
@@ -82,6 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             }
 
             bool enraged = !target.ZoneGlowshroom && npc.Top.Y / 16 < Main.worldSurface && !BossRushEvent.BossRushActive;
+            npc.Calamity().CurrentlyEnraged = enraged;
             npc.alpha = Utils.Clamp(npc.alpha - 12, 0, 255);
 
             switch ((CrabulonAttackState)(int)attackType)

@@ -108,6 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400);
 
             npc.dontTakeDamage = outOfOcean;
+            npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             if (spawnAnimationTime < 180f)
             {

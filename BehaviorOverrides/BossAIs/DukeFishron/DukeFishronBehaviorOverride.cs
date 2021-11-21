@@ -152,6 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             bool enraged = target.position.Y < 300f || target.position.Y > Main.worldSurface * 16.0 ||
                            target.position.X > 6000f && target.position.X < (Main.maxTilesX * 16 - 6000);
+            npc.Calamity().CurrentlyEnraged = enraged;
 
             Vector2 mouthPosition = (npc.rotation + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi).ToRotationVector2() * (npc.Size + Vector2.UnitY * 55f) * 0.6f + npc.Center;
 

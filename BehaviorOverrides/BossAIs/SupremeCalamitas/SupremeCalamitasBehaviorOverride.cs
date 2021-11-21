@@ -266,6 +266,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (!npc.Infernum().arenaRectangle.Intersects(target.Hitbox))
             {
                 enrageFactor = MathHelper.Clamp(enrageFactor + 0.02f, 0f, 3f);
+                npc.Calamity().CurrentlyEnraged = true;
                 npc.Calamity().DR = 0.999f;
                 npc.Calamity().unbreakableDR = true;
             }

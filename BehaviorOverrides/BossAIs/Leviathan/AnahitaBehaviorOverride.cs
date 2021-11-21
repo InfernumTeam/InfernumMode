@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -250,6 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             npc.alpha = Utils.Clamp(npc.alpha - 14, 0, 255);
 
             npc.dontTakeDamage = outOfOcean;
+            npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             if (outOfOcean && (AnahitaAttackType)(int)npc.ai[1] != AnahitaAttackType.AtlantisCharge)
             {

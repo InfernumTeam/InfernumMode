@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.DesertScourge;
+﻿using CalamityMod;
+using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -64,6 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             bool inTiles = Collision.SolidCollision(npc.position, npc.width, npc.height);
             npc.defense = npc.defDefense;
             npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<DesertNuisanceHead>()) || enrageTimer > 300f;
+            npc.Calamity().CurrentlyEnraged = enrageTimer > 300f;
 
             // Idly release bone teeth.
             boneToothShootCounter++;

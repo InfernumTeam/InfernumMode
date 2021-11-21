@@ -66,7 +66,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float enrageFactor = 1f - lifeRatio;
             if (target.Center.Y < Main.worldSurface * 16f)
+            {
+                npc.Calamity().CurrentlyEnraged = true;
                 enrageFactor = 1.5f;
+            }
 
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];

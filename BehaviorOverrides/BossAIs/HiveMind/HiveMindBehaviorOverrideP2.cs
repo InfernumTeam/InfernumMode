@@ -62,6 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             Player target = Main.player[npc.target];
             enrageTimer = MathHelper.Clamp(enrageTimer - (target.ZoneCrimson || target.ZoneCorrupt).ToDirectionInt(), 0f, 480f);
             npc.defense = enrageTimer >= 300f ? -5 : 9999;
+            npc.Calamity().CurrentlyEnraged = enrageTimer >= 300f;
             npc.noTileCollide = true;
             npc.noGravity = true;
             npc.Calamity().DR = 0f;

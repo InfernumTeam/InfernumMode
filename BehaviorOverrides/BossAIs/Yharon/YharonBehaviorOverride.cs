@@ -519,6 +519,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Vector2 mouthPosition = new Vector2(offsetCenter.X + npc.direction * 60f, offsetCenter.Y - 15);
 
             bool enraged = ArenaSpawnAndEnrageCheck(npc, player);
+            npc.Calamity().CurrentlyEnraged = enraged;
 
             switch ((YharonAttackType)(int)attackType)
             {

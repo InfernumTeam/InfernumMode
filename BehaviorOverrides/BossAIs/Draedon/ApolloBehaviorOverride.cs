@@ -379,9 +379,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Make Artemis go away so Apollo can do its attack without interference.
 			if (npc.type == ModContent.NPCType<Artemis>())
 			{
-				npc.dontTakeDamage = true;
-				npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.16f, 0f, 1f);
-				npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center - Vector2.UnitY * 450f) * 40f, 1.25f);
+				if (ExoMechManagement.CurrentTwinsPhase >= 5)
+				{
+					ArtemisBehaviorOverride.DoBehavior_ReleasePredictiveLasers(npc, target, -1f, ref frame, ref attackTimer);
+					attackTimer++;
+				}
+				else
+				{
+					npc.dontTakeDamage = true;
+					npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.16f, 0f, 1f);
+					npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center - Vector2.UnitY * 450f) * 40f, 1.25f);
+				}
 				return;
 			}
 
@@ -402,7 +410,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				chargeTime -= 5;
 				totalCharges--;
 				homingSparkCount++;
-				chargeSpeed += 5f;
+				chargeSpeed -= 5f;
 			}
 
 			ref float attackDelay = ref npc.Infernum().ExtraAI[1];
@@ -506,25 +514,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Make Apollo go away so Artemis can do its attack without interference.
 			if (npc.type == ModContent.NPCType<Apollo>())
 			{
-				npc.dontTakeDamage = true;
-				npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.16f, 0f, 1f);
-				npc.ai[1] = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Artemis>())].ai[1];
-				npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center - Vector2.UnitY * 450f) * 40f, 1.25f);
+				if (ExoMechManagement.CurrentTwinsPhase >= 5)
+					DoBehavior_ReleaseSplittingPlasmaShots(npc, target, 1f, ref frame, ref attackTimer);
+				else
+				{
+					npc.dontTakeDamage = true;
+					npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.16f, 0f, 1f);
+					npc.ai[1] = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Artemis>())].ai[1];
+					npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center - Vector2.UnitY * 450f) * 40f, 1.25f);
+				}
 				return;
 			}
 
 			int shootDelay = 25;
 			int burstReleaseRate = 30;
 			float spinRadius = 540f;
-			float spinArc = MathHelper.Pi * 1.5f;
+			float spinArc = MathHelper.Pi * 1.2f;
 
 			if (ExoMechManagement.CurrentTwinsPhase >= 3)
-				spinArc *= 1.2f;
+				spinArc *= 1.1f;
 			if (ExoMechManagement.CurrentTwinsPhase == 4)
 				burstReleaseRate += 10;
 			if (ExoMechManagement.CurrentTwinsPhase >= 5)
 			{
-				spinArc *= 1.35f;
+				spinArc *= 1.2f;
 				burstReleaseRate -= 8;
 			}
 
@@ -600,7 +613,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					npc.frameCounter++;
 					frame = (int)Math.Round(MathHelper.Lerp(80f, 89f, (float)npc.frameCounter / 32f % 1f));
 
-					float spinAngle = attackTimer / ArtemisSpinLaser.LaserLifetime * spinArc * -spinDirection * verticalOffsetDirection;
+					float spinAngle = (float)Math.Pow(attackTimer / ArtemisSpinLaser.LaserLifetime, 1.4f) * spinArc * -spinDirection * verticalOffsetDirection;
 					npc.velocity = spinAngle.ToRotationVector2() * MathHelper.TwoPi * spinRadius / ArtemisSpinLaser.LaserLifetime * -spinDirection;
 					npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + MathHelper.PiOver2;
 
@@ -616,6 +629,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				Vector2 spawnPosition = target.Center - targetDirection.RotatedByRandom(1.1f) * Main.rand.NextFloat(325f, 725f) * new Vector2(1f, 0.6f);
 				Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<ArtemisChargeFlameExplosion>(), 575, 0f);
 			}
+			attackTimer++;
 		}
 
 		public static void DoBehavior_GatlingLaserAndPlasmaFlames(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
@@ -743,7 +757,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				npc.ai[0] = (int)TwinsAttackType.FireCharge;
 				if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
 					npc.ai[0] = Main.rand.NextBool() ? (int)TwinsAttackType.SpecialAttack_PlasmaCharges : (int)TwinsAttackType.SpecialAttack_LaserRayScarletBursts;
-				if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(3))
+				if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(4))
 					npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
 			}
 
@@ -760,12 +774,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			else
 			{
 				NPC artemis = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Artemis>())];
+				artemis.ai[0] = npc.ai[0];
 				artemis.ai[1] = 0f;
 				for (int i = 0; i < 5; i++)
 					artemis.Infernum().ExtraAI[i] = 0f;
 
 				if (npc.Infernum().ExtraAI[5] % 6f == 2f)
 					npc.ai[2] *= -1f;
+				artemis.netUpdate = true;
 			}
 
 			npc.netUpdate = true;

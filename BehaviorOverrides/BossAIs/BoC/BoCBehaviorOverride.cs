@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -60,6 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             enrageTimer = MathHelper.Clamp(enrageTimer - (target.ZoneCrimson || target.ZoneCorrupt).ToDirectionInt(), 0f, 480f);
             npc.dontTakeDamage = enrageTimer >= 300f;
+            npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             // Summon creepers.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedCreepersFlag == 0f)

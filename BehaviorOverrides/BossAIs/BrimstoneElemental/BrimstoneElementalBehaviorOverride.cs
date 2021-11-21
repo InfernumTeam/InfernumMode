@@ -84,6 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             ref float frameType = ref npc.localAI[0];
 
             npc.dontTakeDamage = pissedOff;
+            npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             if (spawnAnimationTimer < 240f)
             {

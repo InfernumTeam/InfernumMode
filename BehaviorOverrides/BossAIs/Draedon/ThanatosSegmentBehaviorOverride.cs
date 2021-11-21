@@ -100,7 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         float generalShootSpeedFactor = 1f;
                         if (ExoMechManagement.CurrentThanatosPhase == 4)
-                            generalShootSpeedFactor *= 0.5f;
+                            generalShootSpeedFactor *= 0.65f;
                         else
                         {
                             if (ExoMechManagement.CurrentThanatosPhase >= 2)
@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 break;
                             case ThanatosHeadBehaviorOverride.ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
                                 type = ModContent.ProjectileType<PlasmaLaser>();
-                                shootSpeed = generalShootSpeedFactor * 5.6f;
+                                shootSpeed = generalShootSpeedFactor * 9.5f;
 
                                 projectileDestination = target.Center;
                                 laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);

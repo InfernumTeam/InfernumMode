@@ -124,7 +124,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
 					break;
 				case TwinsAttackType.SpecialAttack_LaserRayScarletBursts:
-					DoBehavior_LaserRayScarletBursts(npc, target, hoverSide, ref frame, ref attackTimer);
+					DoBehavior_LaserRayScarletBursts(npc, target, ref frame, ref attackTimer);
+					break;
+				case TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames:
+					DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);
 					break;
 			}
 
@@ -166,7 +169,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					int laser = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, aimDirection * laserShootSpeed, ModContent.ProjectileType<ArtemisLaser>(), 550, 0f);
 					if (Main.projectile.IndexInRange(laser))
 					{
-						Main.projectile[laser].ModProjectile<ArtemisLaser>().InitialDestination = aimDestination;
+						Main.projectile[laser].ModProjectile<ArtemisLaser>().InitialDestination = aimDestination + aimDirection * 1000f;
 						Main.projectile[laser].ai[1] = npc.whoAmI;
 						Main.projectile[laser].netUpdate = true;
 					}

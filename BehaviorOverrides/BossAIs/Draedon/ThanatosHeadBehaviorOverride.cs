@@ -223,7 +223,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			if (ExoMechManagement.CurrentThanatosPhase == 4)
 			{
-				generalSpeedFactor *= 0.5f;
+				generalSpeedFactor *= 0.75f;
 				flyAcceleration *= 0.5f;
 			}
 			else

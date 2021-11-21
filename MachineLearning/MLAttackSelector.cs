@@ -37,6 +37,9 @@ namespace InfernumMode.MachineLearning
 
         public static MLAttackSelector Load(TagCompound tag, string name)
         {
+            if (!tag.ContainsKey($"SelectorWeights_{name}"))
+                return null;
+
             byte[] weightBytes = (byte[])tag[$"SelectorWeights_{name}"];
             float[] weights = new float[weightBytes.Length / 4];
             for (int i = 0; i < weights.Length; i++)

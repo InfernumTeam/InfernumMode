@@ -93,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			{
 				if (ExplodeCountdown == 0)
 				{
-					ExplodeCountdown = Main.rand.Next(60, 90);
+					ExplodeCountdown = Main.rand.Next(45, 70);
 					projectile.netUpdate = true;
 				}
 				else if (projectile.FinalExtraUpdate())

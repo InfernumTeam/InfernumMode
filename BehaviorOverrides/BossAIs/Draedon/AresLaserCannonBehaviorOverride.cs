@@ -70,7 +70,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					laserCount += 2;
 			}
 
-
 			// Nerf things while Ares' complement mech is present.
 			if (ExoMechManagement.CurrentAresPhase == 4)
 			{
@@ -80,6 +79,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				laserCount--;
 				laserShootSpeed *= 0.6f;
 			}
+
+			if (ExoMechManagement.CurrentAresPhase >= 5)
+				laserShootSpeed *= 1.2f;
 
 			int shootRate = shootTime / totalLasersPerBurst;
 

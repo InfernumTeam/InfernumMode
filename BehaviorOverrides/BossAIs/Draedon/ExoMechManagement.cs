@@ -161,6 +161,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					return 0;
 
 				NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+				if (FindFinalMech() == aresBody)
+					return 5;
 				if (ComplementMechIsPresent(aresBody) || aresBody.Infernum().ExtraAI[7] == 1f)
 					return 4;
 				if (aresBody.life <= aresBody.lifeMax * Phase3LifeRatio)
@@ -180,6 +182,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					return 0;
 
 				NPC thanatosHead = Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
+				if (FindFinalMech() == thanatosHead)
+					return 5;
 				if (ComplementMechIsPresent(thanatosHead) || thanatosHead.Infernum().ExtraAI[7] == 1f)
 					return 4;
 				if (thanatosHead.life <= thanatosHead.lifeMax * Phase3LifeRatio)
@@ -204,6 +208,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				if (apollo.ai[3] < ApolloBehaviorOverride.Phase2TransitionTime)
 					return 1;
 
+				if (FindFinalMech() == apollo)
+					return 5;
 				if (ComplementMechIsPresent(apollo) || apollo.Infernum().ExtraAI[7] == 1f)
 					return 4;
 				if (apollo.life <= apollo.lifeMax * Phase3LifeRatio)

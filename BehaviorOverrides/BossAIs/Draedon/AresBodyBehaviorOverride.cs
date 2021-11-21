@@ -131,13 +131,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				attackTimer = 0f;
 				attackState = (int)AresBodyAttackType.IdleHover;
 				npc.Calamity().newAI[1] = (int)AresBody.SecondaryPhase.PassiveAndImmune;
+				npc.Calamity().ShouldCloseHPBar = true;
 				npc.dontTakeDamage = true;
 			}
 			else
 				npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
 			// Reset things.
-			projectileDamageBoost = ExoMechManagement.ComplementMechIsPresent(npc) ? 50f : 0f;
+			projectileDamageBoost = ExoMechManagement.CurrentAresPhase >= 4 ? 50f : 0f;
 
 			// Get a target.
 			npc.TargetClosest(false);
@@ -186,7 +187,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int totalLasers = 20;
 			int totalSparks = 25;
 
-			if (ExoMechManagement.ComplementMechIsPresent(npc))
+			if (ExoMechManagement.CurrentAresPhase == 4)
 			{
 				totalBursts -= 2;
 				telegraphTime += 10;

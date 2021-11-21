@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float hoverSide = ref npc.ai[2];
 			ref float phaseTransitionAnimationTime = ref npc.ai[3];
 			ref float frame = ref npc.localAI[0];
-			ref float hasDoneInitializations = ref npc.localAI[1];
+			ref float hasDoneInitializations = ref npc.Infernum().ExtraAI[5];
 			ref float hasSummonedComplementMech = ref npc.Infernum().ExtraAI[7];
 			ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
 			ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[11];
@@ -211,7 +211,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor);
 
 			if (ExoMechManagement.CurrentTwinsPhase >= 2)
-				shootRate -= 18f;
+				shootRate -= 12f;
+			if (ExoMechManagement.CurrentTwinsPhase == 3)
+			{
+				shootRate -= 8f;
+				plasmaShootSpeed *= 1.3f;
+			}
+			if (ExoMechManagement.CurrentTwinsPhase >= 5)
+			{
+				shootRate -= 20f;
+				plasmaShootSpeed *= 1.35f;
+			}
 
 			ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
 			ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
@@ -385,6 +395,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
 			Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
 
+			if (ExoMechManagement.CurrentTwinsPhase == 3)
+				chargeSpeed += 2.5f;
+			if (ExoMechManagement.CurrentTwinsPhase >= 5)
+			{
+				chargeTime -= 5;
+				totalCharges--;
+				homingSparkCount++;
+				chargeSpeed += 5f;
+			}
+
 			ref float attackDelay = ref npc.Infernum().ExtraAI[1];
 			ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
 
@@ -494,8 +514,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			}
 
 			int shootDelay = 25;
+			int burstReleaseRate = 30;
 			float spinRadius = 540f;
 			float spinArc = MathHelper.Pi * 1.5f;
+
+			if (ExoMechManagement.CurrentTwinsPhase >= 3)
+				spinArc *= 1.2f;
+			if (ExoMechManagement.CurrentTwinsPhase == 4)
+				burstReleaseRate += 10;
+			if (ExoMechManagement.CurrentTwinsPhase >= 5)
+			{
+				spinArc *= 1.35f;
+				burstReleaseRate -= 8;
+			}
+
 			ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
 			ref float spinDirection = ref npc.Infernum().ExtraAI[1];
 			ref float spinningPointX = ref npc.Infernum().ExtraAI[2];
@@ -578,7 +610,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			}
 
 			// Release orange explosions everywhere periodically.
-			if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 25f == 24f)
+			if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % burstReleaseRate == burstReleaseRate - 1f)
 			{
 				Vector2 targetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
 				Vector2 spawnPosition = target.Center - targetDirection.RotatedByRandom(1.1f) * Main.rand.NextFloat(325f, 725f) * new Vector2(1f, 0.6f);
@@ -628,11 +660,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					if (npc.type == ModContent.NPCType<Artemis>())
 					{
 						int laserShootRate = 15;
-						float laserShootSpeed = 6.25f;
+						float laserShootSpeed = 6f;
 						float predictivenessFactor = 18.5f;
 						Vector2 aimDestination = target.Center + target.velocity * predictivenessFactor;
 						Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 						npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+
+						if (ExoMechManagement.CurrentTwinsPhase == 4)
+							laserShootRate += 10;
+						if (ExoMechManagement.CurrentTwinsPhase >= 5)
+							laserShootRate -= 3;
 
 						// Do movement.
 						AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);
@@ -659,10 +696,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 								}
 							}
 						}
-                    }
+					}
 
 					// Release streams of plasma blasts rapid-fire.
-                    else
+					else
 					{
 						int plasmaShootRate = 42;
 						float plasmaShootSpeed = 10f;
@@ -670,6 +707,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 						Vector2 aimDestination = target.Center + target.velocity * predictivenessFactor;
 						Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 						npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+
+						if (ExoMechManagement.CurrentTwinsPhase == 4)
+							plasmaShootRate += 18;
+						if (ExoMechManagement.CurrentTwinsPhase >= 5)
+							plasmaShootRate -= 8;
 
 						// Do movement.
 						AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);
@@ -700,12 +742,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			{
 				npc.ai[0] = (int)TwinsAttackType.FireCharge;
 				if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
-				{
 					npc.ai[0] = Main.rand.NextBool() ? (int)TwinsAttackType.SpecialAttack_PlasmaCharges : (int)TwinsAttackType.SpecialAttack_LaserRayScarletBursts;
-				}
+				if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(3))
+					npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
 			}
-
-			npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
 
 			npc.ai[1] = 0f;
 			for (int i = 0; i < 5; i++)

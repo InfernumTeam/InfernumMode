@@ -63,6 +63,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (ExoMechManagement.CurrentAresPhase == 4)
 				totalOrbsPerBurst = 4;
 
+			if (ExoMechManagement.CurrentAresPhase >= 5)
+				orbShootSpeed *= 1.2f;
+
 			int shootRate = shootTime / totalOrbsPerBurst;
 			ref float attackTimer = ref npc.ai[0];
 			ref float chargeDelay = ref npc.ai[1];

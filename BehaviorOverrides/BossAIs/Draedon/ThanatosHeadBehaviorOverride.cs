@@ -108,7 +108,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (wasNotInitialSummon == 0f && finalMechIndex == -1f && complementMech != null && complementMech.life / (float)complementMech?.lifeMax < ExoMechManagement.ComplementMechInvincibilityThreshold)
 			{
 				ExoMechManagement.SummonFinalMech(npc);
-				finalMechIndex = 1f;
 				npc.netUpdate = true;
 			}
 
@@ -173,7 +172,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				Lighting.AddLight(npc.Center, 0.35f * npc.Opacity, 0.05f * npc.Opacity, 0.05f * npc.Opacity);
 
 				// Emit smoke.
-				npc.takenDamageMultiplier = 47.184f;
+				npc.takenDamageMultiplier = 67.184f;
 				if (npc.Opacity > 0.6f)
 				{
 					npc.ModNPC<ThanatosHead>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
@@ -231,6 +230,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				if (ExoMechManagement.CurrentThanatosPhase >= 2)
 					generalSpeedFactor *= 1.1f;
 				if (ExoMechManagement.CurrentThanatosPhase >= 3)
+				{
+					generalSpeedFactor *= 1.1f;
+					flyAcceleration *= 1.1f;
+				}
+				if (ExoMechManagement.CurrentThanatosPhase >= 5)
 				{
 					generalSpeedFactor *= 1.1f;
 					flyAcceleration *= 1.1f;

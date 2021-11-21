@@ -78,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			// Become invincible and disappear if the final mech is present.
 			npc.Calamity().newAI[1] = 0f;
-			if (finalMech != null && finalMech != npc)
+			if (finalMech != null && finalMech != apollo)
 			{
 				npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
 				attackTimer = 0f;
@@ -143,7 +143,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 
 			if (ExoMechManagement.CurrentTwinsPhase >= 2)
-				shootRate -= 18f;
+				shootRate -= 12f;
+			if (ExoMechManagement.CurrentTwinsPhase == 3)
+				shootRate -= 8f;
+			if (ExoMechManagement.CurrentTwinsPhase >= 5)
+				shootRate -= 20f;
 
 			ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
 			ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];

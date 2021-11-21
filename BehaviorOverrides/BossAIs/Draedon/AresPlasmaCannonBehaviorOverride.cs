@@ -33,7 +33,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Define the life ratio.
 			npc.life = aresBody.life;
 			npc.lifeMax = aresBody.lifeMax;
-			float lifeRatio = npc.life / (float)npc.lifeMax;
 
 			// Shamelessly steal variables from Ares.
 			npc.target = aresBody.target;
@@ -52,6 +51,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Nerf things while Ares' complement mech is present.
 			if (ExoMechManagement.CurrentAresPhase == 4)
 				flameShootSpeed *= 0.75f;
+
+			if (ExoMechManagement.CurrentAresPhase >= 5)
+				flameShootSpeed *= 1.25f;
 
 			int shootRate = shootTime / totalFlamesPerBurst;
 			ref float attackTimer = ref npc.ai[0];

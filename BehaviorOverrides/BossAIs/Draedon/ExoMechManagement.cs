@@ -278,6 +278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		public static void RecordAttackDeath(Player player)
         {
 			int thanatos = CalamityGlobalNPC.draedonExoMechWorm;
+			int apollo = CalamityGlobalNPC.draedonExoMechTwinGreen;
 			if (thanatos != -1)
             {
 				var attack = (ThanatosHeadBehaviorOverride.ThanatosHeadAttackType)(int)Main.npc[thanatos].ai[0];
@@ -292,6 +293,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 				if (attackToReinforce != -1)
 					player.Infernum().ThanatosLaserTypeSelector.BiasInFavorOf(attackToReinforce);
+			}
+
+			if (apollo != -1)
+			{
+				var attack = (ApolloBehaviorOverride.TwinsAttackType)(int)Main.npc[apollo].ai[0];
+				int attackToReinforce = -1;
+				if (attack == ApolloBehaviorOverride.TwinsAttackType.SpecialAttack_LaserRayScarletBursts)
+					attackToReinforce = 0;
+				if (attack == ApolloBehaviorOverride.TwinsAttackType.SpecialAttack_PlasmaCharges)
+					attackToReinforce = 1;
+
+				if (attackToReinforce != -1)
+					player.Infernum().TwinsSpecialAttackTypeSelector.BiasInFavorOf(attackToReinforce);
 			}
         }
 	}

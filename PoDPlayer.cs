@@ -24,6 +24,7 @@ namespace InfernumMode
         public float ScreenFocusInterpolant = 0f;
 
         private MLAttackSelector thanatosLaserTypeSelector = null;
+        private MLAttackSelector twinsSpecialAttackTypeSelector = null;
         public MLAttackSelector ThanatosLaserTypeSelector
         {
             get
@@ -33,6 +34,16 @@ namespace InfernumMode
                 return thanatosLaserTypeSelector;
             }
             set => thanatosLaserTypeSelector = value;
+        }
+        public MLAttackSelector TwinsSpecialAttackTypeSelector
+        {
+            get
+            {
+                if (twinsSpecialAttackTypeSelector is null)
+                    twinsSpecialAttackTypeSelector = new MLAttackSelector(2, "TwinsSpecialAttack");
+                return twinsSpecialAttackTypeSelector;
+            }
+            set => twinsSpecialAttackTypeSelector = value;
         }
 
         #region Skies
@@ -169,12 +180,14 @@ namespace InfernumMode
         {
             TagCompound tag = new TagCompound();
             ThanatosLaserTypeSelector?.Save(tag);
+            TwinsSpecialAttackTypeSelector?.Save(tag);
             return tag;
         }
 
         public override void Load(TagCompound tag)
         {
             ThanatosLaserTypeSelector = MLAttackSelector.Load(tag, "ThanatosLaser");
+            TwinsSpecialAttackTypeSelector = MLAttackSelector.Load(tag, "TwinsSpecialAttack");
         }
         #endregion Saving and Loading
         #region Misc Effects

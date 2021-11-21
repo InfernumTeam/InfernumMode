@@ -763,7 +763,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			{
 				npc.ai[0] = (int)TwinsAttackType.FireCharge;
 				if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
-					npc.ai[0] = Main.rand.NextBool() ? (int)TwinsAttackType.SpecialAttack_PlasmaCharges : (int)TwinsAttackType.SpecialAttack_LaserRayScarletBursts;
+					npc.ai[0] = Main.player[npc.target].Infernum().TwinsSpecialAttackTypeSelector.MakeSelection() + 2;
 				if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(4))
 					npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
 			}

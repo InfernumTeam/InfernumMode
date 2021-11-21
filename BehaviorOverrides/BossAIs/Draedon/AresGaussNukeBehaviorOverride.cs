@@ -34,7 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Define the life ratio.
 			npc.life = aresBody.life;
 			npc.lifeMax = aresBody.lifeMax;
-			float lifeRatio = npc.life / (float)npc.lifeMax;
 
 			// Shamelessly steal variables from Ares.
 			npc.target = aresBody.target;
@@ -65,10 +64,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				idealRechargeTime *= 0.7f;
 			}
 			if (ExoMechManagement.CurrentAresPhase >= 5)
-			{
-				idealChargeDelay *= 0.8f;
-				idealRechargeTime *= 0.8f;
-			}
+				idealChargeDelay *= 0.65f;
+			if (ExoMechManagement.CurrentAresPhase >= 6)
+				idealRechargeTime *= 0.75f;
 
 			// Nerf things while Ares' complement mech is present.
 			if (ExoMechManagement.CurrentAresPhase == 4)

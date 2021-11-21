@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			return false;
 		}
 
-		public static NPC FindFinalMech()
+		public static NPC FindInitialMech()
 		{
 			int apolloID = ModContent.NPCType<Apollo>();
 			int thanatosID = ModContent.NPCType<ThanatosHead>();
@@ -59,10 +59,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				}
 			}
 
+			return initialMech;
+		}
+
+		public static NPC FindFinalMech()
+		{
+			NPC initialMech = FindInitialMech();
+
 			if (initialMech is null)
 				return null;
 
 			// Check to see if the initial mech believes that the final mech index is in use by a mech.
+			int apolloID = ModContent.NPCType<Apollo>();
+			int thanatosID = ModContent.NPCType<ThanatosHead>();
+			int aresID = ModContent.NPCType<AresBody>();
 			for (int i = 0; i < Main.maxNPCs; i++)
 			{
 				if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
@@ -129,6 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				int finalMech = NPC.NewNPC((int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
 				NPC apollo = Main.npc[finalMech];
 				npc.Infernum().ExtraAI[12] = finalMech;
+				Main.npc[(int)npc.Infernum().ExtraAI[10]].Infernum().ExtraAI[12] = finalMech;
 
 				// Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
 				apollo.Infernum().ExtraAI[7] = 1f;
@@ -144,12 +155,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				int finalMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
 				NPC ares = Main.npc[finalMech];
 				npc.Infernum().ExtraAI[12] = finalMech;
+				Main.npc[(int)npc.Infernum().ExtraAI[10]].Infernum().ExtraAI[12] = finalMech;
 
 				// Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
 				ares.Infernum().ExtraAI[7] = 1f;
 				ares.Infernum().ExtraAI[11] = 1f;
 
 				ares.netUpdate = true;
+			}
+		}
+
+		public static int TotalMechs
+		{
+			get
+			{
+				int apolloID = ModContent.NPCType<Apollo>();
+				int thanatosID = ModContent.NPCType<ThanatosHead>();
+				int aresID = ModContent.NPCType<AresBody>();
+				int count = 0;
+				for (int i = 0; i < Main.maxNPCs; i++)
+				{
+					if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
+						continue;
+					if (!Main.npc[i].active)
+						continue;
+
+					count++;
+				}
+
+				return count;
 			}
 		}
 
@@ -161,6 +195,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					return 0;
 
 				NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+
+				if (FindFinalMech() is null && aresBody.Infernum().ExtraAI[12] >= 0f)
+					return TotalMechs == 1 ? 6 : 3;
 				if (FindFinalMech() == aresBody)
 					return 5;
 				if (ComplementMechIsPresent(aresBody) || aresBody.Infernum().ExtraAI[7] == 1f)
@@ -182,6 +219,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					return 0;
 
 				NPC thanatosHead = Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
+
+				if (FindFinalMech() is null && thanatosHead.Infernum().ExtraAI[12] >= 0f)
+					return TotalMechs == 1 ? 6 : 3;
 				if (FindFinalMech() == thanatosHead)
 					return 5;
 				if (ComplementMechIsPresent(thanatosHead) || thanatosHead.Infernum().ExtraAI[7] == 1f)
@@ -208,6 +248,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				if (apollo.ai[3] < ApolloBehaviorOverride.Phase2TransitionTime)
 					return 1;
 
+				if (FindFinalMech() is null && apollo.Infernum().ExtraAI[12] >= 0f)
+					return TotalMechs == 1 ? 6 : 3;
 				if (FindFinalMech() == apollo)
 					return 5;
 				if (ComplementMechIsPresent(apollo) || apollo.Infernum().ExtraAI[7] == 1f)

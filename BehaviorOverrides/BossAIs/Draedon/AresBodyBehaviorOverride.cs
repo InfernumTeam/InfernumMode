@@ -63,8 +63,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			{
 				armCycleCounter++;
 				armCycleTimer = 0f;
-				attackTimer = 0f;
-				attackState = (int)AresBodyAttackType.IdleHover;
 			}
 			else
 				armCycleTimer++;
@@ -170,10 +168,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
 		{
+			int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 1200 : 1500;
 			Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
 			DoHoverMovement(npc, hoverDestination, 24f, 75f);
 
-			if (attackTimer > 1200f)
+			if (attackTimer > attackTime)
 				SelectNextAttack(npc);
 		}
 
@@ -257,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				}
 			}
 
-			if (attackTimer >= shootTime + shootDelay + 1f)
+			if (attackTimer >= shootTime + shootDelay - 1f)
 			{
 				// Destroy all lasers and telegraphs.
 				for (int i = 0; i < Main.maxProjectiles; i++)
@@ -290,31 +289,52 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
 
-			if (aresBody.Opacity <= 0f)
-				return true;
-
-			if (aresBody.life > aresBody.lifeMax * ExoMechManagement.Phase2LifeRatio)
-				return false;
-
 			if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts)
 				return true;
 
-			switch ((int)aresBody.Infernum().ExtraAI[5] % 4)
-			{
-				// Disable the nuke and laser.
-				case 0:
-					return npc.type == ModContent.NPCType<AresGaussNuke>() || npc.type == ModContent.NPCType<AresLaserCannon>();
-				// Disable the nuke and tesla cannon.
-				case 1:
-					return npc.type == ModContent.NPCType<AresGaussNuke>() || npc.type == ModContent.NPCType<AresTeslaCannon>();
-				// Disable the tesla cannon and plasma flamethrower.
-				case 2:
-					return npc.type == ModContent.NPCType<AresTeslaCannon>() || npc.type == ModContent.NPCType<AresPlasmaFlamethrower>();
-				// Disable the plasma flamethrower and laser.
-				case 3:
-					return npc.type == ModContent.NPCType<AresPlasmaFlamethrower>() || npc.type == ModContent.NPCType<AresLaserCannon>();
-			}
+			if (aresBody.Opacity <= 0f)
+				return true;
 
+			if (ExoMechManagement.CurrentAresPhase <= 2)
+				return false;
+
+			// Rotate arm usability as follows (This only applies before phase 5):
+			// Gauss Nuke and Laser Cannon,
+			// Laser Cannon and Tesla Cannon,
+			// Tesla Cannon and Plasma Flamethrower
+			// Plasma Flamethrower and Gauss Nuke.
+
+			// If during or after phase 5, rotate arm usability like this instead:
+			// Gauss Nuke, Laser Cannon, and Tesla Cannon,
+			// Laser Cannon, Tesla Cannon, and Plasma Flamethrower,
+			// Tesla Cannon, Plasma Flamethrower, and Gauss Nuke
+
+			if (ExoMechManagement.CurrentAresPhase < 5)
+			{
+				switch ((int)aresBody.Infernum().ExtraAI[5] % 4)
+				{
+					case 0:
+						return npc.type != ModContent.NPCType<AresGaussNuke>() && npc.type != ModContent.NPCType<AresLaserCannon>();
+					case 1:
+						return npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>();
+					case 2:
+						return npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>();
+					case 3:
+						return npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && npc.type != ModContent.NPCType<AresGaussNuke>();
+				}
+			}
+			else
+			{
+				switch ((int)aresBody.Infernum().ExtraAI[5] % 3)
+				{
+					case 0:
+						return npc.type != ModContent.NPCType<AresGaussNuke>() && npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>();
+					case 1:
+						return npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>();
+					case 2:
+						return npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && npc.type != ModContent.NPCType<AresGaussNuke>();
+				}
+			}
 			return false;
 		}
 

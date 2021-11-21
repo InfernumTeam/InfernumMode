@@ -25,6 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ProjectileShooting_RedLaser,
 			ProjectileShooting_PurpleLaser,
 			ProjectileShooting_GreenLaser,
+			VomitNuke
 		}
 
 		public override int NPCOverrideType => ModContent.NPCType<ThanatosHead>();
@@ -156,6 +157,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					break;
 				case ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
 					DoBehavior_ProjectileShooting_GreenLaser(npc, target, ref attackTimer, ref frameType);
+					break;
+				case ThanatosHeadAttackType.VomitNuke:
+					DoBehavior_VomitNuke(npc, target, ref attackTimer, ref frameType);
 					break;
 			}
 
@@ -314,6 +318,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				}
 				if (ExoMechManagement.CurrentThanatosPhase >= 3)
 					totalSegmentsToFire += 4f;
+				if (ExoMechManagement.CurrentThanatosPhase >= 5)
+				{
+					totalSegmentsToFire += 4f;
+					segmentFireTime += 10f;
+				}
+				if (ExoMechManagement.CurrentThanatosPhase >= 6)
+				{
+					totalSegmentsToFire += 6f;
+					segmentFireTime += 8f;
+				}
 
 				segmentFireCountdown = segmentFireTime;
 				npc.netUpdate = true;
@@ -360,6 +374,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				}
 				if (ExoMechManagement.CurrentThanatosPhase >= 3)
 					totalSegmentsToFire += 4f;
+				if (ExoMechManagement.CurrentThanatosPhase >= 5)
+				{
+					totalSegmentsToFire += 4f;
+					segmentFireTime += 10f;
+				}
+				if (ExoMechManagement.CurrentThanatosPhase >= 6)
+				{
+					totalSegmentsToFire += 6f;
+					segmentFireTime += 8f;
+				}
 
 				segmentFireCountdown = segmentFireTime;
 				npc.netUpdate = true;
@@ -406,6 +430,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				}
 				if (ExoMechManagement.CurrentThanatosPhase >= 3)
 					totalSegmentsToFire += 4f;
+				if (ExoMechManagement.CurrentThanatosPhase >= 5)
+				{
+					totalSegmentsToFire += 4f;
+					segmentFireTime += 10f;
+				}
+				if (ExoMechManagement.CurrentThanatosPhase >= 6)
+				{
+					totalSegmentsToFire += 6f;
+					segmentFireTime += 8f;
+				}
 
 				segmentFireCountdown = segmentFireTime;
 				npc.netUpdate = true;
@@ -418,7 +452,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				SelectNextAttack(npc);
 		}
 
-		public static void DoProjectileShootInterceptionMovement(NPC npc, Player target)
+		public static void DoBehavior_VomitNuke(NPC npc, Player target, ref float attackTimer, ref float frameType)
+		{
+			// Decide frames.
+			frameType = (int)ThanatosFrameType.Open;
+
+			int nukeShootCount = 3;
+			int nukeShootRate = 120;
+
+			if (ExoMechManagement.CurrentThanatosPhase >= 5)
+			{
+				nukeShootCount += 2;
+				nukeShootRate -= 30;
+			}
+			if (ExoMechManagement.CurrentThanatosPhase >= 6)
+			{
+				nukeShootCount++;
+				nukeShootRate -= 20;
+			}
+
+			DoProjectileShootInterceptionMovement(npc, target, 0.6f);
+
+			// Fire the nuke.
+			if (attackTimer % nukeShootRate == nukeShootRate - 1f)
+			{
+				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
+
+				if (Main.netMode != NetmodeID.MultiplayerClient)
+				{
+					Vector2 nukeShootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 18f;
+					Utilities.NewProjectileBetter(npc.Center, nukeShootVelocity, ModContent.ProjectileType<ThanatosNuke>(), 0, 0f, npc.target);
+
+					npc.netUpdate = true;
+				}
+			}
+
+			if (attackTimer >= nukeShootRate * (nukeShootCount + 0.8f))
+				SelectNextAttack(npc);
+		}
+
+		public static void DoProjectileShootInterceptionMovement(NPC npc, Player target, float speedMultiplier = 1f)
 		{
 			// Attempt to intercept the target.
 			Vector2 hoverDestination = target.Center + target.velocity.SafeNormalize(Vector2.UnitX * target.direction) * new Vector2(675f, 950f);
@@ -434,9 +507,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					idealFlySpeed *= 1.2f;
 			}
 			if (ExoMechManagement.CurrentThanatosPhase >= 3)
-				idealFlySpeed *= 1.25f;
+				idealFlySpeed *= 1.2f;
+			if (ExoMechManagement.CurrentThanatosPhase >= 5)
+				idealFlySpeed *= 1.225f;
 
 			idealFlySpeed += npc.Distance(target.Center) * 0.004f;
+			idealFlySpeed *= speedMultiplier;
 
 			// Move towards the target if far away from them.
 			if (!npc.WithinRange(target.Center, 1600f))
@@ -447,6 +523,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				float flySpeed = MathHelper.Lerp(npc.velocity.Length(), idealFlySpeed, 0.05f);
 				npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(hoverDestination), flySpeed / 580f, true) * flySpeed;
 			}
+			else
+				npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * idealFlySpeed, idealFlySpeed / 24f);
 		}
 
 		public static void SelectNextAttack(NPC npc)
@@ -458,6 +536,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (oldAttackType == ThanatosHeadAttackType.AggressiveCharge)
 			{
 				newAttackType = Utils.SelectRandom(Main.rand, ThanatosHeadAttackType.ProjectileShooting_RedLaser, ThanatosHeadAttackType.ProjectileShooting_PurpleLaser, ThanatosHeadAttackType.ProjectileShooting_GreenLaser);
+				if (Main.rand.NextBool(4) && ExoMechManagement.CurrentThanatosPhase >= 3)
+					newAttackType = ThanatosHeadAttackType.VomitNuke;
 			}
 			else
 			{
@@ -495,7 +575,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				}
 				int finalFrame = Main.npcFrameCount[npc.type] - 1;
 
-				// Play a vent sound (sus)
+				// Play a vent sound (sus).
 				if (Main.netMode != NetmodeID.Server && npc.frame.Y == frameHeight * (finalFrame - 1))
 				{
 					SoundEffectInstance sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosVent"), npc.Center);

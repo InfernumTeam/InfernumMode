@@ -81,7 +81,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			}
 
 			if (ExoMechManagement.CurrentAresPhase >= 5)
-				laserShootSpeed *= 1.2f;
+			{
+				shootTime += 120;
+				laserShootSpeed *= 0.8f;
+			}
 
 			int shootRate = shootTime / totalLasersPerBurst;
 

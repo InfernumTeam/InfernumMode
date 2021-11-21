@@ -33,7 +33,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Define the life ratio.
 			npc.life = aresBody.life;
 			npc.lifeMax = aresBody.lifeMax;
-			float lifeRatio = npc.life / (float)npc.lifeMax;
 
 			// Shamelessly steal variables from Ares.
 			npc.target = aresBody.target;
@@ -64,7 +63,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				totalOrbsPerBurst = 4;
 
 			if (ExoMechManagement.CurrentAresPhase >= 5)
-				orbShootSpeed *= 1.2f;
+			{
+				shootTime += 40;
+				totalOrbsPerBurst = 6;
+				orbShootSpeed *= 1.1f;
+			}
+			if (ExoMechManagement.CurrentAresPhase >= 6)
+			{
+				shootTime += 40;
+				totalOrbsPerBurst = 8;
+			}
 
 			int shootRate = shootTime / totalOrbsPerBurst;
 			ref float attackTimer = ref npc.ai[0];

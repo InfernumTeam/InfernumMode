@@ -88,9 +88,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     if (willShootLaser)
                     {
                         string soundType = headAttackType == ThanatosHeadBehaviorOverride.ThanatosHeadAttackType.ProjectileShooting_GreenLaser ? "PlasmaCasterFire" : "LaserCannon";
-                        SoundEffectInstance sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, $"Sounds/Item/{soundType}"), npc.Center);
+                        SoundEffectInstance sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, $"Sounds/Item/{soundType}"), target.Center);
                         if (sound != null)
-                            sound.Volume *= 0.25f;
+                            sound.Volume *= 0.5f;
                     }
                     SoundEffectInstance ventSound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosVent"), npc.Center);
                     if (ventSound != null)

@@ -53,7 +53,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				flameShootSpeed *= 0.75f;
 
 			if (ExoMechManagement.CurrentAresPhase >= 5)
+			{
+				shootTime += 60;
+				totalFlamesPerBurst += 2;
 				flameShootSpeed *= 1.25f;
+			}
+			if (ExoMechManagement.CurrentAresPhase >= 6)
+			{
+				shootTime += 30;
+				totalFlamesPerBurst++;
+			}
 
 			int shootRate = shootTime / totalFlamesPerBurst;
 			ref float attackTimer = ref npc.ai[0];

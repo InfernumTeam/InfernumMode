@@ -273,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 for (int i = 0; i < 3; i++)
                 {
                     float shootOffsetAngle = MathHelper.Lerp(-0.48f, 0.48f, i / 2f);
-                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 13.5f;
+                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 15f;
                     Vector2 spawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.Zero) * 68f;
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, 155, 0f);
                 }
@@ -316,7 +316,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     for (int i = 0; i < (int)petalCount; i++)
                     {
                         float rotateOffset = MathHelper.Lerp(-0.33f, 0.33f, i / (petalCount - 1f));
-                        Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(rotateOffset) * 9.25f;
+                        Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(rotateOffset) * 10.5f;
                         Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 68f;
                         Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<Petal>(), 155, 0f);
                     }
@@ -356,7 +356,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     {
                         Vector2 gasSporeVelocity;
                         do
-                            gasSporeVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 26f);
+                            gasSporeVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(7f, 33f);
                         while (gasSporeVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.53f);
 
                         if (enraged)
@@ -471,7 +471,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int vineCount = inPhase4 ? 5 : 4;
+                    int vineCount = inPhase4 ? 6 : 4;
                     for (int i = 0; i < vineCount; i++)
                     {
                         Vector2 thornVelocity = (MathHelper.TwoPi * i / (float)vineCount).ToRotationVector2() * 12f;
@@ -516,7 +516,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // Stop attempting to spawn more flowers once enough have been decided.
-                    if (flowerSpawnPositions.Count > (inPhase4 ? 12 : 9))
+                    if (flowerSpawnPositions.Count > (inPhase4 ? 14 : 10))
                         break;
                 }
 
@@ -537,7 +537,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             int chargeTime = 30;
             int chargeTimer = (int)(attackTimer - 60) % (chargeTime + chargeSlowdownDelay);
             int chargeCount = 5;
-            float chargeSpeed = (enraged ? 19f : 14.25f) + (1f - lifeRatio) * 3.2f;
+            float chargeSpeed = (enraged ? 21f : 15.5f) + (1f - lifeRatio) * 3.2f;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             if (attackTimer < 60f)

@@ -344,6 +344,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             int gasReleaseRate = enraged ? 50 : 90;
 
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 75f)
+            {
+                for (int i = 0; i < 24; i++)
+                {
+                    Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 720f;
+                    Vector2 petalShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.Zero) * 5f;
+                    Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<SporeGasPlantera>(), 165, 0f);
+                }
+            }
+
             // Periodically release gas.
             if (attackTimer % gasReleaseRate == gasReleaseRate - 1f)
             {
@@ -357,7 +367,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                         Vector2 gasSporeVelocity;
                         do
                             gasSporeVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(7f, 33f);
-                        while (gasSporeVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.53f);
+                        while (gasSporeVelocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.23f);
 
                         if (enraged)
                             gasSporeVelocity *= 1.25f;

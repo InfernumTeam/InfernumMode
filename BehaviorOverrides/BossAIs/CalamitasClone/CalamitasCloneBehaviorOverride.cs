@@ -539,9 +539,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int fireballDamage = shouldBeBuffed ? 345 : 150;
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
 
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
+                        for (int i = 0; i < 5; i++)
+                        {
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
+                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, i / 4f));
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
+                        }
                     }
                 }
 

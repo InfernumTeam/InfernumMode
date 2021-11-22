@@ -115,9 +115,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                         if (!otherBrotherIsPresent)
                         {
                             int fireballDamage = shouldBeBuffed ? 340 : 145;
-                            for (int i = 0; i < 3; i++)
+                            for (int i = 0; i < 12; i++)
                             {
-                                Vector2 shootVelocity = (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 8f;
+                                Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 8f;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
                             }
 						}
@@ -154,7 +154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             int attackCycleCount = 2;
             int hoverTime = 210;
-            float hoverHorizontalOffset = 485f;
+            float hoverHorizontalOffset = 600f;
             float hoverSpeed = 15f;
             float fireballSpeed = MathHelper.Lerp(6.5f, 10f, 1f - lifeRatio);
             int fireballReleaseRate = 65;
@@ -200,10 +200,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int fireballDamage = shouldBeBuffed ? 340 : 145;
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
-
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
+                        int fireballCount = otherBrotherIsPresent ? 5 : 6;
+                        for (int i = 0; i < fireballCount; i++)
+                        {
+                            int fireballDamage = shouldBeBuffed ? 340 : 145;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
+                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.8f, 0.8f, i / (fireballCount - 1f)));
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
+                        }
                     }
                 }
 

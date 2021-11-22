@@ -109,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			}
 
 			// Handle the second phase transition.
-			if (phaseTransitionAnimationTime < Phase2TransitionTime && lifeRatio < ExoMechManagement.Phase2LifeRatio)
+			if (phaseTransitionAnimationTime < Phase2TransitionTime && lifeRatio < ExoMechManagement.Phase3LifeRatio)
 			{
 				npc.dontTakeDamage = true;
 				npc.ModNPC<Artemis>().ChargeFlash = 0f;
@@ -156,6 +156,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				laserShootSpeed *= 0.8f;
 				shootRate -= 20f;
 			}
+			if (ExoMechManagement.CurrentTwinsPhase >= 6)
+				shootRate -= 5f;
 
 			ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
 			ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];

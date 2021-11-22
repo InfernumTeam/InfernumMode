@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				return;
 			}
 
-			if (Main.npc[OwnerIndex].Opacity <= 0f)
+			if (Main.npc[OwnerIndex].Opacity <= 0f || Main.npc[OwnerIndex].ai[0] != (int)ApolloBehaviorOverride.TwinsAttackType.SpecialAttack_LaserRayScarletBursts)
 			{
 				projectile.Kill();
 				return;

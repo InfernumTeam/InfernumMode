@@ -97,10 +97,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
 				npc.dontTakeDamage = true;
 
-			// Become invincible if the complement and the final mech was killed.
-			if (initialMech != null && initialMech.Infernum().ExtraAI[12] >= 0f && wasNotInitialSummon == 1f && finalMech != npc)
-				npc.dontTakeDamage = true;
-
 			// Become invincible and disappear if the final mech is present.
 			npc.Calamity().newAI[1] = 0f;
 			if (finalMech != null && finalMech != npc)
@@ -130,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			}
 
 			// Handle the second phase transition.
-			if (phaseTransitionAnimationTime < Phase2TransitionTime && lifeRatio < ExoMechManagement.Phase2LifeRatio)
+			if (phaseTransitionAnimationTime < Phase2TransitionTime && lifeRatio < ExoMechManagement.Phase3LifeRatio)
 			{
 				if (phaseTransitionAnimationTime == 1f)
 					SelectNextAttack(npc);
@@ -227,6 +223,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				shootRate -= 20f;
 				plasmaShootSpeed *= 1.35f;
 			}
+			if (ExoMechManagement.CurrentTwinsPhase >= 6)
+				shootRate -= 5f;
 
 			ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
 			ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
@@ -417,6 +415,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				homingSparkCount++;
 				chargeSpeed -= 5f;
 			}
+			if (ExoMechManagement.CurrentTwinsPhase >= 6)
+				totalCharges--;
 
 			ref float attackDelay = ref npc.Infernum().ExtraAI[1];
 			ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
@@ -547,6 +547,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				spinArc *= 1.2f;
 				burstReleaseRate -= 8;
 			}
+			if (ExoMechManagement.CurrentTwinsPhase >= 6)
+				burstReleaseRate -= 4;
 
 			ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
 			ref float spinDirection = ref npc.Infernum().ExtraAI[1];
@@ -691,6 +693,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 							laserShootRate += 10;
 						if (ExoMechManagement.CurrentTwinsPhase >= 5)
 							laserShootRate -= 3;
+						if (ExoMechManagement.CurrentTwinsPhase >= 6)
+							laserShootRate -= 4;
 
 						// Do movement.
 						AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);

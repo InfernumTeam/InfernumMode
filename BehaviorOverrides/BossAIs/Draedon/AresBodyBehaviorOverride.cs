@@ -136,10 +136,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			else
 				npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
-			// Become invincible if the complement and the final mech was killed.
-			if (initialMech != null && initialMech.Infernum().ExtraAI[12] >= 0f && wasNotInitialSummon == 1f && finalMech != npc)
-				npc.dontTakeDamage = true;
-
 			// Reset things.
 			projectileDamageBoost = ExoMechManagement.CurrentAresPhase >= 4 ? 50f : 0f;
 

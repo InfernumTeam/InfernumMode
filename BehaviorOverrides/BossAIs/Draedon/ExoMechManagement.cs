@@ -15,10 +15,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
 	public static class ExoMechManagement
 	{
-		public const float Phase2LifeRatio = 0.75f;
-		public const float Phase3LifeRatio = 0.5f;
-		public const float Phase4LifeRatio = 0.3f;
-		public const float ComplementMechInvincibilityThreshold = 0.6f;
+		public const float Phase2LifeRatio = 0.85f;
+		public const float Phase3LifeRatio = 0.625f;
+		public const float Phase4LifeRatio = 0.5f;
+		public const float ComplementMechInvincibilityThreshold = 0.5f;
 		public static bool ComplementMechIsPresent(NPC npc)
 		{
 			// Ares summons Thanatos.

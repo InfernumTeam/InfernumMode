@@ -277,13 +277,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     npc.spriteDirection = npc.direction;
                     target = Main.player[npc.target];
 
-                    int totalBubbles = enraged ? 11 : 8;
+                    int totalBubbles = enraged ? 15 : 8;
                     int bubbleShootRate = leviathanAlive ? 45 : 22;
                     float bubbleShootSpeed = 10f;
                     if (enraged)
                     {
-                        bubbleShootRate -= 6;
-                        bubbleShootSpeed += 3f;
+                        bubbleShootRate = 16;
+                        bubbleShootSpeed += 4f;
                     }
 
                     Vector2 destination = target.Center - Vector2.UnitY * 400f;
@@ -312,8 +312,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     float clefShootSpeed = leviathanAlive ? 13f : 15.5f;
                     if (enraged)
                     {
-                        singClefFireRate -= 2;
-                        clefShootSpeed += 2f;
+                        singClefFireRate = 6;
+                        clefShootSpeed = 17.67f;
                     }
 
                     destination = target.Center;
@@ -355,7 +355,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
                     }
 
-                    if (attackTimer == (enraged ? 175f : 210f))
+                    if (attackTimer == (enraged ? 155f : 210f))
                         goToNextAIState();
                     break;
                 case AnahitaAttackType.AtlantisCharge:
@@ -373,7 +373,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     {
                         hoverTime = 40;
                         spinTime = 300;
-                        chargeSpeed += 4f;
+                        chargeSpeed += 4.5f;
                     }
                     if (outOfOcean)
                     {

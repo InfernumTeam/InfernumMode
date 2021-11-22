@@ -177,14 +177,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 900f;
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 8f, 0.16f);
 
-                    if (attackTimer >= (sirenAlive ? 100f : 240f))
+                    if (attackTimer >= (sirenAlive ? 100f : 50f))
                         goToNextAIState();
                     break;
                 case LeviathanAttackType.BubbleBelch:
                     npc.TargetClosest();
                     npc.spriteDirection = npc.direction;
 
-                    int shootDelay = sirenAlive ? 60 : 35;
+                    int shootDelay = sirenAlive ? 60 : 20;
 
                     destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 960f;
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 10f, 0.2f);
@@ -296,7 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     int vomitCount = 9;
                     int vomitTime = anahitaFightingToo ? 65 : 75;
                     if (!sirenAlive)
-                        vomitTime = 52;
+                        vomitTime = 62;
 
                     if (attackTimer % vomitTime >= 15f && attackTimer % vomitTime <= 50f && usingBelchFrames)
                     {
@@ -305,9 +305,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         {
                             for (int i = 0; i < 3; i++)
                             {
-                                Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitX * npc.direction).RotatedBy(MathHelper.Lerp(-0.4f, 0.4f, i / 3f)) * 9f;
-                                if (!anahitaFightingToo)
-                                    shootVelocity *= 1.3f;
+                                Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitX * npc.direction).RotatedBy(MathHelper.Lerp(-0.4f, 0.4f, i / 2f)) * 9f;
+                                if (!sirenAlive)
+                                    shootVelocity *= Main.rand.NextFloat(1.3f, 1.5f);
+                                shootVelocity = shootVelocity.RotatedByRandom(0.21f);
                                 int meteor = Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanBomb>(), 150, 0f);
                                 if (Main.projectile.IndexInRange(meteor))
                                     Main.projectile[meteor].timeLeft += 180;
@@ -328,7 +329,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     npc.TargetClosest();
 
                     int redirectTime = sirenAlive ? 60 : 45;
-                    int chargeTime = sirenAlive ? 60 : 50;
+                    int chargeTime = sirenAlive ? 60 : 32;
                     ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
                     if (outOfOcean)
                     {
@@ -347,9 +348,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
                     if (attackTimer == redirectTime)
                     {
-                        float chargeSpeed = sirenAlive ? 23.5f : 32f;
+                        float chargeSpeed = sirenAlive ? 23.5f : 37.5f;
                         if (outOfOcean)
-                            chargeSpeed = 37f;
+                            chargeSpeed = 42f;
                         npc.velocity = Vector2.UnitX * npc.direction * chargeSpeed;
                         if (outOfOcean)
                             npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;

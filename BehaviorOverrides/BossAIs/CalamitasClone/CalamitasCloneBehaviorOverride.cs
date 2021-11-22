@@ -266,16 +266,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int attackCycleCount = 3;
             int hoverTime = 210;
             float hoverHorizontalOffset = 530f;
-            float hoverSpeed = 15f;
-            float initialFlameSpeed = 8f;
-            float flameAngularVariance = 0.72f;
-            int flameReleaseRate = 9;
+            float hoverSpeed = 20f;
+            float initialFlameSpeed = 12.7f;
+            float flameAngularVariance = 0.84f;
+            int flameReleaseRate = 8;
             int flameReleaseTime = 180;
             if (lifeRatio < Phase2LifeRatio)
             {
                 attackCycleCount--;
                 hoverHorizontalOffset -= 70f;
-                initialFlameSpeed += 5f;
+                initialFlameSpeed += 6f;
                 flameAngularVariance *= 1.35f;
                 flameReleaseRate -= 2;
             }
@@ -283,8 +283,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (shouldBeBuffed)
             {
                 attackCycleCount--;
-                hoverSpeed += 9f;
-                initialFlameSpeed *= 1.9f;
+                hoverSpeed += 4f;
+                initialFlameSpeed *= 1.35f;
             }
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
@@ -340,15 +340,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             int attackDelay = 90;
             int attackTime = 480;
-            int meteorShootRate = 9;
-            float meteorShootSpeed = 16f;
-            float hoverSpeed = 15f;
+            int meteorShootRate = 8;
+            float meteorShootSpeed = 18.5f;
+            float hoverSpeed = 20f;
             if (shouldBeBuffed)
             {
                 attackTime += 60;
                 meteorShootRate -= 3;
                 meteorShootSpeed += 5f;
-                hoverSpeed += 9f;
+                hoverSpeed += 5f;
             }
             meteorShootSpeed *= MathHelper.Lerp(1f, 1.35f, 1f - lifeRatio);
 
@@ -390,8 +390,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             int attackDelay = 45;
             int attackTime = 300;
-            int lavaShootRate = 30;
-            float hoverSpeed = 15f;
+            int lavaShootRate = 24;
+            float hoverSpeed = 20f;
 
             if (lifeRatio < Phase2LifeRatio)
             {
@@ -403,7 +403,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 attackTime += 45;
                 lavaShootRate -= 10;
-                hoverSpeed += 9f;
+                hoverSpeed += 5f;
             }
 
             // Attempt to hover above the target.
@@ -445,14 +445,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             int attackDelay = 45;
             int attackTime = 330;
-            int lightningShootRate = 28;
-            float hoverSpeed = 15f;
+            int lightningShootRate = 23;
+            float hoverSpeed = 18f;
 
             if (shouldBeBuffed)
             {
                 attackTime += 45;
                 lightningShootRate -= 8;
-                hoverSpeed += 9f;
+                hoverSpeed += 6f;
             }
 
             // Attempt to hover above the target.
@@ -485,9 +485,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int attackCycleCount = 2;
             int hoverTime = 210;
             float hoverHorizontalOffset = 485f;
-            float hoverSpeed = 15f;
+            float hoverSpeed = 19f;
             float fireballSpeed = MathHelper.Lerp(7.8f, 12f, 1f - lifeRatio);
-            int fireballReleaseRate = 60;
+            int fireballReleaseRate = 36;
             int fireballReleaseTime = 360;
 
             if (inFinalPhase)
@@ -499,8 +499,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (shouldBeBuffed)
             {
                 attackCycleCount--;
-                fireballReleaseRate /= 2;
-                hoverSpeed += 9f;
+                fireballReleaseRate = (int)(fireballReleaseRate * 0.65f);
+                hoverSpeed += 6f;
                 fireballSpeed += 8.5f;
             }
 
@@ -567,8 +567,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         public static void DoBehavior_DiagonalCharge(NPC npc, Player target, float lifeRatio, bool shouldBeBuffed, ref float attackTimer)
         {
             float chargeOffset = 395f;
-            float redirectSpeed = 29f;
-            float chargeSpeed = MathHelper.Lerp(23.5f, 27.5f, 1f - lifeRatio);
+            float redirectSpeed = 33f;
+            float chargeSpeed = MathHelper.Lerp(26.75f, 30.25f, 1f - lifeRatio);
             int chargeTime = 50;
             int chargeSlowdownTime = 15;
             int chargeCount = 5;
@@ -576,7 +576,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (shouldBeBuffed)
             {
                 chargeSpeed *= 1.5f;
-                redirectSpeed += 7f;
+                redirectSpeed += 6f;
             }
 
             if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
@@ -637,15 +637,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 19f;
-            float fireballSpeed = 10.5f;
-            int fireballReleaseRate = 25;
+            float fireballSpeed = 13.5f;
+            int fireballReleaseRate = 22;
             int fireballReleaseTime = 360;
 
             if (shouldBeBuffed)
             {
                 fireballReleaseRate -= 6;
                 hoverSpeed += 9f;
-                fireballSpeed += 8.5f;
+                fireballSpeed += 7f;
             }
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
@@ -698,12 +698,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             int redirectTime = 60;
             int chargeTime = 130;
-            float chargeSpeed = 19f;
-            float fireballSpeed = 10f;
+            float chargeSpeed = 21.5f;
+            float fireballSpeed = 10.5f;
 
             if (shouldBeBuffed)
             {
-                chargeSpeed += 7f;
+                chargeSpeed += 6f;
                 fireballSpeed += 6f;
             }
 

@@ -55,6 +55,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             CalamityGlobalNPC.calamitas = npc.whoAmI;
 
+            npc.defense = npc.defDefense = 0;
+
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -28f, 0.08f);

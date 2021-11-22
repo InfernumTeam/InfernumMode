@@ -352,7 +352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 32f;
-                    for (int i = 0; i < 30; i++)
+                    for (int i = 0; i < 55; i++)
                     {
                         Vector2 gasSporeVelocity;
                         do

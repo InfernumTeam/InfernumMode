@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             NPC[] hands = Main.npc.Where(n => n.type == npc.type && n.active).ToArray();
             float handsRatio = hands.Sum(h => h.life / (float)h.lifeMax);
 
-            if ((calamityGlobalNPC.newAI[0] == 1f || npc.life < 1700) && npc.Infernum().ExtraAI[2] != -2f)
+            if ((calamityGlobalNPC.newAI[0] == 2f || npc.life < 1700) && npc.Infernum().ExtraAI[2] != -2f)
             {
                 SummonTrueEye(npc);
             }
@@ -71,8 +71,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 if (npc.ai[0] == -2f && Main.npc[(int)npc.ai[3]].ai[0] != 2f)
                 {
-                    if (calamityGlobalNPC.newAI[0] != 1f)
-                        calamityGlobalNPC.newAI[0] = 1f;
+                    if (calamityGlobalNPC.newAI[0] != 2f)
+                        calamityGlobalNPC.newAI[0] = 2f;
 
                     npc.life = npc.lifeMax;
                     npc.netUpdate = true;

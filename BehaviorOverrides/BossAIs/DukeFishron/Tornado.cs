@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             projectile.ignoreWater = true;
             projectile.penetrate = -1;
             projectile.alpha = 255;
-            projectile.timeLeft = 300;
+            projectile.timeLeft = 480;
             cooldownSlot = 1;
         }
 
@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 return;
             }
 
-            projectile.Opacity = (float)Math.Sin(projectile.timeLeft / 300f) * 10f;
+            projectile.Opacity = (float)Math.Sin(projectile.timeLeft / 480f) * 10f;
             if (projectile.Opacity > 1f)
                 projectile.Opacity = 1f;
         }

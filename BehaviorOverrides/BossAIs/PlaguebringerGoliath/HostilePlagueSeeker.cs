@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             {
                 Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
                 if (!projectile.WithinRange(target.Center, 50f))
-                    projectile.velocity = (projectile.velocity * 69f + projectile.SafeDirectionTo(target.Center) * 10f) / 70f;
+                    projectile.velocity = (projectile.velocity * 69f + projectile.SafeDirectionTo(target.Center) * 16f) / 70f;
             }
             Time++;
         }

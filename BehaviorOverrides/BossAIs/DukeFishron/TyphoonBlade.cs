@@ -36,6 +36,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             Time++;
             projectile.rotation += 0.4f * (projectile.velocity.X > 0).ToDirectionInt();
             projectile.Opacity = Utils.InverseLerp(0f, 30f, Time, true);
+
+            if (Time > 40f)
+            {
+                float oldSpeed = projectile.velocity.Length();
+                Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+                projectile.velocity = (projectile.velocity * 49f + projectile.SafeDirectionTo(target.Center) * oldSpeed) / 50f;
+                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * oldSpeed;
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

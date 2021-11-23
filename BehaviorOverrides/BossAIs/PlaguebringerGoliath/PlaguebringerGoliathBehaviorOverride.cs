@@ -207,8 +207,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public static void DoBehavior_MissileLaunch(NPC npc, Player target, ref float attackTimer, float enrageFactor, ref float frameType)
         {
             int attackCycleCount = enrageFactor > 1f - Phase3LifeRatio ? 1 : 2;
-            int missileShootRate = (int)(16f - enrageFactor * 6f);
-            float missileShootSpeed = enrageFactor * 5f + 12f;
+            int missileShootRate = (int)(14f - enrageFactor * 6f);
+            float missileShootSpeed = enrageFactor * 5f + 16f;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float bombingCount = ref npc.Infernum().ExtraAI[1];
             ref float missileShootTimer = ref npc.Infernum().ExtraAI[2];
@@ -227,10 +227,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
                     // Make the attack go by way quicker once in position.
                     if (npc.WithinRange(hoverDestination, 35f))
-                        attackTimer += 4f;
+                        attackTimer += 3f;
 
                     missileShootTimer = 0f;
-                    if (attackTimer >= 180f)
+                    if (attackTimer >= 120f)
 					{
                         attackState++;
                         attackTimer = 0f;
@@ -380,7 +380,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 195f))
+                if (npc.WithinRange(hoverDestination, 195f) || hoverTimer >= 75f)
                 {
                     npc.velocity *= 0.95f;
 
@@ -469,7 +469,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 255f))
+                if (npc.WithinRange(hoverDestination, 255f) || hoverTimer > 50f)
                 {
                     npc.velocity *= 0.935f;
 
@@ -608,7 +608,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 255f))
+                if (npc.WithinRange(hoverDestination, 255f) || hoverTimer > 50f)
                 {
                     npc.velocity *= 0.935f;
 
@@ -699,7 +699,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             int chargeCount = 6;
             int chargeTime = (int)(130f - enrageFactor * 24f);
-            float chargeSpeed = enrageFactor * 6f + 14f;
+            float chargeSpeed = enrageFactor * 6.25f + 18f;
 
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
             ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
@@ -730,7 +730,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 255f))
+                if (npc.WithinRange(hoverDestination, 255f) || hoverTimer > 50f)
                 {
                     npc.velocity *= 0.935f;
 

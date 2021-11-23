@@ -51,7 +51,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             else if (npc.timeLeft > 600)
                 npc.timeLeft = 600;
 
-            Vector2 continousHoverPosition = Target.Center + new Vector2(-250f, -175f);
+            npc.dontTakeDamage = GeneralTimer < 60f;
+
+            Vector2 continousHoverPosition = Target.Center + new Vector2(-280f, -225f);
             continousHoverPosition += (npc.whoAmI * 1.58436f).ToRotationVector2() * (float)Math.Cos(GeneralTimer / 17f) * 42f;
             if (Vector2.Distance(GeneralHoverPosition, continousHoverPosition) > 325f)
                 GeneralHoverPosition = continousHoverPosition;

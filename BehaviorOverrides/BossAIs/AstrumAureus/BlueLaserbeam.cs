@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
     public class BlueLaserbeam : BaseLaserbeamProjectile
     {
         public int OwnerIndex => (int)projectile.ai[1];
-        public override float Lifetime => 180;
+        public override float Lifetime => OrangeLaserbeam.LaserLifetime;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.Cyan;
         public override Texture2D LaserBeginTexture => Main.projectileTexture[projectile.type];

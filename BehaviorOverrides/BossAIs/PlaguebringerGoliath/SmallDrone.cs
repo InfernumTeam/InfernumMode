@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 laserDirection = npc.SafeDirectionTo(Main.npc[(int)NextDroneIndex].Center, Vector2.UnitY);
-                    int laser = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<PlagueDeathray>(), 215, 0f);
+                    int laser = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<PlagueDeathray>(), 270, 0f);
                     if (Main.projectile.IndexInRange(laser))
                         Main.projectile[laser].ai[1] = npc.whoAmI;
                 }

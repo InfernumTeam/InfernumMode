@@ -197,8 +197,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
-            int laserShootRate = (int)MathHelper.Lerp(110f, 60f, 1f - lifeRatio);
-            float walkSpeed = MathHelper.Lerp(5.4f, 9f, 1f - lifeRatio);
+            int laserShootRate = (int)MathHelper.Lerp(80f, 50f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(6.3f, 9.5f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 
@@ -222,12 +222,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             {
                 Main.PlaySound(SoundID.Item33, npc.Center);
 
-                int laserCount = 8;
+                int laserCount = 13;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(0.38f) * Main.rand.NextFloat(16f, 20f);
+                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(0.68f) * Main.rand.NextFloat(16f, 20f);
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
                     }
 
@@ -314,6 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             if (distanceBelowTarget > 0f)
                                 jumpIntensity = 1f + distanceBelowTarget * 0.00115f;
 
+                            jumpIntensity *= 1.15f;
                             if (jumpIntensity > 3.6f)
                                 jumpIntensity = 3.6f;
 
@@ -440,7 +441,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.66f) * Main.rand.NextFloat(16f, 19f);
+                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedByRandom(1.16f) * Main.rand.NextFloat(16f, 19f);
                     Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 3f, rocketShootVelocity, ModContent.ProjectileType<AstralMissile>(), 165, 0f);
 
                     rocketShootTimer = 0f;
@@ -618,11 +619,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 Vector2 shootVelocity = shootDirection * 16f;
 
                 int cometType = ModContent.ProjectileType<AstralBlueComet>();
-                if (Main.rand.NextBool(12))
-                {
-                    cometType = ModContent.ProjectileType<AstralFlame>();
-                    shootVelocity *= 0.55f;
-                }
                 Utilities.NewProjectileBetter(cometSpawnPosition, shootVelocity, cometType, 170, 0f);
             }
 
@@ -678,7 +674,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         {
                             int laserDirection = (i == 0).ToDirectionInt();
                             Main.projectile[i].Infernum().ExtraAI[0] = i;
-                            Main.projectile[i].ai[0] = MathHelper.Pi / 180f * laserDirection * 0.84f;
+                            Main.projectile[i].ai[0] = MathHelper.Pi / OrangeLaserbeam.LaserLifetime * laserDirection * 0.84f;
                             Main.projectile[i].ai[1] = npc.whoAmI;
                         }
                     }
@@ -735,7 +731,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     npc.velocity.Y += 0.5f;
             }
 
-            if (attackTimer >= laserShootDelay + 180f)
+            if (attackTimer >= laserShootDelay + OrangeLaserbeam.LaserLifetime)
                 GotoNextAttackState(npc);
         }
         #endregion Custom Behaviors

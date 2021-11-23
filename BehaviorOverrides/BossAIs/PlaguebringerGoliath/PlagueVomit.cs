@@ -33,9 +33,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 7; i++)
             {
-                Vector2 seekerVelocity = (MathHelper.TwoPi * (i + 0.5f) / 4f).ToRotationVector2() * 11f;
+                Vector2 seekerVelocity = (MathHelper.TwoPi * (i + 0.5f) / 7f).ToRotationVector2() * 13.5f;
                 Utilities.NewProjectileBetter(projectile.Center, seekerVelocity, ModContent.ProjectileType<HostilePlagueSeeker>(), 155, 0f);
             }
         }

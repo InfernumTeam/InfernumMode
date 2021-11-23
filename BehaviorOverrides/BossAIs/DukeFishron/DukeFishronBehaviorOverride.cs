@@ -15,7 +15,7 @@ using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 {
-	public class DukeFishronBehaviorOverride : NPCBehaviorOverride
+    public class DukeFishronBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.DukeFishron;
 
@@ -40,10 +40,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             IdleFins,
             OpenMouth
         }
-		#endregion
+        #endregion
 
-		#region Pattern Lists
-		public static readonly DukeAttackType[] Subphase1Pattern = new DukeAttackType[]
+        #region Pattern Lists
+        public static readonly DukeAttackType[] Subphase1Pattern = new DukeAttackType[]
         {
             DukeAttackType.Charge,
             DukeAttackType.Charge,
@@ -139,6 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool inPhase2 = lifeRatio < 0.65f;
             bool inPhase3 = lifeRatio < 0.35f;
+            bool inPhase4 = lifeRatio < 0.15f;
             bool inWater = npc.wet;
             ref float aiState = ref npc.Infernum().ExtraAI[5];
             ref float aiStateIndex = ref npc.ai[1];
@@ -250,9 +251,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             switch ((DukeAttackType)(int)aiState)
             {
                 case DukeAttackType.Charge:
-                    int angularAimTime = 8;
+                    int angularAimTime = 6;
                     int chargeTime = 40;
-                    float chargeSpeed = 18.75f;
+                    float chargeSpeed = 23f;
                     int decelerationTime = 14;
                     float chargeDeceleration = 0.8f;
                     if (enraged || inPhase3)
@@ -260,6 +261,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         angularAimTime -= 5;
                         chargeTime -= 10;
                         chargeSpeed *= 1.3f;
+                    }
+                    if (inPhase4)
+                    {
+                        chargeTime -= 5;
+                        chargeSpeed *= 1.15f;
                     }
 
                     if (inWater)
@@ -483,8 +489,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
                         List<int> xSpawnPositions = new List<int>()
                         {
-                            (int)(target.Center.X - (enraged ? 570f : 700f)) / 16,
-                            (int)(target.Center.X + (enraged ? 570f : 700f)) / 16
+                            (int)(target.Center.X - (enraged ? 500f : 600f)) / 16,
+                            (int)(target.Center.X + (enraged ? 500f : 600f)) / 16
                         };
 
                         // Summon tornadoes on the ground/water.
@@ -495,7 +501,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                             {
                                 WorldUtils.Find(new Point(x, y), Searches.Chain(new Searches.Down(Main.maxTilesY - 10), new CustomTileConditions.IsWaterOrSolid()), out Point result);
                                 Vector2 spawnPosition = result.ToWorldCoordinates();
-                                int tornado = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<Tornado>(), 150, 0f);
+                                Vector2 tornadoVelocity = Vector2.UnitX * (target.Center.X > spawnPosition.X).ToDirectionInt() * 4f;
+                                int tornado = Utilities.NewProjectileBetter(spawnPosition, tornadoVelocity, ModContent.ProjectileType<Tornado>(), 150, 0f);
                                 Main.projectile[tornado].Bottom = spawnPosition;
                             }
                         }
@@ -530,7 +537,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 case DukeAttackType.TidalWave:
                     int redirectTime = inPhase3 ? 60 : 90;
                     float lungeSpeed = enraged ? 24f : 18f;
-                    float waveSpeed = enraged ? 16f : 8f;
+                    float waveSpeed = enraged ? 20f : 12.5f;
                     if (inPhase3)
                     {
                         lungeSpeed *= 1.4f;
@@ -590,6 +597,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     int typhoonBurstRate = enraged ? 20 : 30;
                     int typhoonCount = enraged ? 14 : 8;
                     float typhoonBurstSpeed = enraged ? 14f : 9f;
+
+                    if (inPhase4)
+                    {
+                        initialChargeSpeed += 2.5f;
+                        typhoonBurstRate -= 5;
+                        typhoonCount += 5;
+                    }
+
                     if (attackTimer < hoverTime)
                     {
                         Vector2 destination = target.Center + new Vector2(500f, -1000f);
@@ -659,6 +674,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     break;
                 case DukeAttackType.TeleportCharge:
                     chargeSpeed = enraged ? 35f : 30f;
+                    
+                    if (inPhase4)
+                        chargeSpeed += 3f;
 
                     // Fadeout effects, flying, and damage disabling.
                     if (attackTimer < 45f)

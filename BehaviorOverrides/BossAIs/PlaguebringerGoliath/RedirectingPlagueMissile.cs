@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 projectile.velocity *= 1.01f;
             if (Time >= 30f)
             {
-                float newSpeed = MathHelper.Clamp(projectile.velocity.Length() * 1.003f, 9f, 16f);
+                float newSpeed = MathHelper.Clamp(projectile.velocity.Length() * 1.003f, 11f, 18f);
                 projectile.velocity = (projectile.velocity * 29f + projectile.SafeDirectionTo(Target.Center) * newSpeed) / 30f;
             }
 

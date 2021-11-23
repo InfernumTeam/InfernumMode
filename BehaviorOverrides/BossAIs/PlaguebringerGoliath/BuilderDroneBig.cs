@@ -50,6 +50,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             else if (npc.timeLeft > 600)
                 npc.timeLeft = 600;
 
+            npc.dontTakeDamage = GeneralTimer < 60f;
+
             // Randomly play sounds to indicate building.
             if (Main.rand.NextBool(10))
 			{

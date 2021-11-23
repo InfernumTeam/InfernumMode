@@ -23,16 +23,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             ref float ringRadius = ref npc.ai[1];
             ref float ringIrregularity = ref npc.ai[2];
             ref float time = ref npc.ai[3];
+            ref float explodeTimer = ref npc.Infernum().ExtraAI[0];
 
             npc.DeathSound = SoundID.Item11;
+
+            if (explodeTimer > 0f)
+            {
+                npc.velocity *= 0.96f;
+                npc.rotation = Math.Abs(npc.velocity.X) * npc.spriteDirection * 0.03f;
+                if (explodeTimer >= 35f)
+                {
+                    npc.life = 0;
+                    npc.HitEffect();
+                    npc.checkDead();
+                    npc.active = false;
+                }
+                else
+                    npc.scale *= 1.03f;
+
+                explodeTimer++;
+                return false;
+			}
 
             // Explode if Astrum Aureus is not present or enough time has passed.
             if (aureus == -1 || time >= 600f)
             {
-                npc.life = 0;
-                npc.HitEffect();
-                npc.checkDead();
-                npc.active = false;
+                explodeTimer = 1f;
+                npc.netUpdate = true;
                 return false;
             }
 
@@ -70,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 Tile tile = Framing.GetTileSafely(npc.Center.ToTileCoordinates());
                 bool collidingWithTile = tile.nactive() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type] && !TileID.Sets.Platforms[tile.type];
 
-                if (npc.WithinRange(target.Center, 60f) || collidingWithTile)
+                if (collidingWithTile)
                 {
                     npc.life = 0;
                     npc.HitEffect();
@@ -78,6 +95,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     npc.active = false;
                     return false;
                 }
+
+                if (npc.WithinRange(target.Center, 60f))
+				{
+                    explodeTimer = 1f;
+                    return false;
+				}
 
                 npc.velocity = (npc.velocity * 50f + npc.SafeDirectionTo(target.Center) * 20.5f) / 51f;
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();

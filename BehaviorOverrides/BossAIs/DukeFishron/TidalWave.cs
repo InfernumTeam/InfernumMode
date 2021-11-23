@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             if (WaveHeight < 60f)
                 WaveHeight = 60f;
-            WaveHeight = MathHelper.Lerp(WaveHeight, 400f, 0.04f);
+            WaveHeight = MathHelper.Lerp(WaveHeight, 720f, 0.04f);
             projectile.Opacity = (float)Math.Sin(projectile.timeLeft / 360f * MathHelper.Pi) * 3f;
             if (projectile.Opacity > 1f)
                 projectile.Opacity = 1f;

@@ -154,18 +154,6 @@ namespace InfernumMode.GlobalInstances
         {
             if (InfernumMode.CanUseCustomAIs)
             {
-                if (projectile.type == ProjectileID.PhantasmalBolt)
-                {
-                    if (projectile.velocity.X != oldVelocity.X)
-                    {
-                        projectile.velocity.X = -oldVelocity.X;
-                    }
-                    if (projectile.velocity.Y != oldVelocity.Y)
-                    {
-                        projectile.velocity.Y = -oldVelocity.Y;
-                    }
-                    return false;
-                }
                 if (projectile.type == ProjectileID.PhantasmalSphere)
                 {
                     if (projectile.velocity.X != oldVelocity.X)

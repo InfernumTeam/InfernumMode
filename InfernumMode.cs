@@ -1,6 +1,7 @@
 using CalamityMod.Events;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
+using InfernumMode.BossRush;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Items;
 using InfernumMode.OverridingSystem;
@@ -23,7 +24,9 @@ namespace InfernumMode
     {
         internal static InfernumMode Instance = null;
         internal static Mod CalamityMod = null;
-        internal static bool CanUseCustomAIs => !BossRushEvent.BossRushActive && PoDWorld.InfernumMode;
+        internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && PoDWorld.InfernumMode;
+
+        internal static bool BossRushApplies => false;
 
         internal static readonly Color HiveMindSkyColor = new Color(53, 42, 81);
 
@@ -102,6 +105,9 @@ namespace InfernumMode
 
                 OverrideMusicBox(ItemID.MusicBoxBoss3, GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
             }
+
+            if (BossRushApplies)
+                BossRushChanges.Load();
         }
 
         internal static IDictionary<int, int> SoundLoaderMusicToItem => (IDictionary<int, int>)typeof(SoundLoader).GetField("musicToItem", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);

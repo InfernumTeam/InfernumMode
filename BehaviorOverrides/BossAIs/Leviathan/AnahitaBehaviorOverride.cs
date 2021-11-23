@@ -282,7 +282,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     float bubbleShootSpeed = 10f;
                     if (enraged)
                     {
-                        bubbleShootRate = 16;
+                        bubbleShootRate = 13;
                         bubbleShootSpeed += 4f;
                     }
 
@@ -312,7 +312,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     float clefShootSpeed = leviathanAlive ? 13f : 15.5f;
                     if (enraged)
                     {
-                        singClefFireRate = 6;
+                        singClefFireRate = 5;
                         clefShootSpeed = 17.67f;
                     }
 
@@ -355,7 +355,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
                     }
 
-                    if (attackTimer == (enraged ? 155f : 210f))
+                    if (attackTimer == (enraged ? 135f : 210f))
                         goToNextAIState();
                     break;
                 case AnahitaAttackType.AtlantisCharge:
@@ -373,7 +373,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     {
                         hoverTime = 40;
                         spinTime = 300;
-                        chargeSpeed += 4.5f;
+                        chargeSpeed += 6f;
                     }
                     if (outOfOcean)
                     {

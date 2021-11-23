@@ -128,7 +128,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     DoBehavior_InvulnerableFlyToTarget(npc, target, ref attackState);
                     break;
                 case MoonLordCoreAttackState.VulnerableFlyToTarget:
-                    DoBehavior_VulnerableFlyToTarget(npc, target);
+                    DoBehavior_VulnerableFlyToTarget(npc, target, ref attackTimer);
                     break;
                 case MoonLordCoreAttackState.DeathEffects:
                     DoBehavior_DeathEffects(npc, ref attackTimer);
@@ -365,11 +365,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 // Start taking damage if other parts are marked as dead.
                 bool takeDamage = true;
-                if (Main.npc[(int)npc.localAI[0]].Calamity().newAI[0] != 1f)
+                if (Main.npc[(int)npc.localAI[0]].Calamity().newAI[0] != 2f)
                     takeDamage = false;
-                if (Main.npc[(int)npc.localAI[1]].Calamity().newAI[0] != 1f)
+                if (Main.npc[(int)npc.localAI[1]].Calamity().newAI[0] != 2f)
                     takeDamage = false;
-                if (Main.npc[(int)npc.localAI[2]].Calamity().newAI[0] != 1f)
+                if (Main.npc[(int)npc.localAI[2]].Calamity().newAI[0] != 2f)
                     takeDamage = false;
 
                 // Go to the other non-invulnerable move variant if the Moon Lord should take damage.
@@ -382,7 +382,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
         }
 
-        public static void DoBehavior_VulnerableFlyToTarget(NPC npc, Player target)
+        public static void DoBehavior_VulnerableFlyToTarget(NPC npc, Player target, ref float attackTimer)
         {
             npc.dontTakeDamage = false;
             npc.TargetClosest(false);
@@ -395,7 +395,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination - npc.velocity) * 8f, 0.5f);
                 npc.velocity = Vector2.Lerp(npc.velocity, oldVelocity, 0.5f);
             }
+
+            bool eyesButNoSeals = NPC.CountNPCS(NPCID.MoonLordFreeEye) >= 3 && !NPC.AnyNPCs(ModContent.NPCType<EldritchSeal>());
+            if (Main.netMode != NetmodeID.MultiplayerClient && eyesButNoSeals && attackTimer % 90f == 89f)
+            {
+                for (int i = 0; i < 16; i++)
+                {
+                    Vector2 boltVelocity = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * 2f;
+                    Utilities.NewProjectileBetter(npc.Center, boltVelocity, ProjectileID.PhantasmalBolt, 180, 0f);
+                }
+            }
+
             NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
+            attackTimer++;
         }
 
         public static void DoBehavior_DeathEffects(NPC npc, ref float attackTimer)

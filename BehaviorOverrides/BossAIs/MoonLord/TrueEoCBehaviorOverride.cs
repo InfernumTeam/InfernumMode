@@ -257,7 +257,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         else if (npc.ai[1] == seekTimeCircular + waitTime)
                         {
                             npc.Infernum().canTelegraph = false;
-                            int boltCount = enrage ? 25 : 12;
+                            int boltCount = enrage ? 32 : 20;
                             for (int i = 0; i < boltCount; i++)
                             {
                                 float angle = MathHelper.TwoPi / boltCount * i + npc.Infernum().ExtraAI[1];
@@ -338,7 +338,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                             {
                                 npc.Infernum().ExtraAI[1] += MathHelper.ToRadians(360f / (250f - seekTimeSpiral) * ai1Skip);
                                 Vector2 spawnPositon = npc.Center;
-                                NewProjectileBetter(spawnPositon, npc.Infernum().ExtraAI[1].ToRotationVector2() * (enrage ? 3.5f : 2f), ProjectileID.PhantasmalBolt, 185, 1f);
+                                NewProjectileBetter(spawnPositon, npc.Infernum().ExtraAI[1].ToRotationVector2() * (enrage ? 4.25f : 3f), ProjectileID.PhantasmalBolt, 185, 1f);
                             }
                         }
                         break;
@@ -458,7 +458,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         const float floatTime = 140f;
                         const float aimTime = 45f;
                         const float blastTime = 60f;
-                        const int blastCount = 6;
+                        const int blastCount = 12;
                         // Get into a general area of the target position
                         if (npc.ai[1] < floatTime + 2f * delay)
                         {

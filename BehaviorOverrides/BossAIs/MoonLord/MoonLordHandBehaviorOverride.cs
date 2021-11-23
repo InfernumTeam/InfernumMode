@@ -112,6 +112,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                     npc.velocity = Vector2.Lerp(oldVelocity, npc.velocity, 0.5f);
                 }
+                npc.Calamity().newAI[1] = 2f;
                 npc.dontTakeDamage = true;
             }
 
@@ -149,30 +150,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             else if (npc.ai[0] == 1f)
             {
                 idealFrame = 0;
-                int phantasmalEyeCount = 5;
-                int modulo = 4;
+                int phantasmalEyeCount = 14;
+                int shootRate = 4;
                 if (enrage)
                 {
-                    phantasmalEyeCount = 12;
-                    modulo = 2;
+                    phantasmalEyeCount = 24;
+                    shootRate = 2;
                 }
 
-                if (npc.Infernum().ExtraAI[1] >= phantasmalEyeCount * modulo * 2)
+                if (npc.Infernum().ExtraAI[1] >= phantasmalEyeCount * shootRate * 2)
                 {
                     npc.localAI[1] -= 0.07f;
                     if (npc.localAI[1] < 0f)
                         npc.localAI[1] = 0f;
                 }
-                else if (npc.Infernum().ExtraAI[1] >= phantasmalEyeCount * modulo)
+                else if (npc.Infernum().ExtraAI[1] >= phantasmalEyeCount * shootRate)
                 {
                     npc.localAI[1] += 0.05f;
                     if (npc.localAI[1] > 0.75f)
                         npc.localAI[1] = 0.75f;
 
-                    float pupilAngle = MathHelper.TwoPi * (npc.Infernum().ExtraAI[1] % (phantasmalEyeCount * modulo)) / (phantasmalEyeCount * modulo) - 1.57079637f;
+                    float pupilAngle = MathHelper.TwoPi * (npc.Infernum().ExtraAI[1] % (phantasmalEyeCount * shootRate)) / (phantasmalEyeCount * shootRate) - 1.57079637f;
                     npc.localAI[0] = (pupilAngle.ToRotationVector2() * ellipseVector).ToRotation();
 
-                    if (npc.Infernum().ExtraAI[1] % modulo == 0f)
+                    if (npc.Infernum().ExtraAI[1] % shootRate == 0f)
                     {
                         // Vector2 value11 = new Vector2(1f * -handSign, 3f);
                         // Let it also be known that some nerd was multiplying a value by 1.
@@ -187,14 +188,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 }
                 else
                 {
-                    npc.localAI[1] += 0.02f;
-                    if (npc.localAI[1] > 0.75f)
-                        npc.localAI[1] = 0.75f;
+                    npc.localAI[1] -= 0.02f;
+                    if (npc.localAI[1] < 0f)
+                        npc.localAI[1] = 0f;
 
-                    float pupilAngle = MathHelper.TwoPi * (npc.Infernum().ExtraAI[1] % (phantasmalEyeCount * modulo)) / (phantasmalEyeCount * modulo) - 1.57079637f;
-                    npc.localAI[0] = (pupilAngle.ToRotationVector2() * ellipseVector).ToRotation();
+                    npc.localAI[0] = npc.localAI[0].AngleTowards(0f, 0.7f);
                 }
-                if (npc.Infernum().ExtraAI[1] >= phantasmalEyeCount * modulo + 10)
+                if (npc.Infernum().ExtraAI[1] >= phantasmalEyeCount * shootRate + 10)
                 {
                     if (npc.life > 1700)
                         npc.ai[0] = ai0Reset;
@@ -224,7 +224,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     Vector2 intialVelocity = idealBase - npc.Center;
                     if (intialVelocity != Vector2.Zero)
                     {
-                        float velocityMult = BossRushEvent.BossRushActive ? 14f : 10f;
+                        float velocityMult = 16f;
                         npc.velocity = Vector2.SmoothStep(npc.velocity, Vector2.Normalize(intialVelocity) * Math.Min(velocityMult, intialVelocity.Length()), 0.2f);
                     }
                 }
@@ -232,8 +232,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 {
                     idealFrame = 1;
                     int modifiedAICounter = (int)npc.Infernum().ExtraAI[1] - 30;
-                    int modulo = enrage ? 10 : 60;
-                    if (modifiedAICounter % modulo == 0 && Main.netMode != NetmodeID.MultiplayerClient)
+                    int shootRate = enrage ? 8 : 24;
+                    if (modifiedAICounter % shootRate == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 sphereVelocity = new Vector2(5f * handSign, -8f);
                         int counterDivided = modifiedAICounter / 30;
@@ -318,21 +318,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 }
                 npc.TargetClosest(false);
                 Vector2 playerDistance = Main.player[npc.target].Center + Main.player[npc.target].velocity * 20f - npc.Center;
-                npc.localAI[0] = npc.localAI[0].AngleLerp(playerDistance.ToRotation(), 0.5f);
+                npc.localAI[0] = playerDistance.ToRotation();
 
                 npc.localAI[1] += 0.05f;
                 if (npc.localAI[1] > 1f)
                     npc.localAI[1] = 1f;
 
-                if (npc.Infernum().ExtraAI[1] == 70 - 35f)
+                if (npc.Infernum().ExtraAI[1] == 20f)
                     Main.PlaySound(SoundID.NPCDeath6, npc.position);
 
-                if ((npc.Infernum().ExtraAI[1] == 70 - 14f ||
-                    npc.Infernum().ExtraAI[1] == 70 - 7f ||
-                    npc.Infernum().ExtraAI[1] == 70) &&
-                    Main.netMode != NetmodeID.MultiplayerClient)
+                if (npc.Infernum().ExtraAI[1] >= 20f && npc.Infernum().ExtraAI[1] % 5f == 4f && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float velocity = BossRushEvent.BossRushActive ? 4f : 2.7f;
+                    float velocity = BossRushEvent.BossRushActive ? 7f : 5f;
                     if (enrage)
                         velocity *= 1.8f;
                     Vector2 boltVelocity = Vector2.Normalize(playerDistance) * velocity;

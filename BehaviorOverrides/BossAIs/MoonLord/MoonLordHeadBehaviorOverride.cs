@@ -86,8 +86,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 if (attackState == MoonLordHeadAttackState.FreeEye)
                 {
-                    if (calamityGlobalNPC.newAI[0] != 1f)
-                        calamityGlobalNPC.newAI[0] = 1f;
+                    if (calamityGlobalNPC.newAI[0] != 2f)
+                        calamityGlobalNPC.newAI[0] = 2f;
 
                     npc.life = npc.lifeMax;
                     npc.netUpdate = true;

@@ -12,9 +12,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
     public class EldritchSeal : ModNPC
     {
-        Vector2 targetPosition = default;
-        int hitCounter = 0;
-        const int secondsOfInvinicibility = 7;
+        public int HitTimer = 0;
+        public Vector2 TargetPosition = default;
+        public ref float ShootTimer => ref npc.ai[1];
+        public ref float SpinAngle => ref npc.Infernum().ExtraAI[0];
+        public ref float HitDelay => ref npc.Infernum().ExtraAI[7];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Eldritch Seal");
@@ -25,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             npc.damage = 0;
             npc.width = 78;
             npc.height = 78;
-            npc.lifeMax = 20;
+            npc.lifeMax = 13;
             npc.noTileCollide = false;
             npc.noGravity = true;
             npc.netAlways = true;
@@ -46,52 +48,57 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override void AI()
         {
             if (!NPC.AnyNPCs(NPCID.MoonLordCore))
+            {
                 npc.active = false;
-            if (npc.alpha > 0)
-                npc.alpha -= 2;
+                return;
+            }
+            npc.alpha = Utils.Clamp(npc.alpha - 2, 0, 255);
+
+            HitDelay++;
+            ShootTimer++;
+            if (HitTimer > 0)
+                HitTimer--;
+
             bool anySpecialSeals = Main.npc.Any(npc => npc.type == this.npc.type && npc.active && npc.ai[0] == 3f);
             Lighting.AddLight(npc.Center, 1f, 1f, 1f);
             Player player = Main.player[Player.FindClosest(npc.Center, 1, 1)];
-            npc.Infernum().ExtraAI[7] += 1f;
-            npc.dontTakeDamage = hitCounter > 0 || npc.Infernum().ExtraAI[7] < 60f * secondsOfInvinicibility;
-            if (hitCounter > 0)
-                hitCounter--;
-            npc.ai[1] += 1f;
+            npc.dontTakeDamage = HitTimer > 0 || HitDelay < 420f;
+
             switch ((int)npc.ai[0])
             {
                 // Shooters Type A
                 case 0:
-                    float modulo = anySpecialSeals ? 250f : 160f;
-                    if (npc.ai[1] % modulo < modulo - 30f)
+                    float shootRate = anySpecialSeals ? 250f : 160f;
+                    if (ShootTimer % shootRate < shootRate - 30f)
                     {
-                        targetPosition = player.Center;
+                        TargetPosition = player.Center;
                     }
-                    if (npc.ai[1] % modulo == modulo - 30f)
+                    if (ShootTimer % shootRate == shootRate - 30f)
                     {
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(targetPosition) * 2.8f, ProjectileID.PhantasmalBolt, 185, 0f);
-                        targetPosition = default;
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(TargetPosition) * 4f, ProjectileID.PhantasmalBolt, 185, 0f);
+                        TargetPosition = default;
                     }
                     break;
                 // Shooters Type B
                 case 1:
-                    modulo = anySpecialSeals ? 120f : 210f;
-                    if (npc.ai[1] % modulo == modulo - 20f)
+                    shootRate = anySpecialSeals ? 100f : 150f;
+                    if (ShootTimer % shootRate == shootRate - 20f)
                     {
                         for (int i = -3; i <= 3; i++)
                         {
                             float angle = MathHelper.Pi / 3f * i;
-                            Utilities.NewProjectileBetter(npc.Center, (npc.SafeDirectionTo(targetPosition) * 1.4f).RotatedBy(angle), ProjectileID.PhantasmalBolt, 185, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, (npc.SafeDirectionTo(TargetPosition) * 1.4f).RotatedBy(angle), ProjectileID.PhantasmalBolt, 185, 0f);
                         }
                     }
                     break;
                 // Sniper
                 case 2:
-                    modulo = anySpecialSeals ? 330f : 250f;
-                    if (npc.ai[1] % modulo < modulo - 130f)
+                    shootRate = anySpecialSeals ? 300f : 225f;
+                    if (ShootTimer % shootRate < shootRate - 130f)
                     {
-                        targetPosition = player.Center;
+                        TargetPosition = player.Center;
                     }
-                    if (npc.ai[1] % modulo == modulo - 70f)
+                    if (ShootTimer % shootRate == shootRate - 70f)
                     {
                         const int dustCount = 50;
                         const int dustType = 229;
@@ -104,16 +111,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                                 default, 1f);
                             Main.dust[idx].noGravity = true;
                         }
-                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(targetPosition) * 1.4f, ModContent.ProjectileType<PhantasmalBlast>(), 185, 0f);
-                        targetPosition = default;
+                        Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(TargetPosition) * 1.4f, ModContent.ProjectileType<PhantasmalBlast>(), 185, 0f);
+                        TargetPosition = default;
                     }
                     break;
             }
-            const float radius = 900f;
-            npc.Infernum().ExtraAI[0] += MathHelper.ToRadians(0.6f);
+
+            SpinAngle += MathHelper.ToRadians(0.6f);
             if (npc.ai[0] != 3f)
             {
-                npc.position = Main.npc[(int)npc.ai[3]].Center + npc.Infernum().ExtraAI[0].ToRotationVector2() * radius;
+                npc.position = Main.npc[(int)npc.ai[3]].Center + SpinAngle.ToRotationVector2() * 900f;
                 Main.LocalPlayer.Calamity().adrenaline = 0;
             }
             else
@@ -145,19 +152,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     }
                     if (npc.ai[2] > 0f)
                     {
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(player.Center + npc.Infernum().ExtraAI[0].ToRotationVector2() * 540f) * 16f, 0.5f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(player.Center + SpinAngle.ToRotationVector2() * 540f) * 16f, 0.5f);
                         if (npc.ai[2] == 1f)
                         {
                             npc.velocity = Vector2.Zero;
-                            int idx = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(targetPosition), ModContent.ProjectileType<MoonlordPendulum>(), 350, 0f, 255, 0f, npc.whoAmI);
+                            int idx = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(TargetPosition), ModContent.ProjectileType<MoonlordPendulum>(), 350, 0f, 255, 0f, npc.whoAmI);
                             Main.projectile[idx].ai[0] = 0f;
                             Main.projectile[idx].ai[1] = npc.whoAmI;
-                            targetPosition = default;
+                            TargetPosition = default;
                             npc.ai[2] = 0f;
                         }
                         else if (npc.ai[2] > 20f)
                         {
-                            targetPosition = player.Center;
+                            TargetPosition = player.Center;
                         }
                         npc.ai[2] -= 1f;
                     }
@@ -191,7 +198,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         npc.velocity.Y = 6f;
                     if (npc.velocity.Y < -6f)
                         npc.velocity.Y = -6f;
-                    if (npc.ai[1] % 80f == 60f)
+                    if (ShootTimer % 80f == 60f)
                         Utilities.NewProjectileBetter(npc.Center, new Vector2(0f, -8f).RotatedByRandom(MathHelper.ToRadians(26f)), ProjectileID.PhantasmalEye, 205, 1f);
                 }
                 npc.dontTakeDamage = anyNonSpecialSeals;
@@ -200,7 +207,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         }
         public override bool StrikeNPC(ref double damage, int defense, ref float knockback, int hitDirection, ref bool crit)
         {
-            hitCounter = 15;
+            HitTimer = 15;
 
             if (npc.ai[0] != 3f)
                 damage = 1D;
@@ -243,10 +250,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         }
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            if (targetPosition != default && (npc.ai[0] == 0f || npc.ai[0] == 3f))
-            {
-                Utils.DrawLine(spriteBatch, npc.Center, npc.Center + npc.AngleTo(targetPosition).ToRotationVector2() * npc.Distance(targetPosition), Color.Cyan, Color.Transparent, 4f);
-            }
+            if (TargetPosition != default && (npc.ai[0] == 0f || npc.ai[0] == 3f))
+                spriteBatch.DrawLineBetter(npc.Center, TargetPosition, Color.Cyan * 0.7f, 4f);
+
             return true;
         }
         public override bool CheckActive() => false;

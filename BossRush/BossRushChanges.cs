@@ -33,8 +33,10 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.Projectiles.Typeless;
 using CalamityMod.World;
+using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.BehaviorOverrides.BossAIs.DukeFishron;
+using InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu;
 using InfernumMode.BehaviorOverrides.BossAIs.Guardians;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Polterghast;
@@ -79,7 +81,7 @@ namespace InfernumMode.BossRush
                     NPC.SpawnWOF(player.position);
                 }, permittedNPCs: new int[] { NPCID.WallofFleshEye, NPCID.LeechHead, NPCID.LeechBody, NPCID.LeechTail, NPCID.TheHungry, NPCID.TheHungryII }),
                 
-                new Boss(NPCID.EyeofCthulhu, TimeChangeContext.Night, permittedNPCs: NPCID.ServantofCthulhu),
+                new Boss(NPCID.EyeofCthulhu, TimeChangeContext.Night, permittedNPCs: new int[] { NPCID.ServantofCthulhu, ModContent.NPCType<ExplodingServant>() }),
 
                 new Boss(NPCID.DukeFishron, spawnContext: type =>
                 {
@@ -96,7 +98,7 @@ namespace InfernumMode.BossRush
                     CalamityUtils.BossAwakenMessage(shittyStatueBoss);
                 }, permittedNPCs: new int[] { NPCID.GolemFistLeft, NPCID.GolemFistRight, NPCID.GolemHead, NPCID.GolemHeadFree }),
 
-                new Boss(NPCID.BrainofCthulhu, permittedNPCs: NPCID.Creeper),
+                new Boss(NPCID.BrainofCthulhu, permittedNPCs: new int[] { NPCID.Creeper , ModContent.NPCType<BrainIllusion>() }),
 
                 new Boss(NPCID.KingSlime, permittedNPCs: new int[] { NPCID.BlueSlime, NPCID.YellowSlime, NPCID.PurpleSlime, NPCID.RedSlime, NPCID.GreenSlime, NPCID.RedSlime,
                     NPCID.IceSlime, NPCID.UmbrellaSlime, NPCID.Pinky, NPCID.SlimeSpiked, NPCID.RainbowSlime, ModContent.NPCType<KingSlimeJewel>() }),

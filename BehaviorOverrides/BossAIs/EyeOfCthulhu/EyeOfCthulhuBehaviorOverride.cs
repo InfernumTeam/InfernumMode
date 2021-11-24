@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 {
-	public class EyeOfCthulhuBehaviorOverride : NPCBehaviorOverride
+    public class EyeOfCthulhuBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.EyeofCthulhu;
 
@@ -154,6 +154,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     float hoverAcceleration = MathHelper.Lerp(0.1f, 0.25f, 1f - lifeRatio);
                     float hoverSpeed = MathHelper.Lerp(8.5f, 17f, 1f - lifeRatio);
 
+                    if (BossRushEvent.BossRushActive)
+                    {
+                        chargeSpeed *= 2.6f;
+                        hoverAcceleration *= 2.25f;
+                        hoverSpeed *= 1.75f;
+                    }
+
                     if (attackTimer < hoverTime)
                     {
                         Vector2 destination = target.Center - Vector2.UnitY * 185f;
@@ -233,6 +240,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         {
                             subState = 1f;
                             npc.velocity = npc.SafeDirectionTo(target.Center - Vector2.UnitY * 300f) * 15f;
+                            if (BossRushEvent.BossRushActive)
+                                npc.velocity *= 2f;
+
                             npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                             npc.netUpdate = true;
                             attackTimer = 0f;
@@ -302,7 +312,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                                 for (int i = 0; i < teethPerShot; i++)
                                 {
                                     float offsetAngle = MathHelper.Lerp(-0.52f, 0.52f, i / (float)teethPerShot) + Main.rand.NextFloat(-0.07f, 0.07f);
-                                    Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitY.RotatedBy(offsetAngle) * 16f, ModContent.ProjectileType<EoCTooth>(), 70, 0f, 255, npc.target);
+                                    Vector2 toothShootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * 16f;
+                                    if (BossRushEvent.BossRushActive)
+                                        toothShootVelocity *= 1.6f;
+                                    Utilities.NewProjectileBetter(spawnPosition, toothShootVelocity, ModContent.ProjectileType<EoCTooth>(), 70, 0f, 255, npc.target);
                                 }
                             }
                             teethBurstDelay = 10f;
@@ -324,6 +337,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     chargeSpeed = 14f;
                     float chargeAcceleration = 1.006f;
                     float spinRadius = 345f;
+                    if (BossRushEvent.BossRushActive)
+                        chargeSpeed *= 1.8f;
 
                     subState = ref npc.Infernum().ExtraAI[0];
                     ref float spinAngle = ref npc.Infernum().ExtraAI[1];

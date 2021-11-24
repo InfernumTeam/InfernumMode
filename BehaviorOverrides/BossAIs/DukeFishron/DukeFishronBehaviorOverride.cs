@@ -275,6 +275,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                     if (inWater)
                         chargeSpeed += 4f;
+                    if (BossRushEvent.BossRushActive)
+                        chargeSpeed *= 1.4f;
 
                     if (attackTimer < angularAimTime)
                     {
@@ -333,6 +335,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         maxBubbleSpeed = 15f;
                     }
 
+                    if (BossRushEvent.BossRushActive)
+                    {
+                        minBubbleSpeed *= 1.5f;
+                        maxBubbleSpeed *= 1.5f;
+                    }
+
                     ref float hoverDirection = ref npc.Infernum().ExtraAI[0];
 
                     frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
@@ -376,6 +384,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         moveToTargetSpeed = 9f;
                         bubbleShootRate = 5;
                     }
+
+                    if (BossRushEvent.BossRushActive)
+                        spinSpeed *= 1.45f;
+
                     spinSpeed *= totalSpins * 0.5f;
 
                     frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
@@ -424,9 +436,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (enraged)
                     {
                         bubbleCount = 15;
-                        bubbleCount = 4;
+                        bubbleShootRate = 4;
                     }
 
+                    if (BossRushEvent.BossRushActive)
+                        bubbleShootRate = 15;
+                    
                     frameDrawType = (int)DukeFrameDrawingType.FinFlapping;
 
                     // Fly a bit above the target.
@@ -479,6 +494,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     int sharkWaves = 6;
                     int sharkSummonRate = 10;
                     ref float summonOutwardness = ref npc.Infernum().ExtraAI[0];
+
+                    if (BossRushEvent.BossRushActive)
+                        sharkSummonRate = 8;
 
                     if (attackTimer < slowdownTime)
                         npc.velocity *= 0.95f;
@@ -549,6 +567,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         waveSpeed *= 1.6f;
                     }
 
+                    if (BossRushEvent.BossRushActive)
+                    {
+                        lungeSpeed *= 1.5f;
+                        waveSpeed *= 1.35f;
+                    }
+
                     int lungeMaxTime = 180;
                     if (attackTimer < redirectTime)
                     {
@@ -609,6 +633,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         typhoonBurstRate -= 5;
                         typhoonCount += 5;
                     }
+
+                    if (BossRushEvent.BossRushActive)
+                        initialChargeSpeed *= 1.2f;
 
                     if (attackTimer < hoverTime)
                     {
@@ -682,6 +709,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     
                     if (inPhase4)
                         chargeSpeed += 3f;
+
+                    if (BossRushEvent.BossRushActive)
+                        chargeSpeed *= 1.15f;
 
                     // Fadeout effects, flying, and damage disabling.
                     if (attackTimer < 45f)

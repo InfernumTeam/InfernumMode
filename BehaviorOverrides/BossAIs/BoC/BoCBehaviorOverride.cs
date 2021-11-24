@@ -128,6 +128,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 return;
 
             float floatSpeed = MathHelper.Lerp(5.3f, 7.5f, 1f - lifeRatio);
+            if (BossRushEvent.BossRushActive)
+                floatSpeed *= 3.5f;
+
             npc.velocity = npc.SafeDirectionTo(target.Center) * floatSpeed;
 
             // Stick to the target if close to them.
@@ -168,6 +171,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 14f;
+                    if (BossRushEvent.BossRushActive)
+                        npc.velocity *= 2.15f;
                     npc.netUpdate = true;
                 }
             }
@@ -226,6 +231,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                         Vector2 spawnPosition = npc.Center - Vector2.UnitY.RotatedByRandom(0.42f) * 12f;
                         Vector2 bloodVelocity = Utilities.GetProjectilePhysicsFiringVelocity(spawnPosition, target.Center, BloodGeyser2.Gravity, Main.rand.NextFloat(12f, 14f), out _);
                         bloodVelocity = bloodVelocity.RotatedByRandom(0.78f);
+                        if (BossRushEvent.BossRushActive)
+                            bloodVelocity *= 1.35f;
 
                         Utilities.NewProjectileBetter(spawnPosition, bloodVelocity, ModContent.ProjectileType<BloodGeyser2>(), 50, 0f);
                     }

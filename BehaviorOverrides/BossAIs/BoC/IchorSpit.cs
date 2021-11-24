@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -40,8 +41,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 				if (Time > 55f)
 				{
 					Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+					float flySpeed = 7f;
+					if (BossRushEvent.BossRushActive)
+						flySpeed *= 2.35f;
 					if (!projectile.WithinRange(target.Center, 50f))
-						projectile.velocity = (projectile.velocity * 56f + projectile.SafeDirectionTo(target.Center) * 7f) / 57f;
+						projectile.velocity = (projectile.velocity * 56f + projectile.SafeDirectionTo(target.Center) * flySpeed) / 57f;
 				}
 			}
 

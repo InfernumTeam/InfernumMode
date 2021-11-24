@@ -25,14 +25,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreAI(NPC npc)
         {
-            // If not doing anything don't do anything
-            if (npc.dontTakeDamage)
-                return false;
-
+            npc.chaseable = !npc.dontTakeDamage;
+            npc.Opacity = npc.dontTakeDamage ? 0f : 1f;
             return false;
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        /*public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             DoEyeDrawing(npc);
             return false;
@@ -41,6 +39,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         public static void DoEyeDrawing(NPC npc)
         {
             Color drawColor = AttackEyeColorPairs[(GolemAttackState)Main.npc[(int)npc.ai[0]].ai[1]];
-        }
+        }*/
     }
 }

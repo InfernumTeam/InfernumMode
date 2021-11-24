@@ -14,17 +14,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreAI(NPC npc)
         {
-            // If not doing anything don't do anything
-            if (npc.dontTakeDamage)
-                return false;
-
-
+            npc.chaseable = !npc.dontTakeDamage;
+            npc.Opacity = npc.dontTakeDamage ? 0f : 1f;
             return false;
         }
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+
+        /*public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             GolemHeadBehaviorOverride.DoEyeDrawing(npc);
             return false;
-        }
+        }*/
     }
 }

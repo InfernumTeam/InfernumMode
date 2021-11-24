@@ -15,44 +15,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public static bool DoFistAI(NPC npc, bool leftFist)
         {
-            NPC golemBody = Main.npc[(int)npc.ai[0]];
-            Vector2 leftHandCenterPos = new Vector2(golemBody.Left.X, golemBody.Left.Y);
-            Vector2 rightHandCenterPos = new Vector2(golemBody.Right.X, golemBody.Right.Y);
-
-            float attackState = golemBody.ai[1];
-
-            // if not doing anything do nothing
-            if (attackState != (float)GolemAttackState.ArmBullets && attackState != (float)GolemAttackState.FistSpin)
-            {
-                if (leftFist)
-                    npc.Center = leftHandCenterPos;
-                else
-                    npc.Center = rightHandCenterPos;
-
-                return false;
-            }
-
-            switch ((GolemAttackState)attackState)
-            {
-                case GolemAttackState.ArmBullets:
-                    ArmBulletsFistAttack(npc, leftFist);
-                    break;
-                case GolemAttackState.FistSpin:
-                    FistSpinFistAttack(npc, leftFist);
-                    break;
-            }
-
+            Main.NewText(leftFist);
+            npc.dontTakeDamage = true;
+            npc.chaseable = false;
+            npc.Opacity = 1f;
             return false;
-        }
-
-        private static void ArmBulletsFistAttack(NPC npc, bool leftFist)
-        {
-
-        }
-
-        private static void FistSpinFistAttack(NPC npc, bool leftFist)
-        {
-
         }
     }
 }

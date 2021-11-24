@@ -1,4 +1,5 @@
-﻿using CalamityMod.World;
+﻿using CalamityMod.Events;
+using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
@@ -52,14 +53,17 @@ namespace InfernumMode
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            bool useHIV = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("HiveMind")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].Infernum().ExtraAI[10] == 1f || Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].life < Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].lifeMax * 0.2f);
-            player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", useHIV);
-
             bool useFolly = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("Bumblefuck")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("Bumblefuck"))].Infernum().ExtraAI[8] > 0f);
             player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", useFolly);
 
-            bool useDeus = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("AstrumDeusHeadSpectral"));
-            player.ManageSpecialBiomeVisuals("InfernumMode:Deus", useDeus);
+            if (!BossRushEvent.BossRushActive)
+            {
+                bool useHIV = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("HiveMind")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].Infernum().ExtraAI[10] == 1f || Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].life < Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].lifeMax * 0.2f);
+                player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", useHIV);
+
+                bool useDeus = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("AstrumDeusHeadSpectral"));
+                player.ManageSpecialBiomeVisuals("InfernumMode:Deus", useDeus);
+            }
         }
         #endregion
         #region Reset Effects

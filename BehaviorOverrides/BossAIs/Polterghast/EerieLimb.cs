@@ -270,6 +270,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             for (int i = 0; i < Limbs.Length; i++)
             {
+                if (Limbs[i] is null)
+                    return false;
+
                 for (int j = 0; j < 3; j++)
                 {
                     GameShaders.Misc["Infernum:PolterghastEctoplasm"].UseOpacity((float)Math.Pow(MathHelper.Lerp(1f, 0.05f, j / 3f), 4D));

@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
@@ -60,9 +61,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 lifeRatio = 0.1995f;
 
             Player target = Main.player[npc.target];
-            enrageTimer = MathHelper.Clamp(enrageTimer - (target.ZoneCrimson || target.ZoneCorrupt).ToDirectionInt(), 0f, 480f);
+            bool outOfBiome = !target.ZoneCrimson && !target.ZoneCorrupt && !BossRushEvent.BossRushActive;
+
+            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
             npc.defense = enrageTimer >= 300f ? -5 : 9999;
-            npc.Calamity().CurrentlyEnraged = enrageTimer >= 300f;
+            npc.Calamity().CurrentlyEnraged = outOfBiome;
             npc.noTileCollide = true;
             npc.noGravity = true;
             npc.Calamity().DR = 0f;

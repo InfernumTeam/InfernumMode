@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.World;
 using InfernumMode.OverridingSystem;
@@ -101,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Reset things.
             npc.damage = 0;
-            npc.dontTakeDamage = target.Center.Y < Main.worldSurface * 16f;
+            npc.dontTakeDamage = target.Center.Y < Main.worldSurface * 16f && !BossRushEvent.BossRushActive;
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             // Do bullet hells.

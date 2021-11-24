@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -65,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float enrageFactor = 1f - lifeRatio;
-            if (target.Center.Y < Main.worldSurface * 16f)
+            if (target.Center.Y < Main.worldSurface * 16f && !BossRushEvent.BossRushActive)
             {
                 npc.Calamity().CurrentlyEnraged = true;
                 enrageFactor = 1.5f;

@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -56,14 +57,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			ref float hasBegunFinalPhaseTransition = ref npc.localAI[1];
 			ref float enrageTimer = ref npc.Infernum().ExtraAI[6];
 
-			enrageTimer = MathHelper.Clamp(enrageTimer - target.ZoneJungle.ToDirectionInt(), 0f, 480f);
+			bool outOfBiome = !target.ZoneJungle && !BossRushEvent.BossRushActive;
+			enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
 			npc.defense = enrageTimer >= 300f ? npc.defDefense : 70;
-			npc.Calamity().CurrentlyEnraged = enrageTimer >= 300f;
+			npc.Calamity().CurrentlyEnraged = outOfBiome;
 
 			if (npc.life < npc.lifeMax * 0.1f && Main.netMode != NetmodeID.MultiplayerClient && hasBegunFinalPhaseTransition == 0f)
 			{
 				hasBegunFinalPhaseTransition = 1f;
-				finalPhaseTransitionTimer = 150f;
+				finalPhaseTransitionTimer = 75f;
 			}
 
 			if (finalPhaseTransitionTimer > 0f)

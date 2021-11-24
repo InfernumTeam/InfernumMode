@@ -9,7 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     public class MoonlordPendulum : BaseLaserbeamProjectile
     {
         public int OwnerIndex => (int)projectile.ai[1];
-        public override float Lifetime => Main.npc[OwnerIndex].type == ModContent.NPCType<EldritchSeal>() ? 570f : 300f;
+        public override float Lifetime => Main.npc[OwnerIndex].type == ModContent.NPCType<EldritchSeal>() ? 120f : 300f;
         public override Color LaserOverlayColor => new Color(200, 200, 200, 0) * 0.9f;
         public override Color LightCastColor => new Color(0.3f, 0.65f, 0.7f);
         public override Texture2D LaserBeginTexture => ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGDeathray");

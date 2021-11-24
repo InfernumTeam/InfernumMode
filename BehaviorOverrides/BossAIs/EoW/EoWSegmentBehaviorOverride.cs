@@ -1,4 +1,5 @@
-﻿using CalamityMod.Buffs.DamageOverTime;
+﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -24,6 +25,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 npc.active = false;
                 npc.netUpdate = true;
             }
+
+            // Fuck.
+            npc.Calamity().newAI[1] = 720f;
 
             // Inherit various attributes from the head segment.
             // This code will go upstream across every segment, until it reaches the head.

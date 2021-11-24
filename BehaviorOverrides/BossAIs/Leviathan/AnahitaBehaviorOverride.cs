@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.Projectiles.Boss;
@@ -116,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             bool shouldSummonLeviathan = lifeRatio < 0.5f;
             bool leviathanAlive = Main.npc.IndexInRange(CalamityGlobalNPC.leviathan) && Main.npc[CalamityGlobalNPC.leviathan].active;
             bool enraged = !leviathanAlive && shouldSummonLeviathan;
-            bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400);
+            bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400) && !BossRushEvent.BossRushActive;
             float? leviathanLifeRatio = !leviathanAlive ? null : new float?(Main.npc[CalamityGlobalNPC.leviathan].life / (float)Main.npc[CalamityGlobalNPC.leviathan].lifeMax);
             bool shouldWaitForLeviathan = (leviathanLifeRatio.HasValue && leviathanLifeRatio.Value >= 0.6f) || Utilities.AnyProjectiles(ModContent.ProjectileType<LeviathanSpawner>());
 
@@ -231,7 +232,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
                 npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.08f);
 
-                if (Collision.WetCollision(npc.position, npc.width, npc.height) || npc.position.Y > Main.worldSurface * 16.0)
+                if (Collision.WetCollision(npc.position, npc.width, npc.height) || npc.position.Y > Main.worldSurface * 16D || BossRushEvent.BossRushActive)
                 {
                     int oldAlpha = npc.alpha;
                     npc.alpha = Utils.Clamp(npc.alpha + 9, 0, 255);

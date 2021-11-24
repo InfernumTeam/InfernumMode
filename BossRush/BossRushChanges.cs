@@ -33,6 +33,9 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.Projectiles.Typeless;
 using CalamityMod.World;
+using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
+using InfernumMode.BehaviorOverrides.BossAIs.DukeFishron;
+using InfernumMode.BehaviorOverrides.BossAIs.Guardians;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Polterghast;
 using Microsoft.Xna.Framework;
@@ -83,7 +86,7 @@ namespace InfernumMode.BossRush
                     int dukeFishron = NPC.NewNPC((int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
                     Main.npc[dukeFishron].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(dukeFishron);
-                }, permittedNPCs: new int[] { NPCID.DetonatingBubble, NPCID.Sharkron, NPCID.Sharkron2 }),
+                }, permittedNPCs: new int[] { NPCID.DetonatingBubble, NPCID.Sharkron, NPCID.Sharkron2, ModContent.NPCType<RedirectingBubble>() }),
 
                 new Boss(NPCID.Golem, TimeChangeContext.Day, type =>
                 {
@@ -139,7 +142,8 @@ namespace InfernumMode.BossRush
                     ModContent.NPCType<AquaticScourgeTail>(), ModContent.NPCType<AquaticParasite>(), ModContent.NPCType<AquaticParasite>(), ModContent.NPCType<AquaticSeekerHead>(),
                     ModContent.NPCType<AquaticSeekerBody>(), ModContent.NPCType<AquaticSeekerTail>() }),
 
-                new Boss(ModContent.NPCType<ProfanedGuardianBoss>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<ProfanedGuardianBoss2>(), ModContent.NPCType<ProfanedGuardianBoss3>() }),
+                new Boss(ModContent.NPCType<ProfanedGuardianBoss>(), TimeChangeContext.Day, 
+                    permittedNPCs: new int[] { ModContent.NPCType<ProfanedGuardianBoss2>(), ModContent.NPCType<ProfanedGuardianBoss3>(), ModContent.NPCType<EtherealHand>() }),
 
                 new Boss(ModContent.NPCType<CeaselessVoid>(), permittedNPCs: ModContent.NPCType<DarkEnergy>()),
 
@@ -154,16 +158,17 @@ namespace InfernumMode.BossRush
 
                 new Boss(ModContent.NPCType<HiveMind>(), spawnContext: type =>
                 {
+                    NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.BossRushTierThreeEndText2", XerocTextColor);
                 }, permittedNPCs: new int[] { ModContent.NPCType<DankCreeper>(), ModContent.NPCType<DarkHeart>(), ModContent.NPCType<HiveBlob>(), ModContent.NPCType<HiveBlob2>() }),
 
                 new Boss(ModContent.NPCType<CalamitasRun3>(), TimeChangeContext.Night, specialSpawnCountdown: 420, dimnessFactor: 0.6f, permittedNPCs: new int[] { ModContent.NPCType<CalamitasRun>(), ModContent.NPCType<CalamitasRun2>(),
-                    ModContent.NPCType<LifeSeeker>(), ModContent.NPCType<SoulSeeker>() }),
+                    ModContent.NPCType<LifeSeeker>(), ModContent.NPCType<SoulSeeker>(), ModContent.NPCType<SoulSeeker2>() }),
 
                 new Boss(ModContent.NPCType<StormWeaverHead>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<StormWeaverBody>(), ModContent.NPCType<StormWeaverTail>(),  }),
 
                 new Boss(ModContent.NPCType<Siren>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<Leviathan>(), ModContent.NPCType<AquaticAberration>(), ModContent.NPCType<Parasea>(),
-                    ModContent.NPCType<SirenIce>(), NPCID.DetonatingBubble}),
+                    ModContent.NPCType<SirenIce>(), NPCID.DetonatingBubble, ModContent.NPCType<RedirectingBubble>() }),
 
                 new Boss(NPCID.Spazmatism, TimeChangeContext.Night, type =>
                 {

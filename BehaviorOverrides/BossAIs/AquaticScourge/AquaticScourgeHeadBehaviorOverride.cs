@@ -91,9 +91,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             // Enrage if the target leaves the ocean.
             if (target.position.Y < 800f || target.position.Y > Main.worldSurface * 16.0 || (target.position.X > 6400f && target.position.X < (Main.maxTilesX * 16 - 6400)))
             {
-                npc.Calamity().CurrentlyEnraged = angeredYet == 1f;
-                enrageFactor = 1.8f;
+                if (!BossRushEvent.BossRushActive)
+                {
+                    npc.Calamity().CurrentlyEnraged = angeredYet == 1f;
+                    enrageFactor = 1.8f;
+                }
             }
+
+            if (BossRushEvent.BossRushActive)
+                enrageFactor *= 3f;
 
             // Swim slowly around the "target" when not angry.
             if (angeredYet == 0f)

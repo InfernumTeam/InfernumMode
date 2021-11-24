@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -59,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             Player target = Main.player[npc.target];
 
             int hookCount = 3;
-            bool enraged = target.Center.Y < Main.worldSurface * 16f;
+            bool enraged = target.Center.Y < Main.worldSurface * 16f && !BossRushEvent.BossRushActive;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool inPhase4 = lifeRatio < Phase4LifeRatio;
             ref float attackType = ref npc.ai[0];

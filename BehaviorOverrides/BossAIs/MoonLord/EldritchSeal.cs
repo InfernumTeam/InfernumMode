@@ -150,8 +150,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                             angle += MathHelper.TwoPi / 3f;
                         }
                     }
+
+                    if (!Utilities.AnyProjectiles(ModContent.ProjectileType<MoonlordPendulum>()) && npc.ai[2] <= 0f)
+                        npc.ai[2] = 100f;
+
                     if (npc.ai[2] > 0f)
                     {
+                        if (npc.ai[2] > 100f)
+                            npc.ai[2] = 100f;
+
                         npc.SimpleFlyMovement(npc.SafeDirectionTo(player.Center + SpinAngle.ToRotationVector2() * 540f) * 16f, 0.5f);
                         if (npc.ai[2] == 1f)
                         {

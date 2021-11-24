@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod.Events;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -60,12 +61,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         public override bool PreAI(NPC npc)
         {
             Player target = Main.player[npc.target];
-            if (Main.dayTime || target.dead)
+
+            bool canDespawn = Main.dayTime && !BossRushEvent.BossRushActive;
+            if (canDespawn || target.dead)
             {
                 npc.TargetClosest();
                 target = Main.player[npc.target];
 
-                if (Main.dayTime || target.dead)
+                if (canDespawn || target.dead)
                 {
                     npc.velocity.Y -= 0.18f;
                     npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;

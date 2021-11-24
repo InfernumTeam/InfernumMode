@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.Projectiles.Boss;
@@ -105,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool anahitaFightingToo = lifeRatio < 0.6f;
             bool sirenAlive = Main.npc.IndexInRange(CalamityGlobalNPC.siren) && Main.npc[CalamityGlobalNPC.siren].active;
-            bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400);
+            bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400) && !BossRushEvent.BossRushActive;
 
             npc.dontTakeDamage = outOfOcean;
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;

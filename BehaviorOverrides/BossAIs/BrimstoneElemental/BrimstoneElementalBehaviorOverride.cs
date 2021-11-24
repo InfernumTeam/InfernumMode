@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
-            bool pissedOff = target.Bottom.Y < (Main.maxTilesY - 200f) * 16f;
+            bool pissedOff = target.Bottom.Y < (Main.maxTilesY - 200f) * 16f && !BossRushEvent.BossRushActive;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float spawnAnimationTimer = ref npc.ai[2];

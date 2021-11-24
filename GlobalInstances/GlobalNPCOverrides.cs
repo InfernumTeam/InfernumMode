@@ -41,6 +41,7 @@ using CalamityMod.Projectiles.Typeless;
 using CalamityMod.Projectiles.Hybrid;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using CalamityMod.Events;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -198,7 +199,12 @@ namespace InfernumMode.GlobalInstances
                 }
 
                 if (npc.ai[2] >= 2f)
+                {
                     npc.boss = true;
+                    if (BossRushEvent.BossRushActive)
+                        typeof(BossRushEvent).GetMethod("OnBossKill", Utilities.UniversalBindingFlags).Invoke(null, new object[] { npc, mod });
+                }
+
                 else if (npc.realLife == -1 && npc.Infernum().ExtraAI[8] == 0f)
                 {
                     npc.Infernum().ExtraAI[8] = 1f;

@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
@@ -35,13 +36,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public override bool PreAI(NPC npc)
         {
-            float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float splitCounter = ref npc.ai[2];
             ref float segmentCount = ref npc.ai[3];
             ref float initializedFlag = ref npc.localAI[0];
             ref float enrageTimer = ref npc.Infernum().ExtraAI[6];
+
+            // Fuck.
+            npc.Calamity().newAI[1] = 720f;
 
             // Perform initialization logic.
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
@@ -56,13 +59,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 
             Player target = Main.player[npc.target];
-            if (target.ZoneCorrupt || target.ZoneCrimson)
+            bool outOfBiome = !target.ZoneCrimson && !target.ZoneCorrupt && !BossRushEvent.BossRushActive;
+            if (!outOfBiome)
                 enrageTimer = MathHelper.Clamp(enrageTimer - 2.4f, 0f, 480f);
             else
                 enrageTimer = MathHelper.Clamp(enrageTimer + 1f, 0f, 480f);
 
             bool enraged = enrageTimer >= 300f;
-            npc.Calamity().CurrentlyEnraged = enraged;
+            npc.Calamity().CurrentlyEnraged = outOfBiome;
 
             switch ((EoWAttackState)(int)attackState)
             {

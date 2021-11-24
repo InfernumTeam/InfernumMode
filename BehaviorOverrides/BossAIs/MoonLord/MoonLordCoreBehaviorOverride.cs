@@ -65,6 +65,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 // 1 is normal. 0 is enraged.
                 npc.Infernum().ExtraAI[0] = Main.player[npc.target].Hitbox.Intersects(arena).ToInt();
+                if (npc.Infernum().ExtraAI[0] == 0f)
+                    npc.Calamity().CurrentlyEnraged = true;
+
                 npc.TargetClosest(false);
             }
 

@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.Projectiles.Boss;
@@ -54,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 			ref float attackState = ref npc.ai[0];
 			ref float attackTimer = ref npc.ai[1];
 			ref float summonAnimationCountdown = ref npc.ai[2];
-			ref float outOfBiomeTimer = ref npc.ai[3];
+			ref float enrageTimer = ref npc.ai[3];
 			ref float animationState = ref npc.localAI[0];
 			ref float wormSpawnState = ref npc.localAI[1];
 
@@ -73,37 +74,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 			Player target = Main.player[npc.target];
 			bool anyWorms = NPC.AnyNPCs(ModContent.NPCType<PerforatorHeadSmall>()) || NPC.AnyNPCs(ModContent.NPCType<PerforatorHeadMedium>()) || NPC.AnyNPCs(ModContent.NPCType<PerforatorHeadLarge>());
 
+			int spawnAnimationTime = BossRushEvent.BossRushActive ? 75 : 200;
 			if (Main.netMode != NetmodeID.MultiplayerClient)
 			{
 				if (lifeRatio < 0.75f && animationState == 0f)
 				{
 					animationState = 1f;
-					summonAnimationCountdown = 200f;
+					summonAnimationCountdown = spawnAnimationTime;
 					npc.netUpdate = true;
 				}
 
 				if (lifeRatio < 0.4f && animationState == 1f)
 				{
 					animationState = 2f;
-					summonAnimationCountdown = 200f;
+					summonAnimationCountdown = spawnAnimationTime;
 					npc.netUpdate = true;
 				}
 
 				if (lifeRatio < 0.15f && animationState == 2f)
 				{
 					animationState = 3f;
-					summonAnimationCountdown = 200f;
+					summonAnimationCountdown = spawnAnimationTime;
 					npc.netUpdate = true;
 				}
 			}
 
-			if (!target.ZoneCorrupt && !target.ZoneCrimson)
-				outOfBiomeTimer++;
+			if (!target.ZoneCorrupt && !target.ZoneCrimson && !BossRushEvent.BossRushActive)
+				enrageTimer++;
 			else
-				outOfBiomeTimer = 0f;
+				enrageTimer = 0f;
 
-			npc.dontTakeDamage = anyWorms || outOfBiomeTimer > 240f || summonAnimationCountdown > 0f;
-			npc.Calamity().CurrentlyEnraged = outOfBiomeTimer > 240f;
+			npc.dontTakeDamage = anyWorms || enrageTimer > 300f || summonAnimationCountdown > 0f;
+			npc.Calamity().CurrentlyEnraged = enrageTimer > 300f;
 
 			if (summonAnimationCountdown > 0f)
 			{

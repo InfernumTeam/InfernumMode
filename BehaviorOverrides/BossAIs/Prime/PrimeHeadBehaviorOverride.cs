@@ -132,6 +132,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(210f, 202f, attackTimer, true);
             }
 
+            // Don't do damage during the spawn animation.
+            npc.damage = 0;
+
             if (canHover)
             {
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 500f;

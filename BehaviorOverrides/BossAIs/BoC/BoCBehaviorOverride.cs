@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -59,9 +60,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             ref float enrageTimer = ref npc.Infernum().ExtraAI[6];
             ref float hasCreatedCreepersFlag = ref npc.localAI[0];
 
-            enrageTimer = MathHelper.Clamp(enrageTimer - (target.ZoneCrimson || target.ZoneCorrupt).ToDirectionInt(), 0f, 480f);
+            bool outOfBiome = !target.ZoneCrimson && !target.ZoneCorrupt && !BossRushEvent.BossRushActive;
+            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
+
             npc.dontTakeDamage = enrageTimer >= 300f;
-            npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
+            npc.Calamity().CurrentlyEnraged = outOfBiome;
 
             // Summon creepers.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedCreepersFlag == 0f)

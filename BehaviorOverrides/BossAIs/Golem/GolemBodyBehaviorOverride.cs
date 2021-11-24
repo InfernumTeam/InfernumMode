@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
     {
         public override int NPCOverrideType => NPCID.Golem;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
         public static int ArenaWidth = 115;
         public static int ArenaHeight = 105;
@@ -49,9 +49,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 leftHandCenterPos = new Vector2(npc.Left.X, npc.Left.Y);
             Vector2 rightHandCenterPos = new Vector2(npc.Right.X, npc.Right.Y);
 
-            // Set the whoAmI variable.
-            NPC.golemBoss = npc.whoAmI;
-
             if (AITimer == 0f)
             {
                 npc.TargetClosest();
@@ -74,7 +71,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.noGravity = true;
                 npc.noTileCollide = false;
                 npc.chaseable = false;
+                npc.Opacity = 1f;
+                AttackState = (float)GolemAttackState.FistSpin;
                 npc.netUpdate = true;
+
+                // Set the whoAmI variable.
+                NPC.golemBoss = npc.whoAmI;
 
                 int freeHeadInt = NPC.NewNPC((int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHeadFree);
                 Main.npc[freeHeadInt].Center = attachedHeadCenterPos;
@@ -132,17 +134,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     npc.velocity.Y += 0.5f;
                     if (npc.timeLeft > 120)
                         npc.timeLeft = 120;
+
                     if (!npc.WithinRange(Main.player[npc.target].Center, 4200f))
                     {
-                        npc.life = 0;
-                        npc.active = false;
-                        if (Main.netMode == NetmodeID.Server)
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
-
                         DespawnNPC((int)AttachedHeadNPC);
                         DespawnNPC((int)FreeHeadNPC);
                         DespawnNPC((int)LeftFistNPC);
                         DespawnNPC((int)RightFistNPC);
+
+                        npc.life = 0;
+                        npc.active = false;
+                        if (Main.netMode == NetmodeID.Server)
+                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
 
                         DeleteGolemArena();
                     }
@@ -175,10 +178,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Sync the heads, and end the fight if necessary
             if (!attachedHead.active || !freeHead.active || attachedHead.life <= 0 || freeHead.life <= 0)
             {
-                DespawnNPC((int)AttachedHeadNPC);
-                DespawnNPC((int)FreeHeadNPC);
-                DespawnNPC((int)LeftFistNPC);
-                DespawnNPC((int)RightFistNPC);
+                DespawnNPC(attachedHead.whoAmI);
+                DespawnNPC(freeHead.whoAmI);
+                DespawnNPC(leftFist.whoAmI);
+                DespawnNPC(rightFist.whoAmI);
 
                 npc.life = 0;
                 npc.HitEffect();
@@ -188,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                 DeleteGolemArena();
             }
-            else
+            else if (!EnrageReturn)
             {
                 // Sync head HP
                 if (freeHead.life > attachedHead.life)
@@ -205,6 +208,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 if (freeHead.dontTakeDamage)
                     freeHead.Center = attachedHeadCenterPos;
             }
+
+            freeHead.ai[1]++;
+            if (freeHead.ai[1] >= 240f)
+                freeHead.ai[1] = 0f;
+
+            attachedHead.ai[1]++;
+            if (attachedHead.ai[1] >= 240f)
+                attachedHead.ai[1] = 0f;
 
             float LifeRatio = npc.life / npc.lifeMax;
             npc.dontTakeDamage = true;
@@ -284,12 +295,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         if (AttackTimer <= 240f)
                         {
                             // Rotate the fists around the body over the course of 3 seconds, spawning projectiles every so often
-                            float rotation = MathHelper.Lerp(0f, MathHelper.TwoPi, AttackTimer / 240f);
-                            float distance = body.Distance(rightHandCenterPos);
+                            float rotation = MathHelper.Lerp(0f, MathHelper.TwoPi * 2, AttackTimer / 240f);
+                            float distance = 160f;
                             rightFist.Center = body.Center + rotation.ToRotationVector2() * distance;
+                            rightFist.rotation = rotation;
                             leftFist.Center = body.Center + MathHelper.WrapAngle(rotation + MathHelper.Pi).ToRotationVector2() * distance;
+                            leftFist.rotation = rotation; ;
 
-                            if (AttackTimer % 30f == 0f)
+                            if (AttackTimer % 15f == 0f)
                             {
                                 int type = ModContent.ProjectileType<FistBullet>();
                                 int bullet = Utilities.NewProjectileBetter(rightFist.Center, Vector2.Zero, type, 280, 0);
@@ -311,6 +324,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         if (AttackTimer >= 300f)
                         {
+                            rightFist.Center = rightHandCenterPos;
+                            leftFist.Center = leftHandCenterPos;
                             AttackCooldown = 90f;
                             GoToNextAttack(npc);
                             break;
@@ -398,6 +413,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         {
             Main.npc[NPCID].life = 0;
             Main.npc[NPCID].active = false;
+            Main.npc[NPCID].netUpdate = true;
+
             if (Main.netMode == NetmodeID.Server)
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPCID);
         }
@@ -514,16 +531,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
         }
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
-        {
-            SpriteEffects flipped = SpriteEffects.None;
-            Texture2D texture = Main.npcTexture[npc.type];
-            Rectangle rectangle = new Rectangle(0, 0, texture.Width, texture.Height);
-            Vector2 origin = rectangle.Size() * .5f;
-            Color drawColor = npc.GetAlpha(lightColor);
-
-            Main.spriteBatch.Draw(texture, npc.position - Main.screenPosition, rectangle, drawColor, npc.rotation, origin, npc.scale, flipped, 0f);
-            return false;
-        }
     }
 }

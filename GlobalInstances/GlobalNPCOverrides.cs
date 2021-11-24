@@ -42,6 +42,8 @@ using CalamityMod.Projectiles.Hybrid;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using CalamityMod.Events;
+using CalamityMod.UI;
+using System.Linq;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -162,6 +164,10 @@ namespace InfernumMode.GlobalInstances
                     InfernumNPCHPValues.HPValues[npc.type] != npc.lifeMax)
                 {
                     npc.life = npc.lifeMax = InfernumNPCHPValues.HPValues[npc.type];
+
+                    if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
+                        BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
+
                     npc.netUpdate = true;
                 }
 
@@ -227,7 +233,7 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if (npc.type == InfernumMode.CalamityMod.NPCType("Providence"))
+            if (npc.type == InfernumMode.CalamityMod.NPCType("Providence") && !BossRushEvent.BossRushActive)
             {
                 // Drops pre-scal, cannot be sold, does nothing aka purely vanity. Requires at least expert for consistency with other post scal dev items.
                 DropHelper.DropItemCondition(npc, ModContent.ItemType<ProfanedSoulCrystal>(), true, true);

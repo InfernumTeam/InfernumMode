@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using InfernumMode.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -201,6 +202,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
         public static void DoHoverMovement(NPC npc, Vector2 destination, Vector2 acceleration)
 		{
+            if (BossRushEvent.BossRushActive)
+                acceleration *= 4f;
+
             if (npc.Center.Y > destination.Y)
             {
                 if (npc.velocity.Y > 0f)
@@ -254,6 +258,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     Vector2 skullShootVelocity = Vector2.Lerp(npc.velocity.SafeNormalize(Vector2.UnitY), npc.SafeDirectionTo(target.Center, Vector2.UnitY), 0.75f) * npc.velocity.Length();
                     skullShootVelocity.X *= 0.4f;
                     skullShootVelocity = skullShootVelocity.ClampMagnitude(10f, 16f);
+                    if (BossRushEvent.BossRushActive)
+                        skullShootVelocity *= 1.85f;
+
                     Vector2 skullShootPosition = npc.Center + skullShootVelocity * 5f;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -272,10 +279,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             {
                 if (attackTimer % 1050f == 601f)
                     Main.PlaySound(SoundID.Roar, target.Center, 0);
-                
+
+                float moveSpeed = BossRushEvent.BossRushActive ? 20.75f : 5.75f;
                 npc.direction = (npc.velocity.X > 0f).ToDirectionInt();
                 npc.rotation += npc.direction * 0.3f;
-                npc.velocity = npc.SafeDirectionTo(target.Center) * 5.75f;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
 
                 // Increase speed while charging.
                 npc.damage = (int)(npc.defDamage * 1.4);
@@ -316,6 +324,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                                 skullSpeed *= 1.1f;
                                 skullCount = 5;
                             }
+
+                            if (BossRushEvent.BossRushActive)
+                                skullSpeed *= 3.25f;
 
                             for (int i = 0; i < skullCount; i++)
                             {
@@ -398,8 +409,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     }
 
                     if (attackTimer > 50f && attackTimer < 270f)
-					{
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * 5.3f;
+                    {
+                        float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 5.3f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
 
                         npc.rotation += 0.2f;
                         npc.rotation %= MathHelper.TwoPi;
@@ -452,6 +464,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                                 skullCount = 5;
                             }
 
+                            if (BossRushEvent.BossRushActive)
+                                skullSpeed *= 3.25f;
+
                             for (int i = 0; i < skullCount; i++)
                             {
                                 Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
@@ -490,6 +505,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         float skullSpeed = 5.6f;
                         int skullCount = 5;
 
+                        if (BossRushEvent.BossRushActive)
+                            skullSpeed *= 3.25f;
+
                         for (int i = 0; i < skullCount; i++)
                         {
                             Vector2 skullVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 95f).RotatedBy(MathHelper.Lerp(-0.44f, 0.44f, i / (skullCount - 1f))) * skullSpeed;
@@ -501,7 +519,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     if (attackTimer > 30f && attackTimer < 300f)
                     {
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * 5.3f;
+                        float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 5.3f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
 
                         npc.rotation += 0.2f;
                         npc.rotation %= MathHelper.TwoPi;

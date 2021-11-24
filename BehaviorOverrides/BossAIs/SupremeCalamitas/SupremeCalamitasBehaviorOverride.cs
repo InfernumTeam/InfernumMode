@@ -864,7 +864,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.065f, 0f, 1f);
                         npc.velocity *= 0.825f;
-                        npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.25f);
 					}
 					else
 					{
@@ -1348,10 +1347,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                     // Look at the player again after a bit of time charging.
                     if (attackTimer >= chargeTime)
-                    {
                         npc.velocity *= 0.9f;
-                        npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.33f);
-					}
 					else
                     {
                         // Determine frames.

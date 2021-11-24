@@ -71,7 +71,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
             // Idly release bone teeth.
             boneToothShootCounter++;
-            if (!npc.dontTakeDamage && !inTiles && boneToothShootCounter % 180f == 179f)
+            int boneToothShootRate = 180;
+            float boneToothShootSpeed = 8f;
+            if (BossRushEvent.BossRushActive)
+			{
+                boneToothShootRate = 70;
+                boneToothShootSpeed = 15f;
+			}
+
+            if (!npc.dontTakeDamage && !inTiles && boneToothShootCounter % boneToothShootRate == boneToothShootRate - 1f)
             {
                 Main.PlaySound(SoundID.Item92, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -79,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     for (int i = 0; i < 14; i++)
                     {
                         Vector2 spawnPosition = npc.Center;
-                        Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.73f) * Main.rand.NextFloat(8f, 15f);
+                        Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.73f) * Main.rand.NextFloat(1f, 1.875f) * boneToothShootSpeed;
                         spawnPosition += shootVelocity * 2.5f;
 
                         int sand = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<BoneTooth>(), 62, 0f);
@@ -191,10 +199,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             }
             else
             {
+                float riseSpeed = 16f;
+                float horizontalMoveSpeed = 12f;
+                if (BossRushEvent.BossRushActive)
+				{
+                    riseSpeed = 29f;
+                    horizontalMoveSpeed = 19f;
+				}
+
                 if (MathHelper.Distance(target.Center.X, npc.Center.X) > 125f)
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * 12f, 0.04f);
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * horizontalMoveSpeed, 0.04f);
                 if (lungeFallTimer > 145f || target.Center.Y - npc.Center.Y < -720f)
-                    npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -16f, 0.08f);
+                    npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -riseSpeed, 0.08f);
 
                 // Fall.
                 else if (npc.Center.Y < target.Top.Y - 100f && npc.velocity.Y < 21f)
@@ -252,13 +268,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             if (attackTimer >= riseTime)
             {
                 bool inTiles = Collision.SolidCollision(npc.Center, 2, 2);
+                float sandShootSpeed = 7f;
+                if (BossRushEvent.BossRushActive)
+                    sandShootSpeed = 24f;
 
                 // Release a bunch of sand and seekers once tiles have been hit.
                 if (Main.netMode != NetmodeID.MultiplayerClient && inTiles && wasPreviouslyInTiles == 0f)
                 {
                     for (int i = 0; i < 50; i++)
                     {
-                        Vector2 sandShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 50f) * 7f;
+                        Vector2 sandShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 50f) * sandShootSpeed;
                         Vector2 spawnPosition = npc.Center + sandShootVelocity * 3f;
                         int sand = Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 60, 0f);
                         if (Main.projectile.IndexInRange(sand))
@@ -295,8 +314,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             fallTime = Utils.Clamp(fallTime - (inTiles ? 3 : 1), 0, 300);
             inAirTime = Utils.Clamp(inAirTime - 2, 0, 180);
             npc.velocity.X *= 0.985f;
-            if (npc.velocity.Y < 11f)
-                npc.velocity.Y += 0.175f;
+
+            float fallAcceleration = 0.175f;
+            float fallMaxSpeed = 11f;
+            if (BossRushEvent.BossRushActive)
+            {
+                fallAcceleration = 0.375f;
+                fallMaxSpeed = 23f;
+            }
+
+            if (npc.velocity.Y < fallMaxSpeed)
+                npc.velocity.Y += fallAcceleration;
         }
         
         public static void DoAttack_FlyTowardsTarget(NPC npc, Player target, float lifeRatio, bool inTiles, ref float inAirTime, ref float fallTime)
@@ -316,6 +344,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             float newSpeed = npc.velocity.Length();
             float idealSpeed = MathHelper.Lerp(4.25f, 8.3f, 1f - lifeRatio);
             idealSpeed += MathHelper.Lerp(0f, 2f, (float)Math.Sin(waveTimer * MathHelper.TwoPi / 300f) * 0.5f + 0.5f);
+            if (BossRushEvent.BossRushActive)
+                idealSpeed *= 3.7f;
 
             // Accelerate quickly if relatively far from the destination.
             if (distanceFromDestination > 1250f)
@@ -334,9 +364,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             if (!inTiles)
                 inAirTime++;
 
-            if (inAirTime >= 180f)
+            if (inAirTime >= (BossRushEvent.BossRushActive ? 420f : 180f))
             {
-                fallTime = 190f;
+                fallTime = BossRushEvent.BossRushActive ? 430f : 190f;
                 npc.netUpdate = true;
             }
         }

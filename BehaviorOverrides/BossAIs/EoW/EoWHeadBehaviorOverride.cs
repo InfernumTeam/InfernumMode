@@ -31,6 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         // This is applicable to all split worms as well.
         // Since split worms share HP, the total amount of HP of the boss is equal to Worm HP * (Total Splits + 1).
         public const int TotalLifeAcrossWorm = 4000;
+        public const int TotalLifeAcrossWormBossRush = 376810;
         public const int BaseBodySegmentCount = 40;
         public const int TotalSplitsToPerform = 2;
 

@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -117,6 +118,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         {
                             Vector2 skullSpawnPosition = npc.Center;
                             Vector2 skullShootVelocity = (skullSpawnPosition - owner.Center).SafeNormalize(Vector2.UnitY) * 7.5f;
+                            if (BossRushEvent.BossRushActive)
+                                skullShootVelocity *= 2f;
+
                             skullSpawnPosition += skullShootVelocity * 4f;
                             Utilities.NewProjectileBetter(skullSpawnPosition, skullShootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 115, 0f);
                         }
@@ -142,6 +146,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                                 for (int i = 0; i < 5; i++)
                                 {
                                     Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 5f) * 7.95f;
+                                    if (BossRushEvent.BossRushActive)
+                                        flameShootVelocity *= 3f;
                                     Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 95, 0f);
                                 }
                             }
@@ -163,6 +169,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                                 for (int i = 0; i < 5; i++)
                                 {
                                     Vector2 flameShootVelocity = Vector2.UnitX * Math.Sign(npc.SafeDirectionTo(target.Center).X) * 13f;
+                                    if (BossRushEvent.BossRushActive)
+                                        flameShootVelocity *= 2f;
                                     Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
                                 }
                             }

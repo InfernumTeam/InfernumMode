@@ -2,7 +2,6 @@
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.Perforator;
-using CalamityMod.NPCs.HiveMind;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.BrimstoneElemental;
@@ -22,6 +21,7 @@ using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
 using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
+using CalamityMod.Events;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -29,47 +29,47 @@ namespace InfernumMode.GlobalInstances
     {
         public static Dictionary<int, int> HPValues => new Dictionary<int, int>()
         {
-            [ModContent.NPCType<DesertScourgeHead>()] = 5550,
-            [NPCID.KingSlime] = 4200,
-            [NPCID.EyeofCthulhu] = 3560,
-            [NPCID.BrainofCthulhu] = 4545,
-            [ModContent.NPCType<CrabulonBoss>()] = 8750,
-            [NPCID.EaterofWorldsHead] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
-            [NPCID.EaterofWorldsBody] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
-            [NPCID.EaterofWorldsTail] = EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
-            [ModContent.NPCType<HiveMindP1Boss>()] = 6007,
-            [ModContent.NPCType<PerforatorHive>()] = 6132,
-            [ModContent.NPCType<PerforatorHeadSmall>()] = 2280,
-            [ModContent.NPCType<PerforatorBodyMedium>()] = 160,
-            [ModContent.NPCType<PerforatorHeadLarge>()] = 4055,
-            [NPCID.QueenBee] = 7550,
-            [NPCID.SkeletronHead] = 7600,
-            [ModContent.NPCType<CrimulanSGBig>()] = 4020,
-            [ModContent.NPCType<EbonianSGBig>()] = 4020,
-            [NPCID.WallofFleshEye] = 3232,
-            [NPCID.WallofFlesh] = 11875,
-            [NPCID.Spazmatism] = 22223,
-            [NPCID.Retinazer] = 24500,
-            [NPCID.SkeletronPrime] = 53333,
-            [NPCID.TheDestroyer] = 111000,
-            [ModContent.NPCType<BrimstoneElemental>()] = 51515,
-            [ModContent.NPCType<CalamitasRun3>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 244444 : 82800,
-            [ModContent.NPCType<CalamitasRun>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 55000 : 19500,
-            [ModContent.NPCType<CalamitasRun2>()] = CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 41000 : 13000,
-            [NPCID.Plantera] = 110500,
-            [ModContent.NPCType<Leviathan>()] = 103103,
-            [ModContent.NPCType<Siren>()] = 39250,
+            [ModContent.NPCType<DesertScourgeHead>()] = BossRushEvent.BossRushActive ? 1185000 : 5550,
+            [NPCID.KingSlime] = BossRushEvent.BossRushActive ? 499920 : 4200,
+            [NPCID.EyeofCthulhu] = BossRushEvent.BossRushActive ? 770000 : 3560,
+            [NPCID.BrainofCthulhu] = BossRushEvent.BossRushActive ? 289000 : 4545,
+            [ModContent.NPCType<CrabulonBoss>()] = BossRushEvent.BossRushActive ? 1776000 : 8750,
+            [NPCID.EaterofWorldsHead] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
+            [NPCID.EaterofWorldsBody] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
+            [NPCID.EaterofWorldsTail] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
+            [ModContent.NPCType<HiveMindP1Boss>()] = BossRushEvent.BossRushActive ? 606007 : 6007,
+            [ModContent.NPCType<PerforatorHive>()] = BossRushEvent.BossRushActive ? 420419 : 6132,
+            [ModContent.NPCType<PerforatorHeadSmall>()] = BossRushEvent.BossRushActive ? 119000 : 2280,
+            [ModContent.NPCType<PerforatorBodyMedium>()] = BossRushEvent.BossRushActive ? 7675 : 160,
+            [ModContent.NPCType<PerforatorHeadLarge>()] = BossRushEvent.BossRushActive ? 174500 : 4055,
+            [NPCID.QueenBee] = BossRushEvent.BossRushActive ? 511100 : 7550,
+            [NPCID.SkeletronHead] = BossRushEvent.BossRushActive ? 418105 : 7600,
+            [ModContent.NPCType<CrimulanSGBig>()] = BossRushEvent.BossRushActive ? 113720 : 4020,
+            [ModContent.NPCType<EbonianSGBig>()] = BossRushEvent.BossRushActive ? 113720 : 4020,
+            [NPCID.WallofFleshEye] = BossRushEvent.BossRushActive ? 246800 : 3232,
+            [NPCID.WallofFlesh] = BossRushEvent.BossRushActive ? 1068000 : 11875,
+            [NPCID.Spazmatism] = BossRushEvent.BossRushActive ? 333760 : 22223,
+            [NPCID.Retinazer] = BossRushEvent.BossRushActive ? 340885 : 24500,
+            [NPCID.SkeletronPrime] = BossRushEvent.BossRushActive ? 289515 : 53333,
+            [NPCID.TheDestroyer] = BossRushEvent.BossRushActive ? 610580 : 111000,
+            [ModContent.NPCType<BrimstoneElemental>()] = BossRushEvent.BossRushActive ? 1105000 : 51515,
+            [ModContent.NPCType<CalamitasRun3>()] = BossRushEvent.BossRushActive ? 485000 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 244444 : 82800,
+            [ModContent.NPCType<CalamitasRun>()] = BossRushEvent.BossRushActive ? 193380 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 55000 : 19500,
+            [ModContent.NPCType<CalamitasRun2>()] = BossRushEvent.BossRushActive ? 176085 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 41000 : 13000,
+            [NPCID.Plantera] = BossRushEvent.BossRushActive ? 575576 : 110500,
+            [ModContent.NPCType<Leviathan>()] = BossRushEvent.BossRushActive ? 1200000 : 103103,
+            [ModContent.NPCType<Siren>()] = BossRushEvent.BossRushActive ? 400000 : 39250,
             [ModContent.NPCType<AureusSpawn>()] = 25000,
-            [ModContent.NPCType<PlaguebringerGoliath>()] = 111776,
-            [NPCID.CultistBoss] = 56000,
-            [NPCID.MoonLordHand] = 43390,
-            [NPCID.MoonLordHead] = 52525,
-            [NPCID.MoonLordCore] = 99990,
-            [ModContent.NPCType<Bumblefuck>()] = 177550,
-            [ModContent.NPCType<ProvidenceBoss>()] = 430000,
-            [ModContent.NPCType<StormWeaverHead>()] = 515432,
-            [ModContent.NPCType<OldDukeBoss>()] = 872444,
-            [ModContent.NPCType<DevourerofGodsHead>()] = 1116000
+            [ModContent.NPCType<PlaguebringerGoliath>()] = BossRushEvent.BossRushActive ? 666666 : 111776,
+            [NPCID.CultistBoss] = BossRushEvent.BossRushActive ? 727272 : 56000,
+            [NPCID.MoonLordHand] = BossRushEvent.BossRushActive ? 275200 : 43390,
+            [NPCID.MoonLordHead] = BossRushEvent.BossRushActive ? 281110 : 52525,
+            [NPCID.MoonLordCore] = BossRushEvent.BossRushActive ? 510000 : 99990,
+            [ModContent.NPCType<Bumblefuck>()] = BossRushEvent.BossRushActive ? 560000 : 177550,
+            [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 430000,
+            [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 632100 : 415432,
+            [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 686868 : 542444,
+            [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2450000 : 1116000
         };
     }
 }

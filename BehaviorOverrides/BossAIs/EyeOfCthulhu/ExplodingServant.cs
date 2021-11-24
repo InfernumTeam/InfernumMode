@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -47,7 +48,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             npc.alpha = Utils.Clamp(npc.alpha - 30, 0, 255);
 
-            if (npc.velocity.Length() < 14f)
+            float maxSpeed = BossRushEvent.BossRushActive ? 27f : 14f;
+            if (npc.velocity.Length() < maxSpeed)
                 npc.velocity *= 1.0075f;
 
             Player target = Main.player[Player.FindClosest(npc.Center, 1, 1)];

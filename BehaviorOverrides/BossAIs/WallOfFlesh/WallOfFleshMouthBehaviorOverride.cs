@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -157,6 +158,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             float horizontalSpeed = MathHelper.Lerp(4f, 7f, 1f - lifeRatio);
             if (verticalDestination < (Main.maxTilesY - 180) * 16f)
                 verticalDestination = (Main.maxTilesY - 180) * 16f;
+
+            if (BossRushEvent.BossRushActive)
+                horizontalSpeed *= 2.4f;
 
             npc.position.Y = verticalDestination;
 

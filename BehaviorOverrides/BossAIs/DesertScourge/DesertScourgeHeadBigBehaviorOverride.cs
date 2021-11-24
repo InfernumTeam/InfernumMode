@@ -283,19 +283,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         if (Main.projectile.IndexInRange(sand))
                             Main.projectile[sand].tileCollide = false;
                     }
-
-                    // Release 4 dried seekers if none currently exist.
-                    if (!NPC.AnyNPCs(ModContent.NPCType<DriedSeekerHead>()))
-                    {
-                        for (int i = 0; i < 4; i++)
-                        {
-                            Vector2 initialSeekerVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 9f;
-                            Vector2 spawnPosition = npc.Center + initialSeekerVelocity * 2f;
-                            int seeker = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<DriedSeekerHead>(), 1);
-                            if (Main.npc.IndexInRange(seeker))
-                                Main.npc[seeker].velocity = initialSeekerVelocity;
-                        }
-                    }
                     wasPreviouslyInTiles = 1f;
                 }
 

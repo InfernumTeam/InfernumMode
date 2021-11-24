@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             projectile.width = projectile.height = 112;
             projectile.hostile = true;
             projectile.alpha = 255;
-            projectile.penetrate = 1;
+            projectile.penetrate = -1;
             projectile.tileCollide = false;
             projectile.timeLeft = ProvidenceBehaviorOverride.GuardianApparationTime;
             cooldownSlot = 1;
@@ -67,20 +67,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             switch (State)
             {
                 case AttackState.TopLeftCharge:
-                    projectile.velocity = projectile.SafeDirectionTo(Target.Center) * 18f;
+                    projectile.velocity = projectile.SafeDirectionTo(Target.Center) * 22.5f;
                     projectile.spriteDirection = (projectile.velocity.X < 0).ToDirectionInt();
 
                     break;
                 case AttackState.HorizontalCharge:
                     projectile.rotation = 0f;
-                    projectile.velocity = Vector2.UnitX * -DirectionBias * 25f;
+                    projectile.velocity = Vector2.UnitX * -DirectionBias * 31f;
                     projectile.spriteDirection = (projectile.velocity.X < 0).ToDirectionInt();
 
                     // Fire a spear.
                     if (Main.myPlayer == projectile.owner && projectile.alpha == 0)
                     {
                         Vector2 spawnPosition = projectile.Center - Vector2.UnitX * projectile.spriteDirection * 40f;
-                        Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitX * projectile.spriteDirection * 40f, ModContent.ProjectileType<ProfanedSpear>(), 290, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitX * projectile.spriteDirection * 45f, ModContent.ProjectileType<ProfanedSpear>(), 290, 0f);
                     }
 
                     Main.PlaySound(SoundID.Item109, Target.Center);
@@ -89,10 +89,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     if (Main.myPlayer == projectile.owner && projectile.alpha == 0)
                     {
                         Vector2 baseShootDirection = projectile.SafeDirectionTo(Target.Center);
-                        for (int i = 0; i < 9; i++)
+                        for (int i = 0; i < 13; i++)
                         {
                             Vector2 spawnPosition = projectile.Center;
-                            Vector2 shootVelocity = baseShootDirection.RotatedBy(MathHelper.TwoPi * i / 9f) * 12f;
+                            Vector2 shootVelocity = baseShootDirection.RotatedBy(MathHelper.TwoPi * i / 12f) * 14f;
                             Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 300, 0f);
                         }
                     }

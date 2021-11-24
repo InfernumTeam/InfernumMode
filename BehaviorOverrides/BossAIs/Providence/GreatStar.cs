@@ -54,9 +54,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 			{
 				Main.PlaySound(SoundID.Item20, projectile.position);
 				Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-				for (int i = 0; i < 3; i++)
+				for (int i = 0; i < 5; i++)
 				{
-					float shootSpeed = MathHelper.Lerp(1f, 6.5f, i / 3f);
+					float shootSpeed = MathHelper.Lerp(2f, 12f, i / 4f);
 					int star = Projectile.NewProjectile(projectile.Center, projectile.SafeDirectionTo(target.Center + target.velocity * 35f) * shootSpeed, projectile.type, projectile.damage, projectile.knockBack);
 					Main.projectile[star].Size /= 1.3f;
 					Main.projectile[star].scale /= 1.3f;

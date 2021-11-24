@@ -32,13 +32,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override void AI()
         {
             Time++;
-            if (Main.myPlayer == projectile.owner && Time % 20 == 19)
+            if (Main.myPlayer == projectile.owner && Time % 15f == 14f)
             {
                 for (int i = -1; i <= 1; i += 2)
                 {
                     float shootSpeed = 15.5f;
-                    Vector2 shootVelocity = projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.ToRadians(15f) * i + MathHelper.Pi) * shootSpeed;
-                    Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<HolySpear3>(), 240, 0f);
+                    Vector2 shootVelocity = projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.ToRadians(35f) * i + MathHelper.Pi) * shootSpeed;
+                    Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<HolySpear3>(), 250, 0f);
                 }
             }
 			projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;

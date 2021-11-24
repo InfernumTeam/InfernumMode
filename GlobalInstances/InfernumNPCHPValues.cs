@@ -66,8 +66,8 @@ namespace InfernumMode.GlobalInstances
             [NPCID.MoonLordHead] = BossRushEvent.BossRushActive ? 281110 : 52525,
             [NPCID.MoonLordCore] = BossRushEvent.BossRushActive ? 510000 : 99990,
             [ModContent.NPCType<Bumblefuck>()] = BossRushEvent.BossRushActive ? 560000 : 177550,
-            [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 430000,
-            [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 632100 : 415432,
+            [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 520000,
+            [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 632100 : 465432,
             [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 686868 : 542444,
             [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2450000 : 1116000
         };

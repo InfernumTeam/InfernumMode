@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
-	public class RainbowCrystal : ModProjectile
+	public class RainbowCrystal2 : ModProjectile
     {
         public float ProvidenceLifeRatio => Main.npc[CalamityGlobalNPC.holyBoss].life / (float)Main.npc[CalamityGlobalNPC.holyBoss].lifeMax;
         public ref float CrystalHue => ref projectile.ai[0];
@@ -64,26 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             if (projectile.alpha == 0)
                 Lighting.AddLight(projectile.Center, CrystalColor.ToVector3() * 0.7f);
 
-            projectile.velocity.X *= 0.995f;
-
-            if (projectile.velocity.Y >= 0f)
-            {
-                projectile.velocity.Y *= 1.06f;
-                float maxFallSpeed = MathHelper.Lerp(4.5f, 5.5f, 1f - ProvidenceLifeRatio);
-
-                if (ProvidenceInPhase2)
-                    maxFallSpeed += 0.5f;
-                if (projectile.velocity.Y > maxFallSpeed)
-                    projectile.velocity.Y = maxFallSpeed;
-            }
-            else
-                projectile.velocity.Y *= 0.98f;
-
-            if (!HasStartedFall && projectile.velocity.Y > -0.5f)
-            {
-                HasStartedFall = true;
-                projectile.velocity.Y = 0.1f;
-            }
+            projectile.velocity *= 1.004f;
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             EmitIdleDust();

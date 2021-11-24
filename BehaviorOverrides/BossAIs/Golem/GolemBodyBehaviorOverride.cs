@@ -49,6 +49,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 leftHandCenterPos = new Vector2(npc.Left.X, npc.Left.Y);
             Vector2 rightHandCenterPos = new Vector2(npc.Right.X, npc.Right.Y);
 
+            // Set the whoAmI variable.
+            NPC.golemBoss = npc.whoAmI;
+
             if (AITimer == 0f)
             {
                 npc.TargetClosest();

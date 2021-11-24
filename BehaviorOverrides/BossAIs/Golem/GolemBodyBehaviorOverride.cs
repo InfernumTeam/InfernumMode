@@ -40,10 +40,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref float AttachedHeadNPC = ref npc.Infernum().ExtraAI[2];
             ref float FreeHeadNPC = ref npc.Infernum().ExtraAI[3];
             ref float HeadState = ref npc.Infernum().ExtraAI[4];
-            ref float ReturnFromEnrageState = ref npc.Infernum().ExtraAI[5];
-            ref float AttackCooldown = ref npc.Infernum().ExtraAI[6];
+            ref float EnrageState = ref npc.Infernum().ExtraAI[5];
+            ref float ReturnFromEnrageState = ref npc.Infernum().ExtraAI[6];
+            ref float AttackCooldown = ref npc.Infernum().ExtraAI[7];
             bool FreeHead = HeadState == 1;
-            bool EnrageReturn = ReturnFromEnrageState == 1;
 
             Vector2 attachedHeadCenterPos = new Vector2(npc.Center.X, npc.Top.Y);
             Vector2 leftHandCenterPos = new Vector2(npc.Left.X, npc.Left.Y);
@@ -162,11 +162,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Rectangle arena = npc.Infernum().arenaRectangle;
 
                 // 0 is normal. 1 is enraged.
-                npc.Infernum().ExtraAI[5] = (!Main.player[npc.target].Hitbox.Intersects(arena)).ToInt();
+                EnrageState = (!Main.player[npc.target].Hitbox.Intersects(arena)).ToInt();
                 npc.TargetClosest(false);
             }
 
-            bool Enraged = npc.Infernum().ExtraAI[5] == 1;
+            bool Enraged = EnrageState == 1f;
 
             ref NPC body = ref npc;
             ref NPC freeHead = ref Main.npc[(int)FreeHeadNPC];
@@ -191,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                 DeleteGolemArena();
             }
-            else if (!EnrageReturn)
+            else if (ReturnFromEnrageState == 0f)
             {
                 // Sync head HP
                 if (freeHead.life > attachedHead.life)
@@ -245,19 +245,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                 // Invincibility is lame
                 freeHead.defense = 9999;
-                if (freeHead.velocity.Length() < 20)
-                    freeHead.velocity += freeHead.DirectionTo(target.Center) * 0.5f;
+
+                // Accelerate the X and Y separately for sporadic movement
+                if (freeHead.velocity.Length() < 2)
+                    freeHead.velocity = freeHead.DirectionTo(target.Center) * 2f;
+
+                if (Math.Abs((freeHead.Center + freeHead.velocity).X - target.Center.X) > Math.Abs(freeHead.Center.X - target.Center.X))
+                    freeHead.velocity.X += freeHead.Center.X > target.Center.X ? -1f : 1f;
                 else
-                    freeHead.velocity = freeHead.DirectionTo(target.Center) * 20f;
+                    freeHead.velocity.X *= 1.1f;
+
+                if (Math.Abs((freeHead.Center + freeHead.velocity).Y - target.Center.Y) > Math.Abs(freeHead.Center.Y - target.Center.Y))
+                    freeHead.velocity.Y += freeHead.Center.Y > target.Center.Y ? -1f : 1f;
+                else
+                    freeHead.velocity.Y *= 1.1f;
+
+                freeHead.velocity = freeHead.velocity.ClampMagnitude(0f, 25f);
+
+                // TODO - Spawn projectiles based on velocity path
 
                 // Mark this so that if the player re-enters the arena then the AI will know to resync
                 ReturnFromEnrageState = 1f;
                 return false;
             }
-            else if (EnrageReturn)
+            else if (ReturnFromEnrageState == 1f)
             {
                 // Custom re-attach code rather than the method so that the fight can return to normal faster
-                if (freeHead.Distance(attachedHeadCenterPos) > 1 || freeHead.Distance(attachedHeadCenterPos + freeHead.velocity) > freeHead.Distance(attachedHeadCenterPos))
+                // Slow down for the first part
+                if (!(freeHead.velocity.ToRotation() < freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() + MathHelper.ToRadians(3) &&
+                    freeHead.velocity.ToRotation() > freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() - MathHelper.ToRadians(3)) &&
+                    !(freeHead.velocity.ToRotation() < MathHelper.WrapAngle(freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() + MathHelper.Pi) + MathHelper.ToRadians(3) &&
+                    freeHead.velocity.ToRotation() > MathHelper.WrapAngle(freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() + MathHelper.Pi) - MathHelper.ToRadians(3)))
+                {
+                    freeHead.velocity *= 0.925f;
+                    // Once stopped, approach the attached position
+                    if (freeHead.velocity.Length() < 1)
+                        freeHead.velocity = freeHead.DirectionTo(attachedHeadCenterPos);
+                    return false;
+                }
+
+                // If it will pass, reattach
+                // It's fine if the head was unattached before enraging, the attack will continue like normal
+                if (attachedHead.Distance(freeHead.Center + freeHead.velocity) > attachedHead.Distance(freeHead.Center))
                 {
                     freeHead.defense = freeHead.defDefense;
                     SwapHeads(npc);
@@ -266,7 +295,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     return false;
                 }
 
-                freeHead.velocity += freeHead.DirectionTo(attachedHeadCenterPos) * 0.5f;
+                // Accelerate towards the optimal position
+                freeHead.velocity = (freeHead.velocity * 1.085f).ClampMagnitude(0, 20f);
                 return false;
             }
 
@@ -280,9 +310,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                             ReAttachHead(npc);
                             break;
                         }
+
                         #region Arm Bullets
 
                         #endregion
+                        
                         break;
                     case GolemAttackState.FistSpin:
                         if (FreeHead)
@@ -290,6 +322,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                             ReAttachHead(npc);
                             break;
                         }
+
                         #region Fist Spin
 
                         if (AttackTimer <= 240f)
@@ -334,6 +367,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         AttackTimer++;
 
                         #endregion
+
                         break;
                     case GolemAttackState.SpikeTrapWaves:
                         if (FreeHead)
@@ -341,19 +375,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                             ReAttachHead(npc);
                             break;
                         }
+
                         #region Spiketrap Waves
 
                         #endregion
+
                         break;
                     case GolemAttackState.HeatRay:
+                        if (!FreeHead)
+                            SwapHeads(npc);
+
                         #region Heat Ray
 
                         #endregion
+                        
                         break;
                     case GolemAttackState.SpinLaser:
+                        if (!FreeHead)
+                            SwapHeads(npc);
+
                         #region Spin Laser
 
                         #endregion
+
                         break;
                     case GolemAttackState.Slingshot:
                         if (FreeHead)
@@ -361,9 +405,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                             ReAttachHead(npc);
                             break;
                         }
+
                         #region Slingshot
 
                         #endregion
+
                         break;
                 }
             }
@@ -448,8 +494,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (!Main.player.IndexInRange(npc.target))
                 return;
 
-            // TO DO:
-            // If BR is active, set the area rectangle to null and return
+            // TODO - If BR is active, set the area rectangle to null and return
 
             Player closest = Main.player[npc.target];
 

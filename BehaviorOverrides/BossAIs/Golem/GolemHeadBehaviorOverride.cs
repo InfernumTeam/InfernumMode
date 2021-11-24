@@ -34,7 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Main.NewText("A");
             if (npc.dontTakeDamage)
                 return false;
 

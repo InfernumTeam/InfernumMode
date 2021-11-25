@@ -255,17 +255,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static readonly Dictionary<YharonAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<YharonAttackType[], Func<NPC, bool>>()
         {
-            [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.875f && npc.Infernum().ExtraAI[2] == 0f,
-            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.55f && npc.life / (float)npc.lifeMax <= 0.875f && npc.Infernum().ExtraAI[2] == 0f,
-            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.35f && npc.life / (float)npc.lifeMax <= 0.55f && npc.Infernum().ExtraAI[2] == 0f,
-            [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.1f && npc.life / (float)npc.lifeMax <= 0.35f && npc.Infernum().ExtraAI[2] == 0f,
+            [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.9375f && npc.Infernum().ExtraAI[2] == 0f,
+            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.775f && npc.life / (float)npc.lifeMax <= 0.9375f && npc.Infernum().ExtraAI[2] == 0f,
+            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.675f && npc.life / (float)npc.lifeMax <= 0.775f && npc.Infernum().ExtraAI[2] == 0f,
+            [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.5f && npc.life / (float)npc.lifeMax <= 0.675f && npc.Infernum().ExtraAI[2] == 0f,
 
-            [Subphase5Pattern] = (npc) => (npc.life / (float)npc.lifeMax > 0.9f || npc.Infernum().ExtraAI[3] > 0f) && npc.Infernum().ExtraAI[2] == 1f,
-            [Subphase6Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.7f && npc.life / (float)npc.lifeMax <= 0.9f && npc.Infernum().ExtraAI[2] == 1f,
-            [Subphase7Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.4f && npc.life / (float)npc.lifeMax <= 0.7f && npc.Infernum().ExtraAI[2] == 1f,
-            [Subphase8Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.15f && npc.life / (float)npc.lifeMax <= 0.4f && npc.Infernum().ExtraAI[2] == 1f,
-            [Subphase9Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.05f && npc.life / (float)npc.lifeMax <= 0.15f && npc.Infernum().ExtraAI[2] == 1f,
-            [LastSubphasePattern] = (npc) => npc.life / (float)npc.lifeMax <= 0.05f && npc.Infernum().ExtraAI[2] == 1f,
+            [Subphase5Pattern] = (npc) => (npc.life / (float)npc.lifeMax > 0.45f || npc.Infernum().ExtraAI[3] > 0f) && npc.Infernum().ExtraAI[2] == 1f,
+            [Subphase6Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.35f && npc.life / (float)npc.lifeMax <= 0.45f && npc.Infernum().ExtraAI[2] == 1f,
+            [Subphase7Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.2f && npc.life / (float)npc.lifeMax <= 0.35f && npc.Infernum().ExtraAI[2] == 1f,
+            [Subphase8Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.075f && npc.life / (float)npc.lifeMax <= 0.2f && npc.Infernum().ExtraAI[2] == 1f,
+            [Subphase9Pattern] = (npc) => npc.life / (float)npc.lifeMax > 0.025f && npc.life / (float)npc.lifeMax <= 0.075f && npc.Infernum().ExtraAI[2] == 1f,
+            [LastSubphasePattern] = (npc) => npc.life / (float)npc.lifeMax <= 0.025f && npc.Infernum().ExtraAI[2] == 1f,
         };
         #endregion
 
@@ -295,10 +295,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override bool PreAI(NPC npc)
         {
-            // Fuck you and your reactive DR
-            npc.Calamity().KillTime = 5150;
-            npc.Calamity().AITimer = npc.Calamity().KillTime;
-
             // Stop rain if it's happen so it doesn't obstruct the fight (also because Yharon is heat oriented).
             CalamityMod.CalamityMod.StopRain();
 
@@ -340,8 +336,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             ref float transitionDRCountdown = ref npc.Infernum().ExtraAI[14];
             ref float berserkCharges = ref npc.Infernum().ExtraAI[15];
 
-            // Go to phase 2 if at 10%.
-            if (npc.Infernum().ExtraAI[2] == 0f && lifeRatio < 0.1f)
+            // Go to phase 2 if at 50%.
+            if (npc.Infernum().ExtraAI[2] == 0f && lifeRatio < 0.5f)
             {
                 npc.Infernum().ExtraAI[2] = 1f;
                 string text = "The air is scorching your skin...";
@@ -568,12 +564,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Regenerate health over time in Phase 2
             if (invincibilityTime > 0f)
             {
-                if (invincibilityTime % 5f == 0f)
-                {
-                    int healValue = (int)(npc.lifeMax * 0.9 / (phase2InvincibilityTime / 5f));
-                    npc.life += healValue;
-                    npc.HealEffect(healValue);
-                }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(180f, 180f);
@@ -1257,7 +1247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 // Create a text indicator.
                 if (finalAttackCompletionState != 1f)
                 {
-                    npc.life = (int)(npc.lifeMax * 0.05);
+                    npc.life = (int)(npc.lifeMax * 0.025);
                     if (Main.netMode == NetmodeID.SinglePlayer)
                         Main.NewText("The heat is surging...", Color.Orange);
                     else if (Main.netMode == NetmodeID.Server)
@@ -1303,7 +1293,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 // Begin to fade into magic sparkles.
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.65f, 0.15f);
-                npc.life = (int)MathHelper.Lerp(npc.life, npc.lifeMax * 0.025f, 0.025f);
+                npc.life = (int)MathHelper.Lerp(npc.life, npc.lifeMax * 0.0125f, 0.0125f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(180f, 180f);
@@ -1367,7 +1357,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 // Fade into magic sparkles more heavily.
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.3f, 0.15f);
-                npc.life = (int)MathHelper.Lerp(npc.life, npc.lifeMax * 0.01f, 0.025f);
+                npc.life = (int)MathHelper.Lerp(npc.life, npc.lifeMax * 0.005f, 0.025f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 2; i++)
@@ -1455,7 +1445,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.04f);
                 npc.life = (int)MathHelper.Lerp(npc.life, 0, 0.01f);
 
-                if (npc.life <= 1500 && npc.life > 1)
+                if (npc.life <= 1000 && npc.life > 1)
                     npc.life = 1;
 
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
@@ -1508,7 +1498,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.life = 0;
                     npc.HitEffect();
                     npc.checkDead();
-                    npc.NPCLoot();
                     npc.active = false;
 
                     // YOU SHALL HAVE HEARD MY FINAL DYINNNG ROOOOARRRRR

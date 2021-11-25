@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -83,9 +84,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int shurikenCount = (int)MathHelper.Lerp(2f, 6f, Utils.InverseLerp(300f, 720f, npc.Distance(Target.Center), true));
+                        float shurikenSpeed = 5.5f;
+                        if (BossRushEvent.BossRushActive)
+                        {
+                            shurikenSpeed = 23f;
+                            shurikenCount *= 3;
+                        }
+
                         for (int i = 0; i < shurikenCount; i++)
                         {
-                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i / (float)(shurikenCount - 1f))) * 5.5f;
+                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i / (float)(shurikenCount - 1f))) * shurikenSpeed;
                             Utilities.NewProjectileBetter(npc.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 72, 0f);
                         }
                     }

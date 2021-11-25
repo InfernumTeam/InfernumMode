@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
+using CalamityMod.Events;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
@@ -60,6 +61,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             {
                 Main.PlaySound(SoundID.Roar, (int)projectile.Center.X, (int)projectile.Center.Y, 0);
                 projectile.velocity = projectile.SafeDirectionTo(Main.player[Player.FindClosest(projectile.Center, 1, 1)].Center) * 12f;
+                if (BossRushEvent.BossRushActive)
+                    projectile.velocity *= 1.56f;
             }
             else
                 projectile.alpha += 3;

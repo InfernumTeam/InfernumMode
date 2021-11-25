@@ -304,8 +304,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             float inertia = MathHelper.Lerp(35f, 21f, 1f - lifeRatio);
             if (enraged)
             {
-                speed *= 1.3f;
+                speed *= 1.45f;
                 inertia *= 0.66f;
+            }
+            if (BossRushEvent.BossRushActive)
+            {
+                speed *= 1.7f;
+                inertia *= 0.6f;
             }
 
             if (!npc.WithinRange(target.Center, 150f) || npc.velocity == Vector2.Zero)
@@ -331,6 +336,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 shootRate = 5;
                 shootSpeed = 40f;
+            }
+            if (BossRushEvent.BossRushActive)
+            {
+                shootRate = (int)(shootRate * 0.6f);
+                shootSpeed *= 1.55f;
             }
 
             Vector2 destination = target.Center - Vector2.UnitY * 300f;
@@ -365,7 +375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.velocity *= 0.98f;
             }
             else
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 16f, 0.4f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 18f, 0.4f);
 
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
@@ -426,6 +436,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             // Create a petal of released souls.
             int shootRate = enraged ? 5 : 7;
+            if (BossRushEvent.BossRushActive)
+                shootRate = 4;
+
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 60f && attackTimer < 300f && attackTimer % shootRate == shootRate - 1f)
             {
                 float offsetAngle = (float)Math.Sin(MathHelper.TwoPi * (attackTimer - 60f) / 128f) * MathHelper.Pi / 3f;
@@ -479,7 +492,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float chargeSpeed = MathHelper.Lerp(19f, 23f, 1f - lifeRatio);
-            
+            if (BossRushEvent.BossRushActive)
+                chargeSpeed *= 1.45f;
+
             // Aim.
             if (attackTimer < 80f)
             {
@@ -487,7 +502,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                 Vector2 destination = target.Center - Vector2.UnitY * 300f;
                 destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 240f;
-                npc.velocity = (npc.velocity * 10f + npc.SafeDirectionTo(destination) * 24f) / 11f;
+                npc.velocity = (npc.velocity * 10f + npc.SafeDirectionTo(destination) * chargeSpeed) / 11f;
             }
 
             // Slow down.
@@ -547,6 +562,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             int shootCount = enraged ? 5 : 3;
             int shootRate = enraged ? 45 : 75;
+            float roarSpeed = 12.75f;
+
+            if (BossRushEvent.BossRushActive)
+            {
+                shootCount = 7;
+                shootRate = 35;
+                roarSpeed *= 1.75f;
+            }
 
             ref float shootCounter = ref npc.Infernum().ExtraAI[0];
             ref float totalShotsDoneSoFar = ref npc.Infernum().ExtraAI[1];
@@ -584,7 +607,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 // Release souls and a burst.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 12.75f, ModContent.ProjectileType<NecroplasmicRoar>(), 240, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * roarSpeed, ModContent.ProjectileType<NecroplasmicRoar>(), 240, 0f);
 
                     for (int i = 0; i <= 6; i++)
                     {
@@ -758,7 +781,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (adjustedTimer > 50f && adjustedTimer < 105f)
             {
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                npc.velocity *= (enraged ? 1.012f : 1.006f);
+                npc.velocity *= enraged || BossRushEvent.BossRushActive ? 1.0125f : 1.006f;
             }
             else
             {
@@ -773,7 +796,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 for (int i = 0; i < polterghasts.Count(); i++)
                 {
-                    Main.npc[polterghasts.ElementAt(i)].velocity = Main.npc[polterghasts.ElementAt(i)].SafeDirectionTo(target.Center) * (enraged ? 22.5f : 14f);
+                    Main.npc[polterghasts.ElementAt(i)].velocity = Main.npc[polterghasts.ElementAt(i)].SafeDirectionTo(target.Center) * (enraged || BossRushEvent.BossRushActive ? 25f : 14f);
                     Main.npc[polterghasts.ElementAt(i)].netUpdate = true;
                 }
             }

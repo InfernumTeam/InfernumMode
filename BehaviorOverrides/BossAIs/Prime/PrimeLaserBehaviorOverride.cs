@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod.Events;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -69,17 +70,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Main.PlaySound(SoundID.Item33, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    float shootSpeed = BossRushEvent.BossRushActive ? 17f : 10.5f;
                     if (lifeRatio < 0.5f || PrimeHeadBehaviorOverride.RemainingArms <= 2)
                     {
                         for (int i = 0; i < 3; i++)
                         {
-                            Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.49f, 0.49f, i / 2f)) * 10.5f;
+                            Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.49f, 0.49f, i / 2f)) * shootSpeed;
                             Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 4f, laserShootVelocity, ModContent.ProjectileType<LaserBolt>(), 135, 0f);
                         }
                     }
                     else
                     {
-                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center) * 10.5f;
+                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center) * shootSpeed;
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 4f, laserShootVelocity, ModContent.ProjectileType<LaserBolt>(), 130, 0f);
                     }
                     attackTimer = 0f;

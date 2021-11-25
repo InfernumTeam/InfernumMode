@@ -154,6 +154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             int bombardTime = 75;
             int fireballShootRate = lifeRatio < 0.5f ? 6 : 9;
             int fadeOutTime = (int)MathHelper.Lerp(48f, 27f, 1f - lifeRatio);
+            float skullShootSpeed = 11f;
             float horizontalTeleportOffset = MathHelper.Lerp(950f, 820f, 1f - lifeRatio);
             float verticalDestinationOffset = MathHelper.Lerp(600f, 475f, 1f - lifeRatio);
             Vector2 verticalDestination = target.Center - Vector2.UnitY * verticalDestinationOffset;
@@ -171,6 +172,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             {
                 fadeOutTime = (int)(fadeOutTime * 0.45);
                 horizontalTeleportOffset *= 0.7f;
+                fireballShootRate = 3;
+            }
+            if (BossRushEvent.BossRushActive)
+            {
+                skullShootSpeed *= 1.8f;
+                fadeOutTime = (int)(fadeOutTime * 0.4);
+                horizontalTeleportOffset *= 0.6f;
                 fireballShootRate = 3;
             }
 
@@ -221,10 +229,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                             int skullDamage = shouldBeBuffed ? 310 : 125;
                             skullDamage += (int)((1f - lifeRatio) * 35);
 
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 11f;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * skullShootSpeed;
                             int skull = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<HomingBrimstoneSkull>(), skullDamage, 0f);
                             if (Main.projectile.IndexInRange(skull))
-                                Main.projectile[skull].ai[0] = pissedOff ? -8f : (attackTimer - bombardTime) / 5f;
+                                Main.projectile[skull].ai[0] = pissedOff || BossRushEvent.BossRushActive ? -8f : (attackTimer - bombardTime) / 5f;
                         }
                     }
 
@@ -256,8 +264,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             int totalRosesToSpawn = shouldBeBuffed ? 14 : 10;
             int castingAnimationTime = shouldBeBuffed ? 30 : 50;
-            if (pissedOff)
+            if (pissedOff || BossRushEvent.BossRushActive)
                 totalRosesToSpawn += 5;
+
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float roseCreationCounter = ref npc.Infernum().ExtraAI[1];
@@ -428,15 +437,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                             // Release waving skulls.
                             int skullCount = (int)MathHelper.Lerp(4f, 9f, 1f - lifeRatio);
                             int skullDamage = shouldBeBuffed ? 310 : 125;
+                            float skullShootSpeed = 10f;
                             skullDamage += (int)((1f - lifeRatio) * 35);
 
                             if (pissedOff)
                                 skullCount += 8;
+                            if (BossRushEvent.BossRushActive)
+                            {
+                                skullCount += 8;
+                                skullShootSpeed *= 1.4f;
+                            }
 
                             for (int i = 0; i < skullCount; i++)
                             {
                                 float offsetAngle = MathHelper.Lerp(-0.74f, 0.74f, i / (float)(skullCount - 1f));
-                                Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * 10f;
+                                Vector2 shootVelocity = (target.Center - eyePosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * skullShootSpeed;
                                 Utilities.NewProjectileBetter(eyePosition, shootVelocity, ModContent.ProjectileType<BrimstoneSkull>(), skullDamage, 0f);
                             }
 
@@ -484,6 +499,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             int fireReleaseRate = lifeRatio < 0.5f ? 5 : 7;
             int bulletHellTime = 520;
+            float shootSpeedFactor = 1f;
             if (shouldBeBuffed)
             {
                 fireReleaseRate -= 1;
@@ -491,6 +507,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
             if (pissedOff)
                 fireReleaseRate = 2;
+            if (BossRushEvent.BossRushActive)
+            {
+                fireReleaseRate = 2;
+                shootSpeedFactor = 1.6f;
+            }
 
             // Rapidly slow down.
             npc.velocity *= 0.8f;
@@ -524,7 +545,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     {
                         Vector2 shootDirection = Main.rand.NextVector2Unit();
                         Vector2 fireSpawnPosition = npc.Center + npc.Size * shootDirection * 0.45f;
-                        Vector2 fireShootVelocity = shootDirection * 12f;
+                        Vector2 fireShootVelocity = shootDirection * shootSpeedFactor * 12f;
                         Utilities.NewProjectileBetter(fireSpawnPosition, fireShootVelocity, ModContent.ProjectileType<BrimstoneFireball>(), fireDamage, 0f);
                     }
 
@@ -535,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         for (int i = 0; i < dartCount; i++)
                         {
                             float offsetAngle = MathHelper.Lerp(-0.64f, 0.64f, i / (float)(dartCount - 1f));
-                            Vector2 dartVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 25f).RotatedBy(offsetAngle) * 14f;
+                            Vector2 dartVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 25f).RotatedBy(offsetAngle) * shootSpeedFactor * 14f;
                             Utilities.NewProjectileBetter(npc.Center, dartVelocity, ModContent.ProjectileType<BrimstonePetal2>(), fireDamage, 0f);
                         }
                     }
@@ -561,7 +582,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             int totalLaserbeamBursts = 2;
             Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * 20f, -70f);
 
-            if (pissedOff || shouldBeBuffed)
+            if (pissedOff || shouldBeBuffed || BossRushEvent.BossRushActive)
                 hoverTime -= 25;
 
             ref float attackState = ref npc.Infernum().ExtraAI[2];

@@ -399,7 +399,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                         {
                             Main.projectile[icicle].ai[0] = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
                             Main.projectile[icicle].ai[1] = npc.whoAmI;
-                            Main.projectile[icicle].localAI[1] = 1f;
+                            Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.7f : 1f;
                         }
 
                         icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f);
@@ -407,7 +407,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                         {
                             Main.projectile[icicle].ai[0] = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
                             Main.projectile[icicle].ai[1] = npc.whoAmI;
-                            Main.projectile[icicle].localAI[1] = 0.66f;
+                            Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.122f : 0.66f;
                         }
                     }
                 }
@@ -427,6 +427,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             int burstCount = 6;
             int burstCreationRate = 120 - (int)(zeroBasedAttackPower * 12f);
             int icicleCount = 6 + (int)(zeroBasedAttackPower * 4f);
+            float angularOffsetRandomness = 0.58f;
+            if (BossRushEvent.BossRushActive)
+            {
+                icicleCount *= 2;
+                angularOffsetRandomness = 0.97f;
+            }
+
             Vector2 destination = target.Center - Vector2.UnitY * 325f;
 
             // Move to the side of the target instead of right on top of them if below the target to prevent
@@ -450,7 +457,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 {
                     for (int i = 0; i < icicleCount; i++)
                     {
-                        Vector2 icicleVelocity = -Vector2.UnitY.RotatedByRandom(0.58f) * Main.rand.NextFloat(7f, 11f);
+                        Vector2 icicleVelocity = -Vector2.UnitY.RotatedByRandom(angularOffsetRandomness) * Main.rand.NextFloat(7f, 11f);
                         int icicle = Utilities.NewProjectileBetter(npc.Center, icicleVelocity, ModContent.ProjectileType<AimedIcicleSpike>(), 135, 0f);
                         if (Main.projectile.IndexInRange(icicleCount))
                             Main.projectile[icicle].ai[1] = i / (float)icicleCount * 68f;
@@ -579,7 +586,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                         {
                             Main.projectile[icicle].ai[0] = MathHelper.TwoPi * i / icicleCount + npc.AngleTo(target.Center) + angleOffset;
                             Main.projectile[icicle].ai[1] = npc.whoAmI;
-                            Main.projectile[icicle].localAI[1] = 1f;
+                            Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.7f : 1f;
                         }
 
                         icicle = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<IcicleSpike>(), 130, 0f);
@@ -587,7 +594,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                         {
                             Main.projectile[icicle].ai[0] = MathHelper.TwoPi * (i + 0.5f) / icicleCount + npc.AngleTo(target.Center) + angleOffset;
                             Main.projectile[icicle].ai[1] = npc.whoAmI;
-                            Main.projectile[icicle].localAI[1] = 0.66f;
+                            Main.projectile[icicle].localAI[1] = BossRushEvent.BossRushActive ? 1.122f : 0.66f;
                         }
                     }
                 }
@@ -690,6 +697,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             float zeroBasedAttackPower = attackPower - 1f;
             int chargeCount = 3;
             float chargeSpeed = MathHelper.Lerp(17f, 22f, zeroBasedAttackPower);
+            if (BossRushEvent.BossRushActive)
+                chargeSpeed *= 1.45f;
 
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];

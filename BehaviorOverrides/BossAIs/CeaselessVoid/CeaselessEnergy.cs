@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -35,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Accelerate.
             if (projectile.velocity.Length() < 23f)
-                projectile.velocity *= 1.023f;
+                projectile.velocity *= BossRushEvent.BossRushActive ? 1.03f : 1.023f;
 
             Time++;
         }

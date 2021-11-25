@@ -1,5 +1,6 @@
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Dusts;
+using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using System;
@@ -35,15 +36,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
         public override void AI()
         {
             npc.TargetClosest();
+            float speedFactor = BossRushEvent.BossRushActive ? 1.7f : 1f;
 
             if (Time > 420f)
                 npc.velocity *= 0.985f;
             else if (!npc.WithinRange(Target.Center, 170f))
             {
                 Vector2 destinationOffset = (MathHelper.TwoPi * Time / 24f + npc.whoAmI * 1.156f).ToRotationVector2() * 40f;
-                npc.velocity = (npc.velocity * 70f + npc.SafeDirectionTo(Target.Center + destinationOffset) * 13f) / 71f;
+                npc.velocity = (npc.velocity * 70f + npc.SafeDirectionTo(Target.Center + destinationOffset) * speedFactor * 13f) / 71f;
                 if (!npc.WithinRange(Target.Center, 275f))
-                    npc.velocity = (npc.velocity * 31f + npc.SafeDirectionTo(Target.Center + destinationOffset) * 14f) / 32f;
+                    npc.velocity = (npc.velocity * 31f + npc.SafeDirectionTo(Target.Center + destinationOffset) * speedFactor * 14f) / 32f;
             }
 
             npc.rotation += npc.velocity.Length() * Math.Sign(npc.velocity.X) * 0.02f;

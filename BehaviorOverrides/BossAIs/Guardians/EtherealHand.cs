@@ -47,6 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             npc.knockBackResist = 0f;
             npc.noGravity = true;
             npc.noTileCollide = true;
+            npc.hide = true;
             npc.alpha = 255;
         }
 
@@ -115,7 +116,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                 npc.velocity = Vector2.UnitY;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override void DrawBehind(int index)
+        {
+            Main.instance.DrawCacheNPCsBehindNonSolidTiles.Add(index);
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = ModContent.GetTexture("CalamityMod/Projectiles/StarProj");
             Vector2 handScale = new Vector2(HandSize) / texture.Size() * 1.6f;

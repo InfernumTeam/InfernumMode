@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -21,6 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.timeLeft = 240;
+            projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
         }
 
         public override void AI()
@@ -45,8 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 projectile.velocity = projectile.SafeDirectionTo(closestPlayer.Center + closestPlayer.velocity * AimAheadFactor) * 9f;
                 Main.PlaySound(SoundID.Item8, projectile.Center);
             }
-            if (Time > 60f && projectile.velocity.Length() < 16f)
-                projectile.velocity *= 1.01f;
+            if (Time > 60f && projectile.velocity.Length() < 18f)
+                projectile.velocity *= BossRushEvent.BossRushActive ? 1.02f : 1.01f;
 
             Lighting.AddLight(projectile.Center, Vector3.One * projectile.Opacity * 0.4f);
             Time++;

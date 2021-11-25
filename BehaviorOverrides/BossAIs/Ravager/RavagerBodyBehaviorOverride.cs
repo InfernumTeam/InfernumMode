@@ -127,6 +127,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
 
             int darkMagicFireballShootRate = 75;
+            int fireballsPerBurst = shouldBeBuffed ? 11 : 8;
+            float darkMagicFireballSpeed = shouldBeBuffed ? 16f : 11.5f;
             int jumpDelay = !leftClawActive || !rightClawActive ? 270 : 210;
             float gravity = 0.625f;
             if (!anyLimbsArePresent)
@@ -138,6 +140,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             if (shouldBeBuffed)
             {
                 darkMagicFireballShootRate -= 20;
+                jumpDelay /= 2;
+            }
+            if (BossRushEvent.BossRushActive)
+            {
+                darkMagicFireballShootRate = (int)(darkMagicFireballShootRate * 0.6f);
+                fireballsPerBurst += 12;
+                darkMagicFireballSpeed *= 1.7f;
                 jumpDelay /= 2;
             }
 
@@ -197,9 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int fireballsPerBurst = shouldBeBuffed ? 11 : 8;
                     int darkMagicFireballDamage = shouldBeBuffed ? 335 : 215;
-                    float darkMagicFireballSpeed = shouldBeBuffed ? 16f : 11.5f;
                     for (int i = 0; i < fireballsPerBurst; i++)
                     {
                         Vector2 darkMagicFireballVelocity = (MathHelper.TwoPi * i / fireballsPerBurst).ToRotationVector2() * darkMagicFireballSpeed;
@@ -489,6 +496,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 hoverSpeed += 5.6f;
                 verticalHoverOffset -= 80f;
                 slamGravityFactor *= 1.5f;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                hoverTime -= 27;
+                hoverSlowdownTime = 6;
+                hoverSpeed *= 1.4f;
+                verticalHoverOffset -= 80f;
+                slamGravityFactor *= 1.7f;
             }
 
             switch ((int)attackState)

@@ -117,6 +117,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             // Periodically release fireballs.
             int fireRate = splitCounter >= TotalSplitsToPerform - 1f ? 80 : 120;
+            if (BossRushEvent.BossRushActive)
+                fireRate = 32;
+
             if (attackTimer % fireRate == fireRate - 1f)
             {
                 Main.PlaySound(SoundID.Item20, npc.Center);
@@ -147,6 +150,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             if (attackTimer < 75f)
                 flySpeed *= 0.6f;
 
+            if (BossRushEvent.BossRushActive)
+                flySpeed *= 2.15f;
+
             // Have the main head generate a bunch of thorns at the beginning.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.realLife == -1 && attackTimer == 15f)
             {
@@ -169,6 +175,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(6f, 6f);
+                        if (BossRushEvent.BossRushActive)
+                            shootVelocity *= 3.2f;
                         Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<CursedBullet>(), 85, 0f);
                     }
                 }
@@ -195,6 +203,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             float flySpeed = enraged ? 13.5f : 8.25f;
             float turnSpeedFactor = enraged ? 1.1f : 0.8f;
             flySpeed *= MathHelper.Lerp(1f, 1.225f, splitCounter / TotalSplitsToPerform);
+
+            if (BossRushEvent.BossRushActive)
+                GotoNextAttackState(npc);
 
             DoDefaultMovement(npc, target, flySpeed, turnSpeedFactor);
 
@@ -235,6 +246,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             if (splitCounter == 2f)
                 idealVelocity *= 0.8f;
 
+            if (BossRushEvent.BossRushActive)
+                idealVelocity *= 2f;
+
             if (!npc.WithinRange(hoverDestination, 225f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) + offsetAngle, 0.018f, true) * idealVelocity.Length();
@@ -243,6 +257,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             // And release rain clouds.
             int rainReleaseRate = splitCounter >= 1f ? 67 : 35;
+            if (BossRushEvent.BossRushActive)
+                rainReleaseRate /= 2;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % rainReleaseRate == rainReleaseRate - 1f && npc.Center.Y < target.Center.Y - 185f)
             {
                 Vector2 cloudSpawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.45f;
@@ -259,6 +275,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
 
             int riseTime = 75;
+
+            if (BossRushEvent.BossRushActive)
+                riseTime -= 25;
 
             // Rise upward in anticipation of slamming into the target.
             if (attackTimer < riseTime)
@@ -334,6 +353,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed * 0.875f;
             idealVelocity *= 1f + npc.Distance(target.Center) / 2400f;
+            if (BossRushEvent.BossRushActive)
+                idealVelocity *= 2.1f;
             if (!npc.WithinRange(target.Center, 320f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) + offsetAngle, turnSpeedFactor * 0.018f, true) * idealVelocity.Length();

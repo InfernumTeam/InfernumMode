@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using CalamityMod.NPCs.Crabulon;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -47,7 +48,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             npc.target = Owner.target;
             npc.damage = MainBossLifeRatio < 0.45f ? 0 : 5;
 
-            HomeTowardsTarget(MathHelper.Lerp(7f, 11f, 1f - MainBossLifeRatio));
+            float hoverSpeed = MathHelper.Lerp(7f, 11f, 1f - MainBossLifeRatio);
+            if (BossRushEvent.BossRushActive)
+                hoverSpeed *= 2.15f;
+            HomeTowardsTarget(hoverSpeed);
 
             if (Main.netMode != NetmodeID.MultiplayerClient && MainBossLifeRatio < 0.45f && Time % 90f == 89f)
                 ReleaseSpores();

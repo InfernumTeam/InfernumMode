@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             npc.damage = 40;
             npc.height = npc.width = 28;
             npc.defense = 2;
-            npc.lifeMax = 40;
+            npc.lifeMax = BossRushEvent.BossRushActive ? 6500 : 40;
             npc.aiStyle = -1;
             aiType = -1;
             npc.alpha = 255;
@@ -39,18 +39,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             npc.spriteDirection = (npc.direction > 0).ToDirectionInt();
             npc.noGravity = true;
             if (npc.direction == 0)
-            {
                 npc.TargetClosest(true);
-            }
+
             npc.rotation = npc.velocity.ToRotation();
             npc.spriteDirection = (Math.Cos(npc.rotation) > 0).ToDirectionInt();
             npc.rotation -= MathHelper.PiOver2;
 
             npc.alpha = Utils.Clamp(npc.alpha - 30, 0, 255);
 
-            float maxSpeed = BossRushEvent.BossRushActive ? 27f : 14f;
+            float maxSpeed = BossRushEvent.BossRushActive ? 34f : 14f;
+            float moveAcceleration = BossRushEvent.BossRushActive ? 1.04f : 1.0075f;
             if (npc.velocity.Length() < maxSpeed)
-                npc.velocity *= 1.0075f;
+                npc.velocity *= moveAcceleration;
 
             Player target = Main.player[Player.FindClosest(npc.Center, 1, 1)];
             if (target != null && !target.dead && target.active)

@@ -184,10 +184,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public static void DoAttack_UnripeFakeout(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
+            float hoverSpeed = 3.25f;
+            int seedFireRate = enraged ? 12 : 32;
+            float seedShootSpeed = 12f;
+            if (BossRushEvent.BossRushActive)
+            {
+                hoverSpeed *= 4f;
+                seedFireRate = 15;
+                seedShootSpeed *= 2.4f;
+            }
+
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             if (!npc.WithinRange(target.Center, 85f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * 3.25f, 0.1f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * hoverSpeed, hoverSpeed / 32.5f);
             else
                 npc.velocity *= 0.9f;
 
@@ -213,7 +223,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     Tile tile = CalamityUtils.ParanoidTileRetrieval(potentialTilePosition.X, potentialTilePosition.Y);
 
                     // If a tile is an active wall with no tile in fron of it register it as a place to spawn a flower.
-                    if (tile.wall > 0 && !WorldGen.SolidTile(tile))
+                    if ((tile.wall > 0 && !WorldGen.SolidTile(tile)) || BossRushEvent.BossRushActive)
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // If a tile is a jungle grass mud tile and is active but not actuated register it as a place to spawn a flower.
@@ -231,10 +241,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             }
 
             // Release seeds.
-            int seedFireRate = enraged ? 12 : 32;
             if (attackTimer % seedFireRate == seedFireRate - 1f)
             {
-                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 12f;
+                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * seedShootSpeed;
                 Vector2 spawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.Zero) * 68f;
                 Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, 155, 0f);
             }
@@ -243,9 +252,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         public static void DoAttack_RedBlossom(NPC npc, Player target, bool inPhase4, bool enraged, ref float attackTimer)
         {
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            float hoverSpeed = 4f;
+            int seedFireRate = enraged ? 10 : 16;
+            float seedShootSpeed = 15f;
+            if (BossRushEvent.BossRushActive)
+            {
+                hoverSpeed *= 3.5f;
+                seedFireRate = 11;
+                seedShootSpeed *= 1.8f;
+            }
 
             if (!npc.WithinRange(target.Center, 85f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * 4f, 0.15f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * hoverSpeed, hoverSpeed / 27f);
             else
                 npc.velocity *= 0.9f;
 
@@ -266,7 +284,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             }
 
             // Release seeds.
-            int seedFireRate = enraged ? 10 : 16;
             if (inPhase4)
                 seedFireRate -= 2;
             if (attackTimer % seedFireRate == seedFireRate - 1f)
@@ -274,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 for (int i = 0; i < 3; i++)
                 {
                     float shootOffsetAngle = MathHelper.Lerp(-0.48f, 0.48f, i / 2f);
-                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * 15f;
+                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * seedShootSpeed;
                     Vector2 spawnPosition = npc.Center + shootVelocity.SafeNormalize(Vector2.Zero) * 68f;
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.PoisonSeedPlantera, 155, 0f);
                 }
@@ -291,14 +308,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             if (!npc.WithinRange(target.Center, 85f))
             {
                 float hoverSpeed = enraged ? 9f : 4f;
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * hoverSpeed, 0.15f);
+                if (BossRushEvent.BossRushActive)
+                    hoverSpeed = 15.5f;
+
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center) * hoverSpeed, hoverSpeed / 50f);
             }
             else
                 npc.velocity *= 0.9f;
 
+            float petalShootSpeed = 10.5f;
             ref float petalReleaseCountdown = ref npc.Infernum().ExtraAI[0];
             ref float petalReleaseDelay = ref npc.Infernum().ExtraAI[1];
             ref float petalCount = ref npc.Infernum().ExtraAI[2];
+
+            if (BossRushEvent.BossRushActive)
+                petalShootSpeed *= 1.85f;
 
             if (attackTimer == 1f)
             {
@@ -317,7 +341,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     for (int i = 0; i < (int)petalCount; i++)
                     {
                         float rotateOffset = MathHelper.Lerp(-0.33f, 0.33f, i / (petalCount - 1f));
-                        Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(rotateOffset) * 10.5f;
+                        Vector2 petalShootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY).RotatedBy(rotateOffset) * petalShootSpeed;
                         Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 68f;
                         Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<Petal>(), 155, 0f);
                     }
@@ -350,8 +374,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 for (int i = 0; i < 24; i++)
                 {
                     Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 720f;
-                    Vector2 petalShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.Zero) * 5f;
-                    Utilities.NewProjectileBetter(spawnPosition, petalShootVelocity, ModContent.ProjectileType<SporeGasPlantera>(), 165, 0f);
+                    Vector2 gasSporeVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.Zero) * 5f;
+                    Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGasPlantera>(), 165, 0f);
                 }
             }
 
@@ -372,6 +396,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
                         if (enraged)
                             gasSporeVelocity *= 1.25f;
+                        if (BossRushEvent.BossRushActive)
+                            gasSporeVelocity *= 1.5f;
 
                         Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGasPlantera>(), 160, 0f);
                     }
@@ -486,6 +512,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     for (int i = 0; i < vineCount; i++)
                     {
                         Vector2 thornVelocity = (MathHelper.TwoPi * i / (float)vineCount).ToRotationVector2() * 12f;
+                        if (BossRushEvent.BossRushActive)
+                            thornVelocity *= 1.5f;
                         Utilities.NewProjectileBetter(npc.Center, thornVelocity, ModContent.ProjectileType<NettlevineArenaSeparator>(), 215, 0f);
                     }
                 }
@@ -519,7 +547,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     Tile tile = CalamityUtils.ParanoidTileRetrieval(potentialTilePosition.X, potentialTilePosition.Y);
 
                     // If a tile is an active wall with no tile in fron of it register it as a place to spawn a flower.
-                    if (tile.wall > 0 && !WorldGen.SolidTile(tile))
+                    if ((tile.wall > 0 && !WorldGen.SolidTile(tile)) || BossRushEvent.BossRushActive)
                         flowerSpawnPositions.Add(ceneteredSpawnPosition);
 
                     // If a tile is a jungle grass mud tile and is active but not actuated register it as a place to spawn a flower.
@@ -550,6 +578,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             int chargeCount = 5;
             float chargeSpeed = (enraged ? 21f : 15.5f) + (1f - lifeRatio) * 3.2f;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeSpeed *= 1.6f;
+            }
 
             if (attackTimer < 60f)
             {

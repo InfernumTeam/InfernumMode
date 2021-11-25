@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
@@ -113,6 +114,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     float maxDiveDescendSpeed = 18f;
                     float diveAcceleration = 0.3f;
                     float maxDiveAscendSpeed = 30.5f;
+
+                    if (BossRushEvent.BossRushActive)
+                    {
+                        diveAcceleration += 0.315f;
+                    }
 
                     if (attackTimer < diveTime)
                     {
@@ -303,7 +309,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                             npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -21f, 0.3f);
                         else
                         {
-                            float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 19f, 0.15f);
+                            float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 19f, 0.15f);
                             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
 
                             if (attackTimer < 140f)
@@ -323,6 +329,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
                                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
+                                    if (BossRushEvent.BossRushActive)
+                                        shootVelocity *= 1.56f;
                                     Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 135, 0f);
                                 }
                             }
@@ -405,14 +413,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             int chargeTime = 45;
             int chargeSlowdownTime = 25;
             int chargeCount = 2;
+            float idealChargeSpeed = MathHelper.Lerp(19.5f, 23f, 1f - lifeRatio);
             ref float idealChargeVelocityX = ref npc.Infernum().ExtraAI[0];
             ref float idealChargeVelocityY = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
+
+            if (BossRushEvent.BossRushActive)
+                idealChargeSpeed *= 1.64f;
 
             // Attempt to get into position for a charge.
             if (attackTimer < hoverRedirectTime)
             {
                 float idealHoverSpeed = MathHelper.Lerp(20.5f, 39f, attackTimer / hoverRedirectTime);
+                if (BossRushEvent.BossRushActive)
+                    idealHoverSpeed *= 1.45f;
+
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.08f);
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.064f, true) * idealVelocity.Length();
 
@@ -430,7 +445,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Determine a charge velocity to adjust to.
             if (attackTimer == hoverRedirectTime)
             {
-                Vector2 idealChargeVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f) * MathHelper.Lerp(19.5f, 23f, 1f - lifeRatio);
+                Vector2 idealChargeVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f) * idealChargeSpeed;
                 idealChargeVelocityX = idealChargeVelocity.X;
                 idealChargeVelocityY = idealChargeVelocity.Y;
                 npc.netUpdate = true;

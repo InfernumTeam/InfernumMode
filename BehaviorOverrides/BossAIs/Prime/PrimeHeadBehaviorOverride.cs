@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod.Events;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -203,6 +204,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             float hoverSpeed = AnyArms ? 15f : 36f;
             float wrappedTime = attackTimer % shootRate;
 
+            if (BossRushEvent.BossRushActive)
+            {
+                spikesPerBurst += 10;
+                hoverSpeed = MathHelper.Max(hoverSpeed, 30f) * 1.2f;
+            }
+
             // Don't do contact damage, to prevent cheap hits.
             npc.damage = 0;
 
@@ -228,6 +235,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         Vector2 spikeVelocity = (MathHelper.TwoPi * i / spikesPerBurst).ToRotationVector2() * 5.5f;
                         if (AnyArms)
                             spikeVelocity *= 0.56f;
+                        if (BossRushEvent.BossRushActive)
+                            spikeVelocity *= 3f;
 
                         Utilities.NewProjectileBetter(npc.Center + spikeVelocity * 12f, spikeVelocity, ModContent.ProjectileType<MetallicSpike>(), 135, 0f);
                     }
@@ -300,6 +309,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             float hoverSpeed = AnyArms ? 14f : 33f;
             float chargeSpeed = AnyArms ? 15f : 24.5f;
             float wrappedTime = attackTimer % (hoverTime + chargeTime);
+
+            if (BossRushEvent.BossRushActive)
+            {
+                hoverSpeed *= 1.3f;
+                chargeSpeed *= 1.6f;
+            }
 
             if (!AnyArms)
                 chargeSpeed += (1f - lifeRatio) * 6f;
@@ -494,6 +509,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     frameType = (int)PrimeFrameType.OpenMouth;
 
                 float shootSpeedAdditive = npc.Distance(target.Center) * 0.0084f;
+                if (BossRushEvent.BossRushActive)
+                    shootSpeedAdditive += 10f;
 
                 // Fire 9 lasers outward. They intentionally avoid intersecting the player's position and do not rotate.
                 // Their purpose is to act as a "border".

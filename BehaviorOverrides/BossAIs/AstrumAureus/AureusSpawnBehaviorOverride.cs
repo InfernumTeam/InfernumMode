@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.AstrumAureus;
+﻿using CalamityMod.Events;
+using CalamityMod.NPCs.AstrumAureus;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -43,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                 explodeTimer++;
                 return false;
-			}
+            }
 
             // Explode if Astrum Aureus is not present or enough time has passed.
             if (aureus == -1 || time >= 600f)
@@ -97,12 +98,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 }
 
                 if (npc.WithinRange(target.Center, 60f))
-				{
+                {
                     explodeTimer = 1f;
                     return false;
-				}
+                }
 
-                npc.velocity = (npc.velocity * 50f + npc.SafeDirectionTo(target.Center) * 20.5f) / 51f;
+                float flySpeed = BossRushEvent.BossRushActive ? 31f : 20.5f;
+                npc.velocity = (npc.velocity * 50f + npc.SafeDirectionTo(target.Center) * flySpeed) / 51f;
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
 
                 // Do damage and become invincible.

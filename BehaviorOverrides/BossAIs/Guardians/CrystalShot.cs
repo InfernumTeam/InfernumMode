@@ -1,4 +1,5 @@
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Events;
 using InfernumMode;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -54,7 +55,7 @@ namespace CalamityMod.Projectiles.Boss
 				float offsetScale = (float)Math.Cos(projectile.identity % 6f / 6f + projectile.position.X / 320f + projectile.position.Y / 160f);
 
 				if (projectile.velocity.Length() < 22f)
-					projectile.velocity *= 1.004f;
+					projectile.velocity *= BossRushEvent.BossRushActive ? 1.025f : 1.004f;
 				projectile.velocity = projectile.velocity.RotatedBy(offsetScale * MathHelper.TwoPi / 240f);
 			}
 
@@ -63,6 +64,8 @@ namespace CalamityMod.Projectiles.Boss
 				Vector2 idealVelocity = projectile.velocity;
 				if (Main.player.IndexInRange((int)projectile.ai[0]))
 					idealVelocity = projectile.SafeDirectionTo(Target.Center) * 30f;
+                if (BossRushEvent.BossRushActive)
+                    idealVelocity *= 1.25f;
 
 				projectile.velocity = Vector2.SmoothStep(projectile.velocity, idealVelocity, MathHelper.Lerp(0.05f, 0.1f, Utils.InverseLerp(150f, 30f, projectile.timeLeft, true)));
 			}

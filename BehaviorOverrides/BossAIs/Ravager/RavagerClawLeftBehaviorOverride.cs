@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod.Events;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
@@ -51,6 +52,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             float reelbackSpeed = ravagerBody.velocity.Length() + 24f;
             float punchSpeed = 23.5f;
             Vector2 stickPosition = ravagerBody.Center + new Vector2(-120f * leftClaw.ToDirectionInt(), 50f);
+
+            if (BossRushEvent.BossRushActive)
+            {
+                punchSpeed *= 1.45f;
+                reelbackSpeed *= 1.7f;
+            }
 
             float specialAttackDelay = ravagerBody.Infernum().ExtraAI[0];
             ref float attackState = ref npc.ai[0];
@@ -136,7 +143,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         if (npc.velocity.Y < 0f && npc.Center.Y < target.Center.Y)
                             npc.noTileCollide = false;
                     }
-                    if (!npc.WithinRange(stickPosition, 700f) || npc.collideX || npc.collideY || npc.justHit)
+
+                    float reelbackDistance = BossRushEvent.BossRushActive ? 1450f : 700f;
+                    if (!npc.WithinRange(stickPosition, reelbackDistance) || npc.collideX || npc.collideY || npc.justHit)
                     {
                         npc.noTileCollide = true;
                         attackState = (int)RavagerClawAttackState.StickToBody;
@@ -174,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     {
                         punchTimer = 0f;
                         attackState = (int)RavagerClawAttackState.AccelerationPunch;
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * 14f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * punchSpeed / 1.67f;
                         npc.netUpdate = true;
                     }
 

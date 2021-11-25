@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.Perforator;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu;
@@ -47,6 +48,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int totalSegmentsInAir = 0;
             int bodyType = ModContent.NPCType<PerforatorBodyLarge>();
             float moveSpeed = MathHelper.Lerp(0.15f, 0.36f, 1f - npc.life / (float)npc.lifeMax);
+            float horizontalSpeed = 8.5f;
+            float maxVerticalSpeed = 17f;
+            int circularBurstCount = 6;
+            float circularBurstSpeed = 6f;
+            if (BossRushEvent.BossRushActive)
+            {
+                moveSpeed *= 4f;
+                horizontalSpeed = 19f;
+                maxVerticalSpeed = 20f;
+                circularBurstCount = 15;
+                circularBurstSpeed = 19f;
+            }
+
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 bool inAir = true;
@@ -58,22 +72,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             if (fallCountdown > 0f)
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + moveSpeed * 1.775f, -17f, 17f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + moveSpeed * 1.775f, -maxVerticalSpeed, maxVerticalSpeed);
                 fallCountdown--;
             }
             else
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed * 2f, -17f, 17f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed * 2f, -maxVerticalSpeed, maxVerticalSpeed);
 
                 if (MathHelper.Distance(target.Center.X, npc.Center.X) > 125f)
-                    npc.velocity.X = (npc.velocity.X * 5f + npc.SafeDirectionTo(target.Center).X * 8.5f) / 6f;
+                    npc.velocity.X = (npc.velocity.X * 5f + npc.SafeDirectionTo(target.Center).X * horizontalSpeed) / 6f;
 
                 if (totalSegmentsInAir >= 14 && target.Center.Y - npc.Center.Y > -870f)
                 {
                     fallCountdown = 50f;
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < circularBurstCount; i++)
                     {
-                        Vector2 ichorVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 6f;
+                        Vector2 ichorVelocity = (MathHelper.TwoPi * i / circularBurstCount).ToRotationVector2() * circularBurstSpeed;
                         Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorSpit>(), 80, 0f);
                     }
 

@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod.Events;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -143,6 +144,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 for (int i = 0; i < clotCount; i++)
                 {
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(MathHelper.ToRadians(15f)) * 8f;
+                    if (BossRushEvent.BossRushActive)
+                        shootVelocity *= 2.25f;
+
                     Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<VileClot>(), 65, 1f);
                 }
             }

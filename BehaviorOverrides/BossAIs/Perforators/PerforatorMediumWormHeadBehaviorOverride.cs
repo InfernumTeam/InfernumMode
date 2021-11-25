@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.Perforator;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.OverridingSystem;
@@ -19,13 +20,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
             shootTimer++;
 
+            int burstCount = 4;
+            float burstSpeed = 10f;
             int shootRate = (int)MathHelper.Lerp(100f, 45f, 1f - npc.life / (float)npc.lifeMax);
+            if (BossRushEvent.BossRushActive)
+            {
+                burstCount = 9;
+                burstSpeed = 21f;
+            }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && shootTimer >= shootRate)
             {
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < burstCount; i++)
                 {
-                    Vector2 ichorVelocity = (npc.velocity.ToRotation() + MathHelper.Lerp(-0.53f, 0.53f, i / 4f)).ToRotationVector2() * 10f;
+                    Vector2 ichorVelocity = (npc.velocity.ToRotation() + MathHelper.Lerp(-0.53f, 0.53f, i / (float)(burstCount - 1f))).ToRotationVector2() * burstSpeed;
                     Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorSpit>(), 80, 0f);
                 }
                 shootTimer = 0f;

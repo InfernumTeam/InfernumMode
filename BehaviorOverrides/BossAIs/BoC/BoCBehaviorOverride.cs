@@ -129,7 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             float floatSpeed = MathHelper.Lerp(5.3f, 7.5f, 1f - lifeRatio);
             if (BossRushEvent.BossRushActive)
-                floatSpeed *= 3.5f;
+                floatSpeed *= 1.85f;
 
             npc.velocity = npc.SafeDirectionTo(target.Center) * floatSpeed;
 

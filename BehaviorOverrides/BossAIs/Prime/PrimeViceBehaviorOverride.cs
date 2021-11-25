@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod.Events;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -39,9 +40,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             {
                 attackTimer = 0f;
                 Vector2 hoverDestination = owner.Center + new Vector2(hoverDirection * -240f, 380f) + owner.velocity * 4f;
+                float hoverSpeed = BossRushEvent.BossRushActive ? 31f : 20f;
 
                 if (!npc.WithinRange(hoverDestination, 50f))
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, shouldBeInactive ? 0.07f : 0.18f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, shouldBeInactive ? 0.07f : 0.18f);
                 PrimeHeadBehaviorOverride.ArmHoverAI(npc);
                 return false;
             }
@@ -61,6 +63,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     if (wrappedTime == chargeCycleTime - 44f)
                     {
                         npc.velocity = npc.SafeDirectionTo(target.Center) * 22.5f;
+                        if (BossRushEvent.BossRushActive)
+                            npc.velocity *= 1.5f;
+
                         npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                         npc.netUpdate = true;
                     }
@@ -79,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 float rotationalOffset = (float)Math.Sin(attackTimer / 37f) * -0.64f;
                 float outwardness = MathHelper.Clamp(owner.Distance(target.Center), 120f, 460f) + MathHelper.Lerp(0f, 70f, (float)Math.Sin(attackTimer / 26f) * 0.5f + 0.5f);
                 float idealRotation = owner.AngleTo(npc.Center) + rotationalOffset - MathHelper.PiOver2;
-                float acceleration = 0.23f;
+                float acceleration = BossRushEvent.BossRushActive ? 0.67f : 0.23f;
                 Vector2 hoverDestination = owner.Center + owner.SafeDirectionTo(target.Center).RotatedBy(rotationalOffset) * outwardness;
                 if (npc.WithinRange(target.Center, 240f))
                 {
@@ -89,8 +94,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
                 npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.08f);
 
+                float hoverSpeed = BossRushEvent.BossRushActive ? 24f : 13f;
                 if (!npc.WithinRange(hoverDestination, 90f))
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 13f, acceleration);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, acceleration);
             }
 
             return false;

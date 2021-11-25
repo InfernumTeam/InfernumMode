@@ -8,6 +8,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -247,11 +248,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 			{
 				Vector2 destination = target.Center - Vector2.UnitY * 270f;
 				destination.X += (target.Center.X - npc.Center.X < 0f).ToDirectionInt() * 360f;
-				npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 17f, anyWorms ? 0.054f : 0.07f);
+				float hoverSpeed = BossRushEvent.BossRushActive ? 28f : 17f;
+				npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * hoverSpeed, anyWorms ? 0.054f : 0.07f);
 
 				if (npc.WithinRange(destination, 35f))
 				{
-					attackTimer = 90;
+					attackTimer = 90f;
 					npc.netUpdate = true;
 				}
 			}
@@ -270,7 +272,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
 			// Swoop.
 			if (attackTimer >= 90f && attackTimer <= 180f)
+			{
 				npc.velocity = npc.velocity.RotatedBy(MathHelper.PiOver2 / 90f * -npc.direction);
+				if (BossRushEvent.BossRushActive && Math.Abs(npc.velocity.X) < 27f)
+					npc.velocity.X *= 1.05f;
+			}
 
 			if (attackTimer > 180f)
 				npc.velocity *= 0.97f;
@@ -292,6 +298,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 				{
 					Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 8.4f);
 					Vector2 spawnPosition = npc.Center - Vector2.UnitY * 45f + Main.rand.NextVector2Circular(30f, 30f);
+					if (BossRushEvent.BossRushActive)
+						shootVelocity *= 2f;
 
 					int ichor = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<IchorSpit>(), 80, 0f);
 					if (Main.projectile.IndexInRange(ichor))
@@ -303,7 +311,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 				Vector2 destination = target.Center - Vector2.UnitY * 270f;
 				float distanceFromDestination = npc.Distance(destination);
 				float movementInterpolant = MathHelper.Lerp(0.055f, 0.1f, Utils.InverseLerp(100f, 30f, distanceFromDestination, true));
-				npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * MathHelper.Min(distanceFromDestination, 15f), movementInterpolant);
+				float idealMovementSpeed = BossRushEvent.BossRushActive ? 28f : 15f;
+				npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * MathHelper.Min(distanceFromDestination, idealMovementSpeed), movementInterpolant);
 				npc.velocity -= npc.SafeDirectionTo(target.Center) * Utils.InverseLerp(235f, 115f, npc.Distance(target.Center), true) * 12f;
 			}
 

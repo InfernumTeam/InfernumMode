@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Dusts;
+using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
@@ -201,6 +202,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             float walkSpeed = MathHelper.Lerp(6.3f, 9.5f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
+            if (BossRushEvent.BossRushActive)
+            {
+                laserShootRate /= 2;
+                walkSpeed *= 2.64f;
+            }
 
             ref float laserShootCounter = ref npc.Infernum().ExtraAI[0];
 
@@ -431,6 +437,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             int rocketReleaseRate = (int)MathHelper.Lerp(10f, 5f, 1f - lifeRatio);
             ref float rocketShootTimer = ref npc.Infernum().ExtraAI[0];
 
+            if (BossRushEvent.BossRushActive)
+                rocketReleaseRate /= 2;
+
             // Slow down.
             npc.velocity.X *= 0.9f;
 
@@ -465,12 +474,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootDelay = 390;
+            float laserSpeed = 7.4f;
             float walkSpeed = MathHelper.Lerp(5f, 8.65f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 
             if (npc.WithinRange(target.Center, 920f))
                 walkSpeed *= Utils.InverseLerp(laserShootDelay - 90f, 210f, attackTimer, true);
+            if (BossRushEvent.BossRushActive)
+                laserSpeed *= 2.5f;
+            laserSpeed += npc.Distance(target.Center) * 0.01f;
 
             if (shouldSlowDown)
             {
@@ -493,7 +506,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             {
                 Main.PlaySound(SoundID.Item33, npc.Center);
 
-                float laserSpeed = npc.Distance(target.Center) * 0.01f + 7.4f;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 25; i++)
@@ -641,6 +653,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             float walkSpeed = MathHelper.Lerp(5f, 8.65f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= Utils.InverseLerp(laserShootDelay - 90f, 210f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
+            if (BossRushEvent.BossRushActive)
+                walkSpeed *= 2.64f;
 
             if (shouldSlowDown)
             {

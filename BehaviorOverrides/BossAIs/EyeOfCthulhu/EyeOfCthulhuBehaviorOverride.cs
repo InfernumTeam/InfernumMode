@@ -156,7 +156,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
                     if (BossRushEvent.BossRushActive)
                     {
-                        chargeSpeed *= 2.6f;
+                        chargeSpeed *= 3f;
                         hoverAcceleration *= 2.25f;
                         hoverSpeed *= 1.75f;
                     }
@@ -338,7 +338,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     float chargeAcceleration = 1.006f;
                     float spinRadius = 345f;
                     if (BossRushEvent.BossRushActive)
-                        chargeSpeed *= 1.8f;
+                    {
+                        chargeChainCount = 2;
+                        chargeSpeed *= 2.6f;
+                    }
 
                     subState = ref npc.Infernum().ExtraAI[0];
                     ref float spinAngle = ref npc.Infernum().ExtraAI[1];
@@ -449,6 +452,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         {
                             attackTimer = 0f;
                             npc.velocity *= 0.9785f;
+                            if (BossRushEvent.BossRushActive)
+                                npc.velocity *= 0.97f;
                         }
                     }
 

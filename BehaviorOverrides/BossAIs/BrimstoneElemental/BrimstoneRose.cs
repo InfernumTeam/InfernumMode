@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
 		public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if ((CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
+            if ((CalamityWorld.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI) || BossRushEvent.BossRushActive)
                 target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 180);
 			else
 				target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
@@ -76,6 +76,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 int petalCount = CalamityWorld.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 3 : 2;
                 int petalDamage = CalamityWorld.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 325 : 145;
                 float petalShootSpeed = CalamityWorld.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI ? 13.5f : 10f;
+                if (BossRushEvent.BossRushActive)
+                {
+                    petalCount = 3;
+                    petalShootSpeed = 14f;
+                }
+
                 if (SpawnedWhileAngry)
                 {
                     petalShootSpeed *= 1.6f;

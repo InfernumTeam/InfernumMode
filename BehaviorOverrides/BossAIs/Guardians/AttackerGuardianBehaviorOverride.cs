@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod.Events;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -134,9 +135,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && phase2TransitionTimer % 45 == 0)
                 {
+                    float shootSpeed = BossRushEvent.BossRushActive ? 17f : 12f;
                     for (int i = 0; i < 12; i++)
                     {
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 12f) * 12f;
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 11f) * shootSpeed;
                         Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 170, 0f);
                     }
                 }
@@ -190,6 +192,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                     {
                         arcDirection = (Math.Cos(npc.AngleTo(target.Center)) > 0).ToDirectionInt();
                         npc.velocity = npc.SafeDirectionTo(target.Center) * 24f;
+                        if (BossRushEvent.BossRushActive)
+                            npc.velocity *= 1.5f;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -288,7 +292,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                         int shotType = Main.rand.NextBool(lightSpawnChance) ? ModContent.ProjectileType<CrystalShot>() : ProjectileID.CultistBossFireBall;
                         Vector2 spawnPosition = npc.Center;
 
-                        float shootSpeed = 11f;
+                        float shootSpeed = BossRushEvent.BossRushActive ? 21f : 13f;
                         Vector2 shootVelocity = Main.rand.NextVector2CircularEdge(shootSpeed, shootSpeed);
                         shootVelocity = Vector2.Lerp(shootVelocity, npc.SafeDirectionTo(target.Center) * shootSpeed, Main.rand.NextFloat(0.6f, 0.7f));
                         shootVelocity = shootVelocity.SafeNormalize(Vector2.UnitY) * shootSpeed;

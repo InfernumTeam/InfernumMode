@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.NormalNPCs;
+﻿using CalamityMod.Events;
+using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -49,10 +50,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             bool canReachTarget = Collision.CanHit(npc.position, npc.width, npc.height, target.position, target.width, target.height);
             int shootRate = canReachTarget ? 75 : 30;
+            float shootSpeed = NPC.AnyNPCs(ModContent.NPCType<Ninja>()) && !canReachTarget ? 6f : 9f;
             float predictivenessFactor = canReachTarget ? 45f : 24f;
+            if (BossRushEvent.BossRushActive)
+            {
+                shootRate = 32;
+                shootSpeed *= 2.25f;
+                predictivenessFactor = 15f;
+            }
+
             if (Main.netMode != NetmodeID.MultiplayerClient && time % shootRate == shootRate - 1f)
             {
-                float shootSpeed = NPC.AnyNPCs(ModContent.NPCType<Ninja>()) && !canReachTarget ? 6f : 9f;
                 Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor);
                 int beam = Utilities.NewProjectileBetter(npc.Center, aimDirection * shootSpeed, ModContent.ProjectileType<JewelBeam>(), 84, 0f);
                 if (Main.projectile.IndexInRange(beam))

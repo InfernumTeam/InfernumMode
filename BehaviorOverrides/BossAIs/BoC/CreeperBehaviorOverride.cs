@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod.Events;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -73,7 +74,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             if (ownerAttackState == BoCAttackState.CreeperBloodDripping)
             {
                 bool eligableToFire = npc.Top.Y < target.Center.Y;
-                if (attackTimer > 135f && eligableToFire && attackTimer % 35f == 34f && npc.alpha <= 80)
+                int shootRate = BossRushEvent.BossRushActive ? 10 : 35;
+                if (attackTimer > 135f && eligableToFire && attackTimer % shootRate == shootRate - 1f && npc.alpha <= 80)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.Events;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -34,9 +35,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 				{
                     Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
-                    for (int i = 0; i < 3; i++)
+                    int energyCount = BossRushEvent.BossRushActive ? 7 : 3;
+                    for (int i = 0; i < energyCount; i++)
                     {
-                        float shootAngle = MathHelper.Lerp(-0.56f, 0.56f, i / 2f);
+                        float shootAngle = MathHelper.Lerp(-0.56f, 0.56f, i / (float)(energyCount - 1f));
                         Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(shootAngle) * 5f;
                         Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<CeaselessEnergy>(), 250, 0f);
                     }

@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -27,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.timeLeft = 200;
-		}
+        }
 
         public override void AI()
         {
@@ -40,12 +41,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             NPC polterghast = Main.npc[CalamityGlobalNPC.ghostBoss];
             projectile.Opacity = Utils.InverseLerp(200f, 185f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 15f, projectile.timeLeft, true);
 
+            float speedFactor = BossRushEvent.BossRushActive ? 1.67f : 1f;
             if (!projectile.WithinRange(Twin.Center, 35f))
-                projectile.velocity = (projectile.velocity * 39f + projectile.SafeDirectionTo(Twin.Center) * 14f) / 40f;
+                projectile.velocity = (projectile.velocity * 39f + projectile.SafeDirectionTo(Twin.Center) * speedFactor * 14f) / 40f;
 
             if (projectile.timeLeft < 3)
             {
-                projectile.velocity = (projectile.velocity * 11f + projectile.SafeDirectionTo(polterghast.Center) * 29f) / 12f;
+                projectile.velocity = (projectile.velocity * 11f + projectile.SafeDirectionTo(polterghast.Center) * speedFactor * 29f) / 12f;
                 if (projectile.Hitbox.Intersects(polterghast.Hitbox))
                 {
                     polterghast.ai[2]--;
@@ -55,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
             else
                 projectile.velocity = projectile.velocity.RotateTowards(projectile.AngleTo(Target.Center), 0.011f);
-            projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * 14f;
+            projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * speedFactor * 14f;
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             projectile.frameCounter++;

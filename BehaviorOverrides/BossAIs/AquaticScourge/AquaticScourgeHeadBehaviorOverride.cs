@@ -423,7 +423,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             float acceleration = MathHelper.Lerp(0.019f, 0.0265f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
             float movementSpeed = MathHelper.Lerp(12.25f, 14.25f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
             movementSpeed += MathHelper.Lerp(0f, 15f, Utils.InverseLerp(420f, 3000f, npc.Distance(target.Center), true));
-            movementSpeed *= speedFactor;
+            movementSpeed *= speedFactor * (BossRushEvent.BossRushActive ? 2.1f : 1f);
+            acceleration *= BossRushEvent.BossRushActive ? 2f : 1f;
 
             if (attackType == AquaticScourgeAttackType.JustCharges)
                 acceleration *= (speedFactor - 1f) * 0.5f + 1f;

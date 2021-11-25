@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.Events;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             projectile.tileCollide = true;
             projectile.alpha = 255;
             projectile.penetrate = -1;
-            projectile.timeLeft = 240;
+            projectile.timeLeft = BossRushEvent.BossRushActive ? 120 : 240;
         }
 
         public override void AI()

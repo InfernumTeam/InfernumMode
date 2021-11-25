@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             npc.alpha = 255;
             npc.aiStyle = -1;
             npc.knockBackResist = 0f;
-            npc.LifeMaxNERB(4145, 4145, 96960);
+            npc.LifeMaxNERB(4145, 4145, 146960);
             if (CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive)
                 npc.lifeMax = 22650;
 

@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -26,6 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             projectile.ignoreWater = true;
             projectile.timeLeft = 300;
             projectile.Opacity = 0f;
+            projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
         }
 
         public override void AI()

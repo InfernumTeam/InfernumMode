@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using InfernumMode.InverseKinematics;
 using Microsoft.Xna.Framework;
@@ -73,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 if (AttackTimer % 150f == 60f && (npc.ai[0] == 1f || npc.ai[0] == 3f))
                 {
-                    Vector2 searchDirection = -Polterghast.SafeDirectionTo(Target.Center).RotatedBy((npc.ai[0] == 1f).ToDirectionInt() + MathHelper.PiOver4);
+                    Vector2 searchDirection = -Polterghast.SafeDirectionTo(Target.Center).RotatedBy((npc.ai[0] != 1f).ToDirectionInt() + MathHelper.PiOver4);
                     IdealPosition = Polterghast.Center + searchDirection * 370f;
                 }
 
@@ -81,6 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 {
                     IdealPosition = Target.Center;
                     npc.velocity = npc.SafeDirectionTo(Target.Bottom + Limbs[1].Rotation.ToRotationVector2() * 100f) * 42f;
+                    if (BossRushEvent.BossRushActive)
+                        npc.velocity *= 1.4f;
+
                     if (Enraged)
                         npc.velocity *= 1.5f;
                     npc.netUpdate = true;

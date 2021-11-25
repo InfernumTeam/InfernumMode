@@ -382,6 +382,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int energyPerCircle = (int)MathHelper.Lerp(15f, 22f, 1f - lifeRatio);
             float burstBaseSpeed = MathHelper.Lerp(6f, 8f, 1f - lifeRatio);
 
+            if (BossRushEvent.BossRushActive)
+                burstBaseSpeed *= 1.3f + npc.Distance(target.Center) * 0.00174f;
+
             // Slow down.
             npc.velocity *= 0.965f;
 

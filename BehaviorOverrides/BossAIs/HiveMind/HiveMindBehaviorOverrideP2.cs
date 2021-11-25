@@ -372,6 +372,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 DoRoar(npc, false);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 3.3f;
                 npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.InverseLerp(1f, 0.6f, lifeRatio));
+                if (BossRushEvent.BossRushActive)
+                    npc.velocity *= 4f;
+
                 fadeoutCountdown = HiveMindFadeoutTime;
                 npc.netUpdate = true;
             }
@@ -423,7 +426,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 {
                     npc.Center = target.Center;
                     while (dashDirection == 0f)
-                        dashDirection = Main.rand.NextBool(2).ToDirectionInt();
+                        dashDirection = Main.rand.NextBool().ToDirectionInt();
 
                     npc.position.Y -= RainDashOffset * MathHelper.Lerp(1f, 1.325f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
                     npc.position.X += RainDashOffset * dashDirection;
@@ -433,6 +436,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     DoRoar(npc, true);
                     npc.velocity = Vector2.UnitX * dashDirection * -11f;
                     npc.velocity *= MathHelper.Lerp(1f, 1.575f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
+                    if (BossRushEvent.BossRushActive)
+                        npc.velocity *= 1.8f;
                     npc.netUpdate = true;
                 }
             }

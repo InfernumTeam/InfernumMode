@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -53,7 +54,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             int shark = NPC.NewNPC((int)projectile.Center.X, (int)projectile.Center.Y - 16, NPCID.Sharkron2);
 
             Main.npc[shark].velocity = Vector2.UnitY * -projectile.ai[1];
-            Main.npc[shark].life = Main.npc[shark].lifeMax = 1200;
+            Main.npc[shark].life = Main.npc[shark].lifeMax = BossRushEvent.BossRushActive ? 11000 : 1200;
+
             Main.npc[shark].direction = projectile.direction;
             Main.npc[shark].spriteDirection = 1;
             Main.npc[shark].ai[0] = 1f;

@@ -276,7 +276,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (inWater)
                         chargeSpeed += 4f;
                     if (BossRushEvent.BossRushActive)
-                        chargeSpeed *= 1.4f;
+                    {
+                        chargeTime -= 8;
+                        chargeSpeed *= 1.75f;
+                    }
 
                     if (attackTimer < angularAimTime)
                     {
@@ -569,7 +572,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                     if (BossRushEvent.BossRushActive)
                     {
-                        lungeSpeed *= 1.5f;
+                        lungeSpeed *= 2f;
                         waveSpeed *= 1.35f;
                     }
 

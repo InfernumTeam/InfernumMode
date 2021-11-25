@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.AquaticScourge;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -58,6 +59,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 toothVelocity = Main.rand.NextVector2CircularEdge(7.2f, 7.2f);
+                    if (BossRushEvent.BossRushActive)
+                        toothVelocity *= 2.4f;
+
                     Utilities.NewProjectileBetter(npc.Center + toothVelocity * 3f, toothVelocity, ModContent.ProjectileType<SlowerSandTooth>(), 115, 0f);
                     attackTimer = 0f;
                 }

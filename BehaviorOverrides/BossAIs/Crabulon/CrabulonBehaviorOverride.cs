@@ -145,12 +145,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 return;
             }
 
+            int sporeCloudCount = 15;
+            float sporeCloudSpeed = 6f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float jumpSpeed = MathHelper.Lerp(13.5f, 18.75f, 1f - lifeRatio);
             float extraGravity = MathHelper.Lerp(0f, 0.45f, 1f - lifeRatio);
             float jumpAngularImprecision = MathHelper.Lerp(0.1f, 0f, Utils.InverseLerp(0f, 0.7f, 1f - lifeRatio));
 
             jumpSpeed += MathHelper.Clamp((npc.Top.Y - target.Top.Y) * 0.02f, 0f, 12f);
+            if (BossRushEvent.BossRushActive)
+            {
+                sporeCloudSpeed = 18f;
+                sporeCloudCount = 70;
+                jumpSpeed *= 1.4f;
+                extraGravity += 0.25f;
+            }
 
             if (enraged)
             {
@@ -232,10 +241,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
                         if (Main.netMode != NetmodeID.MultiplayerClient && jumpCount % 3f == 2f)
                         {
-                            for (int i = 0; i < 15; i++)
+                            for (int i = 0; i < sporeCloudCount; i++)
                             {
                                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.45f;
-                                Vector2 sporeShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(6f, 12f);
+                                Vector2 sporeShootVelocity = Main.rand.NextVector2Unit() * sporeCloudSpeed * Main.rand.NextFloat(1f, 2f);
                                 int cloud = Utilities.NewProjectileBetter(spawnPosition, sporeShootVelocity, ModContent.ProjectileType<SporeCloud>(), 75, 0f);
                                 if (Main.projectile.IndexInRange(cloud))
                                     Main.projectile[cloud].ai[0] = Main.rand.Next(3);
@@ -266,6 +275,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             float walkSpeed = MathHelper.Lerp(2.4f, 5.6f, 1f - lifeRatio);
             if (enraged)
                 walkSpeed += 1.5f;
+            if (BossRushEvent.BossRushActive)
+                walkSpeed *= 5f;
+
             walkSpeed += horizontalDistanceFromTarget * 0.004f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 

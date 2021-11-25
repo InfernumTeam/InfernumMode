@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -36,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public override void AI()
         {
             projectile.width = (int)MathHelper.Lerp(projectile.width, 200f, 0.05f);
-            TornadoHeight = MathHelper.Lerp(TornadoHeight, 1600f, 0.05f);
+            TornadoHeight = MathHelper.Lerp(TornadoHeight, BossRushEvent.BossRushActive ? 4800f : 1600f, 0.05f);
             if (!CalamityPlayer.areThereAnyDamnBosses)
             {
                 projectile.active = false;
@@ -51,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         internal Color ColorFunction(float completionRatio)
 		{
-            return Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime))) * projectile.Opacity;
+            return Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime))) * projectile.Opacity * 1.6f;
 		}
 
         internal float WidthFunction(float completionRatio)

@@ -75,6 +75,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 for (int i = -1; i <= 1; i++)
                 {
                     Vector2 petalVelocity = projectile.velocity.RotatedBy(MathHelper.PiOver2 * i) * 8f;
+                    if (BossRushEvent.BossRushActive)
+                        petalVelocity *= 1.85f;
                     Utilities.NewProjectileBetter(petalSpawnPosition, petalVelocity, ModContent.ProjectileType<BrimstonePetal2>(), petalDamage, 0f);
                 }
             }

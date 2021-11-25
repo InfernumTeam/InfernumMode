@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod.Events;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -23,9 +24,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Have a brief moment of no damage.
             npc.damage = generalTimer > 60f ? npc.defDamage : 0;
 
+            float hoverSpeed = 22f;
+            if (BossRushEvent.BossRushActive)
+                hoverSpeed *= 1.5f;
+
             if (npc.ai[0] == 0f)
             {
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 21f, 0.1f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * hoverSpeed, 0.1f);
                 if (npc.WithinRange(destination, npc.velocity.Length() * 1.35f))
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * -7f;
@@ -41,9 +46,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 npc.velocity *= 0.975f;
                 time++;
 
-                if (time >= 60f)
+                int chargeDelay = BossRushEvent.BossRushActive ? 30 : 60;
+                if (time >= chargeDelay)
                 {
-                    npc.velocity = npc.SafeDirectionTo(target.Center) * 22f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * hoverSpeed;
+
                     npc.ai[0] = 2f;
                     npc.netUpdate = true;
                 }

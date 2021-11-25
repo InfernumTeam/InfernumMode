@@ -1,4 +1,5 @@
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -77,13 +78,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 npc.netUpdate = true;
             }
 
+            float flySpeed = BossRushEvent.BossRushActive ? 20f : 12f;
             if (npc.WithinRange(Main.player[npc.target].Center, 280f))
             {
                 if (npc.velocity.Length() < 18f)
                     npc.velocity *= 1.024f;
             }
             else
-                npc.velocity = (npc.velocity * 31f + npc.SafeDirectionTo(Main.player[npc.target].Center) * 12f) / 32f;
+                npc.velocity = (npc.velocity * 31f + npc.SafeDirectionTo(Main.player[npc.target].Center) * flySpeed) / 32f;
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }

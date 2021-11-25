@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs.NormalNPCs;
+﻿using CalamityMod.Events;
+using CalamityMod.NPCs.NormalNPCs;
 using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -150,7 +151,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             // Enforce slightly stronger gravity.
             if (npc.velocity.Y > 0f)
+            {
                 npc.velocity.Y += MathHelper.Lerp(0.05f, 0.25f, 1f - lifeRatio);
+                if (BossRushEvent.BossRushActive && npc.velocity.Y > 4f)
+                    npc.position.Y += 4f;
+            }
 
             switch ((KingSlimeAttackType)(int)npc.ai[1])
             {
@@ -169,6 +174,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                             jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
                             npc.velocity = new Vector2(npc.direction * 6f, -jumpSpeed);
+                            if (BossRushEvent.BossRushActive)
+                                npc.velocity *= 2.4f;
+
                             npc.netUpdate = true;
                         }
 
@@ -193,6 +201,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                             jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
                             npc.velocity = new Vector2(npc.direction * 8f, -jumpSpeed);
+                            if (BossRushEvent.BossRushActive)
+                                npc.velocity *= 1.5f;
                             npc.netUpdate = true;
                         }
 

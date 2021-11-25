@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -25,8 +26,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+            float movementSpeed = BossRushEvent.BossRushActive ? 18f : 6.5f;
             if (!projectile.WithinRange(closestPlayer.Center, 180) && projectile.timeLeft > 70)
-                projectile.velocity = (projectile.velocity * 19f + projectile.SafeDirectionTo(closestPlayer.Center) * 6.5f) / 20f;
+                projectile.velocity = (projectile.velocity * 19f + projectile.SafeDirectionTo(closestPlayer.Center) * movementSpeed) / 20f;
 
             Lighting.AddLight(projectile.Center, Color.Red.ToVector3());
         }

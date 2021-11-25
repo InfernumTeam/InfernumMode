@@ -1,3 +1,4 @@
+using CalamityMod;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -34,6 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             npc.noGravity = true;
             npc.noTileCollide = true;
             npc.netAlways = true;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
 		public override void AI()

@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using Microsoft.Xna.Framework;
@@ -10,8 +11,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
     public class DarkMagicFireball : ModProjectile
     {
         public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Dark Magic Fireball");
+        {
+            DisplayName.SetDefault("Dark Magic Fireball");
             Main.projFrames[projectile.type] = 5;
         }
 
@@ -23,6 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.timeLeft = 360;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
@@ -44,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
 
         public override void Kill(int timeLeft)
-		{
+        {
             if (Main.dedServ)
                 return;
 

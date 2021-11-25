@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -19,6 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             projectile.timeLeft = 180;
             projectile.extraUpdates = 1;
             projectile.scale = 0.15f;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

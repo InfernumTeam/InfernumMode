@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -20,6 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             projectile.tileCollide = false;
             projectile.timeLeft = 90;
             projectile.Opacity = 0f;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

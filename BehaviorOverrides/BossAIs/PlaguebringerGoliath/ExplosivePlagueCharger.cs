@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -29,6 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             npc.canGhostHeal = false;
             npc.HitSound = SoundID.NPCHit4;
             npc.DeathSound = SoundID.NPCDeath14;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

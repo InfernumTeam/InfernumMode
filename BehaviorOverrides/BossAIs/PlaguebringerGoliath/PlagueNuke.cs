@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 		}
         public ref float ExistTimer => ref npc.ai[0];
         public ref float DisappearTimer => ref npc.ai[2];
-        public const int BuildTime = 600;
+        public const int BuildTime = 660;
         public const int ExplodeDelay = 150;
         public override void SetStaticDefaults()
         {

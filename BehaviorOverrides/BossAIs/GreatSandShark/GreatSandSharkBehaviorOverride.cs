@@ -84,6 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.timeLeft = NPC.activeTime * 30;
             npc.modNPC.banner = npc.type;
             npc.modNPC.bannerItem = ModContent.ItemType<GreatSandSharkBanner>();
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public override bool PreAI(NPC npc)

@@ -35,7 +35,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 300;
-            cooldownSlot = 1;
+			projectile.Calamity().canBreakPlayerDefense = true;
+			cooldownSlot = 1;
         }
 
 		public override void SendExtraAI(BinaryWriter writer)

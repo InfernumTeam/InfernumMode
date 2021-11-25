@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -23,6 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             projectile.ignoreWater = true;
             projectile.timeLeft = 240;
             projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

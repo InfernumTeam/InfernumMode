@@ -44,6 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             npc.noGravity = false;
             npc.noTileCollide = false;
             npc.netAlways = true;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(StuckTimer);

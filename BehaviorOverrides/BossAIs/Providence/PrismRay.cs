@@ -39,6 +39,7 @@ namespace CalamityMod.Projectiles.Ranged
             projectile.hostile = true;
             projectile.penetrate = -1;
             projectile.alpha = 255;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AttachToSomething()

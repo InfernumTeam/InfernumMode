@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using CalamityMod.Projectiles.BaseProjectiles;
+using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -32,6 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             projectile.penetrate = -1;
             projectile.tileCollide = false;
             projectile.timeLeft = 570;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

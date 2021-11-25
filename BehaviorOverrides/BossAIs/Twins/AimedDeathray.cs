@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -37,6 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.alpha = 255;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AttachToSomething()

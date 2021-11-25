@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
@@ -31,6 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.knockBackResist = 0f;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

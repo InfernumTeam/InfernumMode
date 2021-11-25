@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             projectile.ignoreWater = true;
             projectile.timeLeft = 30;
             projectile.hide = true;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

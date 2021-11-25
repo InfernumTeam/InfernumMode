@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -23,6 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             projectile.hide = true;
             projectile.hostile = true;
             projectile.ignoreWater = true;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

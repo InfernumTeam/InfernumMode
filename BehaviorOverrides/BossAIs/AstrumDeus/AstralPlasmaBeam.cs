@@ -29,6 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             projectile.penetrate = -1;
             projectile.timeLeft = 125;
             projectile.alpha = 255;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

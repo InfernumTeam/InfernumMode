@@ -1,13 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
     public class PhantasmalBlast : ModProjectile
     {
-        const int maxTimeLeft = 240;
+        public const int Lifetime = 240;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Phantasmal Blast");
@@ -21,7 +23,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             projectile.height = 34;
             projectile.hostile = true;
             projectile.tileCollide = true;
-            projectile.timeLeft = maxTimeLeft;
+            projectile.timeLeft = Lifetime;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
         public override void AI()
         {
@@ -34,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 projectile.localAI[0] = 1f;
             }
             Player player = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            if (projectile.timeLeft < maxTimeLeft - 60)
+            if (projectile.timeLeft < Lifetime - 60)
             {
                 projectile.velocity = (projectile.velocity * 60f + projectile.SafeDirectionTo(player.Center) * 13f) / 60.5f;
             }

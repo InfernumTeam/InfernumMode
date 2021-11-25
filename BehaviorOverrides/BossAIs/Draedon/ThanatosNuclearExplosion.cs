@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.BehaviorOverrides.BossAIs.Prime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             projectile.timeLeft = 180;
             projectile.extraUpdates = 1;
             projectile.scale = 0.15f;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

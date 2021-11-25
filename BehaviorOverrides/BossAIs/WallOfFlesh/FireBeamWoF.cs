@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -26,6 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             projectile.penetrate = -1;
             projectile.timeLeft = 120;
             projectile.alpha = 255;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

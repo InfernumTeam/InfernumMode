@@ -31,6 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             projectile.penetrate = -1;
             projectile.alpha = 255;
             projectile.timeLeft = 480;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

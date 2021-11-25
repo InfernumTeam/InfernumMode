@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
@@ -20,6 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             projectile.penetrate = -1;
             projectile.timeLeft = 250;
             projectile.tileCollide = false;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

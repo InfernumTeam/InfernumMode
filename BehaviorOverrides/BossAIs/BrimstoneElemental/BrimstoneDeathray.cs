@@ -2,7 +2,6 @@
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.BaseProjectiles;
-using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -36,6 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             projectile.penetrate = -1;
             projectile.tileCollide = false;
             projectile.timeLeft = (int)Lifetime;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

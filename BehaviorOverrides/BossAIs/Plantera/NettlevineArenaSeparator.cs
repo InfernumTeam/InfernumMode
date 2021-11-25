@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -29,6 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             projectile.tileCollide = false;
             projectile.timeLeft = 660;
             projectile.penetrate = -1;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

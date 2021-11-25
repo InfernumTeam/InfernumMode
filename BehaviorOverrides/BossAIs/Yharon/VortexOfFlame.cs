@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             projectile.ignoreWater = true;
             projectile.alpha = 255;
             projectile.timeLeft = Lifetime;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

@@ -44,6 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			projectile.penetrate = -1;
 			projectile.extraUpdates = 1;
 			projectile.timeLeft = 600;
+			projectile.Calamity().canBreakPlayerDefense = true;
 			cooldownSlot = 1;
 		}
 

@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -76,6 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 npc.active = false;
             }
 
+            npc.Calamity().canBreakPlayerDefense = false;
             switch (AttackState)
 			{
                 case SuperchargedProbeAttackState.ChargePreparation:
@@ -83,6 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     break;
                 case SuperchargedProbeAttackState.Charge:
                     DoBehavior_Charge();
+                    npc.Calamity().canBreakPlayerDefense = true;
                     break;
 			}
 

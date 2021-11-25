@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 using CalamityMod.Events;
+using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
@@ -30,6 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = LungeTime + DashTime;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
         public override void AI()

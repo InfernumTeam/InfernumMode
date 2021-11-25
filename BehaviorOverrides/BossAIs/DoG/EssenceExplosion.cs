@@ -21,6 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.penetrate = -1;
             projectile.timeLeft = 75;
             projectile.scale = 0.15f;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

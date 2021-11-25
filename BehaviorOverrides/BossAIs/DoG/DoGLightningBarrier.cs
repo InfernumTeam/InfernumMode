@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs.DevourerofGods;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,6 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 			projectile.tileCollide = false;
 			projectile.penetrate = -1;
 			projectile.alpha = 255;
+			projectile.Calamity().canBreakPlayerDefense = true;
 			cooldownSlot = 1;
 		}
 

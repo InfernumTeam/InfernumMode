@@ -28,7 +28,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 480;
-        }
+			projectile.Calamity().canBreakPlayerDefense = true;
+		}
 
 		public override void SendExtraAI(BinaryWriter writer)
 		{

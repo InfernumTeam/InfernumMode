@@ -33,6 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             projectile.tileCollide = false;
             projectile.timeLeft = (int)Lifetime;
             projectile.hide = true;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

@@ -32,6 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             projectile.penetrate = -1;
             projectile.alpha = 255;
             projectile.timeLeft = 360;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

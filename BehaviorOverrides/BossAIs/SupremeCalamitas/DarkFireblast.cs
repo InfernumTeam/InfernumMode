@@ -1,6 +1,6 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -26,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             projectile.tileCollide = true;
             projectile.penetrate = -1;
             projectile.timeLeft = 90;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

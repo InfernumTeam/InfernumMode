@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -22,6 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
+            projectile.Calamity().canBreakPlayerDefense = true;
             aiType = ProjectileID.CrystalVileShardHead;
         }
 

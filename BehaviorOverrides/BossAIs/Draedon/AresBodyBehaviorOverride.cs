@@ -184,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int shootDelay = 125;
 			int telegraphTime = 35;
 			int laserLifetime = shootTime / totalBursts - telegraphTime;
-			int totalLasers = 20;
+			int totalLasers = 27;
 			int totalSparks = 25;
 
 			if (ExoMechManagement.CurrentAresPhase <= 4)
@@ -193,7 +193,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				telegraphTime += 10;
 				shootDelay += 25;
 				shootTime += 100;
-				totalLasers -= 10;
+				totalLasers -= 11;
 				totalSparks -= 8;
 			}
 

@@ -29,6 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.penetrate = -1;
             projectile.tileCollide = false;
             projectile.timeLeft = (int)Lifetime;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

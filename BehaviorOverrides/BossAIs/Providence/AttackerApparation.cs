@@ -45,6 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             projectile.penetrate = -1;
             projectile.tileCollide = false;
             projectile.timeLeft = ProvidenceBehaviorOverride.GuardianApparationTime;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

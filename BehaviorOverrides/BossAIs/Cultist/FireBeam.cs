@@ -27,6 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             projectile.penetrate = -1;
             projectile.timeLeft = 120;
             projectile.alpha = 255;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

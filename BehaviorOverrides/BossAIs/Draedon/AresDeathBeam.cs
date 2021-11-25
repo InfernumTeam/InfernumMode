@@ -1,8 +1,6 @@
 using CalamityMod;
-using CalamityMod.Events;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Projectiles.BaseProjectiles;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -48,6 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			projectile.penetrate = -1;
 			projectile.tileCollide = false;
 			projectile.timeLeft = 600;
+			projectile.Calamity().canBreakPlayerDefense = true;
 			cooldownSlot = 1;
 		}
 

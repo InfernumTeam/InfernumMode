@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,7 +20,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
         public override Texture2D LaserMiddleTexture => ModContent.GetTexture("CalamityMod/ExtraTextures/Lasers/UltimaRayMid");
         public override Texture2D LaserEndTexture => ModContent.GetTexture("CalamityMod/ExtraTextures/Lasers/UltimaRayEnd");
 
-        // To allow easy, static access from different locations.
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Zap Ray");
@@ -33,6 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             projectile.ignoreWater = true;
             projectile.penetrate = -1;
             projectile.alpha = 255;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AttachToSomething()

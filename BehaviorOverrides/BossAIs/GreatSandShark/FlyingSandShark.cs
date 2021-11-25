@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework.Graphics;
+using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
@@ -40,6 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 			npc.noTileCollide = true;
 			for (int k = 0; k < npc.buffImmune.Length; k++)
 				npc.buffImmune[k] = true;
+			npc.Calamity().canBreakPlayerDefense = true;
 		}
 
 		public override void SendExtraAI(BinaryWriter writer)

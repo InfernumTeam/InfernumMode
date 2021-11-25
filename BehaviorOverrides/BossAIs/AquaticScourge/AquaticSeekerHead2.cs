@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
@@ -31,6 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             npc.noTileCollide = true;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
+            npc.Calamity().canBreakPlayerDefense = true;
             npc.netAlways = true;
         }
 

@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -25,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

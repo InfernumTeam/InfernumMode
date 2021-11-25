@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -27,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = Lifetime;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

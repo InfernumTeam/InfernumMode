@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -24,7 +25,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             projectile.hostile = true;
             projectile.ignoreWater = true;
             projectile.timeLeft = 240;
-		}
+            projectile.Calamity().canBreakPlayerDefense = true;
+        }
 
         public override void AI()
         {

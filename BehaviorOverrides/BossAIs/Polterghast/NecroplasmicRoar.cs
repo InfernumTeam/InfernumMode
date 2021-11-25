@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -25,7 +26,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.timeLeft = 300;
-		}
+            projectile.Calamity().canBreakPlayerDefense = true;
+        }
 
         public override void AI()
         {

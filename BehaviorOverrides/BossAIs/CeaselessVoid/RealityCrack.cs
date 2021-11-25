@@ -1,4 +1,5 @@
-﻿using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+﻿using CalamityMod;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.timeLeft = 240;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

@@ -1,4 +1,4 @@
-using InfernumMode.BehaviorOverrides.BossAIs.Signus;
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -30,6 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             npc.noTileCollide = true;
             npc.canGhostHeal = false;
             npc.HitSound = SoundID.NPCHit41;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

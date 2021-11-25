@@ -23,6 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.timeLeft = 240;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 

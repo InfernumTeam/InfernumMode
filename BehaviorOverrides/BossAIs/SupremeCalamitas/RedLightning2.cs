@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.BaseEntities;
 using Microsoft.Xna.Framework;
 using System;
@@ -39,6 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 		public override float PrimitiveWidthFunction(float completionRatio)
 		{
 			projectile.hostile = true;
+			projectile.Calamity().canBreakPlayerDefense = true;
 			cooldownSlot = 1;
 			float baseWidth = MathHelper.Lerp(0.25f, 3.5f, (float)Math.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * projectile.scale;
 			return baseWidth * (float)Math.Sin(MathHelper.Pi * completionRatio) + 1f;

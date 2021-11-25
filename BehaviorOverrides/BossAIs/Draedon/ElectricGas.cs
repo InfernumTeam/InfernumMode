@@ -1,9 +1,9 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
@@ -24,6 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			projectile.hide = true;
 			projectile.hostile = true;
 			projectile.ignoreWater = true;
+			projectile.Calamity().canBreakPlayerDefense = true;
 			cooldownSlot = 1;
 		}
 

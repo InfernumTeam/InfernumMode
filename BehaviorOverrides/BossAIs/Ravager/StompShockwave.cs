@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,6 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             projectile.scale = 0.15f;
             projectile.extraUpdates = 3;
             projectile.hide = true;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

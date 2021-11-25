@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
@@ -30,6 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             projectile.tileCollide = false;
             projectile.timeLeft = 9000;
             projectile.scale = 0.2f;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(AngerOnCreation);

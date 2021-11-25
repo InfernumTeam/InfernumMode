@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -18,7 +19,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 210;
-		}
+            projectile.Calamity().canBreakPlayerDefense = true;
+        }
 
         public override void AI()
         {

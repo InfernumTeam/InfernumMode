@@ -28,8 +28,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			projectile.tileCollide = false;
 			projectile.penetrate = -1;
 			projectile.Opacity = 0f;
-			cooldownSlot = 1;
 			projectile.timeLeft = 95;
+			projectile.Calamity().canBreakPlayerDefense = true;
+			cooldownSlot = 1;
 		}
 
 		public override void SendExtraAI(BinaryWriter writer)

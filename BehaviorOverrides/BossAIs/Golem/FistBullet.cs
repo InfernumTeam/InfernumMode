@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 origin = rectangle.Size() * .5f;
             Color drawColor = projectile.GetAlpha(lightColor);
 
-            Main.spriteBatch.Draw(texture, projectile.position - Main.screenPosition, rectangle, drawColor, projectile.rotation, origin, projectile.scale, flipped, 0f);
+            Main.spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, rectangle, drawColor, projectile.rotation, origin, projectile.scale, flipped, 0f);
             return false;
         }
     }

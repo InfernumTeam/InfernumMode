@@ -60,17 +60,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
 			Texture2D spearTexture = Main.projectileTexture[projectile.type];
-			int green = 125;
-			int blue = 125;
-			Color baseColor = new Color(255, green, blue, 255);
+			Color baseColor = Color.OrangeRed;
+			baseColor.A = 128;
 
-			float fadeFactor = Utils.InverseLerp(15f, 30f, projectile.timeLeft, true) * Utils.InverseLerp(360f, 340f, projectile.timeLeft, true) * (1f + 0.2f * (float)Math.Cos(Main.GlobalTime % 30f / 0.5f * MathHelper.TwoPi * 3f)) * 0.8f;
+			float fadeFactor = Utils.InverseLerp(15f, 30f, projectile.timeLeft, true) * Utils.InverseLerp(360f, 340f, projectile.timeLeft, true) * (1f + 0.2f * (float)Math.Cos(Main.GlobalTime % 80f / 0.5f * MathHelper.TwoPi * 3f)) * 0.8f;
 			Color fadedBrightColor = baseColor * 0.5f;
 			fadedBrightColor.A = 0;
 			Vector2 drawPosition = projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY);
 			Vector2 origin5 = spearTexture.Size() / 2f;
-			Color brightColor = fadedBrightColor * fadeFactor;
-			Color dimColor = fadedBrightColor * fadeFactor * 0.5f;
+			Color brightColor = fadedBrightColor * fadeFactor * 1.2f;
+			Color dimColor = fadedBrightColor * fadeFactor * 0.6f;
 			Vector2 largeScale = new Vector2(1f, 1.5f) * fadeFactor;
 			Vector2 smallScale = new Vector2(0.5f, 1f) * fadeFactor;
 

@@ -184,6 +184,13 @@ namespace InfernumMode.GlobalInstances
                     if (npc.Calamity().KillTime > 0 && npc.Calamity().AITimer < npc.Calamity().KillTime)
                         npc.Calamity().AITimer++;
 
+                    // Decrement each immune timer if it's greater than 0.
+                    for (int i = 0; i < CalamityGlobalNPC.maxPlayerImmunities; i++)
+                    {
+                        if (npc.Calamity().dashImmunityTime[i] > 0)
+                            npc.Calamity().dashImmunityTime[i]--;
+                    }
+
                     return (bool)OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].DynamicInvoke(npc);
                 }
             }

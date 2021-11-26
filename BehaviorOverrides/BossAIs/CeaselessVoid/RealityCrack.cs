@@ -26,7 +26,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.timeLeft = 240;
-            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

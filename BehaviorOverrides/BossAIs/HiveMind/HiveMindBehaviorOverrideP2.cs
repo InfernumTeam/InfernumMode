@@ -211,6 +211,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             else
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center) * 168f / reelbackTime;
+                if (BossRushEvent.BossRushActive)
+                    npc.velocity *= 5f;
+
                 if (npc.WithinRange(target.Center, 15f))
                 {
                     npc.velocity = Vector2.Zero;
@@ -373,7 +376,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 3.3f;
                 npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.InverseLerp(1f, 0.6f, lifeRatio));
                 if (BossRushEvent.BossRushActive)
-                    npc.velocity *= 4f;
+                    npc.velocity *= 2.5f;
 
                 fadeoutCountdown = HiveMindFadeoutTime;
                 npc.netUpdate = true;
@@ -437,7 +440,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     npc.velocity = Vector2.UnitX * dashDirection * -11f;
                     npc.velocity *= MathHelper.Lerp(1f, 1.575f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
                     if (BossRushEvent.BossRushActive)
-                        npc.velocity *= 1.8f;
+                        npc.velocity *= 2.4f;
                     npc.netUpdate = true;
                 }
             }
@@ -510,6 +513,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
                 Vector2 wallSpawnOffset = new Vector2(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
                 Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < 0.2f ? MathHelper.ToRadians(10f) : 0f) * 10f;
+                if (BossRushEvent.BossRushActive)
+                    wallVelocity *= 1.7f;
+
                 Utilities.NewProjectileBetter(target.Center + wallSpawnOffset, wallVelocity, ModContent.ProjectileType<EaterOfSouls>(), 70, 1f);
                 Utilities.NewProjectileBetter(target.Center + wallSpawnOffset * new Vector2(-1f, 1f), wallVelocity * new Vector2(-1f, 1f), ModContent.ProjectileType<EaterOfSouls>(), 72, 1f);
 
@@ -549,6 +555,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             float waitTime = lifeRatio < 0.2f ? 96f : 75f;
             float moveTime = lifeRatio < 0.2f ? 50f : 90f;
             float dashSpeed = lifeRatio < 0.2f ? 24f : 21.5f;
+            if (BossRushEvent.BossRushActive)
+            {
+                waitTime = (int)(waitTime * 0.4f);
+                moveTime *= 0.5f;
+                dashSpeed *= 1.64f;
+            }
 
             npc.alpha = Utils.Clamp(npc.alpha - 36, 0, 255);
 
@@ -705,6 +717,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                         float shootSpeed = i == 0f ? 15.6f : Main.rand.NextFloat(9f, 12f);
                         if (lifeRatio < 0.25f)
                             shootSpeed *= 1.325f;
+                        if (BossRushEvent.BossRushActive)
+                            shootSpeed *= 2.3f;
+
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * shootSpeed, ModContent.ProjectileType<BlobProjectile>(), 80, 0f);
                     }

@@ -197,10 +197,10 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == NPCID.EaterofWorldsHead)
             {
-                if (npc.realLife != -1 && Main.npc[npc.realLife].Infernum().ExtraAI[7] == 0f)
+                if (npc.realLife != -1 && Main.npc[npc.realLife].Infernum().ExtraAI[9] == 0f)
                 {
                     Main.npc[npc.realLife].NPCLoot();
-                    Main.npc[npc.realLife].Infernum().ExtraAI[7] = 1f;
+                    Main.npc[npc.realLife].Infernum().ExtraAI[9] = 1f;
                     return false;
                 }
 
@@ -211,9 +211,9 @@ namespace InfernumMode.GlobalInstances
                         typeof(BossRushEvent).GetMethod("OnBossKill", Utilities.UniversalBindingFlags).Invoke(null, new object[] { npc, mod });
                 }
 
-                else if (npc.realLife == -1 && npc.Infernum().ExtraAI[8] == 0f)
+                else if (npc.realLife == -1 && npc.Infernum().ExtraAI[10] == 0f)
                 {
-                    npc.Infernum().ExtraAI[8] = 1f;
+                    npc.Infernum().ExtraAI[10] = 1f;
                     EoWHeadBehaviorOverride.HandleSplit(npc, ref npc.ai[2]);
                 }
 

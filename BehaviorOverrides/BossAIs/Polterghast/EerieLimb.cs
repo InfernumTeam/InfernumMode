@@ -70,35 +70,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             UpdateLimbs();
 
-            if (CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.Impale)
-            {
-                if (AttackTimer % 150f == 60f && (npc.ai[0] == 1f || npc.ai[0] == 3f))
-                {
-                    Vector2 searchDirection = -Polterghast.SafeDirectionTo(Target.Center).RotatedBy((npc.ai[0] != 1f).ToDirectionInt() + MathHelper.PiOver4);
-                    IdealPosition = Polterghast.Center + searchDirection * 370f;
-                }
-
-                if (AttackTimer % 150f == 90f && Main.netMode != NetmodeID.MultiplayerClient && (npc.ai[0] == 1f || npc.ai[0] == 3f))
-                {
-                    IdealPosition = Target.Center;
-                    npc.velocity = npc.SafeDirectionTo(Target.Bottom + Limbs[1].Rotation.ToRotationVector2() * 100f) * 42f;
-                    if (BossRushEvent.BossRushActive)
-                        npc.velocity *= 1.4f;
-
-                    if (Enraged)
-                        npc.velocity *= 1.5f;
-                    npc.netUpdate = true;
-                }
-
-                if (AttackTimer % 150f >= 90f && npc.WithinRange(IdealPosition, 120f))
-                    npc.velocity *= 0.97f;
-                else
-                    npc.velocity *= 0.985f;
-
-                if (AttackTimer % 150f >= 90f)
-                    return;
-            }
-
             float moveSpeed = 28f + Polterghast.velocity.Length() * 1.2f;
             if (!npc.WithinRange(IdealPosition, moveSpeed + 4f))
                 npc.velocity = npc.SafeDirectionTo(IdealPosition) * moveSpeed;
@@ -264,6 +235,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
+            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
             if (LimbDrawer is null)
                 LimbDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, GameShaders.Misc["Infernum:PolterghastEctoplasm"]);
 

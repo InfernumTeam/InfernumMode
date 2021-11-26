@@ -68,6 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                         Vector2 sparkVelocity = Vector2.UnitY * Main.rand.NextFloat(12f, 16f);
                         Vector2 sparkSpawnPosition = projectile.Bottom + new Vector2(Main.rand.NextFloatDirection() * projectile.width * 0.45f, Main.rand.NextFloat(-8f, 0f));
                         Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<WeaverSpark2>(), 255, 0f);
+                        Utilities.NewProjectileBetter(sparkSpawnPosition, -sparkVelocity, ModContent.ProjectileType<WeaverSpark2>(), 255, 0f);
                     }
                 }
             }

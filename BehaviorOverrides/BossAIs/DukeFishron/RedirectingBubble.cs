@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using CalamityMod.Projectiles.Rogue;
 using Microsoft.Xna.Framework;
 using System;
@@ -35,8 +36,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public override void AI()
         {
-            if (Time < 45 && npc.velocity.Length() < RedirectSpeed)
-                npc.velocity *= (float)Math.Pow(RedirectSpeed / InitialSpeed, 1f / 45f);
+            float redirectSpeed = RedirectSpeed * (BossRushEvent.BossRushActive ? 2f : 1f);
+            if (Time < 45 && npc.velocity.Length() < redirectSpeed)
+                npc.velocity *= (float)Math.Pow(redirectSpeed / InitialSpeed, 1f / 45f);
             else if (Time >= 45f)
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(Target.Center), MathHelper.ToRadians(2.4f));
 

@@ -19,7 +19,7 @@ using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
-	public class LeviathanAIClass : NPCBehaviorOverride
+    public class LeviathanAIClass : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<LeviathanNPC>();
 
@@ -199,6 +199,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                                 Vector2 bubbleVelocity = Vector2.UnitX.RotatedByRandom(0.3f) * npc.spriteDirection * Main.rand.NextFloat(7f, 11f);
                                 if (!sirenAlive || !anahitaFightingToo)
                                     bubbleVelocity *= 1.33f;
+                                if (BossRushEvent.BossRushActive)
+                                    bubbleVelocity *= 1.6f;
 
                                 int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, Main.rand.NextBool(2) ? ModContent.NPCType<RedirectingBubble>() : NPCID.DetonatingBubble);
                                 if (Main.npc.IndexInRange(bubble))
@@ -292,10 +294,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     npc.spriteDirection = npc.direction;
 
                     destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * (anahitaFightingToo ? 1360f : 1110f);
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 19f, 0.3f);
+                    float hoverSpeed = BossRushEvent.BossRushActive ? 29f : 19f;
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 60f);
 
                     int vomitCount = 9;
                     int vomitTime = anahitaFightingToo ? 65 : 75;
+                    if (BossRushEvent.BossRushActive)
+                        vomitTime = 64;
                     if (!sirenAlive)
                         vomitTime = 62;
 
@@ -309,6 +314,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                                 Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitX * npc.direction).RotatedBy(MathHelper.Lerp(-0.4f, 0.4f, i / 2f)) * 9f;
                                 if (!sirenAlive)
                                     shootVelocity *= Main.rand.NextFloat(1.3f, 1.5f);
+                                if (BossRushEvent.BossRushActive)
+                                    shootVelocity *= 2f;
+
                                 shootVelocity = shootVelocity.RotatedByRandom(0.21f);
                                 int meteor = Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanBomb>(), 150, 0f);
                                 if (Main.projectile.IndexInRange(meteor))
@@ -350,8 +358,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     if (attackTimer == redirectTime)
                     {
                         float chargeSpeed = sirenAlive ? 23.5f : 37.5f;
+                        if (BossRushEvent.BossRushActive)
+                            chargeSpeed *= 1.3f;
                         if (outOfOcean)
-                            chargeSpeed = 42f;
+                            chargeSpeed = 46f;
                         npc.velocity = Vector2.UnitX * npc.direction * chargeSpeed;
                         if (outOfOcean)
                             npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;

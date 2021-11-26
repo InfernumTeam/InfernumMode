@@ -94,6 +94,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 return false;
             }
 
+            npc.timeLeft = 3600;
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -251,7 +253,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public static void DoBehavior_DarkEnergyBolts(NPC npc, Player target, int phase, ref float attackTimer)
         {
             int burstCount = phase >= 2 ? 2 : 3;
-            int projectilesPerBurst = phase >= 2 ? 5 : 4;
+            int projectilesPerBurst = phase >= 2 ? 11 : 8;
 
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float burstCounter = ref npc.Infernum().ExtraAI[1];
@@ -304,7 +306,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DoBehavior_RealityCracks(NPC npc, Player target, int phase, ref float attackTimer)
         {
-            int crackCount = 12 + phase * 3;
+            int crackCount = 12 + phase * 8;
 
             // Hover into position.
             float moveSpeedFactor = Utils.InverseLerp(60f, 120f, attackTimer, true) * Utils.InverseLerp(240f, 180f, attackTimer, true);
@@ -376,11 +378,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void DoBehavior_DarkEnergyBulletHell(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            int burstFireRate = (int)MathHelper.Lerp(32f, 20f, 1f - lifeRatio);
+            int burstFireRate = (int)MathHelper.Lerp(32f, 16f, 1f - lifeRatio);
             int circleFireRate = (int)MathHelper.Lerp(72f, 50f, 1f - lifeRatio);
             int energyPerBurst = (int)MathHelper.Lerp(9f, 14f, 1f - lifeRatio);
             int energyPerCircle = (int)MathHelper.Lerp(15f, 22f, 1f - lifeRatio);
-            float burstBaseSpeed = MathHelper.Lerp(6f, 8f, 1f - lifeRatio);
+            float burstBaseSpeed = MathHelper.Lerp(6f, 10.5f, 1f - lifeRatio);
 
             if (BossRushEvent.BossRushActive)
                 burstBaseSpeed *= 1.3f + npc.Distance(target.Center) * 0.00174f;

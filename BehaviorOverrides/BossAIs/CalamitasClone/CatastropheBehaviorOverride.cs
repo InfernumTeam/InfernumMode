@@ -95,6 +95,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 carpetBombChargeSpeed *= 1.35f;
             }
 
+            if (BossRushEvent.BossRushActive)
+            {
+                redirectSpeed += 12f;
+                carpetBombChargeSpeed *= 1.5f;
+            }
+
             if (attackTimer < redirectTime)
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 480f;
@@ -178,6 +184,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (shouldBeBuffed)
             {
                 chargeSpeed *= 1.35f;
+                redirectSpeed += 6f;
+                chargeCount--;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeSpeed *= 1.56f;
                 redirectSpeed += 6f;
                 chargeCount--;
             }

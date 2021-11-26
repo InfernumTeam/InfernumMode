@@ -33,6 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             projectile.Opacity = Utils.InverseLerp(300f, 275f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
             projectile.scale = projectile.Opacity * 2f;
+            projectile.velocity *= 1.015f;
             projectile.rotation = projectile.velocity.ToRotation();
         }
 

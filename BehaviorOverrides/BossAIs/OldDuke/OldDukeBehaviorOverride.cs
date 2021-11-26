@@ -441,18 +441,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         public static void DoBehavior_Charge(NPC npc, Player target, bool inPhase2, bool inPhase3, bool inPhase4, float attackTimer, ref float frameType)
 		{
             int chargeTime = 29;
-            float chargeSpeed = 28.5f;
+            float chargeSpeed = 32.5f;
             float aimAheadFactor = 0.95f;
 
             if (inPhase2)
             {
                 chargeTime = 26;
-                chargeSpeed = 31.25f;
+                chargeSpeed = 36.25f;
             }
             if (inPhase3)
             {
                 chargeTime = inPhase4 ? 21 : 22;
-                chargeSpeed = inPhase4 ? 40f : 39f;
+                chargeSpeed = inPhase4 ? 43f : 41.5f;
                 aimAheadFactor = MathHelper.Lerp(1f, 1.45f, Utils.InverseLerp(200f, 525f, npc.Distance(target.Center), true));
             }
 
@@ -500,7 +500,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         public static void DoBehavior_FastRegularCharge(NPC npc, Player target, float attackTimer, ref float frameType)
         {
             int chargeTime = 23;
-            float chargeSpeed = 44f;
+            float chargeSpeed = 47f;
 
             if (attackTimer >= chargeTime)
             {
@@ -592,8 +592,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.damage = 0;
 
             int shootDelay = inPhase2 ? 40 : 55;
-            int bubbleCount = inPhase2 ? 20 : 15;
-            int bubbleSummonRate = inPhase2 ? 12 : 20;
+            int bubbleCount = inPhase2 ? 12 : 15;
+            int bubbleSummonRate = inPhase2 ? 11 : 18;
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
@@ -613,7 +613,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % bubbleSummonRate == bubbleSummonRate - 1f)
             {
                 Vector2 bubbleSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f + target.velocity.X * 60f, 800f);
-                Vector2 bubbleVelocity = -Vector2.UnitY * Main.rand.NextFloat(10f, 13f);
+                Vector2 bubbleVelocity = -Vector2.UnitY * Main.rand.NextFloat(10.5f, 13.5f);
                 if (inPhase2)
                     bubbleVelocity *= 1.15f;
 

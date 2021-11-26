@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -98,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             else if (npc.velocity.Length() > 19f + attackTimer / 36f)
                 moveSpeed *= 0.98f;
 
-            moveSpeed = MathHelper.Clamp(moveSpeed, 15f, 29f);
+            moveSpeed = MathHelper.Clamp(moveSpeed, 15f, 29f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
@@ -116,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             else if (npc.velocity.Length() > 13f)
                 moveSpeed *= 0.98f;
 
-            moveSpeed = MathHelper.Clamp(moveSpeed, 13f, 25f);
+            moveSpeed = MathHelper.Clamp(moveSpeed, 13f, 25f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
 
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), turnSpeed, true) * moveSpeed;
 
@@ -135,6 +136,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float shootSpeed = MathHelper.Lerp(8f, 12.5f, 1f - lifeRatio);
+                    if (BossRushEvent.BossRushActive)
+                        shootSpeed *= 1.5f;
+
                     for (int i = 0; i < 9; i++)
                     {
                         float offsetAngle = MathHelper.Lerp(-0.51f, 0.51f, i / 8f);
@@ -153,10 +157,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             int hoverRedirectTime = 240;
             Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt(), (target.Center.Y < npc.Center.Y).ToDirectionInt()) * 485f;
             Vector2 hoverDestination = target.Center + hoverOffset;
-            int chargeRedirectTime = 40;
-            int chargeTime = 45;
-            int chargeSlowdownTime = 25;
-            int chargeCount = 3;
+            int chargeRedirectTime = 25;
+            int chargeTime = 15;
+            int chargeSlowdownTime = 10;
+            int chargeCount = 4;
             ref float idealChargeVelocityX = ref npc.Infernum().ExtraAI[0];
             ref float idealChargeVelocityY = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
@@ -164,7 +168,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Attempt to get into position for a charge.
             if (attackTimer < hoverRedirectTime)
             {
-                float idealHoverSpeed = MathHelper.Lerp(20.5f, 39f, attackTimer / hoverRedirectTime);
+                float idealHoverSpeed = MathHelper.Lerp(33.5f, 50f, attackTimer / hoverRedirectTime);
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.08f);
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.064f, true) * idealVelocity.Length();
 
@@ -182,7 +186,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Determine a charge velocity to adjust to.
             if (attackTimer == hoverRedirectTime)
             {
-                Vector2 idealChargeVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * MathHelper.Lerp(24f, 31.5f, 1f - lifeRatio);
+                Vector2 idealChargeVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * MathHelper.Lerp(37f, 45f, 1f - lifeRatio);
+                if (BossRushEvent.BossRushActive)
+                    idealChargeVelocity *= 1.2f;
                 idealChargeVelocityX = idealChargeVelocity.X;
                 idealChargeVelocityY = idealChargeVelocity.Y;
                 npc.netUpdate = true;
@@ -219,7 +225,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             // Slow down after charging.
             if (attackTimer > hoverRedirectTime + chargeRedirectTime + chargeTime)
-                npc.velocity *= 0.95f;
+                npc.velocity *= 0.8f;
 
             // Calculate fade to blue.
             fadeToBlue = Utils.InverseLerp(hoverRedirectTime, hoverRedirectTime + chargeRedirectTime, attackTimer, true) *
@@ -246,7 +252,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             int spinDelay = 30;
             int totalSpins = 3;
             int spinTime = 270;
+            float sparkShootSpeed = 5.6f;
+            int sparkShootRate = 8;
             float spinSpeed = 18f;
+            if (BossRushEvent.BossRushActive)
+            {
+                sparkShootRate = 5;
+                sparkShootSpeed *= 1.8f;
+            }
+
             float angularSpinVelocity = MathHelper.TwoPi * totalSpins / spinTime;
 
             // Determine fade to blue.
@@ -280,7 +294,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 Vector2 spinCenter = npc.Center + npc.velocity.RotatedBy(MathHelper.PiOver2) * spinTime / totalSpins / MathHelper.TwoPi;
 
                 // Frequently release sparks.
-                if (attackTimer % 8f == 7f)
+                if (attackTimer % sparkShootRate == sparkShootRate - 1f)
                 {
                     Main.PlaySound(SoundID.DD2_LightningAuraZap, spinCenter);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -296,7 +310,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                                 angularOffset = MathHelper.Lerp(-0.87f, 0.87f, i / (float)(projectileCount - 1f));
 
                             Vector2 predictiveOffset = target.velocity * predictivenessFactor * 15f;
-                            Vector2 shootVelocity = (target.Center - spinCenter + predictiveOffset).SafeNormalize(Vector2.UnitY).RotatedBy(angularOffset).RotatedByRandom(angularImprecision * 0.59f) * 5.6f;
+                            Vector2 shootVelocity = (target.Center - spinCenter + predictiveOffset).SafeNormalize(Vector2.UnitY).RotatedBy(angularOffset).RotatedByRandom(angularImprecision * 0.59f) * sparkShootSpeed;
                             Utilities.NewProjectileBetter(spinCenter, shootVelocity, ModContent.ProjectileType<WeaverSpark>(), 255, 0f);
                         }
                     }
@@ -329,7 +343,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
         public static void DoAttack_StormWeave(NPC npc, Player target, ref float attackTimer, ref float fadeToBlue)
         {
             int hoverRedirectTime = 240;
-            int chargeTime = 235;
+            int chargeTime = 150;
             float cloudCoverArea = 4600f;
             Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * cloudCoverArea * 0.5f, -1350f);
             Vector2 hoverDestination = target.Center + hoverOffset;
@@ -337,7 +351,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 hoverDestination.Y = 300f;
 
             float chargeSpeed = cloudCoverArea / chargeTime;
-            int chargeSlowdownTime = 180;
+            int chargeSlowdownTime = 90;
             ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
 
             // Attempt to get into position for a charge.
@@ -362,7 +376,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 Vector2 chargeVelocity = Vector2.UnitX * chargeSpeed * chargeDirection;
                 npc.velocity = Vector2.Lerp(npc.velocity, chargeVelocity, 0.15f).MoveTowards(chargeVelocity, 2f);
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 4f == 3f)
                 {
                     Vector2 cloudSpawnPosition = npc.Center + Main.rand.NextVector2Circular(8f, 8f);
                     Vector2 cloudVelocity = Main.rand.NextVector2Circular(5f, 5f);
@@ -390,8 +404,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             newStatePicker.Add((int)StormWeaverAttackType.LightningCharge);
             newStatePicker.Add((int)StormWeaverAttackType.StaticChargeup);
 
-            if (lifeRatio < 0.5f)
-                newStatePicker.Add((int)StormWeaverAttackType.StormWeave, 6.5);
+            if (lifeRatio < 0.4f)
+                newStatePicker.Add((int)StormWeaverAttackType.StormWeave, 5D);
 
             do
                 attackState = newStatePicker.Get();

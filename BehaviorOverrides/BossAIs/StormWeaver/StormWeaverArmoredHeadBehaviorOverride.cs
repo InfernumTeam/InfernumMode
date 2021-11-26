@@ -36,6 +36,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             ref float phase2 = ref npc.Infernum().ExtraAI[20];
 
+            if (!target.active || target.dead)
+            {
+                npc.active = false;
+                return false;
+            }
+
             if (npc.life < npc.lifeMax * 0.9f)
 			{
                 if (phase2 == 0f)

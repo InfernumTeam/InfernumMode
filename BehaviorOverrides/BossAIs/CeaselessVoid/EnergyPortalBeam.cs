@@ -35,10 +35,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 				{
                     Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
-                    int energyCount = BossRushEvent.BossRushActive ? 7 : 3;
+                    int energyCount = BossRushEvent.BossRushActive ? 7 : 5;
                     for (int i = 0; i < energyCount; i++)
                     {
-                        float shootAngle = MathHelper.Lerp(-0.56f, 0.56f, i / (float)(energyCount - 1f));
+                        float shootAngle = MathHelper.Lerp(-0.86f, 0.86f, i / (float)(energyCount - 1f));
                         Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(shootAngle) * 5f;
                         Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<CeaselessEnergy>(), 250, 0f);
                     }

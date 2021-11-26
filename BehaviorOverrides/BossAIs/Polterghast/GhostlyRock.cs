@@ -27,11 +27,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override void AI()
         {
-            if (projectile.velocity.Length() < 15f)
+            if (projectile.velocity.Length() < 27f)
                 projectile.velocity *= 1.045f;
 
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            projectile.Opacity = Utils.InverseLerp(300f, 275f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.InverseLerp(300f, 295f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
             Lighting.AddLight(projectile.Center, Color.White.ToVector3());
         }
 

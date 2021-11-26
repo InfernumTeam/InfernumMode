@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             NPC polterghast = Main.npc[CalamityGlobalNPC.ghostBoss];
             if (projectile.timeLeft < 9)
             {
-                projectile.velocity = (projectile.velocity * 11f + projectile.SafeDirectionTo(polterghast.Center) * 29f) / 12f;
+                projectile.velocity = (projectile.velocity * 11f + projectile.SafeDirectionTo(polterghast.Center) * 39f) / 12f;
                 if (projectile.Hitbox.Intersects(polterghast.Hitbox))
                 {
                     polterghast.ai[2]--;
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            projectile.Opacity = Utils.InverseLerp(0f, 35f, Time, true) * Utils.InverseLerp(0f, 35f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.InverseLerp(0f, 8f, Time, true) * Utils.InverseLerp(0f, 35f, projectile.timeLeft, true);
 
             projectile.frameCounter++;
             if (projectile.frameCounter % 5 == 4)
@@ -78,8 +78,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             color.A = 0;
             return color * projectile.Opacity;
         }
-
-        public override bool CanDamage() => projectile.Opacity >= 1f;
 
         public override void Kill(int timeLeft)
         {

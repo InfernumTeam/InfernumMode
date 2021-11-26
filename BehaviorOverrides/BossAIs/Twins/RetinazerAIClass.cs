@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -69,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 			int totalInstancesToDraw = 1;
 			Color color = lightColor;
 			float overdriveTimer = npc.Infernum().ExtraAI[4];
-			if (overdriveTimer > 0f)
+			if (!BossRushEvent.BossRushActive && overdriveTimer > 0f)
 			{
 				float fadeCompletion = overdriveTimer / TwinsShield.HealTime;
 				totalInstancesToDraw += (int)MathHelper.Lerp(1f, 40f, fadeCompletion);

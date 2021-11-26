@@ -37,8 +37,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public override bool PreAI(NPC npc)
         {
-            ref float attackState = ref npc.ai[0];
-            ref float attackTimer = ref npc.ai[1];
+            ref float attackState = ref npc.Infernum().ExtraAI[7];
+            ref float attackTimer = ref npc.Infernum().ExtraAI[8];
             ref float splitCounter = ref npc.ai[2];
             ref float segmentCount = ref npc.ai[3];
             ref float initializedFlag = ref npc.localAI[0];
@@ -93,8 +93,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             {
                 npc.life = Main.npc[npc.realLife].life;
                 npc.lifeMax = Main.npc[npc.realLife].lifeMax;
-                npc.ai[0] = Main.npc[npc.realLife].ai[0];
-                npc.ai[1] = Main.npc[npc.realLife].ai[1];
+                npc.Infernum().ExtraAI[7] = Main.npc[npc.realLife].Infernum().ExtraAI[7];
+                npc.Infernum().ExtraAI[8] = Main.npc[npc.realLife].Infernum().ExtraAI[8];
             }
 
             npc.rotation = npc.rotation.AngleLerp(npc.velocity.ToRotation() + MathHelper.PiOver2, 0.05f);
@@ -426,10 +426,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                     nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
                     nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
-
-                // Save the behind segment.
-                if (previousIndex != npc.whoAmI)
-                    Main.npc[previousIndex].ai[0] = nextIndex;
 
                 // The head.
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;

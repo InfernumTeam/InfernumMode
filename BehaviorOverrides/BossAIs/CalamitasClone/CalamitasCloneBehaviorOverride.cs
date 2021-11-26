@@ -287,6 +287,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 initialFlameSpeed *= 1.35f;
             }
 
+            if (BossRushEvent.BossRushActive)
+            {
+                attackCycleCount--;
+                hoverSpeed += 8f;
+                initialFlameSpeed *= 1.72f;
+            }
+
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
 
@@ -350,6 +357,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 meteorShootSpeed += 5f;
                 hoverSpeed += 5f;
             }
+            if (BossRushEvent.BossRushActive)
+            {
+                attackTime -= 45;
+                hoverSpeed += 8f;
+                meteorShootSpeed *= 1.4f;
+            }
+
             meteorShootSpeed *= MathHelper.Lerp(1f, 1.35f, 1f - lifeRatio);
 
             ref float meteorAngle = ref npc.Infernum().ExtraAI[0];
@@ -402,8 +416,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (shouldBeBuffed)
             {
                 attackTime += 45;
-                lavaShootRate -= 10;
+                lavaShootRate -= 7;
                 hoverSpeed += 5f;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                attackTime -= 45;
+                hoverSpeed += 8f;
+                lavaShootRate -= 7;
             }
 
             // Attempt to hover above the target.
@@ -455,6 +476,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 hoverSpeed += 6f;
             }
 
+            if (BossRushEvent.BossRushActive)
+            {
+                attackTime -= 45;
+                hoverSpeed += 8f;
+                lightningShootRate -= 9;
+            }
+
             // Attempt to hover above the target.
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 350f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
@@ -502,6 +530,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 fireballReleaseRate = (int)(fireballReleaseRate * 0.65f);
                 hoverSpeed += 6f;
                 fireballSpeed += 8.5f;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                hoverSpeed += 8f;
+                fireballReleaseRate = (int)(fireballReleaseRate * 0.6f);
+                fireballSpeed *= 1.5f;
             }
 
             if (Math.Abs(Vector2.Dot(target.velocity, Vector2.UnitX)) > 0.91f)
@@ -579,6 +614,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 redirectSpeed += 6f;
             }
 
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeSpeed *= 1.72f;
+                redirectSpeed += 6f;
+            }
+
             if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
                 chargeSpeed *= 0.825f;
 
@@ -648,6 +689,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 fireballSpeed += 7f;
             }
 
+            if (BossRushEvent.BossRushActive)
+            {
+                fireballReleaseRate -= 10;
+                hoverSpeed += 10f;
+                fireballSpeed *= 1.65f;
+            }
+
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
 
@@ -705,6 +753,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 chargeSpeed += 6f;
                 fireballSpeed += 6f;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeSpeed *= 1.56f;
+                fireballSpeed *= 1.7f;
             }
 
             if (attackTimer < redirectTime)

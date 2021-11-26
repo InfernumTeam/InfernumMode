@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -58,6 +59,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             for (int i = 0; i < 12; i++)
             {
                 Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 9f;
+                if (BossRushEvent.BossRushActive)
+                    shootVelocity *= 2f;
                 Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<FrostMist>(), 115, 0f);
             }
         }

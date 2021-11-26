@@ -45,6 +45,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas;
+using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -179,7 +180,7 @@ namespace InfernumMode.BossRush
                 {
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, NPCID.Spazmatism);
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, NPCID.Retinazer);
-                }, permittedNPCs: NPCID.Retinazer),
+                }, permittedNPCs: new int[] { NPCID.Retinazer, ModContent.NPCType<EnergyOrb>(), ModContent.NPCType<CursedOrb>() }),
 
                 new Boss(ModContent.NPCType<PlaguebringerGoliath>(), permittedNPCs: new int[] { ModContent.NPCType<PlagueBeeG>(), ModContent.NPCType<PlagueBeeLargeG>(), ModContent.NPCType<PlagueHomingMissile>(),
                     ModContent.NPCType<PlagueMine>(), ModContent.NPCType<PlaguebringerShade>() }),

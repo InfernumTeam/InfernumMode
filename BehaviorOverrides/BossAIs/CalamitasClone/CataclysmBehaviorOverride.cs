@@ -91,6 +91,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 chargeCount--;
             }
 
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeSpeed *= 1.6f;
+                redirectSpeed += 8f;
+                chargeCount--;
+            }
+
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -172,6 +179,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 fireballReleaseRate /= 2;
                 hoverSpeed += 9f;
                 fireballSpeed += 8.5f;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                attackCycleCount--;
+                fireballReleaseRate /= 2;
+                hoverSpeed += 12f;
+                fireballSpeed += 11f;
             }
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];

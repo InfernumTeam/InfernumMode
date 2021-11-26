@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             projectile.friendly = false;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
-            projectile.timeLeft = 200;
+            projectile.timeLeft = 150;
         }
 
         public override void AI()
@@ -39,15 +39,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             NPC polterghast = Main.npc[CalamityGlobalNPC.ghostBoss];
-            projectile.Opacity = Utils.InverseLerp(200f, 185f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 15f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.InverseLerp(150f, 142f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 15f, projectile.timeLeft, true);
 
             float speedFactor = BossRushEvent.BossRushActive ? 1.67f : 1f;
             if (!projectile.WithinRange(Twin.Center, 35f))
-                projectile.velocity = (projectile.velocity * 39f + projectile.SafeDirectionTo(Twin.Center) * speedFactor * 14f) / 40f;
+                projectile.velocity = (projectile.velocity * 39f + projectile.SafeDirectionTo(Twin.Center) * speedFactor * 26f) / 40f;
 
             if (projectile.timeLeft < 3)
             {
-                projectile.velocity = (projectile.velocity * 11f + projectile.SafeDirectionTo(polterghast.Center) * speedFactor * 29f) / 12f;
+                projectile.velocity = (projectile.velocity * 11f + projectile.SafeDirectionTo(polterghast.Center) * speedFactor * 45f) / 12f;
                 if (projectile.Hitbox.Intersects(polterghast.Hitbox))
                 {
                     polterghast.ai[2]--;
@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
             else
                 projectile.velocity = projectile.velocity.RotateTowards(projectile.AngleTo(Target.Center), 0.011f);
-            projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * speedFactor * 14f;
+            projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * speedFactor * 26f;
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             projectile.frameCounter++;
@@ -81,8 +81,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             color.A = 0;
             return color * projectile.Opacity;
         }
-
-        public override bool CanDamage() => projectile.Opacity >= 1f;
 
         public override void Kill(int timeLeft)
         {

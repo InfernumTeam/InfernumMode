@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 			}
 
             NPC polterghast = Main.npc[CalamityGlobalNPC.ghostBoss];
-            projectile.Opacity = Utils.InverseLerp(200f, 175f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.InverseLerp(200f, 195f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
 
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
@@ -91,7 +91,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             color.A = 0;
             return color * projectile.Opacity;
         }
-
-        public override bool CanDamage() => projectile.Opacity >= 1f;
     }
 }

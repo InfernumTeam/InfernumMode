@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public override void AI()
         {
             projectile.width = (int)MathHelper.Lerp(projectile.width, 200f, 0.05f);
-            TornadoHeight = MathHelper.Lerp(TornadoHeight, BossRushEvent.BossRushActive ? 4800f : 1600f, 0.05f);
+            TornadoHeight = MathHelper.Lerp(TornadoHeight, BossRushEvent.BossRushActive ? 3200f : 1600f, 0.05f);
             if (!CalamityPlayer.areThereAnyDamnBosses)
             {
                 projectile.active = false;

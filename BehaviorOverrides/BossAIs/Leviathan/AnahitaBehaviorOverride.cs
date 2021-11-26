@@ -14,7 +14,7 @@ using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
-	public class AnahitaBehaviorOverride : NPCBehaviorOverride
+    public class AnahitaBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<Siren>();
 
@@ -155,6 +155,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             void doSkeletronHeadMovementTo(Vector2 destination, Vector2 maxVelocity, float acceleration)
             {
+                if (BossRushEvent.BossRushActive)
+                {
+                    maxVelocity *= 2.4f;
+                    acceleration *= 2.7f;
+                }
+
                 if (npc.Center.Y > destination.Y + 50f)
                 {
                     if (npc.velocity.Y > 0f)
@@ -286,6 +292,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         bubbleShootRate = 13;
                         bubbleShootSpeed += 4f;
                     }
+                    if (BossRushEvent.BossRushActive)
+                    {
+                        bubbleShootRate = 11;
+                        bubbleShootSpeed *= 2.1f;
+                    }
 
                     Vector2 destination = target.Center - Vector2.UnitY * 400f;
                     destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 260f;
@@ -315,6 +326,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     {
                         singClefFireRate = 5;
                         clefShootSpeed = 17.67f;
+                    }
+                    if (BossRushEvent.BossRushActive)
+                    {
+                        singClefFireRate = 4;
+                        clefShootSpeed *= 1.5f;
                     }
 
                     destination = target.Center;
@@ -356,7 +372,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
                     }
 
-                    if (attackTimer == (enraged ? 135f : 210f))
+                    if (attackTimer == (enraged || BossRushEvent.BossRushActive ? 135f : 210f))
                         goToNextAIState();
                     break;
                 case AnahitaAttackType.AtlantisCharge:
@@ -381,6 +397,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         hoverTime = 30;
                         chargeTime = 20;
                         chargeSpeed = 37f;
+                        totalSpins = 2f;
+                    }
+                    if (BossRushEvent.BossRushActive)
+                    {
+                        hoverTime = 25;
+                        chargeTime = 20;
+                        chargeSpeed = 48f;
                         totalSpins = 2f;
                     }
 

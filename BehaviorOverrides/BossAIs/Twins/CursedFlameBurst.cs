@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -39,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 projectile.Opacity = 1f;
 
             projectile.rotation = projectile.velocity.ToRotation();
-            projectile.velocity *= 1.03f;
+            projectile.velocity *= BossRushEvent.BossRushActive ? 1.056f : 1.03f;
 
             Lighting.AddLight(projectile.Center, Color.Green.ToVector3() * 1.6f);
 

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -67,6 +68,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             else
             {
                 Vector2 idealVelocity = npc.SafeDirectionTo(Target.Center) * 12.5f;
+                if (BossRushEvent.BossRushActive)
+                    idealVelocity *= 2f;
+
                 npc.velocity = (npc.velocity * 34f + idealVelocity) / 35f;
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 0.15f);
                 npc.rotation = npc.rotation.AngleLerp(npc.velocity.X * 0.032f, 0.15f);

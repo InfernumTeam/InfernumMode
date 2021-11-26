@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -28,6 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             projectile.ignoreWater = true;
             projectile.timeLeft = 60;
             projectile.penetrate = -1;
+            projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
             cooldownSlot = 1;
         }
         public override void AI()

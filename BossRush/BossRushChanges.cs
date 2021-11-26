@@ -43,6 +43,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu;
 using InfernumMode.BehaviorOverrides.BossAIs.Guardians;
 using InfernumMode.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
+using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using InfernumMode.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
@@ -182,8 +183,8 @@ namespace InfernumMode.BossRush
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, NPCID.Retinazer);
                 }, permittedNPCs: new int[] { NPCID.Retinazer, ModContent.NPCType<EnergyOrb>(), ModContent.NPCType<CursedOrb>() }),
 
-                new Boss(ModContent.NPCType<PlaguebringerGoliath>(), permittedNPCs: new int[] { ModContent.NPCType<PlagueBeeG>(), ModContent.NPCType<PlagueBeeLargeG>(), ModContent.NPCType<PlagueHomingMissile>(),
-                    ModContent.NPCType<PlagueMine>(), ModContent.NPCType<PlaguebringerShade>() }),
+                new Boss(ModContent.NPCType<PlaguebringerGoliath>(), permittedNPCs: new int[] { ModContent.NPCType<BuilderDroneSmall>(), ModContent.NPCType<BuilderDroneBig>(), ModContent.NPCType<SmallDrone>(),
+                    ModContent.NPCType<PlagueMine>(), ModContent.NPCType<PlaguebringerShade>(), ModContent.NPCType<ExplosivePlagueCharger>() }),
 
                 new Boss(ModContent.NPCType<AstrumDeusHeadSpectral>(), TimeChangeContext.Night, type =>
                 {

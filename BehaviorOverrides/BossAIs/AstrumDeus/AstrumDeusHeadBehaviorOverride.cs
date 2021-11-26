@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -150,6 +151,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             int totalBombsToShoot = lifeRatio < Phase2LifeThreshold ? 38 : 45;
             float flySpeed = MathHelper.Lerp(12f, 16f, 1f - lifeRatio) + beaconAngerFactor * 10f;
             float flyAcceleration = MathHelper.Lerp(0.028f, 0.034f, 1f - lifeRatio) + beaconAngerFactor * 0.036f;
+            if (BossRushEvent.BossRushActive)
+            {
+                flySpeed *= 2f;
+                flyAcceleration *= 1.7f;
+                totalBombsToShoot -= 14;
+            }
+
             int shootTime = shootRate * totalBombsToShoot;
             int attackSwitchDelay = lifeRatio < Phase2LifeThreshold ? 45 : 105;
 
@@ -194,6 +202,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             int crashRiseTime = lifeRatio < Phase2LifeThreshold ? 315 : 375;
             int crashChargeTime = lifeRatio < Phase2LifeThreshold ? 100 : 95;
             float crashSpeed = MathHelper.Lerp(32.5f, 48f, 1f - lifeRatio) + beaconAngerFactor * 20f;
+            if (BossRushEvent.BossRushActive)
+            {
+                crashChargeTime -= 8;
+                crashSpeed *= 1.4f;
+            }
+
             float wrappedTime = attackTimer % (crashRiseTime + crashChargeTime);
 
             // Rise upward and release redirecting astral bombs.
@@ -241,6 +255,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         {
             float flySpeed = MathHelper.Lerp(12.5f, 17f, 1f - lifeRatio);
             float flyAcceleration = MathHelper.Lerp(0.03f, 0.038f, 1f - lifeRatio);
+            if (BossRushEvent.BossRushActive)
+            {
+                flySpeed *= 2f;
+                flyAcceleration *= 1.75f;
+            }
+
             int shootRate = lifeRatio < Phase2LifeThreshold ? 3 : 5;
             shootRate = (int)MathHelper.Lerp(shootRate, 2f, beaconAngerFactor);
 
@@ -299,6 +319,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             int chargeCount = lifeRatio < Phase2LifeThreshold ? 3 : 4;
             float teleportOutwardness = MathHelper.Lerp(1420f, 1095f, 1f - lifeRatio) - beaconAngerFactor * 240f;
             float chargeSpeed = MathHelper.Lerp(33.5f, 45f, 1f - lifeRatio) + beaconAngerFactor * 15f;
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeTime -= 4;
+                chargeSpeed *= 1.425f;
+            }
+
             float wrappedTimer = attackTimer % (fadeInTime + chargeTime + fadeOutTime);
 
             if (wrappedTimer < fadeInTime)
@@ -311,7 +337,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 }
                 else if (wrappedTimer >= 45f)
                 {
-                    if (npc.velocity.Length() < 26f)
+                    float maxSpeed = BossRushEvent.BossRushActive ? 33f : 26f;
+                    if (npc.velocity.Length() < maxSpeed)
                         npc.velocity *= 1.015f;
                 }
 
@@ -330,6 +357,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                         for (int i = 0; i < 5; i++)
                         {
                             Vector2 fireVelocity = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 7f;
+                            if (BossRushEvent.BossRushActive)
+                                fireVelocity *= 2.3f;
+
                             Utilities.NewProjectileBetter(npc.Center, fireVelocity, ModContent.ProjectileType<AstralFlame2>(), 155, 0f);
                         }
 
@@ -443,10 +473,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (aimedTowardsPlayer && stars.Count > 0 && stars.First().velocity == Vector2.Zero && attackTimer > 90f)
             {
                 stars.First().velocity = stars.First().SafeDirectionTo(target.Center) * MathHelper.Lerp(4f, 8f, beaconAngerFactor);
+                if (BossRushEvent.BossRushActive)
+                    stars.First().velocity *= 2.5f;
+
                 stars.First().netUpdate = true;
 
                 cantKeepSpinningFlag = 1f;
                 npc.velocity = npc.SafeDirectionTo(target.Center) * MathHelper.Lerp(24f, 38f, beaconAngerFactor);
+                if (BossRushEvent.BossRushActive)
+                    npc.velocity *= 1.4f;
+
                 npc.netUpdate = true;
             }
 
@@ -468,7 +504,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Drift towards the player.
             if (!npc.WithinRange(target.Center, 530f))
             {
-                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 17f, 0.085f);
+                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 31f : 17f, 0.085f);
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.036f, true) * newSpeed;
             }
 
@@ -482,6 +518,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     for (int i = 0; i < 2; i++)
                     {
                         Vector2 plasmaVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.56f) * Main.rand.NextFloat(14f, 18f);
+                        if (BossRushEvent.BossRushActive)
+                            plasmaVelocity *= 1.8f;
+
                         Utilities.NewProjectileBetter(npc.Center + plasmaVelocity * 2f, plasmaVelocity, ModContent.ProjectileType<InfectiousPlasma>(), 160, 0f);
                     }
                     shootTimer = 0f;

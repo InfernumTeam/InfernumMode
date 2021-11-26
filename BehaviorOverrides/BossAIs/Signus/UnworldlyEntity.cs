@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -23,7 +24,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             npc.npcSlots = 0f;
             npc.width = npc.height = 62;
             npc.defense = 15;
-            npc.lifeMax = 7222;
+            npc.lifeMax = 5666;
+            if (BossRushEvent.BossRushActive)
+                npc.lifeMax = 26666;
+
             npc.aiStyle = aiType = -1;
             npc.knockBackResist = 0f;
             npc.noGravity = true;

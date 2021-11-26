@@ -71,6 +71,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 npc.Calamity().CurrentlyEnraged = true;
                 enrageFactor = 1.5f;
             }
+            if (BossRushEvent.BossRushActive)
+                enrageFactor = 2.25f;
 
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -122,6 +124,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             int chargeTime = (int)(48f - enrageFactor * 13f);
             bool canDoDiagonalCharges = enrageFactor > 0.3f;
             float chargeSpeed = enrageFactor * 11f + 24f;
+            float hoverSpeed = enrageFactor * 6f + 19f;
+
+            if (chargeTime < 28)
+                chargeTime = 28;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
@@ -169,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     }
                 }
                 else
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 3f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 6.5f);
                 npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
                 npc.rotation = npc.velocity.X * 0.0125f;
                 hoverTimer++;
@@ -214,6 +220,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             ref float bombingCount = ref npc.Infernum().ExtraAI[1];
             ref float missileShootTimer = ref npc.Infernum().ExtraAI[2];
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[3];
+
+            if (missileShootRate < 6)
+                missileShootRate = 6;
 
             frameType = (int)PBGFrameType.Fly;
             switch ((int)attackState)
@@ -287,6 +296,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             ref float vomitShootTimer = ref npc.Infernum().ExtraAI[2];
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[3];
 
+            if (vomitShootRate < 15)
+                vomitShootRate = 15;
+
             frameType = (int)PBGFrameType.Fly;
             switch ((int)attackState)
             {
@@ -357,10 +369,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             int chargeTime = (int)(68f + enrageFactor * 16f);
             float chargeSpeed = enrageFactor * 2.75f + 27.5f;
             float horizontalOffset = 750f;
+            float hoverSpeed = enrageFactor * 6f + 19f;
             if (enrageFactor > 0.7f)
                 horizontalOffset = 900f;
             if (enrageFactor > 1f)
                 horizontalOffset = 1100f;
+            if (chargeTime > 84)
+                chargeTime = 84;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
             ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
@@ -398,7 +413,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     }
                 }
                 else
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 0.95f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 20f);
                 npc.Center = npc.Center.MoveTowards(hoverDestination, 3f);
                 npc.rotation = npc.velocity.X * 0.0125f;
                 hoverTimer++;
@@ -446,6 +461,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             int chargeTime = (int)(56f - enrageFactor * 17f);
             int summonRate = (int)(24f - enrageFactor * 9f);
             float chargeSpeed = enrageFactor * 4f + 25f;
+            float hoverSpeed = enrageFactor * 6f + 19f;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
@@ -487,7 +503,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     }
                 }
                 else
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 3f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 7f);
                 npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
                 npc.rotation = npc.velocity.X * 0.0125f;
                 hoverTimer++;
@@ -585,6 +601,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             int chargeTime = (int)(56f - enrageFactor * 22f);
             int bombingDelay = (int)(65f - enrageFactor * 22f);
             float chargeSpeed = enrageFactor * 4f + 24f;
+            float hoverSpeed = enrageFactor * 6f + 19f;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
@@ -626,7 +643,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     }
                 }
                 else
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 3f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 7f);
                 npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
                 npc.rotation = npc.velocity.X * 0.0125f;
                 hoverTimer++;
@@ -701,6 +718,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             int chargeCount = 6;
             int chargeTime = (int)(130f - enrageFactor * 24f);
             float chargeSpeed = enrageFactor * 6.25f + 18f;
+            float hoverSpeed = enrageFactor * 6f + 19f;
 
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
             ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
@@ -748,7 +766,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     }
                 }
                 else
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 19f, 3f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 7f);
                 npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
                 npc.rotation = npc.velocity.X * 0.0125f;
                 hoverTimer++;

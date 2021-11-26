@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -24,6 +25,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             npc.width = npc.height = 42;
             npc.defense = 15;
             npc.lifeMax = 1280;
+            if (BossRushEvent.BossRushActive)
+                npc.lifeMax = 11256;
+
             npc.aiStyle = aiType = -1;
             npc.knockBackResist = 0f;
             npc.noGravity = true;

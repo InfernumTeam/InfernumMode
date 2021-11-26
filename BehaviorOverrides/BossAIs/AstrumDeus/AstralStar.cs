@@ -1,4 +1,5 @@
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -48,8 +49,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (Time > 205f)
             {
                 float angularOffset = (float)Math.Cos((projectile.Center * new Vector2(1.4f, 1f)).Length() / 175f + projectile.identity * 0.89f) * 0.024f;
+                float acceleration = BossRushEvent.BossRushActive ? 1.04f : 1.013f;
+                float baseMaxSpeed = BossRushEvent.BossRushActive ? 24f : 13f;
                 projectile.velocity = projectile.velocity.RotatedBy(angularOffset);
-                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(projectile.velocity.Length() * 1.013f, 7f, 13f + AngerFactor * 6.5f);
+                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(projectile.velocity.Length() * acceleration, 7f, baseMaxSpeed + AngerFactor * 6.5f);
             }
 
             if (Time == 215f && projectile.identity % 3 == 0)

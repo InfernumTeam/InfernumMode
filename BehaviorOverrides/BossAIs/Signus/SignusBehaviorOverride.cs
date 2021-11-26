@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -220,6 +221,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             float scytheSpread = MathHelper.SmoothStep(0.95f, 1.34f, 1f - lifeRatio);
             int attackCycleCount = lifeRatio < Phase3LifeRatio ? 1 : 2;
 
+            if (BossRushEvent.BossRushActive)
+                totalScythesToCreate += 7;
+
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -309,6 +313,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 maxInitialSlashDistance -= 15f;
                 finalDelay -= 15;
             }
+
+            if (BossRushEvent.BossRushActive)
+                slashMovementSpeed += 12f;
 
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float chargeHoverCenterX = ref npc.Infernum().ExtraAI[1];
@@ -448,6 +455,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             int chargeTime = 45;
             float chargeSpeed = 45f;
             int slowdownTime = 20;
+            int kunaiCount = 11;
 
             if (lifeRatio < Phase2LifeRatio)
             {
@@ -462,6 +470,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 chargeSpeed += 3f;
                 slowdownTime -= 4;
             }
+
+            if (BossRushEvent.BossRushActive)
+                kunaiCount = 19;
 
             int totalChargeTime = hoverTime + chargeTime + slowdownTime;
             float wrappedAttackTimer = attackTimer % totalChargeTime;
@@ -503,9 +514,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                     npc.velocity *= 0.25f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 11; i++)
+                        for (int i = 0; i < kunaiCount; i++)
                         {
-                            float offsetAngle = MathHelper.Lerp(-1.13f, 1.13f, i / 10f);
+                            float offsetAngle = MathHelper.Lerp(-1.13f, 1.13f, i / (float)(kunaiCount - 1f));
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 35f;
                             Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<CosmicKunai>(), 250, 0f);
                         }

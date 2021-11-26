@@ -160,8 +160,7 @@ namespace InfernumMode.GlobalInstances
             if (InfernumMode.CanUseCustomAIs)
             {
                 // Correct an enemy's life depending on its cached true life value.
-                if (InfernumNPCHPValues.HPValues.ContainsKey(npc.type) &&
-                    InfernumNPCHPValues.HPValues[npc.type] != npc.lifeMax)
+                if (InfernumNPCHPValues.HPValues.ContainsKey(npc.type) && InfernumNPCHPValues.HPValues[npc.type] >= 0 && InfernumNPCHPValues.HPValues[npc.type] != npc.lifeMax)
                 {
                     npc.life = npc.lifeMax = InfernumNPCHPValues.HPValues[npc.type];
 

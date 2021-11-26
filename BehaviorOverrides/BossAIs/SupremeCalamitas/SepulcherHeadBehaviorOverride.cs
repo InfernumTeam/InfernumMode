@@ -82,6 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.dontTakeDamage = false;
             npc.Calamity().DR = 0.2f;
             npc.Calamity().unbreakableDR = false;
+            npc.Calamity().CanHaveBossHealthBar = true;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             // Create body segments.

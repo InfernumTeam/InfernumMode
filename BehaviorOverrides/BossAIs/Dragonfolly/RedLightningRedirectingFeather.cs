@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -30,6 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = RedirectDelay + FlyTime;
+            projectile.extraUpdates = BossRushEvent.BossRushActive ? 1 : 0;
             cooldownSlot = 1;
         }
 
@@ -55,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             }
             else if (Time == RedirectDelay)
             {
-                projectile.velocity = projectile.rotation.ToRotationVector2() * 34f;
+                projectile.velocity = projectile.rotation.ToRotationVector2() * (BossRushEvent.BossRushActive ? 25f : 34f);
                 Main.PlaySound(SoundID.Item109, projectile.Center);
                 for (int i = 0; i < 16; i++)
                 {

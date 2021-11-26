@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -26,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             projectile.Opacity = Utils.InverseLerp(300f, 290f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * 0.6f;
 
             if (projectile.velocity.Length() < 29f)
-                projectile.velocity *= 1.0215f;
+                projectile.velocity *= BossRushEvent.BossRushActive ? 1.0325f : 1.0215f;
 
             if (projectile.timeLeft < 50)
                 projectile.velocity *= 0.98f;

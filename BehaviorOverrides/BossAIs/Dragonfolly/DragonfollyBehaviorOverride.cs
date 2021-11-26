@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
@@ -383,6 +384,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 float verticalOffsetLeniance = 65f;
                 float flySpeed = 18.5f + accumulatedSpeed;
                 float flyInertia = 4f;
+                if (BossRushEvent.BossRushActive)
+                    flySpeed += 7f;
+
                 Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * horizontalOffset;
 
                 // Fly towards the destination beside the player.
@@ -409,7 +413,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 if (chargeType == DragonfollyAttackType.OrdinaryCharge && phase2 && redirectCounter > 0f)
                     chargeDelay = 6;
 
-                float flySpeed = 32f;
+                float flySpeed = BossRushEvent.BossRushActive ? 40f : 32f;
                 float flyInertia = 8f;
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity * (chargeType == DragonfollyAttackType.ThunderCharge ? 0.5f : 1f)) / flyInertia;
@@ -485,7 +489,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         npc.netUpdate = true;
 					}
 
-                    npc.velocity *= (chargeType != DragonfollyAttackType.ThunderCharge ? 0.3f : 0.6f);
+                    npc.velocity *= chargeType != DragonfollyAttackType.ThunderCharge ? 0.3f : 0.6f;
                     GoToNextAttackState(npc);
                 }
 

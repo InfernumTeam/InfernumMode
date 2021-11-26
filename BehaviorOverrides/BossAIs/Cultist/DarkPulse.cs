@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -34,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public override void AI()
         {
             projectile.Opacity = Utils.InverseLerp(0f, 10f, Time, true);
-            projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(projectile.velocity.Length() + 0.164f, 1f, 17f);
+            projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(projectile.velocity.Length() + 0.164f, 1f, BossRushEvent.BossRushActive ? 29f : 17f);
             projectile.frameCounter++;
             if (projectile.frameCounter % 5 == 4)
                 projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];

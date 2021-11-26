@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod.Events;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -31,7 +32,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 				if (npc.WithinRange(target.Center, 700f))
 				{
 					bool canNoLongerHome = attackTimer >= swerveTime + 125f;
-					float newSpeed = MathHelper.Clamp(npc.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 13f, canNoLongerHome ? 30f : 23f);
+					float idealSpeed = canNoLongerHome ? 30f : 23f;
+					if (BossRushEvent.BossRushActive)
+						idealSpeed *= 1.425f;
+
+					float newSpeed = MathHelper.Clamp(npc.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 13f, idealSpeed);
 					if (!target.dead && target.active && !npc.WithinRange(target.Center, 320f) && !canNoLongerHome)
 					{
 						float homingPower = phase2Variant ? 0.067f : 0.062f;
@@ -40,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 					npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * newSpeed;
 				}
 				else
-					npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.2f).SafeNormalize(Vector2.UnitY) * 17f;
+					npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.2f).SafeNormalize(Vector2.UnitY) * (BossRushEvent.BossRushActive ? 29f : 17f);
 
 				// Die on tile collision or after enough time.
 				bool shouldDie = (Collision.SolidCollision(npc.position, npc.width, npc.height) && attackTimer >= swerveTime + 95f) || attackTimer >= swerveTime + 240f;

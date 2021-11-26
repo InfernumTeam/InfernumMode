@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Dusts;
+using CalamityMod.Events;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -38,11 +39,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 			AncientDoom
 		}
 
-        #region AI
+		#region AI
 
-        #region Main Boss
+		#region Main Boss
 
-        public override bool PreAI(NPC npc)
+		public override bool PreAI(NPC npc)
 		{
 			CultistAIState attackState = (CultistAIState)(int)npc.ai[0];
 
@@ -468,6 +469,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
 						Vector2 fireballShootVelocity = aimRotation.ToRotationVector2() * Main.rand.NextFloat(12f, 14f);
 						fireballShootVelocity = fireballShootVelocity.RotatedByRandom(MathHelper.Pi * 0.1f);
+						if (BossRushEvent.BossRushActive)
+							fireballShootVelocity *= 1.5f;
 
 						Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 150, 0f);
 					}
@@ -475,11 +478,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 				}
 
 				// In Phase 2 however, conjure fireballs that appear from the sides of the target.
-                else
+				else
 				{
 					// Also make cinders appear around the target to actually give a sense that things are warming up.
 					for (int i = 0; i < 4; i++)
-                    {
+					{
 						if (!Main.rand.NextBool(7))
 							continue;
 
@@ -488,7 +491,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 						fire.scale *= Main.rand.NextFloat(1f, 1.4f);
 						fire.fadeIn = Main.rand.NextFloat(0.4f, 0.75f);
 						fire.noGravity = true;
-                    }
+					}
 
 					if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % fireballShootRate == fireballShootRate - 1f)
 					{
@@ -655,9 +658,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 								int lightningCircleCount = phase2 ? 6 : 1;
 								for (int k = 0; k < lightningCircleCount; k++)
 								{
-									Vector2 lightningVelocity = (target.Center - orbSummonPosition + (phase2 ? Vector2.Zero : target.velocity * new Vector2(40f, 20f))).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * k / lightningCircleCount) * 7.6f;
+									Vector2 lightningVelocity = (target.Center - orbSummonPosition + (phase2 ? Vector2.Zero : target.velocity * new Vector2(40f, 20f))).SafeNormalize(Vector2.UnitY) * 7.6f;
+									lightningVelocity = lightningVelocity.RotatedBy(MathHelper.TwoPi * k / lightningCircleCount);
 									if (!phase2)
 										lightningVelocity *= 1.15f;
+									if (BossRushEvent.BossRushActive)
+										lightningVelocity *= 1.3f;
 
 									int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 160, 0f);
 									Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();
@@ -779,7 +785,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
 				if (adjustedTime > 80f && adjustedTime < 180f && adjustedTime % 5f == 4f)
 				{
-					Vector2 lightSpawnPosition = target.Center + target.velocity * 15f + Main.rand.NextVector2Circular(920f, 920f);
+					Vector2 lightSpawnPosition = target.Center + target.velocity * 15f + Main.rand.NextVector2Circular(920f, 920f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
 					lightSpawnPosition += target.velocity * Main.rand.NextFloat(5f, 32f);
 					CreateTeleportTelegraph(npc.Center, lightSpawnPosition, 150, true, 1);
 					int light = Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 170, 0f);
@@ -827,6 +833,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 						Vector2 shootVelocity = Vector2.UnitX.RotatedByRandom(0.51f) * npc.spriteDirection * 10f;
 						if (phase2)
 							shootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * shotCounter / lightBurstCount) * 12f;
+						if (BossRushEvent.BossRushActive)
+							shootVelocity *= 1.7f;
 
 						Point lightSpawnPosition = (handPosition + shootVelocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 10f).ToPoint();
 						int ancientLight = NPC.NewNPC(lightSpawnPosition.X, lightSpawnPosition.Y, NPCID.AncientLight, 0, phase2.ToInt());
@@ -957,7 +965,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 				{
 					Point ritualCenter = (Main.projectile[(int)ritualIndex].Center + Main.projectile[(int)ritualIndex].SafeDirectionTo(target.Center) * 20f).ToPoint();
 					if (phase2)
-						NPC.NewNPC(ritualCenter.X, ritualCenter.Y, NPCID.CultistDragonHead);
+						NPC.NewNPC(ritualCenter.X, ritualCenter.Y, NPCID.CultistDragonHead, 1);
 					else
 					{
 						for (int i = 0; i < 2; i++)
@@ -1176,11 +1184,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
 		#endregion Main Boss
 
-        #endregion AI
+		#endregion AI
 
-        #region Drawing and Frames
+		#region Drawing and Frames
 
-        public override void FindFrame(NPC npc, int frameHeight)
+		public override void FindFrame(NPC npc, int frameHeight)
 		{
 			int frameCount = Main.npcFrameCount[npc.type];
 			switch ((CultistFrameState)(int)npc.localAI[0])
@@ -1264,7 +1272,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 			}
 		}
 
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+		public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
 		{
 			// Draw borders.
 			bool dying = npc.Infernum().ExtraAI[6] == 1f;

@@ -174,13 +174,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.netUpdate = true;
                 return false;
             }
+
             if (phaseTransitionState == 1f && lifeRatio < Phase3LifeRatio)
             {
                 phaseTransitionTimer = 1f;
                 phaseTransitionState = 2f;
                 attackTimer = 0f;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient && !BossRushEvent.BossRushActive)
                 {
                     CalamityUtils.StartRain(true);
                     Main.cloudBGActive = 1f;
@@ -412,6 +413,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 waitDelay = 20;
             if (inPhase4)
                 waitDelay -= 4;
+            if (BossRushEvent.BossRushActive)
+                waitDelay = (int)(waitDelay * 0.56f);
 
             ref float horizontalHoverOffset = ref npc.Infernum().ExtraAI[0];
 
@@ -454,6 +457,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 chargeTime = inPhase4 ? 21 : 22;
                 chargeSpeed = inPhase4 ? 43f : 41.5f;
                 aimAheadFactor = MathHelper.Lerp(1f, 1.45f, Utils.InverseLerp(200f, 525f, npc.Distance(target.Center), true));
+            }
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeTime -= 3;
+                chargeSpeed += 5.4f;
             }
 
             if (attackTimer >= chargeTime)
@@ -501,6 +509,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         {
             int chargeTime = 23;
             float chargeSpeed = 47f;
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeTime -= 3;
+                chargeSpeed += 4.7f;
+            }
 
             if (attackTimer >= chargeTime)
             {
@@ -550,6 +563,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             int shootDelay = inPhase2 ? 45 : 55;
             int belchCount = inPhase2 ? 5 : 3;
             int belchRate = inPhase2 ? 28 : 36;
+            if (BossRushEvent.BossRushActive)
+                belchRate -= 6;
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
@@ -594,6 +609,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             int shootDelay = inPhase2 ? 40 : 55;
             int bubbleCount = inPhase2 ? 12 : 15;
             int bubbleSummonRate = inPhase2 ? 11 : 18;
+            if (BossRushEvent.BossRushActive)
+                bubbleSummonRate -= 2;
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
@@ -616,6 +633,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 Vector2 bubbleVelocity = -Vector2.UnitY * Main.rand.NextFloat(10.5f, 13.5f);
                 if (inPhase2)
                     bubbleVelocity *= 1.15f;
+                if (BossRushEvent.BossRushActive)
+                    bubbleVelocity *= 1.6f;
 
                 Utilities.NewProjectileBetter(bubbleSpawnPosition, bubbleVelocity, ModContent.ProjectileType<AcidFountainBubble>(), 320, 0f);
             }
@@ -672,6 +691,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             int shootDelay = inPhase3 ? 50 : 65;
             int belchCount = inPhase3 ? 6 : 5;
             int belchRate = inPhase3 ? 45 : 70;
+            if (BossRushEvent.BossRushActive)
+                belchRate -= 12;
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;

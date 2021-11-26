@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -44,10 +45,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             if (Time == 30f)
             {
                 projectile.velocity = projectile.SafeDirectionTo(closestPlayer.Center) * 18f;
+                if (BossRushEvent.BossRushActive)
+                    projectile.velocity *= 1.75f;
                 Main.PlaySound(SoundID.Item73, projectile.Center);
             }
-            if (Time > 30f && projectile.velocity.Length() < 30f)
-                projectile.velocity *= 1.0185f;
+            if (Time > 30f && projectile.velocity.Length() < (BossRushEvent.BossRushActive ? 50f : 30f))
+                projectile.velocity *= BossRushEvent.BossRushActive ? 1.03f : 1.0185f;
 
             Lighting.AddLight(projectile.Center, Vector3.One * projectile.Opacity * 0.4f);
             Time++;

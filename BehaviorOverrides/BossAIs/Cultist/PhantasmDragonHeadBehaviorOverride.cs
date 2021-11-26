@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod.Events;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -53,11 +54,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 				// If close to the target, speed up. Otherwise attempt to rotate towards them.
 				if (!npc.WithinRange(target.Center, 250f))
 				{
-					float newSpeed = MathHelper.Lerp(npc.velocity.Length(), 14f, 0.065f);
+					float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 20f : 14f, 0.065f);
 					npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.0415f, true) * newSpeed;
 				}
 				else if (npc.velocity.Length() < 24f)
-					npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length() + 0.1f, 24f, 0.16f);
+					npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length() + 0.1f, BossRushEvent.BossRushActive ? 41f : 24f, 0.16f);
 
 				openMouthFlag = 1f;
 
@@ -95,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 				if (angleBetweenDirectionAndTarget < MathHelper.Pi / 3f && angleBetweenDirectionAndTarget > MathHelper.Pi * 0.75f)
 					newSpeed -= 0.0725f;
 
-				newSpeed = MathHelper.Clamp(newSpeed, 8.5f, 19f);
+				newSpeed = MathHelper.Clamp(newSpeed, 8.5f, 19f) * (BossRushEvent.BossRushActive ? 1.7f : 1f);
 
 				npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.04f, true) * newSpeed;
 			}

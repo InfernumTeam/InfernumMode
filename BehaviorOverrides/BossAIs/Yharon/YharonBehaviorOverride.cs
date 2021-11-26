@@ -1210,7 +1210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             int totalTimeSpentPerCarpetBomb = (int)(splittingMeteorRiseTime + splittingMeteorBombTime);
 
             int totalBerserkCharges = 10;
-            float berserkChargeSpeed = 50f;
+            float berserkChargeSpeed = 45f;
 
             ref float attackTimer = ref npc.ai[1];
             ref float specialFrameType = ref npc.Infernum().ExtraAI[1];

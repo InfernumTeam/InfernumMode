@@ -22,6 +22,12 @@ using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
 using CalamityMod.Events;
+using CalamityMod.NPCs.Yharon;
+using CalamityMod.NPCs.SupremeCalamitas;
+using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.NPCs.ExoMechs.Ares;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -69,7 +75,13 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 520000,
             [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 632100 : 465432,
             [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 686868 : 542444,
-            [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2450000 : 1116000
+            [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2450000 : 1116000,
+            [ModContent.NPCType<Yharon>()] = BossRushEvent.BossRushActive ? 3333330 : -1,
+            [ModContent.NPCType<Artemis>()] = BossRushEvent.BossRushActive ? 2050000 : -1,
+            [ModContent.NPCType<Apollo>()] = BossRushEvent.BossRushActive ? 2050000 : -1,
+            [ModContent.NPCType<ThanatosHead>()] = BossRushEvent.BossRushActive ? 2568000 : -1,
+            [ModContent.NPCType<AresBody>()] = BossRushEvent.BossRushActive ? 2110000 : -1,
+            [ModContent.NPCType<SupremeCalamitas>()] = BossRushEvent.BossRushActive ? 3456780 : -1,
         };
     }
 }

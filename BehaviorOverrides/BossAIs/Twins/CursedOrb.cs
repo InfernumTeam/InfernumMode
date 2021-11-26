@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -31,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             npc.aiStyle = aiType = -1;
             npc.width = npc.height = 22;
             npc.damage = 5;
-            npc.lifeMax = 1600;
+            npc.lifeMax = BossRushEvent.BossRushActive ? 48500 : 1600;
             npc.knockBackResist = 0f;
             npc.noGravity = true;
             npc.noTileCollide = true;
@@ -60,6 +61,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             Vector2 flyDestination = Target.Center;
             float flySpeed = MathHelper.SmoothStep(8f, 23f, Utils.InverseLerp(400f, 1500f, npc.Distance(flyDestination), true));
+            if (BossRushEvent.BossRushActive)
+                flySpeed *= 1.6f;
 
             if (!npc.WithinRange(flyDestination, 105f))
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(flyDestination) * flySpeed, 0.08f);
@@ -76,6 +79,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 {
                     float offsetAngle = MathHelper.Lerp(-0.51f, 0.51f, Utils.InverseLerp(85f, 95f, attackWrappedTimer, true));
                     Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(offsetAngle) * 10f;
+                    if (BossRushEvent.BossRushActive)
+                        shootVelocity *= 1.65f;
+
                     Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<CursedCinder>(), 120, 0f);
                 }
             }

@@ -100,7 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.Calamity().DR = 0.3f;
 
             // Stay in the world.
-            npc.position.Y = MathHelper.Clamp(npc.position.Y, 100f, Main.maxTilesY * 16f - 100f);
+            npc.position.Y = MathHelper.Clamp(npc.position.Y, 180f, Main.maxTilesY * 16f - 180f);
 
             if (deathTimer > 0f)
             {
@@ -532,8 +532,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.03f, lifeRatio);
-            float idealFlySpeed = MathHelper.Lerp(13.4f, 10.1f, lifeRatio);
+            float idealFlySpeed = MathHelper.Lerp(14f, 10.6f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(32f);
+
+            if (BossRushEvent.BossRushActive)
+                idealFlySpeed *= 1.4f;
 
             Vector2 destination = target.Center;
 
@@ -553,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (distanceFromDestination > 1500f && time > 120f)
             {
                 idealFlyAcceleration = MathHelper.Min(6f, flyAcceleration + 1f);
-                idealFlySpeed = 22f;
+                idealFlySpeed *= 2f;
             }
 
             flyAcceleration = MathHelper.Lerp(flyAcceleration, idealFlyAcceleration, 0.3f);

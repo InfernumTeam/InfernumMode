@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -43,6 +44,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             {
                 Main.PlaySound(SoundID.Item109, projectile.position);
                 projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitX) * 28.5f;
+                if (BossRushEvent.BossRushActive)
+                    projectile.velocity *= 1.6f;
+
                 projectile.netUpdate = true;
 			}
             projectile.rotation = projectile.velocity.ToRotation();

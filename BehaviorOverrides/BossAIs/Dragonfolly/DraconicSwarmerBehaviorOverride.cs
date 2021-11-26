@@ -1,4 +1,5 @@
 ﻿using CalamityMod.CalPlayer;
+using CalamityMod.Events;
 using CalamityMod.NPCs.Bumblebirb;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -161,6 +162,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     float distanceFromPlayer = npc.Distance(target.Center);
                     float flySpeed = (duringFollyFight ? 9f : 7f) + distanceFromPlayer / 100f + attackTimer / 15f;
                     float flyInertia = 30f;
+                    if (BossRushEvent.BossRushActive)
+                        flySpeed += 12f;
+
                     npc.velocity = (npc.velocity * (flyInertia - 1f) + npc.SafeDirectionTo(target.Center) * flySpeed) / flyInertia;
                 }
                 else if (npc.velocity.Length() > 2f)
@@ -200,7 +204,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 }
                 npc.ai[2] += 0.0166666675f;
                 float flyInertia = 25f;
-                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * ((duringFollyFight ? 12f : 9f) + npc.ai[2] + npc.Distance(target.Center) / 150f);
+                float baseFlySpeed = duringFollyFight ? 12f : 9f;
+                if (BossRushEvent.BossRushActive)
+                    baseFlySpeed += 10f;
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * (baseFlySpeed + npc.ai[2] + npc.Distance(target.Center) / 150f);
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + idealVelocity) / flyInertia;
                 return false;
             }
@@ -214,6 +221,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 // Line up for a charge for a short amount of time.
                 float flyInertia = 8f;
                 Vector2 idealFlyVelocity = npc.SafeDirectionTo(target.Center) * (duringFollyFight ? 20.5f : 14f);
+                if (BossRushEvent.BossRushActive)
+                    idealFlyVelocity *= 1.6f;
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + idealFlyVelocity) / flyInertia;
                 npc.direction = (npc.velocity.X > 0f).ToDirectionInt();
                 npc.spriteDirection = npc.direction;

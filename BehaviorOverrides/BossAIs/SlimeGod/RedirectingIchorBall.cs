@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -33,8 +34,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
             projectile.Opacity = Utils.InverseLerp(300f, 290f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * 0.75f;
 
+            float homingSpeed = BossRushEvent.BossRushActive ? 21f : 7f;
             if (projectile.timeLeft > 170 && projectile.timeLeft < 235)
-                projectile.velocity = projectile.velocity.MoveTowards(projectile.SafeDirectionTo(target.Center) * 7f, 0.25f);
+                projectile.velocity = projectile.velocity.MoveTowards(projectile.SafeDirectionTo(target.Center) * homingSpeed, 0.25f);
 
             if (projectile.timeLeft < 35)
                 projectile.velocity *= 0.98f;

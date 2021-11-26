@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -67,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 for (float speed = 4f; speed <= 14f; speed += 2.2f)
                 {
-                    Vector2 iceVelocity = (MathHelper.TwoPi * (i + 0.5f) / ShardBurstCount).ToRotationVector2() * speed;
+                    Vector2 iceVelocity = (MathHelper.TwoPi * (i + 0.5f) / ShardBurstCount).ToRotationVector2() * speed * (BossRushEvent.BossRushActive ? 1.6f : 1f);
                     Utilities.NewProjectileBetter(projectile.Center, iceVelocity, ModContent.ProjectileType<IceShard>(), 165, 0f);
                 }
             }

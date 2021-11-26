@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Tiles;
@@ -345,6 +346,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
             if (currentPhase == 0f && lifeRatio < Phase2LifeRatio)
             {
+                SelectNewAttack(npc);
+
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
                 currentPhase = 1f;
@@ -354,6 +357,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
             if (currentPhase == 1f && lifeRatio < Phase3LifeRatio)
             {
+                SelectNewAttack(npc);
+
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
                 currentPhase = 2f;
@@ -363,6 +368,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
             if (textState == 4f && !brotherIsPresent && attackTextDelay <= 0f)
             {
+                SelectNewAttack(npc);
+
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
                 textState = 5f;
@@ -378,6 +385,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
             if (currentPhase == 2f && lifeRatio < Phase4LifeRatio && !seekerIsPresent && attackTextDelay <= 0f)
             {
+                SelectNewAttack(npc);
+
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
                 currentPhase = 3f;
@@ -387,6 +396,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
             if (currentPhase == 3f && lifeRatio < Phase5LifeRatio && attackTextDelay <= 0f)
             {
+                SelectNewAttack(npc);
+
                 attackTimer = 0f;
                 attackCycleIndex = 0f;
                 currentPhase = 4f;
@@ -450,16 +461,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 // Start of battle.
                 case 0:
-                    if (attackTextDelay == 120f)
+                    if (!BossRushEvent.BossRushActive && attackTextDelay == 120f)
                         Main.NewText("...So it's you.", Color.Orange);
 
-                    if (attackTextDelay == 20f)
+                    if (!BossRushEvent.BossRushActive && attackTextDelay == 20f)
                         Main.NewText("After all you've done, I will make you suffer.", Color.Orange);
                     break;
 
                 // After Sepulcher.
                 case 2:
-                    if (attackTextDelay == 100f)
+                    if (!BossRushEvent.BossRushActive && attackTextDelay == 100f)
                         Main.NewText("...You're still alive?", Color.Orange);
                     break;
 
@@ -467,10 +478,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case 3:
                     frameType = (int)SCalFrameType.Casting;
                     frameChangeSpeed = 0.15f;
-                    if (attackTextDelay == 240f)
+                    if (!BossRushEvent.BossRushActive && attackTextDelay == 240f)
                         Main.NewText("The powers you wield. The strength you've amassed.", Color.Orange);
 
-                    if (attackTextDelay == 150f)
+                    if (!BossRushEvent.BossRushActive && attackTextDelay == 150f)
                         Main.NewText("They will not stop me.", Color.Orange);
 
                     // Summon the shadow demon.
@@ -489,10 +500,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case 4:
                     frameType = (int)SCalFrameType.Casting;
                     frameChangeSpeed = 0.15f;
-                    if (attackTextDelay == 240f)
+                    if (!BossRushEvent.BossRushActive && attackTextDelay == 240f)
                         Main.NewText("You are an anomaly. An unforeseen deviation..", Color.Orange);
 
-                    if (attackTextDelay == 150f)
+                    if (!BossRushEvent.BossRushActive && attackTextDelay == 150f)
                         Main.NewText("...And in the end, the bloodshed continues.", Color.Orange);
 
                     // Do a cast animation.
@@ -547,7 +558,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 case 6:
                     if (attackTextDelay == 90f)
                     {
-                        Main.NewText("When the ashes fall, what will all of this have been for?", Color.Orange);
+                        if (!BossRushEvent.BossRushActive)
+                            Main.NewText("When the ashes fall, what will all of this have been for?", Color.Orange);
 
                         // Transition to the Epiphany section of the track.
                         Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
@@ -594,7 +606,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                     if (attackTextDelay == 150f)
                     {
-                        Main.NewText("I have no future if I lose here!", Color.Orange);
+                        if (!BossRushEvent.BossRushActive)
+                            Main.NewText("I have no future if I lose here!", Color.Orange);
 
                         // Create a lot of fire dust.
                         for (int i = 0; i < 80; i++)
@@ -631,7 +644,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // Final phase.
                 case 8:
-                    if (attackTextDelay == 150f)
+                    if (!BossRushEvent.BossRushActive && attackTextDelay == 150f)
                         Main.NewText("Just stop!", Color.Orange);
 
                     // Release a bunch of energy explosions.
@@ -800,9 +813,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         SelectNewAttack(npc);
                     npc.netUpdate = true;
                 }
-			}
-			else
-			{
+            }
+            else
+            {
                 frameType = (int)SCalFrameType.UpwardDraft;
                 frameChangeSpeed = 0.15f;
             }
@@ -864,12 +877,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     {
                         npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.065f, 0f, 1f);
                         npc.velocity *= 0.825f;
-					}
-					else
-					{
+                    }
+                    else
+                    {
                         frameType = (int)SCalFrameType.FasterUpwardDraft;
                         frameChangeSpeed = 0.225f;
-					}
+                    }
 
                     // Create brimstone bombs.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == fadeoutTime + chargeTime + 10f)
@@ -905,7 +918,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int attackDelay = 50;
             int shootTime = 50;
             int shootRate = 2;
-            float shootSpeed = enrageFactor * 3f + 9f;
+            float shootSpeed = enrageFactor * 3f + 12f;
             float angularVariance = 1.53f;
 
             if (currentPhase >= 1)
@@ -1348,7 +1361,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Look at the player again after a bit of time charging.
                     if (attackTimer >= chargeTime)
                         npc.velocity *= 0.9f;
-					else
+                    else
                     {
                         // Determine frames.
                         frameType = (int)SCalFrameType.FasterUpwardDraft;
@@ -1424,7 +1437,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     int teleportCounter = (int)(attackTimer / teleportShootDelay);
                     if (wrappedAttackTimer == 1f)
                     {
-                        Vector2 teleportPosition = target.Center + (MathHelper.PiOver2 * (teleportCounter + 0.5f)).ToRotationVector2() * 400f;
+                        Vector2 teleportPosition = target.Center + (MathHelper.PiOver2 * (teleportCounter + 0.5f)).ToRotationVector2() * 600f;
                         Dust.QuickDustLine(npc.Center, teleportPosition, 200f, Color.OrangeRed);
                         npc.Center = teleportPosition;
                         npc.netUpdate = true;
@@ -1544,7 +1557,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Transition to the Acceptance section of the track.
                     Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
                     if (calamityModMusic != null)
-                        npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCL");
+                        npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCA");
                     else
                         npc.modNPC.music = MusicID.Boss3;
 
@@ -1555,23 +1568,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
                     npc.damage = 0;
 
-                    if (attackTimer == 60f)
-                        Main.NewText("So...This is how it ends.", Color.Orange);
-
-                    if (attackTimer == 210f)
-                        Main.NewText("...I have no energy left to resent you.", Color.Orange);
-
-                    if (attackTimer == 360f)
-                        Main.NewText("Yet perhaps... from this, a new age will begin.", Color.Orange);
-
-                    if (attackTimer == 510f)
-                        Main.NewText("Whatever awaits you, I am certain the consequences will be felt.", Color.Orange);
-
-                    if (attackTimer == 640f)
-                        Main.NewText("It will all be in your hands now.", Color.Orange);
-
-                    if (attackTimer == 760f)
+                    if (!BossRushEvent.BossRushActive)
                     {
+                        if (attackTimer == 60f)
+                            Main.NewText("So...This is how it ends.", Color.Orange);
+
+                        if (attackTimer == 210f)
+                            Main.NewText("...I have no energy left to resent you.", Color.Orange);
+
+                        if (attackTimer == 360f)
+                            Main.NewText("Yet perhaps... from this, a new age will begin.", Color.Orange);
+
+                        if (attackTimer == 510f)
+                            Main.NewText("Whatever awaits you, I am certain the consequences will be felt.", Color.Orange);
+
+                        if (attackTimer == 640f)
+                            Main.NewText("It will all be in your hands now.", Color.Orange);
+
+                        if (attackTimer == 760f)
+                        {
+                            npc.NPCLoot();
+                            npc.active = false;
+                        }
+                    }
+                    else if (attackTimer >= 240f)
+                    {
+                        npc.life = 0;
+                        npc.HitEffect();
+                        npc.checkDead();
                         npc.NPCLoot();
                         npc.active = false;
                     }

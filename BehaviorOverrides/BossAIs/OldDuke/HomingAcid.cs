@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Events;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 {
@@ -38,8 +39,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Time < 80f)
                 return;
 
+            float idealFlySpeed = BossRushEvent.BossRushActive ? 22f : 12f;
             if (!projectile.WithinRange(ClosestPlayer.Center, 150f))
-                projectile.velocity = (projectile.velocity * 69f + projectile.SafeDirectionTo(ClosestPlayer.Center) * 12f) / 70f;
+                projectile.velocity = (projectile.velocity * 69f + projectile.SafeDirectionTo(ClosestPlayer.Center) * idealFlySpeed) / 70f;
 
             if (projectile.WithinRange(ClosestPlayer.Center, 20f))
                 projectile.Kill();

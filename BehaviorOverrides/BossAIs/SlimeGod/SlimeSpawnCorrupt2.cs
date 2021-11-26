@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using System.IO;
@@ -59,8 +60,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             if (RedirectCountdown > 0f && !npc.WithinRange(slimeGod.Center, 50f))
             {
+                float flySpeed = BossRushEvent.BossRushActive ? 38f : 20.75f;
                 Vector2 destinationOffset = (MathHelper.TwoPi * npc.whoAmI / 13f).ToRotationVector2() * 12f;
-                npc.velocity = (npc.velocity * 34f + npc.SafeDirectionTo(slimeGod.Center + destinationOffset) * 20.75f) / 35f;
+                npc.velocity = (npc.velocity * 34f + npc.SafeDirectionTo(slimeGod.Center + destinationOffset) * flySpeed) / 35f;
                 RedirectCountdown--;
             }
 

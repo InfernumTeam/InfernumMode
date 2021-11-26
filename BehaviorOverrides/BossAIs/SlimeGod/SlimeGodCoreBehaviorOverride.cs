@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod.Events;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -162,6 +163,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 float flySpeed = 7f;
                 float flyInertia = 4f;
                 float horizontalOffset = 720f;
+                if (BossRushEvent.BossRushActive)
+                    flySpeed *= 2f;
+
                 Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * horizontalOffset;
 
                 // Fly towards the destination beside the player.
@@ -182,6 +186,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 int chargeDelay = 30;
                 float flySpeed = 9f;
                 float flyInertia = 8f;
+                if (BossRushEvent.BossRushActive)
+                    flySpeed *= 2f;
+
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity) / flyInertia;
 
@@ -216,6 +223,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 float flySpeed = 7f;
                 float flyInertia = 4f;
                 float verticalOffset = 400f;
+                if (BossRushEvent.BossRushActive)
+                    flySpeed *= 2f;
+
                 Vector2 destination = target.Center - Vector2.UnitY * Math.Sign(target.Center.Y - npc.Center.Y) * verticalOffset;
 
                 // Fly towards the destination beside the player.
@@ -236,6 +246,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 int chargeDelay = 30;
                 float flySpeed = 9f;
                 float flyInertia = 8f;
+                if (BossRushEvent.BossRushActive)
+                    flySpeed *= 2f;
+
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity) / flyInertia;
 
@@ -341,6 +354,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackTimer == 220f)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 10f) * 16.5f;
+                if (BossRushEvent.BossRushActive)
+                    npc.velocity *= 1.65f;
                 npc.netUpdate = true;
             }
 
@@ -362,7 +377,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             Vector2 destination = target.Center - Vector2.UnitY * 400f + Vector2.UnitX * target.velocity * 35f;
             if (!npc.WithinRange(destination, 120f))
             {
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * 14f, 1f);
+                float hoverSpeed = BossRushEvent.BossRushActive ? 26f : 14f;
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * hoverSpeed, 1f);
                 npc.rotation = npc.velocity.X * 0.15f;
             }
             else
@@ -402,6 +418,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 float flySpeed = 10f;
                 float flyInertia = 4f;
                 float horizontalOffset = 720f;
+                if (BossRushEvent.BossRushActive)
+                    flySpeed *= 2.15f;
+
                 Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * horizontalOffset;
 
                 // Fly towards the destination beside the player.
@@ -422,6 +441,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 int chargeDelay = 30;
                 float flySpeed = 14.5f;
                 float flyInertia = 8f;
+                if (BossRushEvent.BossRushActive)
+                    flySpeed *= 2.15f;
+
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity) / flyInertia;
 
@@ -467,6 +489,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 float flySpeed = 9.5f;
                 float flyInertia = 4f;
                 float verticalOffset = 400f;
+                if (BossRushEvent.BossRushActive)
+                    flySpeed *= 2.15f;
+
                 Vector2 destination = target.Center - Vector2.UnitY * Math.Sign(target.Center.Y - npc.Center.Y) * verticalOffset;
 
                 // Fly towards the destination beside the player.
@@ -487,6 +512,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 int chargeDelay = 30;
                 float flySpeed = 9f;
                 float flyInertia = 13.5f;
+                if (BossRushEvent.BossRushActive)
+                    flySpeed *= 2.15f;
+
                 Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
                 npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity) / flyInertia;
 

@@ -495,8 +495,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		public static void DoProjectileShootInterceptionMovement(NPC npc, Player target, float speedMultiplier = 1f)
 		{
 			// Attempt to intercept the target.
-			Vector2 hoverDestination = target.Center + target.velocity.SafeNormalize(Vector2.UnitX * target.direction) * new Vector2(675f, 950f);
-			hoverDestination.Y -= 650f;
+			Vector2 hoverDestination = target.Center + target.velocity.SafeNormalize(Vector2.UnitX * target.direction) * new Vector2(675f, 550f);
+			hoverDestination.Y -= 550f;
 
 			float idealFlySpeed = 14f;
 

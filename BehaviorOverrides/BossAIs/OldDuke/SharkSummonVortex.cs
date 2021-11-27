@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 			if (Time == 0f)
 				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeVortex"), projectile.Center);
 
-			if (Main.netMode != NetmodeID.MultiplayerClient && Time % 20f == 10f)
+			if (Main.netMode != NetmodeID.MultiplayerClient && Time % 12f == 11f)
             {
 				Vector2 sharkVelocity = (MathHelper.TwoPi * Time / 120f).ToRotationVector2() * 8f;
 				int shark = NPC.NewNPC((int)projectile.Center.X, (int)projectile.Center.Y, ModContent.NPCType<OldDukeSharkron>());

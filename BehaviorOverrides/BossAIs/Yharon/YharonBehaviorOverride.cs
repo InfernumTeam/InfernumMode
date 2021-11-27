@@ -729,6 +729,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Create sparkles and create heat distortion when charging if doing a phoenix supercharge.
             else if ((YharonAttackType)(int)attackType == YharonAttackType.PhoenixSupercharge && attackTimer < chargeDelay + chargeTime)
             {
+                fireIntensity = 1f;
                 float competionRatio = Utils.InverseLerp(chargeDelay, chargeDelay + chargeTime, attackTimer, true);
                 Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f + CalamityUtils.Convert01To010(competionRatio) * 3f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -740,9 +741,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     }
                 }
             }
-
-            if (attackTimer > chargeDelay)
-                fireIntensity = 1f;
 
             if (attackTimer >= chargeDelay + chargeTime)
                 SelectNextAttack(npc, ref attackType);
@@ -1034,16 +1032,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 Vector2 flareSpawnPosition = npc.Center + ((attackTimer - flareRingSpawnRate + 1) / flareRingSpawnRate * MathHelper.TwoPi / totalFlaresInRing).ToRotationVector2() * 665f;
 
                 if (!target.WithinRange(flareSpawnPosition, 700f))
-                {
                     NPC.NewNPC((int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
-
-                    for (int i = 0; i < 4; i++)
-                    {
-                        Vector2 fireballShootVelocity = (MathHelper.TwoPi / 4f * i).ToRotationVector2() * 7f;
-                        int fire = Utilities.NewProjectileBetter(flareSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 470, 0f, Main.myPlayer);
-                        Main.projectile[fire].tileCollide = false;
-                    }
-                }
             }
 
             if (attackTimer >= flareRingSpawnRate * totalFlaresInRing)

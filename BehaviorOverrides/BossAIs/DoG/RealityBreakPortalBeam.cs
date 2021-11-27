@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             else if (projectile.ai[0] <= 45f)
             {
                 Player closest = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-                AimDestination = closest.Center;
+                AimDestination = closest.Center + closest.velocity * 37.5f;
             }
 
             projectile.rotation -= MathHelper.TwoPi / 100f;

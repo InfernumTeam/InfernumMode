@@ -325,6 +325,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.032f, lifeRatio);
             float idealFlySpeed = MathHelper.Lerp(19f, 14.4f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(34f);
+            float flySpeedFactor = 1f + lifeRatio * 0.425f;
+
             Vector2 destination = Main.player[npc.target].Center;
 
             float distanceFromDestination = npc.Distance(destination);
@@ -333,6 +335,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 destination += (time % 60f / 60f * MathHelper.TwoPi).ToRotationVector2() * 120f;
                 distanceFromDestination = npc.Distance(destination);
                 idealFlyAcceleration *= 2.5f;
+                flySpeedFactor = 1.5f;
             }
             float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.InverseLerp(460f, 600f, distanceFromDestination, true) * 0.41f;
 
@@ -363,7 +366,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
                     speed -= 0.1f;
 
-                speed = MathHelper.Clamp(speed, 10f, 27f);
+                speed = MathHelper.Clamp(speed, flySpeedFactor * 10f, flySpeedFactor * 27f);
 
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
             }

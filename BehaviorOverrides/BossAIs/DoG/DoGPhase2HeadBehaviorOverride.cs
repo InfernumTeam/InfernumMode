@@ -538,6 +538,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float idealFlyAcceleration = MathHelper.Lerp(0.05f, 0.037f, lifeRatio);
             float idealFlySpeed = MathHelper.Lerp(20.5f, 15f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(32f);
+            float flySpeedFactor = 1f + lifeRatio * 0.5f;
 
             if (BossRushEvent.BossRushActive)
                 idealFlySpeed *= 1.4f;
@@ -550,6 +551,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 destination += (time % 60f / 60f * MathHelper.TwoPi).ToRotationVector2() * 145f;
                 distanceFromDestination = npc.Distance(destination);
                 idealFlyAcceleration *= 1.45f;
+                flySpeedFactor = 1.55f;
             }
 
             float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.InverseLerp(400f, 540f, distanceFromDestination, true) * 0.41f;
@@ -584,7 +586,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
                     speed -= 0.1f;
 
-                speed = MathHelper.Clamp(speed, 10f, 23f);
+                speed = MathHelper.Clamp(speed, flySpeedFactor * 12f, flySpeedFactor * 30f);
 
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
             }
@@ -769,7 +771,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                             }
                             break;
                         case SpecialAttackType.LaserRays:
-                            if (specialAttackTimer % 35f == 0f && specialAttackTimer <= 600f)
+                            if (specialAttackTimer % 60f == 0f && specialAttackTimer <= 600f)
                             {
                                 float offsetAngle = target.velocity.ToRotation();
                                 if (target.velocity.Length() < 3f)

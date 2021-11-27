@@ -57,7 +57,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.AcidBelch,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -65,7 +69,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.SharkronSpinSummon,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -76,12 +84,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         {
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.SharkronSpinSummon,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
@@ -89,11 +102,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.AcidBelch,
+            OldDukeAttackState.Charge,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
+            OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -408,7 +425,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             bool goingToCharge = upcomingAttack == OldDukeAttackState.Charge || upcomingAttack == OldDukeAttackState.FastRegularCharge;
             int waitDelay = 45;
             if (goingToCharge)
-                waitDelay = 40;
+                waitDelay = 30;
             if (upcomingAttack == OldDukeAttackState.TeleportPause)
                 waitDelay = 20;
             if (inPhase4)
@@ -443,19 +460,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public static void DoBehavior_Charge(NPC npc, Player target, bool inPhase2, bool inPhase3, bool inPhase4, float attackTimer, ref float frameType)
 		{
-            int chargeTime = 29;
-            float chargeSpeed = 32.5f;
+            int chargeTime = 21;
+            float chargeSpeed = 34.5f;
             float aimAheadFactor = 0.95f;
 
             if (inPhase2)
             {
-                chargeTime = 26;
-                chargeSpeed = 36.25f;
+                chargeTime -= 3;
+                chargeSpeed += 4f;
             }
             if (inPhase3)
             {
-                chargeTime = inPhase4 ? 21 : 22;
-                chargeSpeed = inPhase4 ? 43f : 41.5f;
+                chargeTime -= inPhase4 ? 6 : 5;
+                chargeSpeed += inPhase4 ? 9f : 5f;
                 aimAheadFactor = MathHelper.Lerp(1f, 1.45f, Utils.InverseLerp(200f, 525f, npc.Distance(target.Center), true));
             }
             if (BossRushEvent.BossRushActive)
@@ -476,7 +493,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (attackTimer == 1f)
 			{
                 int chargeDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor * 15f) * chargeSpeed;
+                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor * 14.25f) * chargeSpeed;
                 npc.spriteDirection = chargeDirection;
 
                 npc.rotation = npc.velocity.ToRotation();
@@ -508,7 +525,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         public static void DoBehavior_FastRegularCharge(NPC npc, Player target, float attackTimer, ref float frameType)
         {
             int chargeTime = 23;
-            float chargeSpeed = 47f;
+            float chargeSpeed = 56f;
             if (BossRushEvent.BossRushActive)
             {
                 chargeTime -= 3;
@@ -561,8 +578,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.damage = 0;
 
             int shootDelay = inPhase2 ? 45 : 55;
-            int belchCount = inPhase2 ? 5 : 3;
-            int belchRate = inPhase2 ? 28 : 36;
+            int belchCount = inPhase2 ? 6 : 4;
+            int belchRate = inPhase2 ? 24 : 30;
             if (BossRushEvent.BossRushActive)
                 belchRate -= 6;
 
@@ -608,7 +625,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             int shootDelay = inPhase2 ? 40 : 55;
             int bubbleCount = inPhase2 ? 12 : 15;
-            int bubbleSummonRate = inPhase2 ? 11 : 18;
+            int bubbleSummonRate = inPhase2 ? 9 : 15;
             if (BossRushEvent.BossRushActive)
                 bubbleSummonRate -= 2;
 
@@ -668,7 +685,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
                 Vector2 vortexSpawnPosition = npc.Center + npc.velocity.RotatedBy(npc.spriteDirection * MathHelper.PiOver2) * spinTime / totalRotations / MathHelper.TwoPi;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
                     Utilities.NewProjectileBetter(vortexSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SharkSummonVortex>(), 480, 0f);
+
+                    // Release sharks from above.
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1050f);
+                        int shark = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<OldDukeSharkron>());
+                        if (Main.npc.IndexInRange(shark))
+                        {
+                            Main.npc[shark].velocity = Main.rand.NextVector2CircularEdge(8f, 8f);
+                            Main.npc[shark].ai[1] = 1f;
+                            Main.npc[shark].netUpdate = true;
+                        }
+                    }
+                }
             }
 
             frameType = (int)OldDukeFrameType.Charge;
@@ -762,7 +794,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     for (int i = 0; i < goreCount; i++)
                     {
-                        Vector2 goreVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(15f, 23f);
+                        Vector2 goreVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(19f, 27f);
                         Utilities.NewProjectileBetter(mouthPosition, goreVelocity, ModContent.ProjectileType<OldDukeGore>(), 345, 0f);
                     }
                 }
@@ -770,7 +802,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 150f && attackTimer < 180f)
             {
-                Vector2 acidVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(12f, 16f);
+                Vector2 acidVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(14f, 19f);
                 Utilities.NewProjectileBetter(mouthPosition, acidVelocity, ModContent.ProjectileType<HomingAcid>(), 325, 0f);
             }
 
@@ -782,7 +814,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         {
             npc.damage = 0;
 
-            int fadeTime = 20;
+            int fadeTime = 15;
             if (attackTimer <= fadeTime)
                 npc.Opacity = Utils.InverseLerp(12f, 0f, attackTimer, true);
             else if (attackTimer <= fadeTime * 2f)

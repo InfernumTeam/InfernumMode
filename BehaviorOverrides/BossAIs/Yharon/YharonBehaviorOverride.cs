@@ -460,10 +460,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if (nextAttackType != YharonAttackType.PhoenixSupercharge && nextAttackType != YharonAttackType.HeatFlashRing)
                 fireIntensity = MathHelper.Lerp(fireIntensity, 0f, 0.075f);
 
-            float chargeSpeed = 37f;
+            float chargeSpeed = 40.5f;
             float chargeDelay = 45;
             float chargeTime = 45f;
-            float fastChargeSpeedMultiplier = 1.4f;
+            float fastChargeSpeedMultiplier = 1.28f;
 
             float fireballBreathShootDelay = 34f;
             float totalFireballBreaths = 12f;
@@ -508,7 +508,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 case YharonAttackType.PhoenixSupercharge:
                     chargeDelay = berserkChargeMode ? 30 : 60;
                     chargeTime = berserkChargeMode ? 20f : 35f;
-                    fastChargeSpeedMultiplier = berserkChargeMode ? 1.4f : 1.7f;
+                    fastChargeSpeedMultiplier = berserkChargeMode ? 1.28f : 1.56f;
                     break;
             }
 
@@ -560,7 +560,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     break;
                 case YharonAttackType.Charge:
                 case YharonAttackType.TeleportingCharge:
-                    DoBehavior_ChargesAndTeleportCharges(npc, target, chargeDelay, chargeTime, chargeSpeed, teleportChargeCounter, ref attackTimer, ref attackType, ref specialFrameType);
+                    DoBehavior_ChargesAndTeleportCharges(npc, target, (int)(chargeDelay * 0.6f), chargeTime, chargeSpeed, teleportChargeCounter, ref attackTimer, ref attackType, ref specialFrameType);
                     break;
                 case YharonAttackType.FastCharge:
                 case YharonAttackType.PhoenixSupercharge:
@@ -707,7 +707,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 // Hover to the top left/right of the target and look at them.
                 Vector2 destination = target.Center + new Vector2(xAimOffset, berserkChargeMode ? -480f : -240f);
-                Vector2 idealVelocity = npc.SafeDirectionTo(destination - npc.velocity) * 18f;
+                Vector2 idealVelocity = npc.SafeDirectionTo(destination - npc.velocity) * 26f;
                 npc.SimpleFlyMovement(idealVelocity, 1.1f);
 
                 npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
@@ -766,7 +766,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 xAimOffset = 560f * Math.Sign((npc.Center - target.Center).X);
 
             Vector2 destination = target.Center + new Vector2(xAimOffset, -270f);
-            Vector2 idealVelocity = npc.SafeDirectionTo(destination - npc.velocity) * 17f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(destination - npc.velocity) * 26f;
             npc.SimpleFlyMovement(idealVelocity, 1f);
 
             npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
@@ -776,7 +776,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int fireball = Utilities.NewProjectileBetter(mouthPosition, npc.SafeDirectionTo(mouthPosition) * 20f, ProjectileID.CultistBossFireBall, 450, 0f);
+                    Vector2 fireballShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.91f) * 23f;
+                    int fireball = Utilities.NewProjectileBetter(mouthPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 450, 0f);
                     Main.projectile[fireball].tileCollide = false;
                 }
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
@@ -788,14 +789,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static void DoBehavior_FlarenadoAndDetonatingFlameSpawn(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
-            float flarenadoSpawnDelay = 30f;
+            float flarenadoSpawnDelay = 15f;
 
             specialFrameType = (int)YharonFrameDrawingType.FlapWings;
 
             // Slow down quickly during the delay and approach a 0 rotation.
             if (attackTimer < flarenadoSpawnDelay)
             {
-                npc.velocity *= 0.955f;
+                npc.velocity *= 0.9f;
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.1f);
             }
 
@@ -814,9 +815,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
 
             // Release detonating flares.
-            else if (attackTimer < flarenadoSpawnDelay + 75f)
+            else if (attackTimer < flarenadoSpawnDelay + 45f)
             {
-                if ((attackTimer - flarenadoSpawnDelay) % 12f == 11f)
+                if ((attackTimer - flarenadoSpawnDelay) % 7f == 6f)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient && NPC.CountNPCS(ModContent.NPCType<DetonatingFlare>()) + NPC.CountNPCS(ModContent.NPCType<DetonatingFlare2>()) < 8)
                     {
@@ -934,7 +935,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 xAimOffset = 770f * Math.Sign((npc.Center - target.Center).X);
 
             Vector2 destination = target.Center + new Vector2(xAimOffset, -360f);
-            Vector2 idealVelocity = npc.SafeDirectionTo(destination - npc.velocity) * 17f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(destination - npc.velocity) * 26f;
             npc.SimpleFlyMovement(idealVelocity, 1f);
 
             npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
@@ -953,7 +954,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     for (int i = 0; i < fireballCount; i++)
                     {
                         float offsetAngle = MathHelper.Lerp(-angleSpread, angleSpread, i / (float)fireballCount);
-                        float burstSpeed = Main.rand.NextFloat(9f, 13f);
+                        float burstSpeed = Main.rand.NextFloat(12f, 19f);
                         if (enraged)
                             burstSpeed *= Main.rand.NextFloat(1.5f, 2.7f);
 

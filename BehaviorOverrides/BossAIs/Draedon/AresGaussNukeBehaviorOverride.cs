@@ -50,8 +50,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float rechargeTime = ref npc.ai[2];
 
 			// Initialize delays and other timers.
-			float idealChargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime * 2.3f;
-			float idealRechargeTime = AresBodyBehaviorOverride.Phase1ArmChargeupTime * 2.3f;
+			float idealChargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime * 1.95f;
+			float idealRechargeTime = AresBodyBehaviorOverride.Phase1ArmChargeupTime * 1.95f;
 
 			if (ExoMechManagement.CurrentAresPhase >= 2)
 			{

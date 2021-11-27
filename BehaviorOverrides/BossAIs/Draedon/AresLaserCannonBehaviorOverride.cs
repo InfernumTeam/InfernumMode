@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int shootTime = 240;
 			int totalLasersPerBurst = 6;
 			float aimPredictiveness = 25f;
-			float laserShootSpeed = 7f;
+			float laserShootSpeed = 8f;
 			ref float attackTimer = ref npc.ai[0];
 			ref float chargeDelay = ref npc.ai[1];
 			ref float laserCounter = ref npc.ai[2];

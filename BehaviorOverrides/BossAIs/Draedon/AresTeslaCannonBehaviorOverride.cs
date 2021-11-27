@@ -46,11 +46,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int shootTime = 150;
 			int totalOrbsPerBurst = 3;
 			float aimPredictiveness = 25f;
-			float orbShootSpeed = 9f;
+			float orbShootSpeed = 10f;
 			Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
 
 			// Shoot slower if pointing downward.
-			orbShootSpeed *= MathHelper.Lerp(1f, 0.75f, Utils.InverseLerp(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
+			orbShootSpeed *= MathHelper.Lerp(1f, 0.8f, Utils.InverseLerp(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
 
 			if (ExoMechManagement.CurrentAresPhase >= 2)
 			{

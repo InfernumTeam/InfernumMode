@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			projectile.tileCollide = false;
 			projectile.penetrate = -1;
 			projectile.Opacity = 0f;
-			projectile.timeLeft = 105;
+			projectile.timeLeft = 125;
 			projectile.Calamity().canBreakPlayerDefense = true;
 			cooldownSlot = 1;
 		}
@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (projectile.velocity.Length() < 26f)
 				projectile.velocity *= 1.01f;
 
-			projectile.Opacity = Utils.InverseLerp(105f, 100f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 15f, projectile.timeLeft, true);
+			projectile.Opacity = Utils.InverseLerp(125f, 120f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 15f, projectile.timeLeft, true);
 
 			// Emit light.
 			Lighting.AddLight(projectile.Center, 0.1f * projectile.Opacity, 0.25f * projectile.Opacity, 0.25f * projectile.Opacity);

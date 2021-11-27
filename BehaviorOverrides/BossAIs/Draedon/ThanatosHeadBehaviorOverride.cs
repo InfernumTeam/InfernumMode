@@ -273,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * flySpeed;
 			}
 
-			if (npc.WithinRange(target.Center, 500f) && !npc.WithinRange(target.Center, 200f))
+			if (!npc.WithinRange(target.Center, 200f))
 				npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), generalSpeedFactor);
 
 			// Lunge if near the player.

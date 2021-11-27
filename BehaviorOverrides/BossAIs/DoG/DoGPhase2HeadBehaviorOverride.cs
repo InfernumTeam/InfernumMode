@@ -82,6 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     npc.Center = Main.projectile[(int)fadeinPortalIndex].Center;
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 36f;
                     npc.netUpdate = true;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
                 }
                 return false;
             }
@@ -379,6 +382,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
+
                 if (Main.netMode != NetmodeID.Server)
                 {
                     var soundInstance = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
@@ -449,7 +453,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (trapChargeTimer < 180f)
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 0f, 0.28f);
 
-            float chargeSpeed = npc.life / (float)npc.lifeMax < 0.2f ? 54f : 42f;
+            float chargeSpeed = npc.life / (float)npc.lifeMax < 0.2f ? 68f : 61.5f;
             if ((int)trapChargeTimer == 45f)
             {
                 npc.Opacity = 0f;
@@ -531,8 +535,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public static void DoAggressiveFlyMovement(NPC npc, Player target, bool chomping, ref float jawRotation, ref float chompTime, ref float time, ref float flyAcceleration)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.03f, lifeRatio);
-            float idealFlySpeed = MathHelper.Lerp(14f, 10.6f, lifeRatio);
+            float idealFlyAcceleration = MathHelper.Lerp(0.05f, 0.037f, lifeRatio);
+            float idealFlySpeed = MathHelper.Lerp(20.5f, 15f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(32f);
 
             if (BossRushEvent.BossRushActive)
@@ -637,10 +641,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     for (int i = 0; i < 2; i++)
                     {
                         float xOffset = Main.rand.NextFloat(1185f, 1205f);
-                        Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * xOffset, Vector2.Zero, ModContent.ProjectileType<DoGLightningBarrier>(), 555, 0f, npc.target);
+                        Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * xOffset, Vector2.Zero, ModContent.ProjectileType<DoGLightningBarrier>(), 655, 0f, npc.target);
 
                         xOffset = Main.rand.NextFloat(1185f, 1205f);
-                        Utilities.NewProjectileBetter(target.Center - Vector2.UnitX * xOffset, Vector2.Zero, ModContent.ProjectileType<DoGLightningBarrier>(), 555, 0f, npc.target);
+                        Utilities.NewProjectileBetter(target.Center - Vector2.UnitX * xOffset, Vector2.Zero, ModContent.ProjectileType<DoGLightningBarrier>(), 655, 0f, npc.target);
                     }
                 }
                 trapChargeTimer = 1f;
@@ -713,9 +717,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     switch (specialAttackType)
                     {
                         case SpecialAttackType.LaserWalls:
-                            int offsetPerLaser = 105;
-                            float laserWallSpeed = 12f;
-                            if (specialAttackTimer % 105 == 0 && specialAttackTimer <= 520f)
+                            int offsetPerLaser = 95;
+                            float laserWallSpeed = 16f;
+                            if (specialAttackTimer % 75f == 0f && specialAttackTimer <= 520f)
                             {
                                 Main.PlaySound(SoundID.Item12, (int)target.position.X, (int)target.position.Y);
 
@@ -724,48 +728,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                                 // Side walls
                                 for (int x = -10; x < 10; x++)
                                 {
-                                    Projectile.NewProjectile(target.position.X + 1000f, targetPosY + x * offsetPerLaser, -laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 81, 0f, Main.myPlayer, 0f, 0f);
-                                    Projectile.NewProjectile(target.position.X - 1000f, targetPosY + x * offsetPerLaser, laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 81, 0f, Main.myPlayer, 0f, 0f);
+                                    Utilities.NewProjectileBetter(target.position.X + 1000f, targetPosY + x * offsetPerLaser, -laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
+                                    Utilities.NewProjectileBetter(target.position.X - 1000f, targetPosY + x * offsetPerLaser, laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
                                 }
 
-                                if (Main.rand.NextBool(2) && (CalamityWorld.revenge || BossRushEvent.BossRushActive))
+                                if (Main.rand.NextBool(2))
                                 {
                                     for (int x = -5; x < 5; x++)
                                     {
-                                        Projectile.NewProjectile(target.position.X + 1000f, targetPosY + x * (Main.rand.NextBool(2) ? 180 : 200), -laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 81, 0f, Main.myPlayer, 0f, 0f);
-                                        Projectile.NewProjectile(target.position.X - 1000f, targetPosY + x * (Main.rand.NextBool(2) ? 180 : 200), laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 81, 0f, Main.myPlayer, 0f, 0f);
+                                        Utilities.NewProjectileBetter(target.position.X + 1000f, targetPosY + x * (Main.rand.NextBool(2) ? 180 : 200), -laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
+                                        Utilities.NewProjectileBetter(target.position.X - 1000f, targetPosY + x * (Main.rand.NextBool(2) ? 180 : 200), laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
                                     }
                                 }
 
                                 // Lower wall
                                 for (int x = -12; x <= 12; x++)
                                 {
-                                    Projectile.NewProjectile(target.position.X + x * offsetPerLaser, target.position.Y + 1000f, 0f, -laserWallSpeed, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 81, 0f, Main.myPlayer, 0f, 0f);
+                                    Utilities.NewProjectileBetter(target.position.X + x * offsetPerLaser, target.position.Y + 1000f, 0f, -laserWallSpeed, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
                                 }
 
                                 // Upper wall
                                 if (lifeRatio < 0.4f)
                                 {
                                     for (int x = -20; x < 20; x++)
-                                        Projectile.NewProjectile(target.position.X + x * offsetPerLaser, target.position.Y - 1000f, 0f, laserWallSpeed, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 81, 0f, Main.myPlayer, 0f, 0f);
+                                        Utilities.NewProjectileBetter(target.position.X + x * offsetPerLaser, target.position.Y - 1000f, 0f, laserWallSpeed, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
                                 }
                                 else
                                 {
                                     for (int x = -12; x <= 12; x++)
-                                        Projectile.NewProjectile(target.position.X + x * offsetPerLaser, target.position.Y - 1000f, 0f, laserWallSpeed, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 81, 0f, Main.myPlayer, 0f, 0f);
+                                        Utilities.NewProjectileBetter(target.position.X + x * offsetPerLaser, target.position.Y - 1000f, 0f, laserWallSpeed, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
                                 }
                             }
                             break;
                         case SpecialAttackType.CircularLaserBurst:
                             float radius = 700 - 150f * (1f - lifeRatio);
-                            if (specialAttackTimer % 12 == 0)
+                            if (specialAttackTimer % 8f == 0f)
                             {
                                 Vector2 spawnPosition = target.Center + (specialAttackTimer * (MathHelper.Pi / 100f)).ToRotationVector2() * radius;
                                 Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<RealityBreakPortalLaserWall>(), 0, 0f);
                             }
                             break;
                         case SpecialAttackType.LaserRays:
-                            if (specialAttackTimer % 50 == 0 && specialAttackTimer <= 600f)
+                            if (specialAttackTimer % 35f == 0f && specialAttackTimer <= 600f)
                             {
                                 float offsetAngle = target.velocity.ToRotation();
                                 if (target.velocity.Length() < 3f)

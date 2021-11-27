@@ -55,6 +55,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
             npc.Infernum().ExtraAI[33] = head.Infernum().ExtraAI[33];
 
+            bool headOutOfWorld = head.Center.X < -10001f || head.Center.X > Main.maxTilesX * 16f + 10001f ||
+                head.Center.Y < -10001f || head.Center.Y > Main.maxTilesY * 16f + 10001f;
+
             if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[1] == 0f && head.Infernum().ExtraAI[15] >= 1200f)
             {
                 if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[30]].Hitbox))
@@ -74,9 +77,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         npc.alpha = 255;
                 }
             }
-            else if (head.Infernum().ExtraAI[33] == 0f && head.Infernum().ExtraAI[11] > 0f)
+            else if (head.Infernum().ExtraAI[33] == 0f && head.Infernum().ExtraAI[11] >= 0f)
             {
-                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[11]].Hitbox))
+                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[11]].Hitbox) || headOutOfWorld)
                 {
                     npc.alpha += 140;
                     if (npc.alpha > 255)

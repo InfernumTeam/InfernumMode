@@ -1388,7 +1388,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int darkFlameReleaseTime = 60;
             int totalDarkFlameCycles = 3;
             int teleportShootDelay = 32;
-            float teleportShootSpeed = enrageFactor * 6f + 13f;
+            float teleportShootSpeed = enrageFactor * 6f + 9f;
             int totalTeleportFlameCycles = 16;
             int finalBulletHellTime = 1200;
             int bulletHellBlastShootRate = 12;

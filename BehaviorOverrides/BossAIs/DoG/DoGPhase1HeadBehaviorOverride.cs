@@ -70,6 +70,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 npc.Calamity().CanHaveBossHealthBar = false;
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), 48f, 0.065f);
+                npc.damage = 0;
+
                 if (npc.Infernum().ExtraAI[10] == 1f)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -97,6 +99,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 if (Main.projectile[(int)npc.Infernum().ExtraAI[11]].Hitbox.Intersects(npc.Hitbox))
                     npc.alpha = Utils.Clamp(npc.alpha + 140, 0, 255);
+
+                if (Main.player[npc.target].dead || !Main.player[npc.target].active)
+                {
+                    npc.TargetClosest();
+                    if (Main.player[npc.target].dead || !Main.player[npc.target].active)
+                        npc.active = false;
+                }
 
                 return false;
             }
@@ -135,6 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             npc.damage = npc.dontTakeDamage ? 0 : 4998;
+
             // Spawn segments
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -159,6 +169,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, segment, 0f, 0f, 0f, 0);
                         Previous = segment;
                     }
+                    npc.Infernum().ExtraAI[11] = -1f;
                     npc.Infernum().ExtraAI[2] = 1f;
                 }
             }
@@ -201,7 +212,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Projectile.NewProjectile(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY) * 16f, ModContent.ProjectileType<HomingDoGBurst>(), 81, 0f, Main.myPlayer, 0f, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY) * 16f, ModContent.ProjectileType<HomingDoGBurst>(), 380, 0f, Main.myPlayer, 0f, 0f);
                     }
                 }
                 if (npc.Infernum().ExtraAI[3] > 720)
@@ -311,8 +322,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public static void DoAggressiveFlyMovement(NPC npc, bool chomping, ref float jawAngle, ref float chompTime, ref float time, ref float flyAcceleration)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlyAcceleration = MathHelper.Lerp(0.036f, 0.024f, lifeRatio);
-            float idealFlySpeed = MathHelper.Lerp(12.9f, 7f, lifeRatio);
+            float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.032f, lifeRatio);
+            float idealFlySpeed = MathHelper.Lerp(19f, 14.4f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(34f);
             Vector2 destination = Main.player[npc.target].Center;
 

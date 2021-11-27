@@ -7,8 +7,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
 	public class DoGSpawnBoom : BaseWaveExplosionProjectile
 	{
-		public override int Lifetime => 120;
-		public override float MaxRadius => 3000f;
+		public override int Lifetime => 180;
+		public override float MaxRadius => 4300f;
 		public override float RadiusExpandRateInterpolant => 0.15f;
 		public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
 		{

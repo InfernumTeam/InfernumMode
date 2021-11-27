@@ -45,6 +45,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using InfernumMode.BehaviorOverrides.BossAIs.Polterghast;
+using InfernumMode.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
@@ -195,7 +196,7 @@ namespace InfernumMode.BossRush
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
                 }, usesSpecialSound: true, permittedNPCs: new int[] { ModContent.NPCType<AstrumDeusBodySpectral>(), ModContent.NPCType<AstrumDeusTailSpectral>() }),
 
-                new Boss(ModContent.NPCType<Signus>(), specialSpawnCountdown: 360, permittedNPCs: new int[] { ModContent.NPCType<CosmicLantern>(), ModContent.NPCType<SignusBomb>() }),
+                new Boss(ModContent.NPCType<Signus>(), specialSpawnCountdown: 360, permittedNPCs: new int[] { ModContent.NPCType<UnworldlyEntity>(), ModContent.NPCType<SignusBomb>() }),
 
                 new Boss(ModContent.NPCType<Bumblefuck>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<Bumblefuck2>(), NPCID.Spazmatism, NPCID.Retinazer }),
 

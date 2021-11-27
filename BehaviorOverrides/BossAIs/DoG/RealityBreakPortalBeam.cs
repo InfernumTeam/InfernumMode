@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 rayDirection = projectile.SafeDirectionTo(AimDestination);
-                    Utilities.NewProjectileBetter(projectile.Center, rayDirection, ModContent.ProjectileType<DoGDeathray>(), 440, 0f, Main.myPlayer, 0f, projectile.whoAmI);
+                    Utilities.NewProjectileBetter(projectile.Center, rayDirection, ModContent.ProjectileType<DoGDeathray>(), 600, 0f, Main.myPlayer, 0f, projectile.whoAmI);
                 }
             }
             else if (projectile.ai[0] <= 45f)

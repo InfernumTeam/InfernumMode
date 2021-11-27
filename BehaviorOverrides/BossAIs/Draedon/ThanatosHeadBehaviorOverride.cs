@@ -208,7 +208,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			float lifeRatio = npc.life / (float)npc.lifeMax;
 			float flyAcceleration = MathHelper.Lerp(0.042f, 0.03f, lifeRatio);
 			float idealFlySpeed = MathHelper.Lerp(13f, 9.6f, lifeRatio);
-			float generalSpeedFactor = 1.5f;
+			float generalSpeedFactor = 1.65f;
 
 			Vector2 destination = target.Center;
 
@@ -459,7 +459,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			frameType = (int)ThanatosFrameType.Open;
 
 			int nukeShootCount = 3;
-			int nukeShootRate = 120;
+			int nukeShootRate = 95;
 
 			if (ExoMechManagement.CurrentThanatosPhase >= 5)
 			{
@@ -498,7 +498,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Vector2 hoverDestination = target.Center + target.velocity.SafeNormalize(Vector2.UnitX * target.direction) * new Vector2(675f, 950f);
 			hoverDestination.Y -= 650f;
 
-			float idealFlySpeed = 13f;
+			float idealFlySpeed = 14f;
 
 			if (ExoMechManagement.CurrentThanatosPhase == 4)
 				idealFlySpeed *= 0.7f;

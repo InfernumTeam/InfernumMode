@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             if (!projectile.WithinRange(closestPlayer.Center, 180) && projectile.timeLeft > 70)
-                projectile.velocity = (projectile.velocity * 19f + projectile.SafeDirectionTo(closestPlayer.Center) * 19.5f) / 20f;
+                projectile.velocity = (projectile.velocity * 19f + projectile.SafeDirectionTo(closestPlayer.Center) * 24.5f) / 20f;
 
             Lighting.AddLight(projectile.Center, Color.Red.ToVector3());
         }

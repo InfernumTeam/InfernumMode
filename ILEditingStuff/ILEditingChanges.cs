@@ -492,6 +492,7 @@ namespace InfernumMode.ILEditingStuff
 
             Texture2D outerAreaTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumBG");
             Texture2D armaTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumArma");
+            Texture2D maliceTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumMalice");
 
             Rectangle areaFrame = outerAreaTexture.Frame(3, 27, (int)Math.Floor(frameNumber / 81), (int)row);
             Vector2 drawCenter = new Vector2(Main.screenWidth - 400f, 72f) + areaFrame.Size() * 0.5f;
@@ -506,9 +507,12 @@ namespace InfernumMode.ILEditingStuff
                     Main.spriteBatch.Draw(outerAreaTexture, drawCenter + drawOffset, areaFrame, drawColor, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 }
             }
+
             Main.spriteBatch.Draw(outerAreaTexture, drawCenter, areaFrame, Color.White, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             if (CalamityWorld.armageddon)
                 Main.spriteBatch.Draw(armaTexture, drawCenter, areaFrame, Color.White, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            if (CalamityWorld.malice)
+                Main.spriteBatch.Draw(maliceTexture, drawCenter, areaFrame, Color.White, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             frameNumber++;
             //Displays each frame for 2 ticks instead of 3 if there are any bosses by skipping the 3rd frame

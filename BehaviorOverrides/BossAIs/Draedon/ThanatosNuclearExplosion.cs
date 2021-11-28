@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override void AI()
         {
-            projectile.scale += 0.0625f;
+            projectile.scale += 0.065f;
             projectile.Opacity = Utils.InverseLerp(300f, 265f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 50f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 

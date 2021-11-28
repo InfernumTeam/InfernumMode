@@ -44,6 +44,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using CalamityMod.Events;
 using CalamityMod.UI;
 using System.Linq;
+using InfernumMode.Items;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -239,19 +240,6 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if (npc.type == InfernumMode.CalamityMod.NPCType("Providence") && !BossRushEvent.BossRushActive)
-            {
-                // Drops pre-scal, cannot be sold, does nothing aka purely vanity. Requires at least expert for consistency with other post scal dev items.
-                DropHelper.DropItemCondition(npc, ModContent.ItemType<ProfanedSoulCrystal>(), true, true);
-
-                // Special drop for defeating her at night
-                DropHelper.DropItemCondition(npc, ModContent.ItemType<ProfanedMoonlightDye>(), true, true, 3, 4);
-
-                Main.NewText(Language.GetTextValue("Mods.CalamityMod.ProfanedBossText4"), Color.DarkOrange);
-
-                return true;
-            }
-
             if (npc.type == ModContent.NPCType<OldDukeNPC>())
                 CalamityMod.CalamityMod.StopRain();
 
@@ -268,7 +256,7 @@ namespace InfernumMode.GlobalInstances
                 for (int i = 0; i < Main.rand.Next(18, 29 + 1); i++)
                 {
                     int soul = Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
-                    Main.projectile[soul].localAI[1] = Main.rand.NextBool(2).ToDirectionInt();
+                    Main.projectile[soul].localAI[1] = Main.rand.NextBool().ToDirectionInt();
                 }
             }
 
@@ -283,6 +271,53 @@ namespace InfernumMode.GlobalInstances
                     netMessage.Write((byte)14);
                     netMessage.Write(CalamityWorld.DoGSecondStageCountdown);
                     netMessage.Send();
+                }
+            }
+
+            // Drop challenge drops.
+            if (!CalamityWorld.malice)
+            {
+                if (ChallengeDropHandling.ChallengeDropTable.TryGetValue(npc.type, out int[] loot))
+                {
+                    if (npc.type == NPCID.Spazmatism)
+                    {
+                        if (!NPC.AnyNPCs(NPCID.Retinazer))
+                        {
+                            for (int i = 0; i < loot.Length; i++)
+                                DropHelper.DropItem(npc, loot[i]);
+                        }
+                        return;
+                    }
+                    if (npc.type == NPCID.Retinazer)
+                    {
+                        if (!NPC.AnyNPCs(NPCID.Spazmatism))
+                        {
+                            for (int i = 0; i < loot.Length; i++)
+                                DropHelper.DropItem(npc, loot[i]);
+                        }
+                        return;
+                    }
+                    if (npc.type == ModContent.NPCType<Siren>())
+                    {
+                        if (!NPC.AnyNPCs(ModContent.NPCType<Leviathan>()))
+                        {
+                            for (int i = 0; i < loot.Length; i++)
+                                DropHelper.DropItem(npc, loot[i]);
+                        }
+                        return;
+                    }
+                    if (npc.type == ModContent.NPCType<Leviathan>())
+                    {
+                        if (!NPC.AnyNPCs(ModContent.NPCType<Siren>()))
+                        {
+                            for (int i = 0; i < loot.Length; i++)
+                                DropHelper.DropItem(npc, loot[i]);
+                        }
+                        return;
+                    }
+
+                    for (int i = 0; i < loot.Length; i++)
+                        DropHelper.DropItem(npc, loot[i]);
                 }
             }
         }

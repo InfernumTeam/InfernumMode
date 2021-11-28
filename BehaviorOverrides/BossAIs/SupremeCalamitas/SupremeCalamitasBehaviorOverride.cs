@@ -501,7 +501,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     frameType = (int)SCalFrameType.Casting;
                     frameChangeSpeed = 0.15f;
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 240f)
-                        Main.NewText("You are an anomaly. An unforeseen deviation..", Color.Orange);
+                        Main.NewText("You are an anomaly. An unforeseen deviation.", Color.Orange);
 
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 150f)
                         Main.NewText("...And in the end, the bloodshed continues.", Color.Orange);

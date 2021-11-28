@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && willShootLaser)
                     {
-                        float generalShootSpeedFactor = 1f;
+                        float generalShootSpeedFactor = 1.33f;
                         if (ExoMechManagement.CurrentThanatosPhase == 4)
                             generalShootSpeedFactor *= 0.65f;
                         else

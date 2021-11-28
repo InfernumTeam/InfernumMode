@@ -12,6 +12,7 @@ using static InfernumMode.GlobalInstances.GlobalNPCOverrides;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
+    // TODO: REFACTOR THIS SHIT HOLY FUCKING SHIT I AM LOSING MY MIND THIS IS NOT OK GODDAMN!!!!!!
     public class TrueEoCBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.MoonLordFreeEye;

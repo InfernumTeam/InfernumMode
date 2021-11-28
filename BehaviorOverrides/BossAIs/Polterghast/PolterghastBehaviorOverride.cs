@@ -379,6 +379,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                         Main.PlaySound(SoundID.NPCHit36, target.Center);
                 }
 
+                // Slow down significantly.
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.05f);
                 npc.velocity *= 0.98f;
             }
@@ -398,6 +399,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             int impaleCount = 3;
             float impaleTime = 150f;
 
+            if (attackTimer >= impaleTime * impaleCount + 15f)
+                GotoNextAttackState(npc);
+
+            // Hover to the top left/right of the target before attacking.
             if (attackTimer % impaleTime < 45f)
             {
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
@@ -405,31 +410,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 Vector2 destination = target.Center - Vector2.UnitY * 250f;
                 destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 170f;
                 npc.velocity = (npc.velocity * 10f + npc.SafeDirectionTo(destination) * 21.5f) / 11f;
+                return;
             }
-            else
-            {
-                npc.velocity *= 0.95f;
-                if (attackTimer % impaleTime < 50f)
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
-                // Roar right before impaling.
-                if (attackTimer % impaleTime == 90f)
+            // Slow down.
+            npc.velocity *= 0.95f;
+            if (attackTimer % impaleTime < 50f)
+                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+
+            // Roar right before impaling.
+            if (attackTimer % impaleTime == 90f)
+            {
+                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OmegaBlueAbility"), target.Center);
+                if (roar != null)
                 {
-                    var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OmegaBlueAbility"), target.Center);
-                    if (roar != null)
-                    {
-                        roar.Pitch = -0.425f;
-                        roar.Volume = MathHelper.Clamp(roar.Volume * 1.5f, -1f, 1f);
-                    }
+                    roar.Pitch = -0.425f;
+                    roar.Volume = MathHelper.Clamp(roar.Volume * 1.5f, -1f, 1f);
                 }
             }
-
-            if (attackTimer >= impaleTime * impaleCount + 15f)
-                GotoNextAttackState(npc);
         }
 
         public static void DoAttack_SpiritPetal(NPC npc, Player target, ref float attackTimer, ref float totalReleasedSouls, bool enraged)
         {
+            // Slow down and look at the target.
             npc.velocity *= 0.97f;
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
@@ -441,6 +444,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.velocity = (npc.velocity * 10f + npc.SafeDirectionTo(destination) * 21.5f) / 11f;
             }
 
+            // Create a light effect at the bottom of the screen.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 45f)
                 Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<Light>(), 0, 0f);
 
@@ -449,6 +453,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (BossRushEvent.BossRushActive)
                 shootRate = 4;
 
+            // Release a petal-like dance of souls. They spawn randomized, to make the pattern semi-inconsistent.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 60f && attackTimer < 300f && attackTimer % shootRate == shootRate - 1f)
             {
                 float offsetAngle = (float)Math.Sin(MathHelper.TwoPi * (attackTimer - 60f) / 128f) * MathHelper.Pi / 3f + Main.rand.NextFloatDirection() * 0.16f;
@@ -472,6 +477,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (totalReleasedSouls > 90f)
                 totalReleasedSouls = 90f;
 
+            // Do fade effect.
             if (attackTimer < 360f)
                 npc.Opacity = Utils.InverseLerp(110f, 60f, attackTimer, true);
             else
@@ -560,8 +566,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (attackTimer >= 160f)
             {
                 npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.275f);
-                npc.velocity *= 0.96f;
-                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.0425f);
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.0425f) * 0.96f;
             }
 
             if (attackTimer >= 205f)
@@ -605,6 +610,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (attackTimer >= 50f)
                 shootCounter++;
 
+            // Roar, shoot spirits, and release a cluster of souls in the form of a roar thing idk lol.
             if (shootCounter >= shootRate)
             {
                 var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OmegaBlueAbility"), target.Center);

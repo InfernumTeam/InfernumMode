@@ -485,10 +485,7 @@ namespace InfernumMode.ILEditingStuff
                 frameNumber = 0f;
             float row = (float)Math.Floor(frameNumber / 3);
             if (row >= 27)
-                row = row - (((float)Math.Floor(row / 27)) * 27);
-
-            // TODO - Replace this with Malice when it's added.
-            bool defiledOn = false;
+                row -= (((float)Math.Floor(row / 27)) * 27);
 
             Texture2D outerAreaTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumBG");
             Texture2D armaTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumArma");

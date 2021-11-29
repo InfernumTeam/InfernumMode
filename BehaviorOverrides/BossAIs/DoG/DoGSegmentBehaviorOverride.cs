@@ -131,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
-            npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.scale * 94f;
+            npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.scale * 80f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
         }
 

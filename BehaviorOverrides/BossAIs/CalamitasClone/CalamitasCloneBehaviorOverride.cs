@@ -514,7 +514,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 19f;
-            float fireballSpeed = MathHelper.Lerp(10f, 13f, 1f - lifeRatio);
+            float fireballSpeed = MathHelper.Lerp(12f, 15.6f, 1f - lifeRatio);
             int fireballReleaseRate = 36;
             int fireballReleaseTime = 360;
 

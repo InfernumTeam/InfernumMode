@@ -177,7 +177,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				Lighting.AddLight(npc.Center, 0.35f * npc.Opacity, 0.05f * npc.Opacity, 0.05f * npc.Opacity);
 
 				// Emit smoke.
-				npc.takenDamageMultiplier = 67.184f;
+				npc.takenDamageMultiplier = 103.184f;
 				if (npc.Opacity > 0.6f)
 				{
 					npc.ModNPC<ThanatosHead>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;

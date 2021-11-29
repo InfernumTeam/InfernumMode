@@ -170,10 +170,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                         {
                             npc.TargetClosest();
                             target = Main.player[npc.target];
-                            float jumpSpeed = MathHelper.Lerp(7f, 11.6f, Utils.InverseLerp(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                            float jumpSpeed = MathHelper.Lerp(8.25f, 11.6f, Utils.InverseLerp(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                             jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
-                            npc.velocity = new Vector2(npc.direction * 6f, -jumpSpeed);
+                            npc.velocity = new Vector2(npc.direction * 8.5f, -jumpSpeed);
                             if (BossRushEvent.BossRushActive)
                                 npc.velocity *= 2.4f;
 
@@ -197,10 +197,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                         {
                             npc.TargetClosest();
                             target = Main.player[npc.target];
-                            float jumpSpeed = MathHelper.Lerp(9f, 23f, Utils.InverseLerp(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                            float jumpSpeed = MathHelper.Lerp(10f, 23f, Utils.InverseLerp(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                             jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
-                            npc.velocity = new Vector2(npc.direction * 8f, -jumpSpeed);
+                            npc.velocity = new Vector2(npc.direction * 10.25f, -jumpSpeed);
                             if (BossRushEvent.BossRushActive)
                                 npc.velocity *= 1.5f;
                             npc.netUpdate = true;

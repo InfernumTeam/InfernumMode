@@ -50,13 +50,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             bool canReachTarget = Collision.CanHit(npc.position, npc.width, npc.height, target.position, target.width, target.height);
             int shootRate = canReachTarget ? 75 : 30;
-            float shootSpeed = NPC.AnyNPCs(ModContent.NPCType<Ninja>()) && !canReachTarget ? 6f : 9f;
-            float predictivenessFactor = canReachTarget ? 45f : 24f;
+            float shootSpeed = NPC.AnyNPCs(ModContent.NPCType<Ninja>()) && !canReachTarget ? 8f : 11f;
+            float predictivenessFactor = canReachTarget ? 35f : 18f;
             if (BossRushEvent.BossRushActive)
             {
                 shootRate = 32;
                 shootSpeed *= 2.25f;
-                predictivenessFactor = 15f;
+                predictivenessFactor = 14f;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && time % shootRate == shootRate - 1f)

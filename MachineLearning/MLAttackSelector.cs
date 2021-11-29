@@ -26,6 +26,15 @@ namespace InfernumMode.MachineLearning
             }
         }
 
+        public void BiasAwayFrom(int index, float biasFactor = 0.056f)
+        {
+            for (int i = 0; i < Weights.Length; i++)
+            {
+                Weights[i] = MathHelper.Lerp(Weights[i], i == index ? 0f : 0.5f, biasFactor);
+                Weights[i] = MathHelper.Clamp(Weights[i], 0.005f, 0.995f);
+            }
+        }
+
         public int MakeSelection()
         {
             WeightedRandom<int> rng = new WeightedRandom<int>();

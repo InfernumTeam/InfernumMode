@@ -918,7 +918,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int attackDelay = 50;
             int shootTime = 50;
             int shootRate = 2;
-            float shootSpeed = enrageFactor * 3f + 12f;
+            float shootSpeed = enrageFactor * 3f + 10.5f;
             float angularVariance = 1.53f;
 
             if (currentPhase >= 1)
@@ -942,7 +942,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float wrappedAttackTimer = attackTimer % attackCycleTime;
             bool aboutToFire = wrappedAttackTimer > attackDelay - 15f && wrappedAttackTimer < attackDelay + shootTime;
             bool firing = wrappedAttackTimer > attackDelay && aboutToFire && attackTimer % shootRate == shootRate - 1f;
-            float hoverSpeed = 45f;
+            float hoverSpeed = 40f;
             if (aboutToFire)
                 hoverSpeed *= 0.15f;
 

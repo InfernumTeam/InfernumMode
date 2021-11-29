@@ -514,7 +514,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 19f;
-            float fireballSpeed = MathHelper.Lerp(7.8f, 12f, 1f - lifeRatio);
+            float fireballSpeed = MathHelper.Lerp(10f, 13f, 1f - lifeRatio);
             int fireballReleaseRate = 36;
             int fireballReleaseTime = 360;
 
@@ -580,7 +580,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                         for (int i = 0; i < 5; i++)
                         {
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
-                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, i / 4f));
+                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, i / 4f) + Main.rand.NextFloatDirection() * 0.13f);
                             Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
                         }
                     }

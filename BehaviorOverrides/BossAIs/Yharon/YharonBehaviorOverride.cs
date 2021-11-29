@@ -480,7 +480,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             int totalFlamethrowerBursts = 2;
             float flamethrowerHoverTime = 105f;
-            float flamethrowerFlySpeed = 34f;
+            float flamethrowerFlySpeed = 41f;
 
             int totalShotgunBursts = 3;
             float shotgunBurstFireRate = 30f;
@@ -860,13 +860,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
 
             npc.rotation = npc.velocity.ToRotation() + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
-
-            // Speed up if the target is noticeably far away horizontally.
-            if (MathHelper.Distance(target.Center.X, npc.Center.X) > 1020f && Math.Abs(npc.velocity.X) < flamethrowerFlySpeed * 1.325f)
-            {
-                npc.velocity.Y *= 0.99f;
-                npc.velocity.X += Math.Sign(npc.velocity.X) * 0.6f;
-            }
 
             if (attackTimer >= totalFlamethrowerBursts * (flamethrowerHoverTime + YharonFlamethrower.Lifetime + 15f) - 3f)
                 SelectNextAttack(npc, ref attackType);

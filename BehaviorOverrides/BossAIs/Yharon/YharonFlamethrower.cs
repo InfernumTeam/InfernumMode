@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public const float FadeinTime = 40f;
         public const float FadeoutTime = 35f;
         public const float Lifetime = FadeinTime + FadeoutTime;
-        public const float FireMaxLength = 1750f;
+        public const float FireMaxLength = 1950f;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Draconic Flame Breath");
 
@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public override void AI()
         {
             projectile.Center = Owner.Center + new Vector2(Owner.spriteDirection * -182f, 4f).RotatedBy(Owner.rotation);
-            projectile.rotation = Owner.AngleTo(projectile.Center - Vector2.UnitY * 8f);
+            projectile.rotation = Owner.AngleTo(projectile.Center);
 
             Vector2 flameDirection = projectile.rotation.ToRotationVector2();
 
@@ -49,9 +49,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 fadeOut = 0f;
 
             // Release meteors upward.
-            if (Main.netMode != NetmodeID.MultiplayerClient && Time % 4f == 3f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Time % 3f == 2f)
             {
-                Vector2 meteorShootVelocity = new Vector2(Owner.direction * -0.2f, -0.89f).RotatedByRandom(0.41f) * Main.rand.NextFloat(35f, 44f);
+                Vector2 meteorShootVelocity = new Vector2(Owner.direction * -0.3f, -1f).RotatedByRandom(0.77f) * Main.rand.NextFloat(37.5f, 50f);
                 Utilities.NewProjectileBetter(projectile.Center, meteorShootVelocity, ModContent.ProjectileType<RedirectingYharonMeteor>(), 450, 0f);
             }
 

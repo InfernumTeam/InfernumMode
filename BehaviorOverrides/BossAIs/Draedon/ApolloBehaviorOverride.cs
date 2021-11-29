@@ -761,6 +761,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			npc.frameCounter = 0f;
 			
 			TwinsAttackType oldAttackType = (TwinsAttackType)(int)npc.ai[0];
+
+			// Update learning stuff.
+			ExoMechManagement.DoPostAttackSelections(npc);
+
 			npc.ai[0] = (int)TwinsAttackType.VanillaShots;
 			if (oldAttackType == TwinsAttackType.VanillaShots)
 			{

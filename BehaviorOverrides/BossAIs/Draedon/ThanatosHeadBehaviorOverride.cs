@@ -533,6 +533,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ThanatosHeadAttackType oldAttackType = (ThanatosHeadAttackType)(int)npc.ai[0];
 			ThanatosHeadAttackType newAttackType;
 
+			// Update learning stuff.
+			ExoMechManagement.DoPostAttackSelections(npc);
+
 			if (oldAttackType == ThanatosHeadAttackType.AggressiveCharge)
 			{
 				newAttackType = (ThanatosHeadAttackType)(Main.player[npc.target].Infernum().ThanatosLaserTypeSelector.MakeSelection() + 1);

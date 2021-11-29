@@ -40,16 +40,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 			{
                 if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
                 {
-                    npc.width = 70;
-                    npc.height = 70;
-                    npc.frame = new Rectangle(0, 0, 114, 88);
+                    npc.width = 120;
+                    npc.height = 120;
+                    npc.frame = new Rectangle(0, 0, 142, 126);
                     typeof(DevourerofGodsBody).GetField("phase2Started", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, true);
                 }
 				else
                 {
-                    npc.width = 80;
-                    npc.height = 140;
-                    npc.frame = new Rectangle(0, 0, 86, 148);
+                    npc.width = 100;
+                    npc.height = 100;
+                    npc.frame = new Rectangle(0, 0, 106, 200);
                     typeof(DevourerofGodsTail).GetField("phase2Started", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, true);
                 }
             }
@@ -131,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
-            npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
+            npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.scale * 94f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
         }
 
@@ -146,8 +146,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.Infernum().ExtraAI[33] == 1f)
             {
                 npc.scale = 1f;
-                Texture2D bodyTexture2 = ModContent.GetTexture("CalamityMod/NPCs/DevourerofGods/DevourerofGodsBodyS");
-                Texture2D glowmaskTexture2 = ModContent.GetTexture("CalamityMod/NPCs/DevourerofGods/DevourerofGodsBodySGlow");
+                Texture2D bodyTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Body");
+                Texture2D glowmaskTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlow");
                 Vector2 drawPosition2 = npc.Center - Main.screenPosition;
                 Vector2 origin2 = bodyTexture2.Size() * 0.5f;
                 spriteBatch.Draw(bodyTexture2, drawPosition2, null, npc.GetAlpha(lightColor), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);

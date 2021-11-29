@@ -695,7 +695,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     {
                         npc.damage = 0;
                         npc.dontTakeDamage = true;
-                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitX) * MathHelper.Lerp(npc.velocity.Length(), 45f, 0.15f);
+                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitX) * MathHelper.Lerp(npc.velocity.Length(), 61f, 0.15f);
 
                         // Disappearing when touching the portal.
                         // This same logic applies to body/tail segments.
@@ -831,7 +831,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             float jawRotation = npc.Infernum().ExtraAI[20];
 
-            Texture2D headTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/DevourerofGodsHeadS");
+            Texture2D headTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Head");
+            Texture2D glowTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2HeadGlow");
             npc.frame = new Rectangle(0, 0, headTexture.Width, headTexture.Height);
             if (npc.Size != headTexture.Size())
                 npc.Size = headTexture.Size();
@@ -841,7 +842,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             drawPosition -= headTexture.Size() * npc.scale * 0.5f;
             drawPosition += headTextureOrigin * npc.scale + new Vector2(0f, 4f + npc.gfxOffY);
 
-            Texture2D jawTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/DevourerofGodsJawS");
+            Texture2D jawTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Jaw");
             Vector2 jawOrigin = jawTexture.Size() * 0.5f;
 
             for (int i = -1; i <= 1; i += 2)
@@ -854,11 +855,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
                 Vector2 jawPosition = drawPosition;
                 jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * i * (jawBaseOffset + (float)Math.Sin(jawRotation) * 24f);
-                jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (38f + (float)Math.Sin(jawRotation) * 30f);
+                jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (58f + (float)Math.Sin(jawRotation) * 30f);
                 spriteBatch.Draw(jawTexture, jawPosition, null, npc.GetAlpha(lightColor), npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
             }
 
             spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
             return false;
         }
         #endregion Drawing

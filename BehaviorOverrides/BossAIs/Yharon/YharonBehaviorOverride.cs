@@ -478,9 +478,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             float totalFireballBreaths = 12f;
             float fireballBreathShootRate = 5f;
 
-            int totalFlamethrowerBursts = 3;
+            int totalFlamethrowerBursts = 2;
             float flamethrowerHoverTime = 105f;
-            float flamethrowerFlySpeed = 45f;
+            float flamethrowerFlySpeed = 34f;
 
             int totalShotgunBursts = 3;
             float shotgunBurstFireRate = 30f;
@@ -584,7 +584,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     DoBehavior_FireballBurst(npc, target, mouthPosition, fireballBreathShootDelay, fireballBreathShootRate, totalFireballBreaths, ref attackTimer, ref attackType, ref specialFrameType);
                     break;
                 case YharonAttackType.FlamethrowerAndMeteors:
-                    DoBehavior_FlamethrowerAndMeteors(npc, target, totalFlamethrowerBursts, flamethrowerHoverTime, flamethrowerFlySpeed, ref attackTimer, ref attackType, ref specialFrameType);
+                    DoBehavior_FlamethrowerAndMeteors(npc, target, mouthPosition, totalFlamethrowerBursts, flamethrowerHoverTime, flamethrowerFlySpeed, ref attackTimer, ref attackType, ref specialFrameType);
                     break;
                 case YharonAttackType.FlarenadoAndDetonatingFlameSpawn:
                     DoBehavior_FlarenadoAndDetonatingFlameSpawn(npc, target, mouthPosition, ref attackTimer, ref attackType, ref specialFrameType);
@@ -713,6 +713,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static void DoBehavior_FastCharges(NPC npc, Player target, bool berserkChargeMode, float chargeDelay, float chargeTime, float chargeSpeed, ref float fireIntensity, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
+            if ((YharonAttackType)(int)attackType == YharonAttackType.PhoenixSupercharge)
+                chargeDelay = (int)(chargeDelay * 0.7f);
+
             // Slow down and rotate towards the player.
             if (attackTimer < chargeDelay)
             {
@@ -807,35 +810,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 SelectNextAttack(npc, ref attackType);
         }
 
-        public static void DoBehavior_FlamethrowerAndMeteors(NPC npc, Player target, int totalFlamethrowerBursts, float flamethrowerHoverTime, float flamethrowerFlySpeed, ref float attackTimer, ref float attackType, ref float specialFrameType)
+        public static void DoBehavior_FlamethrowerAndMeteors(NPC npc, Player target, Vector2 mouthPosition, int totalFlamethrowerBursts, float flamethrowerHoverTime, float flamethrowerFlySpeed, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
-            float wrappedAttackTimer = attackTimer % (flamethrowerHoverTime + YharonFlamethrower.Lifetime);
+            float wrappedAttackTimer = attackTimer % (flamethrowerHoverTime + YharonFlamethrower.Lifetime + 15f);
 
             // Look at the target and hover towards the top left/right of the target.
-            if (wrappedAttackTimer < flamethrowerHoverTime)
+            if (wrappedAttackTimer < flamethrowerHoverTime + 15f)
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 1020f, -375f);
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
 
                 npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
-                npc.rotation = npc.rotation.AngleLerp(0f, 0.15f);
+                npc.rotation = npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination - npc.velocity) * 36f, 1.1f);
 
-                // Stop hovering if the destination is reached.
-                if (npc.WithinRange(hoverDestination, 50f))
-                {
-                    npc.velocity *= 0.5f;
+                // Begin the delay if the destination is reached.
+                if (npc.WithinRange(hoverDestination, 50f) && wrappedAttackTimer < flamethrowerHoverTime - 2f)
                     attackTimer += flamethrowerHoverTime - wrappedAttackTimer - 1f;
+                
+                // Release fire and smoke from the mouth as a telegraph.
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 dustSpawnPosition = mouthPosition + Main.rand.NextVector2Circular(8f, 8f);
+                    Vector2 dustVelocity = npc.SafeDirectionTo(dustSpawnPosition).RotatedByRandom(0.45f) * Main.rand.NextFloat(2f, 5f);
+                    Dust hotStuff = Dust.NewDustPerfect(dustSpawnPosition, Main.rand.NextBool() ? 31 : 6);
+                    hotStuff.velocity = dustVelocity + npc.velocity;
+                    hotStuff.fadeIn = 0.8f;
+                    hotStuff.scale = Main.rand.NextFloat(1f, 1.45f);
+                    hotStuff.alpha = 200;
                 }
 
                 return;
             }
 
-            // Begin the charge and breathe fire.
-            if (wrappedAttackTimer == flamethrowerHoverTime)
+            // Begin the charge and breathe fire after a tiny delay.
+            if (wrappedAttackTimer == flamethrowerHoverTime + 15f)
             {
-                Vector2 chargeDirection = npc.SafeDirectionTo(target.Center) * new Vector2(1f, 0.08f).SafeNormalize(Vector2.UnitX * npc.spriteDirection);
-                npc.velocity = chargeDirection * flamethrowerFlySpeed;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * flamethrowerFlySpeed;
 
                 specialFrameType = (int)YharonFrameDrawingType.OpenMouth;
 
@@ -857,7 +868,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 npc.velocity.X += Math.Sign(npc.velocity.X) * 0.6f;
             }
 
-            if (attackTimer >= totalFlamethrowerBursts * (flamethrowerHoverTime + YharonFlamethrower.Lifetime) - 3f)
+            if (attackTimer >= totalFlamethrowerBursts * (flamethrowerHoverTime + YharonFlamethrower.Lifetime + 15f) - 3f)
                 SelectNextAttack(npc, ref attackType);
         }
 
@@ -1538,7 +1549,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 if (Main.netMode != NetmodeID.MultiplayerClient && hasTeleportedFlag == 0f)
                 {
                     Vector2 oldPosition = npc.Center;
-                    for (int i = 0; i < 25; i++)
+                    for (int i = 0; i < 15; i++)
                     {
                         Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(280f, 280f);
                         Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(42f, 42f), ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
@@ -1579,7 +1590,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 25; i++)
+                        for (int i = 0; i < 15; i++)
                         {
                             Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(280f, 280f);
                             Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(42f, 42f), ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
@@ -1598,6 +1609,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
                 if (npc.life < 2000 && hasCreatedExplosionFlag == 0f)
                 {
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlameExplosion>(), 0, 0f);
+
                     // Release a burst of very strong fireballs
                     for (int i = 0; i < 45; i++)
                     {
@@ -1610,7 +1623,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         }
                     }
 
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonFlameExplosion>(), 0, 0f);
                     hasCreatedExplosionFlag = 1f;
                     npc.netUpdate = true;
                 }

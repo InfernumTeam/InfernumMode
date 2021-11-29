@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			// Nerf things while Ares' complement mech is present.
 			if (ExoMechManagement.CurrentAresPhase == 4)
-				flameShootSpeed *= 0.75f;
+				flameShootSpeed *= 0.85f;
 
 			if (ExoMechManagement.CurrentAresPhase >= 5)
 			{

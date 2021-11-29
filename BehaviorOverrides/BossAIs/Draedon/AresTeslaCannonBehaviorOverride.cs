@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			// Define attack variables.
 			bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
-			int shootTime = 150;
+			int shootTime = 135;
 			int totalOrbsPerBurst = 3;
 			float aimPredictiveness = 25f;
 			float orbShootSpeed = 10f;
@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			// Nerf things while Ares' complement mech is present.
 			if (ExoMechManagement.CurrentAresPhase == 4)
-				totalOrbsPerBurst = 4;
+				totalOrbsPerBurst = 5;
 
 			if (ExoMechManagement.CurrentAresPhase >= 5)
 			{
@@ -163,7 +163,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					{
 						for (int i = 0; i < 85; i++)
 						{
-							Vector2 cloudShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 14f) - npc.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
+							Vector2 cloudShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 23f) - npc.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
 							Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<ElectricGas>(), projectileDamageBoost + 580, 0f);
 						}
 					}

@@ -52,7 +52,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
 			ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[11];
 			ref float finalMechIndex = ref npc.Infernum().ExtraAI[12];
-			NPC initialMech = ExoMechManagement.FindInitialMech();
 			NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
 			NPC finalMech = ExoMechManagement.FindFinalMech();
 			
@@ -206,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		public static void DoBehavior_ReleaseSplittingPlasmaShots(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
 		{
 			int totalShots = 8;
-			float shootRate = 60f;
+			float shootRate = 52f;
 			float plasmaShootSpeed = 10f;
 			float predictivenessFactor = 18.5f;
 			Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor);
@@ -401,7 +400,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int totalCharges = 6;
 			int sparkCount = 32;
 			int homingSparkCount = 4;
-			float chargeSpeed = 44f;
+			float chargeSpeed = 46.5f;
 			float chargePredictiveness = 10f;
 			ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
 			Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
@@ -471,7 +470,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 							float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
 							for (int i = 0; i < sparkCount; i++)
 							{
-								Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / sparkCount + offsetAngle).ToRotationVector2() * 12f;
+								Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / sparkCount + offsetAngle).ToRotationVector2() * 16f;
 								Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<AcceleratingPlasmaSpark>(), 580, 0f);
 							}
 
@@ -534,7 +533,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int shootDelay = 25;
 			int burstReleaseRate = 30;
 			float spinRadius = 540f;
-			float spinArc = MathHelper.Pi * 1.65f;
+			float spinArc = MathHelper.Pi * 1.8f;
 
 			npc.dontTakeDamage = false;
 
@@ -682,15 +681,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					// Fire a machine-gun of lasers.
 					if (npc.type == ModContent.NPCType<Artemis>())
 					{
-						int laserShootRate = 15;
-						float laserShootSpeed = 6f;
+						int laserShootRate = 14;
+						float laserShootSpeed = 6.5f;
 						float predictivenessFactor = 18.5f;
 						Vector2 aimDestination = target.Center + target.velocity * predictivenessFactor;
 						Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 						npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
 						if (ExoMechManagement.CurrentTwinsPhase == 4)
-							laserShootRate += 10;
+							laserShootRate += 7;
 						if (ExoMechManagement.CurrentTwinsPhase >= 5)
 							laserShootRate -= 3;
 						if (ExoMechManagement.CurrentTwinsPhase >= 6)
@@ -726,7 +725,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					// Release streams of plasma blasts rapid-fire.
 					else
 					{
-						int plasmaShootRate = 42;
+						int plasmaShootRate = 40;
 						float plasmaShootSpeed = 10f;
 						float predictivenessFactor = 25f;
 						Vector2 aimDestination = target.Center + target.velocity * predictivenessFactor;
@@ -734,7 +733,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 						npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
 						if (ExoMechManagement.CurrentTwinsPhase == 4)
-							plasmaShootRate += 18;
+							plasmaShootRate += 16;
 						if (ExoMechManagement.CurrentTwinsPhase >= 5)
 							plasmaShootRate -= 8;
 

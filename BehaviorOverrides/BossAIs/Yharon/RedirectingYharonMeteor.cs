@@ -28,7 +28,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             projectile.hostile = true;
             projectile.alpha = 255;
             projectile.penetrate = -1;
-            projectile.timeLeft = 3600;
+            projectile.timeLeft = 720;
+            projectile.tileCollide = false;
             projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
 		}

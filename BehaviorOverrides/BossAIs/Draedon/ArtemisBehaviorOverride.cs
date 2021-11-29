@@ -141,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public static void DoBehavior_ReleasePredictiveLasers(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
 		{
-			float shootRate = 60f;
+			float shootRate = 52f;
 			float laserShootSpeed = 10f;
 			float predictivenessFactor = 18.5f;
 			Vector2 aimDestination = target.Center + target.velocity * predictivenessFactor;

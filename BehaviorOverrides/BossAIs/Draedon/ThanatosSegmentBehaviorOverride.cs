@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (segmentFireCountdown == (int)(segmentFireTime / 2) + fireDelay)
                 {
-                    bool willShootLaser = headAttackType != ThanatosHeadBehaviorOverride.ThanatosHeadAttackType.ProjectileShooting_GreenLaser;
+                    bool willShootLaser = true;
 
                     if (willShootLaser)
                     {
@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && willShootLaser)
                     {
-                        float generalShootSpeedFactor = 1.33f;
+                        float generalShootSpeedFactor = 1.425f;
                         if (ExoMechManagement.CurrentThanatosPhase == 4)
                             generalShootSpeedFactor *= 0.65f;
                         else

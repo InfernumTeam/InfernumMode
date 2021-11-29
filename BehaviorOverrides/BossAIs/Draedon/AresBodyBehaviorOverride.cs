@@ -179,13 +179,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public static void DoBehavior_RadianceLaserBursts(NPC npc, Player target, ref float attackTimer, ref float frameType)
 		{
-			int totalBursts = 8;
+			int totalBursts = 9;
 			int shootTime = 450;
 			int shootDelay = 125;
 			int telegraphTime = 35;
 			int laserLifetime = shootTime / totalBursts - telegraphTime;
 			int totalLasers = 27;
-			int totalSparks = 25;
+			int totalSparks = 25 + (int)(npc.Distance(target.Center) * 0.02f);
 
 			if (ExoMechManagement.CurrentAresPhase <= 4)
 			{
@@ -249,7 +249,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					}
 					for (int i = 0; i < totalSparks; i++)
 					{
-						float sparkShootSpeed = npc.Distance(target.Center) * 0.01f + 20f;
+						float sparkShootSpeed = npc.Distance(target.Center) * 0.02f + 20f;
 						Vector2 sparkVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / totalSparks) * sparkShootSpeed;
 						Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), 600, 0f);
 					}

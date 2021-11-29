@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int shootTime = 240;
 			int totalLasersPerBurst = 6;
 			float aimPredictiveness = 25f;
-			float laserShootSpeed = 8f;
+			float laserShootSpeed = 9.25f;
 			ref float attackTimer = ref npc.ai[0];
 			ref float chargeDelay = ref npc.ai[1];
 			ref float laserCounter = ref npc.ai[2];
@@ -73,11 +73,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Nerf things while Ares' complement mech is present.
 			if (ExoMechManagement.CurrentAresPhase == 4)
 			{
-				shootTime += 70;
+				shootTime += 45;
 				if (laserCount > 4)
 					laserCount = 4;
 				laserCount--;
-				laserShootSpeed *= 0.6f;
+				laserShootSpeed *= 0.8f;
 			}
 
 			if (ExoMechManagement.CurrentAresPhase >= 5)

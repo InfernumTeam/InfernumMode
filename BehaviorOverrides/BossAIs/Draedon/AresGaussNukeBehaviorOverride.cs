@@ -71,8 +71,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			// Nerf things while Ares' complement mech is present.
 			if (ExoMechManagement.CurrentAresPhase == 4)
 			{
-				idealChargeDelay += 125f;
-				idealRechargeTime += 125f;
+				idealChargeDelay += 75f;
+				idealRechargeTime += 75f;
 			}
 
 			if (chargeDelay != idealChargeDelay || rechargeTime != idealRechargeTime)

@@ -21,8 +21,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public enum ThanatosHeadAttackType
 		{
-			AggressiveCharge,
 			ProjectileShooting_RedLaser,
+			AggressiveCharge,
 			ProjectileShooting_PurpleLaser,
 			ProjectileShooting_GreenLaser,
 			VomitNuke
@@ -208,7 +208,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			float lifeRatio = npc.life / (float)npc.lifeMax;
 			float flyAcceleration = MathHelper.Lerp(0.042f, 0.03f, lifeRatio);
 			float idealFlySpeed = MathHelper.Lerp(13f, 9.6f, lifeRatio);
-			float generalSpeedFactor = 1.65f;
+			float generalSpeedFactor = 1.825f;
 
 			Vector2 destination = target.Center;
 
@@ -498,7 +498,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Vector2 hoverDestination = target.Center + target.velocity.SafeNormalize(Vector2.UnitX * target.direction) * new Vector2(675f, 550f);
 			hoverDestination.Y -= 550f;
 
-			float idealFlySpeed = 14f;
+			float idealFlySpeed = 17f;
 
 			if (ExoMechManagement.CurrentThanatosPhase == 4)
 				idealFlySpeed *= 0.7f;

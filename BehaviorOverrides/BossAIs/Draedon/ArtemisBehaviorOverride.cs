@@ -143,7 +143,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		{
 			float shootRate = 52f;
 			float laserShootSpeed = 10f;
-			float predictivenessFactor = 18.5f;
+			float predictivenessFactor = ExoMechManagement.ComplementMechIsPresent(npc) ? 13.25f : 18.5f;
 			Vector2 aimDestination = target.Center + target.velocity * predictivenessFactor;
 			Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 

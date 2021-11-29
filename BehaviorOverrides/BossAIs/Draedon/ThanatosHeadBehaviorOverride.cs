@@ -208,7 +208,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			float lifeRatio = npc.life / (float)npc.lifeMax;
 			float flyAcceleration = MathHelper.Lerp(0.042f, 0.03f, lifeRatio);
 			float idealFlySpeed = MathHelper.Lerp(13f, 9.6f, lifeRatio);
-			float generalSpeedFactor = 1.825f;
+			float generalSpeedFactor = Utils.InverseLerp(0f, 35f, attackTimer, true) * 0.825f + 1f;
 
 			Vector2 destination = target.Center;
 

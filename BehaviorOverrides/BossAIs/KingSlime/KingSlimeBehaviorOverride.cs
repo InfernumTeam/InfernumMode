@@ -78,11 +78,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     if (npc.timeLeft > 30)
                         npc.timeLeft = 30;
                     npc.position.X += npc.width / 2;
-                    npc.position.Y += npc.height;
+                    npc.position.Y += npc.height / 2;
                     npc.width = (int)(108f * npc.scale);
                     npc.height = (int)(88f * npc.scale);
                     npc.position.X -= npc.width / 2;
-                    npc.position.Y -= npc.height;
+                    npc.position.Y -= npc.height / 2;
 
                     if (npc.scale < 0.7f || !npc.WithinRange(Main.player[npc.target].Center, 4700f))
                     {
@@ -228,7 +228,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                         npc.scale = MathHelper.Lerp(idealScale, 0.2f, MathHelper.Clamp((float)Math.Pow(attackTimer / digTime, 3D), 0f, 1f));
                         npc.Opacity = Utils.InverseLerp(0.7f, 1f, npc.scale, true) * 0.7f;
                         npc.dontTakeDamage = true;
-                        shouldNotChangeScale = true;
                         npc.damage = 0;
 
                         // Release slime dust to accompany the teleport
@@ -281,12 +280,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             if (!shouldNotChangeScale && oldScale != npc.scale)
             {
-                npc.position.X += npc.width / 2;
-                npc.position.Y += npc.height;
+                npc.position = npc.Bottom;
                 npc.width = (int)(108f * npc.scale);
                 npc.height = (int)(88f * npc.scale);
-                npc.position.X -= npc.width / 2;
-                npc.position.Y -= npc.height;
+                npc.Bottom = npc.position;
             }
 
             if (npc.Opacity > 0.7f)

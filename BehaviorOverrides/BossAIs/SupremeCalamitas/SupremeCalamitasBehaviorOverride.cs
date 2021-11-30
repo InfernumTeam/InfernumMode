@@ -6,6 +6,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Tiles;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
+using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -1519,7 +1520,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         if (attackTimer % 120f == 119f)
                         {
                             Vector2 blastSpawnPosition = target.Center + Main.rand.NextVector2Circular(1050f, 1050f);
-                            Vector2 blastShootVelocity = (target.Center - blastSpawnPosition).SafeNormalize(Vector2.UnitY) * blastShootSpeed * 1.8f;
+                            Vector2 blastShootVelocity = (target.Center - blastSpawnPosition).SafeNormalize(Vector2.UnitY) * blastShootSpeed * 1.6f;
                             Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 600, 0f, Main.myPlayer);
                         }
                     }
@@ -1532,7 +1533,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         for (int i = 0; i < 6; i++)
                         {
                             Vector2 sparkleVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 27f);
-                            Utilities.NewProjectileBetter(npc.Center, sparkleVelocity, ModContent.ProjectileType<BehaviorOverrides.BossAIs.Yharon.MajesticSparkleBig>(), 0, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, sparkleVelocity, ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
                         }
                     }
 

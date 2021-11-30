@@ -196,30 +196,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static readonly YharonAttackType[] Subphase7Pattern = new YharonAttackType[]
         {
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.HeatFlashRing,
-            YharonAttackType.CarpetBombing,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
             YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.HeatFlashRing,
-            YharonAttackType.CarpetBombing,
-            YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.HeatFlashRing,
-            YharonAttackType.InfernadoAndFireShotgunBreath,
-            YharonAttackType.PhoenixSupercharge,
             YharonAttackType.CarpetBombing,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.CarpetBombing,
             YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.HeatFlashRing,
+            YharonAttackType.CarpetBombing,
         };
 
         public static readonly YharonAttackType[] Subphase8Pattern = new YharonAttackType[]

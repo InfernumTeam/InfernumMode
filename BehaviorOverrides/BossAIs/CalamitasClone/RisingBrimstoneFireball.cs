@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
-            projectile.timeLeft = 210;
+            projectile.timeLeft = 120;
             projectile.Opacity = 0f;
             cooldownSlot = 1;
         }
@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             for (int i = 0; i < 2; i++)
             {
                 float offsetAngle = MathHelper.Lerp(-0.22f, 0.22f, i);
-                Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 14f;
+                Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 15f;
                 if (shouldBeBuffed)
                     shootVelocity *= 1.7f;
 

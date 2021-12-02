@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 projectile.Opacity = 1f;
 
             projectile.rotation = projectile.velocity.ToRotation();
-            Lighting.AddLight(projectile.Center, Color.Magenta.ToVector3() * 1.45f);
+            Lighting.AddLight(projectile.Center, Color.Red.ToVector3() * 0.75f);
 
             if (projectile.timeLeft >= Lifetime - HomeTime)
 			{

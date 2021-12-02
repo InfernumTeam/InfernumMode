@@ -45,6 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public const float Phase2LifeRatio = 0.7f;
         public const float Phase3LifeRatio = 0.3f;
+        public const float Phase4LifeRatio = 0.15f;
         public const int FinalPhaseTransitionTime = 180;
 
         public override bool PreAI(NPC npc)
@@ -230,7 +231,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     break;
                 case CloneAttackType.BrimstoneMeteors:
                     npc.damage = 0;
-                    DoBehavior_BrimstoneMeteors(npc, target, lifeRatio, shouldBeBuffed, ref attackTimer);
+                    DoBehavior_BrimstoneMeteors(npc, target, lifeRatio, inFinalPhase, shouldBeBuffed, ref attackTimer);
                     break;
                 case CloneAttackType.BrimstoneVolcano:
                     npc.damage = 0;
@@ -238,7 +239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     break;
                 case CloneAttackType.BrimstoneLightning:
                     npc.damage = 0;
-                    DoBehavior_BrimstoneLightning(npc, target, shouldBeBuffed, ref attackTimer);
+                    DoBehavior_BrimstoneLightning(npc, target, inFinalPhase, shouldBeBuffed, ref attackTimer);
                     break;
                 case CloneAttackType.BrimstoneFireBurst:
                     npc.damage = 0;
@@ -343,7 +344,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
         }
 
-        public static void DoBehavior_BrimstoneMeteors(NPC npc, Player target, float lifeRatio, bool shouldBeBuffed, ref float attackTimer)
+        public static void DoBehavior_BrimstoneMeteors(NPC npc, Player target, float lifeRatio, bool inFinalPhase, bool shouldBeBuffed, ref float attackTimer)
         {
             int attackDelay = 90;
             int attackTime = 480;
@@ -362,6 +363,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 attackTime -= 45;
                 hoverSpeed += 8f;
                 meteorShootSpeed *= 1.4f;
+            }
+            if (inFinalPhase)
+            {
+                attackTime -= 50;
+                meteorShootRate--;
             }
 
             meteorShootSpeed *= MathHelper.Lerp(1f, 1.35f, 1f - lifeRatio);
@@ -462,7 +468,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 SelectNewAttack(npc);
         }
 
-        public static void DoBehavior_BrimstoneLightning(NPC npc, Player target, bool shouldBeBuffed, ref float attackTimer)
+        public static void DoBehavior_BrimstoneLightning(NPC npc, Player target, bool inFinalPhase, bool shouldBeBuffed, ref float attackTimer)
         {
             int attackDelay = 45;
             int attackTime = 330;
@@ -481,6 +487,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 attackTime -= 45;
                 hoverSpeed += 8f;
                 lightningShootRate -= 9;
+            }
+
+            if (inFinalPhase)
+            {
+                attackTime -= 45;
+                lightningShootRate -= 4;
             }
 
             // Attempt to hover above the target.
@@ -512,16 +524,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             int attackCycleCount = 2;
             int hoverTime = 210;
-            float hoverHorizontalOffset = 485f;
+            float hoverHorizontalOffset = 600f;
             float hoverSpeed = 19f;
             float fireballSpeed = MathHelper.Lerp(12f, 15.6f, 1f - lifeRatio);
             int fireballReleaseRate = 36;
-            int fireballReleaseTime = 360;
+            int fireballReleaseTime = 150;
 
             if (inFinalPhase)
             {
                 fireballReleaseRate -= 10;
-                fireballSpeed *= 1.25f;
+                fireballSpeed *= 1.15f;
             }
 
             if (shouldBeBuffed)
@@ -543,7 +555,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 hoverSpeed += 8f;
                 fireballReleaseRate = (int)(fireballReleaseRate * 0.65f);
-                fireballSpeed *= 1.4f;
+                fireballSpeed *= 1.3f;
             }
 
             if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
@@ -834,6 +846,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 possibleAttacks.Add(CloneAttackType.BrimstoneFireBurst);
                 possibleAttacks.Add(CloneAttackType.RisingBrimstoneFireBursts);
                 possibleAttacks.Add(CloneAttackType.HorizontalBurstCharge);
+
+                if (lifeRatio < Phase4LifeRatio)
+                {
+                    possibleAttacks.Add(CloneAttackType.BrimstoneMeteors);
+                    possibleAttacks.Add(CloneAttackType.BrimstoneLightning);
+                }
             }
 
             if (possibleAttacks.Count > 1)

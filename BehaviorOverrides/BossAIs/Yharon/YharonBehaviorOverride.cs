@@ -168,30 +168,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public static readonly YharonAttackType[] Subphase6Pattern = new YharonAttackType[]
         {
             YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
             YharonAttackType.MassiveInfernadoSummon,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.InfernadoAndFireShotgunBreath,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.SummonFlareRing,
-            YharonAttackType.MassiveInfernadoSummon,
-            YharonAttackType.FastCharge,
-            YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.SummonFlareRing,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.FastCharge,
+            YharonAttackType.PhoenixSupercharge,
             YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.MassiveInfernadoSummon,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
-            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.SummonFlareRing,
-            YharonAttackType.FastCharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.PhoenixSupercharge,
+            YharonAttackType.InfernadoAndFireShotgunBreath,
+            YharonAttackType.MassiveInfernadoSummon,
+            YharonAttackType.SummonFlareRing,
         };
 
         public static readonly YharonAttackType[] Subphase7Pattern = new YharonAttackType[]
@@ -513,6 +509,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     fastChargeSpeedMultiplier = berserkChargeMode ? 1.4f : 1.7f;
                     break;
             }
+
+            // Buff charges in sub6 and onwards.
+            if (currentSubphase >= 5f)
+                fastChargeSpeedMultiplier *= 1.125f;
 
             if (enraged)
             {

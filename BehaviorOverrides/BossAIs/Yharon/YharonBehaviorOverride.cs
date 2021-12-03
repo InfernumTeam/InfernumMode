@@ -171,7 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.MassiveInfernadoSummon,
-            YharonAttackType.SummonFlareRing,
+            YharonAttackType.CarpetBombing,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
@@ -181,13 +181,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.InfernadoAndFireShotgunBreath,
-            YharonAttackType.SummonFlareRing,
+            YharonAttackType.CarpetBombing,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.PhoenixSupercharge,
             YharonAttackType.InfernadoAndFireShotgunBreath,
             YharonAttackType.MassiveInfernadoSummon,
-            YharonAttackType.SummonFlareRing,
+            YharonAttackType.CarpetBombing,
         };
 
         public static readonly YharonAttackType[] Subphase7Pattern = new YharonAttackType[]
@@ -636,15 +636,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static void DoBehavior_ChargesAndTeleportCharges(NPC npc, Player target, float chargeDelay, float chargeTime, float chargeSpeed, float teleportChargeCounter, ref float attackTimer, ref float attackType, ref float specialFrameType)
         {
+            float predictivenessFactor = 0f;
             if ((YharonAttackType)(int)attackType != YharonAttackType.TeleportingCharge)
+            {
                 chargeDelay = (int)(chargeDelay * 0.8f);
+                predictivenessFactor = 4.25f;
+            }
+
+            Vector2 chargeDestination = target.Center + target.velocity * predictivenessFactor;
 
             // Slow down and rotate towards the player.
             if (attackTimer < chargeDelay)
             {
                 npc.velocity *= 0.97f;
                 npc.spriteDirection = (target.Center.X - npc.Center.X < 0).ToDirectionInt();
-                npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
+                npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(chargeDestination) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi, 0.1f);
 
                 // Teleport prior to the charge happening if the attack calls for it.
                 if (attackTimer == chargeDelay - 25f && (YharonAttackType)(int)attackType == YharonAttackType.TeleportingCharge)
@@ -688,8 +694,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Charge at the target.
             else if (attackTimer == chargeDelay)
             {
-                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                npc.rotation = npc.AngleTo(target.Center) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
+                npc.velocity = npc.SafeDirectionTo(chargeDestination) * chargeSpeed;
+                npc.rotation = npc.AngleTo(chargeDestination) + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi;
                 specialFrameType = (int)YharonFrameDrawingType.IdleWings;
 
                 npc.netUpdate = true;

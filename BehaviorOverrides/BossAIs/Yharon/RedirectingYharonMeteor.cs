@@ -47,11 +47,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             if (projectile.velocity.Y < -1f)
             {
-                projectile.velocity.Y *= 0.9825f;
+                projectile.velocity.Y *= 0.9775f;
             }
             else
             {
-				projectile.velocity.Y += 0.2f;
+				projectile.velocity.Y += 0.3f;
 				if (projectile.velocity.Y > 16f)
                     projectile.velocity.Y = 16f;
             }

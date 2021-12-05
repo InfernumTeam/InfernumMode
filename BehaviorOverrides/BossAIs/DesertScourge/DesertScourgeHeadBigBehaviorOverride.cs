@@ -97,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             int sandPerBurst = 7;
             int sandBurstShootRate = 60;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlySpeed = MathHelper.Lerp(12.5f, 17.5f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.014f;
+            float idealFlySpeed = MathHelper.Lerp(11f, 14.25f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.014f;
             float maxChargeSpeed = idealFlySpeed * 1.54f;
             float flyAcceleration = idealFlySpeed / 470f;
 
@@ -258,7 +258,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             {
                 Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-850f, 850f));
                 Vector2 sandShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
-                sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * 13.5f;
+                sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * 12f;
                 Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), 80, 0f);
             }
 

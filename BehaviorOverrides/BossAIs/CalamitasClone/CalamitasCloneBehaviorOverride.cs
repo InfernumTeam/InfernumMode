@@ -213,11 +213,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 if (!brotherIsPresent)
                     hoverDestination.Y -= 350f;
 
-                // Stop moving if only one brother is alive.
-                if (brotherCount > 1)
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 4.5f, 0.2f);
-                else
-                    npc.velocity *= 0.98f;
+                // Move the ring towards the target.
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 4.5f, 0.2f);
 
                 npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
                 return false;
@@ -268,7 +265,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int hoverTime = 210;
             float hoverHorizontalOffset = 530f;
             float hoverSpeed = 20f;
-            float initialFlameSpeed = 12.7f;
+            float initialFlameSpeed = 10.75f;
             float flameAngularVariance = 0.84f;
             int flameReleaseRate = 8;
             int flameReleaseTime = 180;
@@ -527,11 +524,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             float hoverHorizontalOffset = 600f;
             float hoverSpeed = 19f;
             float fireballSpeed = MathHelper.Lerp(12f, 15.6f, 1f - lifeRatio);
+
+            int fireballCount = 5;
             int fireballReleaseRate = 36;
             int fireballReleaseTime = 150;
+            float fireballSpread = 0.7f;
 
             if (inFinalPhase)
             {
+                fireballCount = 3;
                 fireballReleaseRate -= 10;
                 fireballSpeed *= 1.15f;
             }
@@ -559,7 +560,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             if (NPC.AnyNPCs(ModContent.NPCType<SoulSeeker>()))
-                fireballSpeed *= 0.675f;
+            {
+                fireballSpeed *= 0.915f;
+                fireballCount = 4;
+                fireballSpread *= 1.225f;
+            }
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
             ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
@@ -589,10 +594,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     {
                         int fireballDamage = shouldBeBuffed ? 345 : 150;
 
-                        for (int i = 0; i < 5; i++)
+                        for (int i = 0; i < fireballCount; i++)
                         {
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
-                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, i / 4f) + Main.rand.NextFloatDirection() * 0.13f);
+                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-fireballSpread, fireballSpread, i / (float)(fireballCount - 1f)) + Main.rand.NextFloatDirection() * 0.13f);
                             Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
                         }
                     }

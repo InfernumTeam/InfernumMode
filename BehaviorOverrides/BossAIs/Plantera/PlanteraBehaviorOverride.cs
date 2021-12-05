@@ -432,7 +432,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 do
                 {
                     if (freeAreaAngle == 0f)
-                        freeAreaAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                        freeAreaAngle = npc.AngleTo(target.Center) + Main.rand.NextFloatDirection() * 1.21f;
                     else
                         freeAreaAngle = (freeAreaAngle + Main.rand.NextFloat(2.28f)) % MathHelper.TwoPi;
                     tries++;
@@ -460,7 +460,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     time += 30f;
 
                 float tentacleAngle = Utils.InverseLerp(tentacleSpawnDelay, tentacleSpawnDelay + tentacleSummonTime, attackTimer, true) * MathHelper.TwoPi;
-                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle) > MathHelper.Pi * 0.16f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle) > MathHelper.Pi * 0.11f)
                 {
                     for (int i = 0; i < 2; i++)
                     {

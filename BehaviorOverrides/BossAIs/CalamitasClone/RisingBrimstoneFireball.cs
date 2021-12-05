@@ -57,15 +57,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int fireDamage = shouldBeBuffed ? 380 : 160;
 
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            for (int i = 0; i < 2; i++)
-            {
-                float offsetAngle = MathHelper.Lerp(-0.22f, 0.22f, i);
-                Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 15f;
-                if (shouldBeBuffed)
-                    shootVelocity *= 1.7f;
+            Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center) * 15f;
+            if (shouldBeBuffed)
+                shootVelocity *= 1.7f;
 
-                Utilities.NewProjectileBetter(projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingBrimstoneBurst>(), fireDamage, 0f);
-            }
+            Utilities.NewProjectileBetter(projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingBrimstoneBurst>(), fireDamage, 0f);
         }
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

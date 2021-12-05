@@ -82,6 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             float carpetBombChargeSpeed = MathHelper.SmoothStep(20f, 23f, 1f - lifeRatio);
 
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
+            ref float bombOffsetDirectionAngle = ref npc.Infernum().ExtraAI[1];
 
             if (otherBrotherIsPresent)
             {
@@ -148,11 +149,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (attackTimer > redirectTime && attackTimer % carpetBombRate == carpetBombRate - 1)
             {
+                if (bombOffsetDirectionAngle == 0f)
+				{
+                    bombOffsetDirectionAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    npc.netUpdate = true;
+                }
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 120f;
                     Vector2 shootVelocity = npc.velocity.SafeNormalize((npc.rotation + MathHelper.PiOver2).ToRotationVector2()) * carpetBombSpeed;
-                    shootVelocity += Main.rand.NextVector2Circular(1.5f, 1.5f);
+                    shootVelocity += bombOffsetDirectionAngle.ToRotationVector2() * 2.12f;
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), 140, 0f);
                 }
                 Main.PlaySound(SoundID.DD2_BetsyFireballShot, target.Center);
@@ -222,7 +229,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 						{
                             for (int i = 0; i < 8; i++)
                             {
-                                Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(0.76f) * Main.rand.NextFloat(9f, 12f);
+                                float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, i / 7f) + Main.rand.NextFloatDirection() * 0.04f;
+                                Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * Main.rand.NextFloat(9f, 12f);
                                 shootVelocity += Main.rand.NextVector2Circular(1.5f, 1.5f);
                                 Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), 140, 0f);
                             }

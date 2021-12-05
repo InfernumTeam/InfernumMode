@@ -5,14 +5,27 @@ using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 {
-	public class DesertScourgeHeadBigBehaviorOverride : NPCBehaviorOverride
+    public class DesertScourgeHeadBigBehaviorOverride : NPCBehaviorOverride
     {
+        public enum DesertScourgeAttackType
+        {
+            SandSpit,
+            SandRushCharge,
+            SandstormParticles,
+            GroundSlam,
+            SummonVultures
+        }
+
+        public const float Phase2LifeRatio = 0.55f;
+        public const float Phase3LifeRatio = 0.25f;
+
         public override int NPCOverrideType => ModContent.NPCType<DesertScourgeHead>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
@@ -20,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
         public override bool PreAI(NPC npc)
         {
-            npc.damage = 95;
+            npc.damage = 100;
 
             // Select a new target if an old one was lost.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
@@ -28,35 +41,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
-            int digLungeTime = 420;
-            int sandSlamTime = 330;
-            ref float initializedFlag = ref npc.Infernum().ExtraAI[0];
-            ref float inAirTime = ref npc.Infernum().ExtraAI[1];
-            ref float fallTime = ref npc.Infernum().ExtraAI[2];
-            ref float digPreparationTime = ref npc.Infernum().ExtraAI[3];
-            ref float digAttackTime = ref npc.Infernum().ExtraAI[4];
-            ref float lungeFallTimer = ref npc.Infernum().ExtraAI[5];
-            ref float mandatoryLungeCount = ref npc.Infernum().ExtraAI[6];
-            ref float mandatoryLungeCountdown = ref npc.Infernum().ExtraAI[7];
-            ref float boneToothShootCounter = ref npc.Infernum().ExtraAI[8];
-            ref float sandSlamTimer = ref npc.Infernum().ExtraAI[10];
-            ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
-            ref float enrageTimer = ref npc.Infernum().ExtraAI[12];
+            ref float attackType = ref npc.ai[0];
+            ref float attackTimer = ref npc.ai[1];
+            ref float initializedFlag = ref npc.ai[2];
+            ref float enrageTimer = ref npc.ai[3];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
             {
                 CreateSegments(npc, 28, ModContent.NPCType<DesertScourgeBody>(), ModContent.NPCType<DesertScourgeTail>());
-                SummonSmallerWorms(npc);
                 initializedFlag = 1f;
                 npc.netUpdate = true;
             }
 
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-
             // If there still was no valid target, dig away.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
             {
-                DoAttack_Despawn(npc);
+                DoBehavior_Despawn(npc);
                 return false;
             }
 
@@ -64,305 +64,387 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             bool outOfBiome = !target.ZoneDesert && !BossRushEvent.BossRushActive;
             enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 420f);
 
-            bool inTiles = Collision.SolidCollision(npc.position, npc.width, npc.height);
             npc.defense = npc.defDefense;
-            npc.dontTakeDamage = NPC.AnyNPCs(ModContent.NPCType<DesertNuisanceHead>()) || enrageTimer > 300f;
+            npc.dontTakeDamage = enrageTimer > 300f;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
 
-            // Idly release bone teeth.
-            boneToothShootCounter++;
-            int boneToothShootRate = 180;
-            float boneToothShootSpeed = 8f;
-            if (BossRushEvent.BossRushActive)
-			{
-                boneToothShootRate = 70;
-                boneToothShootSpeed = 15f;
-			}
-
-            if (!npc.dontTakeDamage && !inTiles && boneToothShootCounter % boneToothShootRate == boneToothShootRate - 1f)
+            switch ((DesertScourgeAttackType)(int)attackType)
             {
-                Main.PlaySound(SoundID.Item92, target.Center);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < 14; i++)
-                    {
-                        Vector2 spawnPosition = npc.Center;
-                        Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.73f) * Main.rand.NextFloat(1f, 1.875f) * boneToothShootSpeed;
-                        spawnPosition += shootVelocity * 2.5f;
-
-                        int sand = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<BoneTooth>(), 62, 0f);
-                        if (Main.projectile.IndexInRange(sand))
-                            Main.projectile[sand].tileCollide = false;
-                    }
-                }
+                case DesertScourgeAttackType.SandSpit:
+                    DoBehavior_SandSpit(npc, target, ref attackTimer);
+                    break;
+                case DesertScourgeAttackType.SandRushCharge:
+                    DoBehavior_SandRushCharge(npc, target, ref attackTimer);
+                    break;
+                case DesertScourgeAttackType.SandstormParticles:
+                    DoBehavior_SandstormParticles(npc, target, ref attackTimer);
+                    break;
+                case DesertScourgeAttackType.GroundSlam:
+                    DoBehavior_GroundSlam(npc, target, ref attackTimer);
+                    break;
+                case DesertScourgeAttackType.SummonVultures:
+                    DoBehavior_SummonVultures(npc, target, ref attackTimer);
+                    break;
             }
-
-            if (mandatoryLungeCountdown > 0)
-                mandatoryLungeCountdown--;
-
-            // Perform mandatory lunges at certain life intervals.
-            if (mandatoryLungeCount == 0f && lifeRatio < 0.8f)
-            {
-                digAttackTime = mandatoryLungeCountdown = digLungeTime;
-                mandatoryLungeCount++;
-                npc.netUpdate = true;
-            }
-            if (mandatoryLungeCount == 1f && lifeRatio < 0.7f)
-            {
-                digAttackTime = mandatoryLungeCountdown = digLungeTime;
-                mandatoryLungeCount++;
-                npc.netUpdate = true;
-            }
-            if (mandatoryLungeCount == 2f && lifeRatio < 0.55f)
-            {
-                digAttackTime = mandatoryLungeCountdown = digLungeTime;
-                mandatoryLungeCount++;
-                npc.netUpdate = true;
-            }
-
-            // Do the dig lunge as necessary if it's being performed.
-            if (digAttackTime > 0f)
-            {
-                DoAttack_DoDigLunge(npc, target, digLungeTime - digAttackTime, lifeRatio, ref lungeFallTimer);
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                digAttackTime--;
-
-                return false;
-            }
-
-            // Do the sand slam as necessary if it's being performed.
-            if (sandSlamTimer > 0f)
-            {
-                DoAttack_SandSlam(npc, target, sandSlamTime - sandSlamTimer, lifeRatio);
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                sandSlamTimer--;
-
-                return false;
-            }
-
-            wasPreviouslyInTiles = 0f;
-            lungeFallTimer = 0f;
-
-            if (lifeRatio < 0.5f)
-            {
-                // After an amount of time, begin the dig/lunge.
-                digPreparationTime++;
-                if (digPreparationTime >= digLungeTime)
-                {
-                    digPreparationTime = 0f;
-
-                    if (Main.rand.NextBool(2))
-                        digAttackTime = digLungeTime;
-                    else
-                        sandSlamTimer = sandSlamTime;
-
-                    npc.netUpdate = true;
-                }
-            }
-
-            // If the worm has been in air for too long, fall into the ground again.
-            if (fallTime > 0f)
-                DoAttack_FallIntoGround(npc, inTiles, ref fallTime, ref inAirTime);
-            else
-                DoAttack_FlyTowardsTarget(npc, target, lifeRatio, inTiles, ref inAirTime, ref fallTime);
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            attackTimer++;
 
             return false;
         }
 
-        #region Specific Behaviors
+        public static void DoBehavior_SandSpit(NPC npc, Player target, ref float attackTimer)
+        {
+            // Attempt to rush the target.
+            int sandPerBurst = 7;
+            int sandBurstShootRate = 60;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            float idealFlySpeed = MathHelper.Lerp(12.5f, 17.5f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.014f;
+            float maxChargeSpeed = idealFlySpeed * 1.54f;
+            float flyAcceleration = idealFlySpeed / 470f;
 
-        public static void DoAttack_Despawn(NPC npc)
-		{
-            npc.velocity.X *= 0.985f;
-            if (npc.velocity.Y < 15f)
-                npc.velocity.Y += 0.25f;
-
-            if (npc.timeLeft > 200)
-                npc.timeLeft = 200;
-		}
-
-        public static void DoAttack_DoDigLunge(NPC npc, Player target, float attackTimer, float lifeRatio, ref float lungeFallTimer)
-		{
-            int burrowTime = 150;
-            if (lifeRatio < 0.4f)
-                burrowTime = 125;
-            if (lifeRatio < 0.1f)
-                burrowTime = 105;
-
-            if (attackTimer < burrowTime)
+            // Accelerate if close to the target.
+            if (npc.WithinRange(target.Center, 280f))
             {
-                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 14f, 0.04f);
+                if (npc.velocity.Length() < 3f)
+                    npc.velocity = Vector2.UnitY * 3f;
 
-                if (attackTimer == burrowTime - 1f)
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
+                if (npc.velocity.Length() < maxChargeSpeed)
+                    npc.velocity *= 1f + flyAcceleration * 0.64f;
             }
+
+            // Otherwise fly towards them and release bursts of sand.
             else
             {
-                float riseSpeed = 16f;
-                float horizontalMoveSpeed = 12f;
-                if (BossRushEvent.BossRushActive)
-				{
-                    riseSpeed = 29f;
-                    horizontalMoveSpeed = 19f;
-				}
+                float flySpeed = MathHelper.Lerp(npc.velocity.Length(), idealFlySpeed, 0.1f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyAcceleration);
+                npc.velocity = npc.velocity.MoveTowards(idealVelocity, flyAcceleration * 15f);
 
-                if (MathHelper.Distance(target.Center.X, npc.Center.X) > 125f)
-                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, npc.SafeDirectionTo(target.Center).X * horizontalMoveSpeed, 0.04f);
-                if (lungeFallTimer > 145f || target.Center.Y - npc.Center.Y < -720f)
-                    npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -riseSpeed, 0.08f);
-
-                // Fall.
-                else if (npc.Center.Y < target.Top.Y - 100f && npc.velocity.Y < 21f)
-                    npc.velocity.Y += 0.6f;
-
-                // Prepare to fall.
-                if (lungeFallTimer == 0f && MathHelper.Distance(target.Center.Y, npc.Center.Y) < 255f)
+                // Release bursts of sand periodically.
+                if (Main.netMode != NetmodeID.MultiplayerClient && !npc.WithinRange(target.Center, 325f) && attackTimer % sandBurstShootRate == sandBurstShootRate - 1f)
                 {
-                    lungeFallTimer = 1f;
-                    npc.netUpdate = true;
-                }
-
-                // If the fall timer has been initialized, increment it further.
-                if (lungeFallTimer > 0f)
-                {
-                    // After a certain point, release a bunch of sand into the air.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && lungeFallTimer == 30f)
+                    for (int i = 0; i < sandPerBurst; i++)
                     {
-                        for (int i = 0; i < (lifeRatio < 0.1f ? 38 : 25); i++)
-                        {
-                            Vector2 spawnPosition = npc.Center;
-                            Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(2.61f) * Main.rand.NextFloat(11f, 13.5f);
-                            spawnPosition += shootVelocity * 2.6f;
-
-                            int sand = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SandBlast>(), 60, 0f);
-                            if (Main.projectile.IndexInRange(sand))
-                                Main.projectile[sand].tileCollide = false;
-                        }
-                    }
-                    lungeFallTimer++;
-                }
-            }
-		}
-
-        public static void DoAttack_SandSlam(NPC npc, Player target, float attackTimer, float lifeRatio)
-        {
-            ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
-
-            int riseTime = 150;
-            if (lifeRatio < 0.4f)
-                riseTime = 125;
-            if (lifeRatio < 0.1f)
-                riseTime = 105;
-
-            // Rise upward in anticipation of slamming into the target.
-            if (attackTimer < riseTime)
-            {
-                float riseSpeed = !Collision.SolidCollision(npc.Center, 2, 2) ? 19f : 9f;
-                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -riseSpeed, 0.045f);
-                if (MathHelper.Distance(npc.Center.X, target.Center.X) > 300f)
-                    npc.velocity.X = (npc.velocity.X * 24f + npc.SafeDirectionTo(target.Center).X * 10.5f) / 25f;
-            }
-
-            // Slam back down after the rise ends.
-            if (attackTimer >= riseTime)
-            {
-                bool inTiles = Collision.SolidCollision(npc.Center, 2, 2);
-                float sandShootSpeed = 7f;
-                if (BossRushEvent.BossRushActive)
-                    sandShootSpeed = 24f;
-
-                // Release a bunch of sand and seekers once tiles have been hit.
-                if (Main.netMode != NetmodeID.MultiplayerClient && inTiles && wasPreviouslyInTiles == 0f)
-                {
-                    for (int i = 0; i < 50; i++)
-                    {
-                        Vector2 sandShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 50f) * sandShootSpeed;
-                        Vector2 spawnPosition = npc.Center + sandShootVelocity * 3f;
-                        int sand = Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 60, 0f);
+                        Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandPerBurst).ToRotationVector2() * 11.25f;
+                        Vector2 spawnPosition = npc.Center + sandShootVelocity * 2.5f;
+                        int sand = Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 80, 0f);
                         if (Main.projectile.IndexInRange(sand))
                             Main.projectile[sand].tileCollide = false;
                     }
-                    wasPreviouslyInTiles = 1f;
                 }
-
-                if (npc.velocity.Y < 26f)
-                    npc.velocity.Y += 0.5f;
-                if (inTiles)
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y, -8f, 8f);
-
-                if (MathHelper.Distance(npc.Center.X, target.Center.X) > 240f)
-                    npc.velocity.X = (npc.velocity.X * 21f + npc.SafeDirectionTo(target.Center).X * 10.5f) / 22f;
             }
+
+            // Calculate rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            if (attackTimer > 360f)
+                SelectNextAttack(npc);
         }
 
-        public static void DoAttack_FallIntoGround(NPC npc, bool inTiles, ref float fallTime, ref float inAirTime)
+        public static void DoBehavior_SandRushCharge(NPC npc, Player target, ref float attackTimer)
         {
-            fallTime = Utils.Clamp(fallTime - (inTiles ? 3 : 1), 0, 300);
-            inAirTime = Utils.Clamp(inAirTime - 2, 0, 180);
-            npc.velocity.X *= 0.985f;
+            int inGroundDepthDefinition = 3;
+            float chargeSpeed = 19f;
+            ref float attackState = ref npc.Infernum().ExtraAI[0];
+            ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
 
-            float fallAcceleration = 0.175f;
-            float fallMaxSpeed = 11f;
-            if (BossRushEvent.BossRushActive)
+            switch ((int)attackState)
             {
-                fallAcceleration = 0.375f;
-                fallMaxSpeed = 23f;
+                // Slam into the ground.
+                // If no ground is reached after a certain amount of falling, just go to the next attack.
+                case 0:
+                    if (attackTimer > 300f)
+                        SelectNextAttack(npc);
+
+                    float acceleration = 0.3f;
+                    if (attackTimer < 30f)
+                        acceleration = MathHelper.Lerp(-0.72f, 0f, attackTimer / 30f);
+                    else if (attackTimer < 70f)
+                        acceleration = MathHelper.Lerp(0f, 0.38f, Utils.InverseLerp(30f, 70f, attackTimer, true));
+                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + acceleration, -10f, 16f);
+
+                    // Try to stay close to the target horizontally.
+                    if (MathHelper.Distance(target.Center.X, npc.Center.X) > 500f)
+                    {
+                        float idealHorizontalSpeed = Math.Sign(target.Center.X - npc.Center.X) * 16f;
+                        npc.velocity.X = (npc.velocity.X * 24f + idealHorizontalSpeed) / 25f;
+                    }
+
+                    // Check to see if DS is underground, with inGroundDepthDefinition total active tiles above it.
+                    // If any of those tiles is active then it is considered not deep enough.
+                    // If DS is above the target, it is automatically designated as unable to begin the charge.
+                    bool inGround = npc.Center.Y > target.Center.Y;
+                    for (int i = 0; i < inGroundDepthDefinition; i++)
+                    {
+                        Tile tile = CalamityUtils.ParanoidTileRetrieval((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f) - i);
+                        if (!tile.active())
+                        {
+                            inGround = false;
+                            break;
+                        }
+                    }
+
+                    // Prepare for the charge.
+                    if (inGround && attackTimer > 50f)
+                    {
+                        chargeDirection = Math.Sign(target.Center.X - npc.Center.X);
+                        attackState = 1f;
+                        attackTimer = 0f;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Charge underground.
+                case 1:
+                    // Constantly approach 0 vertical movement via linear interpolation.
+                    npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, 0f, 0.175f);
+
+                    // And set the horizontal charge speed.
+                    npc.velocity.X = MathHelper.Lerp(npc.velocity.X, chargeSpeed * chargeDirection, 0.08f);
+
+                    // Release sand upward.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f)
+                    {
+                        Vector2 sandShootVelocity = -Vector2.UnitY.RotatedByRandom(0.41f) * Main.rand.NextFloat(13f, 20.5f);
+                        int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 80, 0f);
+                        if (Main.projectile.IndexInRange(sand))
+                            Main.projectile[sand].tileCollide = false;
+
+                        sand = Utilities.NewProjectileBetter(npc.Center, -sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 80, 0f);
+                        if (Main.projectile.IndexInRange(sand))
+                            Main.projectile[sand].tileCollide = false;
+                    }
+
+                    if (attackTimer > 360f || MathHelper.Distance(target.Center.X, npc.Center.X) > 1950f)
+                        SelectNextAttack(npc);
+                    break;
             }
 
-            if (npc.velocity.Y < fallMaxSpeed)
-                npc.velocity.Y += fallAcceleration;
+            // Calculate rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
+        public static void DoBehavior_SandstormParticles(NPC npc, Player target, ref float attackTimer)
+        {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(9f, 5f, 1f - lifeRatio));
+            float idealFlySpeed = MathHelper.Lerp(5f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
+            float maxChargeSpeed = idealFlySpeed * 1.54f;
+            float flyAcceleration = idealFlySpeed / 710f;
+
+            // Accelerate if close to the target.
+            if (npc.WithinRange(target.Center, 250f))
+            {
+                if (npc.velocity.Length() < 3f)
+                    npc.velocity = Vector2.UnitY * 3f;
+
+                if (npc.velocity.Length() < maxChargeSpeed)
+                    npc.velocity *= 1f + flyAcceleration * 0.64f;
+            }
+
+            // Otherwise fly towards them and release bursts of sand.
+            else
+            {
+                float flySpeed = MathHelper.Lerp(npc.velocity.Length(), idealFlySpeed, 0.1f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyAcceleration);
+                npc.velocity = npc.velocity.MoveTowards(idealVelocity, flyAcceleration * 15f);
+            }
+
+            // Calculate rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Create the sandstorm.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sandParticleReleaseRate == sandParticleReleaseRate - 1f)
+            {
+                Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-850f, 850f));
+                Vector2 sandShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
+                sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * 13.5f;
+                Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), 80, 0f);
+            }
+
+            if (attackTimer > 480f)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_GroundSlam(NPC npc, Player target, ref float attackTimer)
+        {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            int totalSlams = 2;
+            float upwardFlySpeed = 16f;
+            float slamSpeed = 23.5f;
+            int sandBurstCount = (int)MathHelper.Lerp(20f, 35f, 1f - lifeRatio);
+            float sandBurstSpeed = MathHelper.Lerp(13.745f, 19f, 1f - lifeRatio);
+
+            ref float attackState = ref npc.Infernum().ExtraAI[0];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
+
+            switch ((int)attackState)
+            {
+                // Fly upward for a time.
+                case 0:
+                    // Fly upward.
+                    npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -upwardFlySpeed, 0.08f);
+
+                    // Try to stay close to the target horizontally.
+                    if (MathHelper.Distance(target.Center.X, npc.Center.X) > 400f)
+                    {
+                        float idealHorizontalSpeed = npc.SafeDirectionTo(target.Center).X * 12.5f;
+                        npc.velocity.X = (npc.velocity.X * 14f + idealHorizontalSpeed) / 15f;
+                    }
+
+                    // Slam downward.
+                    if (attackTimer > 110f)
+                    {
+                        npc.velocity.Y *= 0.6f;
+                        attackState = 1f;
+                        attackTimer = 0f;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Slam into the ground.
+                case 1:
+                    // Fly downward.
+                    npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, slamSpeed, 0.08f);
+
+                    // Slow down horizontally if moving fast enough.
+                    if (Math.Abs(npc.velocity.X) > 6.66f)
+                        npc.velocity.X *= 0.975f;
+
+                    // Create a bunch of sandstorms that traverse the landscape and some sand blasts that expand outward.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && Collision.SolidCollision(npc.position, npc.width, npc.height) && attackTimer < 240f)
+                    {
+                        attackTimer = 240f;
+                        npc.velocity.Y *= 0.5f;
+
+                        // Create the sand burst.
+                        for (int i = 0; i < sandBurstCount; i++)
+                        {
+                            Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandBurstCount).ToRotationVector2() * sandBurstSpeed * Main.rand.NextFloat(0.7f, 1f);
+                            int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 85, 0f);
+                            if (Main.projectile.IndexInRange(sand))
+                                Main.projectile[sand].tileCollide = false;
+                        }
+
+                        // Create the tornadoes.
+                        for (int i = 0; i < 5; i++)
+                        {
+                            Vector2 tornadoVelocity = Vector2.UnitX * MathHelper.Lerp(5.5f, 19f, i / 4f);
+                            Utilities.NewProjectileBetter(npc.Center, tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, -tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
+                        }
+
+                        npc.netUpdate = true;
+                    }
+
+                    if (attackTimer > 260f)
+                    {
+                        chargeCounter++;
+                        if (chargeCounter >= totalSlams)
+                            SelectNextAttack(npc);
+                        else
+                        {
+                            attackState = 0f;
+                            attackTimer = 0f;
+                        }
+                    }
+                    break;
+            }
+
+            // Calculate rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
         
-        public static void DoAttack_FlyTowardsTarget(NPC npc, Player target, float lifeRatio, bool inTiles, ref float inAirTime, ref float fallTime)
+        public static void DoBehavior_SummonVultures(NPC npc, Player target, ref float attackTimer)
         {
-            ref float waveTimer = ref npc.Infernum().ExtraAI[9];
-            Vector2 destination = target.Center;
+            int vultureSummonDelay = 45;
+            int attackSwitchDelay = 30;
+            float idealFlySpeed = npc.Distance(target.Center) * 0.012f + 7f;
+            float maxChargeSpeed = idealFlySpeed * 1.54f;
+            float flyAcceleration = idealFlySpeed / 710f;
 
-            // If close to the target, determine the destination based on the current direction of the worm.
-            if (npc.WithinRange(target.Center, 200f))
-                destination += npc.velocity.SafeNormalize(Vector2.UnitY) * 250f;
-
-            float distanceFromDestination = npc.Distance(destination);
-            float turnSpeed = MathHelper.Lerp(0.007f, 0.035f, Utils.InverseLerp(175f, 475f, distanceFromDestination, true));
-
-            waveTimer++;
-
-            float newSpeed = npc.velocity.Length();
-            float idealSpeed = MathHelper.Lerp(4.25f, 8.3f, 1f - lifeRatio);
-            idealSpeed += MathHelper.Lerp(0f, 2f, (float)Math.Sin(waveTimer * MathHelper.TwoPi / 300f) * 0.5f + 0.5f);
-            if (BossRushEvent.BossRushActive)
-                idealSpeed *= 3.7f;
-
-            // Accelerate quickly if relatively far from the destination.
-            if (distanceFromDestination > 1250f)
-                newSpeed += 0.05f;
-
-            // Otherwise slow down if relatively close to the destination.
-            if (distanceFromDestination < 300f)
-                newSpeed -= 0.04f;
-
-            // Slowly regress back to the ideal speed over time.
-            newSpeed = MathHelper.Lerp(newSpeed, idealSpeed, 0.018f);
-            newSpeed = MathHelper.Clamp(newSpeed, 7f, 13.25f);
-
-            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), turnSpeed, true) * newSpeed;
-
-            if (!inTiles)
-                inAirTime++;
-
-            if (inAirTime >= (BossRushEvent.BossRushActive ? 420f : 180f))
+            // Accelerate if close to the target.
+            if (npc.WithinRange(target.Center, 250f))
             {
-                fallTime = BossRushEvent.BossRushActive ? 430f : 190f;
-                npc.netUpdate = true;
+                if (npc.velocity.Length() < 3f)
+                    npc.velocity = Vector2.UnitY * 3f;
+
+                if (npc.velocity.Length() < maxChargeSpeed)
+                    npc.velocity *= 1f + flyAcceleration * 0.64f;
             }
+
+            // Otherwise fly towards them and release bursts of sand.
+            else
+            {
+                float flySpeed = MathHelper.Lerp(npc.velocity.Length(), idealFlySpeed, 0.1f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), flyAcceleration);
+                npc.velocity = npc.velocity.MoveTowards(idealVelocity, flyAcceleration * 15f);
+            }
+
+            // Summon vultures.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == vultureSummonDelay)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    // Prevent NPC spam if there's more than 8 vultures present.
+                    if (NPC.CountNPCS(NPCID.Vulture) >= 8)
+                        break;
+
+                    Vector2 vultureSpawnPosition = target.Center + new Vector2(MathHelper.Lerp(-600f, 600f, i / 2f), -500f);
+                    NPC.NewNPC((int)vultureSpawnPosition.X, (int)vultureSpawnPosition.Y, NPCID.Vulture);
+                }
+            }
+
+            // Calculate rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            if (attackTimer > vultureSummonDelay + attackSwitchDelay)
+                SelectNextAttack(npc);
         }
 
-        #endregion Specific Behaviors
+        public static void SelectNextAttack(NPC npc)
+        {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            DesertScourgeAttackType oldAttack = (DesertScourgeAttackType)(int)npc.ai[0];
+            List<DesertScourgeAttackType> potentialAttacks = new List<DesertScourgeAttackType>()
+            {
+                DesertScourgeAttackType.SandSpit,
+                DesertScourgeAttackType.SandRushCharge,
+                DesertScourgeAttackType.SandstormParticles,
+            };
 
-        #region AI Utility Methods
+            if (lifeRatio < Phase2LifeRatio)
+                potentialAttacks.Add(DesertScourgeAttackType.GroundSlam);
+            if (lifeRatio < Phase3LifeRatio)
+            {
+                potentialAttacks.Add(DesertScourgeAttackType.SummonVultures);
+                potentialAttacks.Add(DesertScourgeAttackType.SummonVultures);
+            }
+
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+
+            do
+                npc.ai[0] = (int)Main.rand.Next(potentialAttacks);
+            while ((int)oldAttack == (int)npc.ai[0] && potentialAttacks.Count >= 2);
+
+            npc.ai[1] = 0f;
+            npc.netUpdate = true;
+        }
+
+        public static void DoBehavior_Despawn(NPC npc)
+        {
+            npc.velocity.X *= 0.985f;
+            if (npc.velocity.Y < 18f)
+                npc.velocity.Y += 0.3f;
+
+            if (npc.timeLeft > 200)
+                npc.timeLeft = 200;
+        }
+
         public static void CreateSegments(NPC npc, int wormLength, int bodyType, int tailType)
-		{
+        {
             int previousIndex = npc.whoAmI;
             for (int i = 0; i < wormLength; i++)
             {
@@ -375,7 +457,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 Main.npc[nextIndex].realLife = npc.whoAmI;
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;
                 Main.npc[nextIndex].ai[1] = previousIndex;
-                Main.npc[previousIndex].ai[0] = nextIndex;
+
+                if (i > 0)
+                    Main.npc[previousIndex].ai[0] = nextIndex;
 
                 // Force sync the new segment into existence.
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, nextIndex, 0f, 0f, 0f, 0);
@@ -383,35 +467,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 previousIndex = nextIndex;
             }
         }
-
-        public static void SummonSmallerWorms(NPC npc)
-		{
-            int headType = ModContent.NPCType<DesertNuisanceHead>();
-            int bodyType = ModContent.NPCType<DesertNuisanceBody>();
-            int tailType = ModContent.NPCType<DesertNuisanceTail>();
-
-            // Clear the initial worms spawned by the item.
-            for (int i = 0; i < Main.maxNPCs; i++)
-			{
-                int npcType = Main.npc[i].type;
-                if (npcType != headType || npcType != bodyType || npcType != tailType || !Main.npc[i].active)
-                    continue;
-
-                Main.npc[i].active = false;
-                Main.npc[i].netUpdate = true;
-			}
-
-            // And respawn them again.
-            Point spawnPosition = (npc.Center + Main.rand.NextVector2Circular(60f, 60f)).ToPoint();
-            int highAggressionWorm = NPC.NewNPC(spawnPosition.X, spawnPosition.Y, headType, npc.whoAmI);
-            if (Main.npc.IndexInRange(highAggressionWorm))
-                Main.npc[highAggressionWorm].Infernum().ExtraAI[0] = 0f;
-
-            spawnPosition = (npc.Center + Main.rand.NextVector2Circular(60f, 60f)).ToPoint();
-            int sandSpewingWorm = NPC.NewNPC(spawnPosition.X, spawnPosition.Y, headType, highAggressionWorm);
-            if (Main.npc.IndexInRange(sandSpewingWorm))
-                Main.npc[sandSpewingWorm].Infernum().ExtraAI[0] = 1f;
-        }
-		#endregion AI Utility Methods
-	}
+    }
 }

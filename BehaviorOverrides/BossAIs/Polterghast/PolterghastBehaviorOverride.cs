@@ -365,7 +365,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                         for (int i = 0; i < soulPair.Length; i++)
                         {
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(1.05f) * shootSpeed * Main.rand.NextFloat(0.8f, 1.2f);
-                            int soul = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 1.25f, shootVelocity, ModContent.ProjectileType<PairedSoul>(), 190, 0f, npc.target);
+                            int soul = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 1.25f, shootVelocity, ModContent.ProjectileType<PairedSoul>(), 290, 0f, npc.target);
                             soulPair[i] = Main.projectile[soul];
                         }
 
@@ -463,11 +463,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     Vector2 leftVelocity = (MathHelper.TwoPi * i / 3f - offsetAngle).ToRotationVector2() * 22.5f;
                     Vector2 rightVelocity = (MathHelper.TwoPi * i / 3f + offsetAngle).ToRotationVector2() * 22.5f;
 
-                    int soul = Utilities.NewProjectileBetter(baseSpawnPosition + leftVelocity * 2f, leftVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 190, 0f);
+                    int soul = Utilities.NewProjectileBetter(baseSpawnPosition + leftVelocity * 2f, leftVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 290, 0f);
                     if (Main.projectile.IndexInRange(soul))
                         Main.projectile[soul].ai[0] = 1f;
 
-                    soul = Utilities.NewProjectileBetter(baseSpawnPosition + rightVelocity * 2f, rightVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 190, 0f);
+                    soul = Utilities.NewProjectileBetter(baseSpawnPosition + rightVelocity * 2f, rightVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 290, 0f);
                     if (Main.projectile.IndexInRange(soul))
                         Main.projectile[soul].ai[0] = 1f;
                     totalReleasedSouls += 2f;
@@ -556,9 +556,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
                 {
                     Vector2 rockVelocity = npc.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY) * 2f;
-                    Utilities.NewProjectileBetter(npc.Center + rockVelocity * 20f, rockVelocity, ModContent.ProjectileType<GhostlyRock>(), 180, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + rockVelocity * 20f, rockVelocity, ModContent.ProjectileType<GhostlyRock>(), 280, 0f);
                     rockVelocity *= -1f;
-                    Utilities.NewProjectileBetter(npc.Center + rockVelocity * 20f, rockVelocity, ModContent.ProjectileType<GhostlyRock>(), 180, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + rockVelocity * 20f, rockVelocity, ModContent.ProjectileType<GhostlyRock>(), 280, 0f);
                 }
             }
 
@@ -623,14 +623,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 // Release souls and a burst.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * roarSpeed, ModContent.ProjectileType<NecroplasmicRoar>(), 240, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * roarSpeed, ModContent.ProjectileType<NecroplasmicRoar>(), 375, 0f);
 
                     for (int i = 0; i <= 10; i++)
                     {
                         Vector2 soulVelocity = npc.SafeDirectionTo(target.Center) * 15f;
                         soulVelocity = soulVelocity.RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, (i + 0.5f) / 10f));
                         soulVelocity *= MathHelper.Lerp(1f, 1.4f, (float)Math.Sin(MathHelper.Pi * i / 10f));
-                        Utilities.NewProjectileBetter(npc.Center, soulVelocity, ModContent.ProjectileType<WavySoul>(), 190, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, soulVelocity, ModContent.ProjectileType<WavySoul>(), 290, 0f);
                     }
                     totalReleasedSouls += 7;
 
@@ -685,7 +685,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     {
                         Vector2 spawnPosition = npc.Center + npc.SafeDirectionTo(target.Center) * 35f + Main.rand.NextVector2Circular(20f, 20f);
                         Vector2 shootVelocity = (npc.rotation - MathHelper.PiOver2 + Main.rand.NextFloatDirection() * 0.81f).ToRotationVector2() * 23f;
-                        Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 190, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<NotSpecialSoul>(), 290, 0f);
                         totalReleasedSouls++;
                     }
 

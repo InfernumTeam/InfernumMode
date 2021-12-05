@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 fadeOut = 0f;
 
             // Release meteors upward.
-            if (Main.netMode != NetmodeID.MultiplayerClient && Time % 2f == 1f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Time % 3f == 2f)
             {
                 Vector2 meteorShootVelocity = new Vector2(Owner.direction * -0.3f, -1f).RotatedByRandom(0.77f) * Main.rand.NextFloat(34f, 44f);
                 Utilities.NewProjectileBetter(projectile.Center, meteorShootVelocity, ModContent.ProjectileType<RedirectingYharonMeteor>(), 450, 0f);
@@ -161,6 +161,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            if (Time < 32f)
+                return false;
+
             float completelyUselessFuckYouLmao = 0f;
             float fadeIn = projectile.ai[0] / 25f;
             if (fadeIn > 1f)

@@ -45,8 +45,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 projectile.Kill();
         }
 
-		public override void Kill(int timeLeft)
-		{
+        public override void Kill(int timeLeft)
+        {
             Main.PlaySound(SoundID.Item73, projectile.Center);
             Utilities.CreateGenericDustExplosion(projectile.Center, (int)CalamityDusts.Brimstone, 10, 7f, 1.25f);
 
@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             Utilities.NewProjectileBetter(projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingBrimstoneBurst>(), fireDamage, 0f);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(projectile, lightColor, 0);
             return false;

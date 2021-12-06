@@ -150,7 +150,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (attackTimer > redirectTime && attackTimer % carpetBombRate == carpetBombRate - 1)
             {
                 if (bombOffsetDirectionAngle == 0f)
-				{
+                {
                     bombOffsetDirectionAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                     npc.netUpdate = true;
                 }
@@ -226,7 +226,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                         // Release fireballs upward if alone and charging down.
                         if (!otherBrotherIsPresent && Vector2.Dot(npc.velocity, Vector2.UnitY) > 0f)
-						{
+                        {
                             for (int i = 0; i < 8; i++)
                             {
                                 float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, i / 7f) + Main.rand.NextFloatDirection() * 0.04f;
@@ -234,7 +234,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                                 shootVelocity += Main.rand.NextVector2Circular(1.5f, 1.5f);
                                 Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), 140, 0f);
                             }
-						}
+                        }
 
                         attackTimer = 0f;
                         attackState = 1f;

@@ -12,7 +12,7 @@ using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 {
-	public class KingSlimeBehaviorOverride : NPCBehaviorOverride
+    public class KingSlimeBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.KingSlime;
 
@@ -26,11 +26,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             SlamJump,
             Teleport,
         }
-		#endregion
+        #endregion
 
-		#region AI
+        #region AI
 
-		internal static readonly KingSlimeAttackType[] AttackPattern = new KingSlimeAttackType[]
+        public static readonly KingSlimeAttackType[] AttackPattern = new KingSlimeAttackType[]
         {
             KingSlimeAttackType.SmallJump,
             KingSlimeAttackType.SmallJump,
@@ -38,6 +38,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             KingSlimeAttackType.Teleport,
             KingSlimeAttackType.LargeJump,
         };
+
+        public const float Phase2LifeRatio = 0.75f;
+        public const float Phase3LifeRatio = 0.3f;
 
         public override bool PreAI(NPC npc)
         {
@@ -105,13 +108,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 npc.localAI[2] = 1f;
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * 0.3f && hasSummonedNinjaFlag == 0f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * Phase3LifeRatio && hasSummonedNinjaFlag == 0f)
             {
                 NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
                 hasSummonedNinjaFlag = 1f;
             }
 
-            if (npc.life < npc.lifeMax * 0.75f && hasSummonedJewelFlag == 0f && npc.scale >= 0.8f)
+            if (npc.life < npc.lifeMax * Phase2LifeRatio && hasSummonedJewelFlag == 0f && npc.scale >= 0.8f)
             {
                 Vector2 jewelSpawnPosition = target.Center - Vector2.UnitY * 350f;
                 Main.PlaySound(SoundID.Item67, target.Center);
@@ -252,7 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                         Gore.NewGore(npc.Center + new Vector2(-40f, npc.height * -0.5f), npc.velocity, 734, 1f);
                         WorldUtils.Find(new Vector2(digXPosition, digYPosition).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
                         {
-                            new Conditions.IsSolid(),
+                            new CustomTileConditions.IsSolidOrSolidTop(),
                             new CustomTileConditions.ActiveAndNotActuated()
                         }), out Point newBottom);
 
@@ -305,7 +308,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             Vector2 kingSlimeDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
 
             // Draw the ninja, if it's still stuck.
-            if (npc.life > npc.lifeMax * 0.3f)
+            if (npc.life > npc.lifeMax * Phase3LifeRatio)
             {
                 Vector2 drawOffset = Vector2.Zero;
                 float ninjaRotation = npc.velocity.X * 0.05f;

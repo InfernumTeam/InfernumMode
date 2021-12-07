@@ -17,6 +17,15 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y) => !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval(x, y).type];
         }
 
+        public class IsSolidOrSolidTop : GenCondition
+        {
+            protected override bool CheckValidity(int x, int y)
+            {
+                Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
+                return tile.nactive() && (Main.tileSolid[tile.type] || Main.tileSolidTop[tile.type]);
+            }
+        }
+
         public class IsWater : GenCondition
         {
             protected override bool CheckValidity(int x, int y)

@@ -63,24 +63,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             Player target = Main.player[npc.target];
             bool outOfBiome = !target.ZoneDesert && !BossRushEvent.BossRushActive;
             enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 420f);
+            bool enraged = enrageTimer > 300f;
 
             npc.defense = npc.defDefense;
-            npc.dontTakeDamage = enrageTimer > 300f;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
 
             switch ((DesertScourgeAttackType)(int)attackType)
             {
                 case DesertScourgeAttackType.SandSpit:
-                    DoBehavior_SandSpit(npc, target, ref attackTimer);
+                    DoBehavior_SandSpit(npc, target, enraged, ref attackTimer);
                     break;
                 case DesertScourgeAttackType.SandRushCharge:
-                    DoBehavior_SandRushCharge(npc, target, ref attackTimer);
+                    DoBehavior_SandRushCharge(npc, target, enraged, ref attackTimer);
                     break;
                 case DesertScourgeAttackType.SandstormParticles:
-                    DoBehavior_SandstormParticles(npc, target, ref attackTimer);
+                    DoBehavior_SandstormParticles(npc, target, enraged, ref attackTimer);
                     break;
                 case DesertScourgeAttackType.GroundSlam:
-                    DoBehavior_GroundSlam(npc, target, ref attackTimer);
+                    DoBehavior_GroundSlam(npc, target, enraged, ref attackTimer);
                     break;
                 case DesertScourgeAttackType.SummonVultures:
                     DoBehavior_SummonVultures(npc, target, ref attackTimer);
@@ -91,13 +91,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             return false;
         }
 
-        public static void DoBehavior_SandSpit(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_SandSpit(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             // Attempt to rush the target.
             int sandPerBurst = 7;
-            int sandBurstShootRate = 60;
+            int sandBurstShootRate = 80;
+            float sandBurstSpeed = 11.25f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealFlySpeed = MathHelper.Lerp(11f, 14.25f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.014f;
+            if (enraged)
+            {
+                sandPerBurst += 5;
+                sandBurstShootRate -= 42;
+                sandBurstSpeed *= 1.3f;
+                idealFlySpeed *= 1.4f;
+            }
+
             float maxChargeSpeed = idealFlySpeed * 1.54f;
             float flyAcceleration = idealFlySpeed / 470f;
 
@@ -124,9 +133,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 {
                     for (int i = 0; i < sandPerBurst; i++)
                     {
-                        Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandPerBurst).ToRotationVector2() * 11.25f;
+                        Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandPerBurst).ToRotationVector2() * sandBurstSpeed;
                         Vector2 spawnPosition = npc.Center + sandShootVelocity * 2.5f;
-                        int sand = Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 80, 0f);
+                        int sand = Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 90, 0f);
                         if (Main.projectile.IndexInRange(sand))
                             Main.projectile[sand].tileCollide = false;
                     }
@@ -140,10 +149,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_SandRushCharge(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_SandRushCharge(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             int inGroundDepthDefinition = 3;
+            int sandCreationRate = 6;
             float chargeSpeed = 19f;
+            if (enraged)
+                sandCreationRate -= 3;
+
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
 
@@ -202,7 +215,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     npc.velocity.X = MathHelper.Lerp(npc.velocity.X, chargeSpeed * chargeDirection, 0.08f);
 
                     // Release sand upward.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sandCreationRate == sandCreationRate - 1f)
                     {
                         Vector2 sandShootVelocity = -Vector2.UnitY.RotatedByRandom(0.41f) * Main.rand.NextFloat(13f, 20.5f);
                         int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 80, 0f);
@@ -223,11 +236,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public static void DoBehavior_SandstormParticles(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_SandstormParticles(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(9f, 5f, 1f - lifeRatio));
+            float sandParticleSpeed = 12f;
             float idealFlySpeed = MathHelper.Lerp(5f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
+            if (enraged)
+			{
+                sandParticleReleaseRate /= 2;
+                sandParticleSpeed *= 1.4f;
+			}
+
             float maxChargeSpeed = idealFlySpeed * 1.54f;
             float flyAcceleration = idealFlySpeed / 710f;
 
@@ -258,7 +278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             {
                 Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-850f, 850f));
                 Vector2 sandShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
-                sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * 12f;
+                sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * sandParticleSpeed;
                 Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), 80, 0f);
             }
 
@@ -266,7 +286,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_GroundSlam(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_GroundSlam(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int totalSlams = 2;
@@ -274,6 +294,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             float slamSpeed = 23.5f;
             int sandBurstCount = (int)MathHelper.Lerp(20f, 35f, 1f - lifeRatio);
             float sandBurstSpeed = MathHelper.Lerp(13.745f, 19f, 1f - lifeRatio);
+            if (enraged)
+            {
+                sandBurstCount += 10;
+                sandBurstSpeed *= 1.6f;
+            }
 
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];

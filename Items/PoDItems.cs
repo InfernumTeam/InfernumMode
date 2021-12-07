@@ -26,6 +26,9 @@ namespace InfernumMode
                 item.maxStack = 1;
             }
 
+            if (item.type == ModContent.ItemType<StickySpikyBall>())
+                item.damage = 6;
+
             if (item.type == ModContent.ItemType<FlashBullet>())
                 item.damage = 4;
 

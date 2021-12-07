@@ -92,7 +92,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             bool phase3 = lifeRatio < 0.33f;
             npc.damage = npc.defDamage + 12;
             if (phase2)
+            {
+                npc.defense = 0;
                 npc.damage += 28;
+            }
 
             void goToNextAIState()
             {
@@ -180,9 +183,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
                     break;
                 case EoCAttackType.ChargingServants:
-                    int servantSummonDelay = phase2 ? 35 : 50;
+                    int servantSummonDelay = phase2 ? 35 : 42;
                     int servantsToSummon = phase2 ? 9 : 6;
-                    int servantSummonTime = phase2 ? 60 : 120;
+                    int servantSummonTime = phase2 ? 54 : 85;
                     int servantSpawnRate = servantSummonTime / servantsToSummon;
 
                     hoverAcceleration = MathHelper.Lerp(0.15f, 0.35f, 1f - lifeRatio);
@@ -192,30 +195,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         Vector2 destination = target.Center - Vector2.UnitY * 275f;
                         npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverAcceleration);
                     }
-                    else if ((attackTimer - servantSummonDelay) % servantSpawnRate == servantSpawnRate - 1)
+                    else
                     {
-                        Vector2 spawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(120f, 120f);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        if ((attackTimer - servantSummonDelay) % servantSpawnRate == servantSpawnRate - 1)
                         {
-                            int eye = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<ExplodingServant>());
-                            Main.npc[eye].target = npc.target;
-                            Main.npc[eye].velocity = Main.npc[eye].SafeDirectionTo(target.Center) * 4.5f;
-                        }
-
-                        if (!Main.dedServ)
-                        {
-                            for (int i = 0; i < 20; i++)
+                            Vector2 spawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(120f, 120f);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                float angle = MathHelper.TwoPi * i / 20f;
-                                Dust magicBlood = Dust.NewDustPerfect(spawnPosition + angle.ToRotationVector2() * 4f, 261);
-                                magicBlood.color = Color.IndianRed;
-                                magicBlood.velocity = angle.ToRotationVector2() * 5f;
-                                magicBlood.noGravity = true;
+                                int eye = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<ExplodingServant>());
+                                Main.npc[eye].target = npc.target;
+                                Main.npc[eye].velocity = Main.npc[eye].SafeDirectionTo(target.Center) * 4.5f;
+                            }
+
+                            if (!Main.dedServ)
+                            {
+                                for (int i = 0; i < 20; i++)
+                                {
+                                    float angle = MathHelper.TwoPi * i / 20f;
+                                    Dust magicBlood = Dust.NewDustPerfect(spawnPosition + angle.ToRotationVector2() * 4f, 261);
+                                    magicBlood.color = Color.IndianRed;
+                                    magicBlood.velocity = angle.ToRotationVector2() * 5f;
+                                    magicBlood.noGravity = true;
+                                }
                             }
                         }
+
+                        Vector2 destination = target.Center - Vector2.UnitY * 300f;
+                        if (npc.WithinRange(destination, 400f))
+                            npc.velocity *= 0.93f;
+                        else
+                            npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverAcceleration);
                     }
 
-                    npc.velocity *= 0.95f;
                     npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.2f);
 
                     if (attackTimer >= servantSummonDelay + servantSummonTime)

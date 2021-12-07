@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             {
                 Vector2 shootVelocity = PredictiveAimRotation.ToRotationVector2() * (UseUndergroundAI ? 11f : 13.25f);
                 shootVelocity *= 0.52f;
-                int ray = Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ProjectileID.CultistBossLightningOrbArc, 80, 0f, 255);
+                int ray = Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ProjectileID.CultistBossLightningOrbArc, 125, 0f, 255);
 
                 if (Main.projectile.IndexInRange(ray))
                 {

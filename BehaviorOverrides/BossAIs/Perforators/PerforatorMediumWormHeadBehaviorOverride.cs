@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 for (int i = 0; i < burstCount; i++)
                 {
                     Vector2 ichorVelocity = (npc.velocity.ToRotation() + MathHelper.Lerp(-0.53f, 0.53f, i / (float)(burstCount - 1f))).ToRotationVector2() * burstSpeed;
-                    Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorSpit>(), 80, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorSpit>(), 95, 0f);
                 }
                 shootTimer = 0f;
                 npc.netUpdate = true;

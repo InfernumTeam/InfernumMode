@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 bloodVelocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, target.Center + Vector2.UnitY * 480f + target.velocity * 120f, BloodGeyser2.Gravity, 16f, out _);
-                        Utilities.NewProjectileBetter(npc.Center, bloodVelocity, ModContent.ProjectileType<BloodGeyser2>(), 50, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, bloodVelocity, ModContent.ProjectileType<BloodGeyser2>(), 100, 0f);
                     }
                     Main.PlaySound(SoundID.NPCHit20, npc.position);
                 }
@@ -93,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 if (Main.netMode != NetmodeID.MultiplayerClient && !obstanceInWayOfTarget && attackTimer % 75f == 74f && Main.rand.NextBool(4))
                 {
                     float aimAwayAngle = Utils.InverseLerp(480f, 300f, npc.Distance(target.Center), true) * Main.rand.NextFloat(2.16f, 3.84f);
-                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(aimAwayAngle) * 8f, ModContent.ProjectileType<IchorSpit>(), 50, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(aimAwayAngle) * 8f, ModContent.ProjectileType<IchorSpit>(), 100, 0f);
                 }
             }
 

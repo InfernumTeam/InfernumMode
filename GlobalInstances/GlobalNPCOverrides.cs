@@ -45,6 +45,7 @@ using CalamityMod.Events;
 using CalamityMod.UI;
 using System.Linq;
 using InfernumMode.Items;
+using CalamityMod.NPCs.Perforator;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -227,6 +228,16 @@ namespace InfernumMode.GlobalInstances
                 return npc.ai[2] >= 2f;
             }
 
+            // Clear lightning.
+            if (npc.type == NPCID.BrainofCthulhu)
+            {
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].type == ProjectileID.CultistBossLightningOrbArc)
+                        Main.projectile[i].Kill();
+                }
+            }
+
             if (npc.type == NPCID.WallofFleshEye)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -407,15 +418,24 @@ namespace InfernumMode.GlobalInstances
             if (isSplitEoW && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.45);
 
-            if ((npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyMedium>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.Perforator.PerforatorBodyLarge>()) && (projectile.penetrate >= 2 || projectile.penetrate == -1))
+            if (projectile.type == ModContent.ProjectileType<AshenStalagmiteProj>() && projectile.Calamity().stealthStrike)
+                damage = (int)(damage * 0.65f);
+
+            if ((npc.type == ModContent.NPCType<PerforatorBodyMedium>() ||
+                npc.type == ModContent.NPCType<PerforatorBodyLarge>()) && (projectile.penetrate >= 2 || projectile.penetrate == -1))
             {
-                damage = (int)(damage * 0.4);
+                damage = (int)(damage * 0.4f);
+            }
+
+            if ((npc.type == ModContent.NPCType<PerforatorBodySmall>() ||
+                npc.type == ModContent.NPCType<PerforatorBodyLarge>()) && (projectile.type == ModContent.ProjectileType<InfernalKrisCinder>()))
+            {
+                damage = (int)(damage * 0.55f);
             }
 
             bool isInkCloud = projectile.type == ModContent.ProjectileType<InkCloud>() || projectile.type == ModContent.ProjectileType<InkCloud2>() || projectile.type == ModContent.ProjectileType<InkCloud3>();
             if (isInkCloud && (npc.type == ModContent.NPCType<SlimeSpawnCrimson3>() || npc.type == ModContent.NPCType<SlimeSpawnCorrupt2>()))
-                damage = (int)(damage * 0.6);
+                damage = (int)(damage * 0.6f);
 
             if (npc.type == NPCID.WallofFleshEye && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.785);

@@ -351,7 +351,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
             offsetAngle *= Utils.InverseLerp(100f, 350f, npc.Distance(target.Center), true);
 
-            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed * 0.875f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed * 0.95f;
             idealVelocity *= 1f + npc.Distance(target.Center) / 2400f;
             if (BossRushEvent.BossRushActive)
                 idealVelocity *= 2.1f;

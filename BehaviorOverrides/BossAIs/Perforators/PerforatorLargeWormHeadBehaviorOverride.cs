@@ -20,6 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
         public override bool PreAI(NPC npc)
         {
             ref float fallCountdown = ref npc.ai[0];
+            ref float enrageTimer = ref npc.ai[1];
             ref float hasSummonedSegments = ref npc.localAI[0];
 
             npc.TargetClosest();
@@ -44,6 +45,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             Player target = Main.player[npc.target];
 
+            bool outOfBiome = !target.ZoneCorrupt && !target.ZoneCrimson;
+            if (outOfBiome && !BossRushEvent.BossRushActive)
+                enrageTimer++;
+            else
+                enrageTimer = 0f;
+
+            bool enraged = enrageTimer > 300f;
+            npc.dontTakeDamage = enraged;
+            npc.Calamity().CurrentlyEnraged = outOfBiome;
+
             // Count segments in the air.
             int totalSegmentsInAir = 0;
             int bodyType = ModContent.NPCType<PerforatorBodyLarge>();
@@ -52,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             float maxVerticalSpeed = 17f;
             int circularBurstCount = 6;
             float circularBurstSpeed = 6f;
-            if (BossRushEvent.BossRushActive)
+            if (BossRushEvent.BossRushActive || enraged)
             {
                 moveSpeed *= 4f;
                 horizontalSpeed = 19f;

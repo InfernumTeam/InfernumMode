@@ -29,6 +29,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             // Fuck.
             npc.Calamity().newAI[1] = 720f;
 
+            // Fuck!
+            for (int k = 0; k < npc.buffImmune.Length; k++)
+                npc.buffImmune[k] = true;
+
             // Inherit various attributes from the head segment.
             // This code will go upstream across every segment, until it reaches the head.
             npc.scale = aheadSegment.scale;

@@ -100,13 +100,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 				}
 			}
 
-			if (!target.ZoneCorrupt && !target.ZoneCrimson && !BossRushEvent.BossRushActive)
+			bool outOfBiome = !target.ZoneCorrupt && !target.ZoneCrimson;
+			if (outOfBiome && !BossRushEvent.BossRushActive)
 				enrageTimer++;
 			else
 				enrageTimer = 0f;
 
 			npc.dontTakeDamage = anyWorms || enrageTimer > 300f || summonAnimationCountdown > 0f;
-			npc.Calamity().CurrentlyEnraged = enrageTimer > 300f;
+			npc.Calamity().CurrentlyEnraged = outOfBiome;
 
 			if (summonAnimationCountdown > 0f)
 			{
@@ -389,7 +390,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 			// And release ichor shots upward more frequently.
 			if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
 			{
-				int totalProjectiles = (int)MathHelper.Lerp(27f, 35f, 1f - npc.life / (float)npc.lifeMax);
+				int totalProjectiles = (int)MathHelper.Lerp(22f, 30f, 1f - npc.life / (float)npc.lifeMax);
 				float blobSpeed = anyWorms ? 6f : 8f;
 				if (finalWormDead)
 					blobSpeed += 0.25f;
@@ -400,7 +401,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 				for (int i = 0; i < totalProjectiles + 1; i++)
 				{
 					Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), finalWormDead ? 110 : 95, 0f, Main.myPlayer, 0f, 0f);
-					currentBlobVelocity.X += blobSpeed / totalProjectiles * -1.54f;
+					currentBlobVelocity.X += blobSpeed / totalProjectiles * -1.54f + Main.rand.NextFloatDirection() * 0.08f;
 				}
 				Main.PlaySound(SoundID.NPCHit20, npc.position);
 			}

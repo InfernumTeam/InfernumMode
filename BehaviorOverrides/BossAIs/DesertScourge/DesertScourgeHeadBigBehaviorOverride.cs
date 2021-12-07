@@ -152,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         public static void DoBehavior_SandRushCharge(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             int inGroundDepthDefinition = 3;
-            int sandCreationRate = 6;
+            int sandCreationRate = 8;
             float chargeSpeed = 19f;
             if (enraged)
                 sandCreationRate -= 3;

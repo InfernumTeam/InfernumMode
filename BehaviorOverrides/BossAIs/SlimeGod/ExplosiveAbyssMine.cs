@@ -1,3 +1,4 @@
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using CalamityMod.Projectiles;
 using Terraria;
@@ -60,6 +61,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => projectile.Kill();
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            target.AddBuff(ModContent.BuffType<Shadowflame>(), 180);
+            projectile.Kill();
+        }
     }
 }

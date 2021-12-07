@@ -62,8 +62,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
             Player target = Main.player[npc.target];
             bool outOfBiome = !target.ZoneDesert && !BossRushEvent.BossRushActive;
-            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 420f);
-            bool enraged = enrageTimer > 300f;
+            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 600f);
+            bool enraged = enrageTimer > 450f;
 
             npc.defense = npc.defDefense;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             int sandBurstShootRate = 80;
             float sandBurstSpeed = 11.25f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlySpeed = MathHelper.Lerp(11f, 14.25f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.014f;
+            float idealFlySpeed = MathHelper.Lerp(10f, 13.15f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
             if (enraged)
             {
                 sandPerBurst += 5;
@@ -108,7 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             }
 
             float maxChargeSpeed = idealFlySpeed * 1.54f;
-            float flyAcceleration = idealFlySpeed / 470f;
+            float flyAcceleration = idealFlySpeed / 560f;
 
             // Accelerate if close to the target.
             if (npc.WithinRange(target.Center, 280f))
@@ -135,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     {
                         Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandPerBurst).ToRotationVector2() * sandBurstSpeed;
                         Vector2 spawnPosition = npc.Center + sandShootVelocity * 2.5f;
-                        int sand = Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 90, 0f);
+                        int sand = Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 80, 0f);
                         if (Main.projectile.IndexInRange(sand))
                             Main.projectile[sand].tileCollide = false;
                     }
@@ -218,11 +218,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % sandCreationRate == sandCreationRate - 1f)
                     {
                         Vector2 sandShootVelocity = -Vector2.UnitY.RotatedByRandom(0.41f) * Main.rand.NextFloat(13f, 20.5f);
-                        int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 80, 0f);
+                        int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 75, 0f);
                         if (Main.projectile.IndexInRange(sand))
                             Main.projectile[sand].tileCollide = false;
 
-                        sand = Utilities.NewProjectileBetter(npc.Center, -sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 80, 0f);
+                        sand = Utilities.NewProjectileBetter(npc.Center, -sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 75, 0f);
                         if (Main.projectile.IndexInRange(sand))
                             Main.projectile[sand].tileCollide = false;
                     }
@@ -239,8 +239,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         public static void DoBehavior_SandstormParticles(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(11f, 6f, 1f - lifeRatio));
-            float sandParticleSpeed = 12f;
+            int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(13f, 8f, 1f - lifeRatio));
+            float sandParticleSpeed = 11f;
             float idealFlySpeed = MathHelper.Lerp(5f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
             if (enraged)
 			{
@@ -279,7 +279,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-850f, 850f));
                 Vector2 sandShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
                 sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * sandParticleSpeed;
-                Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), 80, 0f);
+                Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), 75, 0f);
             }
 
             if (attackTimer > 480f)
@@ -346,7 +346,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         for (int i = 0; i < sandBurstCount; i++)
                         {
                             Vector2 sandShootVelocity = (MathHelper.TwoPi * i / sandBurstCount).ToRotationVector2() * sandBurstSpeed * Main.rand.NextFloat(0.7f, 1f);
-                            int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 85, 0f);
+                            int sand = Utilities.NewProjectileBetter(npc.Center, sandShootVelocity, ModContent.ProjectileType<SandBlast>(), 75, 0f);
                             if (Main.projectile.IndexInRange(sand))
                                 Main.projectile[sand].tileCollide = false;
                         }

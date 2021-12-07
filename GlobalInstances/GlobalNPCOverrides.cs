@@ -25,6 +25,9 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
+using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
+using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
+using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
@@ -47,6 +50,7 @@ using System.Linq;
 using InfernumMode.Items;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Crabulon;
+using CalamityMod.Buffs.DamageOverTime;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -443,6 +447,11 @@ namespace InfernumMode.GlobalInstances
             bool isInkCloud = projectile.type == ModContent.ProjectileType<InkCloud>() || projectile.type == ModContent.ProjectileType<InkCloud2>() || projectile.type == ModContent.ProjectileType<InkCloud3>();
             if (isInkCloud && (npc.type == ModContent.NPCType<SlimeSpawnCrimson3>() || npc.type == ModContent.NPCType<SlimeSpawnCorrupt2>()))
                 damage = (int)(damage * 0.6f);
+            if ((npc.type == ModContent.NPCType<SlimeSpawnCrimson3>() || npc.type == ModContent.NPCType<SlimeSpawnCorrupt2>()) &&
+                (projectile.penetrate >= 2 || projectile.penetrate == -1))
+            {
+                damage = (int)(damage * 0.5f);
+            }
 
             if (npc.type == NPCID.WallofFleshEye && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.785);
@@ -686,7 +695,19 @@ namespace InfernumMode.GlobalInstances
         {
             if (!PoDWorld.InfernumMode)
                 return;
+            
+            if (npc.type == ModContent.NPCType<CrimulanSGBig>() || npc.type == ModContent.NPCType<SlimeSpawnCrimson3>())
+                target.AddBuff(ModContent.BuffType<BurningBlood>(), 240);
+            if (npc.type == ModContent.NPCType<EbonianSGBig>() || npc.type == ModContent.NPCType<SlimeSpawnCorrupt2>())
+                target.AddBuff(ModContent.BuffType<Shadowflame>(), 240);
 
+            if (npc.type == ModContent.NPCType<SlimeGodCore>())
+            {
+                target.AddBuff(ModContent.BuffType<BurningBlood>(), 150);
+                target.AddBuff(ModContent.BuffType<Shadowflame>(), 150);
+                target.AddBuff(BuffID.Slimed, 300);
+                target.AddBuff(BuffID.Slow, 300);
+            }
             if (npc.type == NPCID.Retinazer && !NPC.AnyNPCs(NPCID.Spazmatism))
                 target.AddBuff(ModContent.BuffType<RedSurge>(), 180);
             if (npc.type == NPCID.Spazmatism && !NPC.AnyNPCs(NPCID.Retinazer))

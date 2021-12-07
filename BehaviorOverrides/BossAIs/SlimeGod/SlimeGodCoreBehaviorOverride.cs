@@ -160,7 +160,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 0f)
             {
                 float verticalOffsetLeniance = 65f;
-                float flySpeed = 7f;
+                float flySpeed = 9f;
                 float flyInertia = 4f;
                 float horizontalOffset = 720f;
                 if (BossRushEvent.BossRushActive)
@@ -184,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 1f)
             {
                 int chargeDelay = 30;
-                float flySpeed = 9f;
+                float flySpeed = 12.75f;
                 float flyInertia = 8f;
                 if (BossRushEvent.BossRushActive)
                     flySpeed *= 2f;
@@ -294,7 +294,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 spinAngleOffset += MathHelper.TwoPi * Utils.InverseLerp(170f, 150f, attackTimer, true) / 90f;
                 npc.rotation += spinAngleOffset * 0.3f;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 22f == 21f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 16f == 15f)
                 {
                     Vector2 abyssBallVelocity = npc.SafeDirectionTo(target.Center) * -7f;
                     Utilities.NewProjectileBetter(npc.Center, abyssBallVelocity, ModContent.ProjectileType<RedirectingAbyssBall>(), 95, 0f);
@@ -353,7 +353,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             if (attackTimer == 220f)
             {
-                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 10f) * 16.5f;
+                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 10f) * 18.5f;
                 if (BossRushEvent.BossRushActive)
                     npc.velocity *= 1.65f;
                 npc.netUpdate = true;
@@ -415,7 +415,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 0f)
             {
                 float verticalOffsetLeniance = 65f;
-                float flySpeed = 10f;
+                float flySpeed = 14.5f;
                 float flyInertia = 4f;
                 float horizontalOffset = 720f;
                 if (BossRushEvent.BossRushActive)
@@ -439,7 +439,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 1f)
             {
                 int chargeDelay = 30;
-                float flySpeed = 14.5f;
+                float flySpeed = 17.5f;
                 float flyInertia = 8f;
                 if (BossRushEvent.BossRushActive)
                     flySpeed *= 2.15f;

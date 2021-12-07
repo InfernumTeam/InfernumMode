@@ -1,5 +1,7 @@
-﻿using CalamityMod.Dusts;
+﻿using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Projectiles.Enemy;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.OverridingSystem;
@@ -169,7 +171,17 @@ namespace InfernumMode.GlobalInstances
             }
             return base.OnTileCollide(projectile, oldVelocity);
         }
-        public override bool CanHitPlayer(Projectile projectile, Player target)
+
+		public override void ModifyHitPlayer(Projectile projectile, Player target, ref int damage, ref bool crit)
+		{
+            if (!InfernumMode.CanUseCustomAIs)
+                return;
+
+            if (projectile.type == ModContent.ProjectileType<CrimsonSpike>())
+                target.AddBuff(ModContent.BuffType<BurningBlood>(), 180);
+        }
+
+		public override bool CanHitPlayer(Projectile projectile, Player target)
         {
             if (InfernumMode.CanUseCustomAIs)
             {

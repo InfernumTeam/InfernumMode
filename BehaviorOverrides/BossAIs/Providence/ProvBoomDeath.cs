@@ -47,7 +47,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 				MaxRadius = Main.rand.NextFloat(1000f, 1600f);
 				projectile.localAI[0] = 1f;
 			}
-			Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / Lifetime) * 12f;
 
 			Lighting.AddLight(projectile.Center, 0.2f, 0.1f, 0f);
 			Radius = MathHelper.Lerp(Radius, MaxRadius, 0.15f);

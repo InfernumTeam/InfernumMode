@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 {
-	public class SkeletronHandBehaviorOverride : NPCBehaviorOverride
+    public class SkeletronHandBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.SkeletronHand;
 
@@ -85,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                                 npc.velocity.X = -3.5f;
                         }
 
-                        if (npc.WithinRange(destination, 100f) && attackTimer % 10f == 9f && owner.life < owner.lifeMax * 0.825f)
+                        if (npc.WithinRange(destination, 100f) && attackTimer % 10f == 9f && attackTimer > 50f && owner.life < owner.lifeMax * 0.825f)
                         {
                             Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
                             for (int i = 0; i < 4; i++)
@@ -171,7 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                                     Vector2 flameShootVelocity = Vector2.UnitX * Math.Sign(npc.SafeDirectionTo(target.Center).X) * 13f;
                                     if (BossRushEvent.BossRushActive)
                                         flameShootVelocity *= 2f;
-                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
+                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 95, 0f);
                                 }
                             }
                         }

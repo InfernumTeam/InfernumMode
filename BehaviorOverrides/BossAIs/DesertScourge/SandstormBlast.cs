@@ -48,7 +48,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], lightColor, 1);
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Vector2 origin = texture.Size() * 0.5f;
+            spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(Color.Red) * 0.6f, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

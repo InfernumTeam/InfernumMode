@@ -1,3 +1,4 @@
+using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -62,6 +63,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, 4, projectile.oldVelocity.X * 0.5f, projectile.oldVelocity.Y * 0.5f);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Ichor, 180);
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+		{
+            target.AddBuff(ModContent.BuffType<Shadowflame>(), 180);
+        }
     }
 }

@@ -28,6 +28,7 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.SlimeGod;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -49,9 +50,10 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<PerforatorBodyMedium>()] = BossRushEvent.BossRushActive ? 7675 : 175,
             [ModContent.NPCType<PerforatorHeadLarge>()] = BossRushEvent.BossRushActive ? 174500 : 5500,
             [NPCID.QueenBee] = BossRushEvent.BossRushActive ? 511100 : 6969,
-            [NPCID.SkeletronHead] = BossRushEvent.BossRushActive ? 418105 : 7600,
-            [ModContent.NPCType<CrimulanSGBig>()] = BossRushEvent.BossRushActive ? 113720 : 4020,
-            [ModContent.NPCType<EbonianSGBig>()] = BossRushEvent.BossRushActive ? 113720 : 4020,
+            [NPCID.SkeletronHead] = BossRushEvent.BossRushActive ? 418105 : 8880,
+            [ModContent.NPCType<SlimeGodCore>()] = BossRushEvent.BossRushActive ? 486500 : 2730,
+            [ModContent.NPCType<CrimulanSGBig>()] = BossRushEvent.BossRushActive ? 213720 : 6220,
+            [ModContent.NPCType<EbonianSGBig>()] = BossRushEvent.BossRushActive ? 213720 : 6220,
             [NPCID.WallofFleshEye] = BossRushEvent.BossRushActive ? 246800 : 3232,
             [NPCID.WallofFlesh] = BossRushEvent.BossRushActive ? 1068000 : 11875,
             [NPCID.Spazmatism] = BossRushEvent.BossRushActive ? 833760 : 22223,

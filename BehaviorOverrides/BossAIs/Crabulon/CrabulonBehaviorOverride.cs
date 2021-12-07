@@ -372,6 +372,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                     }), out Point newBottom);
                     Utilities.NewProjectileBetter(newBottom.ToWorldCoordinates(8, 0), Vector2.Zero, ModContent.ProjectileType<MushroomPillar>(), 70, 0f);
                 }
+
+                // Release spores into the air.
+                for (int i = 0; i < 3; i++)
+                {
+                    int x = (int)(npc.position.X + Main.rand.Next(npc.width - 32));
+                    int y = (int)(npc.position.Y + Main.rand.Next(npc.height - 32));
+                    int fuck = NPC.NewNPC(x, y, ModContent.NPCType<CrabShroom>());
+                    Main.npc[fuck].SetDefaults(ModContent.NPCType<CrabShroom>());
+                    Main.npc[fuck].velocity.X = Main.rand.NextFloat(-5f, 5f);
+                    Main.npc[fuck].velocity.Y = Main.rand.NextFloat(-9f, -6f);
+                    if (Main.netMode == NetmodeID.Server && fuck < 200)
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, fuck, 0f, 0f, 0f, 0, 0, 0);
+                }
             }
 
             if (attackTimer >= 120f)

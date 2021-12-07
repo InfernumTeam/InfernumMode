@@ -538,7 +538,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int shootDelay = 25;
             int burstReleaseRate = 30;
             float spinRadius = 540f;
-            float spinArc = MathHelper.Pi * 1.8f;
+            float spinArc = MathHelper.Pi * 1.15f;
 
             npc.dontTakeDamage = false;
 

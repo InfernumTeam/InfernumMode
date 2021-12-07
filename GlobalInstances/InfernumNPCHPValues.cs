@@ -31,24 +31,24 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 
 namespace InfernumMode.GlobalInstances
 {
-	public static class InfernumNPCHPValues
+    public static class InfernumNPCHPValues
     {
         public static Dictionary<int, int> HPValues => new Dictionary<int, int>()
         {
             [ModContent.NPCType<DesertScourgeHead>()] = BossRushEvent.BossRushActive ? 1185000 : 5200,
             [NPCID.KingSlime] = BossRushEvent.BossRushActive ? 499920 : 4200,
             [NPCID.EyeofCthulhu] = BossRushEvent.BossRushActive ? 770000 : 3560,
-            [NPCID.BrainofCthulhu] = BossRushEvent.BossRushActive ? 289000 : 4545,
+            [NPCID.BrainofCthulhu] = BossRushEvent.BossRushActive ? 289000 : 5420,
             [ModContent.NPCType<CrabulonBoss>()] = BossRushEvent.BossRushActive ? 1776000 : 8750,
             [NPCID.EaterofWorldsHead] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsBody] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsTail] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
-            [ModContent.NPCType<HiveMindP1Boss>()] = BossRushEvent.BossRushActive ? 606007 : 6007,
-            [ModContent.NPCType<PerforatorHive>()] = BossRushEvent.BossRushActive ? 420419 : 6132,
-            [ModContent.NPCType<PerforatorHeadSmall>()] = BossRushEvent.BossRushActive ? 119000 : 2560,
-            [ModContent.NPCType<PerforatorBodyMedium>()] = BossRushEvent.BossRushActive ? 7675 : 160,
-            [ModContent.NPCType<PerforatorHeadLarge>()] = BossRushEvent.BossRushActive ? 174500 : 5160,
-            [NPCID.QueenBee] = BossRushEvent.BossRushActive ? 511100 : 7550,
+            [ModContent.NPCType<HiveMindP1Boss>()] = BossRushEvent.BossRushActive ? 606007 : 8000,
+            [ModContent.NPCType<PerforatorHive>()] = BossRushEvent.BossRushActive ? 420419 : 6645,
+            [ModContent.NPCType<PerforatorHeadSmall>()] = BossRushEvent.BossRushActive ? 119000 : 2720,
+            [ModContent.NPCType<PerforatorBodyMedium>()] = BossRushEvent.BossRushActive ? 7675 : 175,
+            [ModContent.NPCType<PerforatorHeadLarge>()] = BossRushEvent.BossRushActive ? 174500 : 5500,
+            [NPCID.QueenBee] = BossRushEvent.BossRushActive ? 511100 : 6969,
             [NPCID.SkeletronHead] = BossRushEvent.BossRushActive ? 418105 : 7600,
             [ModContent.NPCType<CrimulanSGBig>()] = BossRushEvent.BossRushActive ? 113720 : 4020,
             [ModContent.NPCType<EbonianSGBig>()] = BossRushEvent.BossRushActive ? 113720 : 4020,

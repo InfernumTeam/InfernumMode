@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -31,6 +32,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             projectile.rotation = projectile.velocity.ToRotation();
             if (projectile.velocity.Length() < 11f)
                 projectile.velocity *= 1.01f;
+        }
+
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        {
+            target.AddBuff(BuffID.CursedInferno, 60);
+            target.Calamity().lastProjectileHit = projectile;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

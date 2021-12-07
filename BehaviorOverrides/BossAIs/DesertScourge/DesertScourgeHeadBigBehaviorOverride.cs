@@ -239,7 +239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         public static void DoBehavior_SandstormParticles(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(9f, 5f, 1f - lifeRatio));
+            int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(11f, 6f, 1f - lifeRatio));
             float sandParticleSpeed = 12f;
             float idealFlySpeed = MathHelper.Lerp(5f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
             if (enraged)

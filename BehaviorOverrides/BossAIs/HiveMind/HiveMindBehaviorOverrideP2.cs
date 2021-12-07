@@ -14,7 +14,7 @@ using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
-	public static class HiveMindBehaviorOverrideP2
+    public static class HiveMindBehaviorOverrideP2
     {
         public enum HiveMindP2AttackState
         {
@@ -62,9 +62,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             Player target = Main.player[npc.target];
             bool outOfBiome = !target.ZoneCrimson && !target.ZoneCorrupt && !BossRushEvent.BossRushActive;
+            bool enraged = enrageTimer > 300f;
 
             enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
-            npc.defense = enrageTimer >= 300f ? -5 : 9999;
+            npc.defense = enraged ? -5 : 9999;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
             npc.noTileCollide = true;
             npc.noGravity = true;
@@ -116,7 +117,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             if (finalPhaseInvinciblityTime > 0f)
             {
                 npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - finalPhaseInvinciblityTime / 300f);
-                npc.velocity *= 0.94f;
+                npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SuspensionStateDrift;
+                npc.velocity *= 0.825f;
                 npc.defense = 9999;
                 afterimagePulse += 0.24f;
                 finalPhaseInvinciblityTime--;
@@ -147,28 +149,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     DoBehavior_ResetAI(npc, lifeRatio);
                     break;
                 case HiveMindP2AttackState.NPCSpawnArc:
-                    DoBehavior_NPCSpawnArc(npc, target, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_NPCSpawnArc(npc, target, enraged, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.SpinLunge:
-                    DoBehavior_SpinLunge(npc, target, lifeRatio, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_SpinLunge(npc, target, enraged, lifeRatio, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.CloudDash:
-                    DoBehavior_CloudDash(npc, target, lifeRatio, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_CloudDash(npc, target, enraged, lifeRatio, ref slowdownCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.EaterOfSoulsWall:
-                    DoBehavior_EaterWall(npc, target, lifeRatio, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_EaterWall(npc, target, enraged, lifeRatio, ref slowdownCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.UndergroundFlameDash:
-                    DoBehavior_UndergroundFlameDash(npc, target, lifeRatio, ref attackTimer);
+                    DoBehavior_UndergroundFlameDash(npc, target, enraged, lifeRatio, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.CursedRain:
-                    DoBehavior_CursedRain(npc, target, lifeRatio, ref flameColumnCountdown, ref attackTimer);
+                    DoBehavior_CursedRain(npc, target, enraged, lifeRatio, ref flameColumnCountdown, ref attackTimer);
                     break;
                 case HiveMindP2AttackState.SlowDown:
                     DoBehavior_SlowDown(npc, ref slowdownCountdown);
                     break;
                 case HiveMindP2AttackState.BlobBurst:
-                    DoBehavior_BlobBurst(npc, target, lifeRatio, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
+                    DoBehavior_BlobBurst(npc, target, enraged, lifeRatio, ref fadeoutCountdown, ref slowdownCountdown, ref attackTimer);
                     break;
             }
 
@@ -282,9 +284,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             npc.netUpdate = true;
         }
 
-        public static void DoBehavior_NPCSpawnArc(NPC npc, Player target, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
+        public static void DoBehavior_NPCSpawnArc(NPC npc, Player target, bool enraged, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
         {
-            int spawnCount = 6;
+            int spawnCount = enraged ? 9 : 6;
             ref float hasFadedInFlag = ref npc.ai[1];
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
             ref float spawnedEnemyCount = ref npc.Infernum().ExtraAI[2];
@@ -301,7 +303,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 {
                     DoRoar(npc, false);
                     fadeoutCountdown = HiveMindFadeoutTime;
-                    spinDirection = Main.rand.NextBool(2).ToDirectionInt();
+                    spinDirection = Main.rand.NextBool().ToDirectionInt();
                     npc.velocity = Vector2.UnitX * MathHelper.Pi * SpinRadius / NPCSpawnArcSpinTime * spinDirection;
                     npc.alpha = 0;
                     hasFadedInFlag = 1f;
@@ -341,7 +343,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             attackTimer++;
         }
 
-        public static void DoBehavior_SpinLunge(NPC npc, Player target, float lifeRatio, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
+        public static void DoBehavior_SpinLunge(NPC npc, Player target, bool enraged, float lifeRatio, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
         {
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
             ref float spinIncrement = ref npc.Infernum().ExtraAI[2];
@@ -367,7 +369,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             // Decide the spin direction if it has yet to be.
             while (spinDirection == 0f)
-                spinDirection = Main.rand.NextBool(2).ToDirectionInt();
+                spinDirection = Main.rand.NextBool().ToDirectionInt();
 
             // Lunge.
             if (attackTimer == LungeSpinTime + LungeSpinChargeDelay)
@@ -375,6 +377,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 DoRoar(npc, false);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 3.3f;
                 npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.InverseLerp(1f, 0.6f, lifeRatio));
+                if (enraged)
+                    npc.velocity *= 1.45f;
+
                 if (BossRushEvent.BossRushActive)
                     npc.velocity *= 2.5f;
 
@@ -398,7 +403,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
         }
 
-        public static void DoBehavior_CloudDash(NPC npc, Player target, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
+        public static void DoBehavior_CloudDash(NPC npc, Player target, bool enraged, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
         {
             if (lifeRatio < 0.4f)
             {
@@ -439,6 +444,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     DoRoar(npc, true);
                     npc.velocity = Vector2.UnitX * dashDirection * -11f;
                     npc.velocity *= MathHelper.Lerp(1f, 1.575f, Utils.InverseLerp(1f, 0.4f, lifeRatio, true));
+                    if (enraged)
+                        npc.velocity *= 1.5f;
                     if (BossRushEvent.BossRushActive)
                         npc.velocity *= 2.4f;
                     npc.netUpdate = true;
@@ -473,7 +480,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             Utilities.NewProjectileBetter(rainSpawnPosition, Vector2.UnitY * 6f, ModContent.ProjectileType<ShaderainHostile>(), 82, 0f, Main.myPlayer, 0f, 0f);
         }
 
-        public static void DoBehavior_EaterWall(NPC npc, Player target, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
+        public static void DoBehavior_EaterWall(NPC npc, Player target, bool enraged, float lifeRatio, ref float slowdownCountdown, ref float attackTimer)
         {
             ref float verticalSpawnOffset = ref npc.Infernum().ExtraAI[1];
 
@@ -513,6 +520,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
                 Vector2 wallSpawnOffset = new Vector2(-1200f, verticalSpawnOffset - EaterWallTotalHeight / 2f);
                 Vector2 wallVelocity = Vector2.UnitX.RotatedBy(lifeRatio < 0.2f ? MathHelper.ToRadians(10f) : 0f) * 10f;
+
+                if (enraged)
+                    wallVelocity *= 1.35f;
                 if (BossRushEvent.BossRushActive)
                     wallVelocity *= 1.7f;
 
@@ -530,7 +540,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
         }
 
-        public static void DoBehavior_UndergroundFlameDash(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        public static void DoBehavior_UndergroundFlameDash(NPC npc, Player target, bool enraged, float lifeRatio, ref float attackTimer)
         {
             ref float dashDirection = ref npc.Infernum().ExtraAI[1];
             ref float initializedFlag = ref npc.Infernum().ExtraAI[2];
@@ -541,7 +551,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             if (initializedFlag == 0f)
             {
                 npc.velocity = Vector2.Zero;
-                dashDirection = Main.rand.NextBool(2).ToDirectionInt();
+                dashDirection = Main.rand.NextBool().ToDirectionInt();
 
                 float horizontalTeleportOffset = MathHelper.Lerp(600f, 440f, 1f - lifeRatio);
                 if (lifeRatio < 0.2f)
@@ -555,6 +565,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             float waitTime = lifeRatio < 0.2f ? 96f : 75f;
             float moveTime = lifeRatio < 0.2f ? 50f : 90f;
             float dashSpeed = lifeRatio < 0.2f ? 24f : 21.5f;
+            if (enraged)
+            {
+                waitTime = (int)(waitTime * 0.67f);
+                moveTime *= 0.64f;
+                dashSpeed *= 1.4f;
+            }
             if (BossRushEvent.BossRushActive)
             {
                 waitTime = (int)(waitTime * 0.4f);
@@ -590,7 +606,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SlowDown;
         }
 
-        public static void DoBehavior_CursedRain(NPC npc, Player target, float lifeRatio, ref float flameColumnCountdown, ref float attackTimer)
+        public static void DoBehavior_CursedRain(NPC npc, Player target, bool enraged, float lifeRatio, ref float flameColumnCountdown, ref float attackTimer)
         {
             ref float initializedFlag = ref npc.Infernum().ExtraAI[2];
 
@@ -623,6 +639,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 int clotSpawnRate = lifeRatio < 0.2f ? 9 : 13;
                 int cloudSpawnRate = lifeRatio < 0.2f ? 30 : 40;
                 int attackTime = lifeRatio < 0.2f ? 180 : 210;
+                if (enraged)
+                {
+                    clotSpawnRate /= 2;
+                    cloudSpawnRate -= 14;
+                }
 
                 // Release clouds and clots.
                 if (npc.ai[3] % clotSpawnRate == clotSpawnRate - 1f)
@@ -655,7 +676,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             npc.alpha = Utils.Clamp(npc.alpha - 17, 0, 255);
             if (slowdownCountdown > 0f)
             {
-                npc.velocity *= 0.92f;
+                npc.velocity *= 0.9f;
                 slowdownCountdown--;
             }
             else
@@ -666,10 +687,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
         }
 
-        public static void DoBehavior_BlobBurst(NPC npc, Player target, float lifeRatio, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
+        public static void DoBehavior_BlobBurst(NPC npc, Player target, bool enraged, float lifeRatio, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
         {
             int blobShootRate = 50;
             int blobShotCount = 4;
+            int totalBlobsPerBurst = enraged ? 11 : 6;
             ref float hasFadedInFlag = ref npc.ai[1];
             ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
 
@@ -711,12 +733,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.velocity *= 0.95f;
                 if (attackTimer % blobShootRate == blobShootRate - 5f)
                 {
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < totalBlobsPerBurst; i++)
                     {
                         float offsetAngle = i == 0 ? 0f : Main.rand.NextFloat(-0.53f, 0.53f);
                         float shootSpeed = i == 0f ? 15.6f : Main.rand.NextFloat(9f, 12f);
+
                         if (lifeRatio < 0.25f)
                             shootSpeed *= 1.325f;
+                        if (enraged)
+                            shootSpeed *= 1.3f;
                         if (BossRushEvent.BossRushActive)
                             shootSpeed *= 2.3f;
 

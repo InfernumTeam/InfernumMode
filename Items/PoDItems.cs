@@ -35,6 +35,9 @@ namespace InfernumMode
             if (item.type == ModContent.ItemType<NapalmArrow>())
                 item.damage = 9;
 
+            if (item.type == ModContent.ItemType<MeteorFist>())
+                item.damage = 10;
+
             if (item.type == ItemID.StarCannon)
                 item.damage = 24;
 

@@ -48,6 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 npc.TargetClosest();
 
             // Reset things.
+            npc.defDamage = 100;
             npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
             npc.noTileCollide = false;
             npc.defense = 14;

@@ -7,9 +7,9 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 {
-	public class CursedFlameBomb : ModProjectile
+    public class CursedFlameBomb : ModProjectile
     {
-		public override void SetStaticDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cursed Flame Bomb");
             ProjectileID.Sets.TrailingMode[projectile.type] = 0;
@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             projectile.width = projectile.height = 14;
             projectile.hostile = true;
             projectile.ignoreWater = true;
-			projectile.tileCollide = false;
+            projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 150;
             projectile.Opacity = 0f;
@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             Lighting.AddLight(projectile.Center, Vector3.One * 0.7f);
         }
 
-		// Explode into smaller flames on death.
+        // Explode into smaller flames on death.
         public override void Kill(int timeLeft)
         {
             Main.PlaySound(SoundID.Item74, projectile.Center);
@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 Vector2 shootVelocity = (initialAngleOffset + MathHelper.TwoPi * i / burstCount).ToRotationVector2() * burstSpeed;
                 Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<CursedBullet>(), 80, 0f);
             }
-		}
+        }
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.White, Color.MediumPurple, Utils.InverseLerp(45f, 0f, projectile.timeLeft, true)) * projectile.Opacity;
 
@@ -64,6 +64,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public override bool CanDamage() => projectile.Opacity >= 1f;
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        {
+            target.AddBuff(BuffID.CursedInferno, 120);
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

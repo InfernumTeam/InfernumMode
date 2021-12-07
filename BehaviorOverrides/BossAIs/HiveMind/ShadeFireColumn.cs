@@ -1,10 +1,11 @@
 ﻿using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
-	public class ShadeFireColumn : ModProjectile
+    public class ShadeFireColumn : ModProjectile
     {
         public ref float Time => ref projectile.ai[1];
         public override void SetStaticDefaults()
@@ -78,6 +79,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
 
             Time++;
+        }
+
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        {
+            target.AddBuff(BuffID.CursedInferno, 180);
+            target.Calamity().lastProjectileHit = projectile;
         }
 
         public override bool CanDamage() => Time >= 67f;

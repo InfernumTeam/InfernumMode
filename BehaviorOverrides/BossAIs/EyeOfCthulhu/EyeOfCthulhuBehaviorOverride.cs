@@ -135,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 }
                 if (phase2ResetTimer == 120f)
                 {
-                    npc.Center = target.Center + Main.rand.NextVector2CircularEdge(325f, 325f);
+                    npc.Center = target.Center + Main.rand.NextVector2CircularEdge(405f, 405f);
                     npc.ai[0] = 3f;
                     npc.ai[3] = 0f; // Reset the attack state index.
                     npc.netUpdate = true;

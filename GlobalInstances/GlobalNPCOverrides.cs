@@ -46,6 +46,7 @@ using CalamityMod.UI;
 using System.Linq;
 using InfernumMode.Items;
 using CalamityMod.NPCs.Perforator;
+using CalamityMod.NPCs.Crabulon;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -421,6 +422,12 @@ namespace InfernumMode.GlobalInstances
             if (projectile.type == ModContent.ProjectileType<AshenStalagmiteProj>() && projectile.Calamity().stealthStrike)
                 damage = (int)(damage * 0.65f);
 
+            if (npc.type == ModContent.NPCType<CrabulonIdle>() && projectile.type == ModContent.ProjectileType<SeafoamBubble>())
+                damage = (int)(damage * 0.875f);
+
+            if (npc.type == NPCID.EaterofWorldsBody && projectile.type == ModContent.ProjectileType<ScourgeoftheDesertProj>() && projectile.Calamity().stealthStrike)
+                damage = (int)(damage * 0.75f);
+
             if ((npc.type == ModContent.NPCType<PerforatorBodyMedium>() ||
                 npc.type == ModContent.NPCType<PerforatorBodyLarge>()) && (projectile.penetrate >= 2 || projectile.penetrate == -1))
             {
@@ -430,7 +437,7 @@ namespace InfernumMode.GlobalInstances
             if ((npc.type == ModContent.NPCType<PerforatorBodySmall>() ||
                 npc.type == ModContent.NPCType<PerforatorBodyLarge>()) && (projectile.type == ModContent.ProjectileType<InfernalKrisCinder>()))
             {
-                damage = (int)(damage * 0.55f);
+                damage = (int)(damage * 0.3f);
             }
 
             bool isInkCloud = projectile.type == ModContent.ProjectileType<InkCloud>() || projectile.type == ModContent.ProjectileType<InkCloud2>() || projectile.type == ModContent.ProjectileType<InkCloud3>();
@@ -442,56 +449,6 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == NPCID.WallofFleshEye && projectile.type == ModContent.ProjectileType<TrackingDiskLaser>())
                 damage = (int)(damage * 0.625);
-
-            if (projectile.type == ProjectileID.HolyArrow || projectile.type == ProjectileID.HallowStar)
-                damage = (int)(damage * 0.65);
-
-            if (npc.type == ModContent.NPCType<AquaticScourgeBody>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.45);
-
-            if (npc.type == NPCID.TheDestroyerBody && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.6);
-
-            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<BlueFlamePillar>())
-                damage = (int)(damage * 0.55);
-
-            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<SulphuricNukesplosion>())
-                damage = (int)(damage * 0.5);
-
-            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<SkyfinNuke>())
-                damage = (int)(damage * 0.7);
-
-            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<AcidicSaxMist>())
-                damage = (int)(damage * 0.475);
-            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<AcidicSaxBubble>())
-                damage = (int)(damage * 0.6);
-            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<AcidicReed>())
-                damage = (int)(damage * 0.6);
-            if (npc.type == NPCID.TheDestroyerBody && (projectile.type == ProjectileID.QuarterNote || projectile.type == ProjectileID.EighthNote || projectile.type == ProjectileID.TiedEighthNote))
-                damage = (int)(damage * 0.7);
-
-            if (npc.type == NPCID.TheDestroyerBody && (projectile.type == ModContent.ProjectileType<BileExplosion>() || projectile.type == ModContent.ProjectileType<SkyBomberGas>()))
-                damage = (int)(damage * 0.8);
-
-            if (npc.type == NPCID.TheDestroyerBody && projectile.type == ModContent.ProjectileType<Stormfrontspark>())
-                damage = (int)(damage * 0.3);
-
-            if ((npc.type == NPCID.Spazmatism || npc.type == NPCID.Retinazer) && projectile.minion)
-            {
-                float damageFactor = 1.45f;
-                if (projectile.type == ModContent.ProjectileType<MountedScannerLaser>())
-                    damageFactor = 0.85f;
-                if (projectile.type == ModContent.ProjectileType<DormantBrimseekerBab>())
-                    damageFactor = 1.3f;
-                damage = (int)(damage * damageFactor);
-            }
-
-            bool skeletronPrime = npc.type == NPCID.SkeletronPrime || npc.type == NPCID.PrimeCannon || npc.type == NPCID.PrimeSaw || npc.type == NPCID.PrimeVice || npc.type == NPCID.PrimeLaser;
-            if (skeletronPrime && (projectile.type == ModContent.ProjectileType<UltimusCleaverDust>() || projectile.type == ModContent.ProjectileType<GacruxianHome>()))
-                damage = (int)(damage * 0.7);
-
-            if (npc.type == ModContent.NPCType<SoulSeeker>() && (projectile.type == ModContent.ProjectileType<KelvinCatalystStar>() || projectile.type == ModContent.ProjectileType<KelvinCatalystBoomerang>()))
-                damage = (int)(damage * 0.575);
 
             if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
                 damage = (int)(damage * 0.55);

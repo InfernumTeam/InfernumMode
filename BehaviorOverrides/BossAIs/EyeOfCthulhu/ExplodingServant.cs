@@ -21,10 +21,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         {
             npc.noGravity = true;
             npc.lavaImmune = true;
-            npc.damage = 40;
+            npc.damage = 48;
             npc.height = npc.width = 28;
             npc.defense = 2;
-            npc.lifeMax = BossRushEvent.BossRushActive ? 6500 : 40;
+            npc.lifeMax = BossRushEvent.BossRushActive ? 6500 : 24;
             npc.aiStyle = -1;
             aiType = -1;
             npc.alpha = 255;

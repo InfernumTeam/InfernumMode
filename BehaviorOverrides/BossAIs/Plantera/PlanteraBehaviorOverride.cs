@@ -375,7 +375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 {
                     Vector2 spawnPosition = target.Center + (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 720f;
                     Vector2 gasSporeVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.Zero) * 5f;
-                    Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGasPlantera>(), 165, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGas>(), 165, 0f);
                 }
             }
 
@@ -399,7 +399,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                         if (BossRushEvent.BossRushActive)
                             gasSporeVelocity *= 1.5f;
 
-                        Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGasPlantera>(), 160, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, gasSporeVelocity, ModContent.ProjectileType<SporeGas>(), 160, 0f);
                     }
                 }
             }

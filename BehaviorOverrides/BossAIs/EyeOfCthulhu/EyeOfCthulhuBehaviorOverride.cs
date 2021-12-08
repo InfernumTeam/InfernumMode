@@ -362,6 +362,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     // Redirect.
                     if (subState == 0f)
                     {
+                        // Don't do damage while redirecting.
+                        npc.damage = 0;
+
                         if (spinAngle == 0f)
                         {
                             spinAngle = Main.rand.NextFloat(MathHelper.TwoPi);

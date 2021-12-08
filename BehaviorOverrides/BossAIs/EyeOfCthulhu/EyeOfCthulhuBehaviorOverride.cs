@@ -93,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             npc.damage = npc.defDamage + 12;
             if (phase2)
             {
-                npc.defense = 0;
+                npc.defense = 4;
                 npc.damage += 28;
             }
 

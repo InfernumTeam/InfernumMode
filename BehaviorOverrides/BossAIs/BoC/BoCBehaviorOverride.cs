@@ -215,9 +215,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public static void DoAttack_BloodDashSwoop(NPC npc, Player target, ref float attackTimer)
         {
             int teleportFadeTime = 46;
-            Vector2 teleportDestination = target.Center + new Vector2(target.direction * -350f, -330f);
+            Vector2 teleportDestination = target.Center + new Vector2(target.direction * -350f, -360f);
             if (Math.Abs(target.velocity.X) > 0f)
-                teleportDestination = target.Center + new Vector2(Math.Sign(target.velocity.X) * -310f, -330f);
+                teleportDestination = target.Center + new Vector2(Math.Sign(target.velocity.X) * -310f, -360f);
 
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
                 return;
@@ -256,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     npc.velocity.Y *= 0.96f;
                 }
 
-                if (attackTimer > teleportFadeTime + 140f)
+                if (attackTimer > teleportFadeTime + 100f)
                     GotoNextAttackState(npc);
             }
         }
@@ -401,7 +401,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 return;
 
             if (attackTimer > teleportFadeTime * 1.5f)
+            {
                 spinAngle += MathHelper.TwoPi * 2f / spinTime * Utils.InverseLerp(teleportFadeTime * 1.5f + spinTime, teleportFadeTime * 1.5f + spinTime - 30f, attackTimer, true);
+                if (Main.netMode != NetmodeID.MultiplayerClient && (int)attackTimer % 16f == 15f)
+                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion2>(), npc.whoAmI);
+            }
 
             npc.localAI[1] = (float)Math.Sin(Utils.InverseLerp((int)(teleportFadeTime * 1.5f) + spinTime - 20f, (int)(teleportFadeTime * 1.5f) + spinTime + 45f, attackTimer, true) * MathHelper.Pi);
             if (attackTimer == (int)(teleportFadeTime * 1.5f) + spinTime + 15f)
@@ -409,6 +413,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 npc.velocity = npc.SafeDirectionTo(target.Center) * 26f;
                 if (enraged)
                     npc.velocity *= 1.425f;
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (!Main.npc[i].active || Main.npc[i].type != ModContent.NPCType<BrainIllusion2>())
+                        continue;
+
+                    Main.npc[i].velocity = Main.npc[i].SafeDirectionTo(target.Center) * npc.velocity.Length();
+                    Main.npc[i].netUpdate = true;
+                }
 
                 Main.PlaySound(SoundID.ForceRoar, (int)target.Center.X, (int)target.Center.Y, -1, 1f, 0f);
             }
@@ -422,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             {
                 npc.velocity *= 0.9f;
                 npc.Opacity -= 0.05f;
-                if (npc.Opacity <= 0.5f)
+                if (npc.Opacity <= 0.05f)
                     GotoNextAttackState(npc);
             }
         }

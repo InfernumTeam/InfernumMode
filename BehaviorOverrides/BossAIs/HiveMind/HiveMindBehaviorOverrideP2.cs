@@ -240,9 +240,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 if (shouldBecomeInvisible)
                 {
                     if (nextAttack == HiveMindP2AttackState.EaterOfSoulsWall || nextAttack == HiveMindP2AttackState.CursedRain)
+                    {
                         npc.Center = target.Center - Vector2.UnitY * 350f;
+                        npc.velocity = Vector2.Zero;
+                    }
                     if (nextAttack == HiveMindP2AttackState.BlobBurst)
+                    {
                         npc.Center = target.Center - Vector2.UnitY * 400f;
+                        npc.velocity = Vector2.Zero;
+                    }
 
                     npc.alpha = 255;
                 }
@@ -365,7 +371,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             attackTimer++;
             npc.alpha = Utils.Clamp(npc.alpha - 24, 0, 255);
-            spinIncrement += (float)Math.Pow(Utils.InverseLerp(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer, true), 2D);
+            spinIncrement += (float)Math.Pow(Utils.InverseLerp(MaxSlowdownTime + LungeSpinChargeDelay * 0.85f, MaxSlowdownTime, attackTimer, true), 0.6D);
 
             // Decide the spin direction if it has yet to be.
             while (spinDirection == 0f)
@@ -392,6 +398,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             {
                 npc.velocity = Vector2.Zero;
                 npc.Center = target.Center + (MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / LungeSpinTime + initialSpinRotation).ToRotationVector2() * SpinRadius;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 10f == 9f && attackTimer < MaxSlowdownTime)
+                {
+                    Vector2 clotVelocity = npc.SafeDirectionTo(target.Center) * 5.4f;
+                    int fuck = Utilities.NewProjectileBetter(npc.Center, clotVelocity, ModContent.ProjectileType<VileClot>(), 78, 1f);
+                    Main.projectile[fuck].tileCollide = false;
+                }
             }
 
             // Reset to the slowdown state in preparation for the next attack.
@@ -582,7 +595,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             // Constantly shoot shade flames upward.
             if (npc.alpha <= 0)
-                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -7.4f, ModContent.ProjectileType<ShadeFire>(), 82, 0f);
+                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -7.4f, ModContent.ProjectileType<ShadeFire>(), 88, 0f);
 
             attackTimer++;
 

@@ -147,13 +147,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     if (BossRushEvent.BossRushActive)
                         shootVelocity *= 2.25f;
 
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<VileClot>(), 65, 1f);
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<VileClot>(), 80, 1f);
                 }
             }
             if (shootTimer > 50 && shootTimer % mirageSummonRate == 0f && lifeRatio < 0.75f)
             {
                 Vector2 mirageSummonPosition = target.Center - Vector2.UnitY * 2300f;
-                Utilities.NewProjectileBetter(mirageSummonPosition, Vector2.Zero, ModContent.ProjectileType<HiveMindMirage>(), 92, 3f, target.whoAmI, 1f);
+                Utilities.NewProjectileBetter(mirageSummonPosition, Vector2.Zero, ModContent.ProjectileType<HiveMindMirage>(), 105, 3f, target.whoAmI, 1f);
             }
             if (shootTimer < -120)
             {

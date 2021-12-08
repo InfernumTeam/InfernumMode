@@ -56,7 +56,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 		{
             if (TotalBounces == 0f)
             {
-                projectile.velocity.Y = -oldVelocity.Y * 0.6f;
+                if (projectile.velocity.X != oldVelocity.X)
+                    projectile.velocity.X = -oldVelocity.X;
+                if (projectile.velocity.Y != oldVelocity.Y)
+                    projectile.velocity.Y = -oldVelocity.Y;
+
                 if (projectile.velocity.Y < 3f && projectile.velocity.Y > -3f)
                     projectile.velocity = Vector2.Zero;
             }

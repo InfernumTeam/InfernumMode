@@ -239,14 +239,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         public static void DoBehavior_SandstormParticles(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(13f, 8f, 1f - lifeRatio));
+            int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(22f, 16f, 1f - lifeRatio));
             float sandParticleSpeed = 11f;
             float idealFlySpeed = MathHelper.Lerp(5f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
             if (enraged)
-			{
+            {
                 sandParticleReleaseRate /= 2;
                 sandParticleSpeed *= 1.4f;
-			}
+            }
 
             float maxChargeSpeed = idealFlySpeed * 1.54f;
             float flyAcceleration = idealFlySpeed / 710f;
@@ -279,7 +279,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloat(-850f, 850f));
                 Vector2 sandShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.16f);
                 sandShootVelocity = (sandShootVelocity * new Vector2(0.33f, 1f)).SafeNormalize(Vector2.UnitY) * sandParticleSpeed;
-                Utilities.NewProjectileBetter(spawnPosition, sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), 75, 0f);
+
+                for (int i = 0; i < 3; i++)
+                    Utilities.NewProjectileBetter(spawnPosition + Main.rand.NextVector2Circular(120f, 120f), sandShootVelocity, ModContent.ProjectileType<SandstormBlast>(), 75, 0f);
             }
 
             if (attackTimer > 480f)
@@ -354,7 +356,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         // Create the tornadoes.
                         for (int i = 0; i < 5; i++)
                         {
-                            Vector2 tornadoVelocity = Vector2.UnitX * MathHelper.Lerp(5.5f, 19f, i / 4f);
+                            Vector2 tornadoVelocity = Vector2.UnitX * MathHelper.Lerp(7f, 23f, i / 4f);
                             Utilities.NewProjectileBetter(npc.Center, tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
                             Utilities.NewProjectileBetter(npc.Center, -tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
                         }

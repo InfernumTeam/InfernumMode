@@ -141,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 180f == 179f)
             {
-                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center) * 12f;
+                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 16f) * 12f;
                 Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<ExplosiveAbyssMine>(), 90, 0f);
             }
 

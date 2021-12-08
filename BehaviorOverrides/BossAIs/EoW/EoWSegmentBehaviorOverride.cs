@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             npc.scale = aheadSegment.scale;
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
-            npc.defense = 11;
+            npc.defense = 7;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

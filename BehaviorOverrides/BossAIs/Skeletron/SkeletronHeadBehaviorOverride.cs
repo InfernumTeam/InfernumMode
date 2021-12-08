@@ -280,7 +280,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 if (attackTimer % 1050f == 601f)
                     Main.PlaySound(SoundID.Roar, target.Center, 0);
 
-                float moveSpeed = BossRushEvent.BossRushActive ? 20.75f : 7f;
+                float moveSpeed = BossRushEvent.BossRushActive ? 20.75f : 7.75f;
                 npc.direction = (npc.velocity.X > 0f).ToDirectionInt();
                 npc.rotation += npc.direction * 0.3f;
                 npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
@@ -410,7 +410,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     if (attackTimer > 50f && attackTimer < 270f)
                     {
-                        float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 6.4f;
+                        float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 7f;
                         npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
 
                         npc.rotation += 0.2f;
@@ -519,7 +519,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     if (attackTimer > 30f && attackTimer < 300f)
                     {
-                        float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 6.4f;
+                        float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 7.45f;
                         npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
 
                         npc.rotation += 0.2f;

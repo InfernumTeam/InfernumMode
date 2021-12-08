@@ -58,9 +58,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             // Count segments in the air.
             int totalSegmentsInAir = 0;
             int bodyType = ModContent.NPCType<PerforatorBodyLarge>();
-            float moveSpeed = MathHelper.Lerp(0.15f, 0.36f, 1f - npc.life / (float)npc.lifeMax);
+            float moveSpeed = MathHelper.Lerp(0.175f, 0.415f, 1f - npc.life / (float)npc.lifeMax);
             float horizontalSpeed = 8.5f;
-            float maxVerticalSpeed = 17f;
+            float maxVerticalSpeed = 18f;
             int circularBurstCount = 6;
             float circularBurstSpeed = 6f;
             if (BossRushEvent.BossRushActive || enraged)

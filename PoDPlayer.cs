@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Events;
+using CalamityMod.NPCs;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Dusts;
@@ -87,6 +88,14 @@ namespace InfernumMode
                 player.respawnTimer = Utils.Clamp(player.respawnTimer - 1, 0, 3600);
         }
         #endregion
+        #region Pre Hurt
+        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
+        {
+            if (InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.adultEidolonWyrmHead >= 0 && Main.npc[CalamityGlobalNPC.adultEidolonWyrmHead].ai[3] == 1f)
+                damage = (int)MathHelper.Min(4000, damage);
+            return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
+        }
+        #endregion Pre Hurt
         #region Pre Kill
         public override bool PreKill(double damage, int hitDirection, bool pvp, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
@@ -161,15 +170,15 @@ namespace InfernumMode
             layers.Add(RedLightningEffect);
         }
 
-		#endregion
-		#region Screen Shaking
-		public override void ModifyScreenPosition()
-		{
+        #endregion
+        #region Screen Shaking
+        public override void ModifyScreenPosition()
+        {
             if (ScreenFocusInterpolant > 0f)
-			{
+            {
                 Vector2 idealScreenPosition = ScreenFocusPosition - new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
                 Main.screenPosition = Vector2.Lerp(Main.screenPosition, idealScreenPosition, ScreenFocusInterpolant);
-			}
+            }
 
             if (CurrentScreenShakePower > 0f)
                 CurrentScreenShakePower = Utils.Clamp(CurrentScreenShakePower - 0.2f, 0f, 15f);
@@ -230,16 +239,16 @@ namespace InfernumMode
             }
 
             if (ShadowflameInferno)
-			{
+            {
                 for (int i = 0; i < 2; i++)
-				{
+                {
                     Dust shadowflame = Dust.NewDustDirect(player.position, player.width, player.height, 28);
                     shadowflame.velocity = player.velocity.SafeNormalize(Vector2.UnitX * player.direction);
                     shadowflame.velocity = shadowflame.velocity.RotatedByRandom(0.4f) * -Main.rand.NextFloat(2.5f, 5.4f);
                     shadowflame.scale = Main.rand.NextFloat(0.95f, 1.3f);
                     shadowflame.noGravity = true;
                 }
-			}
+            }
 
             if (DarkFlames)
             {

@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 			npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.width = npc.height = 50;
-            npc.damage = 5;
+            npc.damage = 40;
             npc.lifeMax = 5000;
             npc.knockBackResist = 0f;
             npc.dontTakeDamage = true;
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            int healAmount = damage * 5;
+            int healAmount = damage;
             Owner.HealEffect(healAmount);
             Owner.life += healAmount;
             if (Owner.life > Owner.lifeMax)

@@ -51,6 +51,7 @@ using InfernumMode.Items;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.Buffs.DamageOverTime;
+using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -238,8 +239,8 @@ namespace InfernumMode.GlobalInstances
             {
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    if (Main.projectile[i].type == ProjectileID.CultistBossLightningOrbArc)
-                        Main.projectile[i].Kill();
+                    if (Main.projectile[i].type == ProjectileID.CultistBossLightningOrbArc || Main.projectile[i].type == ModContent.ProjectileType<PsionicOrb>())
+                        Main.projectile[i].active = false;
                 }
             }
 
@@ -427,7 +428,7 @@ namespace InfernumMode.GlobalInstances
                 damage = (int)(damage * 0.65f);
 
             if (npc.type == ModContent.NPCType<CrabulonIdle>() && projectile.type == ModContent.ProjectileType<SeafoamBubble>())
-                damage = (int)(damage * 0.875f);
+                damage = (int)(damage * 0.785f);
 
             if (npc.type == NPCID.EaterofWorldsBody && projectile.type == ModContent.ProjectileType<ScourgeoftheDesertProj>() && projectile.Calamity().stealthStrike)
                 damage = (int)(damage * 0.75f);
@@ -703,10 +704,10 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<SlimeGodCore>())
             {
-                target.AddBuff(ModContent.BuffType<BurningBlood>(), 150);
-                target.AddBuff(ModContent.BuffType<Shadowflame>(), 150);
-                target.AddBuff(BuffID.Slimed, 300);
-                target.AddBuff(BuffID.Slow, 300);
+                target.AddBuff(ModContent.BuffType<BurningBlood>(), 120);
+                target.AddBuff(ModContent.BuffType<Shadowflame>(), 120);
+                target.AddBuff(BuffID.Slimed, 240);
+                target.AddBuff(BuffID.Slow, 240);
             }
             if (npc.type == NPCID.Retinazer && !NPC.AnyNPCs(NPCID.Spazmatism))
                 target.AddBuff(ModContent.BuffType<RedSurge>(), 180);

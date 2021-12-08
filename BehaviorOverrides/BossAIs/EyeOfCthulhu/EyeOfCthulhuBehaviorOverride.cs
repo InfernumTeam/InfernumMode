@@ -312,7 +312,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     if (subState == 1f)
                     {
                         float idealAngle = MathHelper.Lerp(-teethRadialSpread, teethRadialSpread, teethBurstCounter / teethBurstTotal);
-                        npc.rotation = npc.rotation.AngleTowards(idealAngle - MathHelper.Pi, 0.04f);
+                        npc.rotation = npc.rotation.AngleTowards(idealAngle - MathHelper.Pi, 0.08f);
                         npc.velocity *= 0.945f;
 
                         if (teethBurstDelay <= 0f && Math.Abs(MathHelper.WrapAngle(idealAngle - npc.rotation - MathHelper.Pi)) < 0.07f)
@@ -329,7 +329,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                                     Utilities.NewProjectileBetter(spawnPosition, toothShootVelocity, ModContent.ProjectileType<EoCTooth>(), 70, 0f, 255, npc.target);
                                 }
                             }
-                            teethBurstDelay = 10f;
+                            teethBurstDelay = 8f;
                             teethBurstCounter++;
                             npc.netUpdate = true;
                         }

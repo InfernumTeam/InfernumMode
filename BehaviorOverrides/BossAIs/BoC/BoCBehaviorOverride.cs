@@ -42,8 +42,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 npc.TargetClosest();
 
-            // Reset damage. Do none by default if somewhat transparent.
+            // Reset things.
             npc.damage = npc.alpha > 30 ? 0 : npc.defDamage;
+            npc.defense = npc.defDefense + 4;
 
             // If none was found or it was too far away, despawn.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead ||
@@ -128,9 +129,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             if (!DoTeleportFadeEffect(npc, attackTimer, target.Center + Main.rand.NextVector2CircularEdge(teleportOffset, teleportOffset), teleportFadeTime))
                 return;
 
-            float floatSpeed = MathHelper.Lerp(5.3f, 7.5f, 1f - lifeRatio);
+            float floatSpeed = MathHelper.Lerp(5.8f, 8f, 1f - lifeRatio);
             if (enraged)
-                floatSpeed *= 1.32f;
+                floatSpeed *= 1.5f;
             if (BossRushEvent.BossRushActive)
                 floatSpeed *= 1.85f;
 
@@ -162,7 +163,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             if (canFloatFlag == 1f)
             {
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * Utils.InverseLerp(120f, 108f, attackTimer, true) * 4f, 0.125f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * Utils.InverseLerp(120f, 108f, attackTimer, true) * 5f, 0.125f);
                 if (attackTimer >= 120f)
                     GotoNextAttackState(npc);
                 return;
@@ -173,9 +174,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 14f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 16.75f;
                     if (enraged)
-                        npc.velocity *= 1.4f;
+                        npc.velocity *= 1.56f;
                     if (BossRushEvent.BossRushActive)
                         npc.velocity *= 2.15f;
                     npc.netUpdate = true;
@@ -191,7 +192,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     // Release ichor everywhere.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 5f == 4f)
                     {
-                        Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 7.5f);
+                        Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 8f);
                         Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(40f, 40f);
                         int ichor = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<IchorSpit>(), 100, 0f);
                         if (Main.projectile.IndexInRange(ichor))
@@ -227,7 +228,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    npc.velocity = Vector2.UnitY * 14f;
+                    npc.velocity = Vector2.UnitY * 16f;
                     npc.direction = (target.Center.X < npc.Center.X).ToDirectionInt();
                     npc.netUpdate = true;
 
@@ -311,9 +312,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             {
                 Main.PlaySound(SoundID.Roar, target.Center, 0);
 
-                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * 14.25f;
+                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * 17f;
                 if (enraged)
-                    npc.velocity *= 1.4f;
+                    npc.velocity *= 1.55f;
                 if (BossRushEvent.BossRushActive)
                     npc.velocity *= 1.8f;
 
@@ -405,9 +406,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             npc.localAI[1] = (float)Math.Sin(Utils.InverseLerp((int)(teleportFadeTime * 1.5f) + spinTime - 20f, (int)(teleportFadeTime * 1.5f) + spinTime + 45f, attackTimer, true) * MathHelper.Pi);
             if (attackTimer == (int)(teleportFadeTime * 1.5f) + spinTime + 15f)
             {
-                npc.velocity = npc.SafeDirectionTo(target.Center) * 25f;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 26f;
                 if (enraged)
-                    npc.velocity *= 1.3f;
+                    npc.velocity *= 1.425f;
 
                 Main.PlaySound(SoundID.ForceRoar, (int)target.Center.X, (int)target.Center.Y, -1, 1f, 0f);
             }

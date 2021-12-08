@@ -108,9 +108,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public static void DoAttack_CursedBombBurst(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
         {
             int totalFireballsPerBurst = (int)(TotalSplitsToPerform - splitCounter + 1f);
-            float flySpeed = enraged ? 16f : 8f;
-            float turnSpeedFactor = enraged ? 1.8f : 1f;
+            float flySpeed = enraged ? 13f : 8f;
+            float turnSpeedFactor = enraged ? 1.7f : 1f;
             flySpeed *= MathHelper.Lerp(1f, 1.425f, splitCounter / TotalSplitsToPerform);
+            if (splitCounter == 0f)
+            {
+                flySpeed *= 1.15f;
+                turnSpeedFactor *= 1.15f;
+            }
 
             // Do default movement.
             DoDefaultMovement(npc, target, flySpeed, turnSpeedFactor);
@@ -143,8 +148,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public static void DoAttack_VineCharge(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
         {
-            float flySpeed = enraged ? 17f : 9f;
-            float turnSpeedFactor = enraged ? 1.4f : 0.85f;
+            float flySpeed = enraged ? 15f : 9f;
+            float turnSpeedFactor = enraged ? 1.3f : 0.85f;
             flySpeed *= MathHelper.Lerp(1f, 1.2f, splitCounter / TotalSplitsToPerform);
 
             if (attackTimer < 75f)
@@ -200,9 +205,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public static void DoAttack_ShadowOrbSummon(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
         {
-            float flySpeed = enraged ? 16.5f : 8.25f;
-            float turnSpeedFactor = enraged ? 1.35f : 0.8f;
+            float flySpeed = enraged ? 13.5f : 8.25f;
+            float turnSpeedFactor = enraged ? 1.2f : 0.8f;
             flySpeed *= MathHelper.Lerp(1f, 1.275f, splitCounter / TotalSplitsToPerform);
+            if (splitCounter == 0f)
+            {
+                flySpeed *= 1.15f;
+                turnSpeedFactor *= 1.15f;
+            }
 
             if (BossRushEvent.BossRushActive)
                 GotoNextAttackState(npc);
@@ -293,7 +303,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             {
                 bool inTiles = Collision.SolidCollision(npc.Center, 2, 2);
                 if (npc.velocity.Y < 26f)
-                    npc.velocity.Y += enraged ? 0.95f : 0.5f;
+                    npc.velocity.Y += enraged ? 0.9f : 0.5f;
                 if (inTiles)
                     npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y, -8f, 8f);
 
@@ -374,8 +384,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 EoWAttackState.ShadowOrbSummon,
             };
             possibleAttacks.AddWithCondition(EoWAttackState.RainHover, splitCounter >= 1f);
-            possibleAttacks.AddWithCondition(EoWAttackState.DarkHeartSlam, splitCounter >= 2f);
-            possibleAttacks.Remove(oldAttackState);
+
+            for (int i = 0; i < 2; i++)
+                possibleAttacks.AddWithCondition(EoWAttackState.DarkHeartSlam, splitCounter >= 2f);
+            possibleAttacks.RemoveAll(p => p == oldAttackState);
 
             npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
             npc.ai[1] = 0f;

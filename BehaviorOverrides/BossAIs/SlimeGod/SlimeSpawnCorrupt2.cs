@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             npc.damage = 67;
 			npc.width = 40;
             npc.height = 30;
-            npc.defense = 5;
+            npc.defense = 11;
             npc.lifeMax = 320;
             npc.knockBackResist = 0f;
             animationType = 121;

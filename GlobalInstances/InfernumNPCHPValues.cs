@@ -37,7 +37,7 @@ namespace InfernumMode.GlobalInstances
         public static Dictionary<int, int> HPValues => new Dictionary<int, int>()
         {
             [ModContent.NPCType<DesertScourgeHead>()] = BossRushEvent.BossRushActive ? 1185000 : 5200,
-            [NPCID.KingSlime] = BossRushEvent.BossRushActive ? 499920 : 4200,
+            [NPCID.KingSlime] = BossRushEvent.BossRushActive ? 499920 : 3370,
             [NPCID.EyeofCthulhu] = BossRushEvent.BossRushActive ? 770000 : 3560,
             [NPCID.BrainofCthulhu] = BossRushEvent.BossRushActive ? 289000 : 5420,
             [ModContent.NPCType<CrabulonBoss>()] = BossRushEvent.BossRushActive ? 1776000 : 8750,

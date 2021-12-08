@@ -51,7 +51,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
-            spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(Color.Red) * 0.6f, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
+
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
+                spriteBatch.Draw(texture, drawPosition + drawOffset, null, projectile.GetAlpha(Color.Red) * 0.6f, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
+            }
             spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
         }

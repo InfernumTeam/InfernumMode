@@ -92,7 +92,7 @@ namespace InfernumMode
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
             if (InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.adultEidolonWyrmHead >= 0 && Main.npc[CalamityGlobalNPC.adultEidolonWyrmHead].ai[3] == 1f)
-                damage = (int)MathHelper.Min(4000, damage);
+                damage = (int)MathHelper.Max(5500f / (1f - player.endurance + 1e-6f), damage);
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }
         #endregion Pre Hurt

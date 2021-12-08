@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int totalSegmentsInAir = 0;
             int bodyType = ModContent.NPCType<PerforatorBodyLarge>();
             float moveSpeed = MathHelper.Lerp(0.175f, 0.415f, 1f - npc.life / (float)npc.lifeMax);
-            float horizontalSpeed = 8.5f;
+            float horizontalSpeed = 13f;
             float maxVerticalSpeed = 18f;
             int circularBurstCount = 6;
             float circularBurstSpeed = 6f;
@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - moveSpeed * 2f, -maxVerticalSpeed, maxVerticalSpeed);
 
-                if (MathHelper.Distance(target.Center.X, npc.Center.X) > 125f)
+                if (MathHelper.Distance(target.Center.X, npc.Center.X) > 95f)
                     npc.velocity.X = (npc.velocity.X * 5f + npc.SafeDirectionTo(target.Center).X * horizontalSpeed) / 6f;
 
                 if (totalSegmentsInAir >= 14 && target.Center.Y - npc.Center.Y > -870f)

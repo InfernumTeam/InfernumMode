@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         public const float NPCSpawnArcRotationalOffset = MathHelper.Pi / NPCSpawnArcSpinTime;
         public const float LungeSpinTime = 90f;
         public const float LungeSpinTotalRotations = 2f;
-        public const float LungeSpinChargeDelay = 15f;
+        public const float LungeSpinChargeDelay = 6f;
         public const float LungeSpinChargeTime = 20f;
         public const float RainDashOffset = 380f;
         public const float EaterWallSlowdownTime = 40f;
@@ -212,9 +212,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.velocity *= 1.06f;
             else
             {
-                npc.velocity = npc.SafeDirectionTo(target.Center) * 168f / reelbackTime;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 190f / reelbackTime;
                 if (BossRushEvent.BossRushActive)
-                    npc.velocity *= 5f;
+                    npc.velocity *= 4.5f;
 
                 if (npc.WithinRange(target.Center, 15f))
                 {
@@ -375,7 +375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             if (attackTimer == LungeSpinTime + LungeSpinChargeDelay)
             {
                 DoRoar(npc, false);
-                npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 3.3f;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 3.6f;
                 npc.velocity *= MathHelper.Lerp(1f, 1.3f, Utils.InverseLerp(1f, 0.6f, lifeRatio));
                 if (enraged)
                     npc.velocity *= 1.45f;
@@ -562,7 +562,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.netUpdate = true;
             }
 
-            float waitTime = lifeRatio < 0.2f ? 96f : 75f;
+            float waitTime = lifeRatio < 0.2f ? 75f : 60f;
             float moveTime = lifeRatio < 0.2f ? 50f : 90f;
             float dashSpeed = lifeRatio < 0.2f ? 24f : 21.5f;
             if (enraged)

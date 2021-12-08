@@ -20,12 +20,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
             shootTimer++;
 
-            int burstCount = 4;
+            int burstCount = 9;
             float burstSpeed = 10f;
             int shootRate = (int)MathHelper.Lerp(100f, 45f, 1f - npc.life / (float)npc.lifeMax);
             if (BossRushEvent.BossRushActive)
             {
-                burstCount = 9;
+                burstCount = 15;
                 burstSpeed = 21f;
             }
 
@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 for (int i = 0; i < burstCount; i++)
                 {
-                    Vector2 ichorVelocity = (npc.velocity.ToRotation() + MathHelper.Lerp(-0.53f, 0.53f, i / (float)(burstCount - 1f))).ToRotationVector2() * burstSpeed;
+                    Vector2 ichorVelocity = (npc.velocity.ToRotation() + MathHelper.Lerp(-0.63f, 0.63f, i / (float)(burstCount - 1f))).ToRotationVector2() * burstSpeed;
                     Utilities.NewProjectileBetter(npc.Center, ichorVelocity, ModContent.ProjectileType<IchorSpit>(), 95, 0f);
                 }
                 shootTimer = 0f;

@@ -41,11 +41,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 				if (Time > 55f)
 				{
 					Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-					float flySpeed = 7f;
+					float flySpeed = 10f;
 					if (BossRushEvent.BossRushActive)
-						flySpeed *= 2.35f;
+						flySpeed *= 2f;
 					if (!projectile.WithinRange(target.Center, 50f))
-						projectile.velocity = (projectile.velocity * 56f + projectile.SafeDirectionTo(target.Center) * flySpeed) / 57f;
+						projectile.velocity = (projectile.velocity * 44f + projectile.SafeDirectionTo(target.Center) * flySpeed) / 45f;
 				}
 			}
 

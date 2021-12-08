@@ -410,19 +410,22 @@ namespace InfernumMode.GlobalInstances
             bool isSplitEoW = npc.type == NPCID.EaterofWorldsBody && npc.realLife >= 0 && Main.npc[npc.realLife].ai[2] >= 1f;
 
             if (isDesertScourge && (projectile.type == ProjectileID.JestersArrow || projectile.type == ProjectileID.UnholyArrow || projectile.type == ProjectileID.WaterBolt))
-                damage = (int)(damage * 0.45);
+                damage = (int)(damage * 0.45f);
+
+            if (isDesertScourge && (projectile.penetrate == -1 || projectile.penetrate > 1))
+                damage = (int)(damage * 0.6f);
 
             if (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare)
-                damage = (int)(damage * 0.8);
+                damage = (int)(damage * 0.8f);
 
             if (isDesertScourge && (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare))
-                damage = (int)(damage * 0.75);
+                damage = (int)(damage * 0.75f);
 
             if (npc.type == NPCID.KingSlime && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.67);
+                damage = (int)(damage * 0.67f);
 
             if (isSplitEoW && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.45);
+                damage = (int)(damage * 0.45f);
 
             if (projectile.type == ModContent.ProjectileType<AshenStalagmiteProj>() && projectile.Calamity().stealthStrike)
                 damage = (int)(damage * 0.65f);

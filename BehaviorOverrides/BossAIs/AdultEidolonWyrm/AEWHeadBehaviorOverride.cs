@@ -52,6 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             bool enraged = ArenaSpawnAndEnrageCheck(npc, target);
             npc.Calamity().CurrentlyEnraged = enraged;
 
+            float lifeRatio = npc.life / (float)npc.lifeMax;
             float generalDamageFactor = enraged ? 40f : 1f;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -59,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             // Do initializations.
             if (hasInitialized == 0f)
-			{
+            {
                 npc.Opacity = 1f;
 
                 int Previous = npc.whoAmI;
@@ -85,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     Main.npc[Previous].ai[3] = i / 2;
                 }
                 hasInitialized = 1f;
-			}
+            }
 
             // Reset damage and other things.
             npc.damage = (int)(npc.defDamage * generalDamageFactor);
@@ -93,10 +94,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             switch ((AEWAttackType)(int)attackType)
             {
                 case AEWAttackType.AbyssalCrash:
+                    DoBehavior_AbyssalCrash(npc, target, lifeRatio, generalDamageFactor, ref attackTimer);
                     break;
             }
             attackTimer++;
             return false;
+        }
+
+        public static void DoBehavior_AbyssalCrash(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float attackTimer)
+        {
+
         }
 
         public static void SelectNextAttack(NPC npc)

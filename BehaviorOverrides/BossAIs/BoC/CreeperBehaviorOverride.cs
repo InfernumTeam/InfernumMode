@@ -90,9 +90,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             else if (npc.alpha <= 10)
             {
                 bool obstanceInWayOfTarget = !Collision.CanHitLine(npc.position, npc.width, npc.height, target.position, target.width, target.height);
-                if (Main.netMode != NetmodeID.MultiplayerClient && !obstanceInWayOfTarget && attackTimer % 75f == 74f && Main.rand.NextBool(4))
+                if (Main.netMode != NetmodeID.MultiplayerClient && !obstanceInWayOfTarget && attackTimer % 45f == 44f && Main.rand.NextBool(3))
                 {
-                    float aimAwayAngle = Utils.InverseLerp(480f, 300f, npc.Distance(target.Center), true) * Main.rand.NextFloat(2.16f, 3.84f);
+                    float aimAwayAngle = Utils.InverseLerp(300f, 150f, npc.Distance(target.Center), true) * Main.rand.NextFloat(2.16f, 3.84f);
                     Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center).RotatedBy(aimAwayAngle) * 8f, ModContent.ProjectileType<IchorSpit>(), 100, 0f);
                 }
             }

@@ -215,9 +215,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public static void DoAttack_BloodDashSwoop(NPC npc, Player target, ref float attackTimer)
         {
             int teleportFadeTime = 46;
-            Vector2 teleportDestination = target.Center + new Vector2(target.direction * -350f, -280f);
+            Vector2 teleportDestination = target.Center + new Vector2(target.direction * -350f, -330f);
             if (Math.Abs(target.velocity.X) > 0f)
-                teleportDestination = target.Center + new Vector2(Math.Sign(target.velocity.X) * -310f, -280f);
+                teleportDestination = target.Center + new Vector2(Math.Sign(target.velocity.X) * -310f, -330f);
 
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
                 return;

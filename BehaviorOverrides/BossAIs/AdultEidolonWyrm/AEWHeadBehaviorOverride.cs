@@ -288,24 +288,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             float etherealnessFactor = npc.localAI[1];
             if (npc.realLife >= 0)
                 etherealnessFactor = Main.npc[npc.realLife].localAI[1];
-            float opacity = MathHelper.Lerp(1f, 0.67f, etherealnessFactor);
+            float opacity = MathHelper.Lerp(1f, 0.75f, etherealnessFactor) * npc.Opacity;
             Color color = Color.Lerp(lightColor, Main.hslToRgb(Main.GlobalTime * 0.7f % 1f, 1f, 0.74f), etherealnessFactor * 0.85f);
-            color.A = (byte)(int)(255 - etherealnessFactor * 255f);
+            color.A = (byte)(int)(255 - etherealnessFactor * 84f);
 
             if (etherealnessFactor > 0f)
             {
-                float etherealOffsetPulse = (float)Math.Abs(Math.Cos(Main.GlobalTime * 1.74f)) * etherealnessFactor * 8f;
+                float etherealOffsetPulse = etherealnessFactor * 16f;
 
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 32; i++)
                 {
-                    Color baseColor = Main.hslToRgb((Main.GlobalTime * 0.7f + i / 8f) % 1f, 1f, 0.8f);
-                    Color etherealAfterimageColor = Color.Lerp(lightColor, baseColor, etherealnessFactor * 0.85f) * 0.2f;
+                    Color baseColor = Main.hslToRgb((Main.GlobalTime * 1.7f + i / 32f) % 1f, 1f, 0.8f);
+                    Color etherealAfterimageColor = Color.Lerp(lightColor, baseColor, etherealnessFactor * 0.85f) * 0.24f;
                     etherealAfterimageColor.A = (byte)(int)(255 - etherealnessFactor * 255f);
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 2.3f).ToRotationVector2() * etherealOffsetPulse;
-                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, npc.GetAlpha(etherealAfterimageColor) * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 32f).ToRotationVector2() * etherealOffsetPulse;
+                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, etherealAfterimageColor * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
                 }
             }
-            spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(color) * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+
+            for (int i = 0; i < (int)Math.Round(1f + etherealnessFactor); i++)
+                spriteBatch.Draw(texture, drawPosition, npc.frame, color * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

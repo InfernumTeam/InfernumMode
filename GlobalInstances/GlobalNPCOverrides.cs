@@ -52,6 +52,7 @@ using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
+using CalamityMod.Buffs.StatDebuffs;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -413,7 +414,7 @@ namespace InfernumMode.GlobalInstances
                 damage = (int)(damage * 0.45f);
 
             if (isDesertScourge && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.6f);
+                damage = (int)(damage * 0.425f);
 
             if (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare)
                 damage = (int)(damage * 0.8f);
@@ -699,7 +700,12 @@ namespace InfernumMode.GlobalInstances
         {
             if (!PoDWorld.InfernumMode)
                 return;
-            
+
+            if (npc.type == ModContent.NPCType<CrabulonIdle>())
+            {
+                target.AddBuff(BuffID.Poisoned, 180);
+                target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
+            }
             if (npc.type == ModContent.NPCType<CrimulanSGBig>() || npc.type == ModContent.NPCType<SlimeSpawnCrimson3>())
                 target.AddBuff(ModContent.BuffType<BurningBlood>(), 240);
             if (npc.type == ModContent.NPCType<EbonianSGBig>() || npc.type == ModContent.NPCType<SlimeSpawnCorrupt2>())

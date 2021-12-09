@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 			npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.width = npc.height = 50;
-            npc.damage = 40;
+            npc.damage = 60;
             npc.lifeMax = 5000;
             npc.knockBackResist = 0f;
             npc.dontTakeDamage = true;

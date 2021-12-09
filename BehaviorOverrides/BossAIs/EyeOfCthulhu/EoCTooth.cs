@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 			projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.tileCollide = true;
-            projectile.timeLeft = 600;
+            projectile.timeLeft = 720;
             cooldownSlot = 1;
         }
 

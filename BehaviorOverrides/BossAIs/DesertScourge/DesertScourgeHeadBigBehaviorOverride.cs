@@ -54,7 +54,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             }
 
             // If there still was no valid target, dig away.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
+            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || 
+                !Main.player[npc.target].active || !npc.WithinRange(Main.player[npc.target].Center, 5600f))
             {
                 DoBehavior_Despawn(npc);
                 return false;
@@ -463,11 +464,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         public static void DoBehavior_Despawn(NPC npc)
         {
             npc.velocity.X *= 0.985f;
-            if (npc.velocity.Y < 18f)
-                npc.velocity.Y += 0.3f;
+            if (npc.velocity.Y < 26f)
+                npc.velocity.Y += 0.4f;
 
             if (npc.timeLeft > 200)
                 npc.timeLeft = 200;
+
+            // If someone has instant respawn and complains about the despawn not working I will break their spine :)
+            if (!npc.WithinRange(Main.player[npc.target].Center, 1500f))
+                npc.active = false;
         }
 
         public static void CreateSegments(NPC npc, int wormLength, int bodyType, int tailType)

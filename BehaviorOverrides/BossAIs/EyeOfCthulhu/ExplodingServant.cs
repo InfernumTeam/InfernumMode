@@ -56,15 +56,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             Player target = Main.player[Player.FindClosest(npc.Center, 1, 1)];
             if (target != null && !target.dead && target.active)
-			{
+            {
                 float squareTargetDistance = npc.DistanceSQ(target.Center);
                 if (squareTargetDistance > 180f * 180f && squareTargetDistance < 1000f * 1000f)
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.0145f);
-			}
+            }
 
-            npc.noTileCollide = Timer++ < 90;
-
-            if (Collision.SolidCollision(npc.Center, 30, 30) && !npc.noTileCollide)
+            Timer++;
+            if (Collision.SolidCollision(npc.Center, 30, 30) && Timer > 90f)
             {
                 npc.life = -1;
                 npc.HitEffect();

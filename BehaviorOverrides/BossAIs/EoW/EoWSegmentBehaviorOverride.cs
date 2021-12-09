@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 
             // Fuck.
-            npc.Calamity().newAI[1] = 720f;
+            npc.Calamity().newAI[1] = head.Calamity().newAI[1];
 
             // Fuck!
             for (int k = 0; k < npc.buffImmune.Length; k++)
@@ -35,10 +35,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             // Inherit various attributes from the head segment.
             // This code will go upstream across every segment, until it reaches the head.
+            npc.realLife = head.realLife >= 0 ? head.realLife : head.whoAmI;
             npc.scale = aheadSegment.scale;
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
+            npc.damage = npc.defDamage + 8;
             npc.defense = 7;
+            aheadSegment.ai[0] = npc.whoAmI;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
@@ -46,9 +49,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
             npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
-
-            // Make segments immune to crush depth.
-            npc.buffImmune[ModContent.BuffType<CrushDepth>()] = true;
         }
 
         public override bool PreAI(NPC npc)
@@ -66,6 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public override bool PreAI(NPC npc)
         {
             EoWBodyBehaviorOverride.SegmentAI(npc);
+            npc.dontTakeDamage = true;
             return false;
         }
     }

@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             projectile.penetrate = -1;
             projectile.hostile = true;
             projectile.ignoreWater = true;
-            projectile.timeLeft = 240;
+            projectile.timeLeft = 360;
             projectile.Calamity().canBreakPlayerDefense = true;
         }
 
@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             projectile.rotation += (projectile.velocity.X > 0f).ToDirectionInt() * 0.4f;
             projectile.tileCollide = projectile.timeLeft < 90;
 
-            if (projectile.velocity.Length() < 9f)
+            if (projectile.velocity.Length() < 9.5f)
                 projectile.velocity *= 1.0145f;
         }
 

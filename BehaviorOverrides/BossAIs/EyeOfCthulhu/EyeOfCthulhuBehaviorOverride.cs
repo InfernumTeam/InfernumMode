@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 case EoCAttackType.HoverCharge:
                     int hoverTime = 60;
                     int chargeTime = phase2 ? 30 : 45;
-                    float chargeSpeed = MathHelper.Lerp(8f, 11.15f, 1f - lifeRatio);
+                    float chargeSpeed = MathHelper.Lerp(10f, 13.33f, 1f - lifeRatio);
                     if (phase2)
                         chargeSpeed += 1.3f;
                     float hoverAcceleration = MathHelper.Lerp(0.1f, 0.25f, 1f - lifeRatio);
@@ -247,7 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         Vector2 destination = target.Center + new Vector2(-chargeDirection * 1100f, -300f);
                         npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 27f, 0.06f);
                         npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
-                        if (npc.DistanceSQ(destination) < 32f * 32f)
+                        if (npc.WithinRange(destination, 32f))
                         {
                             subState = 1f;
                             npc.velocity = npc.SafeDirectionTo(target.Center - Vector2.UnitY * 300f) * 15f;
@@ -285,7 +285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 case EoCAttackType.TeethSpit:
                     int teethPerShot = phase3 ? 7 : 4;
                     int teethBurstTotal = phase3 ? 6 : 4;
-                    float teethRadialSpread = phase3 ? 1.3f : 0.96f;
+                    float teethRadialSpread = phase3 ? 1.42f : 1.21f;
                     subState = ref npc.Infernum().ExtraAI[0];
                     ref float teethBurstCounter = ref npc.Infernum().ExtraAI[1];
                     ref float teethBurstDelay = ref npc.Infernum().ExtraAI[2];
@@ -323,7 +323,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                                 for (int i = 0; i < teethPerShot; i++)
                                 {
                                     float offsetAngle = MathHelper.Lerp(-0.52f, 0.52f, i / (float)teethPerShot) + Main.rand.NextFloat(-0.07f, 0.07f);
-                                    Vector2 toothShootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * 16f;
+                                    Vector2 toothShootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * 25.6f;
                                     if (BossRushEvent.BossRushActive)
                                         toothShootVelocity *= 1.6f;
                                     Utilities.NewProjectileBetter(spawnPosition, toothShootVelocity, ModContent.ProjectileType<EoCTooth>(), 70, 0f, 255, npc.target);
@@ -345,13 +345,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     int chargeDelay = 25;
                     int chargeChainCount = 3;
                     chargeTime = 60;
-                    chargeSpeed = 14f;
+                    chargeSpeed = 18f;
                     float chargeAcceleration = 1.006f;
                     float spinRadius = 345f;
                     if (BossRushEvent.BossRushActive)
                     {
                         chargeChainCount = 2;
-                        chargeSpeed *= 2.6f;
+                        chargeSpeed *= 2.25f;
                     }
 
                     subState = ref npc.Infernum().ExtraAI[0];

@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             ref float enrageTimer = ref npc.Infernum().ExtraAI[6];
 
             // Fuck.
-            npc.Calamity().newAI[1] = 720f;
+            npc.Calamity().newAI[1] = MathHelper.Clamp(npc.Calamity().newAI[1] + 8f, 0f, 720f);
 
             // Perform initialization logic.
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)

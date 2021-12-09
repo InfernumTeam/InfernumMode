@@ -234,6 +234,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
             ref float shootCounter = ref npc.Infernum().ExtraAI[2];
 
+            if (shootCounter < 0f)
+                shootCounter = 0f;
+
             Vector2 hoverDestination = target.Center + Vector2.UnitX * hoverSide * 780f;
             hoverDestination.X += hoverOffsetX;
             hoverDestination.Y += hoverOffsetY;

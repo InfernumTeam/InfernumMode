@@ -37,10 +37,10 @@ namespace InfernumMode.GlobalInstances
         public static Dictionary<int, int> HPValues => new Dictionary<int, int>()
         {
             [ModContent.NPCType<DesertScourgeHead>()] = BossRushEvent.BossRushActive ? 1185000 : 7200,
-            [NPCID.KingSlime] = BossRushEvent.BossRushActive ? 499920 : 3370,
-            [NPCID.EyeofCthulhu] = BossRushEvent.BossRushActive ? 770000 : 4700,
+            [NPCID.KingSlime] = BossRushEvent.BossRushActive ? 420000 : 4200,
+            [NPCID.EyeofCthulhu] = BossRushEvent.BossRushActive ? 770000 : 6100,
             [NPCID.BrainofCthulhu] = BossRushEvent.BossRushActive ? 289000 : 7272,
-            [ModContent.NPCType<CrabulonBoss>()] = BossRushEvent.BossRushActive ? 1776000 : 8750,
+            [ModContent.NPCType<CrabulonBoss>()] = BossRushEvent.BossRushActive ? 1776000 : 9700,
             [NPCID.EaterofWorldsHead] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsBody] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsTail] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,

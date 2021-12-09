@@ -358,15 +358,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             // Delare the previous attack for later.
             npc.Infernum().ExtraAI[9] = (int)npc.Infernum().ExtraAI[5];
 
-            if (npc.ai[0] == 0f)
+            if (attackTimer == 0f)
             {
-                fadeoutCountdown = HiveMindFadeoutTime;
                 initialSpinRotation = Main.rand.NextFloat(MathHelper.TwoPi);
 
                 npc.velocity = Vector2.Zero;
-                npc.alpha = 255;
                 npc.Center = target.Center + initialSpinRotation.ToRotationVector2() * SpinRadius;
-                npc.ai[0] = 1f;
+                npc.netUpdate = true;
             }
 
             attackTimer++;

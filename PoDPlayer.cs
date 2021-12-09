@@ -1,4 +1,5 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
@@ -91,7 +92,7 @@ namespace InfernumMode
         #region Pre Hurt
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource)
         {
-            if (InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.adultEidolonWyrmHead >= 0 && Main.npc[CalamityGlobalNPC.adultEidolonWyrmHead].ai[3] == 1f)
+            if (InfernumMode.CanUseCustomAIs && CalamityGlobalNPC.adultEidolonWyrmHead >= 0 && Main.npc[CalamityGlobalNPC.adultEidolonWyrmHead].Calamity().CurrentlyEnraged)
                 damage = (int)MathHelper.Max(5500f / (1f - player.endurance + 1e-6f), damage);
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }

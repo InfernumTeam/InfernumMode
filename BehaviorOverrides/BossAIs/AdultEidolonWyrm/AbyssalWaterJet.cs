@@ -1,68 +1,77 @@
 using CalamityMod;
-using CalamityMod.CalPlayer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-    public class TornadoBorder : ModProjectile
+    public class AbyssalWaterJet : ModProjectile
     {
         internal PrimitiveTrailCopy TornadoDrawer;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-        public const float TornadoHeight = 60000f;
+        public ref float TornadoHeight => ref projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Tornado");
+            DisplayName.SetDefault("Water Jet");
+            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 25;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 50;
-            projectile.height = 1020;
+            projectile.width = 20;
+            projectile.height = 20;
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.penetrate = -1;
             projectile.alpha = 255;
-            projectile.timeLeft = 9000000;
+            projectile.timeLeft = 90;
             projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.width = (int)MathHelper.Lerp(projectile.width, 200f, 0.085f);
-            if (!CalamityPlayer.areThereAnyDamnBosses)
+            projectile.Opacity = Utils.InverseLerp(60f, 48f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 12f, projectile.timeLeft, true);
+
+            // Split into a bunch of water bolts.
+            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.timeLeft == 12f)
             {
-                projectile.active = false;
-                projectile.netUpdate = true;
-                return;
+                for (int i = 0; i < 7; i++)
+                {
+                    Vector2 boltShootVelocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 12f;
+                    Projectile.NewProjectile(projectile.Center, boltShootVelocity, ModContent.ProjectileType<AbyssalWaterBolt>(), (int)(projectile.damage * 0.8f), 0f);
+                }
             }
 
-            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.1f, 0f, 1f);
+            if (projectile.velocity.Length() < 34f)
+                projectile.velocity *= 1.042f;
         }
 
         internal Color ColorFunction(float completionRatio)
         {
-            return Color.Lerp(Color.BlueViolet, Color.Black, 0.85f) * projectile.Opacity * 1.6f;
+            return Color.Lerp(Color.BlueViolet, Color.Black, 0.85f) * projectile.Opacity * 1.2f;
         }
 
-        internal float WidthFunction(float completionRatio) => projectile.width + 10f;
+        internal float WidthFunction(float completionRatio)
+        {
+            return MathHelper.Lerp(projectile.width * 0.6f, projectile.width + 16f, 1f - completionRatio);
+        }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), 
                 targetHitbox.Size(), 
-                projectile.Bottom + Vector2.UnitY * TornadoHeight * 0.48f, 
-                projectile.Bottom - Vector2.UnitY * TornadoHeight * 0.48f,
+                projectile.oldPos[5] + projectile.Size * 0.5f,
+                projectile.oldPos[projectile.oldPos.Length - 6] + projectile.Size * 0.5f,
                 (int)(projectile.width * 0.525), 
-                ref _);
+                ref _) && projectile.timeLeft < 72f;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -71,16 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
 
             GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.GetTexture("Terraria/Misc/Perlin"));
-            Vector2 upwardAscent = Vector2.UnitY * TornadoHeight * 0.5f;
-            Vector2 top = projectile.Bottom - upwardAscent;
-            List<Vector2> drawPoints = new List<Vector2>()
-            {
-                top
-            };
-            for (int i = 0; i < 15; i++)
-                drawPoints.Add(Vector2.Lerp(top, projectile.Bottom + upwardAscent, i / 14f));
-
-            TornadoDrawer.Draw(drawPoints, -Main.screenPosition, 85);
+            TornadoDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 85);
             return false;
         }
 

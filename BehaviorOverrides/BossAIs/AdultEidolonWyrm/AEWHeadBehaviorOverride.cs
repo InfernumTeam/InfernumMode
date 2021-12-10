@@ -73,12 +73,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     if (i >= 0 && i < 40)
                     {
                         if (i % 2 == 0)
-                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmBodyHuge>(), npc.whoAmI);
+                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmBodyHuge>(), npc.whoAmI + 1);
                         else
-                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmBodyAltHuge>(), npc.whoAmI);
+                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmBodyAltHuge>(), npc.whoAmI + 1);
                     }
                     else
-                        lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmTailHuge>(), npc.whoAmI);
+                        lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmTailHuge>(), npc.whoAmI + 1);
 
                     Main.npc[lol].realLife = npc.whoAmI;
                     Main.npc[lol].ai[2] = npc.whoAmI;
@@ -106,6 +106,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     break;
                 case AEWAttackType.HadalSpirits:
                     DoBehavior_HadalSpirits(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
+                    break;
+                case AEWAttackType.PsychicBlasts:
+                    DoBehavior_PsychicBlasts(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -199,6 +202,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
         }
 
+        public static void DoBehavior_PsychicBlasts(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
+        {
+            int attackShootDelay = 60;
+            int orbCreationRate = (int)MathHelper.Lerp(32f, 24f, 1f - lifeRatio);
+            int attackChangeDelay = 90;
+            int attackTime = 6600;
+
+            // Reset damage to 0.
+            npc.damage = 0;
+
+            // Do movement.
+            DoDefaultSwimMovement(npc, target, 0.625f);
+
+            // Decide rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Decide the etherealness factor.
+            etherealnessFactor = Utils.InverseLerp(0f, 60f, attackTimer, true) * Utils.InverseLerp(attackTime, attackTime - attackChangeDelay, attackTimer, true);
+
+            if (attackTimer > attackTime)
+                SelectNextAttack(npc);
+
+            if (attackTimer > attackTime - attackChangeDelay)
+                return;
+
+            // Release psychic fields around the head.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > attackShootDelay && attackTimer % orbCreationRate == orbCreationRate - 1f)
+            {
+                Vector2 fieldSpawnPosition = npc.Center + Main.rand.NextVector2Circular(420f, 80f).RotatedBy(npc.rotation);
+                Utilities.NewProjectileBetter(fieldSpawnPosition, Vector2.Zero, ModContent.ProjectileType<PsychicEnergyField>(), 0, 0f);
+            }
+        }
+
         public static void DoDefaultSwimMovement(NPC npc, Player target, float generalSpeedFactor = 1f)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -229,9 +265,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             switch (oldAttack)
             {
                 case AEWAttackType.AbyssalCrash:
-                    npc.ai[0] = (int)AEWAttackType.HadalSpirits;
+                    npc.ai[0] = (int)AEWAttackType.PsychicBlasts;
                     break;
-                case AEWAttackType.HadalSpirits:
+                case AEWAttackType.PsychicBlasts:
                     npc.ai[0] = (int)AEWAttackType.AbyssalCrash;
                     break;
             }

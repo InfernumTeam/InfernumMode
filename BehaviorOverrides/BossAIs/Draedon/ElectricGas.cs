@@ -66,6 +66,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
 		{
+			Vector2 screenArea = new Vector2(Main.screenWidth, Main.screenHeight);
+			Rectangle screenRectangle = Utils.CenteredRectangle(Main.screenPosition + screenArea * 0.5f, screenArea * 1.33f);
+
+			if (!projectile.Hitbox.Intersects(screenRectangle))
+				return false;
+
 			spriteBatch.SetBlendState(BlendState.Additive);
 
 			Texture2D texture = Main.projectileTexture[projectile.type];

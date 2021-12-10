@@ -21,6 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         {
             npc.noGravity = true;
             npc.lavaImmune = true;
+            npc.noTileCollide = true;
             npc.damage = 48;
             npc.height = npc.width = 28;
             npc.defense = 2;

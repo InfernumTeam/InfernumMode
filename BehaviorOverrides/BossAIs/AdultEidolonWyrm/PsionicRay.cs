@@ -8,7 +8,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
+namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
     public class PsionicRay : ModProjectile
     {
@@ -49,8 +49,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             projectile.rotation = projectile.velocity.ToRotation();
 
             // Accelerate quickly until reaching a specific speed.
-            if (projectile.velocity.Length() < 17f)
-                projectile.velocity *= 1.03f;
+            if (projectile.velocity.Length() < 30f)
+                projectile.velocity *= 1.064f;
 
             Lighting.AddLight(projectile.Center, Color.Cyan.ToVector3() * 1.6f);
         }
@@ -101,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             GameShaders.Misc["Infernum:BrainPsychic"].UseSaturation(1f);
             GameShaders.Misc["Infernum:BrainPsychic"].UseImage("Images/Misc/Perlin");
-            RayDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 38);
+            RayDrawer.Draw(projectile.oldPos.Where((x, i) => i % 2 == 0), projectile.Size * 0.5f - Main.screenPosition, 38);
             return false;
         }
     }

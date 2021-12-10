@@ -205,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public static void DoBehavior_PsychicBlasts(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
         {
             int attackShootDelay = 60;
-            int orbCreationRate = (int)MathHelper.Lerp(32f, 24f, 1f - lifeRatio);
+            int orbCreationRate = (int)MathHelper.Lerp(22f, 13f, 1f - lifeRatio);
             int attackChangeDelay = 90;
             int attackTime = 6600;
 

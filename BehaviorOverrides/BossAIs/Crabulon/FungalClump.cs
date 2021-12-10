@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 			npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.width = npc.height = 50;
-            npc.damage = 60;
+            npc.damage = 45;
             npc.lifeMax = 5000;
             npc.knockBackResist = 0f;
             npc.dontTakeDamage = true;
@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 			}
 
             npc.target = Owner.target;
-            npc.damage = MainBossLifeRatio < 0.45f ? 0 : 5;
+            npc.damage = MainBossLifeRatio < 0.45f ? 0 : npc.defDamage;
 
             float hoverSpeed = MathHelper.Lerp(7f, 11f, 1f - MainBossLifeRatio);
             if (BossRushEvent.BossRushActive)

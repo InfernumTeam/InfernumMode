@@ -300,9 +300,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 if (npc.WithinRange(destination, 32f))
                 {
                     attackSubstate = 1f;
-                    npc.velocity = npc.SafeDirectionTo(target.Center - Vector2.UnitY * 300f) * 15f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center - Vector2.UnitY * 300f) * 24f;
                     if (BossRushEvent.BossRushActive)
-                        npc.velocity *= 2f;
+                        npc.velocity *= 1.7f;
 
                     npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                     npc.netUpdate = true;

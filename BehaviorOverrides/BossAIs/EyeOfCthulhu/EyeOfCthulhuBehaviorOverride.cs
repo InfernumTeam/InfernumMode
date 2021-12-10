@@ -281,6 +281,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             if (enraged)
                 bloodBallReleaseRate = (int)(bloodBallReleaseRate * 0.6f);
 
+            int chargeTime = phase2 ? 90 : 45;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
 
@@ -326,7 +327,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SittingBlood>(), 60, 0f);
                 }
 
-                if (attackTimer >= 90f || Math.Abs(npc.Center.X - target.Center.X) > 1200f)
+                if (attackTimer >= chargeTime || Math.Abs(npc.Center.X - target.Center.X) > 1200f)
                     SelectNextAttack(npc);
             }
         }

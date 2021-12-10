@@ -52,6 +52,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             float maxSpeed = BossRushEvent.BossRushActive ? 34f : 14f;
             float moveAcceleration = BossRushEvent.BossRushActive ? 1.04f : 1.0075f;
+            if (Main.dayTime && !BossRushEvent.BossRushActive)
+            {
+                maxSpeed *= 1.425f;
+                moveAcceleration = 1.0145f;
+            }
+
             if (npc.velocity.Length() < maxSpeed)
                 npc.velocity *= moveAcceleration;
 

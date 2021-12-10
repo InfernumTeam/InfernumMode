@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             ref float attackTimer = ref npc.ai[2];
             ref float hasSummonedNinjaFlag = ref npc.localAI[0];
             ref float hasSummonedJewelFlag = ref npc.localAI[1];
-            ref float teleportDirection = ref npc.Infernum().ExtraAI[6];
+            ref float teleportDirection = ref npc.Infernum().ExtraAI[5];
 
             bool shouldNotChangeScale = false;
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -125,33 +125,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 hasSummonedJewelFlag = 1f;
             }
 
-            void goToNextAIState()
-            {
-                // You cannot use ref locals inside of a delegate context.
-                // You should be able to find most important, universal locals above, anyway.
-                // Any others that don't have an explicit reference above are exclusively for
-                // AI state manipulation.
-
-                npc.ai[3]++;
-
-                KingSlimeAttackType[] patternToUse = AttackPattern;
-                KingSlimeAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
-
-                // Going to the next AI state.
-                npc.ai[1] = (int)nextAttackType;
-
-                // Resetting the attack timer.
-                npc.ai[2] = 0f;
-
-                // And the misc ai slots.
-                for (int i = 0; i < 5; i++)
-                    npc.Infernum().ExtraAI[i] = 0f;
-
-                if (npc.velocity.Y < 0f)
-                    npc.velocity.Y = 0f;
-                npc.netUpdate = true;
-            }
-
             // Enforce slightly stronger gravity.
             if (npc.velocity.Y > 0f)
             {
@@ -163,121 +136,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             switch ((KingSlimeAttackType)(int)npc.ai[1])
             {
                 case KingSlimeAttackType.SmallJump:
-                    if (npc.velocity.Y == 0f)
-                    {
-                        npc.velocity.X *= 0.8f;
-                        if (Math.Abs(npc.velocity.X) < 0.1f)
-                            npc.velocity.X = 0f;
-
-                        if (attackTimer == 25f && npc.collideY)
-                        {
-                            npc.TargetClosest();
-                            target = Main.player[npc.target];
-                            float jumpSpeed = MathHelper.Lerp(8.25f, 11.6f, Utils.InverseLerp(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
-                            jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
-
-                            npc.velocity = new Vector2(npc.direction * 8.5f, -jumpSpeed);
-                            if (BossRushEvent.BossRushActive)
-                                npc.velocity *= 2.4f;
-
-                            npc.netUpdate = true;
-                        }
-
-                        if (attackTimer > 25f && (npc.collideY || attackTimer >= 180f))
-                            goToNextAIState();
-                    }
-                    else
-                        attackTimer--;
+                    DoBehavior_SmallJump(npc, ref target, ref attackTimer);
                     break;
                 case KingSlimeAttackType.LargeJump:
-                    if (npc.velocity.Y == 0f)
-                    {
-                        npc.velocity.X *= 0.8f;
-                        if (Math.Abs(npc.velocity.X) < 0.1f)
-                            npc.velocity.X = 0f;
-
-                        if (attackTimer == 35f)
-                        {
-                            npc.TargetClosest();
-                            target = Main.player[npc.target];
-                            float jumpSpeed = MathHelper.Lerp(10f, 23f, Utils.InverseLerp(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
-                            jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
-
-                            npc.velocity = new Vector2(npc.direction * 10.25f, -jumpSpeed);
-                            if (BossRushEvent.BossRushActive)
-                                npc.velocity *= 1.5f;
-                            npc.netUpdate = true;
-                        }
-
-                        if (attackTimer > 35f && (npc.collideY || attackTimer >= 180f))
-                            goToNextAIState();
-                    }
-                    else
-                        attackTimer--;
+                    DoBehavior_LargeJump(npc, ref target, ref attackTimer);
                     break;
                 case KingSlimeAttackType.Teleport:
-                    int digTime = 60;
-                    int reappearTime = 30;
-
-                    ref float digXPosition = ref npc.Infernum().ExtraAI[0];
-                    ref float digYPosition = ref npc.Infernum().ExtraAI[1];
-
-                    if (attackTimer < digTime)
-                    {
-                        npc.velocity.X *= 0.8f;
-                        if (Math.Abs(npc.velocity.X) < 0.1f)
-                            npc.velocity.X = 0f;
-
-                        npc.scale = MathHelper.Lerp(idealScale, 0.2f, MathHelper.Clamp((float)Math.Pow(attackTimer / digTime, 3D), 0f, 1f));
-                        npc.Opacity = Utils.InverseLerp(0.7f, 1f, npc.scale, true) * 0.7f;
-                        npc.dontTakeDamage = true;
-                        npc.damage = 0;
-
-                        // Release slime dust to accompany the teleport
-                        for (int i = 0; i < 30; i++)
-                        {
-                            Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
-                            slime.noGravity = true;
-                            slime.velocity *= 0.5f;
-                        }
-                    }
-
-                    if (attackTimer == digTime)
-                    {
-                        if (teleportDirection == 0f)
-                            teleportDirection = 1f;
-
-                        digXPosition = target.Center.X + 600f * teleportDirection;
-                        digYPosition = target.Top.Y - 800f;
-                        if (digYPosition < 100f)
-                            digYPosition = 100f;
-
-                        Gore.NewGore(npc.Center + new Vector2(-40f, npc.height * -0.5f), npc.velocity, 734, 1f);
-                        WorldUtils.Find(new Vector2(digXPosition, digYPosition).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
-                        {
-                            new CustomTileConditions.IsSolidOrSolidTop(),
-                            new CustomTileConditions.ActiveAndNotActuated()
-                        }), out Point newBottom);
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            npc.Bottom = newBottom.ToWorldCoordinates(8, -16);
-                            teleportDirection *= -1f;
-                            npc.netUpdate = true;
-                        }
-                        npc.Opacity = 0.7f;
-                    }
-
-                    if (attackTimer > digTime && attackTimer <= digTime + reappearTime)
-                    {
-                        npc.scale = MathHelper.Lerp(0.2f, idealScale, Utils.InverseLerp(digTime, digTime + reappearTime, attackTimer, true));
-                        npc.Opacity = 0.7f;
-                        npc.dontTakeDamage = true;
-                        npc.damage = 0;
-                    }
-
-                    if (attackTimer > digTime + reappearTime + 25)
-                        goToNextAIState();
+                    DoBehavior_Teleport(npc, target, idealScale, ref attackTimer, ref teleportDirection);
                     break;
             }
 
@@ -296,6 +161,151 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             attackTimer++;
             return false;
+        }
+
+        public static void DoBehavior_SmallJump(NPC npc, ref Player target, ref float attackTimer)
+        {
+            if (npc.velocity.Y == 0f)
+            {
+                npc.velocity.X *= 0.8f;
+                if (Math.Abs(npc.velocity.X) < 0.1f)
+                    npc.velocity.X = 0f;
+
+                if (attackTimer == 25f && npc.collideY)
+                {
+                    npc.TargetClosest();
+                    target = Main.player[npc.target];
+                    float jumpSpeed = MathHelper.Lerp(8.25f, 11.6f, Utils.InverseLerp(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                    jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
+
+                    npc.velocity = new Vector2(npc.direction * 8.5f, -jumpSpeed);
+                    if (BossRushEvent.BossRushActive)
+                        npc.velocity *= 2.4f;
+
+                    npc.netUpdate = true;
+                }
+
+                if (attackTimer > 25f && (npc.collideY || attackTimer >= 180f))
+                    SelectNextAttack(npc);
+            }
+            else
+                attackTimer--;
+        }
+
+        public static void DoBehavior_LargeJump(NPC npc, ref Player target, ref float attackTimer)
+        {
+            if (npc.velocity.Y == 0f)
+            {
+                npc.velocity.X *= 0.8f;
+                if (Math.Abs(npc.velocity.X) < 0.1f)
+                    npc.velocity.X = 0f;
+
+                if (attackTimer == 35f)
+                {
+                    npc.TargetClosest();
+                    target = Main.player[npc.target];
+                    float jumpSpeed = MathHelper.Lerp(10f, 23f, Utils.InverseLerp(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                    jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
+
+                    npc.velocity = new Vector2(npc.direction * 10.25f, -jumpSpeed);
+                    if (BossRushEvent.BossRushActive)
+                        npc.velocity *= 1.5f;
+                    npc.netUpdate = true;
+                }
+
+                if (attackTimer > 35f && (npc.collideY || attackTimer >= 180f))
+                    SelectNextAttack(npc);
+            }
+            else
+                attackTimer--;
+        }
+
+        public static void DoBehavior_Teleport(NPC npc, Player target, float idealScale, ref float attackTimer, ref float teleportDirection)
+        {
+            int digTime = 60;
+            int reappearTime = 30;
+
+            ref float digXPosition = ref npc.Infernum().ExtraAI[0];
+            ref float digYPosition = ref npc.Infernum().ExtraAI[1];
+
+            if (attackTimer < digTime)
+            {
+                npc.velocity.X *= 0.8f;
+                if (Math.Abs(npc.velocity.X) < 0.1f)
+                    npc.velocity.X = 0f;
+
+                npc.scale = MathHelper.Lerp(idealScale, 0.2f, MathHelper.Clamp((float)Math.Pow(attackTimer / digTime, 3D), 0f, 1f));
+                npc.Opacity = Utils.InverseLerp(0.7f, 1f, npc.scale, true) * 0.7f;
+                npc.dontTakeDamage = true;
+                npc.damage = 0;
+
+                // Release slime dust to accompany the teleport
+                for (int i = 0; i < 30; i++)
+                {
+                    Dust slime = Dust.NewDustDirect(npc.position + Vector2.UnitX * -20f, npc.width + 40, npc.height, 4, npc.velocity.X, npc.velocity.Y, 150, new Color(78, 136, 255, 80), 2f);
+                    slime.noGravity = true;
+                    slime.velocity *= 0.5f;
+                }
+            }
+
+            if (attackTimer == digTime)
+            {
+                if (teleportDirection == 0f)
+                    teleportDirection = 1f;
+
+                digXPosition = target.Center.X + 600f * teleportDirection;
+                digYPosition = target.Top.Y - 800f;
+                if (digYPosition < 100f)
+                    digYPosition = 100f;
+
+                Gore.NewGore(npc.Center + new Vector2(-40f, npc.height * -0.5f), npc.velocity, 734, 1f);
+                WorldUtils.Find(new Vector2(digXPosition, digYPosition).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
+                {
+                            new CustomTileConditions.IsSolidOrSolidTop(),
+                            new CustomTileConditions.ActiveAndNotActuated()
+                }), out Point newBottom);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    npc.Bottom = newBottom.ToWorldCoordinates(8, -16);
+                    teleportDirection *= -1f;
+                    npc.netUpdate = true;
+                }
+                npc.Opacity = 0.7f;
+            }
+
+            if (attackTimer > digTime && attackTimer <= digTime + reappearTime)
+            {
+                npc.scale = MathHelper.Lerp(0.2f, idealScale, Utils.InverseLerp(digTime, digTime + reappearTime, attackTimer, true));
+                npc.Opacity = 0.7f;
+                npc.dontTakeDamage = true;
+                npc.damage = 0;
+            }
+
+            if (attackTimer > digTime + reappearTime + 25)
+                SelectNextAttack(npc);
+        }
+
+        public static void SelectNextAttack(NPC npc)
+        {
+            npc.ai[3]++;
+
+            KingSlimeAttackType[] patternToUse = AttackPattern;
+            KingSlimeAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
+
+            // Go to the next AI state.
+            npc.ai[1] = (int)nextAttackType;
+
+            // Reset the attack timer.
+            npc.ai[2] = 0f;
+
+            // And reset the misc ai slots.
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+
+            if (npc.velocity.Y < 0f)
+                npc.velocity.Y = 0f;
+            npc.netUpdate = true;
         }
 
         #endregion AI

@@ -27,6 +27,7 @@ namespace InfernumMode
         public float ScreenFocusInterpolant = 0f;
 
         private MLAttackSelector thanatosLaserTypeSelector = null;
+        private MLAttackSelector aresSpecialAttackTypeSelector = null;
         private MLAttackSelector twinsSpecialAttackTypeSelector = null;
         public MLAttackSelector ThanatosLaserTypeSelector
         {
@@ -37,6 +38,16 @@ namespace InfernumMode
                 return thanatosLaserTypeSelector;
             }
             set => thanatosLaserTypeSelector = value;
+        }
+        public MLAttackSelector AresSpecialAttackTypeSelector
+        {
+            get
+            {
+                if (aresSpecialAttackTypeSelector is null)
+                    aresSpecialAttackTypeSelector = new MLAttackSelector(2, "AresSpecialAttack");
+                return aresSpecialAttackTypeSelector;
+            }
+            set => twinsSpecialAttackTypeSelector = value;
         }
         public MLAttackSelector TwinsSpecialAttackTypeSelector
         {
@@ -194,6 +205,7 @@ namespace InfernumMode
         {
             TagCompound tag = new TagCompound();
             ThanatosLaserTypeSelector?.Save(tag);
+            AresSpecialAttackTypeSelector?.Save(tag);
             TwinsSpecialAttackTypeSelector?.Save(tag);
             return tag;
         }
@@ -201,6 +213,7 @@ namespace InfernumMode
         public override void Load(TagCompound tag)
         {
             ThanatosLaserTypeSelector = MLAttackSelector.Load(tag, "ThanatosLaser");
+            AresSpecialAttackTypeSelector = MLAttackSelector.Load(tag, "AresSpecialAttack");
             TwinsSpecialAttackTypeSelector = MLAttackSelector.Load(tag, "TwinsSpecialAttack");
         }
         #endregion Saving and Loading

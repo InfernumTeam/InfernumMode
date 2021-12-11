@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
@@ -11,17 +10,22 @@ using Terraria.ModLoader;
 
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ApolloBehaviorOverride;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.AresBodyBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ThanatosHeadBehaviorOverride;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.AresBodyBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
     public static class ExoMechManagement
     {
+        public const int HasSummonedComplementMechIndex = 7;
+        public const int ComplementMechIndexIndex = 10;
+        public const int WasNotInitialSummonIndex = 11;
+        public const int FinalMechIndexIndex = 12;
         public const float Phase2LifeRatio = 0.85f;
         public const float Phase3LifeRatio = 0.625f;
         public const float Phase4LifeRatio = 0.5f;
         public const float ComplementMechInvincibilityThreshold = 0.5f;
+
         public static bool ComplementMechIsPresent(NPC npc)
         {
             // Ares summons Thanatos.
@@ -54,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (!Main.npc[i].active)
                     continue;
 
-                if (Main.npc[i].Infernum().ExtraAI[11] == 0f)
+                if (Main.npc[i].Infernum().ExtraAI[WasNotInitialSummonIndex] == 0f)
                 {
                     initialMech = Main.npc[i];
                     break;
@@ -82,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (!Main.npc[i].active)
                     continue;
 
-                if (initialMech.Infernum().ExtraAI[12] == i)
+                if (initialMech.Infernum().ExtraAI[FinalMechIndexIndex] == i)
                     return Main.npc[i];
             }
             return null;
@@ -103,11 +107,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 Vector2 thanatosSpawnPosition = Main.player[npc.target].Center + Vector2.UnitY * 2100f;
                 int complementMech = NPC.NewNPC((int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
                 NPC thanatos = Main.npc[complementMech];
-                npc.Infernum().ExtraAI[10] = complementMech;
+                npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
 
                 // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
-                thanatos.Infernum().ExtraAI[7] = 1f;
-                thanatos.Infernum().ExtraAI[11] = 1f;
+                thanatos.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+                thanatos.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
                 thanatos.velocity = thanatos.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
 
                 thanatos.netUpdate = true;
@@ -119,11 +123,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
                 int complementMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
                 NPC ares = Main.npc[complementMech];
-                npc.Infernum().ExtraAI[10] = complementMech;
+                npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
 
                 // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
-                ares.Infernum().ExtraAI[7] = 1f;
-                ares.Infernum().ExtraAI[11] = 1f;
+                ares.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+                ares.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
 
                 ares.netUpdate = true;
             }
@@ -144,12 +148,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 Vector2 apolloSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 2100f;
                 int finalMech = NPC.NewNPC((int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
                 NPC apollo = Main.npc[finalMech];
-                npc.Infernum().ExtraAI[12] = finalMech;
-                Main.npc[(int)npc.Infernum().ExtraAI[10]].Infernum().ExtraAI[12] = finalMech;
+                npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
+                Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
 
                 // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
-                apollo.Infernum().ExtraAI[7] = 1f;
-                apollo.Infernum().ExtraAI[11] = 1f;
+                apollo.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+                apollo.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
 
                 apollo.netUpdate = true;
             }
@@ -160,12 +164,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
                 int finalMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
                 NPC ares = Main.npc[finalMech];
-                npc.Infernum().ExtraAI[12] = finalMech;
-                Main.npc[(int)npc.Infernum().ExtraAI[10]].Infernum().ExtraAI[12] = finalMech;
+                npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
+                Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
 
                 // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
-                ares.Infernum().ExtraAI[7] = 1f;
-                ares.Infernum().ExtraAI[11] = 1f;
+                ares.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+                ares.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
 
                 ares.netUpdate = true;
             }
@@ -202,11 +206,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
 
-                if (FindFinalMech() is null && aresBody.Infernum().ExtraAI[12] >= 0f)
+                if (FindFinalMech() is null && aresBody.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
                     return TotalMechs == 1 ? 6 : 3;
                 if (FindFinalMech() == aresBody)
                     return 5;
-                if (ComplementMechIsPresent(aresBody) || aresBody.Infernum().ExtraAI[7] == 1f)
+                if (ComplementMechIsPresent(aresBody) || aresBody.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
                     return 4;
                 if (aresBody.life <= aresBody.lifeMax * Phase3LifeRatio)
                     return 3;
@@ -226,11 +230,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 NPC thanatosHead = Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
 
-                if (FindFinalMech() is null && thanatosHead.Infernum().ExtraAI[12] >= 0f)
+                if (FindFinalMech() is null && thanatosHead.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
                     return TotalMechs == 1 ? 6 : 3;
                 if (FindFinalMech() == thanatosHead)
                     return 5;
-                if (ComplementMechIsPresent(thanatosHead) || thanatosHead.Infernum().ExtraAI[7] == 1f)
+                if (ComplementMechIsPresent(thanatosHead) || thanatosHead.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
                     return 4;
                 if (thanatosHead.life <= thanatosHead.lifeMax * Phase3LifeRatio)
                     return 3;
@@ -254,11 +258,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (apollo.ai[3] < Phase2TransitionTime)
                     return 1;
 
-                if (FindFinalMech() is null && apollo.Infernum().ExtraAI[12] >= 0f)
+                if (FindFinalMech() is null && apollo.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
                     return TotalMechs == 1 ? 6 : 3;
                 if (FindFinalMech() == apollo)
                     return 5;
-                if (ComplementMechIsPresent(apollo) || apollo.Infernum().ExtraAI[7] == 1f)
+                if (ComplementMechIsPresent(apollo) || apollo.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
                     return 4;
                 if (apollo.life <= apollo.lifeMax * Phase3LifeRatio)
                     return 3;
@@ -317,6 +321,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static void RecordAttackDeath(Player player)
         {
             int thanatos = CalamityGlobalNPC.draedonExoMechWorm;
+            int ares = CalamityGlobalNPC.draedonExoMechPrime;
             int apollo = CalamityGlobalNPC.draedonExoMechTwinGreen;
             if (thanatos != -1)
             {
@@ -332,6 +337,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (attackToReinforce != -1)
                     player.Infernum().ThanatosLaserTypeSelector.BiasInFavorOf(attackToReinforce);
+            }
+
+            if (ares != -1)
+            {
+                var attack = (AresBodyAttackType)(int)Main.npc[ares].ai[0];
+                int attackToReinforce = -1;
+                if (attack == AresBodyAttackType.LaserSpinBursts)
+                    attackToReinforce = 0;
+                if (attack == AresBodyAttackType.DirectionChangingSpinBursts)
+                    attackToReinforce = 1;
+
+                if (attackToReinforce != -1)
+                    player.Infernum().AresSpecialAttackTypeSelector.BiasInFavorOf(attackToReinforce);
             }
 
             if (apollo != -1)

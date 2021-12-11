@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     {
         public enum TwinsAttackType
         {
-            VanillaShots,
+            BasicShots,
             FireCharge,
             SpecialAttack_PlasmaCharges,
             SpecialAttack_LaserRayScarletBursts,
@@ -48,10 +48,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float phaseTransitionAnimationTime = ref npc.ai[3];
             ref float frame = ref npc.localAI[0];
             ref float hasDoneInitializations = ref npc.Infernum().ExtraAI[5];
-            ref float hasSummonedComplementMech = ref npc.Infernum().ExtraAI[7];
-            ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
-            ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[11];
-            ref float finalMechIndex = ref npc.Infernum().ExtraAI[12];
+            ref float hasSummonedComplementMech = ref npc.Infernum().ExtraAI[ExoMechManagement.HasSummonedComplementMechIndex];
+            ref float complementMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
+            ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
+            ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
             
@@ -102,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
                 attackTimer = 0f;
-                attackState = (int)TwinsAttackType.VanillaShots;
+                attackState = (int)TwinsAttackType.BasicShots;
                 npc.Calamity().newAI[1] = (int)Apollo.SecondaryPhase.PassiveAndImmune;
                 npc.ModNPC<Apollo>().ChargeComboFlash = 0f;
                 npc.Calamity().ShouldCloseHPBar = true;
@@ -131,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     SelectNextAttack(npc);
 
                 npc.ModNPC<Apollo>().ChargeComboFlash = 0f;
-                attackState = (int)TwinsAttackType.VanillaShots;
+                attackState = (int)TwinsAttackType.BasicShots;
                 phaseTransitionAnimationTime++;
                 npc.dontTakeDamage = true;
                 DoBehavior_DoPhaseTransition(npc, target, ref frame, hoverSide, phaseTransitionAnimationTime);
@@ -140,8 +140,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             switch ((TwinsAttackType)(int)attackState)
             {
-                case TwinsAttackType.VanillaShots:
-                    DoBehavior_ReleaseSplittingPlasmaShots(npc, target, false, hoverSide, ref frame, ref attackTimer);
+                case TwinsAttackType.BasicShots:
+                    DoBehavior_BasicShots(npc, target, false, hoverSide, ref frame, ref attackTimer);
                     break;
                 case TwinsAttackType.FireCharge:
                     DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
@@ -202,25 +202,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireEnd"), npc.Center);
         }
 
-        public static void DoBehavior_ReleaseSplittingPlasmaShots(NPC npc, Player target, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
+        public static void DoBehavior_BasicShots(NPC npc, Player target, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
         {
             int totalShots = 8;
             float shootRate = 52f;
-            float plasmaShootSpeed = 10f;
+            float projectileShootSpeed = 10f;
             float predictivenessFactor = 18.5f;
-            Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor);
+            if (npc.type == ModContent.NPCType<Artemis>())
+                predictivenessFactor = ExoMechManagement.ComplementMechIsPresent(npc) ? 13.25f : 18.5f;
+
+            Vector2 aimDestination = target.Center + target.velocity * predictivenessFactor;
+            Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
                 shootRate -= 12f;
             if (ExoMechManagement.CurrentTwinsPhase == 3)
             {
                 shootRate -= 8f;
-                plasmaShootSpeed *= 1.3f;
+                projectileShootSpeed *= 1.3f;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 5)
             {
                 shootRate -= 20f;
-                plasmaShootSpeed *= 1.35f;
+                projectileShootSpeed *= 1.35f;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
             {
@@ -247,17 +251,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Move to the appropriate side of the target.
             AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 30f, 84f);
 
-            // Fire a plasma burst and select a new offset.
+            // Fire a plasma burst/laser shot and select a new offset.
             if (attackTimer >= shootRate)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (npc.type == ModContent.NPCType<Apollo>())
                 {
-                    Vector2 plasmaShootVelocity = aimDirection * plasmaShootSpeed;
-                    int plasma = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), 550, 0f);
-                    if (Main.projectile.IndexInRange(plasma))
-                        Main.projectile[plasma].ai[0] = shootCounter % 2f;
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 plasmaShootVelocity = aimDirection * projectileShootSpeed;
+                        int plasma = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), 550, 0f);
+                        if (Main.projectile.IndexInRange(plasma))
+                            Main.projectile[plasma].ai[0] = shootCounter % 2f;
+                    }
+                }
+                else
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 laserShootVelocity = aimDirection * projectileShootSpeed;
+                        int laser = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, laserShootVelocity, ModContent.ProjectileType<ArtemisLaser>(), 550, 0f);
+                        if (Main.projectile.IndexInRange(laser))
+                        {
+                            Main.projectile[laser].ModProjectile<ArtemisLaser>().InitialDestination = aimDestination + aimDirection * 1000f;
+                            Main.projectile[laser].ai[1] = npc.whoAmI;
+                            Main.projectile[laser].netUpdate = true;
+                        }
+                    }
                 }
 
                 hoverOffsetX = Main.rand.NextFloat(-50f, 50f);
@@ -391,7 +414,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 if (ExoMechManagement.CurrentTwinsPhase >= 5)
                 {
-                    ArtemisBehaviorOverride.DoBehavior_ReleasePredictiveLasers(npc, target, -1f, ref frame, ref attackTimer);
+                    DoBehavior_BasicShots(npc, target, true, -1f, ref frame, ref attackTimer);
                     attackTimer++;
                 }
                 else
@@ -527,7 +550,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<Apollo>())
             {
                 if (ExoMechManagement.CurrentTwinsPhase >= 5)
-                    DoBehavior_ReleaseSplittingPlasmaShots(npc, target, true, 1f, ref frame, ref attackTimer);
+                    DoBehavior_BasicShots(npc, target, true, 1f, ref frame, ref attackTimer);
                 else
                 {
                     npc.dontTakeDamage = true;
@@ -575,6 +598,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 // Hover into position.
                 case 0:
+                    // Play a telegraph sound on the first frame of the laserbeam.
+                    // This is do so that the player can be perfectly aware that a sweep is coming.
+                    if (attackTimer == 1f)
+                        Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ArtemisLaserSweepTelegraph"), target.Center);
+
                     npc.frameCounter++;
                     frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
 
@@ -773,8 +801,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Update learning stuff.
             ExoMechManagement.DoPostAttackSelections(npc);
 
-            npc.ai[0] = (int)TwinsAttackType.VanillaShots;
-            if (oldAttackType == TwinsAttackType.VanillaShots)
+            npc.ai[0] = (int)TwinsAttackType.BasicShots;
+            if (oldAttackType == TwinsAttackType.BasicShots)
             {
                 npc.ai[0] = (int)TwinsAttackType.FireCharge;
                 if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())

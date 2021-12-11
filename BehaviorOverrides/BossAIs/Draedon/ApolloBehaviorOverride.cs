@@ -96,11 +96,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
                 npc.dontTakeDamage = true;
 
+            // Get a target.
+            npc.TargetClosest(false);
+            Player target = Main.player[npc.target];
+
             // Become invincible and disappear if the final mech is present.
             npc.Calamity().newAI[1] = 0f;
             if (finalMech != null && finalMech != npc)
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
+                if (npc.Opacity <= 0f)
+                    npc.Center = target.Center - Vector2.UnitY * 2700f;
+
                 attackTimer = 0f;
                 attackState = (int)TwinsAttackType.BasicShots;
                 npc.Calamity().newAI[1] = (int)Apollo.SecondaryPhase.PassiveAndImmune;
@@ -110,10 +117,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
             else
                 npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
-
-            // Get a target.
-            npc.TargetClosest(false);
-            Player target = Main.player[npc.target];
 
             // Despawn if the target is gone.
             if (!target.active || target.dead)

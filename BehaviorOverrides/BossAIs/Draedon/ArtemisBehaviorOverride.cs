@@ -84,11 +84,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex] = apollo.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             npc.Calamity().newAI[0] = (int)Artemis.Phase.Charge;
 
+            // Get a target.
+            Player target = Main.player[npc.target];
+
             // Become invincible and disappear if the final mech is present.
             npc.Calamity().newAI[1] = 0f;
             if (finalMech != null && finalMech != apollo)
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
+                if (npc.Opacity <= 0f)
+                    npc.Center = target.Center - Vector2.UnitY * 2700f;
+
                 attackTimer = 0f;
                 attackState = (int)TwinsAttackType.BasicShots;
                 npc.Calamity().newAI[1] = (int)Artemis.SecondaryPhase.PassiveAndImmune;
@@ -98,9 +104,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
             else
                 npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
-
-            // Get a target.
-            Player target = Main.player[npc.target];
 
             // Despawn if the target is gone.
             if (!target.active || target.dead)

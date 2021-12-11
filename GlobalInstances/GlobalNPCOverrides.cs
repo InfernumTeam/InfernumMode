@@ -669,7 +669,10 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if (ExoMechManagement.FindFinalMech() == npc)
+            bool finalMechKilled = ExoMechManagement.FindFinalMech() == npc;
+            if (npc.realLife >= 0)
+                finalMechKilled = ExoMechManagement.FindFinalMech() == Main.npc[npc.realLife];
+            if (finalMechKilled)
                 ExoMechManagement.MakeDraedonSayThings(4);
             else if (ExoMechManagement.TotalMechs - 1 == 1)
                 ExoMechManagement.MakeDraedonSayThings(5);

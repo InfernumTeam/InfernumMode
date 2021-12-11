@@ -137,11 +137,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
                 npc.dontTakeDamage = true;
 
+            // Get a target.
+            npc.TargetClosest(false);
+            Player target = Main.player[npc.target];
+
             // Become invincible and disappear if the final mech is present.
             npc.Calamity().newAI[1] = 0f;
             if (finalMech != null && finalMech != npc)
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
+                if (npc.Opacity <= 0f)
+                    npc.Center = target.Center - Vector2.UnitY * 3200f;
+
                 attackTimer = 0f;
                 attackState = (int)AresBodyAttackType.IdleHover;
                 npc.Calamity().newAI[1] = (int)AresBody.SecondaryPhase.PassiveAndImmune;
@@ -153,10 +160,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Reset things.
             projectileDamageBoost = ExoMechManagement.CurrentAresPhase >= 4 ? 50f : 0f;
-
-            // Get a target.
-            npc.TargetClosest(false);
-            Player target = Main.player[npc.target];
 
             // Despawn if the target is gone.
             if (!target.active || target.dead)
@@ -417,14 +420,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             npc.ai[0] = (int)AresBodyAttackType.IdleHover;
             if (oldAttackType == AresBodyAttackType.IdleHover && ExoMechManagement.CurrentAresPhase >= 3)
             {
-                float complementMechIndex = npc.Infernum().ExtraAI[10];
-                NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
+                bool complementMechIsPresent = ExoMechManagement.ComplementMechIsPresent(npc);
                 NPC finalMech = ExoMechManagement.FindFinalMech();
                 if (finalMech == npc)
                     finalMech = null;
 
                 // Use a laser spin if alone. Otherwise, use the radiance burst attack.
-                if (complementMech is null && finalMech == null)
+                if (!complementMechIsPresent && finalMech is null)
                     npc.ai[0] = Main.player[npc.target].Infernum().AresSpecialAttackTypeSelector.MakeSelection() + 1f;
                 else
                     npc.ai[0] = (int)AresBodyAttackType.RadianceLaserBursts;

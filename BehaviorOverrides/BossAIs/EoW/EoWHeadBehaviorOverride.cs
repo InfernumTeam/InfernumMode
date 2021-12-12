@@ -46,6 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             // Fuck.
             npc.Calamity().newAI[1] = MathHelper.Clamp(npc.Calamity().newAI[1] + 8f, 0f, 720f);
+            npc.dontTakeDamage = npc.Calamity().newAI[1] < 700f;
 
             // Perform initialization logic.
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)
@@ -114,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public static void DoAttack_CursedBombBurst(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
         {
             int totalFireballsPerBurst = (int)(TotalSplitsToPerform - splitCounter + 1f);
-            float flySpeed = enraged ? 13f : 8f;
+            float flySpeed = enraged ? 11f : 8f;
             float turnSpeedFactor = enraged ? 1.7f : 1f;
             flySpeed *= MathHelper.Lerp(1f, 1.425f, splitCounter / TotalSplitsToPerform);
             if (splitCounter == 0f)
@@ -127,7 +128,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             DoDefaultMovement(npc, target, flySpeed, turnSpeedFactor);
 
             // Periodically release fireballs.
-            int fireRate = splitCounter >= TotalSplitsToPerform - 1f ? 80 : 120;
+            int fireRate = splitCounter >= TotalSplitsToPerform - 1f ? 92 : 120;
             if (BossRushEvent.BossRushActive)
                 fireRate = 32;
 
@@ -202,8 +203,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) + offsetAngle, turnSpeedFactor * 0.018f, true) * idealVelocity.Length();
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, turnSpeedFactor * 0.025f);
             }
+
+            // Charge and do a roar sound.
             else if (npc.velocity.Length() < flySpeed * 2.1f)
+            {
                 npc.velocity *= 1.018f;
+                if (npc.soundDelay <= 0)
+                {
+                    Main.PlaySound(SoundID.Roar, target.Center, 0);
+                    npc.soundDelay = 80;
+                }
+            }
 
             if (attackTimer >= 520f)
                 GotoNextAttackState(npc);
@@ -211,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public static void DoAttack_ShadowOrbSummon(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
         {
-            float flySpeed = enraged ? 13.5f : 8.25f;
+            float flySpeed = enraged ? 12f : 8.25f;
             float turnSpeedFactor = enraged ? 1.2f : 0.8f;
             flySpeed *= MathHelper.Lerp(1f, 1.275f, splitCounter / TotalSplitsToPerform);
             if (splitCounter == 0f)
@@ -358,9 +368,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             if (npc.timeLeft > 200)
                 npc.timeLeft = 200;
 
-            npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 24f, 0.06f);
+            npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 30f, 0.12f);
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-            if (!npc.WithinRange(Main.player[npc.target].Center, 2400f))
+            if (!npc.WithinRange(Main.player[npc.target].Center, 2200f))
                 npc.active = false;
         }
 
@@ -370,6 +380,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             offsetAngle *= Utils.InverseLerp(100f, 350f, npc.Distance(target.Center), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed * 0.95f;
+
+            // Avoid other worm heads.
+            Vector2 pushAway = Vector2.Zero;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].type == npc.type && i != npc.whoAmI)
+                    pushAway += npc.SafeDirectionTo(Main.npc[i].Center, Vector2.UnitY) * Utils.InverseLerp(135f, 45f, npc.Distance(Main.npc[i].Center), true) * 1.8f;
+            }
+            idealVelocity += pushAway;
+
             idealVelocity *= 1f + npc.Distance(target.Center) / 2400f;
             if (BossRushEvent.BossRushActive)
                 idealVelocity *= 2.1f;
@@ -397,11 +417,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             };
             possibleAttacks.AddWithCondition(EoWAttackState.RainHover, splitCounter >= 1f);
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
                 possibleAttacks.AddWithCondition(EoWAttackState.DarkHeartSlam, splitCounter >= 2f);
             possibleAttacks.RemoveAll(p => p == oldAttackState);
 
-            npc.ai[0] = (int)Main.rand.Next(possibleAttacks);
+            npc.ai[0] = (int)possibleAttacks[Main.rand.Next(possibleAttacks.Count)];
             npc.ai[1] = 0f;
 
             for (int i = 0; i < 5; i++)

@@ -4,7 +4,6 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 {
@@ -40,8 +39,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
             npc.damage = npc.defDamage + 8;
+            npc.dontTakeDamage = head.dontTakeDamage;
             npc.defense = 7;
             aheadSegment.ai[0] = npc.whoAmI;
+
+            // What the actual fuck why is this needed.
+            if (npc.life <= 0)
+                npc.active = false;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)

@@ -127,8 +127,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			if (npc.life < npc.lifeMax * 0.33)
 				chargesToDo = 4;
 
-			float baseChargeSpeed = 18.5f;
-			float chargeSpeedup = 0.004f;
+			float baseChargeSpeed = 22f;
+			float chargeSpeedup = 0.005f;
 			float hoverOffset = 320f;
 			ref float attackState = ref npc.Infernum().ExtraAI[0];
 			ref float speedBoost = ref npc.Infernum().ExtraAI[1];
@@ -299,7 +299,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			float shootSpeed = 10f;
 			if (BossRushEvent.BossRushActive)
             {
-				shootRate = (int)(shootRate * 0.4f);
+				shootRate = (int)(shootRate * 0.6f);
 				shootSpeed *= 2.64f;
 			}
 
@@ -414,7 +414,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
 		internal static void DoHoverMovement(NPC npc, Vector2 destination, float flyAcceleration)
 		{
-			Vector2 idealVelocity = npc.SafeDirectionTo(destination) * 33f;
+			Vector2 idealVelocity = npc.SafeDirectionTo(destination) * 29f;
 			if (npc.velocity.X < idealVelocity.X)
 			{
 				npc.velocity.X += flyAcceleration;

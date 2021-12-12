@@ -127,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 for (int i = 0; i < 16; i++)
                     drawPoints.Add(Vector2.Lerp(projectile.Center - offsetDirection * Radius * 0.925f, projectile.Center + offsetDirection * Radius * 0.925f, i / 16f));
 
-                OrbDrawer.Draw(drawPoints, projectile.Size * 0.5f - Main.screenPosition, 42);
+                OrbDrawer.Draw(drawPoints, projectile.Size * 0.5f - Main.screenPosition, 24);
             }
             return false;
         }

@@ -69,6 +69,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             bool enraged = enrageTimer >= 300f;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
 
+            if (target.dead)
+            {
+                DoAttack_Despawn(npc);
+                return false;
+            }
+
             switch ((EoWAttackState)(int)attackState)
             {
                 case EoWAttackState.CursedBombBurst:
@@ -352,8 +358,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             if (npc.timeLeft > 200)
                 npc.timeLeft = 200;
 
-            npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 16f, 0.06f);
+            npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 24f, 0.06f);
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            if (!npc.WithinRange(Main.player[npc.target].Center, 2400f))
+                npc.active = false;
         }
 
         public static void DoDefaultMovement(NPC npc, Player target, float flySpeed, float turnSpeedFactor)
@@ -369,7 +377,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) + offsetAngle, turnSpeedFactor * 0.023f, true) * idealVelocity.Length();
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, turnSpeedFactor * 0.03f);
+                npc.velocity = npc.velocity.MoveTowards(idealVelocity, turnSpeedFactor * 0.56f);
             }
+
+            if (npc.WithinRange(target.Center, 320f) && npc.velocity.Length() < idealVelocity.Length() * 1.6f)
+                npc.velocity *= 1.03f;
         }
 
         public static void GotoNextAttackState(NPC npc)

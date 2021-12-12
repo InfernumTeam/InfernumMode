@@ -48,10 +48,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 npc.TargetClosest();
 
             // Reset things.
-            npc.defDamage = 90;
+            npc.defDamage = 84;
             npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
             npc.noTileCollide = false;
-            npc.defense = 14;
+            npc.defense = 11;
 
             // If none was found or it was too far away, despawn.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead ||

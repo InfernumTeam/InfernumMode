@@ -43,8 +43,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 npc.TargetClosest();
 
             // Reset things.
-            npc.damage = npc.alpha > 30 ? 0 : npc.defDamage;
-            npc.defense = npc.defDefense + 4;
+            npc.damage = npc.alpha > 4 ? 0 : npc.defDamage;
+            npc.defense = npc.defDefense - 2;
 
             // If none was found or it was too far away, despawn.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead ||

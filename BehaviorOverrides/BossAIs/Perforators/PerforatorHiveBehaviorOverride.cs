@@ -59,6 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float enrageTimer = ref npc.ai[3];
             ref float animationState = ref npc.localAI[0];
             ref float wormSpawnState = ref npc.localAI[1];
+            ref float wormContactDamageDelay = ref npc.localAI[2];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
@@ -74,6 +75,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             Player target = Main.player[npc.target];
             bool anyWorms = NPC.AnyNPCs(ModContent.NPCType<PerforatorHeadSmall>()) || NPC.AnyNPCs(ModContent.NPCType<PerforatorHeadMedium>()) || NPC.AnyNPCs(ModContent.NPCType<PerforatorHeadLarge>());
+
+            // Disable contact damage for 2 seconds after a worm has been killed.
+            wormContactDamageDelay = MathHelper.Clamp(wormContactDamageDelay + anyWorms.ToDirectionInt(), 0f, 120f);
+            if (wormContactDamageDelay > 0f)
+                npc.damage = 0;
 
             int spawnAnimationTime = BossRushEvent.BossRushActive ? 75 : 200;
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -105,8 +111,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 enrageTimer++;
             else
                 enrageTimer = 0f;
+            bool enraged = enrageTimer > 300f;
 
-            npc.dontTakeDamage = anyWorms || enrageTimer > 300f || summonAnimationCountdown > 0f;
+            npc.dontTakeDamage = anyWorms || enraged || summonAnimationCountdown > 0f;
             npc.Calamity().CurrentlyEnraged = outOfBiome;
 
             if (summonAnimationCountdown > 0f)
@@ -195,7 +202,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 if (attackState == 0f)
                 {
-                    DoAttack_HoverNearTarget(npc, target, lifeRatio < 0.15f, ref attackTimer, anyWorms, out bool gotoNextAttack);
+                    DoAttack_HoverNearTarget(npc, target, lifeRatio < 0.15f, ref attackTimer, enraged, anyWorms, out bool gotoNextAttack);
                     if (gotoNextAttack)
                     {
                         attackTimer = 0f;
@@ -208,7 +215,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 }
                 else if (attackState == 1f)
                 {
-                    DoAttack_SwoopTowardsPlayer(npc, target, ref attackTimer, anyWorms, out bool gotoNextAttack);
+                    DoAttack_SwoopTowardsPlayer(npc, target, ref attackTimer, enraged, anyWorms, out bool gotoNextAttack);
                     if (gotoNextAttack)
                     {
                         attackTimer = 0f;
@@ -218,7 +225,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 }
                 else if (attackState == 2f)
                 {
-                    DoAttack_ReleaseRegularBursts(npc, target, lifeRatio < 0.15f, ref attackTimer, anyWorms, out bool gotoNextAttack);
+                    DoAttack_ReleaseRegularBursts(npc, target, lifeRatio < 0.15f, ref attackTimer, enraged, anyWorms, out bool gotoNextAttack);
                     if (gotoNextAttack)
                     {
                         attackTimer = 0f;
@@ -228,7 +235,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 }
                 else if (attackState == 3f)
                 {
-                    DoAttack_IchorBlastsFromBelow(npc, target, ref attackTimer, out bool gotoNextAttack);
+                    DoAttack_IchorBlastsFromBelow(npc, target, ref attackTimer, enraged, out bool gotoNextAttack);
                     if (gotoNextAttack)
                     {
                         attackTimer = 0f;
@@ -255,7 +262,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 npc.timeLeft = 225;
         }
 
-        public static void DoAttack_SwoopTowardsPlayer(NPC npc, Player target, ref float attackTimer, bool anyWorms, out bool gotoNextAttack)
+        public static void DoAttack_SwoopTowardsPlayer(NPC npc, Player target, ref float attackTimer, bool enraged, bool anyWorms, out bool gotoNextAttack)
         {
             // Hover above the target before swooping.
             if (attackTimer < 90f)
@@ -288,6 +295,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             if (attackTimer >= 90f && attackTimer <= 160f)
             {
                 npc.velocity = npc.velocity.RotatedBy(MathHelper.PiOver2 / 70f * -npc.direction);
+                if (enraged && Math.Abs(npc.velocity.X) < 15f)
+                    npc.velocity.X *= 1.0345f;
                 if (BossRushEvent.BossRushActive && Math.Abs(npc.velocity.X) < 24f)
                     npc.velocity.X *= 1.05f;
             }
@@ -298,7 +307,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             gotoNextAttack = attackTimer >= 195f;
         }
 
-        public static void DoAttack_HoverNearTarget(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool anyWorms, out bool gotoNextAttack)
+        public static void DoAttack_HoverNearTarget(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool enraged, bool anyWorms, out bool gotoNextAttack)
         {
             if (attackTimer % 120f > 85f)
             {
@@ -306,8 +315,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
                 // Release ichor everywhere.
                 int shootRate = anyWorms ? 10 : 6;
+                if (enraged)
+                    shootRate = 5;
                 if (finalWormDead && !anyWorms)
-                    shootRate += 3;
+                    shootRate--;
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % shootRate == shootRate - 1f)
                 {
                     Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 8.4f);
@@ -333,7 +344,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             gotoNextAttack = attackTimer >= 240f;
         }
 
-        public static void DoAttack_ReleaseRegularBursts(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool anyWorms, out bool gotoNextAttack)
+        public static void DoAttack_ReleaseRegularBursts(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool enraged, bool anyWorms, out bool gotoNextAttack)
         {
             Vector2 destination = target.Center - Vector2.UnitY * 270f;
 
@@ -387,7 +398,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int shootRate = anyWorms ? 100 : 62;
             int totalBursts = finalWormDead ? 12 : 8;
             if (finalWormDead)
-                shootRate -= 12;
+                shootRate -= 20;
+            if (enraged)
+                shootRate = 30;
             Vector2 blobSpawnPosition = new Vector2(npc.Center.X + Main.rand.NextFloat(-12f, 12f), npc.Center.Y + 30f);
             
             // Release blood teeth balls upward occasionally.
@@ -422,7 +435,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             gotoNextAttack = attackTimer >= shootRate * (totalBursts + 0.9f);
         }
 
-        public static void DoAttack_IchorBlastsFromBelow(NPC npc, Player target, ref float attackTimer, out bool gotoNextAttack)
+        public static void DoAttack_IchorBlastsFromBelow(NPC npc, Player target, ref float attackTimer, bool enraged, out bool gotoNextAttack)
         {
             Vector2 destination = target.Center - Vector2.UnitY * 270f;
 
@@ -473,6 +486,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 }
             }
 
+            // Play a telegraph sound prior to dashing into the ground.
+            if (attackTimer == 45f)
+                Main.PlaySound(SoundID.NPCDeath18, target.Center);
+
+            if (attackTimer == 90f)
+                Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+
             if (attackTimer > 90f && attackTimer < 300f)
             {
                 if (Math.Abs(npc.velocity.X) > 7f)
@@ -486,7 +506,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     float speedOffset = Main.rand.NextFloat(-3f, 3f);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (float i = -16; i < 16; i += 1.6f)
+                        for (float i = -16; i < 16; i += enraged ? 0.95f : 1.6f)
                         {
                             Vector2 shootVelocity = new Vector2(i + speedOffset, 13f);
                             Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ModContent.ProjectileType<BloodGlob>(), 95, 0f);

@@ -117,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 					}
 				}
 
-				// Delete remaining projectiles with shockwave.
+				// Delete remaining projectiles with a shockwave.
 				if (deathEffectTimer == 96)
 				{
 					int[] typesToDelete = new int[]

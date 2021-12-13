@@ -455,8 +455,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             if (attackTimer > hoverRedirectTime && attackTimer <= hoverRedirectTime + chargeRedirectTime)
             {
                 Vector2 idealChargeVelocity = new Vector2(idealChargeVelocityX, idealChargeVelocityY);
-                npc.velocity = npc.velocity.RotateTowards(idealChargeVelocity.ToRotation(), 0.08f, true) * MathHelper.Lerp(npc.velocity.Length(), idealChargeVelocity.Length(), 0.15f);
                 npc.velocity = npc.velocity.MoveTowards(idealChargeVelocity, 5f);
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * idealChargeVelocity.Length(), 3f);
             }
 
             // Slow down after charging.

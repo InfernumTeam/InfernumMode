@@ -62,10 +62,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             // Home more quickly if close to the target.
             // However, if really close to the target, stop homing and simply go in the
             // current direction.
-            if (!npc.WithinRange(Target.Center, 180f))
-                npc.velocity = (npc.velocity * 115f + npc.SafeDirectionTo(Target.Center) * hoverSpeed) / 116f;
-            else if (!npc.WithinRange(Target.Center, 90f))
-                npc.velocity = (npc.velocity * 90f + npc.SafeDirectionTo(Target.Center) * hoverSpeed * 0.8f) / 91f;
+            Vector2 hoverDestination = (Target.Center + (npc.whoAmI * 10.81f).ToRotationVector2() * 24f);
+            if (!npc.WithinRange(hoverDestination, 180f))
+                npc.velocity = (npc.velocity * 115f + npc.SafeDirectionTo(hoverDestination) * hoverSpeed) / 116f;
+            else if (!npc.WithinRange(hoverDestination, 90f))
+                npc.velocity = (npc.velocity * 90f + npc.SafeDirectionTo(hoverDestination) * hoverSpeed * 0.8f) / 91f;
         }
 
         public void ReleaseSpores()

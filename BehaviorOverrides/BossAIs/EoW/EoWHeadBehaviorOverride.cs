@@ -417,12 +417,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             };
             possibleAttacks.AddWithCondition(EoWAttackState.RainHover, splitCounter >= 1f);
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
                 possibleAttacks.AddWithCondition(EoWAttackState.DarkHeartSlam, splitCounter >= 2f);
             possibleAttacks.RemoveAll(p => p == oldAttackState);
 
-            npc.ai[0] = (int)possibleAttacks[Main.rand.Next(possibleAttacks.Count)];
-            npc.ai[1] = 0f;
+            npc.Infernum().ExtraAI[7] = (int)possibleAttacks[Main.rand.Next(possibleAttacks.Count)];
+            npc.Infernum().ExtraAI[8] = 0f;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

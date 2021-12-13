@@ -808,7 +808,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 				return;
 
 			for (int i = 0; i < sparkleCount; i++)
-				Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(maxSpraySpeed, maxSpraySpeed), ModContent.ProjectileType<MajesticSparkle>(), 0, 0f);
+				Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(maxSpraySpeed, maxSpraySpeed), ModContent.ProjectileType<YharonMajesticSparkle>(), 0, 0f);
 		}
 
 		internal static void CreateChargeDust(Vector2 chargingPoint, float maxOffsetRadius, float generalScale)

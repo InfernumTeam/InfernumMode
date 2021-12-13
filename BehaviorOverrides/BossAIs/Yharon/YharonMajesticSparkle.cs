@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-    public class MajesticSparkle : ModProjectile
+    public class YharonMajesticSparkle : ModProjectile
     {
         public float Time
         {

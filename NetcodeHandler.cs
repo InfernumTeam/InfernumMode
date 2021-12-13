@@ -17,6 +17,7 @@ namespace InfernumMode
 			{
                 case InfernumPacketType.SendExtraNPCData:
                     int npcIndex = reader.ReadInt32();
+                    Main.npc[npcIndex].realLife = reader.ReadInt32();
                     int totalUniqueAIIndicesUsed = reader.ReadInt32();
                     for (int i = 0; i < totalUniqueAIIndicesUsed; i++)
 					{

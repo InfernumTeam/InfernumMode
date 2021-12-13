@@ -149,10 +149,13 @@ namespace InfernumMode
             if (msgType == MessageID.SyncNPC)
 			{
                 NPC npc = Main.npc[number];
+                if (!npc.active)
+                    return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
 
                 ModPacket packet = GetPacket();
                 packet.Write((short)InfernumPacketType.SendExtraNPCData);
                 packet.Write(npc.whoAmI);
+                packet.Write(npc.realLife);
                 packet.Write(npc.Infernum().TotalAISlotsInUse);
                 for (int i = 0; i < npc.Infernum().ExtraAI.Length; i++)
 				{

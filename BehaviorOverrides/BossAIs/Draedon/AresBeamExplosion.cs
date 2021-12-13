@@ -15,13 +15,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Exoburst Explosion");
-			Main.projFrames[projectile.type] = 5;
+			Main.projFrames[projectile.type] = 7;
 		}
 
 		public override void SetDefaults()
 		{
-			projectile.width = 44;
-			projectile.height = 44;
+			projectile.width = 68;
+			projectile.height = 68;
 			projectile.hostile = true;
 			projectile.ignoreWater = true;
 			projectile.tileCollide = false;
@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			// Handle frames.
 			projectile.frameCounter++;
-			projectile.frame = projectile.frameCounter / 5;
+			projectile.frame = projectile.frameCounter / 4;
 
 			// Die once the final frame is passed.
 			if (projectile.frame >= Main.projFrames[projectile.type])

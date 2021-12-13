@@ -1,9 +1,11 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
@@ -321,6 +323,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Enforce an initial delay prior to firing.
             if (attackTimer < shootDelay)
                 return;
+
+            // Delete projectiles after the delay has concluded.
+            if (attackTimer == shootDelay + 1f)
+			{
+                List<int> projectilesToDelete = new List<int>()
+                {
+                    ModContent.ProjectileType<AresPlasmaFireball>(),
+                    ModContent.ProjectileType<AresPlasmaFireball2>(),
+                    ModContent.ProjectileType<PlasmaGas>(),
+                    ModContent.ProjectileType<AresTeslaOrb>(),
+                    ModContent.ProjectileType<ElectricGas>(),
+                    ModContent.ProjectileType<AresGaussNukeProjectile>(),
+                    ModContent.ProjectileType<AresGaussNukeProjectileBoom>(),
+                    ModContent.ProjectileType<CannonLaser>(),
+                };
+
+                for (int i = 0; i < Main.maxProjectiles; i++)
+				{
+                    if (Main.projectile[i].active && projectilesToDelete.Contains(Main.projectile[i].type))
+                        Main.projectile[i].active = false;
+				}
+			}
 
             // Laugh.
             frameType = (int)AresBodyFrameType.Laugh;

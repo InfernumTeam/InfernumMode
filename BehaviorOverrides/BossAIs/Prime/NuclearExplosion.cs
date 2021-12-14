@@ -19,13 +19,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             projectile.ignoreWater = true;
             projectile.timeLeft = 180;
             projectile.extraUpdates = 1;
+            projectile.penetrate = -1;
             projectile.scale = 0.15f;
             projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            projectile.scale += 0.05f;
+            projectile.scale += 0.06f;
             projectile.Opacity = Utils.InverseLerp(300f, 265f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 50f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 

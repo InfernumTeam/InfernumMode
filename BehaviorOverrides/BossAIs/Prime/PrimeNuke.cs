@@ -17,6 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
+            projectile.penetrate = -1;
             projectile.timeLeft = 240;
         }
 

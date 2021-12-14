@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             attackTimer++;
             npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.08f);
 
-            int shootRate = 145 - (4 - PrimeHeadBehaviorOverride.RemainingArms) * 25;
+            int shootRate = 145 - (4 - PrimeHeadBehaviorOverride.RemainingArms) * 28;
             bool canShootNukes = lifeRatio < 0.5f || PrimeHeadBehaviorOverride.RemainingArms <= 2;
             if (canShootNukes)
                 shootRate += PrimeHeadBehaviorOverride.RemainingArms == 1 ? 75 : 220;
@@ -75,9 +75,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     }
                     else
                     {
-                        for (int i = 0; i < (canShootNukes ? 10 : 4); i++)
+                        for (int i = 0; i < (canShootNukes ? 12 : 4); i++)
                         {
-                            Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.78f) * 9f;
+                            Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.78f) * 11f;
                             if (BossRushEvent.BossRushActive)
                                 rocketShootVelocity *= 2.15f;
                             Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 6f, rocketShootVelocity, ProjectileID.SaucerMissile, 135, 0f);

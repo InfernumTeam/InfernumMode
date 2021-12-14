@@ -63,14 +63,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) - MathHelper.PiOver2, 0.08f);
             Lighting.AddLight(npc.Center, Color.Red.ToVector3() * 1.4f);
 
-            int shootRate = 80 - (4 - PrimeHeadBehaviorOverride.RemainingArms) * 14;
+            int shootRate = 70 - (4 - PrimeHeadBehaviorOverride.RemainingArms) * 18;
 
             if (attackTimer >= shootRate)
             {
                 Main.PlaySound(SoundID.Item33, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float shootSpeed = BossRushEvent.BossRushActive ? 17f : 10.5f;
+                    float shootSpeed = BossRushEvent.BossRushActive ? 20.5f : 13.5f;
                     if (lifeRatio < 0.5f || PrimeHeadBehaviorOverride.RemainingArms <= 2)
                     {
                         for (int i = 0; i < 3; i++)

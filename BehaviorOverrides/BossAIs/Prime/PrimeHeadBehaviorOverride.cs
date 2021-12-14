@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Events;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Utilities;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
@@ -24,7 +26,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             RocketRelease,
             HoverCharge,
             LaserRay,
-            LightningSupercharge
+            LightningSupercharge,
+            ReleaseTeslaMines,
+            CarpetBombLaserCharge
         }
 
         public enum PrimeFrameType
@@ -62,6 +66,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             npc.rotation = npc.rotation.AngleLerp(angularVelocity, 0.15f);
         }
 
+        public const float Phase2LifeRatio = 0.4f;
+
         public override bool PreAI(NPC npc)
         {
             npc.frame = new Rectangle(100000, 100000, 94, 94);
@@ -94,7 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             // Do the spawn animation again once entering the second phase.
             if (!AnyArms && hasRedoneSpawnAnimation == 0f)
-			{
+            {
                 attackTimer = 0f;
                 attackType = (int)PrimeAttackType.SpawnEffects;
                 hasRedoneSpawnAnimation = 1f;
@@ -114,7 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
 
                 npc.netUpdate = true;
-			}
+            }
 
             switch ((PrimeAttackType)(int)attackType)
             {
@@ -135,6 +141,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     break;
                 case PrimeAttackType.LightningSupercharge:
                     DoAttack_LightningSupercharge(npc, target, ref attackTimer, ref frameType);
+                    break;
+                case PrimeAttackType.ReleaseTeslaMines:
+                    DoAttack_ReleaseTeslaMines(npc, target, lifeRatio, ref attackTimer, ref frameType);
+                    break;
+                case PrimeAttackType.CarpetBombLaserCharge:
+                    DoAttack_CarpetBombLaserCharge(npc, target, lifeRatio, ref attackTimer, ref frameType);
                     break;
             }
 
@@ -302,7 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 {
                     float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.825f : 1f);
                     if (!AnyArms)
-                        rocketSpeed += (1f - lifeRatio) * 4f;
+                        rocketSpeed += (1f - lifeRatio) * 5.6f;
                     Vector2 rocketVelocity = Main.rand.NextVector2CircularEdge(rocketSpeed, rocketSpeed);
                     if (rocketVelocity.Y < -1f)
                         rocketVelocity.Y = -1f;
@@ -334,6 +346,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int chargeTime = AnyArms ? 72 : 45;
             float hoverSpeed = AnyArms ? 14f : 33f;
             float chargeSpeed = AnyArms ? 15f : 24.5f;
+
+            // Have a bit longer of a delay for the first charge.
+            if (attackTimer < hoverTime + chargeTime)
+                hoverTime += 20;
+
             float wrappedTime = attackTimer % (hoverTime + chargeTime);
 
             if (BossRushEvent.BossRushActive)
@@ -343,11 +360,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             if (!AnyArms)
-                chargeSpeed += (1f - lifeRatio) * 6f;
-
-            // Have a bit longer of a delay for the first charge.
-            if (attackTimer < hoverTime + chargeTime)
-                hoverTime += 20;
+                chargeSpeed += (1f - lifeRatio) * 10f;
 
             if (wrappedTime < hoverTime - 15f)
             {
@@ -419,10 +432,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (attackTimer == 5f)
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
 
-            if (attackTimer == 95f)
+            if (attackTimer == 65f)
                 Main.PlaySound(SoundID.Roar, target.Center, 0);
 
-            if (attackTimer == 125f)
+            if (attackTimer == 95f)
             {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -445,23 +458,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
             }
 
-            frameType = attackTimer < 110f ? (int)PrimeFrameType.ClosedMouth : (int)PrimeFrameType.OpenMouth;
+            frameType = attackTimer < 80f ? (int)PrimeFrameType.ClosedMouth : (int)PrimeFrameType.OpenMouth;
 
             // Release a few rockets after creating the laser to create pressure.
-            int rocketReleaseRate = lifeRatio < 0.5f ? 14 : 20;
-            if (attackTimer > 125f && attackTimer % rocketReleaseRate == rocketReleaseRate - 1f)
+            int rocketReleaseRate = lifeRatio < Phase2LifeRatio ? 11 : 18;
+            if (attackTimer > 95f && attackTimer % rocketReleaseRate == rocketReleaseRate - 1f)
             {
                 Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float rocketAngularOffset = Utils.InverseLerp(125f, 225f, attackTimer, true) * MathHelper.TwoPi;
+                    float rocketAngularOffset = Utils.InverseLerp(95f, 195f, attackTimer, true) * MathHelper.TwoPi;
                     Vector2 rocketVelocity = rocketAngularOffset.ToRotationVector2() * (Main.rand.NextFloat(5.5f, 6.2f) + npc.Distance(target.Center) * 0.00267f);
                     Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f + rocketVelocity * 2.5f, rocketVelocity, ProjectileID.SaucerMissile, 135, 0f);
                 }
             }
 
             // Create a bullet hell outside of the laser area to prevent RoD cheese.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 125f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 95f)
             {
                 for (int i = 0; i < 2; i++)
                 {
@@ -475,7 +488,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
             }
 
-            if (attackTimer >= 255f)
+            if (attackTimer >= 225f)
                 GotoNextAttackState(npc);
         }
 
@@ -483,6 +496,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             ref float struckByLightningFlag = ref npc.Infernum().ExtraAI[0];
             ref float superchargeTimer = ref npc.Infernum().ExtraAI[1];
+            ref float laserSignDirection = ref npc.Infernum().ExtraAI[2];
+            ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[3];
 
             if (attackTimer < 35f)
             {
@@ -490,6 +505,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 npc.rotation = npc.velocity.X * 0.04f;
             }
 
+            // Create a bunch of scenic lightning and decide the laser direction.
             if (attackTimer == 35f)
             {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
@@ -507,6 +523,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                             Main.projectile[lightning].ai[1] = Main.rand.Next(100);
                         }
                     }
+                }
+
+                if (laserSignDirection == 0f)
+                {
+                    laserSignDirection = Main.rand.NextBool().ToDirectionInt();
+                    npc.netUpdate = true;
                 }
             }
 
@@ -565,8 +587,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     }
                 }
 
+                // Use the spike frame type and make the laser move.
                 if (attackTimer > 165f)
+                {
                     frameType = (int)PrimeFrameType.Spikes;
+                    laserOffsetAngle += Utils.InverseLerp(165f, 190f, attackTimer, true) * laserSignDirection * MathHelper.Pi / 300f;
+                }
 
                 // Release electric sparks periodically, along with missiles.
                 Vector2 mouthPosition = npc.Center + Vector2.UnitY * 33f;
@@ -600,6 +626,109 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (attackTimer > 465f)
                 GotoNextAttackState(npc);
         }
+
+        public static void DoAttack_ReleaseTeslaMines(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float frameType)
+        {
+            int slowdownTime = 45;
+            int bombCount = (int)MathHelper.Lerp(10f, 20f, 1f - lifeRatio);
+
+            // Choose the frame type.
+            frameType = (int)PrimeFrameType.Spikes;
+
+            // Sit in place for a moment.
+            if (attackTimer < slowdownTime)
+            {
+                npc.velocity *= 0.9f;
+                npc.rotation = npc.velocity.X * 0.04f;
+            }
+
+            // Release a bunch of tesla orb bombs around the target.
+            if (attackTimer == slowdownTime)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MechGaussRifle"), target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < bombCount; i++)
+                    {
+                        Vector2 bombSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(400f, 1550f);
+                        int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<TeslaBomb>(), 140, 0f);
+                        if (Main.projectile.IndexInRange(bomb))
+                        {
+                            Main.projectile[bomb].ai[0] = Main.rand.Next(45, 70);
+                            Main.projectile[bomb].netUpdate = true;
+                        }
+                    }
+                }
+            }
+
+            if (attackTimer == slowdownTime + 75f)
+                GotoNextAttackState(npc);
+        }
+
+        public static void DoAttack_CarpetBombLaserCharge(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float frameType)
+        {
+            int chargeCount = 3;
+            int hoverTime = AnyArms ? 120 : 60;
+            int chargeTime = AnyArms ? 72 : 45;
+            float hoverSpeed = AnyArms ? 14f : 33f;
+            float chargeSpeed = AnyArms ? 15f : 24.5f;
+
+            // Have a bit longer of a delay for the first charge.
+            if (attackTimer < hoverTime + chargeTime)
+                hoverTime += 20;
+
+            float wrappedTime = attackTimer % (hoverTime + chargeTime);
+
+            if (BossRushEvent.BossRushActive)
+            {
+                hoverSpeed *= 1.3f;
+                chargeSpeed *= 1.6f;
+            }
+
+            if (!AnyArms)
+                chargeSpeed += (1f - lifeRatio) * 10f;
+
+            if (wrappedTime < hoverTime - 15f)
+            {
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 365f, -300f);
+                npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed)) / 8f;
+
+                if (npc.WithinRange(target.Center, 150f))
+                {
+                    npc.Center = target.Center - npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 150f;
+                    npc.velocity = Vector2.Zero;
+                }
+                npc.rotation = npc.velocity.X * 0.04f;
+                frameType = (int)PrimeFrameType.ClosedMouth;
+            }
+            else if (wrappedTime < hoverTime)
+            {
+                npc.velocity *= 0.94f;
+                npc.rotation = npc.velocity.X * 0.04f;
+                frameType = (int)PrimeFrameType.OpenMouth;
+            }
+            else
+            {
+                if (wrappedTime == hoverTime + 1f)
+                {
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                    npc.velocity.Y -= 10f;
+                    npc.netUpdate = true;
+
+                    Main.PlaySound(SoundID.Roar, target.Center, 0);
+                }
+
+                // Release lasers upward.
+                if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 6f == 5f)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -16f, ModContent.ProjectileType<ScavengerLaser>(), 145, 0f);
+
+                frameType = (int)PrimeFrameType.Spikes;
+                npc.rotation += npc.velocity.Length() * 0.018f;
+            }
+
+            if (attackTimer >= (hoverTime + chargeTime) * chargeCount + 20)
+                GotoNextAttackState(npc);
+        }
         #endregion Specific Attacks
 
         #region General Helper Functions
@@ -607,27 +736,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             PrimeAttackType currentAttack = (PrimeAttackType)(int)npc.ai[0];
-            PrimeAttackType nextAttack;
+            WeightedRandom<PrimeAttackType> attackSelector = new WeightedRandom<PrimeAttackType>(Main.rand);
             if (!AnyArms)
             {
-                if (lifeRatio < 0.5f && Main.rand.NextBool(4) && currentAttack != PrimeAttackType.LightningSupercharge)
-                    nextAttack = PrimeAttackType.LightningSupercharge;
-                else
+                attackSelector.Add(PrimeAttackType.MetalBurst);
+                attackSelector.Add(PrimeAttackType.RocketRelease);
+                attackSelector.Add(PrimeAttackType.HoverCharge);
+                attackSelector.Add(PrimeAttackType.LaserRay);
+
+                if (lifeRatio < Phase2LifeRatio)
                 {
-                    do
-                        nextAttack = Utils.SelectRandom(Main.rand, PrimeAttackType.MetalBurst, PrimeAttackType.RocketRelease, PrimeAttackType.HoverCharge, PrimeAttackType.LaserRay);
-                    while (nextAttack == currentAttack);
+                    attackSelector.Add(PrimeAttackType.ReleaseTeslaMines, 1.9);
+                    attackSelector.Add(PrimeAttackType.CarpetBombLaserCharge, 1.9);
+                    if (Main.rand.NextFloat() < 0.3f)
+                        attackSelector.Add(PrimeAttackType.LightningSupercharge, 20D);
                 }
             }
             else
             {
-                do
-                    nextAttack = Utils.SelectRandom(Main.rand, PrimeAttackType.MetalBurst, PrimeAttackType.RocketRelease);
-                while (nextAttack == currentAttack);
+                attackSelector.Add(PrimeAttackType.MetalBurst);
+                attackSelector.Add(PrimeAttackType.RocketRelease);
             }
 
             npc.velocity *= MathHelper.Lerp(1f, 0.25f, Utils.InverseLerp(14f, 30f, npc.velocity.Length()));
-            npc.ai[0] = (int)nextAttack;
+
+            do
+                npc.ai[0] = (int)attackSelector.Get();
+            while (npc.ai[0] == (int)currentAttack);
+
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

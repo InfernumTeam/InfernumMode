@@ -383,14 +383,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             for (int i = 0; i < 4; i++)
                             {
                                 Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.45f, 0.45f, i / 3f)) * shootSpeed;
-                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.CursedFlameHostile, 95, 0f);
+                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.CursedFlameHostile, 135, 0f);
                             }
                         }
                         else
                         {
                             float shootSpeed = MathHelper.Lerp(10.75f, 16f, 1f - CombinedLifeRatio);
                             Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.DeathLaser, 90, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ProjectileID.DeathLaser, 130, 0f);
                         }
                     }
                     break;
@@ -511,7 +511,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center) * shootSpeed;
                             int projectileType = isSpazmatism ? ProjectileID.CursedFlameHostile : ProjectileID.DeathLaser;
 
-                            int proj = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, projectileType, 90, 0f);
+                            int proj = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, projectileType, 130, 0f);
                             Main.projectile[proj].tileCollide = false;
                         }
                     }
@@ -583,7 +583,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             shootSpeed *= 1.6f;
                         Vector2 shootVelocity = (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * shootSpeed;
                         int projectileType = isRetinazer ? ModContent.ProjectileType<ScavengerLaser>() : ProjectileID.CursedFlameHostile;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, projectileType, 95, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, projectileType, 135, 0f);
                     }
                     break;
 
@@ -646,7 +646,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                         Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.TwoPi * i / totalProjectiles) * 14.5f;
                                         if (BossRushEvent.BossRushActive)
                                             shootVelocity *= 2.2f;
-                                        int fire = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ProjectileID.CursedFlameHostile, 100, 0f);
+                                        int fire = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ProjectileID.CursedFlameHostile, 140, 0f);
                                         Main.projectile[fire].ignoreWater = true;
                                     }
                                 }
@@ -668,7 +668,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             {
                                 float shootSpeed = 8.5f;
                                 Vector2 shootVelocity = (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * shootSpeed;
-                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 12f, shootVelocity, ProjectileID.DeathLaser, 75, 0f);
+                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 12f, shootVelocity, ProjectileID.DeathLaser, 130, 0f);
                             }
                             else
                             {
@@ -677,7 +677,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             }
 
                             if (Main.netMode != NetmodeID.MultiplayerClient && UniversalAttackTimer % 50f == 49f)
-                                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 110, 0f);
+                                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 145, 0f);
                         }
                         else
                         {
@@ -761,7 +761,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             Vector2 laserVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.5f, 0.5f, i / 2f)) * 9f;
                             if (BossRushEvent.BossRushActive)
                                 laserVelocity *= 2.25f;
-                            int laser = Utilities.NewProjectileBetter(npc.Center + laserVelocity * 8f, laserVelocity, ProjectileID.DeathLaser, 100, 0f);
+                            int laser = Utilities.NewProjectileBetter(npc.Center + laserVelocity * 8f, laserVelocity, ProjectileID.DeathLaser, 140, 0f);
                             Main.projectile[laser].tileCollide = false;
                         }
                         burstCounter++;
@@ -798,12 +798,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         Vector2 laserVelocity = npc.SafeDirectionTo(Target.Center).RotatedByRandom(MathHelper.ToRadians(10f)) * 10f;
                         if (BossRushEvent.BossRushActive)
                             laserVelocity *= 2.1f;
-                        int laser = Utilities.NewProjectileBetter(npc.Center + laserVelocity * 3.6f, laserVelocity, ProjectileID.DeathLaser, 100, 0f);
+                        int laser = Utilities.NewProjectileBetter(npc.Center + laserVelocity * 3.6f, laserVelocity, ProjectileID.DeathLaser, 140, 0f);
                         Main.projectile[laser].tileCollide = false;
                     }
                     if (attackTimer == 30f && Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 100, 0f);
+                        int deathRay = Utilities.NewProjectileBetter(npc.Center + npc.SafeDirectionTo(Target.Center) * 48f, npc.SafeDirectionTo(Target.Center), ModContent.ProjectileType<AimedDeathray>(), 140, 0f);
                         Main.projectile[deathRay].ai[1] = npc.whoAmI;
                     }
 
@@ -852,7 +852,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         {
                             Main.PlaySound(SoundID.Item33, npc.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
-                                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 110, 0f);
+                                Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 145, 0f);
                         }
                     }
 
@@ -980,7 +980,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                 for (int i = 0; i < 6; i++)
                                 {
                                     Vector2 shootDirection = (MathHelper.TwoPi * i / 6f).ToRotationVector2();
-                                    Utilities.NewProjectileBetter(npc.Center + shootDirection * 50f, shootDirection * 16f, ModContent.ProjectileType<CursedFlameBurst>(), 100, 0f);
+                                    Utilities.NewProjectileBetter(npc.Center + shootDirection * 50f, shootDirection * 16f, ModContent.ProjectileType<CursedFlameBurst>(), 140, 0f);
                                 }
                             }
 
@@ -1069,7 +1069,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                         Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(offsetAngle) * 16f;
                                         if (BossRushEvent.BossRushActive)
                                             shootVelocity *= 1.8f;
-                                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingCursedFlameBurst>(), 115, 0f);
+                                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingCursedFlameBurst>(), 145, 0f);
                                     }
                                 }
 
@@ -1138,7 +1138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         {
                             Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 120f;
                             Vector2 shootVelocity = npc.velocity.SafeNormalize((npc.rotation + MathHelper.PiOver2).ToRotationVector2()) * carpetBombSpeed;
-                            Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<CursedBomb>(), 115, 0f);
+                            Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<CursedBomb>(), 145, 0f);
                         }
                         Main.PlaySound(SoundID.DD2_BetsyFireballShot, Target.Center);
                     }

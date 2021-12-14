@@ -11,6 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
     public class LaserRayIdle : BaseLaserbeamProjectile
     {
+        public float InitialDirection = -100f;
         public int OwnerIndex => (int)projectile.ai[1];
         public override float Lifetime => 260;
         public override Color LaserOverlayColor => Color.White;
@@ -39,21 +40,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             writer.Write(projectile.localAI[0]);
             writer.Write(projectile.localAI[1]);
+            writer.Write(InitialDirection);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             projectile.localAI[0] = reader.ReadSingle();
-            projectile.localAI[1] = reader.ReadSingle();
+			projectile.localAI[1] = reader.ReadSingle();
+            InitialDirection = reader.ReadSingle();
         }
         public override void AttachToSomething()
         {
+            if (InitialDirection == -100f)
+                InitialDirection = projectile.velocity.ToRotation();
+
             if (!Main.npc.IndexInRange(OwnerIndex))
             {
                 projectile.Kill();
                 return;
             }
 
+            projectile.velocity = (InitialDirection + Main.npc[OwnerIndex].Infernum().ExtraAI[3]).ToRotationVector2();
             projectile.Center = Main.npc[OwnerIndex].Center - Vector2.UnitY * 16f + projectile.velocity * 2f;
         }
 

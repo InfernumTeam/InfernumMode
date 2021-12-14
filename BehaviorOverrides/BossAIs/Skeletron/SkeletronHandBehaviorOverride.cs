@@ -42,13 +42,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             }
             else
             {
-                int ownerAttackState = (int)owner.ai[0];
+                SkeletronHeadBehaviorOverride.SkeletronAttackType ownerAttackState = (SkeletronHeadBehaviorOverride.SkeletronAttackType)(int)owner.ai[0];
                 float attackTimer = owner.ai[1];
                 Player target = Main.player[owner.target];
 
                 switch (ownerAttackState)
                 {
-                    case 0:
+                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.HoverSkulls:
+                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.DownwardAcceleratingSkulls:
                         Vector2 destination = owner.Center + new Vector2(armDirection * 600f, 950f);
                         if (npc.Center.Y > destination.Y)
                         {
@@ -97,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                             }
                         }
                         break;
-                    case 1:
+                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.HandWaves:
                         Vector2 idealPosition = owner.Center + new Vector2(armDirection * 200f, -230f);
 
                         bool facingPlayer = armDirection == (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -126,12 +127,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         }
 
                         break;
-                    case 2:
+                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.SpinCharge:
                         destination = owner.Center + new Vector2(armDirection * 200f, -230f);
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.035f);
                         npc.Center = npc.Center.MoveTowards(destination, 5f);
                         break;
-                    case 3:
+                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.HandShadowflameBurst:
                         destination = owner.Center + new Vector2(armDirection * 460f, 360f);
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.05f);
                         npc.Center = npc.Center.MoveTowards(destination, 5f);
@@ -143,24 +144,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                for (int i = 0; i < 5; i++)
+                                for (int i = 0; i < 10; i++)
                                 {
-                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 5f) * 7.95f;
+                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 10f) * 7.95f;
                                     if (BossRushEvent.BossRushActive)
                                         flameShootVelocity *= 3f;
-                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 95, 0f);
+                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
                                 }
                             }
                         }
                         break;
-                    case 4:
+                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.HandShadowflameWaves:
                         adjustedTimer = attackTimer % 150f;
                         bool shouldAttack = (int)(attackTimer / 150) % 2 == (armDirection == 1f).ToInt();
                         destination = owner.Center + new Vector2(armDirection * 620f, 420f + (float)Math.Sin(attackTimer * MathHelper.Pi / 50f) * shouldAttack.ToInt() * 250f);
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.065f);
                         npc.Center = npc.Center.MoveTowards(destination, 5f);
 
-                        if (attackTimer < 450f && adjustedTimer > 45f && adjustedTimer % 10f == 9f && shouldAttack)
+                        if (attackTimer < 450f && adjustedTimer > 45f && adjustedTimer % 7f == 6f && shouldAttack)
                         {
                             Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 

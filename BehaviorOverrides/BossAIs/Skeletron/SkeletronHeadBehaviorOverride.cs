@@ -10,11 +10,25 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 {
-	public class SkeletronHeadBehaviorOverride : NPCBehaviorOverride
+    public class SkeletronHeadBehaviorOverride : NPCBehaviorOverride
     {
+        public enum SkeletronAttackType
+        {
+            Phase1Fakeout,
+            HoverSkulls,
+            HandWaves,
+            SpinCharge,
+            HandShadowflameBurst,
+            HandShadowflameWaves,
+            DownwardAcceleratingSkulls
+        }
+
         public override int NPCOverrideType => NPCID.SkeletronHead;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+
+        public const float Phase2LifeRatio = 0.75f;
+        public const float Phase3LifeRatio = 0.4f;
 
         #region AI
 
@@ -32,6 +46,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase2 = lifeRatio < Phase2LifeRatio;
+            bool phase3 = lifeRatio < Phase3LifeRatio;
             Player target = Main.player[npc.target];
 
             ref float attackState = ref npc.ai[0];
@@ -96,26 +112,45 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     return false;
                 }
 
-                // Do normal behavior at first.
-                if (lifeRatio > 0.825f)
-                    DoTypicalAI(npc, target, ref attackTimer);
-                else if (lifeRatio > 0.4f)
-                    DoPhase2AI(npc, target, ref attackTimer, ref attackState);
-                else
-                    DoPhase3AI(npc, target, ref attackTimer, ref attackState);
+                switch ((SkeletronAttackType)(int)attackState)
+                {
+                    case SkeletronAttackType.Phase1Fakeout:
+                        DoBehavior_Phase1Fakeout(npc, target, ref attackTimer);
+                        if (phase2)
+                            attackState = (int)SkeletronAttackType.HoverSkulls;
+                        break;
+                    case SkeletronAttackType.HoverSkulls:
+                        DoBehavior_HoverSkulls(npc, target, ref attackTimer);
+                        break;
+                    case SkeletronAttackType.HandWaves:
+                        DoBehavior_HandWaves(npc, target, ref attackTimer);
+                        break;
+                    case SkeletronAttackType.SpinCharge:
+                        DoBehavior_SpinCharge(npc, target, phase3, ref attackTimer);
+                        break;
+                    case SkeletronAttackType.HandShadowflameBurst:
+                        DoBehavior_HandShadowflameBurst(npc, target, ref attackTimer);
+                        break;
+                    case SkeletronAttackType.HandShadowflameWaves:
+                        DoBehavior_HandShadowflameWaves(npc, target, ref attackTimer);
+                        break;
+                    case SkeletronAttackType.DownwardAcceleratingSkulls:
+                        DoBehavior_DownwardAcceleratingSkulls(npc, target, ref attackTimer);
+                        break;
+                }
 
                 // Phase transition effects.
                 switch ((int)phaseChangeState)
                 {
                     case 0:
-                        if (lifeRatio < 0.825f)
+                        if (phase2)
                         {
                             phaseChangeCountdown = 90f;
                             phaseChangeState = 1f;
                         }
                         break;
                     case 1:
-                        if (lifeRatio < 0.4f)
+                        if (phase3)
                         {
                             phaseChangeCountdown = 90f;
                             phaseChangeState = 2f;
@@ -129,21 +164,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
         }
 
         public static void DoDespawnEffects(NPC npc)
-		{
+        {
             npc.velocity *= 0.7f;
             npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
             if (npc.Opacity <= 0f)
-			{
+            {
                 npc.active = false;
                 npc.netUpdate = true;
-			}
-		}
+            }
+        }
 
         public static void DoSpawnAnimationStuff(NPC npc, Player target, float animationTimer, ref float animationChargeTimer)
-		{
+        {
             // Focus on the boss as it spawns.
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2000f))
-			{
+            {
                 Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
                 Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(0f, 15f, animationTimer, true);
                 Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(200f, 192f, animationTimer, true);
@@ -158,7 +193,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
             // Summon hands.
             if (animationTimer == 80f)
-			{
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int hand = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
@@ -173,14 +208,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     Main.npc[hand].target = npc.target;
                     Main.npc[hand].netUpdate = true;
                 }
-			}
+            }
 
             // Roar and attack.
             if (animationTimer == 160f)
-			{
+            {
                 Main.PlaySound(SoundID.Item122, target.Center);
                 for (int i = 0; i < 220; i++)
-				{
+                {
                     Dust ectoplasm = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(60f, 60f), 264);
                     ectoplasm.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f, 12f);
                     ectoplasm.velocity = Vector2.Lerp(ectoplasm.velocity, (MathHelper.TwoPi * i / 220f).ToRotationVector2() * ectoplasm.velocity.Length(), 0.8f);
@@ -188,20 +223,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     ectoplasm.fadeIn = Main.rand.NextFloat(1.3f, 1.9f);
                     ectoplasm.scale = Main.rand.NextFloat(1.65f, 1.85f);
                     ectoplasm.noGravity = true;
-				}
-			}
+                }
+            }
 
             if (animationTimer == 190f)
-			{
+            {
                 animationChargeTimer = 70f;
                 Main.PlaySound(SoundID.Roar, target.Center, 0);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * 14f;
                 npc.netUpdate = true;
-			}
+            }
         }
 
         public static void DoHoverMovement(NPC npc, Vector2 destination, Vector2 acceleration)
-		{
+        {
             if (BossRushEvent.BossRushActive)
                 acceleration *= 4f;
 
@@ -241,11 +276,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             }
         }
 
-        public static void DoTypicalAI(NPC npc, Player target, ref float attackTimer)
-		{
+        public static void SelectNextAttack(NPC npc)
+        {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            bool phase3 = lifeRatio < Phase3LifeRatio;
+            SkeletronAttackType currentAttack = (SkeletronAttackType)(int)npc.ai[0];
+
+            switch (currentAttack)
+            {
+                case SkeletronAttackType.HoverSkulls:
+                    npc.ai[0] = phase3 ? (int)SkeletronAttackType.DownwardAcceleratingSkulls : (int)SkeletronAttackType.HandWaves;
+                    break;
+                case SkeletronAttackType.HandWaves:
+                case SkeletronAttackType.DownwardAcceleratingSkulls:
+                    npc.ai[0] = (int)SkeletronAttackType.SpinCharge;
+                    break;
+                case SkeletronAttackType.SpinCharge:
+                    npc.ai[0] = (int)SkeletronAttackType.HandShadowflameBurst;
+                    break;
+                case SkeletronAttackType.HandShadowflameBurst:
+                    npc.ai[0] = phase3 ? (int)SkeletronAttackType.HandShadowflameWaves : (int)SkeletronAttackType.HoverSkulls;
+                    break;
+                case SkeletronAttackType.HandShadowflameWaves:
+                    npc.ai[0] = phase3 ? (int)SkeletronAttackType.DownwardAcceleratingSkulls : (int)SkeletronAttackType.HoverSkulls;
+                    break;
+            }
+            npc.netUpdate = true;
+        }
+
+        public static void DoBehavior_Phase1Fakeout(NPC npc, Player target, ref float attackTimer)
+        {
             // Hover above the target and release skulls.
             if (attackTimer % 1050f < 600f)
-			{
+            {
                 Vector2 destination = target.Center - Vector2.UnitY * 250f;
                 Vector2 acceleration = new Vector2(0.135f, 0.085f);
                 DoHoverMovement(npc, destination, acceleration);
@@ -275,7 +338,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 }
                 npc.rotation = npc.velocity.X * 0.04f;
             }
-			else
+            else
             {
                 if (attackTimer % 1050f == 601f)
                     Main.PlaySound(SoundID.Roar, target.Center, 0);
@@ -295,297 +358,254 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 if (npc.WithinRange(target.Center, 60f))
                     attackTimer += 10f;
             }
-		}
+        }
 
-        public static void DoPhase2AI(NPC npc, Player target, ref float attackTimer, ref float attackState)
-		{
-            switch ((int)attackState)
-			{
-                // Hover over the target and release skulls directly at them.
-                case 0:
-                    int totalShots = 10;
-                    Vector2 destination = target.Center - Vector2.UnitY * 360f;
-                    Vector2 acceleration = new Vector2(0.08f, 0.06f);
-                    DoHoverMovement(npc, destination, acceleration);
+        public static void DoBehavior_HoverSkulls(NPC npc, Player target, ref float attackTimer)
+        {
+            int totalShots = 10;
+            int shootRate = 50;
+            Vector2 destination = target.Center - Vector2.UnitY * 360f;
+            Vector2 acceleration = new Vector2(0.08f, 0.06f);
+            DoHoverMovement(npc, destination, acceleration);
 
-                    npc.rotation = npc.velocity.X * 0.05f;
+            npc.rotation = npc.velocity.X * 0.05f;
 
-                    if (!npc.WithinRange(target.Center, 85f) && attackTimer % 50f == 49f)
-					{
-                        int currentShotCounter = (int)(attackTimer / 50f);
-                        Main.PlaySound(SoundID.Item8, target.Center);
+            if (!npc.WithinRange(target.Center, 85f) && attackTimer % shootRate == shootRate - 1f)
+            {
+                int currentShotCounter = (int)(attackTimer / shootRate);
+                Main.PlaySound(SoundID.Item8, target.Center);
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            float skullSpeed = 3.3f;
-                            int skullCount = 3;
-                            if (currentShotCounter % 4 == 3)
-                            {
-                                skullSpeed *= 1.1f;
-                                skullCount = 5;
-                            }
-
-                            if (BossRushEvent.BossRushActive)
-                                skullSpeed *= 3.25f;
-
-                            for (int i = 0; i < skullCount; i++)
-                            {
-                                Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
-                                int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 90, 0f);
-                                if (Main.projectile.IndexInRange(skull))
-                                    Main.projectile[skull].ai[0] = 0.005f;
-                            }
-                        }
-					}
-
-                    // Go to the next state after enough shots have been performed.
-                    if (attackTimer >= totalShots * 50f + 35f)
-					{
-                        attackTimer = 0f;
-                        attackState = 1f;
-                        npc.netUpdate = true;
-					}
-
-                    break;
-
-                // Hover and swipe at the player.
-                case 1:
-                    destination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 520f, -330f);
-                    acceleration = new Vector2(0.3f, 0.3f);
-
-                    if (attackTimer < 90f)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float skullSpeed = 3.3f;
+                    int skullCount = 3;
+                    if (currentShotCounter % 4 == 3)
                     {
-                        DoHoverMovement(npc, destination, acceleration);
-                        npc.Center = npc.Center.MoveTowards(destination, 10f);
+                        skullSpeed *= 1.1f;
+                        skullCount = 5;
+                    }
+
+                    if (BossRushEvent.BossRushActive)
+                        skullSpeed *= 3.25f;
+
+                    for (int i = 0; i < skullCount; i++)
+                    {
+                        Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
+                        int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 90, 0f);
+                        if (Main.projectile.IndexInRange(skull))
+                            Main.projectile[skull].ai[0] = 0.005f;
+                    }
+                }
+            }
+
+            // Go to the next state after enough shots have been performed.
+            if (attackTimer >= totalShots * shootRate + 35f)
+            {
+                SelectNextAttack(npc);
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_HandWaves(NPC npc, Player target, ref float attackTimer)
+        {
+            Vector2 destination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 520f, -330f);
+            Vector2 acceleration = new Vector2(0.3f, 0.3f);
+
+            if (attackTimer < 90f)
+            {
+                DoHoverMovement(npc, destination, acceleration);
+                npc.Center = npc.Center.MoveTowards(destination, 10f);
+            }
+            else
+                npc.velocity *= 0.94f;
+
+            // Release skulls downward to prevent invalidating the attack by sitting under skeletron like a coward lmao
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f && attackTimer >= 90f)
+            {
+                Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(0.75f) * Main.rand.NextFloat(8f, 12.65f);
+                if (Main.rand.NextBool(2))
+                    shootVelocity.Y *= -1f;
+                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+            }
+
+            npc.damage = 0;
+            npc.rotation = npc.velocity.X * 0.05f;
+
+            if (attackTimer % 160f == 85f)
+                Main.PlaySound(SoundID.Roar, target.Center, 0);
+
+            if (attackTimer >= 305f)
+            {
+                SelectNextAttack(npc);
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_SpinCharge(NPC npc, Player target, bool phase3, ref float attackTimer)
+        {
+            if (attackTimer < 50f)
+            {
+                npc.velocity *= 0.7f;
+                npc.rotation *= 0.7f;
+            }
+
+            // Roar and charge after enough time has passed.
+            if (attackTimer == 50f)
+                Main.PlaySound(SoundID.Roar, target.Center, 0);
+
+            if (attackTimer >= 50f && attackTimer % 45f == 0f)
+            {
+                Main.PlaySound(SoundID.Item8, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    if (phase3)
+                    {
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 14f;
+                            Utilities.NewProjectileBetter(npc.Center, skullVelocity, ModContent.ProjectileType<SpinningFireball>(), 105, 0f);
+                        }
                     }
                     else
-                        npc.velocity *= 0.94f;
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f && attackTimer >= 90f)
                     {
-                        Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(0.75f) * Main.rand.NextFloat(8f, 12.65f);
-                        if (Main.rand.NextBool(2))
-                            shootVelocity.Y *= -1f;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
-                    }
-
-                    npc.damage = 0;
-                    npc.rotation = npc.velocity.X * 0.05f;
-
-                    if (attackTimer % 160f == 85f)
-                        Main.PlaySound(SoundID.Roar, target.Center, 0);
-
-                    if (attackTimer >= 305f)
-                    {
-                        attackTimer = 0f;
-                        attackState = 2f;
-                        npc.netUpdate = true;
-                    }
-                    break;
-
-                // Spin charge.
-                case 2:
-                    if (attackTimer < 50f)
-					{
-                        npc.velocity *= 0.7f;
-                        npc.rotation *= 0.7f;
-					}
-
-                    // Roar and charge after enough time has passed.
-                    if (attackTimer == 50f)
-                        Main.PlaySound(SoundID.Roar, target.Center, 0);
-
-                    if (attackTimer >= 50f && attackTimer % 45f == 0f)
-                    {
-                        Main.PlaySound(SoundID.Item8, target.Center);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        for (int i = 0; i < 3; i++)
                         {
-                            for (int i = 0; i < 3; i++)
-                            {
-                                Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 3f) * 7f;
-                                Utilities.NewProjectileBetter(npc.Center, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 95, 0f);
-                            }
+                            Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 3f) * 7f;
+                            Utilities.NewProjectileBetter(npc.Center, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 95, 0f);
                         }
                     }
-
-                    if (attackTimer > 50f && attackTimer < 270f)
-                    {
-                        float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 7f;
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
-
-                        npc.rotation += 0.2f;
-                        npc.rotation %= MathHelper.TwoPi;
-
-                        if (npc.WithinRange(target.Center, 50f))
-                            attackTimer += 10f;
-                    }
-
-                    if (attackTimer > 270f)
-                    {
-                        npc.velocity *= 0.94f;
-                        npc.rotation = npc.rotation.AngleLerp(0f, 0.07f);
-                    }
-
-                    if (attackTimer >= 290f)
-                    {
-                        attackState = 0f;
-                        attackTimer = 0f;
-                        npc.netUpdate = true;
-                    }
-                    break;
+                }
             }
-		}
 
-        public static void DoPhase3AI(NPC npc, Player target, ref float attackTimer, ref float attackState)
-        {
-            switch ((int)attackState)
+            if (attackTimer > 50f && attackTimer < 270f)
             {
-                // Hover over the target and release skulls directly at them.
-                case 0:
-                    int totalShots = 10;
-                    Vector2 destination = target.Center - Vector2.UnitY * 450f;
-                    Vector2 acceleration = new Vector2(0.08f, 0.06f);
-                    DoHoverMovement(npc, destination, acceleration);
+                float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 6.5f;
+                if (phase3)
+                    moveSpeed *= 1.25f;
+                npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
 
-                    npc.rotation = npc.velocity.X * 0.05f;
+                npc.rotation += 0.2f;
+                npc.rotation %= MathHelper.TwoPi;
 
-                    if (!npc.WithinRange(target.Center, 85f) && attackTimer % 45f == 44f && attackTimer < totalShots * 45f)
+                if (npc.WithinRange(target.Center, 50f))
+                    attackTimer += 10f;
+            }
+
+            if (attackTimer > 270f)
+            {
+                npc.velocity *= 0.94f;
+                npc.rotation = npc.rotation.AngleLerp(0f, 0.07f);
+            }
+
+            if (attackTimer >= 290f)
+            {
+                SelectNextAttack(npc);
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_HandShadowflameBurst(NPC npc, Player target, ref float attackTimer)
+        {
+            float adjustedTimer = attackTimer % 180f;
+            Vector2 destination = target.Center - Vector2.UnitY * 400f;
+            Vector2 acceleration = new Vector2(0.22f, 0.19f);
+            if (adjustedTimer > 45f)
+            {
+                destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 100f;
+                npc.Center = npc.Center.MoveTowards(destination, 10f);
+            }
+
+            DoHoverMovement(npc, destination, acceleration);
+            npc.rotation = npc.velocity.X * 0.05f;
+
+            if (attackTimer >= 385f)
+            {
+                SelectNextAttack(npc);
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_HandShadowflameWaves(NPC npc, Player target, ref float attackTimer)
+        {
+            float adjustedTimer = attackTimer % 150f;
+            Vector2 destination = target.Center - Vector2.UnitY * 360f;
+            Vector2 acceleration = new Vector2(0.4f, 0.27f);
+            if (adjustedTimer > 45f)
+            {
+                destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 100f;
+                npc.Center = npc.Center.MoveTowards(destination, 10f);
+            }
+
+            DoHoverMovement(npc, destination, acceleration);
+            npc.rotation = npc.velocity.X * 0.05f;
+
+            if (attackTimer >= 520f)
+            {
+                SelectNextAttack(npc);
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_DownwardAcceleratingSkulls(NPC npc, Player target, ref float attackTimer)
+        {
+            int totalShots = 7;
+            int shootRate = 75;
+            Vector2 destination = target.Center - Vector2.UnitY * 400f;
+            Vector2 acceleration = new Vector2(0.08f, 0.12f);
+            DoHoverMovement(npc, destination, acceleration);
+
+            npc.rotation = npc.velocity.X * 0.05f;
+
+            // Release magic from the mouth as a telegraph.
+            if (attackTimer < shootRate)
+            {
+                Dust magic = Dust.NewDustDirect(npc.Bottom - Vector2.UnitY * 30f, npc.width, 16, 264);
+                magic.velocity = Main.rand.NextFloat(-0.43f, 0.43f).ToRotationVector2() * Main.rand.NextFloat(2f, 8f);
+                magic.velocity.X *= Main.rand.NextBool().ToDirectionInt();
+                magic.scale = Main.rand.NextFloat(0.45f, 0.7f);
+                magic.fadeIn = 0.6f;
+                magic.noLight = true;
+                magic.noGravity = true;
+            }
+
+            if (!npc.WithinRange(target.Center, 85f) && attackTimer % shootRate == shootRate - 1f)
+            {
+                Main.PlaySound(SoundID.Item8, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float maxOffset = 18f;
+                    float openOffsetArea = Main.rand.NextFloat(-maxOffset * 0.65f, maxOffset * 0.65f);
+                    float fuck = Main.rand.NextFloat(-2f, 2f);
+                    for (float offset = -maxOffset; offset < maxOffset; offset += maxOffset * 0.07f)
                     {
-                        int currentShotCounter = (int)(attackTimer / 40f);
-                        Main.PlaySound(SoundID.Item8, target.Center);
+                        // Don't fire skulls from some areas, to allow the player to have an avoidance area.
+                        if (MathHelper.Distance(openOffsetArea, offset + fuck) < 1.4f)
+                            continue;
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Vector2 shootVelocity = Vector2.UnitX * (offset + fuck) * 0.3f;
+                        int fire = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 110, 0f);
+                        if (Main.projectile.IndexInRange(fire))
                         {
-                            float skullSpeed = 3.8f;
-                            int skullCount = 4;
-                            if (currentShotCounter % 2 == 1)
-                            {
-                                skullSpeed *= 1.1f;
-                                skullCount = 5;
-                            }
+                            Main.projectile[fire].ai[0] = offset + fuck;
+                            Main.projectile[fire].netUpdate = true;
 
-                            if (BossRushEvent.BossRushActive)
-                                skullSpeed *= 3.25f;
-
-                            for (int i = 0; i < skullCount; i++)
-                            {
-                                Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
-                                int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 90, 0f);
-                                if (Main.projectile.IndexInRange(skull))
-                                    Main.projectile[skull].ai[0] = 0.005f;
-                            }
                         }
                     }
+                }
+            }
 
-                    // Go to the next state after enough shots have been performed.
-                    if (attackTimer >= totalShots * 50f + 115f)
-                    {
-                        attackTimer = 0f;
-                        attackState = 2f;
-                        npc.netUpdate = true;
-                    }
-
-                    break;
-
-                // Spin charge.
-                case 2:
-                    if (attackTimer < 30f)
-                    {
-                        npc.velocity *= 0.7f;
-                        npc.rotation *= 0.7f;
-                    }
-
-                    // Roar and charge after enough time has passed.
-                    if (attackTimer == 30f)
-                        Main.PlaySound(SoundID.Roar, target.Center, 0);
-
-                    if (attackTimer >= 30f && attackTimer % 45f == 0f)
-                    {
-                        Main.PlaySound(SoundID.Item8, target.Center);
-                        float skullSpeed = 5.6f;
-                        int skullCount = 5;
-
-                        if (BossRushEvent.BossRushActive)
-                            skullSpeed *= 3.25f;
-
-                        for (int i = 0; i < skullCount; i++)
-                        {
-                            Vector2 skullVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 95f).RotatedBy(MathHelper.Lerp(-0.44f, 0.44f, i / (skullCount - 1f))) * skullSpeed;
-                            int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 90, 0f);
-                            if (Main.projectile.IndexInRange(skull))
-                                Main.projectile[skull].ai[0] = 0.005f;
-                        }
-                    }
-
-                    if (attackTimer > 30f && attackTimer < 300f)
-                    {
-                        float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 7.45f;
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
-
-                        npc.rotation += 0.2f;
-                        npc.rotation %= MathHelper.TwoPi;
-
-                        if (npc.WithinRange(target.Center, 50f))
-                            attackTimer += 11f;
-                    }
-
-                    if (attackTimer > 300f)
-                    {
-                        npc.velocity *= 0.94f;
-                        npc.rotation = npc.rotation.AngleLerp(0f, 0.07f);
-                    }
-
-                    if (attackTimer >= 320f)
-                    {
-                        attackState = Main.rand.Next(3, 5);
-                        attackTimer = 0f;
-                        npc.netUpdate = true;
-                    }
-                    break;
-
-                // Hover above the target and release shadow flames from the hands.
-                case 3:
-                    float adjustedTimer = attackTimer % 180f;
-                    destination = target.Center - Vector2.UnitY * 400f;
-                    acceleration = new Vector2(0.22f, 0.19f);
-                    if (adjustedTimer > 45f)
-                    {
-                        destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 100f;
-                        npc.Center = npc.Center.MoveTowards(destination, 10f);
-                    }
-
-                    DoHoverMovement(npc, destination, acceleration);
-                    npc.rotation = npc.velocity.X * 0.05f;
-
-                    if (attackTimer >= 385f)
-                    {
-                        attackState = 4f;
-                        attackTimer = 0f;
-                        npc.netUpdate = true;
-                    }
-                    break;
-
-                // Fire skulls at the player with hands.
-                case 4:
-                    adjustedTimer = attackTimer % 150f;
-                    destination = target.Center - Vector2.UnitY * 360f;
-                    acceleration = new Vector2(0.4f, 0.27f);
-                    if (adjustedTimer > 45f)
-                    {
-                        destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 100f;
-                        npc.Center = npc.Center.MoveTowards(destination, 10f);
-                    }
-
-                    DoHoverMovement(npc, destination, acceleration);
-                    npc.rotation = npc.velocity.X * 0.05f;
-
-                    if (attackTimer >= 520f)
-                    {
-                        attackState = 0f;
-                        attackTimer = 0f;
-                        npc.netUpdate = true;
-                    }
-                    break;
+            // Go to the next state after enough shots have been performed.
+            if (attackTimer >= totalShots * shootRate + 65f)
+            {
+                SelectNextAttack(npc);
+                attackTimer = 0f;
+                npc.netUpdate = true;
             }
         }
 

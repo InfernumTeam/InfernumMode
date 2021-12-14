@@ -3,6 +3,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -67,6 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float armCycleTimer = ref npc.ai[2];
+            ref float hasRedoneSpawnAnimation = ref npc.ai[3];
             ref float frameType = ref npc.localAI[0];
 
             npc.TargetClosest();
@@ -89,6 +91,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
                 return false;
             }
+
+            // Do the spawn animation again once entering the second phase.
+            if (!AnyArms && hasRedoneSpawnAnimation == 0f)
+			{
+                attackTimer = 0f;
+                attackType = (int)PrimeAttackType.SpawnEffects;
+                hasRedoneSpawnAnimation = 1f;
+
+                List<int> projectilesToDelete = new List<int>()
+                {
+                    ModContent.ProjectileType<MetallicSpike>(),
+                    ModContent.ProjectileType<LaserBolt>(),
+                    ModContent.ProjectileType<PrimeNuke>(),
+                    ModContent.ProjectileType<NuclearExplosion>(),
+                };
+
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].active && projectilesToDelete.Contains(Main.projectile[i].type))
+                        Main.projectile[i].active = false;
+                }
+
+                npc.netUpdate = true;
+			}
 
             switch ((PrimeAttackType)(int)attackType)
             {
@@ -388,6 +414,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 npc.velocity = Vector2.Zero;
             }
             npc.rotation = npc.velocity.X * 0.04f;
+            
+            // Play a telegraph sound prior to firing.
+            if (attackTimer == 5f)
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
 
             if (attackTimer == 95f)
                 Main.PlaySound(SoundID.Roar, target.Center, 0);

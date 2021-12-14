@@ -16,7 +16,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         {
             npc.TargetClosest();
             Player target = Main.player[npc.target];
-            Vector2 destination = target.Center - Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.97f, 0.97f, npc.whoAmI % 16f / 16f)) * 300f;
+
+            Vector2 spawnOffset = Vector2.UnitY.RotatedBy(MathHelper.Lerp(-0.97f, 0.97f, npc.whoAmI % 16f / 16f)) * 300f;
+            if (npc.whoAmI * 113 % 2 == 1)
+                spawnOffset *= -1f;
+
+            Vector2 destination = target.Center + spawnOffset;
 
             ref float generalTimer = ref npc.ai[2];
             Lighting.AddLight(npc.Center, Color.Red.ToVector3() * 1.6f);
@@ -59,7 +64,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             if (npc.ai[0] == 2f)
             {
-                if ((Collision.SolidCollision(npc.position, npc.width, npc.height) || npc.justHit) && !Main.dedServ)
+                npc.knockBackResist = 0f;
+                if (Collision.SolidCollision(npc.position, npc.width, npc.height) && !Main.dedServ)
                 {
                     Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
                     for (int i = 0; i < 36; i++)

@@ -413,7 +413,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             int chargeTime = 45;
             int chargeSlowdownTime = 25;
             int chargeCount = 2;
-            float idealChargeSpeed = MathHelper.Lerp(19.5f, 23f, 1f - lifeRatio);
+            float idealChargeSpeed = MathHelper.Lerp(23f, 29f, 1f - lifeRatio);
             ref float idealChargeVelocityX = ref npc.Infernum().ExtraAI[0];
             ref float idealChargeVelocityY = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
@@ -424,12 +424,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Attempt to get into position for a charge.
             if (attackTimer < hoverRedirectTime)
             {
-                float idealHoverSpeed = MathHelper.Lerp(20.5f, 39f, attackTimer / hoverRedirectTime);
+                float idealHoverSpeed = MathHelper.Lerp(24.5f, 39f, attackTimer / hoverRedirectTime);
                 if (BossRushEvent.BossRushActive)
                     idealHoverSpeed *= 1.45f;
 
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.08f);
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.064f, true) * idealVelocity.Length();
+                npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f);
 
                 // Stop hovering if close to the hover destination
                 if (npc.WithinRange(hoverDestination, 40f))

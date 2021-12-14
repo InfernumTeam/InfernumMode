@@ -1,6 +1,8 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.UI;
@@ -126,6 +128,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(SCalWormTail).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator DesertScourgeItemUseItem
+        {
+            add => HookEndpointManager.Modify(typeof(DriedSeafood).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(DriedSeafood).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
+        }
+
         public static void ILEditingLoad()
         {
             On.Terraria.Gore.NewGore += RemoveCultistGore;
@@ -133,7 +141,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.Main.DrawTiles += WoFLavaColorChange;
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += WoFLavaColorChange2;
             IL.Terraria.Main.DoDraw += DrawSignusBlack;
-			On.Terraria.Player.KillMe += RemoveTheDamnCancerousDoGInstakill;
+            On.Terraria.Player.KillMe += RemoveTheDamnCancerousDoGInstakill;
             ModifyPreAINPC += NPCPreAIChange;
             ModifySetDefaultsNPC += NPCSetDefaultsChange;
             ModifyFindFrameNPC += NPCFindFrameChange;
@@ -149,9 +157,10 @@ namespace InfernumMode.ILEditingStuff
             SepulcherHeadModifyProjectile += FuckYou;
             SepulcherBodyModifyProjectile += FuckYou;
             SepulcherTailModifyProjectile += FuckYou;
+            DesertScourgeItemUseItem += GetRidOfDesertNuisances;
         }
 
-		public static void ILEditingUnload()
+        public static void ILEditingUnload()
         {
             On.Terraria.Gore.NewGore -= RemoveCultistGore;
             IL.Terraria.Player.ItemCheck -= ItemCheckChange;
@@ -174,6 +183,7 @@ namespace InfernumMode.ILEditingStuff
             SepulcherHeadModifyProjectile -= FuckYou;
             SepulcherBodyModifyProjectile -= FuckYou;
             SepulcherTailModifyProjectile -= FuckYou;
+            DesertScourgeItemUseItem -= GetRidOfDesertNuisances;
         }
 
         // Why.
@@ -243,7 +253,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.EmitDelegate<Func<int, VertexColors, VertexColors>>((liquidType, vertexColor) =>
             {
                 if (liquidType == 1 && InfernumMode.CanUseCustomAIs && Main.wof >= 0 && Main.npc[Main.wof].active)
-				{
+                {
                     vertexColor.BottomLeftColor = BlendLavaColors(vertexColor.BottomLeftColor);
                     vertexColor.BottomRightColor = BlendLavaColors(vertexColor.BottomRightColor);
                     vertexColor.TopLeftColor = BlendLavaColors(vertexColor.TopLeftColor);
@@ -647,9 +657,25 @@ namespace InfernumMode.ILEditingStuff
         }        
 
         private static void FuckYou(ILContext il)
-		{
+        {
             ILCursor cursor = new ILCursor(il);
             cursor.Emit(OpCodes.Ret);
-		}
+        }
+
+        private static void GetRidOfDesertNuisances(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            cursor.Emit(OpCodes.Ldarg_1);
+            cursor.EmitDelegate<Action<Player>>(player =>
+            {
+                Main.PlaySound(SoundID.Roar, player.position, 0);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DesertScourgeHead>());
+                else
+                    NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<DesertScourgeHead>());
+            });
+            cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Ret);
+        }
     }
 }

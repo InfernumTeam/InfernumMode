@@ -128,6 +128,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                         break;
                     case SkeletronHeadBehaviorOverride.SkeletronAttackType.SpinCharge:
+                    case SkeletronHeadBehaviorOverride.SkeletronAttackType.Phase1Fakeout:
                         destination = owner.Center + new Vector2(armDirection * 200f, -230f);
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.035f);
                         npc.Center = npc.Center.MoveTowards(destination, 5f);

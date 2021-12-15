@@ -42,7 +42,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 IdealHorizontalOffsetSpeed;
 
             // And accelerate downward.
-            projectile.velocity.Y = MathHelper.Lerp(projectile.velocity.Y, 20f, 0.018f);
+            if (projectile.timeLeft > 270f)
+                projectile.velocity.Y *= 0.98f;
+			else
+			{
+                if (projectile.velocity.Y < 2.5f)
+                    projectile.velocity.Y = 2.5f;
+                projectile.velocity.Y *= 1.03f;
+			}
 
             projectile.rotation = projectile.velocity.ToRotation();
             projectile.spriteDirection = (Math.Cos(projectile.rotation) > 0f).ToDirectionInt();

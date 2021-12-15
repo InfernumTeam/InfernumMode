@@ -582,13 +582,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     float maxOffset = 18f;
                     float openOffsetArea = Main.rand.NextFloat(-maxOffset * 0.65f, maxOffset * 0.65f);
                     float fuck = Main.rand.NextFloat(-2f, 2f);
-                    for (float offset = -maxOffset; offset < maxOffset; offset += maxOffset * 0.07f)
+                    for (float offset = -maxOffset; offset < maxOffset; offset += maxOffset * 0.09f)
                     {
                         // Don't fire skulls from some areas, to allow the player to have an avoidance area.
-                        if (MathHelper.Distance(openOffsetArea, offset + fuck) < 1.4f)
+                        if (MathHelper.Distance(openOffsetArea, offset + fuck) < 1.9f)
                             continue;
 
                         Vector2 shootVelocity = Vector2.UnitX * (offset + fuck) * 0.3f;
+                        shootVelocity.Y += Main.rand.NextFloat(2f);
                         int fire = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 110, 0f);
                         if (Main.projectile.IndexInRange(fire))
                         {

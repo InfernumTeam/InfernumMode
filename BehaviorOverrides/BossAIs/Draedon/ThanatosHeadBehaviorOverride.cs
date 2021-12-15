@@ -25,7 +25,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             AggressiveCharge,
             ProjectileShooting_PurpleLaser,
             ProjectileShooting_GreenLaser,
-            VomitNuke
+            VomitNukes,
+            RocketCharge,
+            MaximumOverdrive
         }
 
         public override int NPCOverrideType => ModContent.NPCType<ThanatosHead>();
@@ -161,8 +163,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 case ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
                     DoBehavior_ProjectileShooting_GreenLaser(npc, target, ref attackTimer, ref frameType);
                     break;
-                case ThanatosHeadAttackType.VomitNuke:
+                case ThanatosHeadAttackType.VomitNukes:
                     DoBehavior_VomitNuke(npc, target, ref attackTimer, ref frameType);
+                    break;
+                case ThanatosHeadAttackType.RocketCharge:
+                    DoBehavior_RocketCharge(npc, target, ref attackTimer, ref frameType);
+                    break;
+                case ThanatosHeadAttackType.MaximumOverdrive:
+                    DoBehavior_MaximumOverdrive(npc, target, ref attackTimer, ref frameType);
                     break;
             }
 
@@ -207,81 +215,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Decide frames.
             frameType = (int)ThanatosFrameType.Open;
 
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            float flyAcceleration = MathHelper.Lerp(0.042f, 0.03f, lifeRatio);
-            float idealFlySpeed = MathHelper.Lerp(13f, 9.6f, lifeRatio);
-            float generalSpeedFactor = Utils.InverseLerp(0f, 35f, attackTimer, true) * 0.825f + 1f;
-
-            Vector2 destination = target.Center;
-
-            float distanceFromDestination = npc.Distance(destination);
-            if (!npc.WithinRange(destination, 550f))
-            {
-                distanceFromDestination = npc.Distance(destination);
-                flyAcceleration *= 1.2f;
-            }
-
-            // Charge if the player is far away.
-            // Don't do this at the start of the fight though. Doing so might lead to an unfair
-            // charge.
-            if (distanceFromDestination > 1750f && attackTimer > 90f)
-                idealFlySpeed = 22f;
-
-            if (ExoMechManagement.CurrentThanatosPhase == 4)
-            {
-                generalSpeedFactor *= 0.75f;
-                flyAcceleration *= 0.5f;
-            }
-            else
-            {
-                if (ExoMechManagement.CurrentThanatosPhase >= 2)
-                    generalSpeedFactor *= 1.1f;
-                if (ExoMechManagement.CurrentThanatosPhase >= 3)
-                {
-                    generalSpeedFactor *= 1.1f;
-                    flyAcceleration *= 1.1f;
-                }
-                if (ExoMechManagement.CurrentThanatosPhase >= 5)
-                {
-                    generalSpeedFactor *= 1.1f;
-                    flyAcceleration *= 1.1f;
-                }
-            }
-
-            // Enforce a lower bound on the speed factor.
-            if (generalSpeedFactor < 1f)
-                generalSpeedFactor = 1f;
-
-            float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(destination));
-
-            // Adjust the speed based on how the direction towards the target compares to the direction of the
-            // current velocity. This check is unnecessary once close to the target, which would prompt a snap/charge.
-            if (!npc.WithinRange(destination, 250f))
-            {
-                float flySpeed = npc.velocity.Length();
-                if (flySpeed < 13f)
-                    flySpeed += 0.06f;
-
-                if (flySpeed > 15f)
-                    flySpeed -= 0.065f;
-
-                if (directionToPlayerOrthogonality < 0.85f && directionToPlayerOrthogonality > 0.5f)
-                    flySpeed += 0.16f;
-
-                if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
-                    flySpeed -= 0.1f;
-
-                flySpeed = MathHelper.Clamp(flySpeed, 12f, 19f) * generalSpeedFactor;
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * flySpeed;
-            }
-
-            if (!npc.WithinRange(target.Center, 200f))
-                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), generalSpeedFactor);
-
-            // Lunge if near the player.
-            bool canCharge = ExoMechManagement.CurrentThanatosPhase != 4 && directionToPlayerOrthogonality > 0.75f && distanceFromDestination < 400f;
-            if (canCharge && npc.velocity.Length() < idealFlySpeed * generalSpeedFactor * 1.8f)
-                npc.velocity *= 1.2f;
+            // Handle movement.
+            DoAggressiveChargeMovement(npc, target, attackTimer, 1f);
 
             if (attackTimer > 720f)
                 SelectNextAttack(npc);
@@ -494,6 +429,91 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 SelectNextAttack(npc);
         }
 
+        public static void DoBehavior_RocketCharge(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        {
+            // Decide frames.
+            frameType = (int)ThanatosFrameType.Open;
+
+            // Handle movement.
+            DoAggressiveChargeMovement(npc, target, attackTimer, 0.8f);
+
+            int segmentShootDelay = 120;
+            ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
+            ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
+            ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
+
+            // Select segment shoot attributes.
+            if (attackTimer % segmentShootDelay == segmentShootDelay - 1f)
+            {
+                totalSegmentsToFire = 18f;
+                segmentFireTime = 80f;
+
+                if (ExoMechManagement.CurrentThanatosPhase >= 5)
+                {
+                    totalSegmentsToFire += 3f;
+                    segmentFireTime += 10f;
+                }
+                if (ExoMechManagement.CurrentThanatosPhase >= 6)
+                {
+                    totalSegmentsToFire += 3f;
+                    segmentFireTime += 8f;
+                }
+
+                segmentFireCountdown = segmentFireTime;
+                npc.netUpdate = true;
+            }
+
+            if (segmentFireCountdown > 0f)
+                segmentFireCountdown--;
+
+            if (attackTimer > 600f)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_MaximumOverdrive(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        {
+            int attackTime = 720;
+            int cooloffTime = 360;
+            float chargeSpeedInterpolant = Utils.InverseLerp(0f, 45f, attackTimer, true) * Utils.InverseLerp(attackTime, attackTime - 45f, attackTimer, true);
+            float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.525f, chargeSpeedInterpolant);
+
+            ref float coolingOff = ref npc.Infernum().ExtraAI[0];
+
+            // Play a telegraph before the attack begins as a warning.
+            if (attackTimer == 1f)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ArtemisLaserSweepTelegraph"), target.Center);
+
+            // Decide frames.
+            frameType = (int)ThanatosFrameType.Open;
+
+            // Decide whether to cool off or not.
+            coolingOff = (attackTimer > attackTime - 12f).ToInt();
+
+            // Handle movement.
+            DoAggressiveChargeMovement(npc, target, attackTimer, chargeSpeedFactor);
+
+            // Periodically release lasers from the sides.
+            if (Main.netMode != NetmodeID.MultiplayerClient && coolingOff == 0f && attackTimer % 40f == 39f)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    int type = ModContent.ProjectileType<DetatchedThanatosLaser>();
+                    float shootSpeed = 19f;
+                    Vector2 projectileDestination = target.Center;
+                    Vector2 spawnPosition = target.Center + Main.rand.NextVector2CircularEdge(1500f, 1500f);
+                    int laser = Utilities.NewProjectileBetter(spawnPosition, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 600, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                    if (Main.projectile.IndexInRange(laser))
+                    {
+                        Main.projectile[laser].owner = npc.target;
+                        Main.projectile[laser].ModProjectile<DetatchedThanatosLaser>().InitialDestination = projectileDestination;
+                    }
+                }
+            }
+
+            if (attackTimer > attackTime + cooloffTime)
+                SelectNextAttack(npc);
+        }
+
         public static void DoProjectileShootInterceptionMovement(NPC npc, Player target, float speedMultiplier = 1f)
         {
             // Attempt to intercept the target.
@@ -530,6 +550,87 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * idealFlySpeed, idealFlySpeed / 24f);
         }
 
+        public static void DoAggressiveChargeMovement(NPC npc, Player target, float attackTimer, float speedMultiplier = 1f)
+        {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            float flyAcceleration = MathHelper.Lerp(0.042f, 0.03f, lifeRatio);
+            float idealFlySpeed = MathHelper.Lerp(13f, 9.6f, lifeRatio);
+            float generalSpeedFactor = Utils.InverseLerp(0f, 35f, attackTimer, true) * 0.825f + 1f;
+
+            Vector2 destination = target.Center;
+
+            float distanceFromDestination = npc.Distance(destination);
+            if (!npc.WithinRange(destination, 550f))
+            {
+                distanceFromDestination = npc.Distance(destination);
+                flyAcceleration *= 1.2f;
+            }
+
+            // Charge if the player is far away.
+            // Don't do this at the start of the fight though. Doing so might lead to an unfair
+            // charge.
+            if (distanceFromDestination > 1750f && attackTimer > 90f)
+                idealFlySpeed = 22f;
+
+            if (ExoMechManagement.CurrentThanatosPhase == 4)
+            {
+                generalSpeedFactor *= 0.75f;
+                flyAcceleration *= 0.5f;
+            }
+            else
+            {
+                if (ExoMechManagement.CurrentThanatosPhase >= 2)
+                    generalSpeedFactor *= 1.1f;
+                if (ExoMechManagement.CurrentThanatosPhase >= 3)
+                {
+                    generalSpeedFactor *= 1.1f;
+                    flyAcceleration *= 1.1f;
+                }
+                if (ExoMechManagement.CurrentThanatosPhase >= 5)
+                {
+                    generalSpeedFactor *= 1.1f;
+                    flyAcceleration *= 1.1f;
+                }
+            }
+
+            // Enforce a lower bound on the speed factor.
+            if (generalSpeedFactor < 1f)
+                generalSpeedFactor = 1f;
+            generalSpeedFactor *= speedMultiplier;
+            flyAcceleration *= 1f + (speedMultiplier - 1f) * 1.3f;
+
+            float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(destination));
+
+            // Adjust the speed based on how the direction towards the target compares to the direction of the
+            // current velocity. This check is unnecessary once close to the target, which would prompt a snap/charge.
+            if (!npc.WithinRange(destination, 250f))
+            {
+                float flySpeed = npc.velocity.Length();
+                if (flySpeed < 13f)
+                    flySpeed += 0.06f;
+
+                if (flySpeed > 15f)
+                    flySpeed -= 0.065f;
+
+                if (directionToPlayerOrthogonality < 0.85f && directionToPlayerOrthogonality > 0.5f)
+                    flySpeed += 0.16f;
+
+                if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
+                    flySpeed -= 0.1f;
+
+                flySpeed = MathHelper.Clamp(flySpeed, 12f, 19f) * generalSpeedFactor;
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination), flyAcceleration, true) * flySpeed;
+            }
+
+            if (!npc.WithinRange(target.Center, 200f))
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), generalSpeedFactor);
+
+            // Lunge if near the player.
+            bool canCharge = ExoMechManagement.CurrentThanatosPhase != 4 && directionToPlayerOrthogonality > 0.75f && distanceFromDestination < 400f;
+            if (canCharge && npc.velocity.Length() < idealFlySpeed * generalSpeedFactor * 1.8f)
+                npc.velocity *= 1.2f;
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             ThanatosHeadAttackType oldAttackType = (ThanatosHeadAttackType)(int)npc.ai[0];
@@ -542,11 +643,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 newAttackType = (ThanatosHeadAttackType)(Main.player[npc.target].Infernum().ThanatosLaserTypeSelector.MakeSelection() + 1);
                 if (Main.rand.NextBool(4) && ExoMechManagement.CurrentThanatosPhase >= 3)
-                    newAttackType = ThanatosHeadAttackType.VomitNuke;
+                    newAttackType = ThanatosHeadAttackType.VomitNukes;
             }
             else
             {
                 newAttackType = ThanatosHeadAttackType.AggressiveCharge;
+                if (ExoMechManagement.CurrentThanatosPhase >= 5 && Main.rand.NextBool())
+                    newAttackType = ThanatosHeadAttackType.RocketCharge;
+                if (ExoMechManagement.CurrentThanatosPhase >= 6 && Main.rand.NextBool())
+                    newAttackType = ThanatosHeadAttackType.MaximumOverdrive;
             }
 
             for (int i = 0; i < 5; i++)

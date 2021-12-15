@@ -10,7 +10,7 @@ using static InfernumMode.BehaviorOverrides.BossAIs.Destroyer.DestroyerHeadBehav
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
-	public class DestroyerBodyBehaviorOverride : NPCBehaviorOverride
+    public class DestroyerBodyBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.TheDestroyerBody;
 
@@ -27,9 +27,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 npc.netUpdate = true;
             }
 
+            NPC head = Main.npc[npc.realLife];
+
             npc.Calamity().DR = 0.2f;
 
-            // Inherit various attributes from the head segment.
+            // Inherit various attributes from the ahead segment.
             // This code will go upstream across every segment, until it reaches the head.
             npc.scale = aheadSegment.scale;
             npc.Opacity = aheadSegment.Opacity;
@@ -52,19 +54,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             npc.Center = aheadSegment.Center - directionToNextSegment * npc.width * npc.scale * 0.725f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
 
-            if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active)
+            if (!Main.npc.IndexInRange(npc.realLife) || !head.active)
             {
                 npc.active = false;
                 return false;
             }
 
             float segmentNumber = npc.localAI[0];
-            float headAttackTimer = Main.npc[npc.realLife].ai[2];
-            Player target = Main.player[Main.npc[npc.realLife].target];
-            if (Main.npc[npc.realLife].ai[1] == (int)DestroyerAttackType.EnergyBlasts && Main.npc[npc.realLife].Infernum().ExtraAI[0] == 2f && headAttackTimer - 45f == segmentNumber)
+            float headAttackTimer = head.ai[2];
+            Player target = Main.player[head.target];
+            if (head.ai[1] == (int)DestroyerAttackType.EnergyBlasts && head.Infernum().ExtraAI[0] == 2f && headAttackTimer - 45f == segmentNumber)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 42f, ModContent.ProjectileType<EnergySpark2>(), 130, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 42f, ModContent.ProjectileType<EnergySpark2>(), 140, 0f);
+            }
+
+            if (head.ai[1] == (int)DestroyerAttackType.LaserSpin && head.Infernum().ExtraAI[0] == segmentNumber && headAttackTimer % 8f == 7f && headAttackTimer > 45f)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(target.Center) * 26f, ModContent.ProjectileType<EnergySpark2>(), 140, 0f);
             }
             return false;
         }

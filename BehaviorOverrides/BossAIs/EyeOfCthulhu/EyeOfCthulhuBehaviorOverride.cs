@@ -32,6 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         public const int GleamTime = 45;
         public const float Phase2LifeRatio = 0.8f;
         public const float Phase3LifeRatio = 0.35f;
+        public const float Phase4LifeRatio = 0.15f;
 
         public static EoCAttackType[] Phase1AttackPattern = new EoCAttackType[]
         {
@@ -115,6 +116,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             bool enraged = Main.dayTime && !BossRushEvent.BossRushActive;
             bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = lifeRatio < Phase3LifeRatio;
+            bool phase4 = lifeRatio < Phase4LifeRatio;
             npc.damage = npc.defDamage + 12;
             if (phase2)
             {
@@ -149,22 +151,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             switch ((EoCAttackType)(int)npc.ai[1])
             {
                 case EoCAttackType.HoverCharge:
-                    DoBehavior_HoverCharge(npc, target, enraged, phase2, lifeRatio, ref attackTimer);
+                    DoBehavior_HoverCharge(npc, target, enraged, phase2, phase4, lifeRatio, ref attackTimer);
                     break;
                 case EoCAttackType.ChargingServants:
-                    DoBehavior_ChargingServants(npc, target, enraged, phase2, lifeRatio, ref attackTimer);
+                    DoBehavior_ChargingServants(npc, target, enraged, phase2, phase4, lifeRatio, ref attackTimer);
                     break;
                 case EoCAttackType.HorizontalBloodCharge:
-                    DoBehavior_HorizontalBloodCharge(npc, target, enraged, phase2, ref attackTimer);
+                    DoBehavior_HorizontalBloodCharge(npc, target, enraged, phase2, phase4, ref attackTimer);
                     break;
                 case EoCAttackType.TeethSpit:
-                    DoBehavior_TeethSpit(npc, target, enraged, phase3, ref attackTimer);
+                    DoBehavior_TeethSpit(npc, target, enraged, phase3, phase4, ref attackTimer);
                     break;
                 case EoCAttackType.SpinDash:
-                    DoBehavior_SpinDash(npc, target, enraged, ref attackTimer);
+                    DoBehavior_SpinDash(npc, target, enraged, phase4, ref attackTimer);
                     break;
                 case EoCAttackType.BloodShots:
-                    DoBehavior_BloodShots(npc, target, enraged, ref attackTimer);
+                    DoBehavior_BloodShots(npc, target, enraged, phase4, ref attackTimer);
                     break;
             }
 
@@ -172,13 +174,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             return false;
         }
 
-        public static void DoBehavior_HoverCharge(NPC npc, Player target, bool enraged, bool phase2, float lifeRatio, ref float attackTimer)
+        public static void DoBehavior_HoverCharge(NPC npc, Player target, bool enraged, bool phase2, bool phase4, float lifeRatio, ref float attackTimer)
         {
             int hoverTime = 60;
-            int chargeTime = phase2 ? 30 : 45;
+            int chargeTime = 45;
             float chargeSpeed = MathHelper.Lerp(10f, 13.33f, 1f - lifeRatio);
             if (phase2)
-                chargeSpeed += 1.3f;
+            {
+                chargeSpeed += 1.5f;
+                chargeTime -= 15;
+            }
+            if (phase4)
+            {
+                chargeSpeed += 1.6f;
+                chargeTime -= 8;
+            }
+
             float hoverAcceleration = MathHelper.Lerp(0.1f, 0.25f, 1f - lifeRatio);
             float hoverSpeed = MathHelper.Lerp(8.5f, 17f, 1f - lifeRatio);
 
@@ -213,14 +224,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_ChargingServants(NPC npc, Player target, bool enraged, bool phase2, float lifeRatio, ref float attackTimer)
+        public static void DoBehavior_ChargingServants(NPC npc, Player target, bool enraged, bool phase2, bool phase4, float lifeRatio, ref float attackTimer)
         {
             npc.damage = 0;
 
-            int servantSummonDelay = phase2 ? 35 : 42;
-            int servantsToSummon = phase2 ? 9 : 6;
-            int servantSummonTime = phase2 ? 54 : 85;
+            int servantSummonDelay = 42;
+            int servantsToSummon = 6;
+            int servantSummonTime = 85;
             float servantSpeed = 4.5f;
+
+            if (phase2)
+            {
+                servantSummonDelay -= 7;
+                servantsToSummon += 3;
+                servantSummonTime -= 32;
+            }
+            if (phase4)
+            {
+                servantSummonDelay -= 6;
+                servantSummonTime -= 12;
+            }
             if (enraged)
             {
                 servantSummonDelay -= 10;
@@ -275,13 +298,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_HorizontalBloodCharge(NPC npc, Player target, bool enraged, bool phase2, ref float attackTimer)
+        public static void DoBehavior_HorizontalBloodCharge(NPC npc, Player target, bool enraged, bool phase2, bool phase4, ref float attackTimer)
         {
-            int bloodBallReleaseRate = phase2 ? 9 : 15;
+            int bloodBallReleaseRate = 15;
+            int chargeTime = 75;
+            if (phase2)
+            {
+                bloodBallReleaseRate -= 6;
+                chargeTime -= 30;
+            }
+            if (phase4)
+            {
+                bloodBallReleaseRate -= 2;
+                chargeTime -= 8;
+            }
+
             if (enraged)
                 bloodBallReleaseRate = (int)(bloodBallReleaseRate * 0.6f);
 
-            int chargeTime = phase2 ? 90 : 45;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
 
@@ -301,7 +335,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 if (npc.WithinRange(destination, 32f))
                 {
                     attackSubstate = 1f;
-                    npc.velocity = npc.SafeDirectionTo(target.Center - Vector2.UnitY * 300f) * 24f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center - Vector2.UnitY * 300f) * 23f;
                     if (BossRushEvent.BossRushActive)
                         npc.velocity *= 1.7f;
 
@@ -332,16 +366,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             }
         }
 
-        public static void DoBehavior_TeethSpit(NPC npc, Player target, bool enraged, bool phase3, ref float attackTimer)
+        public static void DoBehavior_TeethSpit(NPC npc, Player target, bool enraged, bool phase3, bool phase4, ref float attackTimer)
         {
-            int teethPerShot = phase3 ? 7 : 4;
-            int teethBurstTotal = phase3 ? 6 : 4;
-            float teethRadialSpread = phase3 ? 1.42f : 1.21f;
+            int teethPerShot = 4;
+            int totalTeethBursts = 4;
+            float teethRadialSpread = 1.21f;
             float teethSpeed = 25.6f;
+
+            if (phase3)
+            {
+                teethPerShot += 3;
+                totalTeethBursts += 2;
+                teethRadialSpread += 0.21f;
+            }
+            if (phase4)
+            {
+                teethPerShot += 2;
+                totalTeethBursts--;
+            }
             if (enraged)
             {
                 teethPerShot += 4;
-                teethBurstTotal += 2;
+                totalTeethBursts += 2;
                 teethSpeed *= 1.24f;
             }
 
@@ -374,7 +420,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Release teeth into the sky.
             if (attackSubstate == 1f)
             {
-                float idealAngle = MathHelper.Lerp(-teethRadialSpread, teethRadialSpread, teethBurstCounter / teethBurstTotal);
+                float idealAngle = MathHelper.Lerp(-teethRadialSpread, teethRadialSpread, teethBurstCounter / totalTeethBursts);
                 npc.rotation = npc.rotation.AngleTowards(idealAngle - MathHelper.Pi, 0.08f);
                 npc.velocity *= 0.9f;
 
@@ -386,6 +432,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                         for (int i = 0; i < teethPerShot; i++)
                         {
                             float offsetAngle = MathHelper.Lerp(-0.52f, 0.52f, i / (float)teethPerShot) + Main.rand.NextFloat(-0.07f, 0.07f);
+                            offsetAngle += MathHelper.Clamp((target.Center.X - npc.Center.X) * 0.0015f, -0.84f, 0.84f);
                             Vector2 toothShootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * teethSpeed;
                             if (BossRushEvent.BossRushActive)
                                 toothShootVelocity *= 1.6f;
@@ -399,11 +446,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 if (teethBurstDelay > 0f)
                     teethBurstDelay--;
             }
-            if (teethBurstCounter >= teethBurstTotal)
+            if (teethBurstCounter >= totalTeethBursts)
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_SpinDash(NPC npc, Player target, bool enraged, ref float attackTimer)
+        public static void DoBehavior_SpinDash(NPC npc, Player target, bool enraged, bool phase4, ref float attackTimer)
         {
             int spinCycles = 2;
             int spinTime = 120;
@@ -413,6 +460,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             float chargeSpeed = 18f;
             float chargeAcceleration = 1.006f;
             float spinRadius = 345f;
+
+            if (phase4)
+            {
+                spinTime -= 30;
+                chargeDelay -= 5;
+                chargeTime -= 8;
+                chargeSpeed += 2f;
+                spinRadius -= 10f;
+            }
 
             if (enraged)
             {
@@ -528,7 +584,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                     {
                         attackTimer = 0f;
                         chainChargeCounter++;
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed * 1.6f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed * 1.5f;
                         npc.velocity *= MathHelper.Lerp(1f, 0.67f, chainChargeCounter / chargeChainCount);
                         npc.netUpdate = true;
 
@@ -546,11 +602,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             }
         }
 
-        public static void DoBehavior_BloodShots(NPC npc, Player target, bool enraged, ref float attackTimer)
+        public static void DoBehavior_BloodShots(NPC npc, Player target, bool enraged, bool phase4, ref float attackTimer)
         {
             int shootDelay = 75;
             int shootTime = 90;
             int totalShots = 4;
+
+            if (phase4)
+            {
+                shootDelay -= 15;
+                totalShots--;
+            }
+
             if (enraged)
             {
                 shootDelay -= 10;

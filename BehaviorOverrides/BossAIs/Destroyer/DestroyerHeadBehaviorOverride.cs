@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
-	public class DestroyerHeadBehaviorOverride : NPCBehaviorOverride
+    public class DestroyerHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.TheDestroyer;
 
@@ -24,44 +24,70 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             DivingAttack,
             LaserBarrage,
             ProbeBombing,
-            SuperchargedProbes,
+            SuperchargedProbeBombing,
             DiveBombing,
-            EnergyBlasts
+            EnergyBlasts,
+            HyperspeedCharge,
+            LaserSpin
         }
         #endregion
 
         #region AI
 
-        internal static readonly DestroyerAttackType[] Phase1AttackPattern = new DestroyerAttackType[]
+        public static readonly DestroyerAttackType[] Phase1AttackPattern = new DestroyerAttackType[]
         {
             DestroyerAttackType.RegularCharge,
         };
 
-        internal static readonly DestroyerAttackType[] Phase2AttackPattern = new DestroyerAttackType[]
+        public static readonly DestroyerAttackType[] Phase2AttackPattern = new DestroyerAttackType[]
         {
             DestroyerAttackType.RegularCharge,
             DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.ProbeBombing,
             DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.HyperspeedCharge,
         };
 
-        internal static readonly DestroyerAttackType[] Phase3AttackPattern = new DestroyerAttackType[]
+        public static readonly DestroyerAttackType[] Phase3AttackPattern = new DestroyerAttackType[]
         {
             DestroyerAttackType.RegularCharge,
+            DestroyerAttackType.HyperspeedCharge,
             DestroyerAttackType.DivingAttack,
             DestroyerAttackType.EnergyBlasts,
-            DestroyerAttackType.DiveBombing,
-            DestroyerAttackType.SuperchargedProbes,
-            DestroyerAttackType.ProbeBombing,
             DestroyerAttackType.LaserBarrage,
-            DestroyerAttackType.SuperchargedProbes,
+            DestroyerAttackType.DiveBombing,
+            DestroyerAttackType.SuperchargedProbeBombing,
+            DestroyerAttackType.HyperspeedCharge,
+            DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.EnergyBlasts,
+            DestroyerAttackType.SuperchargedProbeBombing,
+            DestroyerAttackType.DivingAttack,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.RegularCharge,
-            DestroyerAttackType.ProbeBombing,
         };
 
-        internal const int BodySegmentCount = 60;
+        public static readonly DestroyerAttackType[] Phase4AttackPattern = new DestroyerAttackType[]
+        {
+            DestroyerAttackType.RegularCharge,
+            DestroyerAttackType.HyperspeedCharge,
+            DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.EnergyBlasts,
+            DestroyerAttackType.LaserSpin,
+            DestroyerAttackType.DiveBombing,
+            DestroyerAttackType.SuperchargedProbeBombing,
+            DestroyerAttackType.HyperspeedCharge,
+            DestroyerAttackType.LaserSpin,
+            DestroyerAttackType.EnergyBlasts,
+            DestroyerAttackType.SuperchargedProbeBombing,
+            DestroyerAttackType.DivingAttack,
+            DestroyerAttackType.DiveBombing,
+            DestroyerAttackType.RegularCharge,
+        };
+
+        public const int BodySegmentCount = 60;
+        public const float Phase2LifeRatio = 0.825f;
+        public const float Phase3LifeRatio = 0.45f;
+        public const float Phase4LifeRatio = 0.2f;
 
         public override bool PreAI(NPC npc)
         {
@@ -109,265 +135,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     DoAttack_RegularCharge(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case DestroyerAttackType.DivingAttack:
-                    int diveTime = 200;
-                    int ascendTime = 150;
-                    float maxDiveDescendSpeed = 18f;
-                    float diveAcceleration = 0.3f;
-                    float maxDiveAscendSpeed = 30.5f;
-
-                    if (BossRushEvent.BossRushActive)
-                    {
-                        diveAcceleration += 0.315f;
-                    }
-
-                    if (attackTimer < diveTime)
-                    {
-                        if (Math.Abs(npc.velocity.X) > 2f)
-                            npc.velocity.X *= 0.97f;
-                        if (npc.velocity.Y < maxDiveDescendSpeed)
-                            npc.velocity.Y += diveAcceleration;
-                    }
-                    else if (attackTimer < diveTime + ascendTime)
-                    {
-                        Vector2 idealVelocity = Vector2.Lerp(Vector2.UnitY, -Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X), 0.3f) * -maxDiveAscendSpeed;
-
-                        if (attackTimer < diveTime + ascendTime - 30f)
-                            npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.016f, true) * MathHelper.Lerp(npc.velocity.Length(), maxDiveAscendSpeed, 0.1f);
-
-                        // Create shake effects for players.
-                        Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.InverseLerp(diveTime + ascendTime / 2, diveTime + ascendTime, attackTimer, true);
-                        Main.LocalPlayer.Infernum().CurrentScreenShakePower = MathHelper.Lerp(Main.LocalPlayer.Infernum().CurrentScreenShakePower, 2f, 7f);
-                        Main.LocalPlayer.Infernum().CurrentScreenShakePower *= Utils.InverseLerp(2000f, 1100f, npc.Distance(Main.LocalPlayer.Center), true);
-
-                        if (attackTimer == diveTime + ascendTime - 15f)
-                            Main.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= diveTime + ascendTime - 30f)
-                        {
-                            for (int i = 0; i < 4; i++)
-                            {
-                                int type = Main.rand.NextBool(2) ? ModContent.ProjectileType<ScavengerLaser>() : ModContent.ProjectileType<DestroyerBomb>();
-                                int damage = type == ModContent.ProjectileType<ScavengerLaser>() ? 110 : 0;
-                                Utilities.NewProjectileBetter(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.8f) * 17f, type, damage, 0f);
-                            }
-                        }
-                    }
-
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-
-                    if (attackTimer >= diveTime + ascendTime + 40f)
-                        SelectNewAttack(npc);
+                    DoAttack_DivingAttack(npc, target, ref attackTimer);
                     break;
                 case DestroyerAttackType.LaserBarrage:
-                    Vector2 destination;
-                    if (attackTimer <= 90f)
-                    {
-                        destination = target.Center + Vector2.UnitY * 400f;
-                        destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 2300f;
-                        if (npc.WithinRange(destination, 23f))
-                        {
-                            npc.velocity.X = Math.Sign(target.Center.X - npc.Center.X) * MathHelper.Lerp(17f, 12f, 1f - lifeRatio);
-                            npc.velocity.Y = 8f;
-                            attackTimer = 90f;
-                        }
-                        else
-                        {
-                            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 20f, 0.05f);
-                            attackTimer--;
-                        }
-                    }
-                    else
-                    {
-                        npc.velocity.Y *= 0.98f;
-                        if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 120f && attackTimer % 60f == 59f)
-                        {
-                            float offset = Main.rand.NextFloat(120f);
-                            for (float dx = -1400f; dx < 1400f; dx += 120f)
-                            {
-                                Vector2 laserSpawnPosition = target.Center + new Vector2(dx + offset, 800f);
-                                int telegraph = Utilities.NewProjectileBetter(laserSpawnPosition, -Vector2.UnitY, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f);
-                                if (Main.projectile.IndexInRange(telegraph))
-                                    Main.projectile[telegraph].ai[0] = npc.whoAmI;
-                            }
-                        }
-                    }
-
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                    if (attackTimer >= 450f)
-                        SelectNewAttack(npc);
+                    DoAttack_LaserBarrage(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case DestroyerAttackType.ProbeBombing:
-                    destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
-                    npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
-                    npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
-                    if (npc.WithinRange(destination, 30f))
-                        npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                    else
-                        npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
-
-                    if (attackTimer % 45f == 44f)
-                    {
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
-                            for (int i = 0; i < probeCount; i++)
-                            {
-                                int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
-                                Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
-                            }
-                        }
-                    }
-
-                    if (attackTimer >= 425f)
-                        SelectNewAttack(npc);
+                    DoAttack_ProbeBombing(npc, target, lifeRatio, ref attackTimer);
                     break;
-                case DestroyerAttackType.SuperchargedProbes:
-                    destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
-                    npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
-                    npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
-                    if (npc.WithinRange(destination, 30f))
-                        npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                    else
-                        npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
-
-                    if (attackTimer == 90f)
-                    {
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int probeCount = (int)Math.Round(MathHelper.Lerp(3f, 6f, 1f - lifeRatio));
-                            for (int i = 0; i < probeCount; i++)
-                            {
-                                int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());
-                                Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
-                                Main.npc[probe].ai[3] = (i == 0f).ToInt();
-                            }
-                        }
-                    }
-
-                    if (attackTimer >= SuperchargedProbe.Lifetime + 90f)
-                        SelectNewAttack(npc);
+                case DestroyerAttackType.SuperchargedProbeBombing:
+                    DoAttack_SuperchargedProbeBombing(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case DestroyerAttackType.DiveBombing:
-                    int slamCount = 3;
-                    ref float attackState = ref npc.Infernum().ExtraAI[0];
-                    ref float slamCounter = ref npc.Infernum().ExtraAI[1];
-
-                    // Rise upwards above the target in antipation of a charge.
-                    if (attackState == 0f)
-					{
-                        Vector2 flyDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 750f, -1600f);
-                        npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(flyDestination) * 20f, 0.08f);
-                        npc.Center = npc.Center.MoveTowards(flyDestination, 15f);
-
-                        if (npc.WithinRange(flyDestination, 70f))
-						{
-                            npc.Center = flyDestination;
-                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.66f);
-                            attackTimer = 0f;
-                            attackState = 1f;
-						}
-					}
-
-                    // Attempt to charge into the target.
-                    if (attackState == 1f)
-					{
-                        if (attackTimer < 20f)
-                        {
-                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center + target.velocity * 20f), 0.15f) * 1.018f;
-                            int type = ModContent.ProjectileType<ScavengerLaser>();
-                            int damage = 120;
-                            Vector2 laserVelocity = Vector2.Lerp(npc.velocity.SafeNormalize(Vector2.UnitY), -Vector2.UnitY, 0.5f);
-                            laserVelocity = laserVelocity.RotatedByRandom(0.8f) * Main.rand.NextFloat(14f, 17f);
-                            Utilities.NewProjectileBetter(npc.Center, laserVelocity, type, damage, 0f);
-                        }
-                        else if (npc.velocity.Length() < 33f)
-                            npc.velocity *= 1.018f;
-
-                        if (attackTimer > 115f)
-						{
-                            if (slamCounter < slamCount)
-                            {
-                                attackTimer = 0f;
-                                attackState = 0f;
-                                slamCounter++;
-                            }
-                            else
-                                SelectNewAttack(npc);
-						}
-                    }
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    DoAttack_DiveBombing(npc, target, ref attackTimer);
                     break;
                 case DestroyerAttackType.EnergyBlasts:
-                    attackState = ref npc.Infernum().ExtraAI[0];
-
-                    if (attackState == 0f)
-                    {
-                        // Move away from the target.
-                        if (attackTimer < 80f)
-                            npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -21f, 0.3f);
-                        else
-                        {
-                            float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 19f, 0.15f);
-                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
-
-                            if (attackTimer < 140f)
-                            {
-                                Dust energy = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2CircularEdge(45f, 45f), 182);
-                                energy.velocity = (npc.Center - energy.position) * 0.08f;
-                                energy.noGravity = true;
-                                energy.scale *= 1.1f;
-                            }
-
-                            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 140f)
-                                Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
-
-                            if (attackTimer > 140f && attackTimer <= 285f && attackTimer % 45f == 44f)
-                            {
-                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
-                                if (Main.netMode != NetmodeID.MultiplayerClient)
-                                {
-                                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
-                                    if (BossRushEvent.BossRushActive)
-                                        shootVelocity *= 1.56f;
-                                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 135, 0f);
-                                }
-                            }
-                        }
-
-                        if (attackTimer >= 360f)
-                        {
-                            attackState = 1f;
-                            attackTimer = 0f;
-                            npc.netUpdate = true;
-                        }
-                    }
-
-                    // Rise upwards above the target in antipation of a charge.
-                    if (attackState == 1f)
-                    {
-                        Vector2 flyDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 750f, -1600f);
-                        npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(flyDestination) * 20f, 0.08f);
-                        npc.Center = npc.Center.MoveTowards(flyDestination, 15f);
-
-                        if (npc.WithinRange(flyDestination, 70f))
-                        {
-                            npc.Center = flyDestination;
-                            npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.66f);
-                            attackTimer = 0f;
-                            attackState = 2f;
-                        }
-                    }
-
-                    // Attempt to charge into the target.
-                    if (attackState == 2f)
-                    {
-                        if (attackTimer > 115f)
-                            SelectNewAttack(npc);
-                    }
-
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    DoAttack_EnergyBlasts(npc, target, ref attackTimer);
+                    break;
+                case DestroyerAttackType.HyperspeedCharge:
+                    DoAttack_HyperspeedCharge(npc, target, lifeRatio, ref attackTimer);
+                    break;
+                case DestroyerAttackType.LaserSpin:
+                    DoAttack_LaserSpin(npc, target, lifeRatio, ref attackTimer);
                     break;
             }
 
@@ -375,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             return false;
         }
 
-        internal static void SpawnDestroyerSegments(NPC head)
+        public static void SpawnDestroyerSegments(NPC head)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -495,26 +284,392 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
+        public static void DoAttack_DivingAttack(NPC npc, Player target, ref float attackTimer)
+        {
+            int diveTime = 200;
+            int ascendTime = 150;
+            float maxDiveDescendSpeed = 18f;
+            float diveAcceleration = 0.4f;
+            float maxDiveAscendSpeed = 30.5f;
+
+            if (BossRushEvent.BossRushActive)
+                diveAcceleration += 0.3f;
+
+            if (attackTimer < diveTime)
+            {
+                if (Math.Abs(npc.velocity.X) > 2f)
+                    npc.velocity.X *= 0.97f;
+                if (npc.velocity.Y < maxDiveDescendSpeed)
+                    npc.velocity.Y += diveAcceleration;
+            }
+            else if (attackTimer < diveTime + ascendTime)
+            {
+                Vector2 idealVelocity = Vector2.Lerp(Vector2.UnitY, -Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X), 0.3f) * -maxDiveAscendSpeed;
+
+                if (attackTimer < diveTime + ascendTime - 30f)
+                    npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.016f, true) * MathHelper.Lerp(npc.velocity.Length(), maxDiveAscendSpeed, 0.1f);
+
+                // Create shake effects for players.
+                Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.InverseLerp(diveTime + ascendTime / 2, diveTime + ascendTime, attackTimer, true);
+                Main.LocalPlayer.Infernum().CurrentScreenShakePower = MathHelper.Lerp(Main.LocalPlayer.Infernum().CurrentScreenShakePower, 2f, 7f);
+                Main.LocalPlayer.Infernum().CurrentScreenShakePower *= Utils.InverseLerp(2000f, 1100f, npc.Distance(Main.LocalPlayer.Center), true);
+
+                if (attackTimer == diveTime + ascendTime - 15f)
+                    Main.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= diveTime + ascendTime - 30f)
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int type = Main.rand.NextBool(2) ? ModContent.ProjectileType<ScavengerLaser>() : ModContent.ProjectileType<DestroyerBomb>();
+                        int damage = type == ModContent.ProjectileType<ScavengerLaser>() ? 110 : 0;
+                        Utilities.NewProjectileBetter(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.8f) * 17f, type, damage, 0f);
+                    }
+                }
+            }
+
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            if (attackTimer >= diveTime + ascendTime + 40f)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoAttack_LaserBarrage(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            Vector2 destination;
+            if (attackTimer <= 90f)
+            {
+                destination = target.Center + Vector2.UnitY * 400f;
+                destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 2300f;
+                if (npc.WithinRange(destination, 23f))
+                {
+                    npc.velocity.X = Math.Sign(target.Center.X - npc.Center.X) * MathHelper.Lerp(17f, 12f, 1f - lifeRatio);
+                    npc.velocity.Y = 8f;
+                    attackTimer = 90f;
+                }
+                else
+                {
+                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * 20f, 0.05f);
+                    attackTimer--;
+                }
+            }
+            else
+            {
+                npc.velocity.Y *= 0.98f;
+
+                int shootRate = lifeRatio < Phase3LifeRatio ? 48 : 60;
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 120f && attackTimer % shootRate == shootRate - 1f)
+                {
+                    float offset = Main.rand.NextFloat(120f);
+                    Vector2 laserDirection = -Vector2.UnitY;
+
+                    // Add some randomness to the lasers in phase 3.
+                    if (lifeRatio < Phase3LifeRatio)
+                        laserDirection = laserDirection.RotatedByRandom(0.66f);
+                    for (float dx = -1400f; dx < 1400f; dx += 120f)
+                    {
+                        Vector2 laserSpawnPosition = target.Center + new Vector2(dx + offset, 800f);
+                        int telegraph = Utilities.NewProjectileBetter(laserSpawnPosition, laserDirection, ModContent.ProjectileType<DestroyerPierceLaserTelegraph>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(telegraph))
+                            Main.projectile[telegraph].ai[0] = npc.whoAmI;
+                    }
+                }
+            }
+
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            if (attackTimer >= 450f)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoAttack_ProbeBombing(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
+            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
+            npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
+            if (npc.WithinRange(destination, 30f))
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            else
+                npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
+
+            if (attackTimer % 45f == 44f)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
+                    for (int i = 0; i < probeCount; i++)
+                    {
+                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                        Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
+                    }
+                }
+            }
+
+            if (attackTimer >= 425f)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoAttack_SuperchargedProbeBombing(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
+            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
+            npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
+            if (npc.WithinRange(destination, 30f))
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            else
+                npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
+
+            if (attackTimer == 90f)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int probeCount = (int)Math.Round(MathHelper.Lerp(3f, 6f, 1f - lifeRatio));
+                    for (int i = 0; i < probeCount; i++)
+                    {
+                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());
+                        Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
+                        Main.npc[probe].ai[3] = (i == 0f).ToInt();
+                    }
+                }
+            }
+
+            if (attackTimer >= SuperchargedProbe.Lifetime + 90f)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoAttack_DiveBombing(NPC npc, Player target, ref float attackTimer)
+        {
+            int slamCount = 3;
+            ref float attackState = ref npc.Infernum().ExtraAI[0];
+            ref float slamCounter = ref npc.Infernum().ExtraAI[1];
+
+            // Rise upwards above the target in antipation of a charge.
+            if (attackState == 0f)
+            {
+                Vector2 flyDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 750f, -1600f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(flyDestination) * 20f, 0.08f);
+                npc.Center = npc.Center.MoveTowards(flyDestination, 15f);
+
+                if (npc.WithinRange(flyDestination, 70f))
+                {
+                    npc.Center = flyDestination;
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.66f);
+                    attackTimer = 0f;
+                    attackState = 1f;
+                }
+            }
+
+            // Attempt to charge into the target.
+            if (attackState == 1f)
+            {
+                if (attackTimer < 20f)
+                {
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center + target.velocity * 26f), 0.15f) * 1.024f;
+                    int type = ModContent.ProjectileType<ScavengerLaser>();
+                    int damage = 120;
+                    Vector2 laserVelocity = Vector2.Lerp(npc.velocity.SafeNormalize(Vector2.UnitY), -Vector2.UnitY, 0.5f);
+                    laserVelocity = laserVelocity.RotatedByRandom(0.8f) * Main.rand.NextFloat(14f, 17f);
+                    Utilities.NewProjectileBetter(npc.Center, laserVelocity, type, damage, 0f);
+                }
+                else if (npc.velocity.Length() < 37f)
+                    npc.velocity *= 1.025f;
+
+                if (attackTimer > 115f)
+                {
+                    if (slamCounter < slamCount)
+                    {
+                        attackTimer = 0f;
+                        attackState = 0f;
+                        slamCounter++;
+                    }
+                    else
+                        SelectNewAttack(npc);
+                }
+            }
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
+        public static void DoAttack_EnergyBlasts(NPC npc, Player target, ref float attackTimer)
+        {
+            ref float attackState = ref npc.Infernum().ExtraAI[0];
+
+            if (attackState == 0f)
+            {
+                // Move away from the target.
+                if (attackTimer < 80f)
+                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -21f, 0.3f);
+                else
+                {
+                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 19f, 0.15f);
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
+
+                    if (attackTimer < 140f)
+                    {
+                        Dust energy = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2CircularEdge(45f, 45f), 182);
+                        energy.velocity = (npc.Center - energy.position) * 0.08f;
+                        energy.noGravity = true;
+                        energy.scale *= 1.1f;
+                    }
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 140f)
+                        Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+
+                    if (attackTimer > 140f && attackTimer <= 285f && attackTimer % 45f == 44f)
+                    {
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
+                            if (BossRushEvent.BossRushActive)
+                                shootVelocity *= 1.56f;
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<EnergyBlast2>(), 135, 0f);
+                        }
+                    }
+                }
+
+                if (attackTimer >= 360f)
+                {
+                    attackState = 1f;
+                    attackTimer = 0f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Rise upwards above the target in antipation of a charge.
+            if (attackState == 1f)
+            {
+                Vector2 flyDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 750f, -1600f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(flyDestination) * 20f, 0.08f);
+                npc.Center = npc.Center.MoveTowards(flyDestination, 15f);
+
+                if (npc.WithinRange(flyDestination, 70f))
+                {
+                    npc.Center = flyDestination;
+                    npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.66f);
+                    attackTimer = 0f;
+                    attackState = 2f;
+                }
+            }
+
+            // Attempt to charge into the target.
+            if (attackState == 2f && attackTimer > 115f)
+                SelectNewAttack(npc);
+
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
+        public static void DoAttack_HyperspeedCharge(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            float idealRotation = npc.AngleTo(target.Center);
+            float acceleration = MathHelper.Lerp(0.03f, 0.043f, 1f - lifeRatio);
+            float movementSpeed = MathHelper.Lerp(14f, 26f, Utils.InverseLerp(0f, 120f, attackTimer, true));
+            float slowdownInterpolant = Utils.InverseLerp(480f, 510f, attackTimer, true);
+            movementSpeed *= MathHelper.Lerp(1f, 0.35f, slowdownInterpolant);
+            movementSpeed += MathHelper.Lerp(0f, 15f, Utils.InverseLerp(420f, 3000f, npc.Distance(target.Center), true));
+            movementSpeed *= BossRushEvent.BossRushActive ? 2.1f : 1f;
+            acceleration *= BossRushEvent.BossRushActive ? 2f : 1f;
+            acceleration *= MathHelper.Lerp(1f, 0.5f, slowdownInterpolant);
+
+            if (!npc.WithinRange(target.Center, 240f))
+            {
+                float newSpeed = MathHelper.Lerp(npc.velocity.Length(), movementSpeed, acceleration * 3.2f);
+                npc.velocity = npc.velocity.RotateTowards(idealRotation, acceleration, true);
+                npc.velocity = Vector2.Lerp(npc.velocity * newSpeed, npc.SafeDirectionTo(target.Center) * newSpeed, 0.03f);
+            }
+            else if (npc.velocity.Length() < movementSpeed * 1.6f)
+                npc.velocity *= 1.04f;
+
+            // Periodically release probes.
+            if (attackTimer % 75f == 74f && slowdownInterpolant < 0.3f)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                    Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
+                }
+            }
+
+            // Emit smoke and fire.
+            for (int i = 0; i < 10; i++)
+            {
+                Dust smoke = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(10f, 10f), Main.rand.NextBool(3) ? 6 : 31);
+                smoke.velocity = -npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.92f) * Main.rand.NextFloat(1f, 13f);
+                smoke.position += npc.velocity.SafeNormalize(Vector2.Zero) * 12f;
+                smoke.noGravity = Main.rand.NextFloat() < 0.9f;
+                smoke.scale *= Main.rand.NextFloat(1.3f, 1.8f);
+            }
+
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            if (attackTimer > 750f)
+                SelectNewAttack(npc);
+        }
+
+        public static void DoAttack_LaserSpin(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        {
+            ref float segmentToFire = ref npc.Infernum().ExtraAI[0];
+
+            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
+            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
+            npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
+            if (npc.WithinRange(destination, 30f))
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            else
+                npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
+
+            if (attackTimer % 8f == 0f && attackTimer > 60f)
+            {
+                segmentToFire = (segmentToFire + 2f) % BodySegmentCount;
+                npc.netSpam = 0;
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer % 55f == 54f)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        // Prevent probe spam.
+                        if (NPC.CountNPCS(NPCID.Probe) >= 7)
+                            break;
+
+                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                        Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
+                    }
+                }
+            }
+
+            if (attackTimer >= 480f)
+                SelectNewAttack(npc);
+        }
+
         public static void SelectNewAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool phase2 = lifeRatio < 0.75f;
-            bool phase3 = lifeRatio < 0.4f;
+            bool phase2 = lifeRatio < Phase2LifeRatio;
+            bool phase3 = lifeRatio < Phase3LifeRatio;
+            bool phase4 = lifeRatio < Phase4LifeRatio;
 
             npc.ai[3]++;
 
             DestroyerAttackType[] patternToUse = phase2 ? Phase2AttackPattern : Phase1AttackPattern;
             if (phase3)
                 patternToUse = Phase3AttackPattern;
+            if (phase4)
+                patternToUse = Phase4AttackPattern;
             DestroyerAttackType nextAttackType = patternToUse[(int)(npc.ai[3] % patternToUse.Length)];
 
-            // Going to the next AI state.
+            // Go to the next AI state.
             npc.ai[1] = (int)nextAttackType;
 
-            // Resetting the attack timer.
+            // Reset the attack timer.
             npc.ai[2] = 0f;
 
-            // And the misc ai slots.
+            // And reset the misc ai slots.
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
         }

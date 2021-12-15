@@ -149,7 +149,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                                 DoAttack_CallForSeekers(npc, target, attackTimer, ref speedFactor);
                                 break;
                             case AquaticScourgeAttackType.JustCharges:
-                                speedFactor = 1.2f;
+                                speedFactor = 1.5f;
                                 if (attackTimer > 300f)
                                     GotoNextAttack(npc);
                                 break;

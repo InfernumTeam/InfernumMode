@@ -475,7 +475,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int attackTime = 720;
             int cooloffTime = 360;
             float chargeSpeedInterpolant = Utils.InverseLerp(0f, 45f, attackTimer, true) * Utils.InverseLerp(attackTime, attackTime - 45f, attackTimer, true);
-            float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.525f, chargeSpeedInterpolant);
+            float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.4f, chargeSpeedInterpolant);
 
             ref float coolingOff = ref npc.Infernum().ExtraAI[0];
 
@@ -493,7 +493,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             DoAggressiveChargeMovement(npc, target, attackTimer, chargeSpeedFactor);
 
             // Periodically release lasers from the sides.
-            if (Main.netMode != NetmodeID.MultiplayerClient && coolingOff == 0f && attackTimer % 40f == 39f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && coolingOff == 0f && attackTimer % 60f == 59f)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -581,15 +581,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 if (ExoMechManagement.CurrentThanatosPhase >= 2)
                     generalSpeedFactor *= 1.1f;
-                if (ExoMechManagement.CurrentThanatosPhase >= 3)
-                {
-                    generalSpeedFactor *= 1.1f;
-                    flyAcceleration *= 1.1f;
-                }
                 if (ExoMechManagement.CurrentThanatosPhase >= 5)
                 {
-                    generalSpeedFactor *= 1.1f;
-                    flyAcceleration *= 1.1f;
+                    generalSpeedFactor *= 1.21f;
+                    flyAcceleration *= 1.21f;
                 }
             }
 

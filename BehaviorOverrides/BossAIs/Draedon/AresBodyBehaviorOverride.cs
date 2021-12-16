@@ -326,7 +326,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Delete projectiles after the delay has concluded.
             if (attackTimer == shootDelay + 1f)
-			{
+            {
                 List<int> projectilesToDelete = new List<int>()
                 {
                     ModContent.ProjectileType<AresPlasmaFireball>(),
@@ -340,11 +340,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 };
 
                 for (int i = 0; i < Main.maxProjectiles; i++)
-				{
+                {
                     if (Main.projectile[i].active && projectilesToDelete.Contains(Main.projectile[i].type))
                         Main.projectile[i].active = false;
-				}
-			}
+                }
+            }
 
             // Laugh.
             frameType = (int)AresBodyFrameType.Laugh;
@@ -450,7 +450,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     finalMech = null;
 
                 // Use a laser spin if alone. Otherwise, use the radiance burst attack.
-                if (!complementMechIsPresent && finalMech is null)
+                if ((!complementMechIsPresent && finalMech is null) || ExoMechManagement.CurrentAresPhase == 5)
                     npc.ai[0] = Main.player[npc.target].Infernum().AresSpecialAttackTypeSelector.MakeSelection() + 1f;
                 else
                     npc.ai[0] = (int)AresBodyAttackType.RadianceLaserBursts;

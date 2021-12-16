@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
 			bool outOfBiome = !target.ZoneJungle && !BossRushEvent.BossRushActive;
 			enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
-			npc.defense = enrageTimer >= 300f ? npc.defDefense : 70;
+			npc.defense = enrageTimer >= 300f ? 70 : npc.defDefense;
 			npc.Calamity().CurrentlyEnraged = outOfBiome;
 
 			if (npc.life < npc.lifeMax * 0.1f && Main.netMode != NetmodeID.MultiplayerClient && hasBegunFinalPhaseTransition == 0f)
@@ -379,7 +379,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			else if (attackTimer < 775f)
 			{
 				// Gain some extra defense to prevent melting.
-				npc.defense += 30;
+				npc.defense += 12;
 
 				npc.velocity *= 0.9785f;
 

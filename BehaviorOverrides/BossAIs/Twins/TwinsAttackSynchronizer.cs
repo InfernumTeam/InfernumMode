@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         {
             ChargeRedirect,
             DownwardCharge,
-            MatisLordEsqueCharge,
+            MantisLordChargeThing,
             Spin,
             RedirectingLasers_And_FireRain,
             SuperAttack,
@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     return (int)MathHelper.Lerp(135f, 105f, 1f - CombinedLifeRatio);
                 case TwinsAttackState.DownwardCharge:
                     return (int)MathHelper.Lerp(105f, 75f, 1f - CombinedLifeRatio);
-                case TwinsAttackState.MatisLordEsqueCharge:
+                case TwinsAttackState.MantisLordChargeThing:
                     return 360;
                 case TwinsAttackState.Spin:
                     return 400;
@@ -72,7 +72,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                 float spazmatismLifeRatio = Main.npc[SpazmatismIndex].life / (float)Main.npc[SpazmatismIndex].lifeMax;
                 float retinzerLifeRatio = Main.npc[RetinazerIndex].life / (float)Main.npc[RetinazerIndex].lifeMax;
-                // Otherwise, become enraged if any of the eyes are at <65% health.
                 return spazmatismLifeRatio < Phase2LifeRatioThreshold || retinzerLifeRatio < Phase2LifeRatioThreshold;
             }
         }
@@ -415,7 +414,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         npc.velocity *= 1.007f;
                     break;
 
-                case TwinsAttackState.MatisLordEsqueCharge:
+                case TwinsAttackState.MantisLordChargeThing:
                     int redirectTime = 50;
                     int chargeTime = 55;
                     bool willCharge;
@@ -1187,7 +1186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         CurrentAttackState = TwinsAttackState.RedirectingLasers_And_FireRain;
                         break;
                     case 5:
-                        CurrentAttackState = TwinsAttackState.MatisLordEsqueCharge;
+                        CurrentAttackState = TwinsAttackState.MantisLordChargeThing;
                         break;
                     case 6:
                         CurrentAttackState = TwinsAttackState.Spin;
@@ -1202,7 +1201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         CurrentAttackState = TwinsAttackState.DownwardCharge;
                         break;
                     case 10:
-                        CurrentAttackState = TwinsAttackState.MatisLordEsqueCharge;
+                        CurrentAttackState = TwinsAttackState.MantisLordChargeThing;
                         break;
                     case 11:
                         CurrentAttackState = TwinsAttackState.RedirectingLasers_And_FireRain;
@@ -1242,7 +1241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         CurrentAttackState = TwinsAttackState.DownwardCharge;
                         break;
                     case 7:
-                        CurrentAttackState = TwinsAttackState.MatisLordEsqueCharge;
+                        CurrentAttackState = TwinsAttackState.MantisLordChargeThing;
                         break;
                     case 8:
                         CurrentAttackState = TwinsAttackState.ChargeRedirect;
@@ -1254,7 +1253,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         CurrentAttackState = TwinsAttackState.Spin;
                         break;
                     case 11:
-                        CurrentAttackState = TwinsAttackState.MatisLordEsqueCharge;
+                        CurrentAttackState = TwinsAttackState.MantisLordChargeThing;
                         break;
 
                     default:

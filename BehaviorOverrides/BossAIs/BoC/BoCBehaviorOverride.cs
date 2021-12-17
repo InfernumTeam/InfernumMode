@@ -321,9 +321,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 npc.netUpdate = true;
             }
 
-            if (attackTimer > teleportFadeTime + 135f)
+            if (attackTimer > teleportFadeTime + 120f)
             {
-                npc.velocity *= 0.98f;
+                npc.velocity *= 0.97f;
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.05f, 0f, 1f);
 
                 if (npc.Opacity <= 0f)
@@ -381,6 +381,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                             Main.projectile[orb].localAI[0] = shouldUseUndergroundAI.ToInt();
                     }
                 }
+                npc.velocity = Vector2.Zero;
+                npc.netUpdate = true;
                 Main.PlaySound(SoundID.Item92, target.Center);
             }
 
@@ -485,6 +487,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public static bool DoTeleportFadeEffect(NPC npc, float time, Vector2 teleportDestination, int teleportFadeTime)
         {
+            if (npc.Opacity < 1f)
+                npc.damage = 0;
+
+            if (npc.life / (float)npc.lifeMax < Subphase3LifeRatio)
+                teleportFadeTime = (int)(teleportFadeTime * 0.6f);
+
             // Fade out and teleport after a bit.
             if (time <= teleportFadeTime)
             {

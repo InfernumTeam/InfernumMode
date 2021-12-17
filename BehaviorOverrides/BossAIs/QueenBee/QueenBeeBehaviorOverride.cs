@@ -123,12 +123,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
 		internal static void DoAttack_HorizontalCharge(NPC npc, Player target, ref float frameType)
 		{
-			int chargesToDo = 2;
+			int chargesToDo = 4;
 			if (npc.life < npc.lifeMax * 0.33)
-				chargesToDo = 4;
+				chargesToDo = 6;
 
-			float baseChargeSpeed = 22f;
-			float chargeSpeedup = 0.005f;
+			float baseChargeSpeed = 24f;
+			float chargeSpeedup = 0.0067f;
 			float hoverOffset = 320f;
 			ref float attackState = ref npc.Infernum().ExtraAI[0];
 			ref float speedBoost = ref npc.Infernum().ExtraAI[1];
@@ -137,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			if (BossRushEvent.BossRushActive)
 			{
 				chargesToDo += 8;
-				baseChargeSpeed = 31f;
+				baseChargeSpeed = 33f;
 				chargeSpeedup = 0.1f;
 				hoverOffset -= 110f;
 			}
@@ -146,14 +146,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			if (attackState == 0f)
 			{
 				Vector2 destination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverOffset;
-				npc.velocity += npc.SafeDirectionTo(destination) * baseChargeSpeed / 37f;
+				npc.Center = npc.Center.MoveTowards(destination, 5f);
+				npc.velocity += npc.SafeDirectionTo(destination) * baseChargeSpeed / 30f;
 
 				frameType = (int)QueenBeeFrameType.UpwardFly;
-				if (npc.WithinRange(destination, 40f) || Math.Abs(target.Center.Y - npc.Center.Y) < 10f)
+				if (npc.WithinRange(destination, 48f) || Math.Abs(target.Center.Y - npc.Center.Y) < 15f)
 				{
+					npc.Center = Vector2.Lerp(npc.Center, destination, 0.5f);
 					npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitX) * baseChargeSpeed;
 					if (npc.life < npc.lifeMax * 0.1)
-						npc.velocity *= 1.3f;
+						npc.velocity *= 1.4f;
 
 					if (npc.life < npc.lifeMax * 0.1 && Math.Abs(target.velocity.Y) > 3f)
 						npc.velocity.Y += target.velocity.Y * 0.5f;
@@ -206,7 +208,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 				npc.netUpdate = true;
 			}
 
-			int shootRate = 50;
+			int shootRate = 42;
 			int totalStingersToShoot = 5;
 			float shootSpeed = 12f;
 			if (npc.life < npc.lifeMax * 0.5)
@@ -294,7 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
 			// Release blasts of honey.
 			bool honeyIsPoisonous = npc.life < npc.lifeMax * 0.5f;
-			int shootRate = honeyIsPoisonous ? 10 : 25;
+			int shootRate = honeyIsPoisonous ? 10 : 20;
 			int totalBlastsToShoot = 18;
 			float shootSpeed = 10f;
 			if (BossRushEvent.BossRushActive)
@@ -313,7 +315,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 				{
 					Vector2 honeySpawnPosition = new Vector2(npc.Center.X, npc.Center.Y + npc.height * 0.325f);
 					Vector2 honeyShootVelocity = (target.Center - honeySpawnPosition).SafeNormalize(Vector2.UnitY) * shootSpeed;
-					int honeyBlast = Utilities.NewProjectileBetter(honeySpawnPosition, honeyShootVelocity, ModContent.ProjectileType<HoneyBlast>(), 80, 0f);
+					int honeyBlast = Utilities.NewProjectileBetter(honeySpawnPosition, honeyShootVelocity, ModContent.ProjectileType<HoneyBlast>(), 85, 0f);
 					if (Main.projectile.IndexInRange(honeyBlast))
 						Main.projectile[honeyBlast].ai[0] = honeyIsPoisonous.ToInt();
 				}
@@ -331,7 +333,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			frameType = (int)QueenBeeFrameType.UpwardFly;
 
 			bool canShootHornetHives = npc.life < npc.lifeMax * 0.75f;
-			int totalThingsToSummon = canShootHornetHives ? 2 : 7;
+			int totalThingsToSummon = canShootHornetHives ? 4 : 7;
 
 			// Shoot 3 hives instead of 2 once below 33% life.
 			if (npc.life < npc.lifeMax * 0.33f)
@@ -339,7 +341,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
 			int summonRate = 25;
 			if (canShootHornetHives)
-				summonRate = 60;
+				summonRate = 45;
 
 			if (MathHelper.Distance(target.Center.X, npc.Center.X) > 60f)
 				npc.spriteDirection = (target.Center.X - npc.Center.X > 0).ToDirectionInt();

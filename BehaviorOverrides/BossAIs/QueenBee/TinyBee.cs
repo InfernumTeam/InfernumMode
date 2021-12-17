@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,6 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             projectile.tileCollide = false;
             projectile.friendly = false;
             projectile.hostile = true;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()

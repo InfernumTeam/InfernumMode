@@ -47,6 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             // Fuck.
             npc.Calamity().newAI[1] = MathHelper.Clamp(npc.Calamity().newAI[1] + 8f, 0f, 720f);
             npc.dontTakeDamage = npc.Calamity().newAI[1] < 700f;
+            npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
 
             // Perform initialization logic.
             if (Main.netMode != NetmodeID.MultiplayerClient && initializedFlag == 0f)

@@ -1,4 +1,5 @@
 using CalamityMod;
+using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -66,6 +67,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             npc.lifeMax = Owner.lifeMax;
             npc.dontTakeDamage = Owner.dontTakeDamage;
         }
+
+        public override Color? GetAlpha(Color drawColor) => NPC.crimsonBoss == -1 ? (Color?)null : Owner.GetAlpha(drawColor);
 
         public override bool CheckActive() => false;
     }

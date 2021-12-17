@@ -240,13 +240,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
             ref float shootCounter = ref npc.Infernum().ExtraAI[2];
+            ref float generalAttackTimer = ref npc.Infernum().ExtraAI[3];
 
+            generalAttackTimer++;
             if (shootCounter < 0f)
                 shootCounter = 0f;
 
-            Vector2 hoverDestination = target.Center + Vector2.UnitX * hoverSide * 780f;
+            Vector2 hoverDestination = target.Center;
             hoverDestination.X += hoverOffsetX;
             hoverDestination.Y += hoverOffsetY;
+
+            if (ExoMechManagement.CurrentTwinsPhase >= 6 && !calmTheFuckDown)
+                hoverDestination += (MathHelper.PiOver2 * (int)(generalAttackTimer / 75f) + MathHelper.PiOver4).ToRotationVector2() * new Vector2(hoverSide * 750f, 350f);
+            else
+                hoverDestination += Vector2.UnitX * hoverSide * 780f;
 
             // Determine rotation.
             npc.rotation = aimDirection.ToRotation() + MathHelper.PiOver2;

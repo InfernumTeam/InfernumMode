@@ -43,6 +43,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             npc.defense = 7;
             aheadSegment.ai[0] = npc.whoAmI;
 
+            if (head.damage == 0)
+                npc.damage = 0;
+
             // What the actual fuck why is this needed.
             if (npc.life <= 0)
                 npc.active = false;

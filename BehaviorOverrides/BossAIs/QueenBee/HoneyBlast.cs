@@ -29,31 +29,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
         }
 
         public override void AI()
-		{
+        {
             projectile.tileCollide = projectile.timeLeft < 390;
             if (projectile.velocity != Vector2.Zero)
                 projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }
 
-		public override void OnHitPlayer(Player target, int damage, bool crit)
-		{
-            int buffToGive = Poisonous ? BuffID.Poisoned : BuffID.Honey;
-            target.AddBuff(buffToGive, 240);
-		}
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            if (Poisonous)
+                target.AddBuff(BuffID.Poisoned, 240);
+        }
 
-		public override void Kill(int timeLeft)
-		{
+        public override void Kill(int timeLeft)
+        {
             for (int i = 0; i < 10; i++)
-			{
+            {
                 Dust ichor = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(4f, 4f), 170);
                 ichor.velocity = Main.rand.NextVector2Circular(3f, 3f);
                 ichor.scale = 0.7f;
                 ichor.fadeIn = 0.7f;
-			}
-		}
+            }
+        }
 
-		public override bool OnTileCollide(Vector2 oldVelocity)
-		{
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
             if (TotalBounces == 0f)
             {
                 if (projectile.velocity.X != oldVelocity.X)
@@ -71,9 +71,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             if (TotalBounces <= 2f)
                 projectile.netUpdate = true;
             return false;
-		}
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Color drawColor = Poisonous ? Color.Green : Color.White;
             drawColor.A = 0;

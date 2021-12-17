@@ -100,36 +100,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            // Ares and twins summons Thanatos.
+            // Thanatos and twins summon Ares.
             // Only Apollo does the summoning.
-            if (npc.type == ModContent.NPCType<AresBody>() || npc.type == ModContent.NPCType<Apollo>())
+            if (npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<Apollo>())
             {
                 Vector2 thanatosSpawnPosition = Main.player[npc.target].Center + Vector2.UnitY * 2100f;
-                int complementMech = NPC.NewNPC((int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
-                NPC thanatos = Main.npc[complementMech];
-                npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
-
-                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
-                thanatos.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
-                thanatos.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
-                thanatos.velocity = thanatos.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
-
-                thanatos.netUpdate = true;
-            }
-
-            // Thanatos summons Ares.
-            if (npc.type == ModContent.NPCType<ThanatosHead>())
-            {
-                Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int complementMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
+                int complementMech = NPC.NewNPC((int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
                 NPC ares = Main.npc[complementMech];
                 npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
 
-                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
+                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs on its own.
                 ares.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
                 ares.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
+                ares.velocity = ares.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
 
                 ares.netUpdate = true;
+            }
+
+            // Ares summons Thanatos.
+            if (npc.type == ModContent.NPCType<AresBody>())
+            {
+                Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
+                int complementMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
+                NPC thanatos = Main.npc[complementMech];
+                npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
+
+                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
+                thanatos.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+                thanatos.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
+
+                thanatos.netUpdate = true;
             }
         }
 
@@ -158,20 +158,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 apollo.netUpdate = true;
             }
 
-            // Twins summon Ares.
+            // Twins summon Thanatos.
             if (npc.type == ModContent.NPCType<Apollo>())
             {
                 Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int finalMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
-                NPC ares = Main.npc[finalMech];
+                int finalMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
+                NPC thanatos = Main.npc[finalMech];
                 npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
                 Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
 
                 // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
-                ares.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
-                ares.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
+                thanatos.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+                thanatos.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
 
-                ares.netUpdate = true;
+                thanatos.netUpdate = true;
             }
         }
 

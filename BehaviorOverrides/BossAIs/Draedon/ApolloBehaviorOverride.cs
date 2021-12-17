@@ -52,6 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float complementMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
+            NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
             
@@ -81,6 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ExoMechManagement.SummonComplementMech(npc);
                 hasSummonedComplementMech = 1f;
                 attackTimer = 0f;
+                SelectNextAttack(npc);
                 npc.netUpdate = true;
             }
 
@@ -141,6 +143,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 return false;
             }
 
+            // Use combo attacks as necessary.
+            if (initialMech != null && initialMech.ai[0] >= 100f && (int)attackState < 100)
+            {
+                attackTimer = 0f;
+                attackState = ExoMechManagement.FindInitialMech().ai[0];
+                npc.netUpdate = true;
+            }
+
             switch ((TwinsAttackType)(int)attackState)
             {
                 case TwinsAttackType.BasicShots:
@@ -157,6 +167,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     break;
                 case TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames:
                     DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);
+                    break;
+            }
+
+            switch ((ExoMechComboAttackContent.ExoMechComboAttackType)attackState)
+            {
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser:
+                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_PressureLaser(npc, target, hoverSide, ref attackTimer, ref frame))
+                        SelectNextAttack(npc);
                     break;
             }
 
@@ -249,11 +267,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             Vector2 hoverDestination = target.Center;
             hoverDestination.X += hoverOffsetX;
             hoverDestination.Y += hoverOffsetY;
-
-            if (ExoMechManagement.CurrentTwinsPhase >= 6 && !calmTheFuckDown)
-                hoverDestination += (MathHelper.PiOver2 * (int)(generalAttackTimer / 75f) + MathHelper.PiOver4).ToRotationVector2() * new Vector2(hoverSide * 750f, 350f);
-            else
-                hoverDestination += Vector2.UnitX * hoverSide * 780f;
+            hoverDestination += Vector2.UnitX * hoverSide * 780f;
 
             // Determine rotation.
             npc.rotation = aimDirection.ToRotation() + MathHelper.PiOver2;
@@ -820,6 +834,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(4))
                     npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
             }
+
+            if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
+                npc.ai[0] = (int)newAttack;
 
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)

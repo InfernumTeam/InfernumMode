@@ -142,6 +142,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     break;
             }
 
+            switch ((ExoMechComboAttackContent.ExoMechComboAttackType)attackState)
+            {
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser:
+                    ExoMechComboAttackContent.DoBehavior_AresTwins_PressureLaser(npc, target, hoverSide, ref attackTimer, ref frame);
+                    break;
+            }
+
             return false;
         }
 

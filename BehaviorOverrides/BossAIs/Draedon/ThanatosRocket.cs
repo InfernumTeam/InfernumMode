@@ -36,11 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
-            // Release spawn dust on the first frame.
-            if (projectile.localAI[0] == 0f)
-            {
-                projectile.localAI[0] = 1f;
-            }
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Set AI to stop homing, start accelerating if the rocket has gotten close enough to the player.
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
@@ -59,7 +55,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             projectile.velocity = (projectile.velocity * inertia + projectile.SafeDirectionTo(target.Center) * oldSpeed) / (inertia + 1f);
             projectile.velocity.Normalize();
             projectile.velocity *= oldSpeed;
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Fly away from other rockets
             float pushForce = 0.08f;

@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
-	public class ArtemisSpinLaser : BaseLaserbeamProjectile
+	public class ArtemisPressureLaser : BaseLaserbeamProjectile
 	{
 		public int OwnerIndex
 		{
@@ -80,29 +80,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				return;
 			}
 
-			bool notUsingReleventAttack = Main.npc[OwnerIndex].ai[0] != (int)ApolloBehaviorOverride.TwinsAttackType.SpecialAttack_LaserRayScarletBursts &&
-				Main.npc[OwnerIndex].ai[0] != (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser;
+			bool notUsingReleventAttack = Main.npc[OwnerIndex].ai[0] != (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser;
 			if (Main.npc[OwnerIndex].Opacity <= 0f || notUsingReleventAttack)
 			{
 				projectile.Kill();
 				return;
 			}
 
-			Time = Main.npc[OwnerIndex].ai[1];
+			if (!notUsingReleventAttack && Time > Lifetime - 25f)
+				Time = Lifetime - 25f;
 		}
 
 		public override float DetermineLaserLength()
 		{
-			float[] sampledLengths = new float[10];
-			Collision.LaserScan(projectile.Center, projectile.velocity, projectile.width * projectile.scale, MaxLaserLength, sampledLengths);
-
-			float newLaserLength = sampledLengths.Average();
-
-			// Fire laser through walls at max length if target is behind tiles.
-			if (!Collision.CanHitLine(Main.npc[OwnerIndex].Center, 1, 1, Main.player[Main.npc[OwnerIndex].target].Center, 1, 1))
-				newLaserLength = MaxLaserLength;
-
-			return newLaserLength;
+			return MaxLaserLength;
 		}
 
 		public override void UpdateLaserMotion()

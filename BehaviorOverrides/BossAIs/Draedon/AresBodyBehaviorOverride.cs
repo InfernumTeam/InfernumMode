@@ -62,6 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             ref float enraged = ref npc.Infernum().ExtraAI[13];
+            NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
 
@@ -118,12 +119,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         if ((Main.projectile[i].type == ModContent.ProjectileType<AresDeathBeamTelegraph>() || Main.projectile[i].type == ModContent.ProjectileType<AresSpinningDeathBeam>()) && Main.projectile[i].active)
                             Main.projectile[i].Kill();
                     }
-                    SelectNextAttack(npc);
                 }
 
                 ExoMechManagement.SummonComplementMech(npc);
                 hasSummonedComplementMech = 1f;
                 attackTimer = 0f;
+                SelectNextAttack(npc);
                 npc.netUpdate = true;
             }
 
@@ -172,6 +173,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     npc.active = false;
             }
 
+            // Use combo attacks as necessary.
+            if (initialMech != null && initialMech.ai[0] >= 100f && (int)attackState < 100)
+            {
+                attackTimer = 0f;
+                attackState = ExoMechManagement.FindInitialMech().ai[0];
+                npc.netUpdate = true;
+            }
+
             // Perform specific behaviors.
             switch ((AresBodyAttackType)(int)attackState)
             {
@@ -184,6 +193,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 case AresBodyAttackType.LaserSpinBursts:
                 case AresBodyAttackType.DirectionChangingSpinBursts:
                     DoBehavior_LaserSpinBursts(npc, target, ref enraged, ref attackTimer, ref frameType);
+                    break;
+            }
+
+            switch ((ExoMechComboAttackContent.ExoMechComboAttackType)attackState)
+            {
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser:
+                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_PressureLaser(npc, target, 1f, ref attackTimer, ref frameType))
+                        SelectNextAttack(npc);
                     break;
             }
 
@@ -456,6 +473,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     npc.ai[0] = (int)AresBodyAttackType.RadianceLaserBursts;
             }
 
+            if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
+                npc.ai[0] = (int)newAttack;
+
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -474,8 +494,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
 
-            if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts || aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts || aresBody.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts)
+            if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts ||
+                aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts ||
+                aresBody.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts ||
+                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser)
+            {
                 return true;
+            }
 
             if (aresBody.Opacity <= 0f)
                 return true;
@@ -569,7 +594,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     }
                     break;
                 case AresBodyFrameType.Laugh:
-                    if (currentFrame <= 35 || currentFrame > 47)
+                    if (currentFrame <= 35 || currentFrame >= 47)
                         currentFrame = 36f;
 
                     if (npc.frameCounter >= 6D)

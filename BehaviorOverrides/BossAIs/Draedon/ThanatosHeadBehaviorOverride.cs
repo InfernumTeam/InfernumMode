@@ -58,6 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float complementMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
+            NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
 
@@ -104,6 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ExoMechManagement.SummonComplementMech(npc);
                 hasSummonedComplementMech = 1f;
                 attackTimer = 0f;
+                SelectNextAttack(npc);
                 npc.netUpdate = true;
             }
 
@@ -147,6 +149,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 target = Main.player[npc.target];
                 if (!target.active || target.dead)
                     npc.active = false;
+            }
+
+            // Use combo attacks as necessary.
+            if (initialMech != null && initialMech.ai[0] >= 100f && (int)attackState < 100)
+            {
+                attackTimer = 0f;
+                attackState = ExoMechManagement.FindInitialMech().ai[0];
+                npc.netUpdate = true;
             }
 
             switch ((ThanatosHeadAttackType)(int)attackState)
@@ -629,30 +639,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static void SelectNextAttack(NPC npc)
         {
             ThanatosHeadAttackType oldAttackType = (ThanatosHeadAttackType)(int)npc.ai[0];
-            ThanatosHeadAttackType newAttackType;
+            int newAttackType;
 
             // Update learning stuff.
             ExoMechManagement.DoPostAttackSelections(npc);
 
-            if (oldAttackType == ThanatosHeadAttackType.AggressiveCharge)
+            bool wasCharging = oldAttackType == ThanatosHeadAttackType.AggressiveCharge ||
+                oldAttackType == ThanatosHeadAttackType.RocketCharge ||
+                oldAttackType == ThanatosHeadAttackType.MaximumOverdrive;
+
+            if (wasCharging)
             {
-                newAttackType = (ThanatosHeadAttackType)(Main.player[npc.target].Infernum().ThanatosLaserTypeSelector.MakeSelection() + 1);
+                newAttackType = Main.player[npc.target].Infernum().ThanatosLaserTypeSelector.MakeSelection() + 1;
                 if (Main.rand.NextBool(4) && ExoMechManagement.CurrentThanatosPhase >= 3)
-                    newAttackType = ThanatosHeadAttackType.VomitNukes;
+                    newAttackType = (int)ThanatosHeadAttackType.VomitNukes;
             }
             else
             {
-                newAttackType = ThanatosHeadAttackType.AggressiveCharge;
+                newAttackType = (int)ThanatosHeadAttackType.AggressiveCharge;
                 if (ExoMechManagement.CurrentThanatosPhase >= 5 && Main.rand.NextBool())
-                    newAttackType = ThanatosHeadAttackType.RocketCharge;
+                    newAttackType = (int)ThanatosHeadAttackType.RocketCharge;
                 if (ExoMechManagement.CurrentThanatosPhase >= 6 && Main.rand.NextBool())
-                    newAttackType = ThanatosHeadAttackType.MaximumOverdrive;
+                    newAttackType = (int)ThanatosHeadAttackType.MaximumOverdrive;
             }
+
+            if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
+                newAttackType = (int)newAttack;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
-            npc.ai[0] = (int)newAttackType;
+            npc.ai[0] = newAttackType;
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }

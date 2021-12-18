@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override void AI()
         {
-            if (!Main.npc.IndexInRange((int)OwnerIndex) || !Owner.active)
+            if (!Main.npc.IndexInRange((int)OwnerIndex) || !Owner.active || Owner.Opacity <= 0f)
             {
                 projectile.Kill();
                 return;

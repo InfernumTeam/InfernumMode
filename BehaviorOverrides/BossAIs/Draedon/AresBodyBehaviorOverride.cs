@@ -181,6 +181,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.netUpdate = true;
             }
 
+            if (finalMech != null && finalMech.Opacity > 0f && attackState >= 100f)
+            {
+                attackTimer = 0f;
+                attackState = 0f;
+                npc.netUpdate = true;
+            }
+
             // Perform specific behaviors.
             switch ((AresBodyAttackType)(int)attackState)
             {

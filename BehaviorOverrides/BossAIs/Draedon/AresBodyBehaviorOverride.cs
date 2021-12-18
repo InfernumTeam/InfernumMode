@@ -206,6 +206,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     if (ExoMechComboAttackContent.DoBehavior_AresTwins_DualLaserCharges(npc, target, 1f, ref attackTimer, ref frameType))
                         SelectNextAttack(npc);
                     break;
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_CircleAttack:
+                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_CircleAttack(npc, target, 1f, ref attackTimer, ref frameType))
+                        SelectNextAttack(npc);
+                    break;
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar:
+                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_ElectromagneticPlasmaStar(npc, target, 1f, ref attackTimer, ref frameType))
+                        SelectNextAttack(npc);
+                    break;
             }
 
             attackTimer++;
@@ -504,6 +512,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser ||
                 aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges)
             {
+                return true;
+            }
+
+            // Only the tesla and plasma arms may fire during this attack, and only after the delay has concluded (which is present in the form of a binary switch in ExtraAI[0]).
+            if (aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_CircleAttack)
+            {
+                if (npc.type == ModContent.NPCType<AresTeslaCannon>() || npc.type == ModContent.NPCType<AresPlasmaFlamethrower>())
+                    return aresBody.Infernum().ExtraAI[0] == 0f;
+
+                return true;
+            }
+
+            if (aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar)
+            {
+                if (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresGaussNuke>())
+                    return aresBody.ai[1] < ElectromagneticStar.ChargeupTime + 60f;
                 return true;
             }
 

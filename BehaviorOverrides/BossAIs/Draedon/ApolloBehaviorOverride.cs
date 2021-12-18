@@ -180,6 +180,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     if (ExoMechComboAttackContent.DoBehavior_AresTwins_DualLaserCharges(npc, target, hoverSide, ref attackTimer, ref frame))
                         SelectNextAttack(npc);
                     break;
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_CircleAttack:
+                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_CircleAttack(npc, target, hoverSide, ref attackTimer, ref frame))
+                        SelectNextAttack(npc);
+                    break;
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar:
+                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_ElectromagneticPlasmaStar(npc, target, hoverSide, ref attackTimer, ref frame))
+                        SelectNextAttack(npc);
+                    break;
             }
 
             attackTimer++;

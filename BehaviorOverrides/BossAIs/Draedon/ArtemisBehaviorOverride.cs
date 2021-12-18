@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             // Define the whoAmI variable.
-            CalamityGlobalNPC.draedonExoMechTwinGreen = npc.whoAmI;
+            CalamityGlobalNPC.draedonExoMechTwinRed = npc.whoAmI;
 
             // Define attack variables.
             ref float attackState = ref npc.ai[0];
@@ -149,6 +149,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     break;
                 case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges:
                     ExoMechComboAttackContent.DoBehavior_AresTwins_DualLaserCharges(npc, target, hoverSide, ref attackTimer, ref frame);
+                    break;
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_CircleAttack:
+                    ExoMechComboAttackContent.DoBehavior_AresTwins_CircleAttack(npc, target, hoverSide, ref attackTimer, ref frame);
+                    break;
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar:
+                    ExoMechComboAttackContent.DoBehavior_AresTwins_ElectromagneticPlasmaStar(npc, target, hoverSide, ref attackTimer, ref frame);
                     break;
             }
 

@@ -639,8 +639,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static void SelectNextAttack(NPC npc)
         {
             ThanatosHeadAttackType oldAttackType = (ThanatosHeadAttackType)(int)npc.ai[0];
-            int newAttackType;
-
             // Update learning stuff.
             ExoMechManagement.DoPostAttackSelections(npc);
 
@@ -650,26 +648,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (wasCharging)
             {
-                newAttackType = Main.player[npc.target].Infernum().ThanatosLaserTypeSelector.MakeSelection() + 1;
+                npc.ai[0] = Main.player[npc.target].Infernum().ThanatosLaserTypeSelector.MakeSelection() + 1;
                 if (Main.rand.NextBool(4) && ExoMechManagement.CurrentThanatosPhase >= 3)
-                    newAttackType = (int)ThanatosHeadAttackType.VomitNukes;
+                    npc.ai[0] = (int)ThanatosHeadAttackType.VomitNukes;
             }
             else
             {
-                newAttackType = (int)ThanatosHeadAttackType.AggressiveCharge;
+                npc.ai[0] = (int)ThanatosHeadAttackType.AggressiveCharge;
                 if (ExoMechManagement.CurrentThanatosPhase >= 5 && Main.rand.NextBool())
-                    newAttackType = (int)ThanatosHeadAttackType.RocketCharge;
+                    npc.ai[0] = (int)ThanatosHeadAttackType.RocketCharge;
                 if (ExoMechManagement.CurrentThanatosPhase >= 6 && Main.rand.NextBool())
-                    newAttackType = (int)ThanatosHeadAttackType.MaximumOverdrive;
+                    npc.ai[0] = (int)ThanatosHeadAttackType.MaximumOverdrive;
             }
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
-                newAttackType = (int)newAttack;
+                npc.ai[0] = (int)newAttack;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
-            npc.ai[0] = newAttackType;
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }

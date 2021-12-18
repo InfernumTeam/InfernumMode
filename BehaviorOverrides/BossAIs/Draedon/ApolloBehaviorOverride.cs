@@ -176,6 +176,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     if (ExoMechComboAttackContent.DoBehavior_AresTwins_PressureLaser(npc, target, hoverSide, ref attackTimer, ref frame))
                         SelectNextAttack(npc);
                     break;
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges:
+                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_DualLaserCharges(npc, target, hoverSide, ref attackTimer, ref frame))
+                        SelectNextAttack(npc);
+                    break;
             }
 
             attackTimer++;
@@ -836,7 +840,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
+            {
                 npc.ai[0] = (int)newAttack;
+                if (npc.type == ModContent.NPCType<Apollo>())
+                {
+                    NPC artemis = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Artemis>())];
+                    artemis.ai[0] = npc.ai[0];
+                }
+            }
 
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)

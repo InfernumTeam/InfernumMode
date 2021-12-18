@@ -202,6 +202,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     if (ExoMechComboAttackContent.DoBehavior_AresTwins_PressureLaser(npc, target, 1f, ref attackTimer, ref frameType))
                         SelectNextAttack(npc);
                     break;
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges:
+                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_DualLaserCharges(npc, target, 1f, ref attackTimer, ref frameType))
+                        SelectNextAttack(npc);
+                    break;
             }
 
             attackTimer++;
@@ -497,7 +501,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts ||
-                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser)
+                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser ||
+                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges)
             {
                 return true;
             }

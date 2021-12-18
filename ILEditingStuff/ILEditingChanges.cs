@@ -490,9 +490,13 @@ namespace InfernumMode.ILEditingStuff
             if (!Main.playerInventory)
                 return;
 
-            //3 times the number of total frames, so that each frame gets displayed 3 times
+            bool renderingText = false;
+            Rectangle mouseRectangle = Utils.CenteredRectangle(Main.MouseScreen, Vector2.One * 2f);
+
+            // 3 times the number of total frames, so that each frame gets displayed 3 times.
             if (frameNumber >= 186f)
                 frameNumber = 0f;
+
             float row = (float)Math.Floor(frameNumber / 3);
             if (row >= 27)
                 row -= (((float)Math.Floor(row / 27)) * 27);
@@ -521,10 +525,35 @@ namespace InfernumMode.ILEditingStuff
             if (CalamityWorld.malice)
                 Main.spriteBatch.Draw(maliceTexture, drawCenter, areaFrame, Color.White, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
+            // Infernum active text.
+            if (mouseRectangle.Intersects(Utils.CenteredRectangle(drawCenter - Vector2.UnitY * 14f, new Vector2(24f))))
+            {
+                Main.instance.MouseText(CalamityUtils.ColorMessage("Infernum Mode is active.", Color.Red));
+                renderingText = true;
+            }
+
+            // Armageddon active text.
+            if (!renderingText && mouseRectangle.Intersects(Utils.CenteredRectangle(drawCenter + new Vector2(12f, 7f), new Vector2(24f))))
+            {
+                Main.instance.MouseText(CalamityUtils.ColorMessage($"Armageddon is {(CalamityWorld.armageddon ? "active" : "not active")}.", Color.DarkViolet));
+                renderingText = true;
+            }
+
+            // Armageddon active text.
+            if (!renderingText && mouseRectangle.Intersects(Utils.CenteredRectangle(drawCenter + new Vector2(-12f, 7f), new Vector2(24f))))
+            {
+                Main.instance.MouseText(CalamityUtils.ColorMessage($"Malice is {(CalamityWorld.malice ? "active" : "not active")}.", Color.LightCoral));
+                renderingText = true;
+            }
+
             frameNumber++;
-            //Displays each frame for 2 ticks instead of 3 if there are any bosses by skipping the 3rd frame
+            // Displays each frame for 2 ticks instead of 3 if there are any bosses by skipping the 3rd frame.
             if (CalamityPlayer.areThereAnyDamnBosses && (frameNumber + 4) % 3 == 0)
                 frameNumber++;
+
+            // Flush text data to the screen.
+            if (renderingText)
+                Main.instance.MouseTextHackZoom(string.Empty);
         }
 
         private static void DrawInfernumIcon(ILContext il)

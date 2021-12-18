@@ -147,6 +147,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser:
                     ExoMechComboAttackContent.DoBehavior_AresTwins_PressureLaser(npc, target, hoverSide, ref attackTimer, ref frame);
                     break;
+                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges:
+                    ExoMechComboAttackContent.DoBehavior_AresTwins_DualLaserCharges(npc, target, hoverSide, ref attackTimer, ref frame);
+                    break;
             }
 
             return false;

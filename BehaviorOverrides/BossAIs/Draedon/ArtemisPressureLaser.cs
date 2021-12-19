@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public const int LaserLifetime = 135;
 		public override float MaxScale => 1f;
-		public override float MaxLaserLength => 4800f;
+		public override float MaxLaserLength => 3200f;
 		public override float Lifetime => LaserLifetime;
 		public override Color LaserOverlayColor => new Color(250, 180, 100, 100);
 		public override Color LightCastColor => Color.White;

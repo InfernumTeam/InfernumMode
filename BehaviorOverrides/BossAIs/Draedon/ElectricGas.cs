@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -24,6 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			projectile.hide = true;
 			projectile.hostile = true;
 			projectile.ignoreWater = true;
+			projectile.hide = true;
 			projectile.Calamity().canBreakPlayerDefense = true;
 			cooldownSlot = 1;
 		}
@@ -59,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
 		{
-			drawCacheProjsBehindNPCsAndTiles.Add(index);
+			ILEditingChanges.DrawCacheAdditiveLighting.Add(index);
 		}
 
 		public override bool CanDamage() => projectile.Opacity > 0.6f;
@@ -72,8 +74,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			if (!projectile.Hitbox.Intersects(screenRectangle))
 				return false;
 
-			spriteBatch.SetBlendState(BlendState.Additive);
-
 			Texture2D texture = Main.projectileTexture[projectile.type];
 			Vector2 origin = texture.Size() * 0.5f;
 			Vector2 drawPosition = projectile.Center - Main.screenPosition;
@@ -83,8 +83,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 			for (int i = 0; i < 2; i++)
 				spriteBatch.Draw(texture, drawPosition, null, drawColor, projectile.rotation, origin, scale, SpriteEffects.None, 0f);
-
-			spriteBatch.SetBlendState(BlendState.AlphaBlend);
 			return false;
 		}
 	}

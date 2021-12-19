@@ -32,6 +32,7 @@ namespace InfernumMode.ILEditingStuff
     public class ILEditingChanges
     {
         public static List<int> DrawCacheProjsOverSignusBlackening = new List<int>(Main.maxProjectiles);
+        public static List<int> DrawCacheAdditiveLighting = new List<int>(Main.maxProjectiles);
         public static event ILContext.Manipulator ModifyPreAINPC
         {
             add => HookEndpointManager.Modify(typeof(NPCLoader).GetMethod("PreAI", Utilities.UniversalBindingFlags), value);
@@ -614,6 +615,23 @@ namespace InfernumMode.ILEditingStuff
                     }
                 }
                 DrawCacheProjsOverSignusBlackening.Clear();
+
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
+                for (int i = 0; i < DrawCacheAdditiveLighting.Count; i++)
+                {
+                    try
+                    {
+                        Main.instance.DrawProj(DrawCacheAdditiveLighting[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        TimeLogger.DrawException(e);
+                        Main.projectile[DrawCacheAdditiveLighting[i]].active = false;
+                    }
+                }
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.instance.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                DrawCacheAdditiveLighting.Clear();
             });
         }
 

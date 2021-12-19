@@ -83,6 +83,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 hasSummonedComplementMech = 1f;
                 attackTimer = 0f;
                 SelectNextAttack(npc);
+
+                // Clear away projectiles to prevent lingering, unfair things so that the combo attacks have a clean, open area.
+                List<int> projectilesToDelete = new List<int>()
+                {
+                    ModContent.ProjectileType<ArtemisLaser>(),
+                    ModContent.ProjectileType<ApolloPlasmaFireball>(),
+                    ModContent.ProjectileType<AresPlasmaBolt>(),
+                    ModContent.ProjectileType<ApolloChargeFlameExplosion>(),
+                    ModContent.ProjectileType<ArtemisChargeFlameExplosion>(),
+                    ModContent.ProjectileType<ExofireSpark>(),
+                    ModContent.ProjectileType<PlasmaSpark>(),
+                };
+
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].active && projectilesToDelete.Contains(Main.projectile[i].type))
+                        Main.projectile[i].active = false;
+                }
+
                 npc.netUpdate = true;
             }
 
@@ -271,6 +290,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 shootRate -= 5f;
                 totalShots += 8;
             }
+
+            // Artemis' projectiles do not speed up.
+            if (npc.type == ModContent.NPCType<Artemis>())
+                projectileShootSpeed = 10f;
+
             if (calmTheFuckDown)
                 shootRate += 12;
 

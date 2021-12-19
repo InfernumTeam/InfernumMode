@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override void AI()
         {
-            projectile.scale += 0.072f;
+            projectile.scale += 0.06f;
             projectile.Opacity = Utils.InverseLerp(300f, 265f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 50f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
@@ -51,10 +51,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             spriteBatch.SetBlendState(BlendState.Additive);
 
             Texture2D texture = Main.projectileTexture[projectile.type];
-            Color explosionColor = Color.Red * projectile.Opacity * 0.7f;
+            Color explosionColor = Color.Red * projectile.Opacity;
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
                 spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
 
             spriteBatch.ResetBlendState();

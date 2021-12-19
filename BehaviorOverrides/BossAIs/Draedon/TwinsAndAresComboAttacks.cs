@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     {
         public static bool DoBehavior_AresTwins_PressureLaser(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
         {
-            int attackDelay = 120;
+            int attackDelay = 210;
             int pressureTime = 240;
             int laserTelegraphTime = AresBeamTelegraph.Lifetime;
             int laserReleaseTime = AresDeathray.Lifetime;
@@ -215,7 +215,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     npc.velocity = npc.velocity.ClampMagnitude(0f, 22f) * 0.92f;
 
                 // Release a border of lasers to prevent from the player from just RoD-ing away.
-                float minHorizontalOffset = MathHelper.Lerp(650f, 400f, Utils.InverseLerp(0f, attackDelay + 90f, attackTimer, true));
+                float minHorizontalOffset = MathHelper.Lerp(900f, 400f, Utils.InverseLerp(0f, attackDelay + 90f, attackTimer, true));
                 for (int i = -1; i <= 1; i += 2)
                 {
                     for (int j = 0; j < 2; j++)
@@ -596,9 +596,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     laserDirection = 0f;
                     laserRotationalOffset = 0f;
 
+                    int tries = 0;
                     do
+                    {
                         hoverDestination = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(500f, 1200f);
-                    while (npc.WithinRange(hoverDestination, 800f));
+                        tries++;
+
+                        if (tries >= 1000)
+                            break;
+                    }
+                    while (npc.WithinRange(hoverDestination, 800f) || Collision.SolidCollision(hoverDestination - Vector2.One * 200f, 400, 400));
 
                     hoverDestinationX = hoverDestination.X;
                     hoverDestinationY = hoverDestination.Y;
@@ -795,6 +802,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int starAnimationTime = attackDelay + starCreationTime;
             int starAttackTime = ElectromagneticStar.AttackTime;
 
+            if (CalamityGlobalNPC.draedonExoMechPrime == -1 || CalamityGlobalNPC.draedonExoMechTwinGreen == -1)
+                return true;
+
             int potentialStarIndex = (int)Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[0];
             Projectile star = potentialStarIndex >= 0 && Main.projectile[potentialStarIndex].type == ModContent.ProjectileType<ElectromagneticStar>() ? Main.projectile[potentialStarIndex] : null;
 
@@ -866,7 +876,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Release a border of lasers to prevent from the player from just RoD-ing away.
-            float minHorizontalOffset = MathHelper.Lerp(800f, 540f, Utils.InverseLerp(0f, attackDelay + 90f, attackTimer, true));
+            float minHorizontalOffset = MathHelper.Lerp(1000f, 540f, Utils.InverseLerp(0f, attackDelay + 90f, attackTimer, true));
             if (npc.type == ModContent.NPCType<AresBody>())
             {
                 for (int i = -1; i <= 1; i += 2)

@@ -113,6 +113,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ares.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
                 ares.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
                 ares.velocity = ares.SafeDirectionTo(Main.player[npc.target].Center) * 40f;
+                ares.Opacity = 0.01f;
 
                 ares.netUpdate = true;
             }
@@ -128,6 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
                 thanatos.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
                 thanatos.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
+                thanatos.Opacity = 0.01f;
 
                 thanatos.netUpdate = true;
             }

@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
@@ -74,6 +75,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
             else
                 armCycleTimer++;
+
+            if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] > 0f)
+                enraged = 1f;
 
             if (Main.netMode != NetmodeID.MultiplayerClient && armsHaveBeenSummoned == 0f)
             {
@@ -500,7 +504,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.Infernum().ExtraAI[i] = 0f;
 
             // Stop being enraged after an idle hover.
-            if (oldAttackType == AresBodyAttackType.IdleHover)
+            if (oldAttackType == AresBodyAttackType.IdleHover || (int)oldAttackType >= 100f)
                 npc.Infernum().ExtraAI[13] = 0f;
 
             npc.netUpdate = true;

@@ -31,7 +31,7 @@ namespace InfernumMode.Items
             item.maxStack = 999;
         }
 
-        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<GiantClam>()) && player.Calamity().ZoneSunkenSea;
+        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<GiantClam>())/* && player.Calamity().ZoneSunkenSea*/;
 
         public override void AddRecipes()
         {

@@ -31,6 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
         public const int Phase2TransitionTime = 270;
+        public const int ComplementMechEnrageTimerIndex = 15;
 
         #region AI
         public override bool PreAI(NPC npc)
@@ -52,6 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float complementMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
+            ref float enrageTimer = ref npc.Infernum().ExtraAI[ComplementMechEnrageTimerIndex];
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
@@ -75,6 +77,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             npc.defDamage = 640;
             npc.dontTakeDamage = false;
             npc.Calamity().newAI[0] = (int)Apollo.Phase.ChargeCombo;
+
+            // Decrement the enrage timer.
+            if (enrageTimer > 0f)
+                enrageTimer--;
 
             // Summon the complement mech and reset things once ready.
             if (hasSummonedComplementMech == 0f && lifeRatio < ExoMechManagement.Phase4LifeRatio)
@@ -268,7 +274,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float projectileShootSpeed = 10f;
             float predictivenessFactor = 18.5f;
             if (npc.type == ModContent.NPCType<Artemis>())
-                predictivenessFactor = ExoMechManagement.ComplementMechIsPresent(npc) ? 13.25f : 18.5f;
+                predictivenessFactor = 24f;
 
             Vector2 aimDestination = target.Center + target.velocity * predictivenessFactor;
             Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
@@ -628,7 +634,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 return;
             }
 
-            int shootDelay = 25;
+            int shootDelay = 48;
             int burstReleaseRate = 30;
             float spinRadius = 540f;
             float spinArc = MathHelper.Pi * 1.15f;
@@ -982,7 +988,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             Rectangle frame = npc.frame;
             Vector2 origin = npc.Size * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
-            Color afterimageBaseColor = Color.White;
+            Color afterimageBaseColor = ExoMechComboAttackContent.EnrageTimer > 0f ? Color.Red : Color.White;
 
             // Draws a single instance of a regular, non-glowmask based Apollo.
             // This is created to allow easy duplication of them when drawing the charge.
@@ -1059,7 +1065,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
             }
 
-            spriteBatch.Draw(texture, center, frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
             spriteBatch.ExitShaderRegion();
 

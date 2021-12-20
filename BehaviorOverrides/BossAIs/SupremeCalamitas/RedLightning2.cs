@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 		}
 
 		public override int Lifetime => 60;
-		public override int TrailPointCount => 150;
+		public override int TrailPointCount => 60;
 
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 		{

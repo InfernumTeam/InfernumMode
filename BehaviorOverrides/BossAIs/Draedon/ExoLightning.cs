@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         }
 
         public override int Lifetime => 60;
-        public override int TrailPointCount => 50;
+        public override int TrailPointCount => 40;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false);
 
-            LightningDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 60);
+            LightningDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 40);
             return false;
         }
     }

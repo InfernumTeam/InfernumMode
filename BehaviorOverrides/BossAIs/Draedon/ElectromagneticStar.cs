@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             List<float> rotationPoints = new List<float>();
             List<Vector2> drawPoints = new List<Vector2>();
 
-            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 80f)
+            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 60f)
             {
                 rotationPoints.Clear();
                 drawPoints.Clear();
@@ -99,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     drawPoints.Add(Vector2.Lerp(projectile.Center - offsetDirection * Radius / 2f, projectile.Center + offsetDirection * Radius / 2f, i / 16f));
                 }
 
-                FireDrawer.Draw(drawPoints, -Main.screenPosition, 14);
+                FireDrawer.Draw(drawPoints, -Main.screenPosition, 12);
             }
             return false;
         }

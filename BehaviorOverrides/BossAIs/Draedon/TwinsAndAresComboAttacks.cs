@@ -11,6 +11,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.AresBodyBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 
@@ -18,6 +19,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
     public static partial class ExoMechComboAttackContent
     {
+        public static float EnrageTimer
+        {
+            get => FindInitialMech()?.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] ?? 0f;
+            set
+            {
+                NPC initialMech = FindInitialMech();
+                if (initialMech is null)
+                    return;
+
+                initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] = value;
+            }
+        }
         public static bool DoBehavior_AresTwins_PressureLaser(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
         {
             int attackDelay = 210;
@@ -33,6 +46,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackDelay -= 20;
                 pressureTime += 15;
                 apolloPlasmaShootRate -= 5;
+            }
+
+            if (EnrageTimer > 0f)
+            {
+                apolloPlasmaSpread *= 2f;
+                apolloPlasmaShootSpeed += 5f;
+                apolloPlasmaShootRate -= 18;
             }
 
             bool aresSlowdownPreparationInProgress = attackTimer > attackDelay + pressureTime * 0.2f;
@@ -220,6 +240,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 {
                     for (int j = 0; j < 2; j++)
                     {
+                        if (!Main.rand.NextBool(3))
+                            break;
+
                         float horizontalOffset = Main.rand.NextFloat(minHorizontalOffset, 1900f) * i;
                         if (Main.rand.NextFloat() < 0.6f)
                             horizontalOffset = minHorizontalOffset * i + Main.rand.NextFloat(0f, 30f) * -i;
@@ -328,11 +351,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int artemisChargeTime = 64;
             int artemisLaserReleaseRate = 16;
             int artemisLaserBurstCount = 8;
+            float maxLaserTurnSpeed = MathHelper.TwoPi / 240f;
 
             if (CurrentTwinsPhase != 4)
             {
                 apolloChargeSpeed += 5f;
                 artemisLaserReleaseRate -= 2;
+            }
+
+            if (EnrageTimer > 0f)
+            {
+                apolloChargeSpeed += 9f;
+                artemisLaserReleaseRate /= 2;
+                artemisLaserBurstCount += 6;
+                maxLaserTurnSpeed *= 1.5f;
             }
 
             bool aresSlowdownPreparationInProgress = wrappedAttackTimer >= redirectTime;
@@ -681,8 +713,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (deathraysHaveBeenFired)
                 {
                     float laserbeamRelativeTime = wrappedAttackTimer - (redirectTime + chargeupTime + laserTelegraphTime);
-                    float deathraySpeed = Utils.InverseLerp(0f, 180f, laserbeamRelativeTime, true) * MathHelper.TwoPi / 240f;
+                    float deathraySpeed = Utils.InverseLerp(0f, 180f, laserbeamRelativeTime, true) * maxLaserTurnSpeed;
                     laserRotationalOffset += laserDirection * deathraySpeed;
+
+                    // Get very pissed if the target leaves the deathray area.
+                    if (!npc.WithinRange(target.Center, AresSpinningRedDeathray.LaserLength + 35f) && EnrageTimer <= 0f)
+                    {
+                        // Have Draedon comment on the player's attempts to escape.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                            CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonAresEnrageText", DraedonNPC.TextColorEdgy);
+
+                        EnrageTimer = 1500f;
+                    }
                 }
 
                 // Decide rotation.
@@ -708,6 +750,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 normalShotShootSpeed += 3f;
                 totalNormalShotsToDo++;
+            }
+
+            if (EnrageTimer > 0f)
+            {
+                normalShotShootSpeed += 6f;
+                totalNormalShotsToDo += 3;
             }
 
             int normalShotShootRate = normalTwinsAttackTime / totalNormalShotsToDo;
@@ -883,9 +931,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 {
                     for (int j = 0; j < 2; j++)
                     {
+                        if (!Main.rand.NextBool(3))
+                            break;
+
                         float horizontalOffset = Main.rand.NextFloat(minHorizontalOffset, 1900f) * i;
                         if (Main.rand.NextFloat() < 0.6f)
                             horizontalOffset = minHorizontalOffset * i + Main.rand.NextFloat(0f, 30f) * -i;
+
                         Vector2 laserSpawnPosition = new Vector2(npc.Center.X + horizontalOffset, target.Center.Y + Main.rand.NextBool().ToDirectionInt() * 1600f);
                         Vector2 laserShootVelocity = Vector2.UnitY * Math.Sign(target.Center.Y - laserSpawnPosition.Y) * Main.rand.NextFloat(7f, 8f);
                         if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(5))

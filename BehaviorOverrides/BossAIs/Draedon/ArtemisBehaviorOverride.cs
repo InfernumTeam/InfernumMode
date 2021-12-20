@@ -230,7 +230,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             Rectangle frame = npc.frame;
             Vector2 origin = npc.Size * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
-            Color afterimageBaseColor = Color.White;
+            Color afterimageBaseColor = ExoMechComboAttackContent.EnrageTimer > 0f ? Color.Red : Color.White;
 
             // Draws a single instance of a regular, non-glowmask based Artemis.
             // This is created to allow easy duplication of them when drawing the charge.
@@ -307,7 +307,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
             }
 
-            spriteBatch.Draw(texture, center, frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
             spriteBatch.ExitShaderRegion();
 

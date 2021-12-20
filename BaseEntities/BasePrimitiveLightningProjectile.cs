@@ -129,7 +129,7 @@ namespace InfernumMode.BaseEntities
 			if (LightningDrawer is null)
 				LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false);
 
-			LightningDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 300);
+			LightningDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 100);
 			return false;
         }
 	}

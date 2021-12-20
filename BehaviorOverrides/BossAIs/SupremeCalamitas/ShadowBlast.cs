@@ -41,18 +41,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Time++;
         }
 
-		public override void Kill(int timeLeft)
-		{
+        public override void Kill(int timeLeft)
+        {
             for (int i = 0; i < 5; i++)
-			{
+            {
                 Dust fire = Dust.NewDustDirect(projectile.Center - Vector2.One * 12f, 6, 6, 267);
                 fire.color = Color.DarkGray;
                 fire.noGravity = true;
-			}
-		}
+            }
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.position - Main.screenPosition;
+            Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
+            Vector2 origin = frame.Size() * 0.5f;
+
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 6f;
+                spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(0.7f, 0.7f, 0.7f, 0f), projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
+            }
             Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1, Main.projectileTexture[projectile.type], false);
             return false;
         }

@@ -115,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         npc.velocity = Vector2.Zero;
 
                         int shootDelay = waveCounter == 1 ? 2 : 4;
-                        if (Main.netMode != NetmodeID.MultiplayerClient && facingPlayer && adjustedTimer > 90f && adjustedTimer < 140f && adjustedTimer % 5f == shootDelay)
+                        if (Main.netMode != NetmodeID.MultiplayerClient && facingPlayer && adjustedTimer > 90f && adjustedTimer < 140f && adjustedTimer % 4f == shootDelay)
                         {
                             Vector2 skullSpawnPosition = npc.Center;
                             Vector2 skullShootVelocity = (skullSpawnPosition - owner.Center).SafeNormalize(Vector2.UnitY) * 7.5f;

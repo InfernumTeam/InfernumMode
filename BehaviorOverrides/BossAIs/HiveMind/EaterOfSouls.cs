@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -25,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             projectile.tileCollide = false;
             projectile.friendly = false;
             projectile.hostile = true;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI() => projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;

@@ -141,8 +141,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 180f == 179f)
             {
-                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 16f) * 12f;
-                Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<ExplosiveAbyssMine>(), 90, 0f);
+                Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 24f) * 13f;
+                Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<ExplosiveAbyssMine>(), 95, 0f);
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 520f)
@@ -184,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 1f)
             {
                 int chargeDelay = 30;
-                float flySpeed = 12.75f;
+                float flySpeed = 15f;
                 float flyInertia = 8f;
                 if (BossRushEvent.BossRushActive)
                     flySpeed *= 2f;
@@ -244,7 +244,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 1f)
             {
                 int chargeDelay = 30;
-                float flySpeed = 9f;
+                float flySpeed = 12.5f;
                 float flyInertia = 8f;
                 if (BossRushEvent.BossRushActive)
                     flySpeed *= 2f;
@@ -297,7 +297,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 16f == 15f)
                 {
                     Vector2 abyssBallVelocity = npc.SafeDirectionTo(target.Center) * -7f;
-                    Utilities.NewProjectileBetter(npc.Center, abyssBallVelocity, ModContent.ProjectileType<RedirectingAbyssBall>(), 95, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, abyssBallVelocity, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
                 }
             }
 
@@ -345,7 +345,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 {
                     Vector2 abyssBallVelocity = npc.SafeDirectionTo(target.Center) * 0.0001f;
                     int ballType = Main.rand.NextBool() ? ModContent.ProjectileType<StartingCursedBall>() : ModContent.ProjectileType<StartingIchorBall>();
-                    int ball = Utilities.NewProjectileBetter(npc.Center, abyssBallVelocity, ballType, 100, 0f);
+                    int ball = Utilities.NewProjectileBetter(npc.Center, abyssBallVelocity, ballType, 105, 0f);
                     if (Main.projectile.IndexInRange(ball))
                         Main.projectile[ball].ai[0] = attackTimer - 225f;
                 }
@@ -391,12 +391,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 50f == 49f)
             {
                 Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 24f) * 15f;
-                Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<ExplosiveAbyssMine>(), 95, 0f);
+                Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<ExplosiveAbyssMine>(), 100, 0f);
             }
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 80f == 79f)
             {
                 Vector2 mineShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 24f) * 10.5f;
-                Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<RedirectingAbyssBall>(), 95, 0f);
+                Utilities.NewProjectileBetter(npc.Center + mineShootVelocity * 3f, mineShootVelocity, ModContent.ProjectileType<RedirectingAbyssBall>(), 100, 0f);
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 520f)
@@ -439,7 +439,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 1f)
             {
                 int chargeDelay = 30;
-                float flySpeed = 17.5f;
+                float flySpeed = 20f;
                 float flyInertia = 8f;
                 if (BossRushEvent.BossRushActive)
                     flySpeed *= 2.15f;
@@ -465,8 +465,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 // Release abyss balls upward.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 20f == 19f)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<AbyssBallVolley>(), 95, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 6f, ModContent.ProjectileType<AbyssBallVolley>(), 95, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<AbyssBallVolley>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * 6f, ModContent.ProjectileType<AbyssBallVolley>(), 100, 0f);
                 }
 
                 npc.rotation += (npc.velocity.X > 0f).ToDirectionInt() * 0.15f;
@@ -510,7 +510,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (attackSubstate == 1f)
             {
                 int chargeDelay = 30;
-                float flySpeed = 9f;
+                float flySpeed = 15f;
                 float flyInertia = 13.5f;
                 if (BossRushEvent.BossRushActive)
                     flySpeed *= 2.15f;
@@ -536,8 +536,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 // Release abyss balls upward.
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 16f == 15f)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitX * 8f, ModContent.ProjectileType<AbyssBallVolley>(), 95, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 8f, ModContent.ProjectileType<AbyssBallVolley>(), 95, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitX * 8f, ModContent.ProjectileType<AbyssBallVolley>(), 100, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * 8f, ModContent.ProjectileType<AbyssBallVolley>(), 100, 0f);
                 }
 
                 npc.rotation += (npc.velocity.Y > 0f).ToDirectionInt() * 0.15f;

@@ -82,7 +82,9 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<Artemis>()] = BossRushEvent.BossRushActive ? 2050000 : -1,
             [ModContent.NPCType<Apollo>()] = BossRushEvent.BossRushActive ? 2050000 : -1,
             [ModContent.NPCType<ThanatosHead>()] = BossRushEvent.BossRushActive ? 2168000 : 1376160,
-            [ModContent.NPCType<AresBody>()] = BossRushEvent.BossRushActive ? 2110000 : -1,
+            [ModContent.NPCType<AresBody>()] = BossRushEvent.BossRushActive ? 2670000 : -1,
+            [ModContent.NPCType<Artemis>()] = BossRushEvent.BossRushActive ? 3333330 : -1,
+            [ModContent.NPCType<Apollo>()] = BossRushEvent.BossRushActive ? 3333330 : -1,
             [ModContent.NPCType<SupremeCalamitas>()] = BossRushEvent.BossRushActive ? 3456780 : -1,
         };
     }

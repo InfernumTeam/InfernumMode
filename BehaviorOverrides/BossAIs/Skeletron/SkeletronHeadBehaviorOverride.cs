@@ -362,13 +362,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
         public static void DoBehavior_HoverSkulls(NPC npc, Player target, ref float attackTimer)
         {
-            int totalShots = 10;
-            int shootRate = 50;
+            int totalShots = 6;
+            int shootRate = 45;
             Vector2 destination = target.Center - Vector2.UnitY * 360f;
             Vector2 acceleration = new Vector2(0.08f, 0.06f);
             DoHoverMovement(npc, destination, acceleration);
 
             npc.rotation = npc.velocity.X * 0.05f;
+
+            // Make skeletron a little beefier due to being easy to hit.
+            npc.defense = npc.defDefense + 6;
 
             if (!npc.WithinRange(target.Center, 85f) && attackTimer % shootRate == shootRate - 1f)
             {
@@ -481,7 +484,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
             if (attackTimer > 50f && attackTimer < 270f)
             {
-                float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 6.5f;
+                float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 7.25f;
                 if (phase3)
                     moveSpeed *= 1.25f;
                 npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
@@ -518,6 +521,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 npc.Center = npc.Center.MoveTowards(destination, 10f);
             }
 
+            // Make skeletron a little beefier due to being easy to hit.
+            npc.defense = npc.defDefense + 6;
+
             DoHoverMovement(npc, destination, acceleration);
             npc.rotation = npc.velocity.X * 0.05f;
 
@@ -540,6 +546,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 npc.Center = npc.Center.MoveTowards(destination, 10f);
             }
 
+            // Make skeletron a little beefier due to being easy to hit.
+            npc.defense = npc.defDefense + 6;
+
             DoHoverMovement(npc, destination, acceleration);
             npc.rotation = npc.velocity.X * 0.05f;
 
@@ -555,14 +564,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
         {
             int totalShots = 7;
             int shootRate = 75;
+            int attackDelay = 135;
             Vector2 destination = target.Center - Vector2.UnitY * 400f;
             Vector2 acceleration = new Vector2(0.08f, 0.12f);
             DoHoverMovement(npc, destination, acceleration);
 
             npc.rotation = npc.velocity.X * 0.05f;
 
+            // Make skeletron a little beefier due to being easy to hit.
+            npc.defense = npc.defDefense + 6;
+
             // Release magic from the mouth as a telegraph.
-            if (attackTimer < shootRate)
+            if (attackTimer < attackDelay)
             {
                 Dust magic = Dust.NewDustDirect(npc.Bottom - Vector2.UnitY * 30f, npc.width, 16, 264);
                 magic.velocity = Main.rand.NextFloat(-0.43f, 0.43f).ToRotationVector2() * Main.rand.NextFloat(2f, 8f);
@@ -573,7 +586,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 magic.noGravity = true;
             }
 
-            if (!npc.WithinRange(target.Center, 85f) && attackTimer % shootRate == shootRate - 1f)
+            if (!npc.WithinRange(target.Center, 85f) && attackTimer % shootRate == shootRate - 1f && attackTimer > attackDelay)
             {
                 Main.PlaySound(SoundID.Item8, target.Center);
 
@@ -582,7 +595,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     float maxOffset = 18f;
                     float openOffsetArea = Main.rand.NextFloat(-maxOffset * 0.65f, maxOffset * 0.65f);
                     float fuck = Main.rand.NextFloat(-2f, 2f);
-                    for (float offset = -maxOffset; offset < maxOffset; offset += maxOffset * 0.09f)
+                    for (float offset = -maxOffset; offset < maxOffset; offset += maxOffset * 0.115f)
                     {
                         // Don't fire skulls from some areas, to allow the player to have an avoidance area.
                         if (MathHelper.Distance(openOffsetArea, offset + fuck) < 1.9f)

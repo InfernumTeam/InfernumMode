@@ -63,6 +63,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             ref float enraged = ref npc.Infernum().ExtraAI[13];
+            ref float backarmSwapTimer = ref npc.Infernum().ExtraAI[14];
+            ref float laserGaussArmAreSwapped = ref npc.Infernum().ExtraAI[15];
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
@@ -78,6 +80,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] > 0f)
                 enraged = 1f;
+
+            // Mark the laser and gauss arms swap sometimes.
+            if (backarmSwapTimer > 960f)
+            {
+                backarmSwapTimer = 0f;
+                laserGaussArmAreSwapped = laserGaussArmAreSwapped == 0f ? 1f : 0f;
+                npc.netUpdate = true;
+            }
+            backarmSwapTimer++;
 
             if (Main.netMode != NetmodeID.MultiplayerClient && armsHaveBeenSummoned == 0f)
             {
@@ -548,6 +559,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (ExoMechManagement.CurrentAresPhase <= 2)
                 return false;
 
+            // The gauss and laser arm are disabled for 2.5 seconds once they swap.
+            if (aresBody.Infernum().ExtraAI[14] < 150f)
+                return false;
+
             // Rotate arm usability as follows (This only applies before phase 5):
             // Gauss Nuke and Laser Cannon,
             // Laser Cannon and Tesla Cannon,
@@ -683,6 +698,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Plasma arm.
                 (1, false),
             };
+
+            // Swap arms as necessary
+            if (npc.Infernum().ExtraAI[15] == 1f)
+            {
+                armProperties[0] = (1, true);
+                armProperties[1] = (-1, true);
+            }
 
             if (laserArm != -1)
                 DrawArmFunction.Invoke(npc.modNPC, new object[] { spriteBatch, Main.npc[laserArm].Center, armGlowmaskColor, armProperties[0].Item1, armProperties[0].Item2 });

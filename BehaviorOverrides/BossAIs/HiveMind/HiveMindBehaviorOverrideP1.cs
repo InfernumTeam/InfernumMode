@@ -1,4 +1,5 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
@@ -25,6 +26,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             npc.TargetClosest(true);
             Player target = Main.player[npc.target];
             float lifeRatio = npc.life / (float)npc.lifeMax;
+
+            // Do defense damage on contact.
+            npc.Calamity().canBreakPlayerDefense = true;
 
             ref float summonThresholdByLife = ref npc.ai[3];
             ref float hasSummonedInitialBlobsFlag = ref npc.localAI[0];
@@ -81,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 hiveBlobSummonTimer++;
-                if (hiveBlobSummonTimer >= 600f)
+                if (hiveBlobSummonTimer >= 540f)
                 {
                     hiveBlobSummonTimer = 0f;
                     NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.NPCType("HiveBlob"), npc.whoAmI, 0f, 0f, 0f, 0f, 255);

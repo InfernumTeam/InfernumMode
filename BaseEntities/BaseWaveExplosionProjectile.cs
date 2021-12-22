@@ -45,7 +45,7 @@ namespace InfernumMode.BaseEntities
 		{
 			// Do screen shake effects.
 			float distanceFromPlayer = projectile.Distance(Main.LocalPlayer.Center);
-			Main.LocalPlayer.Infernum().CurrentScreenShakePower = DetermineScreenShakePower(1f - projectile.timeLeft / (float)Lifetime, distanceFromPlayer);
+			Main.LocalPlayer.Calamity().GeneralScreenShakePower = DetermineScreenShakePower(1f - projectile.timeLeft / (float)Lifetime, distanceFromPlayer);
 
 			// Cause the wave to expand outward, along with its hitbox.
 			Radius = MathHelper.Lerp(Radius, MaxRadius, RadiusExpandRateInterpolant);

@@ -129,7 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             // Enforce gravity more heavily.
             if (!npc.noGravity && npc.velocity.Y < 11f)
-                npc.velocity.Y += 0.1f;
+                npc.velocity.Y += 0.15f;
 
             if (npc.Opacity <= 0f)
             {
@@ -180,8 +180,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                         npc.velocity.Y -= 6.1f;
                     if (!Collision.CanHit(npc.Center, 1, 1, target.Center, 1, 1))
                         npc.velocity.Y -= 3.25f;
+                    npc.velocity.Y *= 1.2f;
 
-                    npc.velocity.X = (target.Center.X > npc.Center.X).ToDirectionInt() * 13f;
+                    npc.velocity.X = (target.Center.X > npc.Center.X).ToDirectionInt() * 16f;
                     npc.netUpdate = true;
                 }
             }

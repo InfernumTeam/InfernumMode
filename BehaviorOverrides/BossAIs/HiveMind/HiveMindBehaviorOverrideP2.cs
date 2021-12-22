@@ -34,7 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         public const float SpinRadius = 300f;
         public const float NPCSpawnArcSpinTime = 25f;
         public const float NPCSpawnArcRotationalOffset = MathHelper.Pi / NPCSpawnArcSpinTime;
-        public const float LungeSpinTime = 90f;
         public const float LungeSpinTotalRotations = 2f;
         public const float LungeSpinChargeDelay = 6f;
         public const float LungeSpinChargeTime = 20f;
@@ -116,6 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             if (finalPhaseInvinciblityTime > 0f)
             {
+                npc.knockBackResist = 0f;
                 npc.life = (int)MathHelper.Lerp(npc.lifeMax * 0.2f, npc.lifeMax * 0.4f, 1f - finalPhaseInvinciblityTime / 300f);
                 npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SuspensionStateDrift;
                 npc.velocity *= 0.825f;
@@ -274,7 +274,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             {
                 nextAttack = Utils.SelectRandom(Main.rand,
                     lifeRatio < 0.8f ? HiveMindP2AttackState.EaterOfSoulsWall : HiveMindP2AttackState.NPCSpawnArc,
-                    lifeRatio < 0.6f ? HiveMindP2AttackState.UndergroundFlameDash : HiveMindP2AttackState.SpinLunge,
+                    lifeRatio < 0.6f && Main.rand.NextBool() ? HiveMindP2AttackState.UndergroundFlameDash : HiveMindP2AttackState.SpinLunge,
                     lifeRatio < 0.4f ? HiveMindP2AttackState.CursedRain : HiveMindP2AttackState.CloudDash);
             }
             while (nextAttack == previousAttack);
@@ -351,6 +351,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public static void DoBehavior_SpinLunge(NPC npc, Player target, bool enraged, float lifeRatio, ref float fadeoutCountdown, ref float slowdownCountdown, ref float attackTimer)
         {
+            int spinTime = lifeRatio < 0.2f ? 75 : 90;
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
             ref float spinIncrement = ref npc.Infernum().ExtraAI[2];
             ref float initialSpinRotation = ref npc.Infernum().ExtraAI[3];
@@ -376,7 +377,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 spinDirection = Main.rand.NextBool().ToDirectionInt();
 
             // Lunge.
-            if (attackTimer == LungeSpinTime + LungeSpinChargeDelay)
+            if (attackTimer == spinTime + LungeSpinChargeDelay)
             {
                 DoRoar(npc, false);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * SpinRadius / MaxSlowdownTime * 3.6f;
@@ -392,21 +393,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
 
             // Do the spin.
-            else if (attackTimer < LungeSpinTime + LungeSpinChargeDelay)
+            else if (attackTimer < spinTime + LungeSpinChargeDelay)
             {
                 npc.velocity = Vector2.Zero;
-                npc.Center = target.Center + (MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / LungeSpinTime + initialSpinRotation).ToRotationVector2() * SpinRadius;
+                npc.Center = target.Center + (MathHelper.TwoPi * LungeSpinTotalRotations * spinIncrement * spinDirection / spinTime + initialSpinRotation).ToRotationVector2() * SpinRadius;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 10f == 9f && attackTimer < MaxSlowdownTime)
                 {
                     Vector2 clotVelocity = npc.SafeDirectionTo(target.Center) * 5.4f;
-                    int fuck = Utilities.NewProjectileBetter(npc.Center, clotVelocity, ModContent.ProjectileType<VileClot>(), 78, 1f);
+                    int fuck = Utilities.NewProjectileBetter(npc.Center, clotVelocity, ModContent.ProjectileType<VileClot>(), 85, 1f);
                     Main.projectile[fuck].tileCollide = false;
                 }
             }
 
             // Reset to the slowdown state in preparation for the next attack.
-            if (attackTimer > LungeSpinTime + LungeSpinChargeTime + LungeSpinChargeDelay * 0.45f)
+            if (attackTimer > spinTime + LungeSpinChargeTime + LungeSpinChargeDelay * 0.45f)
             {
                 slowdownCountdown = MaxSlowdownTime;
                 npc.Infernum().ExtraAI[0] = (int)HiveMindP2AttackState.SlowDown;
@@ -564,23 +565,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.velocity = Vector2.Zero;
                 dashDirection = Main.rand.NextBool().ToDirectionInt();
 
-                float horizontalTeleportOffset = MathHelper.Lerp(600f, 440f, 1f - lifeRatio);
+                float horizontalTeleportOffset = MathHelper.Lerp(510f, 400f, 1f - lifeRatio);
                 if (lifeRatio < 0.2f)
-                    horizontalTeleportOffset -= 100f;
+                    horizontalTeleportOffset -= 75f;
 
                 npc.position = target.Center + new Vector2(horizontalTeleportOffset * -dashDirection, 350f);
                 initializedFlag = 1f;
                 npc.netUpdate = true;
             }
 
-            float waitTime = lifeRatio < 0.2f ? 75f : 60f;
-            float moveTime = lifeRatio < 0.2f ? 50f : 90f;
-            float dashSpeed = lifeRatio < 0.2f ? 24f : 21.5f;
+            float waitTime = lifeRatio < 0.2f ? 70f : 50f;
+            float moveTime = lifeRatio < 0.2f ? 50f : 80f;
+            float dashSpeed = lifeRatio < 0.2f ? 24f : 22.25f;
             if (enraged)
             {
                 waitTime = (int)(waitTime * 0.67f);
-                moveTime *= 0.64f;
-                dashSpeed *= 1.4f;
+                moveTime = (int)(moveTime * 0.64f);
+                dashSpeed *= 1.35f;
             }
             if (BossRushEvent.BossRushActive)
             {
@@ -606,9 +607,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
 
             // Release clots upward if below the necessary phase threshold.
-            if (attackTimer > waitTime && lifeRatio < 0.2f && attackTimer % 8f == 7f)
+            if (attackTimer > waitTime && lifeRatio < 0.2f && attackTimer % 7f == 6f)
             {
-                int vileClot = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(6f, 8.5f), ModContent.ProjectileType<VileClot>(), 74, 0f);
+                int vileClot = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY.RotatedByRandom(0.4f) * Main.rand.NextFloat(7f, 9f), ModContent.ProjectileType<VileClot>(), 74, 0f);
                 Main.projectile[vileClot].tileCollide = false;
             }
 
@@ -647,9 +648,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             {
                 attackTimer++;
 
-                int clotSpawnRate = lifeRatio < 0.2f ? 9 : 13;
-                int cloudSpawnRate = lifeRatio < 0.2f ? 30 : 40;
-                int attackTime = lifeRatio < 0.2f ? 180 : 210;
+                int clotSpawnRate = lifeRatio < 0.2f ? 9 : 11;
+                int cloudSpawnRate = lifeRatio < 0.2f ? 30 : 36;
+                int attackTime = lifeRatio < 0.2f ? 180 : 200;
                 if (enraged)
                 {
                     clotSpawnRate /= 2;
@@ -800,7 +801,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             for (int i = 1; i < npc.oldPos.Length; i++)
             {
-                if (npc.Infernum().ExtraAI[10] == 0f)
+                if (npc.Infernum().ExtraAI[10] == 0f || !CalamityConfig.Instance.Afterimages)
                     break;
 
                 float scale = npc.scale * MathHelper.Lerp(0.9f, 0.45f, i / (float)npc.oldPos.Length);

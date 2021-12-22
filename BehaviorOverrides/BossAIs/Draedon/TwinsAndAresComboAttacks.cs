@@ -31,13 +31,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] = value;
             }
         }
+
         public static bool DoBehavior_AresTwins_PressureLaser(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
         {
             int attackDelay = 210;
             int pressureTime = 240;
             int laserTelegraphTime = AresBeamTelegraph.Lifetime;
             int laserReleaseTime = AresDeathray.Lifetime;
-            int apolloPlasmaShootRate = 50;
+            int apolloPlasmaShootRate = 60;
             float apolloPlasmaSpread = 0.27f;
             float apolloPlasmaShootSpeed = 10f;
 
@@ -248,7 +249,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             horizontalOffset = minHorizontalOffset * i + Main.rand.NextFloat(0f, 30f) * -i;
                         Vector2 laserSpawnPosition = new Vector2(npc.Center.X + horizontalOffset, target.Center.Y + Main.rand.NextBool().ToDirectionInt() * 1600f);
                         Vector2 laserShootVelocity = Vector2.UnitY * Math.Sign(target.Center.Y - laserSpawnPosition.Y) * Main.rand.NextFloat(7f, 8f);
-                        if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(5))
+                        if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(5) && attackTimer > 150f)
                         {
                             int lightning = Utilities.NewProjectileBetter(laserSpawnPosition, laserShootVelocity, ModContent.ProjectileType<ExoLightning>(), 750, 0f);
                             if (Main.projectile.IndexInRange(lightning))

@@ -1,9 +1,11 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod;
+using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
     public class BlobProjectile : ModProjectile
@@ -25,6 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 300;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
         public override void AI()

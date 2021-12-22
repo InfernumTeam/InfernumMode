@@ -118,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Hover near Ares.
-            AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(-375f, 100f), 32f, 75f);
+            AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(-375f, 100f), 45f, 90f);
 
             // Create a dust telegraph before firing.
             if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)

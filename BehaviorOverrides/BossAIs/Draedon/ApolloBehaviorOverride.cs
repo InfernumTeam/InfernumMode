@@ -912,7 +912,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 for (int i = 0; i < 5; i++)
                     artemis.Infernum().ExtraAI[i] = 0f;
 
-                if (npc.Infernum().ExtraAI[5] % 6f == 2f)
+                if (npc.Infernum().ExtraAI[5] % 5f == 2f)
                     npc.ai[2] *= -1f;
                 artemis.netUpdate = true;
             }

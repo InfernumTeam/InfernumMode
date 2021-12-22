@@ -39,6 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             npc.canGhostHeal = false;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
+            npc.buffImmune[BuffID.OnFire] = true;
         }
 
         public override void AI()

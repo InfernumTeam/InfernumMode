@@ -158,6 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             Vector2 centerOnLaser = projectile.Center;
 
             // Body drawing.
+            Rectangle screenArea = new Rectangle((int)(Main.screenPosition.X - 100f), (int)(Main.screenPosition.Y - 100f), Main.screenWidth + 200, Main.screenHeight + 200);
             if (laserBodyLength > 0f)
             {
                 float laserOffset = middleFrameArea.Height * projectile.scale;
@@ -178,6 +179,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     middleFrameArea.Y += LaserMiddleTexture.Height / Main.projFrames[projectile.type];
                     if (middleFrameArea.Y + middleFrameArea.Height > LaserMiddleTexture.Height)
                         middleFrameArea.Y = 0;
+
+                    if (!screenArea.Intersects(new Rectangle((int)centerOnLaser.X, (int)centerOnLaser.Y, 1, 1)))
+                        break;
                 }
             }
 

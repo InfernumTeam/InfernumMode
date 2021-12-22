@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 			{
                 if (projectile.velocity.Y < 2.5f)
                     projectile.velocity.Y = 2.5f;
-                projectile.velocity.Y *= 1.03f;
+                projectile.velocity.Y *= 1.0285f;
 			}
 
             projectile.rotation = projectile.velocity.ToRotation();

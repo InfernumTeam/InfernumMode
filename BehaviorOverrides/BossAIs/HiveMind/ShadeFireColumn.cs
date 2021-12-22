@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -83,7 +84,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.AddBuff(BuffID.CursedInferno, 180);
+            target.AddBuff(BuffID.CursedInferno, 240);
+            target.AddBuff(ModContent.BuffType<Shadowflame>(), 140);
             target.Calamity().lastProjectileHit = projectile;
         }
 

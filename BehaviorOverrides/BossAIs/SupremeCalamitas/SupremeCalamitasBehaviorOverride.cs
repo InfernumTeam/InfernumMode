@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -223,7 +224,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // Define the arena.
                 Vector2 arenaArea = new Vector2(164f, 164f);
-                npc.Infernum().arenaRectangle = Utils.CenteredRectangle(target.Center, arenaArea * 16f);
+                npc.Infernum().arenaRectangle = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
                 int left = (int)(npc.Infernum().arenaRectangle.Center().X / 16 - arenaArea.X * 0.5f);
                 int right = (int)(npc.Infernum().arenaRectangle.Center().X / 16 + arenaArea.X * 0.5f);
                 int top = (int)(npc.Infernum().arenaRectangle.Center().Y / 16 - arenaArea.Y * 0.5f);
@@ -255,6 +256,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 attackTextDelay = 180f;
+
+                typeof(SCalBoss).GetField("initialRitualPosition", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, npc.Center + Vector2.UnitY * 24f);
                 npc.localAI[0] = 1f;
             }
 

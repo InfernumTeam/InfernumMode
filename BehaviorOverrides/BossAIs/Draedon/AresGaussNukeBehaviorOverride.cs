@@ -97,7 +97,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackTimer = 0f;
 
             // Hover near Ares.
-            AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + Vector2.UnitX * 575f, 32f, 75f);
+            Vector2 hoverDestination = aresBody.Center + Vector2.UnitX * (aresBody.Infernum().ExtraAI[15] == 1f ? -1f : 1f) * 575f;
+            AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 45f, 90f);
 
             // Choose a direction and rotation.
             // Rotation is relative to predictiveness.

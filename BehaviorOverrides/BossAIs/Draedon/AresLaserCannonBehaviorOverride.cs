@@ -5,6 +5,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -106,6 +107,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             Vector2 hoverDestination = aresBody.Center + Vector2.UnitX * (aresBody.Infernum().ExtraAI[15] == 1f ? -1f : 1f) * -575f;
             AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 45f, 90f);
 
+            // Check to see if this arm should be used for special things in a combo attack.
+            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
+            {
+                float _ = 0f;
+                ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref _, ref _);
+                return false;
+            }
+
             // Choose a direction and rotation.
             // Rotation is relative to predictiveness.
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
@@ -194,6 +203,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
             else
                 npc.frameCounter = 0D;
+
+            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
+                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / 72f));
 
             npc.frame = new Rectangle(npc.width * (currentFrame / 8), npc.height * (currentFrame % 8), npc.width, npc.height);
         }

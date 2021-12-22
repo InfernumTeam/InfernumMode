@@ -45,13 +45,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             npc.alpha = 254;
             npc.noTileCollide = true;
         }
+
         public override void AI()
         {
+            // Immediately disappear if the moon lord is not present.
             if (!NPC.AnyNPCs(NPCID.MoonLordCore))
             {
                 npc.active = false;
                 return;
             }
+
+            // Fade in.
             npc.alpha = Utils.Clamp(npc.alpha - 2, 0, 255);
 
             HitDelay++;

@@ -191,6 +191,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     break;
             }
 
+            if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
+                SelectNextAttack(npc);
+
             // Handle smoke venting and open/closed DR.
             npc.Calamity().DR = ClosedSegmentDR;
             npc.Calamity().unbreakableDR = true;

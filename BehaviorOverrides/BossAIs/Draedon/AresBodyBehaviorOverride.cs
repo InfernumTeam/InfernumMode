@@ -7,6 +7,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
@@ -237,6 +238,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         SelectNextAttack(npc);
                     break;
             }
+
+            if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
+                SelectNextAttack(npc);
 
             attackTimer++;
             return false;
@@ -552,6 +556,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     return aresBody.ai[1] < ElectromagneticStar.ChargeupTime + 60f;
                 return true;
             }
+
+            // If Ares is specifically using a combo attack that specifies certain arms should be active, go based on which ones should be active.
+            if (ExoMechComboAttackContent.AffectedAresArms.TryGetValue((ExoMechComboAttackContent.ExoMechComboAttackType)aresBody.ai[0], out int[] activeArms))
+                return activeArms.Contains(npc.type);
 
             if (aresBody.Opacity <= 0f)
                 return true;

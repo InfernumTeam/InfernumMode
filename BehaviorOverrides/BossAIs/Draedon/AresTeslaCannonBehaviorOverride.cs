@@ -91,6 +91,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (currentlyDisabled && attackTimer >= chargeDelay)
                 attackTimer = chargeDelay;
 
+            // Hover near Ares.
+            AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(-375f, 100f), 45f, 90f);
+
+            // Check to see if this arm should be used for special things in a combo attack.
+            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
+            {
+                float _ = 0f;
+                ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref _, ref _);
+                return false;
+            }
+
             // Choose a direction and rotation.
             // Rotation is relative to predictiveness.
             Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 84f + Vector2.UnitY * 8f;
@@ -116,9 +127,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 npc.spriteDirection = -npc.direction;
             }
-
-            // Hover near Ares.
-            AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(-375f, 100f), 45f, 90f);
 
             // Create a dust telegraph before firing.
             if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)
@@ -197,6 +205,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
             else
                 npc.frameCounter = 0D;
+            
+            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
+                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / 72f));
 
             npc.frame = new Rectangle(npc.width * (currentFrame / 8), npc.height * (currentFrame % 8), npc.width, npc.height);
         }

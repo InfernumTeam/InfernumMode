@@ -87,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
             {
                 float _ = 0f;
-                ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref _, ref _);
+                ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref aresBody.ai[1], ref _);
                 return false;
             }
 

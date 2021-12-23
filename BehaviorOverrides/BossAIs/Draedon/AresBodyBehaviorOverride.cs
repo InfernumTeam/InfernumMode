@@ -528,9 +528,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static bool ArmIsDisabled(NPC npc)
         {
             if (CalamityGlobalNPC.draedonExoMechPrime == -1)
-                return false;
+                return true;
 
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+
+            // The gauss and laser arm are disabled for 2.5 seconds once they swap.
+            if (aresBody.Infernum().ExtraAI[14] < 150f && (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresGaussNuke>()))
+                return true;
+
+            // If Ares is specifically using a combo attack that specifies certain arms should be active, go based on which ones should be active.
+            if (ExoMechComboAttackContent.AffectedAresArms.TryGetValue((ExoMechComboAttackContent.ExoMechComboAttackType)aresBody.ai[0], out int[] activeArms))
+            {
+                if (!activeArms.Contains(npc.type))
+                    return true;
+            }
 
             if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts ||
@@ -557,18 +568,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 return true;
             }
 
-            // If Ares is specifically using a combo attack that specifies certain arms should be active, go based on which ones should be active.
-            if (ExoMechComboAttackContent.AffectedAresArms.TryGetValue((ExoMechComboAttackContent.ExoMechComboAttackType)aresBody.ai[0], out int[] activeArms))
-                return activeArms.Contains(npc.type);
-
             if (aresBody.Opacity <= 0f)
                 return true;
 
             if (ExoMechManagement.CurrentAresPhase <= 2)
-                return false;
-
-            // The gauss and laser arm are disabled for 2.5 seconds once they swap.
-            if (aresBody.Infernum().ExtraAI[14] < 150f)
                 return false;
 
             // Rotate arm usability as follows (This only applies before phase 5):

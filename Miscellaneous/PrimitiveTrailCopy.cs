@@ -108,17 +108,13 @@ namespace InfernumMode
 					return endPoints;
 
 				// Remap the original positions across a certain length.
-				for (int i = 0; i < totalTrailPoints; i++)
+				for (int i = 0; i < basePoints.Count; i++)
 				{
-					float completionRatio = i / (float)totalTrailPoints;
-					int currentColorIndex = (int)(completionRatio * (basePoints.Count - 1));
-					Vector2 currentColor = basePoints[currentColorIndex];
-					Vector2 nextColor = basePoints[(currentColorIndex + 1) % basePoints.Count];
 					Vector2 offset = generalOffset;
 					if (OffsetFunction != null)
-						offset += OffsetFunction(completionRatio);
+						offset += OffsetFunction(i / (float)(basePoints.Count - 1f));
 
-					endPoints.Add(Vector2.Lerp(currentColor, nextColor, completionRatio * (basePoints.Count - 1) % 0.999f) + offset);
+					endPoints.Add(basePoints[i] + offset);
 				}
 				return endPoints;
 			}

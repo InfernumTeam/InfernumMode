@@ -60,7 +60,7 @@ namespace InfernumMode
             ProjectileBehaviorOverride.LoadAll();
 
             if (Main.netMode != NetmodeID.Server)
-			{
+            {
                 CryogenBehaviorOverride.SetupCustomBossIcon();
 
                 Ref<Effect> portalShader = new Ref<Effect>(GetEffect("Effects/DoGPortalShader"));
@@ -99,6 +99,9 @@ namespace InfernumMode
 
                 Ref<Effect> flameTrailShader = new Ref<Effect>(GetEffect("Effects/TwinsFlameTail"));
                 GameShaders.Misc["Infernum:TwinsFlameTrail"] = new MiscShaderData(flameTrailShader, "TrailPass");
+
+                Ref<Effect> aresLightningArcShader = new Ref<Effect>(GetEffect("Effects/AresLightningArcShader"));
+                GameShaders.Misc["Infernum:AresLightningArc"] = new MiscShaderData(aresLightningArcShader, "TrailPass");
 
                 Ref<Effect> ghostlyShader = new Ref<Effect>(GetEffect("Effects/EidolicWailRingShader"));
                 GameShaders.Misc["Infernum:PolterghastEctoplasm"] = new MiscShaderData(ghostlyShader, "BurstPass");
@@ -145,9 +148,9 @@ namespace InfernumMode
         public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);
 
         public override bool HijackSendData(int whoAmI, int msgType, int remoteClient, int ignoreClient, NetworkText text, int number, float number2, float number3, float number4, int number5, int number6, int number7)
-		{
+        {
             if (msgType == MessageID.SyncNPC)
-			{
+            {
                 NPC npc = Main.npc[number];
                 if (!npc.active)
                     return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
@@ -158,7 +161,7 @@ namespace InfernumMode
                 packet.Write(npc.realLife);
                 packet.Write(npc.Infernum().TotalAISlotsInUse);
                 for (int i = 0; i < npc.Infernum().ExtraAI.Length; i++)
-				{
+                {
                     if (!npc.Infernum().HasAssociatedAIBeenUsed[i])
                         continue;
                     packet.Write(i);
@@ -166,8 +169,8 @@ namespace InfernumMode
                 }
                 packet.Send();
             }
-			return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
-		}
+            return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
+        }
 
         public override void AddRecipes() => RecipeUpdates.Update();
 

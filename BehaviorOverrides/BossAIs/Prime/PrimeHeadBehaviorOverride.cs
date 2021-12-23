@@ -591,7 +591,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 if (attackTimer > 165f)
                 {
                     frameType = (int)PrimeFrameType.Spikes;
-                    laserOffsetAngle += Utils.InverseLerp(165f, 190f, attackTimer, true) * laserSignDirection * MathHelper.Pi / 300f;
+                    laserOffsetAngle += Utils.InverseLerp(165f, 215f, attackTimer, true) * laserSignDirection * MathHelper.Pi / 300f;
                 }
 
                 // Release electric sparks periodically, along with missiles.

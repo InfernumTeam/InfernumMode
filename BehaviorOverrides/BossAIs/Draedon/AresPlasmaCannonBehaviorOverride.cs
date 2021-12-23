@@ -185,7 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.frameCounter = 0D;
 
             if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
-                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / 72f));
+                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] % 72f / 72f));
 
             npc.frame = new Rectangle(npc.width * (currentFrame / 8), npc.height * (currentFrame % 8), npc.width, npc.height);
         }

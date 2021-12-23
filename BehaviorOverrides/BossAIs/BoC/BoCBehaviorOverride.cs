@@ -63,6 +63,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             bool outOfBiome = !target.ZoneCrimson && !target.ZoneCorrupt && !BossRushEvent.BossRushActive;
             bool enraged = enrageTimer > 300f;
+            bool phase2 = npc.life < npc.lifeMax * Subphase2LifeRatio;
+            bool phase3 = npc.life < npc.lifeMax * Subphase3LifeRatio;
             enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 480f);
 
             npc.dontTakeDamage = enraged;
@@ -84,16 +86,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             switch ((BoCAttackState)(int)attackType)
             {
                 case BoCAttackState.IdlyFloat:
-                    DoAttack_IdlyFloat(npc, target, enraged, ref attackTimer);
+                    DoAttack_IdlyFloat(npc, target, phase2, phase3, enraged, ref attackTimer);
                     break;
                 case BoCAttackState.DiagonalCharge:
-                    DoAttack_DiagonalCharge(npc, target, enraged, ref attackTimer);
+                    DoAttack_DiagonalCharge(npc, target, phase2, phase3, enraged, ref attackTimer);
                     break;
                 case BoCAttackState.BloodDashSwoop:
-                    DoAttack_BloodDashSwoop(npc, target, ref attackTimer);
+                    DoAttack_BloodDashSwoop(npc, target, phase2, phase3, ref attackTimer);
                     break;
                 case BoCAttackState.CreeperBloodDripping:
-                    DoAttack_CreeperBloodDripping(npc, target, ref attackTimer);
+                    DoAttack_CreeperBloodDripping(npc, target, phase2, phase3, ref attackTimer);
                     break;
                 case BoCAttackState.DashingIllusions:
                     DoAttack_DashingIllusions(npc, target, enraged, ref attackTimer);
@@ -119,12 +121,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 npc.timeLeft = 60;
         }
         
-        public static void DoAttack_IdlyFloat(NPC npc, Player target, bool enraged, ref float attackTimer)
+        public static void DoAttack_IdlyFloat(NPC npc, Player target, bool phase2, bool phase3, bool enraged, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             int teleportFadeTime = 50;
             int floatTime = 320;
+
+            if (phase2)
+            {
+                teleportFadeTime -= 10;
+                floatTime -= 40;
+            }
+            if (phase3)
+            {
+                teleportFadeTime -= 10;
+                floatTime -= 40;
+            }
+
             float teleportOffset = MathHelper.Lerp(540f, 400f, 1f - lifeRatio);
             if (!DoTeleportFadeEffect(npc, attackTimer, target.Center + Main.rand.NextVector2CircularEdge(teleportOffset, teleportOffset), teleportFadeTime))
                 return;
@@ -150,9 +164,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 GotoNextAttackState(npc);
         }
 
-        public static void DoAttack_DiagonalCharge(NPC npc, Player target, bool enraged, ref float attackTimer)
+        public static void DoAttack_DiagonalCharge(NPC npc, Player target, bool phase2, bool phase3, bool enraged, ref float attackTimer)
         {
             int teleportFadeTime = 30;
+
+            if (phase2)
+                teleportFadeTime -= 4;
+            if (phase3)
+                teleportFadeTime -= 4;
+
             float horizontalTeleportDirection = -Math.Sign(target.velocity.X);
             if (horizontalTeleportDirection == 0f)
                 horizontalTeleportDirection = Main.rand.NextBool(2).ToDirectionInt();
@@ -212,9 +232,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             }
         }
 
-        public static void DoAttack_BloodDashSwoop(NPC npc, Player target, ref float attackTimer)
+        public static void DoAttack_BloodDashSwoop(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
             int teleportFadeTime = 46;
+
+            if (phase2)
+                teleportFadeTime -= 6;
+            if (phase3)
+                teleportFadeTime -= 6;
+
             Vector2 teleportDestination = target.Center + new Vector2(target.direction * -350f, -360f);
             if (Math.Abs(target.velocity.X) > 0f)
                 teleportDestination = target.Center + new Vector2(Math.Sign(target.velocity.X) * -310f, -360f);
@@ -261,9 +287,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             }
         }
 
-        public static void DoAttack_CreeperBloodDripping(NPC npc, Player target, ref float attackTimer)
+        public static void DoAttack_CreeperBloodDripping(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
             int teleportFadeTime = 54;
+            int shootTime = 380;
+
+            if (phase2)
+            {
+                teleportFadeTime -= 10;
+                shootTime -= 35;
+            }
+            if (phase3)
+            {
+                teleportFadeTime -= 8;
+                shootTime -= 40;
+            }
+
             Vector2 teleportDestination;
             int tries = 0;
             do
@@ -282,7 +321,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             // Creepers do most of the interesting stuff with this attack.
             npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * (float)Math.Sin((attackTimer - 54f) / 24f) * 6f, 0.007f);
 
-            if (attackTimer >= 380f)
+            if (attackTimer >= shootTime)
                 GotoNextAttackState(npc);
         }
 
@@ -291,6 +330,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             int teleportFadeTime = 35;
+            int chargeTime = 45;
+
             Vector2 teleportDestination = target.Center + Vector2.UnitY * 435f;
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))
             {
@@ -299,6 +340,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 return;
             }
 
+            npc.damage = npc.defDamage;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == teleportFadeTime + 1f)
             {
                 for (int i = 1; i < 8; i++)
@@ -445,7 +487,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         #region AI Utility Methods
 
         internal const float Subphase2LifeRatio = 0.75f;
-        internal const float Subphase3LifeRatio = 0.4f;
+        internal const float Subphase3LifeRatio = 0.45f;
         public static void GotoNextAttackState(NPC npc)
         {
             npc.Opacity = 0f;

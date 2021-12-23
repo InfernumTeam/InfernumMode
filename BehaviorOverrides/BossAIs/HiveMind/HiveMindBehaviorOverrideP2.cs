@@ -273,9 +273,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             do
             {
                 nextAttack = Utils.SelectRandom(Main.rand,
-                    lifeRatio < 0.8f ? HiveMindP2AttackState.EaterOfSoulsWall : HiveMindP2AttackState.NPCSpawnArc,
-                    lifeRatio < 0.6f && Main.rand.NextBool() ? HiveMindP2AttackState.UndergroundFlameDash : HiveMindP2AttackState.SpinLunge,
-                    lifeRatio < 0.4f ? HiveMindP2AttackState.CursedRain : HiveMindP2AttackState.CloudDash);
+                    lifeRatio < 0.64f ? HiveMindP2AttackState.EaterOfSoulsWall : HiveMindP2AttackState.NPCSpawnArc,
+                    lifeRatio < 0.48f && Main.rand.NextBool() ? HiveMindP2AttackState.UndergroundFlameDash : HiveMindP2AttackState.SpinLunge,
+                    lifeRatio < 0.35f ? HiveMindP2AttackState.CursedRain : HiveMindP2AttackState.CloudDash);
             }
             while (nextAttack == previousAttack);
 

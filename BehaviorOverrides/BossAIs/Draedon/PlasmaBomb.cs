@@ -47,13 +47,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 for (int i = 0; i < 60; i++)
                 {
-                    Dust electricity = Dust.NewDustPerfect(projectile.Center, Main.rand.NextBool() ? 206 : 229);
-                    electricity.position += Main.rand.NextVector2Circular(20f, 20f);
-                    electricity.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.3f) * Main.rand.NextFloat(2f, 16f);
-                    electricity.fadeIn = 1f;
-                    electricity.color = Color.Cyan * 0.6f;
-                    electricity.scale *= Main.rand.NextFloat(1.5f, 2f);
-                    electricity.noGravity = true;
+                    Dust plasma = Dust.NewDustPerfect(projectile.Center, Main.rand.NextBool() ? 110 : 107);
+                    plasma.position += Main.rand.NextVector2Circular(20f, 20f);
+                    plasma.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.3f) * Main.rand.NextFloat(2f, 16f);
+                    plasma.fadeIn = 1f;
+                    plasma.color = Color.Lime * 0.6f;
+                    plasma.scale *= Main.rand.NextFloat(1.5f, 2f);
+                    plasma.noGravity = true;
                 }
                 projectile.localAI[0] = 1f;
             }

@@ -77,11 +77,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     projectile.velocity = Vector2.UnitX * -DirectionBias * 31f;
                     projectile.spriteDirection = (projectile.velocity.X < 0).ToDirectionInt();
 
-                    // Fire a spear.
+                    // Fire a spear and a lot of fire.
                     if (Main.myPlayer == projectile.owner && projectile.alpha == 0)
                     {
                         Vector2 spawnPosition = projectile.Center - Vector2.UnitX * projectile.spriteDirection * 40f;
                         Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitX * projectile.spriteDirection * 45f, ModContent.ProjectileType<ProfanedSpear>(), 290, 0f);
+
+                        for (int i = 0; i < 25; i++)
+                        {
+                            Vector2 shootVelocity = (MathHelper.TwoPi * i / 25f).ToRotationVector2() * 10f;
+                            Utilities.NewProjectileBetter(projectile.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<HolyFireSpark>(), 270, 0f);
+                        }
                     }
 
                     Main.PlaySound(SoundID.Item109, Target.Center);
@@ -93,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         for (int i = 0; i < 13; i++)
                         {
                             Vector2 spawnPosition = projectile.Center;
-                            Vector2 shootVelocity = baseShootDirection.RotatedBy(MathHelper.TwoPi * i / 12f) * 14f;
+                            Vector2 shootVelocity = baseShootDirection.RotatedBy(MathHelper.TwoPi * i / 13f) * 18f;
                             Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 300, 0f);
                         }
                     }
@@ -234,7 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                     if (AttackTimer >= 70f)
                     {
-                        State = AttackState.TopLeftRedirect;
+                        State = AttackState.HorizontalRedirect;
 
                         AttackTimer = 0f;
                         DecideValuesForNextAI();

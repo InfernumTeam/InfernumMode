@@ -209,7 +209,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                         attackState = npc.WithinRange(target.Center, 880f) ? 1f : 2f;
                         if (lifeRatio < 0.15f)
                             attackState = 3f;
-                        attackState = 3f;
+                        attackState = 2f;
                         npc.netUpdate = true;
                     }
                 }

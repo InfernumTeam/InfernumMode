@@ -51,6 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             npc.target = Owner.target;
             npc.timeLeft = 3600;
+            npc.damage = npc.defDamage;
             npc.rotation += MathHelper.ToRadians(16f * AngularDirection);
 
             if (OwnerAttackState == TwinsAttackSynchronizer.RetinazerAttackState.DanceOfLightnings)
@@ -62,6 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     if (OwnerAttackTimer > 60f)
                         AngularOffset = AngularOffset.AngleLerp(Target.AngleTo(Target.Center) + MathHelper.PiOver2 * AngularDirection - MathHelper.PiOver2, 0.25f);
                     npc.Center = Vector2.Lerp(npc.Center, Owner.Center + AngularOffset.ToRotationVector2() * Vector2.One * 150f, 0.21f);
+                    npc.damage = 0;
                 }
 
                 // Have the orbs fire outward in a cone.

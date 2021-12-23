@@ -39,7 +39,7 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<DesertScourgeHead>()] = BossRushEvent.BossRushActive ? 1185000 : 7200,
             [NPCID.KingSlime] = BossRushEvent.BossRushActive ? 420000 : 4200,
             [NPCID.EyeofCthulhu] = BossRushEvent.BossRushActive ? 770000 : 6100,
-            [NPCID.BrainofCthulhu] = BossRushEvent.BossRushActive ? 289000 : 7272,
+            [NPCID.BrainofCthulhu] = BossRushEvent.BossRushActive ? 289000 : 11089,
             [ModContent.NPCType<CrabulonBoss>()] = BossRushEvent.BossRushActive ? 1776000 : 12400,
             [NPCID.EaterofWorldsHead] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsBody] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,

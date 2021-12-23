@@ -437,6 +437,9 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.EaterofWorldsBody && projectile.type == ModContent.ProjectileType<ScourgeoftheDesertProj>() && projectile.Calamity().stealthStrike)
                 damage = (int)(damage * 0.75f);
 
+            if (npc.type == NPCID.EaterofWorldsBody && (projectile.penetrate == -1 || projectile.penetrate > 1))
+                damage = (int)(damage * 0.4f);
+
             if (npc.type == NPCID.BrainofCthulhu && projectile.type == ModContent.ProjectileType<SeafoamBubble>())
                 damage = (int)(damage * 0.75f);
 

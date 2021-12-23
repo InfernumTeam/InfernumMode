@@ -159,7 +159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.netUpdate = true;
             }
 
-            if (finalMech != null && finalMech.Opacity > 0f && attackState >= 100f)
+            if (((finalMech != null && finalMech.Opacity > 0f) || ExoMechManagement.CurrentThanatosPhase >= 6) && attackState >= 100f)
             {
                 attackTimer = 0f;
                 attackState = 0f;

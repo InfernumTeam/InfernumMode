@@ -58,6 +58,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 moveAcceleration = 1.0145f;
             }
 
+            if (npc.velocity == Vector2.Zero || npc.velocity.Length() < 0.01f)
+                npc.velocity = Main.rand.NextVector2Circular(1.7f, 1.7f);
+
             if (npc.velocity.Length() < maxSpeed)
                 npc.velocity *= moveAcceleration;
 

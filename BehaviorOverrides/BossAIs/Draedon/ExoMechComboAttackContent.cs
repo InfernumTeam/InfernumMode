@@ -17,7 +17,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             AresTwins_CircleAttack,
             AresTwins_ElectromagneticPlasmaStar,
             ThanatosAres_ExplosionCircle,
-            ThanatosAres_NuclearHell
+            ThanatosAres_NuclearHell,
+            ThanatosAres_LaserBarrage
         }
 
         public static bool ShouldSelectComboAttack(NPC npc, out ExoMechComboAttackType newAttack)
@@ -79,7 +80,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ExplosionCircle);
-                attackSelector.Add(ExoMechComboAttackType.ThanatosAres_NuclearHell, 1.3);
+                attackSelector.Add(ExoMechComboAttackType.ThanatosAres_NuclearHell);
+                attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserBarrage);
 
                 do
                     newAttack = attackSelector.Get();

@@ -129,11 +129,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             DoDefaultMovement(npc, target, flySpeed, turnSpeedFactor);
 
             // Periodically release fireballs.
-            int fireRate = splitCounter >= TotalSplitsToPerform - 1f ? 92 : 120;
-            if (BossRushEvent.BossRushActive)
-                fireRate = 32;
+            int shootRate = splitCounter >= TotalSplitsToPerform - 1f ? 92 : 120;
+            if (splitCounter == TotalSplitsToPerform)
+                shootRate += 12;
 
-            if (attackTimer % fireRate == fireRate - 1f)
+            if (BossRushEvent.BossRushActive)
+                shootRate = 38;
+
+            if (attackTimer % shootRate == shootRate - 1f)
             {
                 Main.PlaySound(SoundID.Item20, npc.Center);
 

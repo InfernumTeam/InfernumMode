@@ -152,10 +152,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Use combo attacks as necessary.
-            if (initialMech != null && initialMech.ai[0] >= 100f && (int)attackState < 100)
+            if (ExoMechManagement.TotalMechs >= 2 && (int)attackState < 100)
             {
                 attackTimer = 0f;
-                attackState = ExoMechManagement.FindInitialMech().ai[0];
+
+                if (initialMech.whoAmI == npc.whoAmI)
+                    SelectNextAttack(npc);
+
+                attackState = initialMech.ai[0];
                 npc.netUpdate = true;
             }
 
@@ -667,7 +671,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.ai[0] = (int)ThanatosHeadAttackType.AggressiveCharge;
                 if (ExoMechManagement.CurrentThanatosPhase >= 5 && Main.rand.NextBool())
                     npc.ai[0] = (int)ThanatosHeadAttackType.RocketCharge;
-                if (ExoMechManagement.CurrentThanatosPhase >= 6 && Main.rand.NextBool())
+                if (ExoMechManagement.CurrentThanatosPhase >= 6 && Main.rand.NextFloat() < 0.67f)
                     npc.ai[0] = (int)ThanatosHeadAttackType.MaximumOverdrive;
             }
 

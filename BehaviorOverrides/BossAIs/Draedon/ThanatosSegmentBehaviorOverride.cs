@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             frameType = (int)ThanatosFrameType.Closed;
 
             // Die if the head is not present.
-            if (!Main.npc.IndexInRange((int)npc.realLife) || !Main.npc[(int)npc.realLife].active)
+            if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active)
             {
                 npc.active = false;
                 return;
@@ -74,6 +74,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             bool canBeOpen = (int)Math.Round(segmentAttackIndex % (SegmentCount / totalSegmentsToFire)) == 0;
             bool thanatosIsFiring = headAttackType != ThanatosHeadAttackType.AggressiveCharge && head.Infernum().ExtraAI[1] > 0f;
             bool segmentShouldContiuouslyBeOpen = headAttackType == ThanatosHeadAttackType.MaximumOverdrive && head.Infernum().ExtraAI[0] == 1f;
+
+            // Prevent the player for dashing through segments during the spin combo attack by becoming completely invincible.
+            if ((int)head.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_ExplosionCircle)
+                npc.dontTakeDamage = true;
 
             // Handle segment opening/closing and projectile firing.
             if (thanatosIsFiring && canBeOpen)
@@ -126,10 +130,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 generalShootSpeedFactor *= 1.15f;
                         }
                         
-                        switch (headAttackType)
+                        switch ((int)headAttackType)
                         {
                             // Fire regular lasers.
-                            case ThanatosHeadAttackType.ProjectileShooting_RedLaser:
+                            case (int)ThanatosHeadAttackType.ProjectileShooting_RedLaser:
+                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserBarrage:
                                 int type = ModContent.ProjectileType<ThanatosLaser>();
                                 float predictionFactor = 21f;
                                 float shootSpeed = generalShootSpeedFactor * 11f;
@@ -156,7 +161,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 break;
 
                             // Fire pulse lasers.
-                            case ThanatosHeadAttackType.ProjectileShooting_PurpleLaser:
+                            case (int)ThanatosHeadAttackType.ProjectileShooting_PurpleLaser:
                                 type = ModContent.ProjectileType<PulseLaser>();
                                 shootSpeed = generalShootSpeedFactor * 10f;
 
@@ -171,7 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 break;
 
                             // Fire plasma lasers.
-                            case ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
+                            case (int)ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
                                 type = ModContent.ProjectileType<PlasmaLaser>();
                                 shootSpeed = generalShootSpeedFactor * 9.5f;
 
@@ -186,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 break;
 
                             // Fire rockets.
-                            case ThanatosHeadAttackType.RocketCharge:
+                            case (int)ThanatosHeadAttackType.RocketCharge:
                                 type = ModContent.ProjectileType<ThanatosRocket>();
                                 shootSpeed = generalShootSpeedFactor * 11f;
 

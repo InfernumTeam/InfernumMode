@@ -21,7 +21,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     {
         public static float EnrageTimer
         {
-            get => FindInitialMech()?.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] ?? 0f;
+            get
+            {
+                NPC initialMech = FindInitialMech();
+                if (initialMech is null)
+                    return 0f;
+
+                if (initialMech.Opacity <= 0f)
+                    initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] = 0f;
+
+                return initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex];
+            }
             set
             {
                 NPC initialMech = FindInitialMech();

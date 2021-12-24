@@ -12,9 +12,13 @@ using static InfernumMode.GlobalInstances.GlobalNPCOverrides;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
-    // TODO: REFACTOR THIS SHIT HOLY FUCKING SHIT I AM LOSING MY MIND THIS IS NOT OK GODDAMN!!!!!!
     public class TrueEoCBehaviorOverride : NPCBehaviorOverride
     {
+        public enum TrueEoCAttackType
+        {
+            PhantasmalCharge
+        }
+
         public override int NPCOverrideType => NPCID.MoonLordFreeEye;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
@@ -37,36 +41,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (!NPC.AnyNPCs(NPCID.MoonLordCore))
                 npc.active = false;
 
+            // Odd bug fix.
+            // If the reason behind this can be found again and better dealt with, that'd be great.
             if (npc.ai[3] != -1f)
-            {
                 npc.active = false;
-            }
+
+            // Die if the moon lord is not present.
             if (!NPC.AnyNPCs(NPCID.MoonLordCore))
             {
                 npc.active = false;
                 return false;
             }
+
             NPC core = Main.npc[NPC.FindFirstNPC(NPCID.MoonLordCore)];
-            bool enrage = core.Infernum().ExtraAI[0] == 0f;
-            Player player = Main.LocalPlayer;
-            int trueEyeCount = NPC.CountNPCS(NPCID.MoonLordFreeEye);
-            int groupIndex = (int)npc.Infernum().ExtraAI[0];
-            bool executiveDecisionMaker = groupIndex == 1;
+
+            npc.target = core.target;
+            Player target = Main.player[npc.target];
+
+            bool enraged = core.Infernum().ExtraAI[0] == 0f;
+            ref float attackState = ref npc.ai[0];
+            ref float attackTimer = ref npc.ai[1];
+            ref float groupIndex = ref npc.Infernum().ExtraAI[0];
+            ref float pupilRotation = ref npc.localAI[0];
+            ref float pupilOutwardness = ref npc.localAI[1];
+            ref float pupilScale = ref npc.localAI[2];
+            ref float hasInitialized = ref npc.localAI[3];
+            bool executiveDecisionMaker = groupIndex == 1f;
+
             // If a brand new eye appears, reset all other eyes to the charge phase
-            if (npc.localAI[3] == 0f)
+            if (hasInitialized == 0f)
             {
-                float ai3 = npc.ai[3];
-                npc.ai = new float[]
-                {
-                    0f, 0f, 0f, 0f
-                };
-                npc.ai[3] = ai3;
-                groupIndex = 0;
+                attackState = 0f;
+                attackTimer = 0f;
+                pupilRotation = 0f;
+
+                // Use a group index which is successive to the previous one.
                 if (MoonLordHandBehaviorOverride.GetTrueEyes.Length > 0)
                     groupIndex = (int)MoonLordHandBehaviorOverride.GetTrueEyes.Max(eye => eye.Infernum().ExtraAI[0]) + 1;
-                npc.Infernum().ExtraAI[0] = groupIndex;
+
                 EyeSyncVariables(npc);
-                npc.localAI[3] = 1f;
+                hasInitialized = 1f;
             }
             bool anyNonSpecialSeals = Main.npc.Any(seal => seal.type == ModContent.NPCType<EldritchSeal>() && seal.active && seal.ai[0] != 3f);
             if (anyNonSpecialSeals)
@@ -76,149 +90,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 npc.velocity *= 0.9f;
                 return false;
             }
+
             // Attack Delay
             const float delay = 160f;
 
             // Universal Counter
             if (executiveDecisionMaker)
-                npc.ai[1] += 1f;
+                attackTimer++;
+
             // Phantasmal Charge
-            if (npc.ai[0] == 0f)
-            {
-                MoonLordCoreBehaviorOverride.AffectAllEyes(eye => eye.ai[0] = 0f);
-                const float seekTime = 180f;
-                const float sphereCreationTime = 42f;
-                Vector2 idealPosition = default;
-                switch (trueEyeCount)
-                {
-                    case 1:
-                        idealPosition = new Vector2(0f, -360f);
-                        break;
-                    case 2:
-                        switch (groupIndex)
-                        {
-                            case 1:
-                                idealPosition = new Vector2(-620f, -360f);
-                                break;
-                            default:
-                                idealPosition = new Vector2(620f, -360f);
-                                break;
-                        }
-                        break;
-                    case 3:
-                        switch (groupIndex)
-                        {
-                            case 1:
-                                idealPosition = new Vector2(-620f, -360f);
-                                break;
-                            default:
-                                idealPosition = new Vector2(0f, -410f);
-                                break;
-                            case 2:
-                            case 3:
-                                idealPosition = new Vector2(620f, -360f);
-                                break;
-                        }
-                        break;
-                }
-                const float lungeTime = 30f;
-                // Attempt to fly above the player
-                if (npc.ai[1] < seekTime)
-                {
-                    npc.rotation = npc.velocity.X / 10f;
-
-                    const float acceleration = 0.3f;
-                    const float maxVelocity = 13f;
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(player.Center + idealPosition) * maxVelocity, acceleration);
-
-                    npc.localAI[0] = npc.rotation;
-                    npc.localAI[1] = npc.velocity.X / 15f;
-                    npc.localAI[2] = 1f;
-
-                    npc.localAI[0] = 0f;
-                }
-                // Create a hexagon of spheres
-                else if (npc.ai[1] <= seekTime + sphereCreationTime)
-                {
-                    const int sphereCount = 6;
-                    const float sphereRadius = 60f;
-
-                    npc.velocity *= 0.8f;
-                    npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
-                    // Create sphereCount phantasmal spheres in sphereCreationTime frames.
-                    if (npc.ai[1] % (int)(sphereCreationTime / sphereCount) == (int)(sphereCreationTime / sphereCount) - 1f)
-                    {
-                        // Get the respective angle based on which sphere we're spawning
-                        float angle = (npc.ai[1] - seekTime) / sphereCreationTime * MathHelper.TwoPi;
-
-                        // And spawn it. The movement of the spheres are changed later in the code
-                        int sphereProjectileIndex = NewProjectileBetter(npc.Center + angle.ToRotationVector2() * sphereRadius,
-                            Vector2.Zero, ProjectileID.PhantasmalSphere, 225,
-                            0f, Main.myPlayer, 30f, npc.whoAmI);
-                        Main.projectile[sphereProjectileIndex].timeLeft = 195;
-                    }
-                    // Adjust the True Eye's pupil so that it looks at the player
-                    npc.ai[2] = npc.AngleTo(player.Center) + MathHelper.PiOver2;
-                }
-                // Look at the player
-                else if (npc.ai[1] < seekTime + sphereCreationTime + lungeTime)
-                {
-                    npc.Infernum().ExtraAI[1] = 0f;
-                    npc.rotation = npc.rotation.AngleTowards(npc.ai[2], MathHelper.ToRadians(6f));
-                    npc.localAI[0] = npc.rotation;
-                    npc.localAI[1] = 0.5f;
-                    npc.localAI[2] = 0.6f;
-                }
-                // Lunge
-                else if (npc.ai[1] == seekTime + sphereCreationTime + lungeTime)
-                {
-                    if (npc.Distance(Main.LocalPlayer.Center) >= 90f || Math.Abs(npc.velocity.Length() - 12f) > 0.1f)
-                    {
-                        Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, Main.rand.Next(100, 101), 1f, 0f);
-                        npc.velocity = npc.SafeDirectionTo(Main.LocalPlayer.Center) * 12f;
-                    }
-                }
-                // Slow down
-                else if (npc.ai[1] < seekTime + sphereCreationTime + 2f * lungeTime)
-                {
-                    npc.Infernum().ExtraAI[2] = npc.velocity.X;
-                    npc.Infernum().ExtraAI[3] = npc.velocity.Y;
-                    npc.localAI[0] = 0f;
-                    npc.localAI[1] = 0.5f;
-                    if (npc.localAI[2] > 0.3f)
-                    {
-                        npc.localAI[2] -= 0.025f;
-                    }
-                }
-                // Go to next attack
-                else if (npc.ai[1] == seekTime + sphereCreationTime + 2f * lungeTime)
-                {
-                    MLSealTeleport = true;
-                    npc.ai[0] = 1f;
-                    npc.ai[1] =
-                        npc.Infernum().ExtraAI[1] =
-                        npc.Infernum().ExtraAI[2] =
-                        npc.Infernum().ExtraAI[3] = 0f;
-                    EyeSyncVariables(npc);
-                }
-                // Modify static spheres
-                if (npc.ai[1] >= seekTime + sphereCreationTime + lungeTime)
-                {
-                    for (int i = 0; i < Main.maxProjectiles; i++)
-                    {
-                        if (Main.projectile[i].active && Main.projectile[i].type == 454 && Main.projectile[i].ai[1] == npc.whoAmI && Main.projectile[i].ai[0] != -1f)
-                        {
-                            Main.projectile[i].velocity = new Vector2(npc.Infernum().ExtraAI[2], npc.Infernum().ExtraAI[3])
-                                * 1.5f * (enrage ? 2f : 1f);
-                        }
-                    }
-                }
-                if (executiveDecisionMaker)
-                    EyeSyncVariables(npc);
-            }
+            if (attackState == 0f)
+                DoBehavior_PhantasmalCharge(npc, target, enraged, groupIndex, ref attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
 
             // Phantasmal Barrage
-            else if (npc.ai[0] == 1f)
+            else if (attackState == 1f)
             {
                 // TOTAL TIME FOR ALL 3 OF THESE ATTACKS IS 250 FRAMES PLUS A DELAY
                 Vector2 idealPosition = default;
@@ -230,39 +115,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         const float seekTimeCircular = 190f;
                         const float waitTime = 55f;
                         const float staticTelegraphTime = 20f;
-                        // trueEyeCount - 2 is so that it is on top of the player if there's only two, but to the left if there's 3
-                        idealPosition = player.Center + new Vector2(-620 * MathHelper.Clamp(trueEyeCount - 2, 0f, 1f), -360);
+                        // NPC.CountNPCS(NPCID.MoonLordFreeEye) - 2 is so that it is on top of the player if there's only two, but to the left if there's 3
+                        idealPosition = target.Center + new Vector2(-620 * MathHelper.Clamp(NPC.CountNPCS(NPCID.MoonLordFreeEye) - 2, 0f, 1f), -360);
                         // Fly over the top left of the player
-                        if (npc.ai[1] < seekTimeCircular)
+                        if (attackTimer < seekTimeCircular)
                         {
                             const float acceleration = 0.3f;
                             const float maxVelocity = 15f;
                             npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, acceleration);
-                            npc.rotation = npc.localAI[0] = npc.velocity.X / 14f;
-                            npc.localAI[2] = 0.4f;
+                            npc.rotation = pupilRotation = npc.velocity.X / 14f;
+                            pupilScale = 0.4f;
                         }
                         // Look at the player
-                        else if (npc.ai[1] < seekTimeCircular + waitTime)
+                        else if (attackTimer < seekTimeCircular + waitTime)
                         {
-                            npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.6f, 0.05f);
+                            pupilScale = MathHelper.Lerp(pupilScale, 0.6f, 0.05f);
                             npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
                             npc.velocity *= 0.9f;
-                            if (npc.ai[1] < seekTimeCircular + waitTime - staticTelegraphTime)
+                            if (attackTimer < seekTimeCircular + waitTime - staticTelegraphTime)
                             {
-                                npc.Infernum().angleTarget = player.Center;
-                                npc.localAI[0] = npc.Infernum().ExtraAI[1] = npc.AngleTo(npc.Infernum().angleTarget);
+                                npc.Infernum().angleTarget = target.Center;
+                                pupilRotation = npc.Infernum().ExtraAI[1] = npc.AngleTo(npc.Infernum().angleTarget);
                             }
                             npc.Infernum().canTelegraph = true;
                         }
                         // Release circle of bolts
-                        else if (npc.ai[1] == seekTimeCircular + waitTime)
+                        else if (attackTimer == seekTimeCircular + waitTime)
                         {
                             npc.Infernum().canTelegraph = false;
-                            int boltCount = enrage ? 32 : 20;
+                            int boltCount = enraged ? 32 : 20;
                             for (int i = 0; i < boltCount; i++)
                             {
                                 float angle = MathHelper.TwoPi / boltCount * i + npc.Infernum().ExtraAI[1];
-                                float velocityMultiplier = enrage ? 7f : 3f;
+                                float velocityMultiplier = enraged ? 7f : 3f;
                                 // Cause the bolt aimed at the player to go much faster than the other bolts
                                 if (Math.Abs(angle - npc.Infernum().ExtraAI[1]) < 0.04f)
                                 {
@@ -275,81 +160,81 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     // Aim and release 3 phantasmal blasts
                     case 2:
                     case 3:
-                        idealPosition = player.Center + new Vector2(0f, 360);
+                        idealPosition = target.Center + new Vector2(0f, 360);
                         const float seekTimeBlaster = 130f;
                         const float aimTime = 30f;
                         // Fly below the player
-                        if (npc.ai[1] < seekTimeBlaster + delay)
+                        if (attackTimer < seekTimeBlaster + delay)
                         {
                             const float acceleration = 0.3f;
                             const float maxVelocity = 15f;
                             npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, acceleration);
-                            npc.rotation = npc.localAI[0] = npc.velocity.X / 14f;
-                            npc.localAI[2] = 0.4f;
+                            npc.rotation = pupilRotation = npc.velocity.X / 14f;
+                            pupilScale = 0.4f;
                         }
                         // Aim and telegraph
-                        else if (npc.ai[1] < seekTimeBlaster + aimTime + delay)
+                        else if (attackTimer < seekTimeBlaster + aimTime + delay)
                         {
-                            npc.localAI[0] = npc.AngleTo(player.Center);
-                            npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.6f, 0.05f);
-                            npc.rotation = npc.rotation.AngleLerp(npc.localAI[0] + MathHelper.PiOver2, 0.2f);
-                            if (npc.ai[1] < seekTimeBlaster + aimTime + delay - staticTelegraphTime)
+                            pupilRotation = npc.AngleTo(target.Center);
+                            pupilScale = MathHelper.Lerp(pupilScale, 0.6f, 0.05f);
+                            npc.rotation = npc.rotation.AngleLerp(pupilRotation + MathHelper.PiOver2, 0.2f);
+                            if (attackTimer < seekTimeBlaster + aimTime + delay - staticTelegraphTime)
                             {
-                                npc.Infernum().angleTarget = player.Center;
+                                npc.Infernum().angleTarget = target.Center;
                             }
                             npc.Infernum().canTelegraph = true;
                         }
                         // Release 3 phantasmal blasts, chaingun style
-                        else if (npc.ai[1] < seekTimeBlaster + 2f * aimTime + delay)
+                        else if (attackTimer < seekTimeBlaster + 2f * aimTime + delay)
                         {
                             npc.velocity *= 0.9f;
                             npc.Infernum().canTelegraph = false;
-                            if (npc.ai[1] % 10 == 0)
+                            if (attackTimer % 10 == 0)
                             {
-                                if (npc.ai[1] == seekTimeBlaster + aimTime + delay + 10f)
+                                if (attackTimer == seekTimeBlaster + aimTime + delay + 10f)
                                 {
                                     Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, Main.rand.Next(100, 101), 1f, 0f);
                                 }
-                                Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(npc.Infernum().angleTarget) * 15f * (enrage ? 1.4f : 1f), ModContent.ProjectileType<PhantasmalBlast>(), 200, 2.6f);
+                                Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(npc.Infernum().angleTarget) * 15f * (enraged ? 1.4f : 1f), ModContent.ProjectileType<PhantasmalBlast>(), 200, 2.6f);
                             }
                         }
                         break;
                     // Spiral of bolts
                     default:
                         const float seekTimeSpiral = 170f;
-                        idealPosition = player.Center + new Vector2(620 * MathHelper.Clamp(trueEyeCount - 2, 0f, 1f), -360);
+                        idealPosition = target.Center + new Vector2(620 * MathHelper.Clamp(NPC.CountNPCS(NPCID.MoonLordFreeEye) - 2, 0f, 1f), -360);
                         // Fly to the top right the player
-                        if (npc.ai[1] < seekTimeSpiral + delay * 2f)
+                        if (attackTimer < seekTimeSpiral + delay * 2f)
                         {
                             const float acceleration = 0.3f;
                             const float maxVelocity = 15f;
                             npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, acceleration);
-                            npc.rotation = npc.localAI[0] = npc.velocity.X / 14f;
-                            npc.localAI[2] = 0.4f;
+                            npc.rotation = pupilRotation = npc.velocity.X / 14f;
+                            pupilScale = 0.4f;
                         }
                         // Shoot a barrage of spirals
-                        if (npc.ai[1] >= seekTimeSpiral + delay * 2f)
+                        if (attackTimer >= seekTimeSpiral + delay * 2f)
                         {
                             npc.velocity *= 0.9f;
-                            npc.localAI[0] = npc.AngleTo(player.Center);
-                            npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.6f, 0.05f);
-                            npc.rotation = npc.rotation.AngleLerp(npc.localAI[0] + MathHelper.PiOver2, 0.2f);
+                            pupilRotation = npc.AngleTo(target.Center);
+                            pupilScale = MathHelper.Lerp(pupilScale, 0.6f, 0.05f);
+                            npc.rotation = npc.rotation.AngleLerp(pupilRotation + MathHelper.PiOver2, 0.2f);
                             const float ai1Skip = 3f;
-                            if (npc.ai[1] % ai1Skip == ai1Skip - 1)
+                            if (attackTimer % ai1Skip == ai1Skip - 1)
                             {
                                 npc.Infernum().ExtraAI[1] += MathHelper.ToRadians(360f / (250f - seekTimeSpiral) * ai1Skip);
                                 Vector2 spawnPositon = npc.Center;
-                                NewProjectileBetter(spawnPositon, npc.Infernum().ExtraAI[1].ToRotationVector2() * (enrage ? 4.25f : 3f), ProjectileID.PhantasmalBolt, 185, 1f);
+                                NewProjectileBetter(spawnPositon, npc.Infernum().ExtraAI[1].ToRotationVector2() * (enraged ? 4.25f : 3f), ProjectileID.PhantasmalBolt, 185, 1f);
                             }
                         }
                         break;
                 }
                 // Go to next AI state
-                if (npc.ai[1] >= 250f + 2f * delay)
+                if (attackTimer >= 250f + 2f * delay)
                 {
                     MLSealTeleport = true;
-                    npc.ai[0] = 2f;
-                    npc.ai[1] =
+                    attackState = 2f;
+                    attackTimer =
                         npc.Infernum().ExtraAI[1] =
                         npc.Infernum().ExtraAI[2] =
                         npc.Infernum().ExtraAI[3] = 0f;
@@ -358,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Phantasmal Storm
-            else if (npc.ai[0] == 2f)
+            else if (attackState == 2f)
             {
                 Vector2 idealPosition = default;
                 switch (groupIndex)
@@ -371,28 +256,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         const int phantasmalEyeCount = 9;
                         const float maxVelocity = 13f;
                         // Get into a general area of the target position
-                        if (npc.ai[1] < seekTimeSpin)
+                        if (attackTimer < seekTimeSpin)
                         {
-                            idealPosition = player.Center + new Vector2(0f, -420f);
+                            idealPosition = target.Center + new Vector2(0f, -420f);
                             npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, 0.3f);
                             npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
-                            npc.localAI[0] = npc.rotation;
-                            npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.5f, 0.05f);
+                            pupilRotation = npc.rotation;
+                            pupilScale = MathHelper.Lerp(pupilScale, 0.5f, 0.05f);
                         }
                         // Adjust velocity to unit rotation vector
-                        else if (npc.ai[1] == seekTimeSpin + 1)
+                        else if (attackTimer == seekTimeSpin + 1)
                         {
                             npc.velocity = new Vector2(0f, -16f);
                             Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, Main.rand.Next(100, 101), 1f, 0f);
                         }
                         // Spin
-                        else if (npc.ai[1] < seekTimeSpin + spinTime)
+                        else if (attackTimer < seekTimeSpin + spinTime)
                         {
                             npc.velocity = npc.velocity.RotatedBy(MathHelper.ToRadians(360f / spinTime));
                             npc.rotation = npc.rotation.AngleLerp(npc.velocity.ToRotation() + MathHelper.PiOver2, 0.2f);
-                            npc.localAI[0] = npc.rotation;
-                            if (npc.ai[1] % (int)(spinTime / phantasmalEyeCount / (enrage ? 2f : 1f)) ==
-                                (int)(spinTime / phantasmalEyeCount / (enrage ? 2f : 1f)) - 1)
+                            pupilRotation = npc.rotation;
+                            if (attackTimer % (int)(spinTime / phantasmalEyeCount / (enraged ? 2f : 1f)) ==
+                                (int)(spinTime / phantasmalEyeCount / (enraged ? 2f : 1f)) - 1)
                             {
                                 NewProjectileBetter(npc.Center - Vector2.UnitX * Main.rand.Next(-npc.width + 12, npc.width - 12),
                                     new Vector2(0f, -1f * Main.rand.NextFloat(8f, 14f)).RotatedByRandom(MathHelper.ToRadians(36f)),
@@ -400,7 +285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                             }
                         }
                         // Slow down
-                        else if (npc.ai[1] >= seekTimeSpin + spinTime)
+                        else if (attackTimer >= seekTimeSpin + spinTime)
                         {
                             npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
                             npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.2f);
@@ -415,30 +300,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         const float maxChargeVelocity = 26f;
                         const float acceleration = 0.9f;
                         const int phantasmalEyeCount2 = 15;
-                        npc.ai[1] += 1f;
+                        attackTimer += 1f;
                         // Get into a general area of the target position
-                        if (npc.ai[1] < seekTimeCharge + delay)
+                        if (attackTimer < seekTimeCharge + delay)
                         {
                             float signX = 1f;
-                            if (Math.Abs(player.Center.X - xSeekPosition) < Math.Abs(player.Center.X + xSeekPosition))
+                            if (Math.Abs(target.Center.X - xSeekPosition) < Math.Abs(target.Center.X + xSeekPosition))
                                 signX = -1f;
-                            idealPosition = player.Center + new Vector2(signX * xSeekPosition, -480f);
+                            idealPosition = target.Center + new Vector2(signX * xSeekPosition, -480f);
                             npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, 0.3f);
                             npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
-                            npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.5f, 0.05f);
+                            pupilScale = MathHelper.Lerp(pupilScale, 0.5f, 0.05f);
                         }
                         // Charge while releasing eyes
-                        else if (npc.ai[1] < seekTimeCharge + chargeTime + delay)
+                        else if (attackTimer < seekTimeCharge + chargeTime + delay)
                         {
-                            if (npc.ai[1] == seekTimeCharge + delay + 1f)
+                            if (attackTimer == seekTimeCharge + delay + 1f)
                                 Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, Main.rand.Next(100, 101), 1f, 0f);
-                            npc.localAI[2] = 0.5f;
+                            pupilScale = 0.5f;
                             float signX = 1f;
-                            if (Math.Abs(player.Center.X - xSeekPosition) < Math.Abs(player.Center.X + xSeekPosition))
+                            if (Math.Abs(target.Center.X - xSeekPosition) < Math.Abs(target.Center.X + xSeekPosition))
                                 signX = -1f;
                             npc.velocity.X = MathHelper.Lerp(npc.velocity.X, -signX * maxChargeVelocity, acceleration);
                             npc.velocity.Y = 0f;
-                            if (npc.ai[1] % (int)(chargeTime / phantasmalEyeCount2) == (int)(chargeTime / phantasmalEyeCount2) - 1)
+                            if (attackTimer % (int)(chargeTime / phantasmalEyeCount2) == (int)(chargeTime / phantasmalEyeCount2) - 1)
                             {
                                 Utilities.NewProjectileBetter(npc.Center - Vector2.UnitX * Main.rand.Next(-npc.width + 12, npc.width - 12),
                                     new Vector2(0f, -1f * Main.rand.NextFloat(8f, 14f)).RotatedByRandom(MathHelper.ToRadians(36f)),
@@ -447,7 +332,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                             npc.rotation = npc.velocity.X / 16.55211f;
                         }
                         // Slow down
-                        else if (npc.ai[1] >= seekTimeCharge + chargeTime + delay)
+                        else if (attackTimer >= seekTimeCharge + chargeTime + delay)
                         {
                             npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
                             npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.2f);
@@ -455,54 +340,54 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         break;
                     // Spew out phantasmal blasts
                     default:
-                        npc.ai[1] += 1f;
+                        attackTimer += 1f;
                         const float floatTime = 140f;
                         const float aimTime = 45f;
                         const float blastTime = 60f;
                         const int blastCount = 12;
                         // Get into a general area of the target position
-                        if (npc.ai[1] < floatTime + 2f * delay)
+                        if (attackTimer < floatTime + 2f * delay)
                         {
                             float signX = 1f;
-                            if (Math.Abs(player.Center.X - xSeekPosition) < Math.Abs(player.Center.X + xSeekPosition))
+                            if (Math.Abs(target.Center.X - xSeekPosition) < Math.Abs(target.Center.X + xSeekPosition))
                                 signX = -1f;
                             signX *= -1f;
-                            idealPosition = player.Center + new Vector2(signX * xSeekPosition, -480f);
+                            idealPosition = target.Center + new Vector2(signX * xSeekPosition, -480f);
                             npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, 0.3f);
-                            npc.rotation = npc.localAI[0] = npc.velocity.X / 14f;
-                            npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.5f, 0.05f);
+                            npc.rotation = pupilRotation = npc.velocity.X / 14f;
+                            pupilScale = MathHelper.Lerp(pupilScale, 0.5f, 0.05f);
                         }
                         // Choose a target and telegraph
-                        else if (npc.ai[1] < floatTime + blastTime + 2f * delay)
+                        else if (attackTimer < floatTime + blastTime + 2f * delay)
                         {
                             npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
                             npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.2f);
-                            npc.Infernum().angleTarget = player.Center;
+                            npc.Infernum().angleTarget = target.Center;
                             npc.Infernum().canTelegraph = true;
                         }
                         // Stop telegraphing and shoot
-                        else if (npc.ai[1] < floatTime + blastTime + aimTime + 2f * delay)
+                        else if (attackTimer < floatTime + blastTime + aimTime + 2f * delay)
                         {
                             if (npc.Infernum().canTelegraph)
                             {
                                 npc.Infernum().canTelegraph = false;
                                 Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, Main.rand.Next(100, 101), 1f, 0f);
                             }
-                            if (npc.ai[1] % (int)(blastTime / blastCount / (enrage ? 2f : 1f)) ==
-                                (int)(blastTime / blastCount / (enrage ? 2f : 1f)) - 1)
+                            if (attackTimer % (int)(blastTime / blastCount / (enraged ? 2f : 1f)) ==
+                                (int)(blastTime / blastCount / (enraged ? 2f : 1f)) - 1)
                             {
-                                npc.localAI[0] = npc.AngleTo(npc.Infernum().angleTarget);
+                                pupilRotation = npc.AngleTo(npc.Infernum().angleTarget);
                                 NewProjectileBetter(npc.Center, npc.SafeDirectionTo(npc.Infernum().angleTarget) * 15f, ModContent.ProjectileType<PhantasmalBlast>(), 200, 2.6f);
                             }
                         }
                         break;
                 }
                 // Go to next AI state
-                if (npc.ai[1] >= 280f + 2f * delay)
+                if (attackTimer >= 280f + 2f * delay)
                 {
                     MLSealTeleport = true;
-                    npc.ai[0] = core.life / (float)core.lifeMax > 0.4f ? 0f : 3f;
-                    npc.ai[1] =
+                    attackState = core.life / (float)core.lifeMax > 0.4f ? 0f : 3f;
+                    attackTimer =
                         npc.Infernum().ExtraAI[1] =
                         npc.Infernum().ExtraAI[2] =
                         npc.Infernum().ExtraAI[3] = 0f;
@@ -511,7 +396,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Phantasmal Assault
-            else if (npc.ai[0] == 3f)
+            else if (attackState == 3f)
             {
                 Vector2 idealPosition = default;
                 const float maxVelocity = 36f;
@@ -528,53 +413,53 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         float xVelocity = (core.Infernum().arenaRectangle.Width - 50) / chargeTime * 0.45f;
                         float signX = (groupIndex == 3).ToDirectionInt();
                         if (groupIndex == 3)
-                            npc.ai[1] += 1f;
+                            attackTimer += 1f;
                         // Move to appropriate position
-                        if (npc.ai[1] < seekTimeCharge)
+                        if (attackTimer < seekTimeCharge)
                         {
-                            idealPosition = player.Center + new Vector2(xSeekPosition * signX, core.Infernum().arenaRectangle.Y - 50f);
+                            idealPosition = target.Center + new Vector2(xSeekPosition * signX, core.Infernum().arenaRectangle.Y - 50f);
                             idealPosition.X = core.Infernum().arenaRectangle.X + core.Infernum().arenaRectangle.Width * (groupIndex == 3).ToInt();
                             idealPosition.Y = core.Infernum().arenaRectangle.Y + 16f;
                             npc.SimpleFlyMovement(npc.SafeDirectionTo(idealPosition) * maxVelocity, 1.5f);
-                            npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.5f, 0.05f);
+                            pupilScale = MathHelper.Lerp(pupilScale, 0.5f, 0.05f);
                             npc.rotation = 0f;
                         }
                         // Release laser and go twoards the center
-                        else if (npc.ai[1] < seekTimeCharge + chargeTime)
+                        else if (attackTimer < seekTimeCharge + chargeTime)
                         {
-                            if (npc.ai[1] == seekTimeCharge + chargeTime + 1f)
+                            if (attackTimer == seekTimeCharge + chargeTime + 1f)
                                 Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, Main.rand.Next(100, 101), 1f, 0f);
-                            npc.localAI[2] = 0.5f;
+                            pupilScale = 0.5f;
                             npc.velocity = -signX * xVelocity * Vector2.UnitX;
-                            if (npc.ai[1] == seekTimeCharge + 2)
+                            if (attackTimer == seekTimeCharge + 2)
                             {
-                                Vector2 fromEyeCoordinates = Utils.Vector2FromElipse(npc.localAI[0].ToRotationVector2(), new Vector2(27f, 59f) * npc.localAI[1]);
+                                Vector2 fromEyeCoordinates = Utils.Vector2FromElipse(pupilRotation.ToRotationVector2(), new Vector2(27f, 59f) * pupilOutwardness);
                                 int idx = Utilities.NewProjectileBetter(npc.Center + fromEyeCoordinates, Vector2.UnitY, ModContent.ProjectileType<MoonlordPendulum>(), 425, 0f, 255, 0f, npc.whoAmI);
                                 Main.projectile[idx].ai[0] = 0f;
                                 Main.projectile[idx].ai[1] = npc.whoAmI;
                             }
                             npc.rotation = npc.rotation.AngleTowards(-MathHelper.Pi, 0.1f);
-                            npc.localAI[0] = npc.rotation - MathHelper.PiOver2;
+                            pupilRotation = npc.rotation - MathHelper.PiOver2;
                         }
                         break;
                     // Bolts
                     default:
-                        npc.ai[1] += 1f;
-                        idealPosition = player.Center + new Vector2(Main.rand.NextFloat(-120f, 120f), -580f);
+                        attackTimer += 1f;
+                        idealPosition = target.Center + new Vector2(Main.rand.NextFloat(-120f, 120f), -580f);
                         // Adjust rotation and size of pupil
-                        if (npc.ai[1] < seekTimeCharge)
+                        if (attackTimer < seekTimeCharge)
                         {
-                            npc.localAI[2] = MathHelper.Lerp(npc.localAI[2], 0.5f, 0.05f);
+                            pupilScale = MathHelper.Lerp(pupilScale, 0.5f, 0.05f);
                             npc.rotation = 0f;
                         }
                         // Fly above player and release bolts
-                        if (npc.ai[1] < seekTimeCharge + chargeTime)
+                        if (attackTimer < seekTimeCharge + chargeTime)
                         {
                             // Circular spread
-                            if (npc.ai[1] % 80f == 45f && npc.ai[1] <= 240f)
+                            if (attackTimer % 80f == 45f && attackTimer <= 240f)
                             {
                                 int boltCount = 10;
-                                if (enrage)
+                                if (enraged)
                                 {
                                     boltCount += Main.rand.Next(6, 12);
                                 }
@@ -593,13 +478,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                                 }
                             }
                             // Spiral
-                            if (npc.ai[1] >= 240f)
+                            if (attackTimer >= 240f)
                             {
-                                if (npc.ai[1] % 3f == 2f)
+                                if (attackTimer % 3f == 2f)
                                 {
                                     npc.Infernum().ExtraAI[1] += MathHelper.ToRadians(6f);
-                                    npc.localAI[0] = npc.Infernum().ExtraAI[1];
-                                    Utilities.NewProjectileBetter(npc.Center, npc.Infernum().ExtraAI[1].ToRotationVector2() * 1.5f * (enrage ? 3f : 1f), ProjectileID.PhantasmalBolt, 185, 1f);
+                                    pupilRotation = npc.Infernum().ExtraAI[1];
+                                    Utilities.NewProjectileBetter(npc.Center, npc.Infernum().ExtraAI[1].ToRotationVector2() * 1.5f * (enraged ? 3f : 1f), ProjectileID.PhantasmalBolt, 185, 1f);
                                 }
                             }
                         }
@@ -607,11 +492,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         break;
                 }
                 // Go to next AI state
-                if (npc.ai[1] >= chargeTime + seekTimeCharge)
+                if (attackTimer >= chargeTime + seekTimeCharge)
                 {
                     MLSealTeleport = true;
-                    npc.ai[0] = 0f;
-                    npc.ai[1] =
+                    attackState = 0f;
+                    attackTimer =
                         npc.Infernum().ExtraAI[1] =
                         npc.Infernum().ExtraAI[2] =
                         npc.Infernum().ExtraAI[3] = 0f;
@@ -619,6 +504,154 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 }
             }
             return false;
+        }
+
+        public static void DoBehavior_PhantasmalCharge(NPC npc, Player target, bool enraged, float groupIndex, ref float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
+        {
+            int attackDelay = 180;
+            int sphereCount = 6;
+            int sphereCreationTime = 42;
+            int sphereCreationRate = sphereCreationTime / sphereCount;
+            float sphereOffsetRadius = 60f;
+            int lungeTime = 30;
+            ref float initialChargeDirection = ref npc.Infernum().ExtraAI[2];
+
+            MoonLordCoreBehaviorOverride.AffectAllEyes(eye => eye.ai[0] = 0f);
+
+            Vector2 hoverDestination = default;
+            switch (NPC.CountNPCS(NPCID.MoonLordFreeEye))
+            {
+                case 1:
+                    hoverDestination = new Vector2(0f, -360f);
+                    break;
+                case 2:
+                    switch (groupIndex)
+                    {
+                        case 1:
+                            hoverDestination = new Vector2(-620f, -360f);
+                            break;
+                        default:
+                            hoverDestination = new Vector2(620f, -360f);
+                            break;
+                    }
+                    break;
+                case 3:
+                    switch (groupIndex)
+                    {
+                        case 1:
+                            hoverDestination = new Vector2(-620f, -360f);
+                            break;
+                        default:
+                            hoverDestination = new Vector2(0f, -410f);
+                            break;
+                        case 2:
+                        case 3:
+                            hoverDestination = new Vector2(620f, -360f);
+                            break;
+                    }
+                    break;
+            }
+
+            // Attempt to fly above the player.
+            if (attackTimer < attackDelay)
+            {
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center + hoverDestination) * 13f, 0.3f);
+                npc.rotation = npc.velocity.X / 10f;
+
+                pupilRotation = 0f;
+                pupilOutwardness = npc.velocity.X / 15f;
+                pupilScale = 1f;
+            }
+
+            // Create a circle of spheres.
+            else if (attackTimer <= attackDelay + sphereCreationTime)
+            {
+                npc.velocity *= 0.8f;
+                npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
+
+                // Create spheres.
+                if (attackTimer % (sphereCreationTime / sphereCount) == sphereCreationTime / sphereCount - 1f)
+                {
+                    Vector2 sphereOffset = (MathHelper.TwoPi * (attackTimer - attackDelay) / sphereCreationTime).ToRotationVector2() * sphereOffsetRadius;
+
+                    // And spawn it. The movement of the spheres are changed later in the code
+                    int sphere = NewProjectileBetter(npc.Center + sphereOffset, Vector2.Zero, ProjectileID.PhantasmalSphere, 225, 0f, Main.myPlayer, 30f, npc.whoAmI);
+                    if (Main.projectile.IndexInRange(sphere))
+                        Main.projectile[sphere].timeLeft = 195;
+                }
+
+                // Adjust the pupil rotation so that it looks at the player
+                pupilRotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            }
+
+            // Look at the player.
+            else if (attackTimer < attackDelay + sphereCreationTime + lungeTime)
+            {
+                npc.Infernum().ExtraAI[1] = 0f;
+                npc.rotation = npc.rotation.AngleTowards(pupilRotation, 0.105f);
+                pupilRotation = npc.rotation;
+                pupilOutwardness = 0.5f;
+                pupilScale = 0.6f;
+            }
+
+            // Charge.
+            else if (attackTimer == attackDelay + sphereCreationTime + lungeTime)
+            {
+                if (!npc.WithinRange(target.Center, 90f) || npc.velocity.Length() > 12f)
+                {
+                    Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, Main.rand.Next(100, 101), 1f, 0f);
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * 12f;
+                }
+            }
+
+            // Slow down after charging.
+            else if (attackTimer < attackDelay + sphereCreationTime + 2f * lungeTime)
+            {
+                pupilRotation = 0f;
+                pupilOutwardness = 0.5f;
+                if (pupilScale > 0.3f)
+                    pupilScale -= 0.025f;
+
+                initialChargeDirection = npc.velocity.ToRotation();
+            }
+
+            // Go to next attack
+            else if (attackTimer == attackDelay + sphereCreationTime + 2f * lungeTime)
+                SelectNextAttack(npc);
+
+            // Make all sphere move forward after charging.
+            if (attackTimer >= attackDelay + sphereCreationTime + lungeTime)
+            {
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (Main.projectile[i].active && Main.projectile[i].type == ProjectileID.PhantasmalSphere && Main.projectile[i].ai[1] == npc.whoAmI && Main.projectile[i].ai[0] != -1f)
+                    {
+                        Main.projectile[i].velocity = initialChargeDirection.ToRotationVector2() * (enraged ? 3f : 1.5f);
+                        Main.projectile[i].netUpdate = true;
+                    }
+                }
+            }
+
+            // Control the other eyes if the caller is the executive decision maker.
+            if (groupIndex == 1f)
+                EyeSyncVariables(npc);
+        }
+
+        public static void SelectNextAttack(NPC npc)
+        {
+            MLSealTeleport = true;
+
+            npc.ai[0]++;
+
+            NPC core = Main.npc[NPC.FindFirstNPC(NPCID.MoonLordCore)];
+            if (npc.ai[0] >= (core.life / (float)core.lifeMax > 0.4f ? 3f : 4f))
+                npc.ai[0] = 0f;
+
+            npc.ai[1] = 0f;
+            npc.Infernum().ExtraAI[1] = 0f;
+            npc.Infernum().ExtraAI[2] = 0f;
+            npc.Infernum().ExtraAI[3] = 0f;
+            EyeSyncVariables(npc);
         }
 
         /// <summary>
@@ -638,11 +671,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
         }
 
-#pragma warning disable IDE0060
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-#pragma warning restore IDE0060
-
             // Manually draw a telegraph from the True Eyes if they are ready to do so
 
             if (npc.Infernum().canTelegraph)

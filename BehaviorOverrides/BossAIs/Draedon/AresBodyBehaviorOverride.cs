@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             ref float enraged = ref npc.Infernum().ExtraAI[13];
             ref float backarmSwapTimer = ref npc.Infernum().ExtraAI[14];
-            ref float laserGaussArmAreSwapped = ref npc.Infernum().ExtraAI[15];
+            ref float laserPulseArmAreSwapped = ref npc.Infernum().ExtraAI[15];
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
@@ -82,11 +82,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] > 0f)
                 enraged = 1f;
 
-            // Mark the laser and gauss arms swap sometimes.
+            // Make the laser and pulse arms swap sometimes.
             if (backarmSwapTimer > 960f)
             {
                 backarmSwapTimer = 0f;
-                laserGaussArmAreSwapped = laserGaussArmAreSwapped == 0f ? 1f : 0f;
+                laserPulseArmAreSwapped = laserPulseArmAreSwapped == 0f ? 1f : 0f;
                 npc.netUpdate = true;
             }
             backarmSwapTimer++;
@@ -109,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresTeslaCannon>(), npc.whoAmI);
                             break;
                         case 3:
-                            lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresGaussNuke>(), npc.whoAmI);
+                            lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresPulseCannon>(), npc.whoAmI);
                             break;
                         default:
                             break;
@@ -536,8 +536,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
 
-            // The gauss and laser arm are disabled for 2.5 seconds once they swap.
-            if (aresBody.Infernum().ExtraAI[14] < 150f && (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresGaussNuke>()))
+            // The pulse and laser arm are disabled for 2.5 seconds once they swap.
+            if (aresBody.Infernum().ExtraAI[14] < 150f && (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresPulseCannon>()))
                 return true;
 
             // The tesla arm is disabled when on the same side as the laser arm during the laser barrage combo attack.
@@ -568,7 +568,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar)
             {
-                if (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresGaussNuke>())
+                if (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresPulseCannon>())
                     return aresBody.ai[1] < ElectromagneticStar.ChargeupTime + 60f;
                 return true;
             }
@@ -580,28 +580,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 return false;
 
             // Rotate arm usability as follows (This only applies before phase 5):
-            // Gauss Nuke and Laser Cannon,
+            // Pulse Cannon and Laser Cannon,
             // Laser Cannon and Tesla Cannon,
             // Tesla Cannon and Plasma Flamethrower
-            // Plasma Flamethrower and Gauss Nuke.
+            // Plasma Flamethrower and Pulse Cannon.
 
             // If during or after phase 5, rotate arm usability like this instead:
-            // Gauss Nuke, Laser Cannon, and Tesla Cannon,
+            // Pulse Cannon, Laser Cannon, and Tesla Cannon,
             // Laser Cannon, Tesla Cannon, and Plasma Flamethrower,
-            // Tesla Cannon, Plasma Flamethrower, and Gauss Nuke
+            // Tesla Cannon, Plasma Flamethrower, and Pulse Cannon
 
             if (ExoMechManagement.CurrentAresPhase < 5)
             {
                 switch ((int)aresBody.Infernum().ExtraAI[5] % 4)
                 {
                     case 0:
-                        return npc.type != ModContent.NPCType<AresGaussNuke>() && npc.type != ModContent.NPCType<AresLaserCannon>();
+                        return npc.type != ModContent.NPCType<AresPulseCannon>() && npc.type != ModContent.NPCType<AresLaserCannon>();
                     case 1:
                         return npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>();
                     case 2:
                         return npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>();
                     case 3:
-                        return npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && npc.type != ModContent.NPCType<AresGaussNuke>();
+                        return npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && npc.type != ModContent.NPCType<AresPulseCannon>();
                 }
             }
             else
@@ -609,11 +609,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 switch ((int)aresBody.Infernum().ExtraAI[5] % 3)
                 {
                     case 0:
-                        return npc.type != ModContent.NPCType<AresGaussNuke>() && npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>();
+                        return npc.type != ModContent.NPCType<AresPulseCannon>() && npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>();
                     case 1:
                         return npc.type != ModContent.NPCType<AresLaserCannon>() && npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>();
                     case 2:
-                        return npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && npc.type != ModContent.NPCType<AresGaussNuke>();
+                        return npc.type != ModContent.NPCType<AresTeslaCannon>() && npc.type != ModContent.NPCType<AresPlasmaFlamethrower>() && npc.type != ModContent.NPCType<AresPulseCannon>();
                 }
             }
             return false;
@@ -688,7 +688,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             // Draw arms.
             int laserArm = NPC.FindFirstNPC(ModContent.NPCType<AresLaserCannon>());
-            int gaussArm = NPC.FindFirstNPC(ModContent.NPCType<AresGaussNuke>());
+            int pulseArm = NPC.FindFirstNPC(ModContent.NPCType<AresPulseCannon>());
             int teslaArm = NPC.FindFirstNPC(ModContent.NPCType<AresTeslaCannon>());
             int plasmaArm = NPC.FindFirstNPC(ModContent.NPCType<AresPlasmaFlamethrower>());
             Color afterimageBaseColor = Color.White;
@@ -705,7 +705,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Laser arm.
                 (-1, true),
 
-                // Gauss arm.
+                // Pulse arm.
                 (1, true),
 
                 // Telsa arm.
@@ -724,8 +724,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (laserArm != -1)
                 DrawArmFunction.Invoke(npc.modNPC, new object[] { spriteBatch, Main.npc[laserArm].Center, armGlowmaskColor, armProperties[0].Item1, armProperties[0].Item2 });
-            if (gaussArm != -1)
-                DrawArmFunction.Invoke(npc.modNPC, new object[] { spriteBatch, Main.npc[gaussArm].Center, armGlowmaskColor, armProperties[1].Item1, armProperties[1].Item2 });
+            if (pulseArm != -1)
+                DrawArmFunction.Invoke(npc.modNPC, new object[] { spriteBatch, Main.npc[pulseArm].Center, armGlowmaskColor, armProperties[1].Item1, armProperties[1].Item2 });
             if (teslaArm != -1)
                 DrawArmFunction.Invoke(npc.modNPC, new object[] { spriteBatch, Main.npc[teslaArm].Center, armGlowmaskColor, armProperties[2].Item1, armProperties[2].Item2 });
             if (plasmaArm != -1)

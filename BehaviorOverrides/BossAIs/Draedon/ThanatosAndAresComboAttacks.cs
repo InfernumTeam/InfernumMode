@@ -18,8 +18,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
     public static partial class ExoMechComboAttackContent
     {
-        // The Nuke's AI is not changed by this system because there's literally nothing you can do with it beyond its
-        // normal behavior of shooting and reloading gauss nukes.
         public static Dictionary<ExoMechComboAttackType, int[]> AffectedAresArms => new Dictionary<ExoMechComboAttackType, int[]>()
         {
             [ExoMechComboAttackType.ThanatosAres_ExplosionCircle] = new int[] { ModContent.NPCType<AresTeslaCannon>(), 

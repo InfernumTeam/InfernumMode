@@ -4,6 +4,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -79,6 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             CalamityGlobalNPC.slimeGodRed = npc.whoAmI;
 
             // Disappear if the core is missing.
+            npc.timeLeft = 3600;
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGod))
             {
                 npc.active = false;
@@ -230,6 +232,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 for (int k = 0; k < 50; k++)
                     Dust.NewDust(npc.position, npc.width, npc.height, 4, Main.rand.NextFloatDirection() * 3f, -1f, 0, default, 1f);
             }
+
+            if (NPC.CountNPCS(ModContent.NPCType<SlimeSpawnCrimson3>()) > 0)
+                npc.life = Main.npc.Where(n => n.active && n.type == ModContent.NPCType<SlimeSpawnCrimson3>()).Sum(n => n.life);
 
             if (attackTimer < 420f)
             {

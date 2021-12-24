@@ -70,6 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             }
 
             // Disappear if the target is gone.
+            npc.timeLeft = 3600;
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 5000f))
             {
                 npc.TargetClosest();

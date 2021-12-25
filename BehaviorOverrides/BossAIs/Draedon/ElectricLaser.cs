@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
-	public class PulseLaser : ModProjectile
+	public class ElectricLaser : ModProjectile
 	{
 		public ref float TelegraphDelay => ref projectile.ai[0];
 		public ref float PulseFlash => ref projectile.localAI[0];
@@ -28,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Exo Pulse Laser");
+			DisplayName.SetDefault("Exo Teratesla Laser");
 			Main.projFrames[projectile.type] = 4;
 		}
 
@@ -102,11 +101,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					CalamityGlobalProjectile.ExpandHitboxBy(projectile, 114);
 					for (int i = 0; i < 50; i++)
 					{
-						Dust pulseFire = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(16f, 16f), 267);
-						pulseFire.color = Color.MediumPurple;
-						pulseFire.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 16f);
-						pulseFire.scale *= 1.6f;
-						pulseFire.noGravity = true;
+						Dust electricity = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(16f, 16f), 267);
+						electricity.color = Color.Cyan;
+						electricity.velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 16f);
+						electricity.scale *= 1.45f;
+						electricity.noGravity = true;
 					}
 					projectile.Damage();
 					projectile.Kill();
@@ -225,7 +224,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
 			Vector2 scaleOuter = scaleInner * new Vector2(1f, 2.2f);
 
-			Color colorOuter = Color.Lerp(Color.Violet, Color.Purple, TelegraphDelay / TelegraphTotalTime * 2f % 1f);
+			Color colorOuter = Color.Lerp(Color.Cyan, Color.Cyan * 1.25f, TelegraphDelay / TelegraphTotalTime * 2f % 1f);
 			colorOuter = Color.Lerp(colorOuter, new Color(1f, 1f, 1f, 0f), (float)Math.Sin(PulseFlash) * 0.5f + 0.5f);
 			Color colorInner = Color.Lerp(colorOuter, Color.White, 0.75f);
 

@@ -18,7 +18,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             AresTwins_ElectromagneticPlasmaStar,
             ThanatosAres_ExplosionCircle,
             ThanatosAres_NuclearHell,
-            ThanatosAres_LaserBarrage
+            ThanatosAres_LaserBarrage,
+            ThanatosAres_ElectropulseBursts
         }
 
         public static bool ShouldSelectComboAttack(NPC npc, out ExoMechComboAttackType newAttack)
@@ -82,6 +83,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ExplosionCircle);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_NuclearHell);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserBarrage);
+                if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
+                    attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ElectropulseBursts, 1.65);
 
                 do
                     newAttack = attackSelector.Get();

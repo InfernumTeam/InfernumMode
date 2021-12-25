@@ -198,6 +198,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 projectileDestination = target.Center;
                                 Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 580, 0f, Main.myPlayer, 0f, npc.whoAmI);
                                 break;
+
+                            // Fire pulse and electricity lasers.
+                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_ElectropulseBursts:
+                                type = ModContent.ProjectileType<PulseLaser>();
+                                if (npc.whoAmI % 2 == 0)
+                                    type = ModContent.ProjectileType<ElectricLaser>();
+
+                                shootSpeed = generalShootSpeedFactor * 10f;
+
+                                projectileDestination = target.Center;
+                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 600, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                if (Main.projectile.IndexInRange(laser))
+                                {
+                                    Main.projectile[laser].owner = npc.target;
+                                    if (npc.whoAmI % 2 == 0)
+                                        Main.projectile[laser].ModProjectile<ElectricLaser>().InitialDestination = projectileDestination;
+                                    else
+                                        Main.projectile[laser].ModProjectile<PulseLaser>().InitialDestination = projectileDestination;
+                                    Main.projectile[laser].ai[1] = npc.whoAmI;
+                                }
+                                break;
                         }
                     }
                 }

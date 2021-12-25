@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
                 npc.velocity *= 0.925f;
                 npc.rotation = npc.rotation.AngleLerp(npc.velocity.X * 0.032f, 0.15f);
-                npc.Opacity = Utils.InverseLerp(60f, 1f, DeathCountdown, true);
+                npc.Opacity = Utils.InverseLerp(1f, 60f, DeathCountdown, true);
 
                 if (DeathCountdown <= 1f)
                     npc.active = false;

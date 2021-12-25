@@ -157,6 +157,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 float incrementalBodyLength = 0f;
                 while (incrementalBodyLength + 1f < laserBodyLength)
                 {
+                    if (!screenArea.Intersects(new Rectangle((int)centerOnLaser.X, (int)centerOnLaser.Y, 1, 1)))
+                    {
+                        centerOnLaser += projectile.velocity * laserOffset;
+                        incrementalBodyLength += laserOffset;
+                        continue;
+                    }
+
                     spriteBatch.Draw(LaserMiddleTexture,
                                      centerOnLaser - Main.screenPosition,
                                      middleFrameArea,
@@ -171,9 +178,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     middleFrameArea.Y += LaserMiddleTexture.Height / Main.projFrames[projectile.type];
                     if (middleFrameArea.Y + middleFrameArea.Height > LaserMiddleTexture.Height)
                         middleFrameArea.Y = 0;
-
-                    if (!screenArea.Intersects(new Rectangle((int)centerOnLaser.X, (int)centerOnLaser.Y, 1, 1)))
-                        break;
                 }
             }
 

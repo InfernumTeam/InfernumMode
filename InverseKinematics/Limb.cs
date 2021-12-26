@@ -16,6 +16,7 @@ namespace InfernumMode.InverseKinematics
             Rotation = rotation;
         }
 
+        // I'm going to shoot someone.
         public static void UpdateRotationOfDualSet(Limb[] limbs, int direction, Vector2 endPosition)
         {
             float horizontalTotalDistance = endPosition.X - limbs[0].StartingPoint.X;

@@ -83,7 +83,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
 		public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item74, Target.Center);
+            if (Target.Center.Y > (Main.maxTilesX - 300f) * 16f)
+                Main.PlaySound(SoundID.Item74, Target.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

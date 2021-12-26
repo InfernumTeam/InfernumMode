@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
-	public class WallOfFleshEyeBehaviorOverride : NPCBehaviorOverride
+    public class WallOfFleshEyeBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.WallofFleshEye;
 
@@ -18,8 +18,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override bool PreAI(NPC npc)
         {
-            ref float time = ref npc.ai[1];
+            ref float attackTimer = ref npc.ai[1];
 
+            // Disappear if the WoF body is not present.
             if (!Main.npc.IndexInRange(Main.wof))
             {
                 npc.active = false;
@@ -28,13 +29,62 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             }
 
             Player target = Main.player[Main.npc[Main.wof].target];
+
+            // Attack the target independently after being "killed".
+            if (npc.Infernum().ExtraAI[2] == 1f)
+            {
+                Vector2 hoverOffset = (MathHelper.TwoPi * (npc.Infernum().ExtraAI[1] + Main.npc[Main.wof].ai[3] / 90f) / 4f).ToRotationVector2() * 360f;
+                Vector2 hoverDestination = target.Center + hoverOffset;
+                if (!Main.npc[Main.wof].WithinRange(target.Center, 4000f))
+                    hoverDestination = Main.npc[Main.wof].Center;
+
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 18f, 0.9f);
+                npc.damage = 0;
+                npc.rotation = npc.AngleTo(target.Center) + MathHelper.Pi;
+                npc.dontTakeDamage = true;
+
+                int circleHoverOffsetIndex = 0;
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (!Main.npc[i].active || Main.npc[i].type != npc.type || Main.npc[i].Infernum().ExtraAI[2] == 0f)
+                        continue;
+
+                    Main.npc[i].Infernum().ExtraAI[1] = circleHoverOffsetIndex;
+                    circleHoverOffsetIndex++;
+                }
+
+                Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center) * 10f;
+                Vector2 laserShootPosition = npc.Center + laserShootVelocity * 7.5f;
+
+                // Create a dust telegraph prior to releasing lasers.
+                if (Main.npc[Main.wof].ai[3] % 90f > 60f)
+				{
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Dust laser = Dust.NewDustPerfect(laserShootPosition + Main.rand.NextVector2Circular(25f, 25f), 182);
+                        laser.velocity = (laserShootPosition - laser.position).SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(2f, 8f);
+                        laser.noGravity = true;
+                    }
+				}
+
+                if (Main.npc[Main.wof].ai[3] % 90f == 89f)
+                {
+                    Main.PlaySound(SoundID.Item12, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(laserShootPosition, laserShootVelocity, ProjectileID.ScutlixLaser, 100, 0f);
+                }
+
+                return false;
+            }
+
             float destinationOffset = MathHelper.Clamp(npc.Distance(target.Center), 60f, 210f);
-            destinationOffset += MathHelper.Lerp(0f, 215f, (float)Math.Sin(npc.whoAmI % 4f / 4f * MathHelper.Pi + time / 16f) * 0.5f + 0.5f);
+            destinationOffset += MathHelper.Lerp(0f, 215f, (float)Math.Sin(npc.whoAmI % 4f / 4f * MathHelper.Pi + attackTimer / 16f) * 0.5f + 0.5f);
             destinationOffset += npc.Distance(target.Center) * 0.1f;
 
             float destinationAngularOffset = MathHelper.Lerp(-1.5f, 1.5f, npc.ai[0]);
-            destinationAngularOffset += (float)Math.Sin(time / 32f + npc.whoAmI % 4f / 4f * MathHelper.Pi) * 0.16f;
+            destinationAngularOffset += (float)Math.Sin(attackTimer / 32f + npc.whoAmI % 4f / 4f * MathHelper.Pi) * 0.16f;
 
+            // Move in sharp, sudden movements while releasing things at the target.
             Vector2 destination = Main.npc[Main.wof].Center;
             destination += Main.npc[Main.wof].velocity.SafeNormalize(Vector2.UnitX).RotatedBy(destinationAngularOffset) * destinationOffset;
 
@@ -47,10 +97,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             npc.spriteDirection = 1;
             npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.1f);
 
-            time++;
+            attackTimer++;
 
             int beamShootRate = 1600;
-            if (time % beamShootRate == (beamShootRate + npc.whoAmI * 300) % beamShootRate)
+            if (attackTimer % beamShootRate == (beamShootRate + npc.whoAmI * 300) % beamShootRate)
                 WallOfFleshMouthBehaviorOverride.PrepareFireBeam(npc, target);
 
             return false;
@@ -63,6 +113,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             ref float verticalOffsetFactor = ref npc.ai[0];
+
+            // Don't draw any chains once free.
+            if (npc.Infernum().ExtraAI[2] == 1f)
+            {
+                Texture2D texture = Main.npcTexture[npc.type];
+                Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
+                Vector2 origin = npc.frame.Size() * 0.5f;
+                spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, 0, 0f);
+                return false;
+            }
+
             float yStart = MathHelper.Lerp(Main.wofB, Main.wofT, verticalOffsetFactor);
             Vector2 start = new Vector2(Main.npc[Main.wof].Center.X, yStart);
 

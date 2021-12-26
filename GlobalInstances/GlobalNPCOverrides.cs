@@ -245,19 +245,6 @@ namespace InfernumMode.GlobalInstances
                 }
             }
 
-            if (npc.type == NPCID.WallofFleshEye)
-            {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    for (int i = 0; i < Main.rand.Next(11, 15 + 1); i++)
-                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
-                    if (Main.npc.IndexInRange(Main.wof))
-                        Main.npc[Main.wof].StrikeNPC(1550, 0f, 0);
-                }
-
-                return false;
-            }
-
             if (npc.type == ModContent.NPCType<OldDukeNPC>())
                 CalamityMod.CalamityMod.StopRain();
 
@@ -556,6 +543,24 @@ namespace InfernumMode.GlobalInstances
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return base.CheckDead(npc);
+            
+            if (npc.type == NPCID.WallofFleshEye)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < Main.rand.Next(11, 15 + 1); i++)
+                        Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
+                    if (Main.npc.IndexInRange(Main.wof))
+                        Main.npc[Main.wof].StrikeNPC(1550, 0f, 0);
+                }
+
+                npc.life = 1;
+                npc.ai[1] = 0f;
+                npc.Infernum().ExtraAI[2] = 1f;
+                npc.active = true;
+                npc.netUpdate = true;
+                return false;
+			}
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
             {

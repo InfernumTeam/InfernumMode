@@ -459,14 +459,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Make the laser spin.
             float adjustedTimer = attackTimer - (shootDelay + telegraphTime);
-            float spinSpeed = Utils.InverseLerp(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 145f;
+            float spinSpeed = Utils.InverseLerp(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 160f;
             if (npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts)
             {
+                if (adjustedTimer == (int)(spinTime * 0.5f) - 60)
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+
                 if (adjustedTimer < spinTime * 0.5f)
                     spinSpeed *= Utils.InverseLerp(spinTime * 0.5f, spinTime * 0.5f - 45f, adjustedTimer, true);
                 else
                     spinSpeed *= -Utils.InverseLerp(spinTime * 0.5f, spinTime * 0.5f + 45f, adjustedTimer, true);
-                spinSpeed *= 0.7f;
+                spinSpeed *= 0.77f;
             }
 
             generalAngularOffset += spinSpeed * laserDirectionSign;

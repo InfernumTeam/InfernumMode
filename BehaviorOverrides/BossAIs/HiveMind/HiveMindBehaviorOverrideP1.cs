@@ -135,11 +135,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             shootTimer--;
 
             float clotShootRate = 260f;
-            float mirageSummonRate = 450f;
+            float mirageSummonRate = 400f;
 
-            if (lifeRatio < 0.5f)
+            if (lifeRatio < 0.92f)
                 mirageSummonRate = 270f;
-            if (lifeRatio < 0.25f)
+            if (lifeRatio < 0.85f)
                 clotShootRate = 145f;
 
             if (shootTimer > 100 && shootTimer % clotShootRate == 0f)

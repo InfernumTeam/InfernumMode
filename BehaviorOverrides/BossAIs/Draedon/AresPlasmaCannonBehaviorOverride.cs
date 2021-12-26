@@ -62,6 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 shootTime += 30;
                 totalFlamesPerBurst++;
+                aimPredictiveness -= 3f;
             }
 
             // Get very pissed off if Ares is enraged.

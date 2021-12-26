@@ -343,11 +343,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             int attackDelay = 180;
             int attackTime = 580;
-            int aresLaserBurstShootRate = 32;
+            int aresLaserBurstShootRate = 34;
             int lightningShootRate = 200;
             int lightningBurstTime = 60;
             int totalLightningShotsPerBurst = 12;
-            float aresLaserBurstShootSpeed = 12f;
+            float aresLaserBurstShootSpeed = 10.25f;
             bool teslaArmIsDisabled = CalamityGlobalNPC.draedonExoMechPrime >= 0 && Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[15] == 1f;
 
             if (teslaArmIsDisabled)
@@ -444,7 +444,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         for (int i = 0; i < 9; i++)
                         {
-                            float laserShootSpread = MathHelper.Lerp(-0.51f, 0.51f, i / 8f) + Main.rand.NextFloatDirection() * 0.04f;
+                            float laserShootSpread = MathHelper.Lerp(-0.65f, 0.65f, i / 8f) + Main.rand.NextFloatDirection() * 0.04f;
                             Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(laserShootSpread) * aresLaserBurstShootSpeed;
                             int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<CannonLaser>(), 580, 0f);
                             if (Main.projectile.IndexInRange(laser))
@@ -535,6 +535,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static bool DoBehavior_ThanatosAres_ElectropulseBursts(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
             int attackDelay = 180;
+            int attackTime = 560;
             int lightningShootRate = 200;
             int lightningBurstTime = 60;
             int totalLightningShotsPerBurst = 6;
@@ -749,7 +750,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
             }
 
-            return false;
+            return attackTimer > attackDelay + attackTime;
         }
     }
 }

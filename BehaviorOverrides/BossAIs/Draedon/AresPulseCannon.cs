@@ -156,9 +156,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    Vector2 offset = Main.rand.NextVector2Circular(45f, 45f);
-                    Dust.NewDustPerfect(endOfCannon + offset, 234, Main.rand.NextVector2Circular(5f, 5f)).noGravity = true;
-                    Dust.NewDustPerfect(endOfCannon - offset, 234, Main.rand.NextVector2Circular(5f, 5f)).noGravity = true;
+                    Vector2 offset = Main.rand.NextVector2Circular(30f, 30f);
+                    Dust.NewDustPerfect(endOfCannon + offset, 234, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.35f).noGravity = true;
+                    Dust.NewDustPerfect(endOfCannon - offset, 234, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.35f).noGravity = true;
                 }
             }
 
@@ -193,11 +193,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override void FindFrame(int frameHeight)
         {
-            int currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / npc.ai[1])) % 36;
-            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
-                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] % 72f / 72f)) % 36;
+            int currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / npc.ai[1]));
 
-            npc.frame = new Rectangle(currentFrame / 8 * 150, currentFrame % 8 * 102, 150, 102);
+            if (npc.ai[0] > npc.ai[1])
+            {
+                npc.frameCounter++;
+                if (npc.frameCounter >= 66f)
+                    npc.frameCounter = 0D;
+                currentFrame = (int)Math.Round(MathHelper.Lerp(36f, 47f, (float)npc.frameCounter / 66f));
+            }
+            else
+                npc.frameCounter = 0D;
+
+            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
+                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] % 72f / 72f));
+
+            npc.frame = new Rectangle(currentFrame / 12 * 150, currentFrame % 12 * 148, 150, 148);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

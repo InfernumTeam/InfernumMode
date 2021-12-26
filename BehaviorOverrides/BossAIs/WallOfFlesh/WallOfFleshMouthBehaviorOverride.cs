@@ -23,7 +23,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override bool PreAI(NPC npc)
         {
-            npc.Calamity().DR = MathHelper.Lerp(0.225f, 0.725f, Utils.InverseLerp(0f, 3f, NPC.CountNPCS(NPCID.WallofFleshEye), true));
+            int totalAttachedEyes = 0;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (!Main.npc[i].active || Main.npc[i].type != NPCID.WallofFleshEye || Main.npc[i].Infernum().ExtraAI[2] != 0f)
+                    continue;
+
+                totalAttachedEyes++;
+            }
+
+            npc.Calamity().DR = MathHelper.Lerp(0.225f, 0.725f, Utils.InverseLerp(0f, 3f, totalAttachedEyes, true));
 
             ref float initialized01Flag = ref npc.localAI[0];
             ref float attackTimer = ref npc.ai[3];
@@ -64,11 +73,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 DoCeilingAndFloorAttack(npc, target, lifeRatio < 0.5f);
 
             int beamShootRate = 380;
-            if (!NPC.AnyNPCs(NPCID.WallofFleshEye) && attackTimer % beamShootRate == beamShootRate - 1f)
+            if (totalAttachedEyes <= 0 && attackTimer % beamShootRate == beamShootRate - 1f)
                 PrepareFireBeam(npc, target);
 
             int miscEnemyCount = NPC.CountNPCS(NPCID.LeechHead) + NPC.CountNPCS(NPCID.TheHungryII);
-            if (Main.netMode != NetmodeID.MultiplayerClient && miscEnemyCount < 3 && !NPC.AnyNPCs(NPCID.WallofFleshEye) && attackTimer % 240f == 239f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && miscEnemyCount < 3 && totalAttachedEyes <= 0 && attackTimer % 240f == 239f)
             {
                 int leech = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, Main.rand.NextBool() ? NPCID.LeechHead : NPCID.TheHungryII);
                 if (Main.npc.IndexInRange(leech))
@@ -266,11 +275,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 				{
                     roarTimer = 660f;
 
-                    // Scream.
-                    Main.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 1, 1f, 0.3f);
+                    if (Main.LocalPlayer.Center.Y > (Main.maxTilesX - 300f) * 16f)
+                    {
+                        // Scream.
+                        Main.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 1, 1f, 0.3f);
 
-                    // Roar.
-                    Main.PlaySound(SoundID.NPCKilled, (int)target.Center.X, (int)target.Center.Y, 10, 1.2f, 0.3f);
+                        // Roar.
+                        Main.PlaySound(SoundID.NPCKilled, (int)target.Center.X, (int)target.Center.Y, 10, 1.2f, 0.3f);
+                    }
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)

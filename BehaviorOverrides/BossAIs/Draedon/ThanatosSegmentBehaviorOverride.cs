@@ -141,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                                 // Predictive laser.
                                 Vector2 projectileDestination = target.Center + target.velocity * predictionFactor;
-                                int laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                int laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
                                     Main.projectile[laser].owner = npc.target;
@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                                 // Opposite laser.
                                 projectileDestination = target.Center - target.velocity * predictionFactor;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
                                     Main.projectile[laser].owner = npc.target;
@@ -166,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 shootSpeed = generalShootSpeedFactor * 10f;
 
                                 projectileDestination = target.Center;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 600, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
                                     Main.projectile[laser].owner = npc.target;
@@ -181,7 +181,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 shootSpeed = generalShootSpeedFactor * 9.5f;
 
                                 projectileDestination = target.Center;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
                                     Main.projectile[laser].owner = npc.target;
@@ -196,7 +196,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 shootSpeed = generalShootSpeedFactor * 11f;
 
                                 projectileDestination = target.Center;
-                                Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 580, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 530, 0f, Main.myPlayer, 0f, npc.whoAmI);
                                 break;
 
                             // Fire pulse and electricity lasers.
@@ -208,7 +208,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 shootSpeed = generalShootSpeedFactor * 10f;
 
                                 projectileDestination = target.Center;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 600, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
                                     Main.projectile[laser].owner = npc.target;

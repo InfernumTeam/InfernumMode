@@ -89,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             for (int i = 0; i < 7; i++)
             {
                 Vector2 sparkVelocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 6f;
-                Utilities.NewProjectileBetter(projectile.Center, sparkVelocity, ModContent.ProjectileType<TypicalPlasmaSpark>(), 550, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, sparkVelocity, ModContent.ProjectileType<TypicalPlasmaSpark>(), 500, 0f);
             }
         }
 

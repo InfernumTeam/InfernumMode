@@ -11,6 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     public class AresUnstablePulseBlast : ModProjectile
     {
         public bool ShouldExplodeDiagonally => projectile.ai[0] == 1f;
+        public bool ShouldDisappear => projectile.ai[1] == 1f;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Exopulse Energy Burst");
@@ -47,6 +48,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (pulseArm == -1)
             {
                 projectile.Kill();
+                return;
+            }
+
+            if (ShouldDisappear)
+            {
+                projectile.Opacity -= 0.08f;
+                if (projectile.Opacity <= 0f)
+                    projectile.Kill();
                 return;
             }
 

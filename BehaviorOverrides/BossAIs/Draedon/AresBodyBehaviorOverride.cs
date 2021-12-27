@@ -334,7 +334,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         float sparkShootSpeed = npc.Distance(target.Center) * 0.02f + 20f;
                         Vector2 sparkVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / totalSparks) * sparkShootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), 600, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
                     }
                     npc.netUpdate = true;
                 }
@@ -454,7 +454,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 Vector2 targetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
                 Vector2 spawnPosition = target.Center - targetDirection.RotatedByRandom(1.1f) * Main.rand.NextFloat(325f, 650f) * new Vector2(1f, 0.6f);
-                Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<AresBeamExplosion>(), 600, 0f);
+                Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<AresBeamExplosion>(), 550, 0f);
             }
 
             // Make the laser spin.

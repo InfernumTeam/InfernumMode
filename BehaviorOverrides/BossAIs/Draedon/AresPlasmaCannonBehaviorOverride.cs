@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 flameShootVelocity *= Main.rand.NextFloat(0.6f, 0.9f);
                         }
 
-                        Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, projectileDamageBoost + 550, 0f);
+                        Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, projectileDamageBoost + 500, 0f);
                     }
 
                     npc.netUpdate = true;

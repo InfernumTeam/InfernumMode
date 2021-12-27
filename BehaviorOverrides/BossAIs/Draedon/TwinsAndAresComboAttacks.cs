@@ -219,7 +219,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         for (int i = 0; i < 6; i++)
                         {
                             Vector2 plasmaShootVelocity = aimDirection.RotatedByRandom(apolloPlasmaSpread) * apolloPlasmaShootSpeed * Main.rand.NextFloat(0.6f, 1f);
-                            Utilities.NewProjectileBetter(plasmaSpawnPosition, plasmaShootVelocity, ModContent.ProjectileType<TypicalPlasmaSpark>(), 580, 0f);
+                            Utilities.NewProjectileBetter(plasmaSpawnPosition, plasmaShootVelocity, ModContent.ProjectileType<TypicalPlasmaSpark>(), 530, 0f);
                         }
                         npc.netUpdate = true;
                     }
@@ -445,7 +445,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                     {
                                         Vector2 aimDestination = npc.Center + (MathHelper.TwoPi * i / artemisLaserBurstCount + offsetAngle).ToRotationVector2() * 1500f;
                                         Vector2 laserShootVelocity = npc.SafeDirectionTo(aimDestination) * 10.5f;
-                                        int laser = Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<ArtemisLaser>(), 580, 0f);
+                                        int laser = Utilities.NewProjectileBetter(npc.Center, laserShootVelocity, ModContent.ProjectileType<ArtemisLaser>(), 530, 0f);
                                         if (Main.projectile.IndexInRange(laser))
                                         {
                                             Main.projectile[laser].ModProjectile<ArtemisLaser>().InitialDestination = aimDestination + laserShootVelocity.SafeNormalize(Vector2.UnitY) * 1600f;
@@ -581,7 +581,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                         int type = ModContent.ProjectileType<ApolloRocket>();
                                         Vector2 rocketVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 24f;
                                         Vector2 rocketSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 70f;
-                                        int rocket = Utilities.NewProjectileBetter(rocketSpawnPosition, rocketVelocity, type, 640, 0f, Main.myPlayer, 0f, target.Center.Y);
+                                        int rocket = Utilities.NewProjectileBetter(rocketSpawnPosition, rocketVelocity, type, 600, 0f, Main.myPlayer, 0f, target.Center.Y);
                                         if (Main.projectile.IndexInRange(rocket))
                                             Main.projectile[rocket].tileCollide = false;
                                     }
@@ -821,7 +821,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Vector2 plasmaShootVelocity = aimDirection * normalShotShootSpeed;
-                                int plasma = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), 550, 0f);
+                                int plasma = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), 500, 0f);
                                 if (Main.projectile.IndexInRange(plasma))
                                     Main.projectile[plasma].ai[0] = Main.rand.NextBool().ToDirectionInt();
                             }
@@ -833,7 +833,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 Vector2 laserShootVelocity = aimDirection * normalShotShootSpeed;
-                                int laser = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, laserShootVelocity, ModContent.ProjectileType<ArtemisLaser>(), 550, 0f);
+                                int laser = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, laserShootVelocity, ModContent.ProjectileType<ArtemisLaser>(), 500, 0f);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
                                     Main.projectile[laser].ModProjectile<ArtemisLaser>().InitialDestination = aimDestination;
@@ -893,7 +893,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (Main.netMode != NetmodeID.MultiplayerClient && npc.type == ModContent.NPCType<AresBody>() && attackTimer >= attackDelay && attackTimer % 12f == 11f && star != null)
                 {
                     Vector2 coreSpawnPosition = npc.Center + Vector2.UnitY * 26f;
-                    Utilities.NewProjectileBetter(coreSpawnPosition, Main.rand.NextVector2CircularEdge(12f, 12f), ModContent.ProjectileType<ExoburstSpark>(), 600, 0f);
+                    Utilities.NewProjectileBetter(coreSpawnPosition, Main.rand.NextVector2CircularEdge(12f, 12f), ModContent.ProjectileType<ExoburstSpark>(), 550, 0f);
                 }
 
                 NPC plasmaArm = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<AresPlasmaFlamethrower>())];

@@ -171,7 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 {
                     Vector2 blastShootVelocity = aimDirection * blastShootSpeed;
                     Vector2 blastSpawnPosition = endOfCannon + blastShootVelocity * 8.4f;
-                    Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<AresPulseBlast>(), projectileDamageBoost + 550, 0f);
+                    Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<AresPulseBlast>(), projectileDamageBoost + 500, 0f);
 
                     npc.netUpdate = true;
                 }

@@ -145,7 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), projectileDamageBoost + 550, 0f);
+                    int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), projectileDamageBoost + 500, 0f);
                     if (Main.projectile.IndexInRange(electricOrb))
                         Main.projectile[electricOrb].ai[0] = orbCounter;
 
@@ -166,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         for (int i = 0; i < 7; i++)
                         {
                             Vector2 sparkVelocity = (MathHelper.TwoPi * i / 7f + offsetAngle).ToRotationVector2() * 6.5f;
-                            Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 6f, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), projectileDamageBoost + 560, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 6f, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), projectileDamageBoost + 500, 0f);
                         }
                     }
 
@@ -176,7 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         for (int i = 0; i < 85; i++)
                         {
                             Vector2 cloudShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 23f) - npc.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
-                            Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<ElectricGas>(), projectileDamageBoost + 580, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<ElectricGas>(), projectileDamageBoost + 530, 0f);
                         }
                     }
                 }

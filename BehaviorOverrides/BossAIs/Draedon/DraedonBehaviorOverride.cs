@@ -204,7 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 					if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
 					{
 						Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonLaugh"), playerToFollow.Center);
-						Main.NewText("Continue feeding information to my machines.", TextColorEdgy);
+						Main.NewText("Go on. Continue feeding information to my machines.", TextColorEdgy);
 					}
 
 					break;

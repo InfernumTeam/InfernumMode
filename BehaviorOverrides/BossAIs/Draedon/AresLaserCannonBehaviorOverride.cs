@@ -166,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         if (laserCount > 1)
                             shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.41f, 0.41f, i / (float)(laserCount - 1f)));
                         shootVelocity = shootVelocity.RotatedByRandom(0.07f);
-                        int laser = Utilities.NewProjectileBetter(endOfCannon, shootVelocity, ModContent.ProjectileType<CannonLaser>(), projectileDamageBoost + 575, 0f);
+                        int laser = Utilities.NewProjectileBetter(endOfCannon, shootVelocity, ModContent.ProjectileType<CannonLaser>(), projectileDamageBoost + 530, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].ai[1] = npc.whoAmI;
                     }

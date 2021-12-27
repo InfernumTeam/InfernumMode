@@ -135,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float nukeShootSpeed = 13.5f;
-                    Utilities.NewProjectileBetter(endOfCannon, aimDirection * nukeShootSpeed, ModContent.ProjectileType<AresGaussNukeProjectile>(), 1225, 0f, npc.target);
+                    Utilities.NewProjectileBetter(endOfCannon, aimDirection * nukeShootSpeed, ModContent.ProjectileType<AresGaussNukeProjectile>(), 1200, 0f, npc.target);
 
                     npc.netUpdate = true;
                 }

@@ -157,7 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         for (int i = 0; i < totalPlasmaPerBurst; i++)
                         {
                             Vector2 plasmaShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(plasmaBurstMaxSpread) * Main.rand.NextFloat(0.85f, 1f) * plasmaShootSpeed;
-                            Utilities.NewProjectileBetter(endOfCannon, plasmaShootVelocity, ModContent.ProjectileType<PlasmaBomb>(), 580, 0f);
+                            Utilities.NewProjectileBetter(endOfCannon, plasmaShootVelocity, ModContent.ProjectileType<PlasmaBomb>(), 530, 0f);
                         }
                     }
                 }
@@ -328,7 +328,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         {
                             float laserShootSpread = MathHelper.Lerp(-0.44f, 0.44f, i / 6f) + Main.rand.NextFloatDirection() * 0.04f;
                             Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(laserShootSpread) * laserBurstShootSpeed;
-                            int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<CannonLaser>(), 580, 0f);
+                            int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<CannonLaser>(), 530, 0f);
                             if (Main.projectile.IndexInRange(laser))
                                 Main.projectile[laser].ai[1] = npc.whoAmI;
                         }
@@ -446,7 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         {
                             float laserShootSpread = MathHelper.Lerp(-0.65f, 0.65f, i / 8f) + Main.rand.NextFloatDirection() * 0.04f;
                             Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(laserShootSpread) * aresLaserBurstShootSpeed;
-                            int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<CannonLaser>(), 580, 0f);
+                            int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<CannonLaser>(), 530, 0f);
                             if (Main.projectile.IndexInRange(laser))
                                 Main.projectile[laser].ai[1] = npc.whoAmI;
                         }
@@ -747,6 +747,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         blast.velocity = blast.SafeDirectionTo(target.Center).RotatedBy(blast.ai[0]) * 6f;
                         blast.netUpdate = true;
                     }
+                }
+            }
+
+            // Make all blasts disappear.
+            if (attackTimer == attackDelay + attackTime - 10f)
+            {
+                foreach (Projectile blast in Utilities.AllProjectilesByID(ModContent.ProjectileType<AresUnstablePulseBlast>()))
+                {
+                    blast.ai[1] = 1f;
+                    blast.netUpdate = true;
                 }
             }
 

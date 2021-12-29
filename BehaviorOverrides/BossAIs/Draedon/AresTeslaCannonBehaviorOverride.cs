@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -92,7 +93,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackTimer = chargeDelay;
 
             // Hover near Ares.
-            AresBodyBehaviorOverride.DoHoverMovement(npc, aresBody.Center + new Vector2(-375f, 100f), 45f, 90f);
+            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge;
+            float horizontalOffset = doingHoverCharge ? 250f : 375f;
+            float verticalOffset = doingHoverCharge ? 150f : 100f;
+            Vector2 hoverDestination = aresBody.Center + new Vector2(-horizontalOffset, verticalOffset);
+            AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 65f, 115f);
+            npc.Infernum().ExtraAI[0] = MathHelper.Clamp(npc.Infernum().ExtraAI[0] + doingHoverCharge.ToDirectionInt(), 0f, 15f);
 
             // Check to see if this arm should be used for special things in a combo attack.
             if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
@@ -108,6 +114,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float idealRotation = aimDirection.ToRotation();
             if (currentlyDisabled)
                 idealRotation = MathHelper.Clamp(npc.velocity.X * -0.016f, -0.81f, 0.81f) + MathHelper.PiOver2;
+            if (doingHoverCharge)
+                idealRotation = aresBody.velocity.ToRotation() - MathHelper.PiOver2;
 
             if (npc.spriteDirection == 1)
                 idealRotation += MathHelper.Pi;
@@ -214,6 +222,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            if (npc.Infernum().OptionalPrimitiveDrawer is null)
+            {
+                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => AresBodyBehaviorOverride.FlameTrailWidthFunctionBig(npc, completionRatio),
+                    completionRatio => AresBodyBehaviorOverride.FlameTrailColorFunctionBig(npc, completionRatio),
+                    null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                if (npc.Infernum().ExtraAI[0] > 0f)
+                    npc.Infernum().OptionalPrimitiveDrawer.Draw(npc.oldPos, npc.Size * 0.5f - Main.screenPosition, 54);
+            }
+
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -21,7 +22,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("XF-09 Ares Pulse Cannon");
-            Main.npcFrameCount[npc.type] = 8;
+            Main.npcFrameCount[npc.type] = 12;
+            NPCID.Sets.TrailingMode[npc.type] = 3;
+            NPCID.Sets.TrailCacheLength[npc.type] = npc.oldPos.Length;
         }
 
         public override void SetDefaults()
@@ -53,10 +56,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public override void AI()
         {
             if (CalamityGlobalNPC.draedonExoMechPrime < 0)
-			{
+            {
                 npc.active = false;
                 return;
-			}
+            }
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
@@ -113,8 +116,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 AttackTimer = ChargeDelay;
 
             // Hover near Ares.
-            Vector2 hoverDestination = aresBody.Center + Vector2.UnitX * (aresBody.Infernum().ExtraAI[15] == 1f ? -1f : 1f) * 575f;
-            AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 45f, 90f);
+            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge;
+            float horizontalOffset = doingHoverCharge ? 380f : 575f;
+            float verticalOffset = doingHoverCharge ? 150f : 0f;
+            Vector2 hoverDestination = aresBody.Center + new Vector2((aresBody.Infernum().ExtraAI[15] == 1f ? -1f : 1f) * horizontalOffset, verticalOffset);
+            AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 65f, 115f);
+            npc.Infernum().ExtraAI[0] = MathHelper.Clamp(npc.Infernum().ExtraAI[0] + doingHoverCharge.ToDirectionInt(), 0f, 15f);
 
             // Check to see if this arm should be used for special things in a combo attack.
             if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
@@ -131,6 +138,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float idealRotation = aimDirection.ToRotation();
             if (currentlyDisabled)
                 idealRotation = MathHelper.Clamp(npc.velocity.X * -0.016f, -0.81f, 0.81f) + MathHelper.PiOver2;
+            if (doingHoverCharge)
+                idealRotation = aresBody.velocity.ToRotation() - MathHelper.PiOver2;
 
             if (npc.spriteDirection == 1)
                 idealRotation += MathHelper.Pi;
@@ -213,6 +222,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            if (npc.Infernum().OptionalPrimitiveDrawer is null)
+            {
+                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => AresBodyBehaviorOverride.FlameTrailWidthFunctionBig(npc, completionRatio),
+                    completionRatio => AresBodyBehaviorOverride.FlameTrailColorFunctionBig(npc, completionRatio),
+                    null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                if (npc.Infernum().ExtraAI[0] > 0f)
+                    npc.Infernum().OptionalPrimitiveDrawer.Draw(npc.oldPos, npc.Size * 0.5f - Main.screenPosition, 54);
+            }
+
             SpriteEffects spriteEffects = SpriteEffects.None;
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;

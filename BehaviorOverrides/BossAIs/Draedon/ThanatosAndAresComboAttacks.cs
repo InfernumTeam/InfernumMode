@@ -242,8 +242,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int attackDelay = 120;
             int attackTime = 480;
             int thanatosNukeShootRate = 60;
-            int laserBurstShootRate = 27;
-            float laserBurstShootSpeed = 14f;
+            int laserBurstShootRate = 45;
+            float laserBurstShootSpeed = 12f;
 
             // Thanatos periodically releases nukes from the mouth. Its head is always open.
             if (npc.type == ModContent.NPCType<ThanatosHead>())
@@ -343,11 +343,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             int attackDelay = 180;
             int attackTime = 580;
-            int aresLaserBurstShootRate = 34;
+            int aresLaserBurstShootRate = 42;
             int lightningShootRate = 200;
             int lightningBurstTime = 60;
             int totalLightningShotsPerBurst = 12;
-            float aresLaserBurstShootSpeed = 10.25f;
+            float aresLaserBurstShootSpeed = 10f;
             bool teslaArmIsDisabled = CalamityGlobalNPC.draedonExoMechPrime >= 0 && Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[15] == 1f;
 
             if (teslaArmIsDisabled)

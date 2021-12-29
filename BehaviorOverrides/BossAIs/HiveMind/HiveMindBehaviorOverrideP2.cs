@@ -361,7 +361,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
             if (attackTimer == 0f)
             {
-                initialSpinRotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                initialSpinRotation = Main.rand.Next(4) * MathHelper.PiOver2;
 
                 npc.velocity = Vector2.Zero;
                 npc.Center = target.Center + initialSpinRotation.ToRotationVector2() * SpinRadius;

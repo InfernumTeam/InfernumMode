@@ -152,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 				frameType = (int)QueenBeeFrameType.UpwardFly;
 				if (npc.WithinRange(destination, 48f) || Math.Abs(target.Center.Y - npc.Center.Y) < 15f)
 				{
-					npc.Center = Vector2.Lerp(npc.Center, destination, 0.5f);
+					npc.Center = new Vector2(MathHelper.Lerp(npc.Center.X, destination.X, 0.1f), MathHelper.Lerp(npc.Center.Y, destination.Y, 0.5f));
 					npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitX) * baseChargeSpeed;
 					if (npc.life < npc.lifeMax * 0.1)
 						npc.velocity *= 1.4f;

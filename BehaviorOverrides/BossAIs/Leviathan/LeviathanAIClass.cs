@@ -223,7 +223,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         goToNextAIState();
                     break;
                 case LeviathanAttackType.CallForHelp:
-                    int countedMinions = NPC.CountNPCS(ModContent.NPCType<Parasea>()) + NPC.CountNPCS(ModContent.NPCType<AquaticAberration>()) * 2;
+                    int countedMinions = NPC.CountNPCS(ModContent.NPCType<AquaticAberration>()) * 2;
                     int hoverTime = sirenAlive ? 90 : 45;
                     int slowdownTime = sirenAlive ? 60 : 30;
                     if (!anahitaFightingToo)
@@ -248,7 +248,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             List<Vector2> decidedSpawnPositions = new List<Vector2>();
-                            for (int i = 0; i < 3; i++)
+                            for (int i = 0; i < 2; i++)
                             {
                                 bool shouldSpawnImmediately = true;
                                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(300f, 300f);
@@ -268,10 +268,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                                     break;
                                 }
 
-                                int typeToSummon = Main.rand.NextBool(2) ? ModContent.NPCType<Parasea>() : ModContent.NPCType<AquaticAberration>();
-                                if (countedMinions >= 5)
-                                    typeToSummon = ModContent.NPCType<Parasea>();
-
+                                int typeToSummon = ModContent.NPCType<AquaticAberration>();
                                 int spawner = Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<LeviathanMinionSpawner>(), 0, 0f);
                                 if (Main.projectile.IndexInRange(spawner))
                                 {

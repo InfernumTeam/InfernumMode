@@ -153,7 +153,7 @@ namespace InfernumMode.BossRush
 
                 new Boss(ModContent.NPCType<CeaselessVoid>(), permittedNPCs: ModContent.NPCType<DarkEnergy>()),
 
-                new Boss(ModContent.NPCType<Cryogen>(), permittedNPCs: new int[] { ModContent.NPCType<CryogenIce>(), ModContent.NPCType<IceMass>(), ModContent.NPCType<Cryocore>(), ModContent.NPCType<Cryocore2>() }),
+                new Boss(ModContent.NPCType<Cryogen>()),
 
                 new Boss(NPCID.MoonLordCore, spawnContext: type =>
                 {
@@ -169,7 +169,7 @@ namespace InfernumMode.BossRush
                 }, permittedNPCs: new int[] { ModContent.NPCType<DankCreeper>(), ModContent.NPCType<DarkHeart>(), ModContent.NPCType<HiveBlob>(), ModContent.NPCType<HiveBlob2>() }),
 
                 new Boss(ModContent.NPCType<CalamitasRun3>(), TimeChangeContext.Night, specialSpawnCountdown: 420, dimnessFactor: 0.6f, permittedNPCs: new int[] { ModContent.NPCType<CalamitasRun>(), ModContent.NPCType<CalamitasRun2>(),
-                    ModContent.NPCType<LifeSeeker>(), ModContent.NPCType<SoulSeeker>(), ModContent.NPCType<SoulSeeker2>() }),
+                         ModContent.NPCType<SoulSeeker>(), ModContent.NPCType<SoulSeeker2>() }),
 
                 new Boss(ModContent.NPCType<StormWeaverHead>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<StormWeaverBody>(), ModContent.NPCType<StormWeaverTail>(),  }),
 
@@ -183,7 +183,7 @@ namespace InfernumMode.BossRush
                 }, permittedNPCs: new int[] { NPCID.Retinazer, ModContent.NPCType<EnergyOrb>(), ModContent.NPCType<CursedOrb>() }),
 
                 new Boss(ModContent.NPCType<PlaguebringerGoliath>(), permittedNPCs: new int[] { ModContent.NPCType<BuilderDroneSmall>(), ModContent.NPCType<BuilderDroneBig>(), ModContent.NPCType<SmallDrone>(),
-                    ModContent.NPCType<PlagueMine>(), ModContent.NPCType<PlaguebringerShade>(), ModContent.NPCType<ExplosivePlagueCharger>() }),
+                    ModContent.NPCType<PlagueMine>(), ModContent.NPCType<ExplosivePlagueCharger>() }),
 
                 new Boss(ModContent.NPCType<AstrumDeusHeadSpectral>(), TimeChangeContext.Night, type =>
                 {
@@ -246,7 +246,7 @@ namespace InfernumMode.BossRush
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
                 }, usesSpecialSound: true, permittedNPCs: new int[] { ModContent.NPCType<DevourerofGodsBody>(), ModContent.NPCType<DevourerofGodsTail>() }),
 
-                new Boss(ModContent.NPCType<Yharon>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<DetonatingFlare>(), ModContent.NPCType<DetonatingFlare2>() }),
+                new Boss(ModContent.NPCType<Yharon>(), TimeChangeContext.Day),
 
                 new Boss(ModContent.NPCType<Apollo>(), spawnContext: type =>
                 {

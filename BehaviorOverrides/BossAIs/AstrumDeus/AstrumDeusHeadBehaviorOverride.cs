@@ -181,7 +181,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 {
                     float bombShootOffset = lifeRatio < Phase2LifeThreshold ? 850f : 1050f;
                     Vector2 bombShootPosition = target.Center - Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * bombShootOffset;
-                    Vector2 bombShootVelocity = (target.Center - bombShootPosition).SafeNormalize(Vector2.UnitY) * 15f;
+                    Vector2 bombShootVelocity = (target.Center - bombShootPosition).SafeNormalize(Vector2.UnitY) * 27f;
                     if (lifeRatio < Phase2LifeThreshold)
                         bombShootVelocity *= 1.4f;
 
@@ -201,7 +201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             int totalCrashes = lifeRatio < Phase2LifeThreshold ? 2 : 3;
             int crashRiseTime = lifeRatio < Phase2LifeThreshold ? 315 : 375;
             int crashChargeTime = lifeRatio < Phase2LifeThreshold ? 100 : 95;
-            float crashSpeed = MathHelper.Lerp(32.5f, 48f, 1f - lifeRatio) + beaconAngerFactor * 20f;
+            float crashSpeed = MathHelper.Lerp(41f, 56f, 1f - lifeRatio) + beaconAngerFactor * 20f;
             if (BossRushEvent.BossRushActive)
             {
                 crashChargeTime -= 8;
@@ -216,6 +216,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 Vector2 riseDestination = target.Center + new Vector2(70f, MathHelper.Lerp(-1250f, -965f, 1f - lifeRatio));
                 if (!npc.WithinRange(riseDestination, 95f))
                 {
+                    npc.Center = npc.Center.MoveTowards(riseDestination, 12f);
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(riseDestination), 0.035f);
                     npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(riseDestination) * (33.5f + beaconAngerFactor * 13f), 0.6f);
                 }
@@ -261,8 +262,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 flyAcceleration *= 1.75f;
             }
 
-            int shootRate = lifeRatio < Phase2LifeThreshold ? 3 : 5;
-            shootRate = (int)MathHelper.Lerp(shootRate, 2f, beaconAngerFactor);
+            int shootRate = lifeRatio < Phase2LifeThreshold ? 2 : 4;
+            shootRate = (int)MathHelper.Lerp(shootRate, 1f, beaconAngerFactor);
 
             ref float starCounter = ref npc.Infernum().ExtraAI[0];
 
@@ -313,7 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public static void DoBehavior_WarpCharge(NPC npc, Player target, float beaconAngerFactor, float lifeRatio, float attackTimer, ref float releasingParticlesFlag)
         {
-            int fadeInTime = lifeRatio < Phase2LifeThreshold ? 67 : 85;
+            int fadeInTime = lifeRatio < Phase2LifeThreshold ? 42 : 60;
             int chargeTime = lifeRatio < Phase2LifeThreshold ? 38 : 45;
             int fadeOutTime = fadeInTime / 2 + 10;
             int chargeCount = lifeRatio < Phase2LifeThreshold ? 3 : 4;
@@ -498,7 +499,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public static void DoBehavior_InfectedPlasmaVomit(NPC npc, Player target, float beaconAngerFactor, ref float attackTimer)
         {
-            int shootRate = (int)MathHelper.Lerp(48f, 16f, beaconAngerFactor);
+            int shootRate = (int)MathHelper.Lerp(32f, 12f, beaconAngerFactor);
             ref float shootTimer = ref npc.Infernum().ExtraAI[0];
 
             // Drift towards the player.
@@ -531,7 +532,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Adjust rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (attackTimer >= 360f)
+            if (attackTimer >= 270f)
                 GotoNextAttackState(npc);
 
             shootTimer++;
@@ -555,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.05f, true) * newSpeed;
             }
 
-            if (shootTimer > Main.rand.Next(15, 32) - beaconAngerFactor * 12f && shootCounter < totalStarsToCreate)
+            if (shootTimer > Main.rand.Next(10, 18) - beaconAngerFactor * 6f && shootCounter < totalStarsToCreate)
             {
                 Main.PlaySound(SoundID.Item8, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -588,7 +589,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 }
             }
 
-            if (attackTimer > 480f)
+            if (attackTimer > 320f)
                 GotoNextAttackState(npc);
 
             // Adjust rotation.

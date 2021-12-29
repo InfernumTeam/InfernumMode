@@ -890,17 +890,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // Release detonating flares.
             else if (attackTimer < flarenadoSpawnDelay + 45f)
             {
-                if ((attackTimer - flarenadoSpawnDelay) % 7f == 6f)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient && NPC.CountNPCS(ModContent.NPCType<DetonatingFlare>()) + NPC.CountNPCS(ModContent.NPCType<DetonatingFlare2>()) < 8)
-                    {
-                        Vector2 flareSpawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(200f, 100f) * Main.rand.NextFloat(0.6f, 1f);
-
-                        if (!target.WithinRange(flareSpawnPosition, 190f))
-                            NPC.NewNPC((int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
-                    }
+                if ((attackTimer - flarenadoSpawnDelay) % 10f == 9f)
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoarShort"), npc.Center);
-                }
             }
             else
                 SelectNextAttack(npc, ref attackType);
@@ -1103,10 +1094,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             // This only happens if sufficiently far away from the target, to prevent cheap shots.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % flareRingSpawnRate == flareRingSpawnRate - 1)
             {
+                /*
                 Vector2 flareSpawnPosition = npc.Center + ((attackTimer - flareRingSpawnRate + 1) / flareRingSpawnRate * MathHelper.TwoPi / totalFlaresInRing).ToRotationVector2() * 665f;
 
                 if (!target.WithinRange(flareSpawnPosition, 700f))
                     NPC.NewNPC((int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
+                */
             }
 
             if (attackTimer >= flareRingSpawnRate * totalFlaresInRing)

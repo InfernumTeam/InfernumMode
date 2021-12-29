@@ -4,6 +4,7 @@ using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.UI;
 using CalamityMod.World;
@@ -135,6 +136,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(DriedSeafood).GetMethod("UseItem", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator AresBodyCanHitPlayer
+        {
+            add => HookEndpointManager.Modify(typeof(AresBody).GetMethod("CanHitPlayer", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(AresBody).GetMethod("CanHitPlayer", Utilities.UniversalBindingFlags), value);
+        }
+
         public static void ILEditingLoad()
         {
             On.Terraria.Gore.NewGore += RemoveCultistGore;
@@ -159,6 +166,7 @@ namespace InfernumMode.ILEditingStuff
             SepulcherBodyModifyProjectile += FuckYou;
             SepulcherTailModifyProjectile += FuckYou;
             DesertScourgeItemUseItem += GetRidOfDesertNuisances;
+            AresBodyCanHitPlayer += LetAresHitPlayer;
         }
 
         public static void ILEditingUnload()
@@ -185,6 +193,7 @@ namespace InfernumMode.ILEditingStuff
             SepulcherBodyModifyProjectile -= FuckYou;
             SepulcherTailModifyProjectile -= FuckYou;
             DesertScourgeItemUseItem -= GetRidOfDesertNuisances;
+            AresBodyCanHitPlayer -= LetAresHitPlayer;
         }
 
         // Why.
@@ -721,6 +730,13 @@ namespace InfernumMode.ILEditingStuff
                 else
                     NetMessage.SendData(MessageID.SpawnBoss, -1, -1, null, player.whoAmI, ModContent.NPCType<DesertScourgeHead>());
             });
+            cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        private static void LetAresHitPlayer(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);
         }

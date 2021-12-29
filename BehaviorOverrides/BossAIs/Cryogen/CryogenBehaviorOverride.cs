@@ -736,11 +736,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
                 if (attackTimer >= chargeDelay)
                 {
-                    // Release a small core once the charge begins sometimes.
-                    // Only a few can exist at once.
-                    if (NPC.CountNPCS(ModContent.NPCType<Cryocore>()) < 3 && Main.rand.NextBool(2))
-                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y - 8, ModContent.NPCType<Cryocore>(), npc.whoAmI);
-
                     // Play a charge sound.
                     Main.PlaySound(SoundID.Item28, npc.Center);
 

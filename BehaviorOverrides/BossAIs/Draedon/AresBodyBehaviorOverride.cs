@@ -28,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public enum AresBodyAttackType
         {
             IdleHover,
+            HoverCharge,
             LaserSpinBursts,
             DirectionChangingSpinBursts,
             RadianceLaserBursts
@@ -47,6 +48,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Define the whoAmI variable.
             CalamityGlobalNPC.draedonExoMechPrime = npc.whoAmI;
+
+            // Reset damage.
+            npc.damage = 0;
+            npc.Calamity().canBreakPlayerDefense = true;
 
             // Reset frame states.
             ref float frameType = ref npc.localAI[0];
@@ -214,6 +219,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 case AresBodyAttackType.IdleHover:
                     DoBehavior_IdleHover(npc, target, ref attackTimer);
                     break;
+                case AresBodyAttackType.HoverCharge:
+                    DoBehavior_HoverCharge(npc, target, ref attackTimer);
+                    break;
                 case AresBodyAttackType.RadianceLaserBursts:
                     DoBehavior_RadianceLaserBursts(npc, target, ref attackTimer, ref frameType);
                     break;
@@ -246,17 +254,92 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
                 SelectNextAttack(npc);
 
+            // Define rotation.
+            npc.rotation = npc.velocity.X * 0.0025f;
+
             attackTimer++;
             return false;
         }
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
-            int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 1200 : 1500;
+            int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 900 : 1200;
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
             DoHoverMovement(npc, hoverDestination, 24f, 75f);
 
             if (attackTimer > attackTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_HoverCharge(NPC npc, Player target, ref float attackTimer)
+        {
+            int chargeCount = 7;
+            int hoverTime = 35;
+            int chargeTime = 35;
+            int contactDamage = 600;
+            float hoverSpeed = 65f;
+            float chargeSpeed = 36f;
+
+            if (ExoMechManagement.CurrentAresPhase >= 3)
+            {
+                chargeCount--;
+                chargeSpeed += 4f;
+            }
+            if (ExoMechManagement.CurrentAresPhase >= 5)
+            {
+                chargeCount--;
+                chargeTime -= 2;
+                chargeSpeed += 4f;
+            }
+            if (ExoMechManagement.CurrentAresPhase >= 6)
+            {
+                chargeCount--;
+                chargeTime -= 4;
+                contactDamage += 100;
+                chargeSpeed += 4f;
+            }
+
+            // Have a bit longer of a delay for the first charge.
+            if (attackTimer < hoverTime + chargeTime)
+                hoverTime += 35;
+
+            float wrappedTime = attackTimer % (hoverTime + chargeTime);
+
+            if (wrappedTime < hoverTime - 15f)
+            {
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 300f, -420f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, hoverTime * 0.3f);
+                npc.velocity = (npc.velocity * 4f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed)) / 5f;
+            }
+            else if (wrappedTime < hoverTime)
+                npc.velocity *= 0.94f;
+
+            else
+            {
+                npc.damage = contactDamage;
+                if (wrappedTime == hoverTime + 1f)
+                {
+                    npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 5f) * chargeSpeed;
+                    npc.netUpdate = true;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 30; i++)
+                        {
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 30f) * 25f;
+                            Vector2 coreSpawnPosition = npc.Center + Vector2.UnitY * 26f;
+                            Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
+
+                            shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 30f) * 16f;
+                            Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
+                        }
+                    }
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), target.Center);
+                }
+                npc.velocity *= 1.015f;
+            }
+
+            if (attackTimer >= (hoverTime + chargeTime) * chargeCount + 20)
                 SelectNextAttack(npc);
         }
 
@@ -504,18 +587,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             AresBodyAttackType oldAttackType = (AresBodyAttackType)(int)npc.ai[0];
             npc.ai[0] = (int)AresBodyAttackType.IdleHover;
-            if (oldAttackType == AresBodyAttackType.IdleHover && ExoMechManagement.CurrentAresPhase >= 3)
+            if (oldAttackType == AresBodyAttackType.IdleHover)
             {
-                bool complementMechIsPresent = ExoMechManagement.ComplementMechIsPresent(npc);
-                NPC finalMech = ExoMechManagement.FindFinalMech();
-                if (finalMech == npc)
-                    finalMech = null;
+                if (Main.rand.NextBool() || ExoMechManagement.CurrentAresPhase < 3)
+                    npc.ai[0] = (int)AresBodyAttackType.HoverCharge;
+                else if (ExoMechManagement.CurrentAresPhase >= 3)
+                {
+                    bool complementMechIsPresent = ExoMechManagement.ComplementMechIsPresent(npc);
+                    NPC finalMech = ExoMechManagement.FindFinalMech();
+                    if (finalMech == npc)
+                        finalMech = null;
 
-                // Use a laser spin if alone. Otherwise, use the radiance burst attack.
-                if ((!complementMechIsPresent && finalMech is null) || ExoMechManagement.CurrentAresPhase == 5)
-                    npc.ai[0] = Main.player[npc.target].Infernum().AresSpecialAttackTypeSelector.MakeSelection() + 1f;
-                else
-                    npc.ai[0] = (int)AresBodyAttackType.RadianceLaserBursts;
+                    // Use a laser spin if alone. Otherwise, use the radiance burst attack.
+                    if ((!complementMechIsPresent && finalMech is null) || ExoMechManagement.CurrentAresPhase == 5)
+                        npc.ai[0] = Main.player[npc.target].Infernum().AresSpecialAttackTypeSelector.MakeSelection() + 2f;
+                    else
+                        npc.ai[0] = (int)AresBodyAttackType.RadianceLaserBursts;
+                }
             }
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
@@ -552,6 +640,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 return !activeArms.Contains(npc.type);
 
             if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts ||
+                aresBody.ai[0] == (int)AresBodyAttackType.HoverCharge ||
                 aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts ||
                 aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser ||
@@ -686,6 +775,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         }
 
         public static MethodInfo DrawArmFunction = typeof(AresBody).GetMethod("DrawArm", BindingFlags.Public | BindingFlags.Instance);
+
+        public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio)
+        {
+            return MathHelper.SmoothStep(60f, 22f, completionRatio) * Utils.InverseLerp(0f, 15f, npc.Infernum().ExtraAI[0], true);
+        }
+
+        public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
+        {
+            float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * 1.3f;
+            Color startingColor = Color.Lerp(Color.White, Color.Yellow, 0.25f);
+            Color middleColor = Color.Lerp(Color.Orange, Color.White, 0.35f);
+            Color endColor = Color.Lerp(Color.Red, Color.White, 0.17f);
+            Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * Utils.InverseLerp(0f, 15f, npc.Infernum().ExtraAI[0], true) * trailOpacity;
+            color.A = 0;
+            return color;
+        }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {

@@ -124,12 +124,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 		internal static void DoAttack_HorizontalCharge(NPC npc, Player target, ref float frameType)
 		{
 			int chargesToDo = 4;
-			if (npc.life < npc.lifeMax * 0.33)
-				chargesToDo = 6;
-
-			float baseChargeSpeed = 24f;
+			float baseChargeSpeed = 19.5f;
 			float chargeSpeedup = 0.0067f;
 			float hoverOffset = 320f;
+
+			if (npc.life < npc.lifeMax * 0.6)
+				baseChargeSpeed += 4.5f;
+
+			if (npc.life < npc.lifeMax * 0.33)
+				chargesToDo += 2;
+
+			if (npc.life < npc.lifeMax * 0.1)
+			{
+				baseChargeSpeed *= 1.4f;
+				hoverOffset += 50f;
+			}
+
 			ref float attackState = ref npc.Infernum().ExtraAI[0];
 			ref float speedBoost = ref npc.Infernum().ExtraAI[1];
 			ref float totalChargesDone = ref npc.Infernum().ExtraAI[2];
@@ -137,7 +147,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			if (BossRushEvent.BossRushActive)
 			{
 				chargesToDo += 8;
-				baseChargeSpeed = 33f;
 				chargeSpeedup = 0.1f;
 				hoverOffset -= 110f;
 			}
@@ -154,9 +163,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 				{
 					npc.Center = new Vector2(MathHelper.Lerp(npc.Center.X, destination.X, 0.1f), MathHelper.Lerp(npc.Center.Y, destination.Y, 0.5f));
 					npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitX) * baseChargeSpeed;
-					if (npc.life < npc.lifeMax * 0.1)
-						npc.velocity *= 1.4f;
-
 					if (npc.life < npc.lifeMax * 0.1 && Math.Abs(target.velocity.Y) > 3f)
 						npc.velocity.Y += target.velocity.Y * 0.5f;
 					attackState = 1f;

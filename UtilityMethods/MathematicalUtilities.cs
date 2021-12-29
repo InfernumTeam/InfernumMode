@@ -91,6 +91,18 @@ namespace InfernumMode
         }
 
         /// <summary>
+        /// Rotates towards a given vector direction-wise. Magnitude is maintained.
+        /// </summary>
+        /// <param name="originalVector">The original vector.</param>
+        /// <param name="idealVector">The ideal vector to approach.</param>
+        /// <param name="interpolant">The interpolant.</param>
+        public static Vector2 AngleDirectionLerp(this Vector2 originalVector, Vector2 idealVector, float interpolant)
+        {
+            float offsetAngle = originalVector.AngleBetween(idealVector) * MathHelper.Clamp(interpolant, 0f, 1f);
+            return originalVector.RotateTowards(idealVector.ToRotation(), offsetAngle);
+        }
+
+        /// <summary>
         /// Clamps the magnitude of a vector via safe normalization.
         /// </summary>
         /// <param name="v">The vector.</param>

@@ -25,14 +25,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.alpha = 255;
-            projectile.timeLeft = 90;
+            projectile.timeLeft = 75;
             projectile.penetrate = -1;
             cooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(90f, 65f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.InverseLerp(75f, 50f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             if (projectile.timeLeft == 45f)
@@ -43,8 +43,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Player closestTarget = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-                    Vector2 blastShootVelocity = projectile.SafeDirectionTo(closestTarget.Center) * 14f;
-                    Projectile.NewProjectile(projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), projectile.damage, 0f);
+
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float shootOffsetAngle = MathHelper.Lerp(-0.5f, 0.5f, i);
+                        Vector2 blastShootVelocity = projectile.SafeDirectionTo(closestTarget.Center).RotatedBy(shootOffsetAngle) * 21f;
+                        Projectile.NewProjectile(projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), projectile.damage, 0f);
+                    }
                 }
             }
         }

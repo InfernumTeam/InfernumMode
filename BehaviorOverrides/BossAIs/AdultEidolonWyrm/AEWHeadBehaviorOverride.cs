@@ -110,6 +110,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 case AEWAttackType.PsychicBlasts:
                     DoBehavior_PsychicBlasts(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
                     break;
+                case AEWAttackType.UndynesTail:
+                    DoBehavior_UndynesTail(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
+                    break;
             }
             attackTimer++;
             return false;
@@ -205,15 +208,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public static void DoBehavior_PsychicBlasts(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
         {
             int attackShootDelay = 60;
-            int orbCreationRate = (int)MathHelper.Lerp(22f, 13f, 1f - lifeRatio);
+            int orbCreationRate = (int)MathHelper.Lerp(8f, 4f, 1f - lifeRatio);
             int attackChangeDelay = 90;
-            int attackTime = 6600;
+            int attackTime = 900;
 
             // Reset damage to 0.
             npc.damage = 0;
 
             // Do movement.
-            DoDefaultSwimMovement(npc, target, 0.625f);
+            DoDefaultSwimMovement(npc, target, 0.7f);
 
             // Decide rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
@@ -230,15 +233,83 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Release psychic fields around the head.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > attackShootDelay && attackTimer % orbCreationRate == orbCreationRate - 1f)
             {
-                Vector2 fieldSpawnPosition = npc.Center + Main.rand.NextVector2Circular(420f, 80f).RotatedBy(npc.rotation);
-                Utilities.NewProjectileBetter(fieldSpawnPosition, Vector2.Zero, ModContent.ProjectileType<PsychicEnergyField>(), 0, 0f);
+                int fieldBoltDamage = (int)(generalDamageFactor * 640f);
+                Vector2 fieldSpawnPosition = npc.Center + Main.rand.NextVector2Circular(660f, 150f).RotatedBy(npc.rotation);
+                Utilities.NewProjectileBetter(fieldSpawnPosition, Vector2.Zero, ModContent.ProjectileType<PsychicEnergyField>(), fieldBoltDamage, 0f);
+            }
+        }
+
+        public static void DoBehavior_UndynesTail(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
+        {
+            int totalCharges = 8;
+            int redirectTime = 45;
+            int chargeTime = 48;
+            float chargeSpeed = MathHelper.Lerp(48f, 65f, 1f - lifeRatio);
+
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
+            ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
+
+            // Decide rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            switch ((int)attackSubstate)
+            {
+                // Line up in preparation for the charge.
+                case 0:
+                    Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -350f);
+                    Vector2 idealHoverVelocity = npc.SafeDirectionTo(hoverDestination) * 45f;
+                    npc.velocity = npc.velocity.RotateTowards(idealHoverVelocity.ToRotation(), 0.045f).MoveTowards(idealHoverVelocity, 10f);
+
+                    // Begin the charge.
+                    if (attackTimer > redirectTime * 0.5f && (npc.WithinRange(hoverDestination, 60f) || attackTimer > redirectTime))
+                    {
+                        chargeDirection = npc.AngleTo(target.Center + target.velocity * 15f);
+                        attackSubstate = 1f;
+                        attackTimer = 0f;
+                        npc.velocity = npc.velocity.AngleDirectionLerp(chargeDirection.ToRotationVector2(), 0.33f).SafeNormalize(Vector2.Zero) * chargeSpeed * 0.6f;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Move into the charge.
+                case 1:
+                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), chargeSpeed, 0.18f);
+                    npc.velocity = npc.velocity.RotateTowards(chargeDirection, MathHelper.Pi / 3f, true) * newSpeed;
+
+                    // Release water spears from the tail of the wyrm.
+                    int tail = NPC.FindFirstNPC(ModContent.NPCType<EidolonWyrmTailHuge>());
+                    if (tail != -1 && !Main.npc[tail].WithinRange(target.Center, 200f) && attackTimer % 4f == 3f)
+                    {
+                        Main.PlaySound(SoundID.Item66, Main.npc[tail].Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int spearDamage = (int)(generalDamageFactor * 640f);
+                            Vector2 spearShootVelocity = Main.rand.NextVector2CircularEdge(27f, 27f);
+                            Utilities.NewProjectileBetter(Main.npc[tail].Center, spearShootVelocity, ModContent.ProjectileType<HomingWaterSpear>(), spearDamage, 0f);
+                        }
+                    }
+                    
+                    if (attackTimer > chargeTime)
+                    {
+                        chargeDirection = 0f;
+                        attackSubstate = 0f;
+                        attackTimer = 0f;
+                        chargeCounter++;
+                        npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 24f, 0.4f);
+                        npc.netUpdate = true;
+
+                        if (chargeCounter >= totalCharges)
+                            SelectNextAttack(npc);
+                    }
+                    break;
             }
         }
 
         public static void DoDefaultSwimMovement(NPC npc, Player target, float generalSpeedFactor = 1f)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlySpeed = MathHelper.Lerp(20f, 26f, 1f - lifeRatio) * generalSpeedFactor;
+            float idealFlySpeed = MathHelper.Lerp(27f, 34f, 1f - lifeRatio) * generalSpeedFactor;
             float flyAcceleration = MathHelper.Lerp(0.03f, 0.0425f, 1f - lifeRatio) * generalSpeedFactor;
             float newSpeed = MathHelper.Lerp(npc.velocity.Length(), idealFlySpeed, 0.08f);
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * idealFlySpeed;
@@ -265,9 +336,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             switch (oldAttack)
             {
                 case AEWAttackType.AbyssalCrash:
-                    npc.ai[0] = (int)AEWAttackType.PsychicBlasts;
+                    npc.ai[0] = (int)AEWAttackType.UndynesTail;
                     break;
-                case AEWAttackType.PsychicBlasts:
+                case AEWAttackType.UndynesTail:
                     npc.ai[0] = (int)AEWAttackType.AbyssalCrash;
                     break;
             }

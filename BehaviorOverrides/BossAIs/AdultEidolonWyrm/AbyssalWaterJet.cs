@@ -55,7 +55,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         internal Color ColorFunction(float completionRatio)
         {
-            return Color.Lerp(Color.BlueViolet, Color.Black, 0.85f) * projectile.Opacity * 1.2f;
+            Color color = Color.Lerp(Color.BlueViolet, Color.Black, 0.85f) * projectile.Opacity * 1.2f;
+            return color;
         }
 
         internal float WidthFunction(float completionRatio)

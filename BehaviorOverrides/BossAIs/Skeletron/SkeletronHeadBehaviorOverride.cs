@@ -16,8 +16,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
         {
             Phase1Fakeout,
             HoverSkulls,
-            HandWaves,
             SpinCharge,
+            HandWaves,
             HandShadowflameBurst,
             HandShadowflameWaves,
             DownwardAcceleratingSkulls
@@ -27,8 +27,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        public const float Phase2LifeRatio = 0.75f;
-        public const float Phase3LifeRatio = 0.4f;
+        public const float Phase2LifeRatio = 0.85f;
+        public const float Phase3LifeRatio = 0.475f;
 
         #region AI
 
@@ -285,13 +285,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             switch (currentAttack)
             {
                 case SkeletronAttackType.HoverSkulls:
-                    npc.ai[0] = phase3 ? (int)SkeletronAttackType.DownwardAcceleratingSkulls : (int)SkeletronAttackType.HandWaves;
-                    break;
-                case SkeletronAttackType.HandWaves:
-                case SkeletronAttackType.DownwardAcceleratingSkulls:
-                    npc.ai[0] = (int)SkeletronAttackType.SpinCharge;
+                    npc.ai[0] = phase3 ? (int)SkeletronAttackType.DownwardAcceleratingSkulls : (int)SkeletronAttackType.SpinCharge;
                     break;
                 case SkeletronAttackType.SpinCharge:
+                case SkeletronAttackType.DownwardAcceleratingSkulls:
+                    npc.ai[0] = (int)SkeletronAttackType.HandWaves;
+                    break;
+                case SkeletronAttackType.HandWaves:
                     npc.ai[0] = (int)SkeletronAttackType.HandShadowflameBurst;
                     break;
                 case SkeletronAttackType.HandShadowflameBurst:
@@ -595,7 +595,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     float maxOffset = 18f;
                     float openOffsetArea = Main.rand.NextFloat(-maxOffset * 0.65f, maxOffset * 0.65f);
                     float fuck = Main.rand.NextFloat(-2f, 2f);
-                    for (float offset = -maxOffset; offset < maxOffset; offset += maxOffset * 0.115f)
+                    for (float offset = -maxOffset; offset < maxOffset; offset += maxOffset * 0.1f)
                     {
                         // Don't fire skulls from some areas, to allow the player to have an avoidance area.
                         if (MathHelper.Distance(openOffsetArea, offset + fuck) < 1.9f)
@@ -611,6 +611,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                         }
                     }
+
+                    // Fire one skull directly at the target.
+                    Vector2 skullVelocity = npc.SafeDirectionTo(target.Center) * 3f;
+                    int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                    if (Main.projectile.IndexInRange(skull))
+                        Main.projectile[skull].ai[0] = 0.005f;
                 }
             }
 

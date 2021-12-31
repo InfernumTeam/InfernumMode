@@ -50,7 +50,7 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<PerforatorBodyMedium>()] = BossRushEvent.BossRushActive ? 7675 : 160,
             [ModContent.NPCType<PerforatorHeadLarge>()] = BossRushEvent.BossRushActive ? 174500 : 5500,
             [NPCID.QueenBee] = BossRushEvent.BossRushActive ? 511100 : 6969,
-            [NPCID.SkeletronHead] = BossRushEvent.BossRushActive ? 418105 : 10000,
+            [NPCID.SkeletronHead] = BossRushEvent.BossRushActive ? 418105 : 13131,
             [ModContent.NPCType<SlimeGodCore>()] = BossRushEvent.BossRushActive ? 486500 : 2730,
             [ModContent.NPCType<CrimulanSGBig>()] = BossRushEvent.BossRushActive ? 213720 : 6220,
             [ModContent.NPCType<EbonianSGBig>()] = BossRushEvent.BossRushActive ? 213720 : 6220,

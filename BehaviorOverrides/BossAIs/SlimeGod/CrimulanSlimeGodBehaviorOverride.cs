@@ -330,7 +330,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                     npc.velocity = Vector2.UnitY * 4f;
 
                 // If velocity is 0 (indicating something has been hit) create a shockwave and some other things.
-                if (npc.velocity.Y == 0f)
+                if (npc.velocity.Y == 0f && attackTimer < 900f)
                 {
                     Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 70, 1.25f, -0.25f);
                     for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)
@@ -361,6 +361,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                         }
                     }
 
+                    attackTimer = 900f;
                     npc.netUpdate = true;
                     return true;
                 }
@@ -384,7 +385,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             }
 
             attackTimer++;
-            return false;
+            return attackTimer > 960f;
         }
 
         public static void GotoNextAttackState(NPC npc)

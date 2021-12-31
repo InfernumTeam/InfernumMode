@@ -58,20 +58,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
                 // Create a dust telegraph prior to releasing lasers.
                 if (Main.npc[Main.wof].ai[3] % 90f > 60f)
-				{
+                {
                     for (int i = 0; i < 2; i++)
                     {
                         Dust laser = Dust.NewDustPerfect(laserShootPosition + Main.rand.NextVector2Circular(25f, 25f), 182);
                         laser.velocity = (laserShootPosition - laser.position).SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(2f, 8f);
                         laser.noGravity = true;
                     }
-				}
+                }
 
                 if (Main.npc[Main.wof].ai[3] % 90f == 89f)
                 {
                     Main.PlaySound(SoundID.Item12, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(laserShootPosition, laserShootVelocity, ProjectileID.ScutlixLaser, 100, 0f);
+                    {
+                        int laser = Utilities.NewProjectileBetter(laserShootPosition, laserShootVelocity, ProjectileID.ScutlixLaser, 100, 0f);
+                        if (Main.projectile.IndexInRange(laser))
+                            Main.projectile[laser].hostile = true;
+                    }
                 }
 
                 return false;

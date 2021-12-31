@@ -89,13 +89,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         if (npc.WithinRange(destination, 100f) && attackTimer % 10f == 9f && attackTimer > 50f && owner.life < owner.lifeMax * 0.825f)
                         {
                             Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
-                            for (int i = 0; i < 4; i++)
-                            {
-                                Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2().RotatedByRandom(0.1f) * Main.rand.NextFloat(10f, 16f);
 
-                                if (Main.netMode != NetmodeID.MultiplayerClient)
-                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 150, 0f);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                for (int i = 0; i < 4; i++)
+                                {
+                                    Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2().RotatedByRandom(0.1f) * Main.rand.NextFloat(10f, 16f);
+
+                                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                                        Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 150, 0f);
+                                }
                             }
+                        }
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient && ownerAttackState == SkeletronHeadBehaviorOverride.SkeletronAttackType.HoverSkulls && attackTimer % 50f == 49f && attackTimer > 50f)
+                        {
+                            Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center) * 13f;
+                            Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
                         }
                         break;
                     case SkeletronHeadBehaviorOverride.SkeletronAttackType.HandWaves:
@@ -114,7 +124,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         npc.Center = npc.Center.MoveTowards(idealPosition, 5f);
                         npc.velocity = Vector2.Zero;
 
-                        int shootDelay = waveCounter == 1 ? 2 : 4;
+                        int shootDelay = waveCounter == 1 ? 2 : 3;
                         if (Main.netMode != NetmodeID.MultiplayerClient && facingPlayer && adjustedTimer > 90f && adjustedTimer < 140f && adjustedTimer % 4f == shootDelay)
                         {
                             Vector2 skullSpawnPosition = npc.Center;
@@ -145,12 +155,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                for (int i = 0; i < 10; i++)
+                                float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                                for (int i = 0; i < 11; i++)
                                 {
-                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 10f) * 7.95f;
+                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 11f) * 9f;
                                     if (BossRushEvent.BossRushActive)
                                         flameShootVelocity *= 3f;
                                     Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
+                                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity.RotatedBy(offsetAngle) * 0.6f, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
                                 }
                             }
                         }

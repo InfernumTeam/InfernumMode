@@ -360,7 +360,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float apolloChargeSpeed = 45f;
             float artemisChargeSpeed = 30f;
             int artemisChargeTime = 64;
-            int artemisLaserReleaseRate = 16;
+            int artemisLaserReleaseRate = 27;
             int artemisLaserBurstCount = 8;
             float maxLaserTurnSpeed = MathHelper.TwoPi / 240f;
 
@@ -412,7 +412,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         // Hover into position.
                         case 0:
                         default:
-                            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 800f, -400f);
+                            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 850f, -450f);
                             Vector2 chargeVelocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * artemisChargeSpeed;
                             DoHoverMovement(npc, hoverDestination, 20f, 60f);
 
@@ -579,7 +579,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                     if (Main.netMode != NetmodeID.MultiplayerClient)
                                     {
                                         int type = ModContent.ProjectileType<ApolloRocket>();
-                                        Vector2 rocketVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 24f;
+                                        Vector2 rocketVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 19f;
                                         Vector2 rocketSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 70f;
                                         int rocket = Utilities.NewProjectileBetter(rocketSpawnPosition, rocketVelocity, type, 600, 0f, Main.myPlayer, 0f, target.Center.Y);
                                         if (Main.projectile.IndexInRange(rocket))

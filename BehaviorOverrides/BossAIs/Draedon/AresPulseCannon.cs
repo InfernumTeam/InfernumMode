@@ -80,10 +80,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Define attack variables.
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
-            int shootTime = 100;
+            int shootTime = 150;
             int totalFlamesPerBurst = 3;
-            float blastShootSpeed = 8f;
-            float aimPredictiveness = 20f;
+            float blastShootSpeed = 7.5f;
+            float aimPredictiveness = 15f;
 
             // Nerf things while Ares' complement mech is present.
             if (ExoMechManagement.CurrentAresPhase == 4)

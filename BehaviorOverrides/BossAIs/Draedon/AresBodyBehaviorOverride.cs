@@ -278,22 +278,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int chargeTime = 35;
             int contactDamage = 600;
             float hoverSpeed = 65f;
-            float chargeSpeed = 36f;
+            float chargeSpeed = 39f;
 
             if (ExoMechManagement.CurrentAresPhase >= 3)
             {
-                chargeCount--;
                 chargeSpeed += 4f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 5)
             {
-                chargeCount--;
                 chargeTime -= 2;
                 chargeSpeed += 4f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
-                chargeCount--;
+                chargeCount++;
                 chargeTime -= 4;
                 contactDamage += 100;
                 chargeSpeed += 4f;
@@ -319,7 +317,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.damage = contactDamage;
                 if (wrappedTime == hoverTime + 1f)
                 {
-                    npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 5f) * chargeSpeed;
+                    npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * chargeSpeed;
                     npc.netUpdate = true;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -730,6 +728,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 maxVelocity = maxVelocity.SafeNormalize(Vector2.Zero) * hyperSpeedCap;
 
             npc.velocity = Vector2.Lerp(npc.SafeDirectionTo(destination) * flySpeed, maxVelocity, hyperSpeedInterpolant);
+            if (npc.WithinRange(destination, 30f) && Vector2.Distance(npc.oldPosition + npc.Size * 0.5f, destination) >= 30f)
+            {
+                npc.Center = destination;
+                npc.velocity = Vector2.Zero;
+                npc.netUpdate = true;
+                npc.netSpam = 0;
+            }
         }
         #endregion AI
 

@@ -11,7 +11,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     {
         public override int NPCOverrideType => ModContent.NPCType<EidolonWyrmBodyHuge>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCAI;
+
+        public override bool PreAI(NPC npc)
+        {
+            if (Main.npc.IndexInRange(npc.realLife) && Main.npc[npc.realLife].active)
+                npc.Opacity = Main.npc[npc.realLife].Opacity;
+            return true;
+        }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
@@ -24,7 +31,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     {
         public override int NPCOverrideType => ModContent.NPCType<EidolonWyrmBodyAltHuge>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCAI;
+
+        public override bool PreAI(NPC npc)
+        {
+            if (Main.npc.IndexInRange(npc.realLife) && Main.npc[npc.realLife].active)
+                npc.Opacity = Main.npc[npc.realLife].Opacity;
+            return true;
+        }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
@@ -37,7 +51,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     {
         public override int NPCOverrideType => ModContent.NPCType<EidolonWyrmTailHuge>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCPreDraw;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCAI;
+
+        public override bool PreAI(NPC npc)
+        {
+            if (Main.npc.IndexInRange(npc.realLife) && Main.npc[npc.realLife].active)
+                npc.Opacity = Main.npc[npc.realLife].Opacity;
+            return true;
+        }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {

@@ -6,6 +6,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -22,9 +23,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             UndynesTail
         }
 
+        public static List<AEWAttackType[]> Phase1AttackCycles = new List<AEWAttackType[]>()
+        {
+            new AEWAttackType[] { AEWAttackType.HadalSpirits, AEWAttackType.PsychicBlasts, AEWAttackType.UndynesTail },
+            new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash },
+            new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.AbyssalCrash },
+        };
+
+        public static List<AEWAttackType[]> CurrentAttackCycles => Phase1AttackCycles;
+
         public override int NPCOverrideType => ModContent.NPCType<EidolonWyrmHeadHuge>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+
+        public static Color CalculateEyeColor(NPC npc)
+        {
+            float hue = npc.Infernum().ExtraAI[5] / CurrentAttackCycles.Count % 1f;
+            return Main.hslToRgb(hue, 1f, 0.55f);
+        }
 
         public override bool PreAI(NPC npc)
         {
@@ -160,6 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             int homingSpiritShootRate = attackShootRate * 4;
             int attackChangeDelay = 90;
             int attackTime = 600;
+            int psychicBlastCircleShootRate = 90;
             ref float spiritSpawnOffsetAngle = ref npc.Infernum().ExtraAI[0];
 
             // Initialize the spawn offset angle.
@@ -186,6 +203,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             if (attackTimer > attackTime - attackChangeDelay)
                 return;
+
+            // Periodically release blasts of psychic energy.
+            if (attackTimer % psychicBlastCircleShootRate == psychicBlastCircleShootRate - 1f)
+            {
+                int blastDamage = (int)(generalDamageFactor * 640f);
+                for (int i = 0; i < 10; i++)
+                {
+                    Vector2 blastShootVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 15f;
+                    Projectile.NewProjectile(npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
+                }
+            }
 
             // Release souls below the target.
             int spiritDamage = (int)(generalDamageFactor * 640f);
@@ -250,6 +278,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
 
+            // Decide the etherealness factor.
+            etherealnessFactor = MathHelper.Lerp(etherealnessFactor, npc.Opacity, MathHelper.Lerp(0.25f, 0.08f, npc.Opacity));
+
             // Decide rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
@@ -260,6 +291,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -350f);
                     Vector2 idealHoverVelocity = npc.SafeDirectionTo(hoverDestination) * 45f;
                     npc.velocity = npc.velocity.RotateTowards(idealHoverVelocity.ToRotation(), 0.045f).MoveTowards(idealHoverVelocity, 10f);
+
+                    // Fade out.
+                    npc.Opacity = Utils.InverseLerp(redirectTime * 0.5f, redirectTime * 0.5f - 12f, attackTimer, true);
+
+                    // Disable conct damage.
+                    npc.damage = 0;
 
                     // Begin the charge.
                     if (attackTimer > redirectTime * 0.5f && (npc.WithinRange(hoverDestination, 60f) || attackTimer > redirectTime))
@@ -276,6 +313,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 case 1:
                     float newSpeed = MathHelper.Lerp(npc.velocity.Length(), chargeSpeed, 0.18f);
                     npc.velocity = npc.velocity.RotateTowards(chargeDirection, MathHelper.Pi / 3f, true) * newSpeed;
+
+                    // Fade in.
+                    npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
 
                     // Release water spears from the tail of the wyrm.
                     int tail = NPC.FindFirstNPC(ModContent.NPCType<EidolonWyrmTailHuge>());
@@ -328,21 +368,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public static void SelectNextAttack(NPC npc)
         {
-            AEWAttackType oldAttack = (AEWAttackType)(int)npc.ai[0];
-            ref float currentPhase = ref npc.Infernum().ExtraAI[5];
-            ref float attackCycleType = ref npc.Infernum().ExtraAI[6];
-            ref float attackCycleIndex = ref npc.Infernum().ExtraAI[7];
+            ref float attackCycleType = ref npc.Infernum().ExtraAI[5];
+            ref float attackCycleIndex = ref npc.Infernum().ExtraAI[6];
+            List<AEWAttackType[]> attackCycles = Phase1AttackCycles;
+            int oldAttackCycle = (int)attackCycleType;
 
-            switch (oldAttack)
+            attackCycleIndex++;
+
+            // Shift the attack cycle once the current one's end has been reached.
+            if (attackCycleIndex >= attackCycles[(int)attackCycleType].Length)
             {
-                case AEWAttackType.AbyssalCrash:
-                    npc.ai[0] = (int)AEWAttackType.UndynesTail;
-                    break;
-                case AEWAttackType.UndynesTail:
-                    npc.ai[0] = (int)AEWAttackType.AbyssalCrash;
-                    break;
+                attackCycleIndex = 0f;
+                do
+                    attackCycleType = Main.rand.Next(attackCycles.Count);
+                while (attackCycleType == oldAttackCycle);
             }
 
+            npc.ai[0] = (int)attackCycles[(int)attackCycleType][(int)attackCycleIndex];
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -409,7 +451,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     Color etherealAfterimageColor = Color.Lerp(lightColor, baseColor, etherealnessFactor * 0.85f) * 0.24f;
                     etherealAfterimageColor.A = (byte)(int)(255 - etherealnessFactor * 255f);
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 32f).ToRotationVector2() * etherealOffsetPulse;
-                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, etherealAfterimageColor * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, etherealAfterimageColor * opacity, npc.rotation, origin, npc.scale, 0, 0f);
                 }
             }
 
@@ -420,6 +462,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             DrawSegment(spriteBatch, lightColor, npc);
+            Texture2D eyeTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/AdultEidolonWyrm/EidolonWyrmEyes");
+            Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * 1.5f;
+            Vector2 origin = eyeTexture.Size() * 0.5f;
+            Color eyeColor = npc.GetAlpha(CalculateEyeColor(npc));
+
+            spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, 0, 0f);
             return false;
         }
     }

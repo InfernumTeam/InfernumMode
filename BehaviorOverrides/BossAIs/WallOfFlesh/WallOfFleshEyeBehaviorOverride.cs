@@ -124,6 +124,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 return false;
             }
 
+            if (Main.wof == -1)
+                return false;
+
             float yStart = MathHelper.Lerp(Main.wofB, Main.wofT, verticalOffsetFactor);
             Vector2 start = new Vector2(Main.npc[Main.wof].Center.X, yStart);
 

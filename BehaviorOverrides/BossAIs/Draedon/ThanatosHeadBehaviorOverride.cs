@@ -50,6 +50,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float frameType = ref npc.localAI[0];
             frameType = (int)ThanatosFrameType.Closed;
 
+            // Reset damage.
+            npc.damage = npc.defDamage;
+
             // Define attack variables.
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -259,6 +262,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (ExoMechManagement.CurrentThanatosPhase == 4)
                 segmentShootDelay += 60;
 
+            // Temporarily disable damage.
+            if (attackTimer < 150f)
+                npc.damage = 0;
+
             // Do movement.
             DoProjectileShootInterceptionMovement(npc, target);
 
@@ -315,6 +322,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (ExoMechManagement.CurrentThanatosPhase == 4)
                 segmentShootDelay += 60;
 
+            // Temporarily disable damage.
+            if (attackTimer < 150f)
+                npc.damage = 0;
+
             // Do movement.
             DoProjectileShootInterceptionMovement(npc, target);
 
@@ -370,6 +381,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (ExoMechManagement.CurrentThanatosPhase == 4)
                 segmentShootDelay += 75;
+
+            // Temporarily disable damage.
+            if (attackTimer < 150f)
+                npc.damage = 0;
 
             // Do movement.
             DoProjectileShootInterceptionMovement(npc, target);
@@ -432,6 +447,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 nukeShootCount++;
                 nukeShootRate -= 20;
             }
+
+            // Temporarily disable damage.
+            if (attackTimer < 150f)
+                npc.damage = 0;
 
             DoProjectileShootInterceptionMovement(npc, target, 0.6f);
 

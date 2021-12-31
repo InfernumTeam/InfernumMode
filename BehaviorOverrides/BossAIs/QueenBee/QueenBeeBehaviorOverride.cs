@@ -34,6 +34,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
 		#region AI
 
+		public const float FinalPhaseLifeRatio = 0.225f;
+
 		public override bool PreAI(NPC npc)
 		{
 			// Select a new target if an old one was lost.
@@ -62,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			npc.defense = enrageTimer >= 300f ? 70 : npc.defDefense;
 			npc.Calamity().CurrentlyEnraged = outOfBiome;
 
-			if (npc.life < npc.lifeMax * 0.1f && Main.netMode != NetmodeID.MultiplayerClient && hasBegunFinalPhaseTransition == 0f)
+			if (npc.life < npc.lifeMax * FinalPhaseLifeRatio && Main.netMode != NetmodeID.MultiplayerClient && hasBegunFinalPhaseTransition == 0f)
 			{
 				hasBegunFinalPhaseTransition = 1f;
 				finalPhaseTransitionTimer = 75f;
@@ -134,10 +136,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			if (npc.life < npc.lifeMax * 0.33)
 				chargesToDo += 2;
 
-			if (npc.life < npc.lifeMax * 0.1)
+			if (npc.life < npc.lifeMax * FinalPhaseLifeRatio)
 			{
-				baseChargeSpeed *= 1.4f;
-				hoverOffset += 50f;
+				baseChargeSpeed *= 1.15f;
+				hoverOffset += 55f;
 			}
 
 			ref float attackState = ref npc.Infernum().ExtraAI[0];
@@ -163,7 +165,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 				{
 					npc.Center = new Vector2(MathHelper.Lerp(npc.Center.X, destination.X, 0.1f), MathHelper.Lerp(npc.Center.Y, destination.Y, 0.5f));
 					npc.velocity = npc.SafeDirectionTo(target.Center, Vector2.UnitX) * baseChargeSpeed;
-					if (npc.life < npc.lifeMax * 0.1 && Math.Abs(target.velocity.Y) > 3f)
+					if (npc.life < npc.lifeMax * FinalPhaseLifeRatio && Math.Abs(target.velocity.Y) > 3f)
 						npc.velocity.Y += target.velocity.Y * 0.5f;
 					attackState = 1f;
 					frameType = (int)QueenBeeFrameType.HorizontalCharge;
@@ -221,7 +223,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			{
 				shootRate = 28;
 				totalStingersToShoot = 8;
-				shootSpeed = 15f;
+				shootSpeed = 13.75f;
 			}
 
 			if (BossRushEvent.BossRushActive)
@@ -387,7 +389,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 			else if (attackTimer < 775f)
 			{
 				// Gain some extra defense to prevent melting.
-				npc.defense += 12;
+				npc.defense += 22;
 
 				npc.velocity *= 0.9785f;
 
@@ -405,7 +407,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 					}
 				}
 
-				int shootRate = npc.life < npc.lifeMax * 0.1f ? 16 : 20;
+				int shootRate = npc.life < npc.lifeMax * FinalPhaseLifeRatio ? 16 : 20;
 				if (attackTimer % shootRate == shootRate - 1f && attackTimer < 600f)
 				{
 					Vector2 beeSpawnPosition = target.Center + new Vector2(Main.rand.NextBool(2).ToDirectionInt() * 1200f, Main.rand.NextFloat(-900f, 0f));

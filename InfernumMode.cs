@@ -185,6 +185,7 @@ namespace InfernumMode
         public override void PreUpdateEntities()
         {
             BlackFade = MathHelper.Clamp(BlackFade - 0.025f, 0f, 1f);
+            NetcodeHandler.Update();
             TwinsAttackSynchronizer.DoUniversalUpdate();
             TwinsAttackSynchronizer.PostUpdateEffects();
         }

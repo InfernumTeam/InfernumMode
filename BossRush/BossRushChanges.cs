@@ -173,7 +173,7 @@ namespace InfernumMode.BossRush
 
                 new Boss(ModContent.NPCType<StormWeaverHead>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<StormWeaverBody>(), ModContent.NPCType<StormWeaverTail>(),  }),
 
-                new Boss(ModContent.NPCType<Siren>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<Leviathan>(), ModContent.NPCType<AquaticAberration>(), ModContent.NPCType<Parasea>(),
+                new Boss(ModContent.NPCType<Siren>(), TimeChangeContext.Day, permittedNPCs: new int[] { ModContent.NPCType<Leviathan>(),
                     ModContent.NPCType<SirenIce>(), NPCID.DetonatingBubble, ModContent.NPCType<RedirectingBubble>() }),
 
                 new Boss(NPCID.Spazmatism, TimeChangeContext.Night, type =>

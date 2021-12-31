@@ -19,8 +19,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         public override bool PreAI(NPC npc)
         {
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
-            if (!aheadSegment.active)
+            if (!aheadSegment.active || npc.realLife <= -1)
             {
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                    return false;
+
                 npc.life = 0;
                 npc.HitEffect();
                 npc.active = false;

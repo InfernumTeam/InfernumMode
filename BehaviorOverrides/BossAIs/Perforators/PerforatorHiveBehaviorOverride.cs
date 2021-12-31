@@ -209,7 +209,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                         attackState = npc.WithinRange(target.Center, 880f) ? 1f : 2f;
                         if (lifeRatio < 0.15f)
                             attackState = 3f;
-                        attackState = 2f;
                         npc.netUpdate = true;
                     }
                 }
@@ -309,7 +308,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
         public static void DoAttack_HoverNearTarget(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool enraged, bool anyWorms, out bool gotoNextAttack)
         {
-            if (attackTimer % 120f > 85f)
+            if (attackTimer % 120f > 85f && attackTimer > 120f)
             {
                 npc.velocity *= 0.97f;
 
@@ -341,7 +340,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 npc.velocity -= npc.SafeDirectionTo(target.Center) * Utils.InverseLerp(235f, 115f, npc.Distance(target.Center), true) * 12f;
             }
 
-            gotoNextAttack = attackTimer >= 240f;
+            gotoNextAttack = attackTimer >= 360f;
         }
 
         public static void DoAttack_ReleaseRegularBursts(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool enraged, bool anyWorms, out bool gotoNextAttack)

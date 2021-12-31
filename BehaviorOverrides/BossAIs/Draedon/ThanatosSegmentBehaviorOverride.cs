@@ -66,6 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             npc.Opacity = head.Opacity;
             npc.target = head.target;
             npc.dontTakeDamage = head.dontTakeDamage;
+            npc.damage = head.damage > 0 ? npc.defDamage : 0;
             Player target = Main.player[npc.target];
 
             // Handle open behavior and frames.
@@ -157,6 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                     Main.projectile[laser].owner = npc.target;
                                     Main.projectile[laser].ModProjectile<ThanatosLaser>().InitialDestination = projectileDestination;
                                     Main.projectile[laser].ai[1] = npc.whoAmI;
+                                    Main.projectile[laser].netUpdate = true;
                                 }
                                 break;
 
@@ -172,6 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                     Main.projectile[laser].owner = npc.target;
                                     Main.projectile[laser].ModProjectile<PulseLaser>().InitialDestination = projectileDestination;
                                     Main.projectile[laser].ai[1] = npc.whoAmI;
+                                    Main.projectile[laser].netUpdate = true;
                                 }
                                 break;
 
@@ -187,6 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                     Main.projectile[laser].owner = npc.target;
                                     Main.projectile[laser].ModProjectile<PlasmaLaser>().InitialDestination = projectileDestination;
                                     Main.projectile[laser].ai[1] = npc.whoAmI;
+                                    Main.projectile[laser].netUpdate = true;
                                 }
                                 break;
 
@@ -217,6 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                     else
                                         Main.projectile[laser].ModProjectile<PulseLaser>().InitialDestination = projectileDestination;
                                     Main.projectile[laser].ai[1] = npc.whoAmI;
+                                    Main.projectile[laser].netUpdate = true;
                                 }
                                 break;
                         }

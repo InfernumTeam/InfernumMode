@@ -76,7 +76,7 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<Bumblefuck>()] = BossRushEvent.BossRushActive ? 560000 : 177550,
             [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 520000,
             [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 632100 : 465432,
-            [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 686868 : 542444,
+            [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 1600000 : 875000,
             [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2450000 : 1116000,
             [ModContent.NPCType<Yharon>()] = BossRushEvent.BossRushActive ? 3333330 : 2718280,
             [ModContent.NPCType<Artemis>()] = BossRushEvent.BossRushActive ? 2050000 : -1,

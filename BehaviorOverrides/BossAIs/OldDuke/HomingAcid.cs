@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             projectile.hostile = true;
             projectile.tileCollide = true;
             projectile.ignoreWater = true;
-            projectile.timeLeft = 360;
+            projectile.timeLeft = 240;
             cooldownSlot = 1;
         }
 
@@ -51,7 +51,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, new Color(117, 95, 133, 225) * projectile.Opacity, ProjectileID.Sets.TrailingMode[projectile.type], 2);
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.position + projectile.Size * 0.5f - Main.screenPosition;
+            Vector2 origin = texture.Size() * 0.5f;
+            Color backAfterimageColor = projectile.GetAlpha(new Color(0, 203, 255, 0) * 0.35f);
+            for (int i = 0; i < 8; i++)
+            {
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 4f;
+                spriteBatch.Draw(texture, drawPosition + drawOffset, null, backAfterimageColor, projectile.rotation, origin, projectile.scale, 0, 0f);
+            }
+            Utilities.DrawAfterimagesCentered(projectile, new Color(117, 95, 133, 184) * projectile.Opacity, ProjectileID.Sets.TrailingMode[projectile.type], 2);
+
             return false;
         }
     }

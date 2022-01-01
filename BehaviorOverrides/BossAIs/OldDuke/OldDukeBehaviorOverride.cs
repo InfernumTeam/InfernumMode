@@ -257,6 +257,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
             npc.damage = npc.defDamage;
 
+            // Reset the hitbox.
+            npc.width = 140;
+            npc.height = 140;
+
             // Handle phase transitions.
             if (phaseTransitionTimer > 0f)
             {
@@ -381,7 +385,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.alpha -= 5;
                 if (Collision.SolidCollision(npc.position, npc.width, npc.height))
                     npc.alpha += 15;
-                npc.alpha = Utils.Clamp(npc.alpha, 0, 150);
+                npc.alpha = Utils.Clamp(npc.alpha, 0, 224);
                 npc.velocity = -Vector2.UnitY * 6f;
             }
             else
@@ -427,7 +431,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (goingToCharge)
                 waitDelay = 30;
             if (upcomingAttack == OldDukeAttackState.TeleportPause)
-                waitDelay = 20;
+                waitDelay = 32;
             if (inPhase4)
                 waitDelay -= 4;
             if (BossRushEvent.BossRushActive)
@@ -579,9 +583,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             int shootDelay = inPhase2 ? 45 : 55;
             int belchCount = inPhase2 ? 6 : 4;
-            int belchRate = inPhase2 ? 24 : 30;
+            int belchRate = inPhase2 ? 36 : 48;
             if (BossRushEvent.BossRushActive)
-                belchRate -= 6;
+                belchRate -= 8;
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;

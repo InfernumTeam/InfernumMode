@@ -51,7 +51,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Adjust scale.
             npc.scale = 1.2f;
 
-            npc.Calamity().DR = 0.15f;
+            // Adjust DR and defense.
+            npc.defense = 0;
+            npc.Calamity().DR = 0f;
+            npc.takenDamageMultiplier = 2f;
 
             // whoAmI variable
             CalamityGlobalNPC.DoGHead = npc.whoAmI;

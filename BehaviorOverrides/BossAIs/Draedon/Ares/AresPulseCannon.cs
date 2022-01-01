@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 
 using CalamityModClass = CalamityMod.CalamityMod;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresPulseCannon : ModNPC
     {
@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Define attack variables.
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
-            int shootTime = 150;
+            int shootTime = 180;
             int totalFlamesPerBurst = 3;
             float blastShootSpeed = 7.5f;
             float aimPredictiveness = 15f;

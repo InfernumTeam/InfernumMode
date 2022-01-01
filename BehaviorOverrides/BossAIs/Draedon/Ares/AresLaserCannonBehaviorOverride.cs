@@ -5,16 +5,17 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresTeslaCannonBehaviorOverride : NPCBehaviorOverride
+    public class AresLaserCannonBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<AresTeslaCannon>();
+        public override int NPCOverrideType => ModContent.NPCType<AresLaserCannon>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
@@ -44,45 +45,56 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Define attack variables.
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
-            int shootTime = 135;
-            int totalOrbsPerBurst = 3;
+            int shootTime = 300;
+            int totalLasersPerBurst = 6;
             float aimPredictiveness = 25f;
-            float orbShootSpeed = 10f;
-            Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
-
-            // Shoot slower if pointing downward.
-            orbShootSpeed *= MathHelper.Lerp(1f, 0.8f, Utils.InverseLerp(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
+            float laserShootSpeed = 8f;
+            ref float attackTimer = ref npc.ai[0];
+            ref float chargeDelay = ref npc.ai[1];
+            ref float laserCounter = ref npc.ai[2];
+            ref float currentDirection = ref npc.ai[3];
+            int laserCount = laserCounter % 3f == 2f ? 3 : 1;
 
             if (ExoMechManagement.CurrentAresPhase >= 2)
             {
-                totalOrbsPerBurst = 6;
-                orbShootSpeed *= 0.75f;
+                laserCount += 2;
+                totalLasersPerBurst = 12;
+                shootTime += 210;
+                laserShootSpeed *= 1.1f;
+            }
+
+            if (ExoMechManagement.CurrentAresPhase >= 3)
+            {
+                laserShootSpeed *= 0.85f;
+
+                if (laserCount == 3)
+                    laserCount += 2;
             }
 
             // Nerf things while Ares' complement mech is present.
             if (ExoMechManagement.CurrentAresPhase == 4)
-                totalOrbsPerBurst = 5;
+            {
+                shootTime += 45;
+                if (laserCount > 4)
+                    laserCount = 4;
+                laserCount--;
+                laserShootSpeed *= 0.8f;
+            }
 
             if (ExoMechManagement.CurrentAresPhase >= 5)
             {
-                shootTime += 40;
-                totalOrbsPerBurst = 6;
-                orbShootSpeed *= 1.1f;
-            }
-            if (ExoMechManagement.CurrentAresPhase >= 6)
-            {
-                shootTime += 40;
-                totalOrbsPerBurst = 8;
+                shootTime += 120;
+                laserShootSpeed *= 0.8f;
             }
 
             // Get very pissed off if Ares is enraged.
             if (aresBody.Infernum().ExtraAI[13] == 1f)
-                totalOrbsPerBurst += 6;
+            {
+                shootTime /= 3;
+                laserShootSpeed *= 1.5f;
+            }
 
-            int shootRate = shootTime / totalOrbsPerBurst;
-            ref float attackTimer = ref npc.ai[0];
-            ref float chargeDelay = ref npc.ai[1];
-            ref float orbCounter = ref npc.ai[2];
+            int shootRate = shootTime / totalLasersPerBurst;
 
             // Initialize delays and other timers.
             if (chargeDelay == 0f)
@@ -94,9 +106,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Hover near Ares.
             bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge;
-            float horizontalOffset = doingHoverCharge ? 250f : 375f;
-            float verticalOffset = doingHoverCharge ? 150f : 100f;
-            Vector2 hoverDestination = aresBody.Center + new Vector2(-horizontalOffset, verticalOffset);
+            float horizontalOffset = doingHoverCharge ? 380f : 575f;
+            float verticalOffset = doingHoverCharge ? 150f : 0f;
+            Vector2 hoverDestination = aresBody.Center + new Vector2((aresBody.Infernum().ExtraAI[15] == 1f ? -1f : 1f) * -horizontalOffset, verticalOffset);
             AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 65f, 115f);
             npc.Infernum().ExtraAI[0] = MathHelper.Clamp(npc.Infernum().ExtraAI[0] + doingHoverCharge.ToDirectionInt(), 0f, 15f);
 
@@ -110,13 +122,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             // Choose a direction and rotation.
             // Rotation is relative to predictiveness.
-            Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 84f + Vector2.UnitY * 8f;
+            Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
+            Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 74f + Vector2.UnitY * 8f;
             float idealRotation = aimDirection.ToRotation();
             if (currentlyDisabled)
                 idealRotation = MathHelper.Clamp(npc.velocity.X * -0.016f, -0.81f, 0.81f) + MathHelper.PiOver2;
             if (doingHoverCharge)
                 idealRotation = aresBody.velocity.ToRotation() - MathHelper.PiOver2;
 
+            currentDirection = idealRotation;
             if (npc.spriteDirection == 1)
                 idealRotation += MathHelper.Pi;
             if (idealRotation < 0f)
@@ -140,57 +154,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)
             {
                 Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
-                Dust electricity = Dust.NewDustPerfect(dustSpawnPosition, 229);
+                Dust electricity = Dust.NewDustPerfect(dustSpawnPosition, 182);
                 electricity.velocity = (endOfCannon - electricity.position) * 0.04f;
                 electricity.scale = 1.25f;
                 electricity.noGravity = true;
             }
 
-            // Fire orbs.
+            // Fire lasers.
             if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaBolt"), npc.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), projectileDamageBoost + 500, 0f);
-                    if (Main.projectile.IndexInRange(electricOrb))
-                        Main.projectile[electricOrb].ai[0] = orbCounter;
+                    for (int i = 0; i < laserCount; i++)
+                    {
+                        Vector2 shootVelocity = aimDirection * laserShootSpeed;
+                        if (laserCount > 1)
+                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.41f, 0.41f, i / (float)(laserCount - 1f)));
+                        shootVelocity = shootVelocity.RotatedByRandom(0.07f);
+                        int laser = Utilities.NewProjectileBetter(endOfCannon, shootVelocity, ModContent.ProjectileType<CannonLaser>(), projectileDamageBoost + 530, 0f);
+                        if (Main.projectile.IndexInRange(laser))
+                            Main.projectile[laser].ai[1] = npc.whoAmI;
+                    }
 
-                    orbCounter++;
+                    laserCounter++;
                     npc.netUpdate = true;
                 }
             }
 
-            // Reset the attack and orb timer after an attack cycle ends.
+            // Reset the attack and laser counter after an attack cycle ends.
             if (attackTimer >= chargeDelay + shootTime)
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    // Release sparks once Ares is in the second phase.
-                    if (ExoMechManagement.CurrentAresPhase >= 2)
-                    {
-                        float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                        for (int i = 0; i < 7; i++)
-                        {
-                            Vector2 sparkVelocity = (MathHelper.TwoPi * i / 7f + offsetAngle).ToRotationVector2() * 6.5f;
-                            Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 6f, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), projectileDamageBoost + 500, 0f);
-                        }
-                    }
-
-                    // As well as a of electric clouds in the third phase.
-                    if (ExoMechManagement.CurrentAresPhase >= 3)
-                    {
-                        for (int i = 0; i < 85; i++)
-                        {
-                            Vector2 cloudShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 23f) - npc.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
-                            Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<ElectricGas>(), projectileDamageBoost + 530, 0f);
-                        }
-                    }
-                }
-
                 attackTimer = 0f;
-                orbCounter = 0f;
+                laserCounter = 0f;
                 npc.netUpdate = true;
             }
             attackTimer++;
@@ -213,7 +210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
             else
                 npc.frameCounter = 0D;
-            
+
             if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
                 currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] % 72f / 72f));
 
@@ -260,7 +257,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             Vector2 center = npc.Center - Main.screenPosition;
             spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresTeslaCannonGlow");
+            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresLaserCannonGlow");
 
             if (CalamityConfig.Instance.Afterimages)
             {

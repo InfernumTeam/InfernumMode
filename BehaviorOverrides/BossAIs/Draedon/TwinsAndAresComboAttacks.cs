@@ -12,7 +12,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.AresBodyBehaviorOverride;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon

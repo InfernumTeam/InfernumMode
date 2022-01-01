@@ -15,7 +15,7 @@ using Terraria.ModLoader;
 
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresBodyBehaviorOverride : NPCBehaviorOverride
     {
@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
-        public const float Phase1ArmChargeupTime = 150f;
+        public const float Phase1ArmChargeupTime = 240f;
 
         #region AI
         public override bool PreAI(NPC npc)

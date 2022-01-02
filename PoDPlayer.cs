@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.OldDuke;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Dusts;
@@ -71,11 +72,20 @@ namespace InfernumMode
 
             if (!BossRushEvent.BossRushActive)
             {
-                bool useHIV = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("HiveMind")) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].Infernum().ExtraAI[10] == 1f || Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].life < Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("HiveMind"))].lifeMax * 0.2f);
+                int hiveMindID = InfernumMode.CalamityMod.NPCType("HiveMind");
+                int hiveMind = NPC.FindFirstNPC(hiveMindID);
+                NPC hiveMindNPC = hiveMind >= 0 ? Main.npc[hiveMind] : null;
+                bool useHIV = hiveMindNPC != null && (hiveMindNPC.Infernum().ExtraAI[10] == 1f || hiveMindNPC.life < hiveMindNPC.lifeMax * 0.2f);
                 player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", useHIV);
 
                 bool useDeus = NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("AstrumDeusHeadSpectral"));
                 player.ManageSpecialBiomeVisuals("InfernumMode:Deus", useDeus);
+
+                int oldDukeID = ModContent.NPCType<OldDuke>();
+                int oldDuke = NPC.FindFirstNPC(oldDukeID);
+                NPC oldDukeNPC = oldDuke >= 0 ? Main.npc[oldDuke] : null;
+                bool useOD = oldDukeNPC != null && oldDukeNPC.Infernum().ExtraAI[6] >= 2f;
+                player.ManageSpecialBiomeVisuals("InfernumMode:OldDuke", useOD);
             }
         }
         #endregion

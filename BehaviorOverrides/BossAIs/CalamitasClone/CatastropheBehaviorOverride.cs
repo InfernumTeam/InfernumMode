@@ -87,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (otherBrotherIsPresent)
             {
                 carpetBombRate += 6;
-                carpetBombSpeed *= 0.65f;
+                carpetBombSpeed *= 0.75f;
             }
 
             if (shouldBeBuffed)
@@ -186,7 +186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int chargeCount = 3;
 
             if (otherBrotherIsPresent)
-                chargeSpeed *= 0.75f;
+                chargeSpeed *= 0.85f;
 
             if (shouldBeBuffed)
             {

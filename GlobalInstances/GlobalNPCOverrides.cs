@@ -53,6 +53,8 @@ using CalamityMod.NPCs.Crabulon;
 using CalamityMod.Buffs.DamageOverTime;
 using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Buffs.StatBuffs;
+using CalamityMod.NPCs.ExoMechs;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -191,6 +193,13 @@ namespace InfernumMode.GlobalInstances
                     // Use timed DR if enabled.
                     if (npc.Calamity().KillTime > 0 && npc.Calamity().AITimer < npc.Calamity().KillTime)
                         npc.Calamity().AITimer++;
+
+                    // If any boss NPC is active, apply Zen to nearby players to reduce spawn rate.
+                    if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>()))
+                    {
+                        if (!Main.player[Main.myPlayer].dead && Main.player[Main.myPlayer].active && npc.WithinRange(Main.player[Main.myPlayer].Center, 6400f))
+                            Main.player[Main.myPlayer].AddBuff(ModContent.BuffType<BossZen>(), 2);
+                    }
 
                     // Decrement each immune timer if it's greater than 0.
                     for (int i = 0; i < CalamityGlobalNPC.maxPlayerImmunities; i++)

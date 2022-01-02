@@ -18,7 +18,7 @@ using DoGHead = CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-	public class DoGPhase1HeadBehaviorOverride : NPCBehaviorOverride
+    public class DoGPhase1HeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<DoGHead>();
 
@@ -39,14 +39,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Main.player[npc.target].Calamity().normalityRelocator = false;
             Main.player[npc.target].Calamity().spectralVeil = false;
 
-            ref float time = ref npc.Infernum().ExtraAI[5];
+            ref float attackTimer = ref npc.Infernum().ExtraAI[5];
             ref float flyAcceleration = ref npc.Infernum().ExtraAI[6];
             ref float jawAngle = ref npc.Infernum().ExtraAI[7];
             ref float chompTime = ref npc.Infernum().ExtraAI[8];
             ref float inPhase2 = ref npc.Infernum().ExtraAI[33];
+            ref float uncoilTimer = ref npc.Infernum().ExtraAI[35];
 
             // Timer effect.
-            time++;
+            attackTimer++;
 
             // Adjust scale.
             npc.scale = 1.2f;
@@ -56,10 +57,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.Calamity().DR = 0f;
             npc.takenDamageMultiplier = 2f;
 
-            // whoAmI variable
+            // Declare this NPC as the occupant of the DoG whoAmI index.
             CalamityGlobalNPC.DoGHead = npc.whoAmI;
 
-            // Stop rain
+            // Stop rain.
             if (Main.raining)
                 Main.raining = false;
 
@@ -202,7 +203,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
             }
             else
-                DoAggressiveFlyMovement(npc, chomping, ref jawAngle, ref chompTime, ref time, ref flyAcceleration);
+            {
+                if (uncoilTimer < 45f)
+                {
+                    uncoilTimer++;
+                    npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 27f, 0.125f);
+                }
+                else
+                    DoAggressiveFlyMovement(npc, chomping, ref jawAngle, ref chompTime, ref attackTimer, ref flyAcceleration);
+            }
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
@@ -357,10 +366,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (distanceFromDestination > 100f)
             {
                 float speed = npc.velocity.Length();
-                if (speed < 15f)
+                if (speed < 17f)
                     speed += 0.08f;
 
-                if (speed > 21f)
+                if (speed > 24.5f)
                     speed -= 0.08f;
 
                 if (directionToPlayerOrthogonality < 0.85f && directionToPlayerOrthogonality > 0.5f)
@@ -369,9 +378,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
                     speed -= 0.1f;
 
-                speed = MathHelper.Clamp(speed, flySpeedFactor * 10f, flySpeedFactor * 27f);
+                speed = MathHelper.Clamp(speed, flySpeedFactor * 14f, flySpeedFactor * 35f);
 
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * speed, flyAcceleration * 10f);
             }
 
             // Jaw opening when near player.

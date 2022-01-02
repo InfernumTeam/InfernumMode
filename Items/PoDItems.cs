@@ -16,7 +16,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode
 {
-	public class PoDItems : GlobalItem
+    public class PoDItems : GlobalItem
     {
         public override void SetDefaults(Item item)
         {
@@ -41,17 +41,11 @@ namespace InfernumMode
             if (item.type == ItemID.StarCannon)
                 item.damage = 24;
 
-            if (item.type == ModContent.ItemType<HivePod>())
-                item.damage = 74;
-
-            if (item.type == ModContent.ItemType<SkyfinBombers>())
-                item.damage = 25;
-
-            if (item.type == ModContent.ItemType<GacruxianMollusk>())
-                item.damage = 9;
-
             if (item.type == ModContent.ItemType<SeasSearing>())
                 item.damage = 39;
+
+            if (item.type == ModContent.ItemType<HivePod>())
+                item.damage = 74;
 
             if (item.type == ModContent.ItemType<HeavenfallenStardisk>())
                 item.damage = 87;

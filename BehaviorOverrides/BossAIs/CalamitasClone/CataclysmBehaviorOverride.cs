@@ -76,13 +76,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             float horizontalChargeOffset = 450f;
             float redirectSpeed = 19f;
-            float chargeSpeed = MathHelper.Lerp(22.5f, 27f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(19.75f, 25f, 1f - lifeRatio);
             int chargeTime = 40;
             int chargeSlowdownTime = 15;
             int chargeCount = 3;
 
             if (otherBrotherIsPresent)
-                chargeSpeed *= 0.75f;
+                chargeSpeed *= 0.85f;
 
             if (shouldBeBuffed)
             {
@@ -127,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                                 Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 8f;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<ExplodingBrimstoneFireball>(), fireballDamage, 0f);
                             }
-						}
+                        }
                     }
                     break;
 
@@ -168,10 +168,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int fireballReleaseTime = 135;
 
             if (otherBrotherIsPresent)
-			{
+            {
                 hoverHorizontalOffset += 60f;
                 fireballReleaseRate += 40;
-			}
+            }
 
             if (shouldBeBuffed)
             {

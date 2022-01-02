@@ -574,10 +574,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.Distance(destination) > 200f)
             {
                 float speed = npc.velocity.Length();
-                if (speed < 13f)
+                if (speed < 18.5f)
                     speed += 0.08f;
 
-                if (speed > 19f)
+                if (speed > 26f)
                     speed -= 0.08f;
 
                 if (directionToPlayerOrthogonality < 0.85f && directionToPlayerOrthogonality > 0.5f)
@@ -586,9 +586,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
                     speed -= 0.1f;
 
-                speed = MathHelper.Clamp(speed, flySpeedFactor * 12f, flySpeedFactor * 30f);
+                speed = MathHelper.Clamp(speed, flySpeedFactor * 15f, flySpeedFactor * 38f);
 
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
+                npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * speed, flyAcceleration * 10f);
             }
 
             // Jaw opening when near player.

@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
-            projectile.timeLeft = 75;
+            projectile.timeLeft = 90;
             projectile.Opacity = 0f;
             cooldownSlot = 1;
         }

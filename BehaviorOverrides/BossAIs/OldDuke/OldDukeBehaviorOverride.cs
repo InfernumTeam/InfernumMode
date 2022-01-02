@@ -34,18 +34,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         }
 
         public enum OldDukeFrameType
-		{
+        {
             FlapWings,
             Charge,
             Roar,
-		}
+        }
 
         public override int NPCOverrideType => ModContent.NPCType<OldDukeBoss>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public const float Phase2LifeRatio = 0.75f;
-        public const float Phase3LifeRatio = 0.325f;
+        public const float Phase3LifeRatio = 0.35f;
         public const float Phase4LifeRatio = 0.125f;
         public const float PhaseTransitionTime = 150f;
 
@@ -167,7 +167,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         #region AI
         public override bool PreAI(NPC npc)
-		{
+        {
             npc.TargetClosest();
 
             Player target = Main.player[npc.target];
@@ -254,12 +254,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             // Reset variables. They may be changed by behaviors below.
             npc.Calamity().DR = 0.05f;
             npc.dontTakeDamage = outOfOcean;
-            npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
+            npc.Calamity().CurrentlyEnraged = outOfOcean;
             npc.damage = npc.defDamage;
 
             // Reset the hitbox.
-            npc.width = 140;
-            npc.height = 140;
+            npc.width = 152;
+            npc.height = 152;
 
             // Handle phase transitions.
             if (phaseTransitionTimer > 0f)
@@ -288,8 +288,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             if (inPhase3)
             {
-                Main.rainTime = 300;
-                Main.maxRaining = 0.87f;
+                if (phaseTransitionState >= 2f)
+                {
+                    Main.rainTime = 300;
+                    Main.maxRaining = 0.87f;
+                }
+
                 npc.damage = (int)(npc.damage * 1.15);
                 if (inPhase4)
                     npc.damage = (int)(npc.damage * 1.15);
@@ -297,11 +301,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             else
                 CalamityMod.CalamityMod.StopRain();
 
+            // Become fully opaque in contexts where the boss should not need to be transparent.
+            if (!inPhase3 && attackState != (int)OldDukeAttackState.SpawnAnimation)
+                npc.Opacity = 1f;
+
             // Define a general-purpose mouth position vector.
             Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 45f);
 
             switch ((OldDukeAttackState)(int)attackState)
-			{
+            {
                 case OldDukeAttackState.SpawnAnimation:
                     DoBehavior_SpawnEffects(npc, target, attackTimer, ref frameType);
                     break;
@@ -332,14 +340,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 case OldDukeAttackState.TeleportPause:
                     DoBehavior_TeleportPause(npc, target, attackTimer, ref frameType);
                     break;
-			}
+            }
 
             attackTimer++;
 
             return false;
-		}
+        }
 
-		#region Specific Behaviors
+        #region Specific Behaviors
 
         public static void DoBehavior_PhaseTransitionEffects(NPC npc, float phaseTransitionTimer, ref float frameType, ref float phaseTransitionSharkSpawnOffset)
         {
@@ -374,7 +382,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         }
 
         public static void DoBehavior_SpawnEffects(NPC npc, Player target, float attackTimer, ref float frameType)
-		{
+        {
             // Don't do damge during the spawn animation.
             npc.damage = 0;
 
@@ -396,11 +404,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 frameType = (int)OldDukeFrameType.Roar;
 
             // Otherwise, flap wings.
-			else
-			{
+            else
+            {
                 frameType = (int)OldDukeFrameType.FlapWings;
                 npc.frameCounter++;
-			}
+            }
 
             // Play a sound and emit sulphurous acid dust.
             if (attackTimer == 55f)
@@ -460,10 +468,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             if (attackTimer >= waitDelay)
                 GotoNextAttackState(npc);
-		}
+        }
 
         public static void DoBehavior_Charge(NPC npc, Player target, bool inPhase2, bool inPhase3, bool inPhase4, float attackTimer, ref float frameType)
-		{
+        {
             int chargeTime = 21;
             float chargeSpeed = 34.5f;
             float aimAheadFactor = 0.95f;
@@ -486,16 +494,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
 
             if (attackTimer >= chargeTime)
-			{
+            {
                 GotoNextAttackState(npc);
                 return;
-			}
+            }
 
             frameType = (int)OldDukeFrameType.Charge;
 
             // Do the charge on the first frame.
             if (attackTimer == 1f)
-			{
+            {
                 int chargeDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                 npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor * 14.25f) * chargeSpeed;
                 npc.spriteDirection = chargeDirection;
@@ -725,10 +733,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.damage = 0;
 
             int shootDelay = inPhase3 ? 50 : 65;
-            int belchCount = inPhase3 ? 6 : 5;
-            int belchRate = inPhase3 ? 45 : 70;
+            int belchCount = inPhase3 ? 8 : 6;
+            int belchRate = inPhase3 ? 28 : 48;
             if (BossRushEvent.BossRushActive)
-                belchRate -= 12;
+                belchRate -= 8;
 
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
@@ -817,6 +825,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         public static void DoBehavior_TeleportPause(NPC npc, Player target, float attackTimer, ref float frameType)
         {
             npc.damage = 0;
+            npc.dontTakeDamage = true;
 
             int fadeTime = 15;
             if (attackTimer <= fadeTime)
@@ -859,7 +868,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
         #region Utilities
         public static void GotoNextAttackState(NPC npc)
-		{
+        {
             bool inPhase2 = npc.Infernum().ExtraAI[6] == 1f;
             bool inPhase3 = npc.Infernum().ExtraAI[6] == 2f;
             bool inPhase4 = npc.Infernum().ExtraAI[6] == 3f;
@@ -890,7 +899,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.ai[3]++;
             }
             npc.netUpdate = true;
-		}
+        }
         #endregion Utilities
 
         #endregion AI
@@ -898,9 +907,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         #region Frames and Drawcode
 
         public override void FindFrame(NPC npc, int frameHeight)
-		{
+        {
             switch ((OldDukeFrameType)(int)npc.localAI[0])
-			{
+            {
                 case OldDukeFrameType.FlapWings:
                     if (npc.frameCounter >= 8)
                     {
@@ -919,10 +928,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     npc.frame.Y = frameHeight * 6;
                     npc.frameCounter = 0;
                     break;
-			}
-		}
+            }
+        }
 
-		public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             ref float attackTimer = ref npc.ai[1];
             ref float phaseTransitionState = ref npc.Infernum().ExtraAI[6];

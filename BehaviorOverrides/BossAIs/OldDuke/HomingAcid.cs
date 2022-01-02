@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 drawPosition = projectile.position + projectile.Size * 0.5f - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
-            Color backAfterimageColor = projectile.GetAlpha(new Color(0, 203, 255, 0) * 0.35f);
+            Color backAfterimageColor = projectile.GetAlpha(new Color(85, 224, 60, 0) * 0.5f);
             for (int i = 0; i < 8; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 4f;

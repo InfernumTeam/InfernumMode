@@ -126,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 for (int i = 0; i < seekerCount; i++)
                 {
                     int spawn = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeeker>(), npc.whoAmI, 0, 0, 0, -1);
-                    Main.npc[spawn].ai[0] = 360f / seekerCount * i;
+                    Main.npc[spawn].ai[0] = MathHelper.TwoPi / seekerCount * i;
                 }
                 SelectNewAttack(npc);
 
@@ -318,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int dartDamage = shouldBeBuffed ? 310 : 145;
+                        int dartDamage = shouldBeBuffed ? 310 : 155;
                         float idealDirection = npc.AngleTo(target.Center);
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 32f, -Vector2.UnitY).RotatedByRandom(flameAngularVariance) * initialFlameSpeed;
 
@@ -389,7 +389,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Rain meteors from the sky. This has a delay at the start and end of the attack.
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % meteorShootRate == meteorShootRate - 1f)
             {
-                int meteorDamage = shouldBeBuffed ? 325 : 150;
+                int meteorDamage = shouldBeBuffed ? 325 : 160;
                 float horizontalOffsetMax = MathHelper.Lerp(450f, 1050f, Utils.InverseLerp(0f, 8f, target.velocity.Length(), true));
                 Vector2 meteorSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-horizontalOffsetMax, horizontalOffsetMax), -780f);
                 Vector2 shootDirection = Vector2.UnitY.RotatedBy(meteorAngle);
@@ -447,7 +447,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Create lava from the ground. This has a delay at the start and end of the attack.
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lavaShootRate == lavaShootRate - 1f)
             {
-                int lavaDamage = shouldBeBuffed ? 325 : 150;
+                int lavaDamage = shouldBeBuffed ? 325 : 160;
                 Vector2 lavaSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 50f + target.velocity.X * Main.rand.NextFloat(35f, 60f), 420f);
                 if (WorldUtils.Find(lavaSpawnPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(1500), new Conditions.IsSolid()), out Point result))
                 {
@@ -592,7 +592,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int fireballDamage = shouldBeBuffed ? 345 : 150;
+                        int fireballDamage = shouldBeBuffed ? 345 : 160;
 
                         for (int i = 0; i < fireballCount; i++)
                         {
@@ -739,7 +739,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int fireballDamage = shouldBeBuffed ? 320 : 140;
+                        int fireballDamage = shouldBeBuffed ? 320 : 150;
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * fireballSpeed;
 
                         Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<RisingBrimstoneFireball>(), fireballDamage, 0f);
@@ -804,7 +804,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int fireballDamage = shouldBeBuffed ? 320 : 140;
+                        int fireballDamage = shouldBeBuffed ? 320 : 150;
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY);
                         shootVelocity = Vector2.Lerp(shootVelocity, npc.velocity.SafeNormalize(Vector2.Zero), 0.6f).SafeNormalize(Vector2.UnitY) * fireballSpeed;
 

@@ -64,7 +64,7 @@ namespace InfernumMode.GlobalInstances
 
                     posX[i] = oscillatingTime * (xPosOffset - i * 3f);
 
-                    posY[i] = (float)Math.Sin(clampedTime * MathHelper.TwoPi * 2f + MathHelper.Pi / 3f + i) * yPosOffset;
+                    posY[i] = (float)Math.Sin(clampedTime * MathHelper.TwoPi + MathHelper.Pi / 3f + i) * yPosOffset;
                     posY[i] -= i * 3f;
 
                     hue[i] = (i / (float)totalAurasToDraw * 2f) % 1f;
@@ -73,8 +73,10 @@ namespace InfernumMode.GlobalInstances
                     size[i] *= 0.3f;
 
                     Color color = Main.hslToRgb(i / (float)totalAurasToDraw, 1f, 0.5f);
-                    color *= 1.8f;
-                    color.A /= 3;
+                    if (!Main.dayTime)
+                        color = Color.Lerp(Color.Cyan, Color.Indigo, i / (float)totalAurasToDraw);
+
+                    color.A = 24;
 
                     int fadeTime = 30;
                     if (projectile.timeLeft < fadeTime)

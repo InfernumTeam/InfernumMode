@@ -307,7 +307,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 projectileShootSpeed = 10f;
 
             if (calmTheFuckDown)
-                shootRate += 12;
+                shootRate += 25;
 
             ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
@@ -344,7 +344,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             Main.projectile[plasma].ai[0] = shootCounter % 2f;
                     }
                 }
-                else
+                else if (npc.WithinRange(hoverDestination, 100f))
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 

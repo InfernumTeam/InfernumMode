@@ -1,3 +1,5 @@
+using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -18,24 +20,24 @@ namespace InfernumMode
 
         #region Save
         public override TagCompound Save()
-		{
-			var downed = new List<string>();
+        {
+            var downed = new List<string>();
             if (InfernumMode)
                 downed.Add("fuckYouMode");
 
-			return new TagCompound
-			{
+            return new TagCompound
+            {
                 ["downed"] = downed,
                 ["DraedonAttempts"] = DraedonAttempts,
                 ["DraedonSuccesses"] = DraedonSuccesses,
             };
-		}
+        }
         #endregion
 
         #region Load
         public override void Load(TagCompound tag)
-		{
-			var downed = tag.GetList<string>("downed");
+        {
+            var downed = tag.GetList<string>("downed");
             InfernumMode = downed.Contains("fuckYouMode");
             DraedonAttempts = tag.GetInt("DraedonAttempts");
             DraedonSuccesses = tag.GetInt("DraedonSuccesses");
@@ -44,19 +46,19 @@ namespace InfernumMode
 
         #region LoadLegacy
         public override void LoadLegacy(BinaryReader reader)
-		{
-			int loadVersion = reader.ReadInt32();
+        {
+            int loadVersion = reader.ReadInt32();
             if (loadVersion == 0)
-			{
-				BitsByte flags = reader.ReadByte();
+            {
+                BitsByte flags = reader.ReadByte();
                 InfernumMode = flags[0];
             }
-		}
+        }
         #endregion
 
         #region NetSend
         public override void NetSend(BinaryWriter writer)
-		{
+        {
             BitsByte flags = new BitsByte();
             flags[0] = InfernumMode;
             writer.Write(flags);
@@ -67,12 +69,19 @@ namespace InfernumMode
 
         #region NetReceive
         public override void NetReceive(BinaryReader reader)
-		{
+        {
             BitsByte flags = reader.ReadByte();
             InfernumMode = flags[0];
             DraedonAttempts = reader.ReadInt32();
             DraedonSuccesses = reader.ReadInt32();
         }
         #endregion
+        #region Updating
+        public override void PostUpdate()
+        {
+            if (!NPC.AnyNPCs(ModContent.NPCType<Draedon>()))
+                CalamityGlobalNPC.draedon = -1;
+        }
+        #endregion Updating
     }
 }

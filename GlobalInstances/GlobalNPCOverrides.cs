@@ -55,6 +55,8 @@ using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -505,7 +507,11 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == InfernumMode.CalamityMod.NPCType("Providence") && projectile.minion && projectile.type == ModContent.ProjectileType<HolyFireBulletProj>())
                 damage = (int)(damage * 0.6);
-            
+
+            bool isExoTwin = npc.type == ModContent.NPCType<Artemis>() || npc.type == ModContent.NPCType<Apollo>();
+            if (isExoTwin && projectile.type == ModContent.ProjectileType<Galaxia2>())
+                damage = (int)(damage * 1.25);
+
             if (npc.type == ModContent.NPCType<SupremeCalamitas>() && projectile.type == ModContent.ProjectileType<InfernadoFriendly>())
                 damage = (int)(damage * 0.55);
         }
@@ -569,7 +575,7 @@ namespace InfernumMode.GlobalInstances
                 npc.active = true;
                 npc.netUpdate = true;
                 return false;
-			}
+            }
 
             if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
             {

@@ -505,7 +505,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             int waitTime = 8;
-            int chargeTime = 40;
+            int chargeTime = 54;
             int totalCharges = 6;
             int sparkCount = 32;
             int homingSparkCount = 4;

@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         public override bool PreAI(NPC npc)
         {
             Player target = Main.player[npc.target];
-            npc.damage = npc.defDamage;
+            npc.damage = npc.defDamage - 40;
             npc.dontTakeDamage = false;
 
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
@@ -202,7 +202,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             int chargeTime = 45;
             int chargeSlowdownTime = 25;
             int chargeCount = 2;
-            float idealChargeSpeed = MathHelper.Lerp(23f, 29f, 1f - lifeRatio);
+            float idealChargeSpeed = MathHelper.Lerp(29f, 36f, 1f - lifeRatio);
             ref float idealChargeVelocityX = ref npc.Infernum().ExtraAI[0];
             ref float idealChargeVelocityY = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
@@ -259,7 +259,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
+                    int probeCount = 3;
                     for (int i = 0; i < probeCount; i++)
                     {
                         int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
@@ -498,10 +498,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             {
                 // Move away from the target.
                 if (attackTimer < 80f)
-                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -21f, 0.3f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * -16f, 0.3f);
                 else
                 {
-                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 19f, 0.15f);
+                    float newSpeed = MathHelper.Lerp(npc.velocity.Length(), BossRushEvent.BossRushActive ? 30f : 20.5f, 0.15f);
                     npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.03f, true) * newSpeed;
 
                     if (attackTimer < 140f)

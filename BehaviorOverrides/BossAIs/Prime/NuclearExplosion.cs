@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Color explosionColor = Color.OrangeRed * projectile.Opacity * 0.65f;
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
                 spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
 
             spriteBatch.ResetBlendState();

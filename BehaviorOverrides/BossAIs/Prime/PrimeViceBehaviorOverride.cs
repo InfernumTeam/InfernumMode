@@ -47,14 +47,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 PrimeHeadBehaviorOverride.ArmHoverAI(npc);
                 return false;
             }
-            npc.damage = npc.defDamage + 35;
+            npc.damage = (int)((npc.defDamage + 35) * 1.4f);
 
             attackTimer++;
 
-            float chargeCycleTime = PrimeHeadBehaviorOverride.RemainingArms == 1 ? 95f : 160f;
+            float chargeCycleTime = PrimeHeadBehaviorOverride.RemainingArms == 1 ? 75f : 160f;
+            float chargeSpeed = PrimeHeadBehaviorOverride.RemainingArms <= 2 ? 29f : 22.5f;
             float wrappedTime = attackTimer % chargeCycleTime;
             bool canCharge = lifeRatio < 0.5f || PrimeHeadBehaviorOverride.RemainingArms <= 2;
-            bool willCharge = canCharge && wrappedTime > chargeCycleTime - 65f;
+            bool willCharge = canCharge && wrappedTime > chargeCycleTime - 60f;
 
             if (willCharge)
             {
@@ -62,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 {
                     if (wrappedTime == chargeCycleTime - 44f)
                     {
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * 22.5f;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                         if (BossRushEvent.BossRushActive)
                             npc.velocity *= 1.5f;
 

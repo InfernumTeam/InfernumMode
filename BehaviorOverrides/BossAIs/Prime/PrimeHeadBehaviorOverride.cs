@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -76,7 +77,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             ref float armCycleTimer = ref npc.ai[2];
             ref float hasRedoneSpawnAnimation = ref npc.ai[3];
             ref float frameType = ref npc.localAI[0];
+            ref float hasCreatedShield = ref npc.Infernum().ExtraAI[5];
 
+            // Continuously search for the closest target.
             npc.TargetClosest();
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -86,8 +89,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             npc.defense = npc.defDefense;
             npc.damage = npc.defDamage + 24;
 
-            // Don't allow further damage to happen when below 65% life if any arms remain.
-            npc.dontTakeDamage = lifeRatio < 0.8f && AnyArms;
+            // Don't allow damage to happen if any arms remain or the shield is still up.
+            List<Projectile> shields = Utilities.AllProjectilesByID(ModContent.ProjectileType<PrimeShield>()).ToList();
+            npc.dontTakeDamage = AnyArms || shields.Count > 0;
+
+            // Create the shield.
+            if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedShield == 0f)
+            {
+                int shield = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, 255, npc.whoAmI);
+                Main.projectile[shield].ai[0] = npc.whoAmI;
+                hasCreatedShield = 1f;
+            }
 
             if (!target.active || target.dead || Main.dayTime)
             {
@@ -99,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             // Do the spawn animation again once entering the second phase.
-            if (!AnyArms && hasRedoneSpawnAnimation == 0f)
+            if (!AnyArms && hasRedoneSpawnAnimation == 0f && attackType != (int)PrimeAttackType.SpawnEffects)
             {
                 attackTimer = 0f;
                 attackType = (int)PrimeAttackType.SpawnEffects;
@@ -201,7 +213,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 {
                     Main.PlaySound(SoundID.Roar, target.Center, 0);
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && npc.ai[3] == 0f)
                     {
                         npc.TargetClosest();
                         int arm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeCannon, npc.whoAmI);
@@ -291,7 +303,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int cycleTime = 36;
             int rocketCountPerCycle = 7;
             int shootCycleCount = AnyArms ? 4 : 6;
-            int rocketShootDelay = AnyArms ? 60 : 30;
+            int rocketShootDelay = AnyArms ? 60 : 35;
 
             // The attack lasts longer when only the laser and cannon are around so you can focus them down.
             if (!NPC.AnyNPCs(NPCID.PrimeVice) && !NPC.AnyNPCs(NPCID.PrimeSaw) && NPC.AnyNPCs(NPCID.PrimeLaser) && NPC.AnyNPCs(NPCID.PrimeCannon))
@@ -320,7 +332,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         rocketVelocity.Y = -1f;
                     rocketVelocity = Vector2.Lerp(rocketVelocity, npc.SafeDirectionTo(target.Center).RotatedByRandom(0.4f) * rocketVelocity.Length(), 0.6f);
                     rocketVelocity = rocketVelocity.SafeNormalize(-Vector2.UnitY) * rocketSpeed;
-                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ProjectileID.SaucerMissile, 135, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f, rocketVelocity, ProjectileID.SaucerMissile, 150, 0f);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 12f == 11f && !AnyArms)
@@ -329,7 +341,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     idealVelocity += Main.rand.NextVector2Circular(2f, 2f);
                     Vector2 spawnPosition = npc.Center + idealVelocity * 3f;
 
-                    int skull = Utilities.NewProjectileBetter(spawnPosition, idealVelocity, ProjectileID.Skull, 140, 0f, Main.myPlayer, -1f, 0f);
+                    int skull = Utilities.NewProjectileBetter(spawnPosition, idealVelocity, ProjectileID.Skull, 160, 0f, Main.myPlayer, -1f, 0f);
                     Main.projectile[skull].ai[0] = -1f;
                     Main.projectile[skull].timeLeft = 300;
                 }
@@ -345,11 +357,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int hoverTime = AnyArms ? 120 : 60;
             int chargeTime = AnyArms ? 72 : 45;
             float hoverSpeed = AnyArms ? 14f : 33f;
-            float chargeSpeed = AnyArms ? 15f : 24.5f;
+            float chargeSpeed = AnyArms ? 15f : 29f;
 
             // Have a bit longer of a delay for the first charge.
             if (attackTimer < hoverTime + chargeTime)
-                hoverTime += 20;
+                hoverTime += 15;
 
             float wrappedTime = attackTimer % (hoverTime + chargeTime);
 
@@ -360,7 +372,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             if (!AnyArms)
-                chargeSpeed += (1f - lifeRatio) * 10f;
+                chargeSpeed += (1f - lifeRatio) * 5f;
 
             if (wrappedTime < hoverTime - 15f)
             {
@@ -392,9 +404,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            for (int i = 0; i < 7; i++)
+                            for (int i = 0; i < 11; i++)
                             {
-                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.56f, 0.56f, i / 6f)) * 8f;
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, i / 10f)) * 8f;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, ModContent.ProjectileType<MetallicSpike>(), 135, 0f);
                             }
                         }
@@ -469,7 +481,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 {
                     float rocketAngularOffset = Utils.InverseLerp(95f, 195f, attackTimer, true) * MathHelper.TwoPi;
                     Vector2 rocketVelocity = rocketAngularOffset.ToRotationVector2() * (Main.rand.NextFloat(5.5f, 6.2f) + npc.Distance(target.Center) * 0.00267f);
-                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f + rocketVelocity * 2.5f, rocketVelocity, ProjectileID.SaucerMissile, 135, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f + rocketVelocity * 2.5f, rocketVelocity, ProjectileID.SaucerMissile, 155, 0f);
                 }
             }
 
@@ -484,7 +496,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     while (shootDirection.AngleBetween(laserRayRotation.ToRotationVector2()) < angularOffset);
 
                     Vector2 spikeVelocity = shootDirection * Main.rand.NextFloat(11f, 20f);
-                    Utilities.NewProjectileBetter(npc.Center + spikeVelocity * 5f, spikeVelocity, ModContent.ProjectileType<MetallicSpike>(), 175, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + spikeVelocity * 5f, spikeVelocity, ModContent.ProjectileType<MetallicSpike>(), 180, 0f);
                 }
             }
 
@@ -605,7 +617,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         for (int i = 0; i < 12; i++)
                         {
                             Vector2 electricityVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 12f + offsetAngle) * (shootSpeedAdditive + 9f);
-                            Utilities.NewProjectileBetter(mouthPosition, electricityVelocity, ProjectileID.MartianTurretBolt, 135, 0f);
+                            Utilities.NewProjectileBetter(mouthPosition, electricityVelocity, ProjectileID.MartianTurretBolt, 155, 0f);
                         }
                     }
                 }
@@ -615,7 +627,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 rocketVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.47f) * (shootSpeedAdditive + 6.75f);
-                        Utilities.NewProjectileBetter(mouthPosition, rocketVelocity, ProjectileID.SaucerMissile, 135, 0f);
+                        Utilities.NewProjectileBetter(mouthPosition, rocketVelocity, ProjectileID.SaucerMissile, 155, 0f);
                     }
                 }
             }
@@ -651,7 +663,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     for (int i = 0; i < bombCount; i++)
                     {
                         Vector2 bombSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(400f, 1550f);
-                        int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<TeslaBomb>(), 140, 0f);
+                        int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<TeslaBomb>(), 160, 0f);
                         if (Main.projectile.IndexInRange(bomb))
                         {
                             Main.projectile[bomb].ai[0] = Main.rand.Next(45, 70);
@@ -720,7 +732,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
                 // Release lasers upward.
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 6f == 5f)
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -16f, ModContent.ProjectileType<ScavengerLaser>(), 145, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -16f, ModContent.ProjectileType<ScavengerLaser>(), 165, 0f);
 
                 frameType = (int)PrimeFrameType.Spikes;
                 npc.rotation += npc.velocity.Length() * 0.018f;

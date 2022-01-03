@@ -755,6 +755,16 @@ namespace InfernumMode.GlobalInstances
                 target.AddBuff(ModContent.BuffType<RedSurge>(), 180);
             if (npc.type == NPCID.Spazmatism && !NPC.AnyNPCs(NPCID.Retinazer))
                 target.AddBuff(ModContent.BuffType<ShadowflameInferno>(), 180);
+
+            if (npc.type == NPCID.PrimeSaw || npc.type == NPCID.PrimeVice)
+            {
+                target.AddBuff(BuffID.BrokenArmor, 180);
+                target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
+                target.AddBuff(BuffID.Bleeding, 300);
+            }
+
+            if (npc.type == NPCID.SkeletronPrime)
+                target.AddBuff(BuffID.Bleeding, 420);
         }
 
         #endregion

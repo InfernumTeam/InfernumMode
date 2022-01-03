@@ -402,7 +402,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     }
                     if (UniversalAttackTimer == 30)
                     {
-                        float chargeSpeed = MathHelper.Lerp(14.5f, 20.5f, 1f - CombinedLifeRatio);
+                        float chargeSpeed = MathHelper.Lerp(16.5f, 23f, 1f - CombinedLifeRatio);
                         if (BossRushEvent.BossRushActive)
                             chargeSpeed *= 1.8f;
 
@@ -455,7 +455,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         {
                             npc.damage = npc.defDamage;
 
-                            float chargeSpeed = MathHelper.Lerp(21f, 26f, 1f - CombinedLifeRatio);
+                            float chargeSpeed = MathHelper.Lerp(23f, 28f, 1f - CombinedLifeRatio);
                             if (BossRushEvent.BossRushActive)
                                 chargeSpeed *= 1.8f;
                             npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 6.6f) * chargeSpeed;
@@ -535,7 +535,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     // And charge.
                     if (UniversalAttackTimer == 330)
                     {
-                        float chargeSpeed = MathHelper.Lerp(19.5f, 25f, 1f - CombinedLifeRatio);
+                        float chargeSpeed = MathHelper.Lerp(21f, 26.5f, 1f - CombinedLifeRatio);
                         if (BossRushEvent.BossRushActive)
                             chargeSpeed *= 1.8f;
 

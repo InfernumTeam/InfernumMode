@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public override void SetDefaults()
         {
-            npc.damage = 140;
+            npc.damage = 120;
             npc.npcSlots = 0f;
             npc.width = npc.height = 34;
             npc.defense = 15;

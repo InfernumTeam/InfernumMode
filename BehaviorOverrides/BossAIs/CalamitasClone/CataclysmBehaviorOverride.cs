@@ -86,8 +86,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (shouldBeBuffed)
             {
-                chargeSpeed *= 1.35f;
+                chargeSpeed *= 1.5f;
                 redirectSpeed += 6f;
+                chargeTime -= 4;
                 chargeCount--;
             }
 

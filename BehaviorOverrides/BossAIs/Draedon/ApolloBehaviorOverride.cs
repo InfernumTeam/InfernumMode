@@ -505,11 +505,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             int waitTime = 8;
-            int chargeTime = 54;
+            int chargeTime = 45;
             int totalCharges = 6;
-            int sparkCount = 32;
-            int homingSparkCount = 4;
-            float chargeSpeed = 46.5f;
+            int sparkCount = 18;
+            int homingSparkCount = 3;
+            float chargeSpeed = 54f;
             float chargePredictiveness = 10f;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
@@ -521,7 +521,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 chargeTime -= 5;
                 totalCharges--;
                 homingSparkCount++;
-                chargeSpeed -= 5f;
+                chargeSpeed -= 4f;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
                 totalCharges--;

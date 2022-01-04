@@ -61,6 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float complementMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
+            ref float attackDelay = ref npc.Infernum().ExtraAI[13];
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
@@ -154,6 +155,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     npc.active = false;
             }
 
+            // Have a brief period of immortality before attacking to allow for time to uncoil.
+            if (attackDelay < 240f)
+            {
+                npc.dontTakeDamage = true;
+                npc.damage = 0;
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                attackDelay++;
+
+                DoProjectileShootInterceptionMovement(npc, target, 3f);
+                return false;
+            }
+
             // Use combo attacks as necessary.
             if (ExoMechManagement.TotalMechs >= 2 && (int)attackState < 100)
             {
@@ -172,34 +185,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackState = 0f;
                 npc.netUpdate = true;
             }
-
-            switch ((ThanatosHeadAttackType)(int)attackState)
-            {
-                case ThanatosHeadAttackType.AggressiveCharge:
-                    DoBehavior_AggressiveCharge(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.ProjectileShooting_RedLaser:
-                    DoBehavior_ProjectileShooting_RedLaser(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.ProjectileShooting_PurpleLaser:
-                    DoBehavior_ProjectileShooting_PurpleLaser(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
-                    DoBehavior_ProjectileShooting_GreenLaser(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.VomitNukes:
-                    DoBehavior_VomitNuke(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.RocketCharge:
-                    DoBehavior_RocketCharge(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.MaximumOverdrive:
-                    DoBehavior_MaximumOverdrive(npc, target, ref attackTimer, ref frameType);
-                    break;
-            }
-
-            if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
-                SelectNextAttack(npc);
 
             // Handle smoke venting and open/closed DR.
             npc.Calamity().DR = ClosedSegmentDR;
@@ -232,6 +217,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             typeof(ThanatosHead).GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, frameType == (int)ThanatosFrameType.Open);
 
             npc.ModNPC<ThanatosHead>().SmokeDrawer.Update();
+
+            switch ((ThanatosHeadAttackType)(int)attackState)
+            {
+                case ThanatosHeadAttackType.AggressiveCharge:
+                    DoBehavior_AggressiveCharge(npc, target, ref attackTimer, ref frameType);
+                    break;
+                case ThanatosHeadAttackType.ProjectileShooting_RedLaser:
+                    DoBehavior_ProjectileShooting_RedLaser(npc, target, ref attackTimer, ref frameType);
+                    break;
+                case ThanatosHeadAttackType.ProjectileShooting_PurpleLaser:
+                    DoBehavior_ProjectileShooting_PurpleLaser(npc, target, ref attackTimer, ref frameType);
+                    break;
+                case ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
+                    DoBehavior_ProjectileShooting_GreenLaser(npc, target, ref attackTimer, ref frameType);
+                    break;
+                case ThanatosHeadAttackType.VomitNukes:
+                    DoBehavior_VomitNuke(npc, target, ref attackTimer, ref frameType);
+                    break;
+                case ThanatosHeadAttackType.RocketCharge:
+                    DoBehavior_RocketCharge(npc, target, ref attackTimer, ref frameType);
+                    break;
+                case ThanatosHeadAttackType.MaximumOverdrive:
+                    DoBehavior_MaximumOverdrive(npc, target, ref attackTimer, ref frameType);
+                    break;
+            }
+
+            if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
+                SelectNextAttack(npc);
+
             attackTimer++;
 
             return false;

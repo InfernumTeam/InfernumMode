@@ -756,8 +756,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public static void DoBehavior_GatlingLaserAndPlasmaFlames(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
         {
-            int shootTime = 360;
-            Vector2 hoverDestination = target.Center + new Vector2(hoverSide * 750f, -375f);
+            int shootTime = 420;
+            Vector2 hoverDestination = target.Center + new Vector2(hoverSide * 750f, -100f);
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetX = ref npc.Infernum().ExtraAI[1];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[2];
@@ -786,19 +786,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     frame = (int)Math.Round(MathHelper.Lerp(80f, 89f, (float)npc.frameCounter / 30f % 1f));
 
                     // Reset the hover offset periodically.
-                    if (attackTimer % 60f == 59f)
+                    if (attackTimer % 90f == 89f)
                     {
                         hoverOffsetX = Main.rand.NextFloat(-50f, 50f);
-                        hoverOffsetY = Main.rand.NextFloat(-250f, 250f);
+                        hoverOffsetY = Main.rand.NextFloat(-520f, 520f);
                     }
 
                     // Fire a machine-gun of lasers.
                     if (npc.type == ModContent.NPCType<Artemis>())
                     {
                         int laserShootRate = 14;
-                        float laserShootSpeed = 6.5f;
+                        float laserShootSpeed = 6f;
                         float predictivenessFactor = 18.5f;
-                        Vector2 aimDestination = target.Center + target.velocity * predictivenessFactor;
+                        Vector2 aimDestination = target.Center + target.velocity * new Vector2(predictivenessFactor, predictivenessFactor * 2.6f);
                         Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
                         npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
@@ -885,7 +885,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.ai[0] = (int)TwinsAttackType.FireCharge;
                 if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
                     npc.ai[0] = Main.player[npc.target].Infernum().TwinsSpecialAttackTypeSelector.MakeSelection() + 2;
-                if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(4))
+                if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(3))
                     npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
             }
 

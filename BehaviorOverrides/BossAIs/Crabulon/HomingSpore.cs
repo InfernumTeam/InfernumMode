@@ -9,7 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
     public class HomingSpore : ModProjectile
     {
-		public float HomePower => projectile.ai[0];
+        public float HomePower => projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spore");
@@ -30,9 +30,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
         public override void AI()
         {
-			HomeInOnTarget();
+            HomeInOnTarget();
 
-			Lighting.AddLight(projectile.Center, Color.CornflowerBlue.ToVector3() * projectile.Opacity * 0.5f);
+            Lighting.AddLight(projectile.Center, Color.CornflowerBlue.ToVector3() * projectile.Opacity * 0.5f);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver4;
 
             if (projectile.timeLeft > 10f)
@@ -41,16 +41,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 projectile.Opacity = MathHelper.Clamp(projectile.Opacity - 0.1f, 0f, 1f);
         }
 
-		public void HomeInOnTarget()
-		{
-			float homeSpeed = MathHelper.Lerp(3.5f, 6.75f, HomePower);
+        public void HomeInOnTarget()
+        {
+            float homeSpeed = MathHelper.Lerp(3.5f, 6.75f, HomePower);
             if (BossRushEvent.BossRushActive)
                 homeSpeed *= 3f;
 
-			Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-			if (projectile.timeLeft <= 105 && !projectile.WithinRange(target.Center, 55f))
-				projectile.velocity = (projectile.velocity * 15f + projectile.SafeDirectionTo(target.Center) * homeSpeed) / 16f;
-		}
+            Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+            if (projectile.timeLeft <= 105 && !projectile.WithinRange(target.Center, 55f))
+                projectile.velocity = (projectile.velocity * 15f + projectile.SafeDirectionTo(target.Center) * homeSpeed) / 16f;
+        }
 
         public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
 

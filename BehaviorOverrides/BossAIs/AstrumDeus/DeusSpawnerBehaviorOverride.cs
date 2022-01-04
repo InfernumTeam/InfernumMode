@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             {
                 float intensity = MathHelper.Clamp(Utils.InverseLerp(120f, 210f, animationTime, true) - i / 5f, 0f, 1f);
                 Vector2 origin = Main.magicPixel.Size() * 0.5f;
-                Vector2 scale = new Vector2((float)Math.Sqrt(intensity) * 30f, intensity * 50f);
+                Vector2 scale = new Vector2((float)Math.Sqrt(intensity) * 30f, intensity * 15f);
 
                 // Have the beam color cycle through orange red and cyan based on time and beacon index.
                 Color beamColor = Color.Lerp(Color.Lerp(Color.OrangeRed, Color.Red, 0.5f), Color.Cyan, ((float)Math.Cos(Main.GlobalTime * 2.2f + i * 0.26f) * 0.5f + 0.5f) * 0.4f + 0.3f);

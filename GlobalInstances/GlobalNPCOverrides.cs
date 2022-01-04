@@ -168,6 +168,7 @@ namespace InfernumMode.GlobalInstances
                     OverridingListManager.InfernumSetDefaultsOverrideList[npc.type].DynamicInvoke(npc);
             }
         }
+
         public override bool PreAI(NPC npc)
         {
             if (InfernumMode.CanUseCustomAIs)

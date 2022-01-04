@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         public override bool PreAI(NPC npc)
         {
             Player target = Main.player[npc.target];
-            npc.damage = npc.defDamage - 40;
+            npc.damage = npc.defDamage - 95;
             npc.dontTakeDamage = false;
 
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
@@ -202,7 +202,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             int chargeTime = 45;
             int chargeSlowdownTime = 25;
             int chargeCount = 2;
-            float idealChargeSpeed = MathHelper.Lerp(29f, 36f, 1f - lifeRatio);
+            float idealChargeSpeed = MathHelper.Lerp(27.5f, 34.75f, 1f - lifeRatio);
             ref float idealChargeVelocityX = ref npc.Infernum().ExtraAI[0];
             ref float idealChargeVelocityY = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];

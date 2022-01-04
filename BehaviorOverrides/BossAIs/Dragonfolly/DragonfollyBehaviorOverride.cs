@@ -316,7 +316,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     fadeToRed = MathHelper.Lerp(fadeToRed, attackTimer >= 205f + chargeDelay ? 0f : 1f, 0.15f);
 
                     // Release lightning clouds from time to time while charging.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 7f == 6f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f)
                         Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
                 }
                 if (attackTimer >= 230f + chargeDelay)
@@ -494,7 +494,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 }
 
                 // Release lightning clouds from time to time while charging if doing a lightning charge.
-                int cloudSpawnRate = (int)MathHelper.Lerp(16f, 9f, 1f - npc.life / (float)npc.lifeMax);
+                int cloudSpawnRate = (int)MathHelper.Lerp(12f, 6f, 1f - npc.life / (float)npc.lifeMax);
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudSpawnRate == cloudSpawnRate - 1f && chargeType == DragonfollyAttackType.ThunderCharge)
                     Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
 

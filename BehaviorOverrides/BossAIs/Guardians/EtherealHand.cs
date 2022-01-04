@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
 {
-	public class EtherealHand : ModNPC
+    public class EtherealHand : ModNPC
     {
         public Player Target => Main.player[npc.target];
         public ref float HandSide => ref npc.ai[0];
@@ -32,16 +32,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ethereal Hand");
-			NPCID.Sets.TrailingMode[npc.type] = 2;
+            NPCID.Sets.TrailingMode[npc.type] = 2;
             NPCID.Sets.TrailCacheLength[npc.type] = 15;
         }
 
         public override void SetDefaults()
         {
-			npc.npcSlots = 1f;
+            npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.damage = 100;
-			npc.width = npc.height = 50;
+            npc.width = npc.height = 50;
             npc.dontTakeDamage = true;
             npc.lifeMax = 10000;
             npc.knockBackResist = 0f;
@@ -51,14 +51,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             npc.alpha = 255;
         }
 
-		public override void AI()
-		{
-			if (CalamityGlobalNPC.doughnutBoss < 0 || !Main.npc[CalamityGlobalNPC.doughnutBoss].active)
-			{
-				npc.active = false;
-				npc.netUpdate = true;
-				return;
-			}
+        public override void AI()
+        {
+            if (CalamityGlobalNPC.doughnutBoss < 0 || !Main.npc[CalamityGlobalNPC.doughnutBoss].active)
+            {
+                npc.active = false;
+                npc.netUpdate = true;
+                return;
+            }
 
             if (ShouldBeInvisible)
                 npc.alpha = Utils.Clamp(npc.alpha + 40, 0, 255);
@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
                 npc.alpha = Utils.Clamp(npc.alpha - 12, 0, 255);
 
             Vector2 destination = Vector2.Zero;
-			npc.target = Main.npc[CalamityGlobalNPC.doughnutBoss].target;
+            npc.target = Main.npc[CalamityGlobalNPC.doughnutBoss].target;
             npc.rotation = AttackerGuardian.AngleTo(npc.Center);
 
             UsingPointerFinger = false;
@@ -94,14 +94,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
 
                     if (UsingPointerFinger)
                     {
-                        npc.rotation = (Target.Center - PointerFingerPosition + Target.velocity * 30f).ToRotation() + FingerSpacingOffset * 5f;
+                        npc.rotation = (Target.Center - PointerFingerPosition + Target.velocity * 20f).ToRotation() + FingerSpacingOffset * 5f;
                         if (Utilities.AnyProjectiles(ModContent.ProjectileType<ZapRay>()))
                             npc.rotation = npc.oldRot[1];
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && AttackTime % 90f == 89f && UsingPointerFinger)
                     {
-                        int ray = Utilities.NewProjectileBetter(npc.Center, (Target.Center - PointerFingerPosition + Target.velocity * 30f).SafeNormalize(Vector2.UnitX * HandSide), ModContent.ProjectileType<ZapRay>(), 300, 0f);
+                        int ray = Utilities.NewProjectileBetter(npc.Center, (Target.Center - PointerFingerPosition + Target.velocity * 20f).SafeNormalize(Vector2.UnitX * HandSide), ModContent.ProjectileType<ZapRay>(), 400, 0f);
                         Main.projectile[ray].ai[1] = npc.whoAmI;
                     }
 
@@ -139,8 +139,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             if (AttackerState == AttackerGuardianBehaviorOverride.Phase2GuardianAttackState.RayZap && AttackTime % 90f > 60f && UsingPointerFinger)
             {
                 float width = (float)Math.Sin(Utils.InverseLerp(60f, 90f, AttackTime % 90f, true) * MathHelper.Pi) * 3f + 1f;
-                Vector2 endPosition = PointerFingerPosition + (Target.Center - PointerFingerPosition + Target.velocity * 30f).SafeNormalize(Vector2.UnitX * HandSide) * 2400f;
-                Utils.DrawLine(spriteBatch, PointerFingerPosition, endPosition, Color.LightGoldenrodYellow, Color.LightGoldenrodYellow, width);
+                Vector2 endPosition = PointerFingerPosition + (Target.Center - PointerFingerPosition + Target.velocity * 20f).SafeNormalize(Vector2.UnitX * HandSide) * 2400f;
+                spriteBatch.DrawLineBetter(PointerFingerPosition, endPosition, Color.LightGoldenrodYellow, width);
             }
 
             Vector2 sagLocation = Vector2.Lerp(AttackerGuardian.Center, npc.Center, 0.5f);
@@ -195,7 +195,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             }
 
             return false;
-		}
+        }
 
         public override bool CheckActive() => false;
 
@@ -205,9 +205,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             return true;
         }
 
-		public override void OnHitPlayer(Player player, int damage, bool crit)
-		{
-			player.AddBuff(ModContent.BuffType<HolyFlames>(), 120, true);
-		}
+        public override void OnHitPlayer(Player player, int damage, bool crit)
+        {
+            player.AddBuff(ModContent.BuffType<HolyFlames>(), 120, true);
+        }
     }
 }

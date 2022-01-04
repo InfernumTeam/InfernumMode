@@ -40,6 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
         {
             if (!Main.npc.IndexInRange((int)projectile.ai[1]) || !Main.npc[(int)projectile.ai[1]].active)
                 projectile.Kill();
+
             projectile.Center = (Main.npc[(int)projectile.ai[1]].modNPC as EtherealHand).PointerFingerPosition + projectile.velocity * 8f;
         }
 

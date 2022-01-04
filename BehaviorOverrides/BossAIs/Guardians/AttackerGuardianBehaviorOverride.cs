@@ -43,6 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             npc.TargetClosest();
 
             // Despawn if no valid target exists.
+            npc.timeLeft = 3600;
             Player target = Main.player[npc.target];
             if (!target.active || target.dead)
             {

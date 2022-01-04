@@ -66,7 +66,7 @@ namespace InfernumMode.Skies
 
             // Draw nebulous gas behind everything if Deus is below a certain life threshold.
             spriteBatch.SetBlendState(BlendState.Additive);
-            for (int i = 0; i < 275; i++)
+            for (int i = 0; i < 135; i++)
             {
                 Texture2D gasTexture = ModContent.GetTexture($"InfernumMode/ExtraTextures/NebulaGas{(i % 2 == 0 ? "1" : "2")}");
                 Vector2 drawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
@@ -101,14 +101,14 @@ namespace InfernumMode.Skies
             Texture2D starTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/Gleam");
             for (int j = startingDrawIndex; j < endingDrawIndex; j++)
             {
+                // Draw less stars if the background is disabled, to prevent too much visual distraction.
+                if (!Main.BackgroundEnabled && j % 4 != 0)
+                    continue;
+
                 Vector2 baseScale = new Vector2(1f / Stars[j].Depth, 1.1f / Stars[j].Depth) * 0.5f;
                 Vector2 drawPosition = (Stars[j].Position - drawOffset) * baseScale + drawOffset - Main.screenPosition;
                 if (rectangle.Contains((int)drawPosition.X, (int)drawPosition.Y))
                 {
-                    // Draw less stars if the background is disabled, to prevent too much visual distraction.
-                    if (!Main.BackgroundEnabled && j % 4 != 0)
-                        continue;
-
                     // Handle alpha pulsing. This is what allows the stars to appear, disappear, and reappear.
                     float opacity = (float)Math.Sin((Stars[j].AlphaFrequency * Main.GlobalTime + Stars[j].AlphaPhaseShift) * Stars[j].AlphaAmplitude + Stars[j].AlphaAmplitude);
                     float minorFade = (float)Math.Sin(Stars[j].AlphaFrequency * Main.GlobalTime * 5f + Stars[j].AlphaPhaseShift) * 0.1f - 0.1f;
@@ -149,7 +149,7 @@ namespace InfernumMode.Skies
         public override void Activate(Vector2 position, params object[] args)
         {
             isActive = true;
-            int horizontalArea = 80;
+            int horizontalArea = 60;
             int verticalArea = 12;
             Stars = new AstralStar[horizontalArea * verticalArea];
             int starIndex = 0;

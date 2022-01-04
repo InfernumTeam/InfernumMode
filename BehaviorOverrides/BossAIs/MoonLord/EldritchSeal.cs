@@ -241,7 +241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             return new Color(7, 171, 171, npc.alpha);
         }
-        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => false;
+
         public override void HitEffect(int hitDirection, double damage)
         {
             if (npc.life <= 0)

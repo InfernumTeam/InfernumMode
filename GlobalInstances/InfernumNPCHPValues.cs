@@ -29,6 +29,9 @@ using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
 using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
+using CalamityMod.NPCs.ProfanedGuardians;
+using CalamityMod;
+using Terraria;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -56,15 +59,15 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<EbonianSGBig>()] = BossRushEvent.BossRushActive ? 213720 : 6220,
             [NPCID.WallofFleshEye] = BossRushEvent.BossRushActive ? 246800 : 3232,
             [NPCID.WallofFlesh] = BossRushEvent.BossRushActive ? 1068000 : 11875,
-            [NPCID.Spazmatism] = BossRushEvent.BossRushActive ? 833760 : 22223,
-            [NPCID.Retinazer] = BossRushEvent.BossRushActive ? 840885 : 22223,
-            [NPCID.SkeletronPrime] = BossRushEvent.BossRushActive ? 289515 : 44444,
-            [NPCID.PrimeVice] = BossRushEvent.BossRushActive ? -1 : 6300,
-            [NPCID.PrimeSaw] = BossRushEvent.BossRushActive ? -1 : 6300,
-            [NPCID.PrimeCannon] = BossRushEvent.BossRushActive ? -1 : 5005,
-            [NPCID.PrimeLaser] = BossRushEvent.BossRushActive ? -1 : 5005,
-            [NPCID.TheDestroyer] = BossRushEvent.BossRushActive ? 610580 : 104000,
-            [NPCID.Probe] = BossRushEvent.BossRushActive ? 15000 : 150,
+            [NPCID.Spazmatism] = BossRushEvent.BossRushActive ? 833760 : CalculateMechHP(22223),
+            [NPCID.Retinazer] = BossRushEvent.BossRushActive ? 840885 : CalculateMechHP(22223),
+            [NPCID.SkeletronPrime] = BossRushEvent.BossRushActive ? 289515 : CalculateMechHP(44444),
+            [NPCID.PrimeVice] = BossRushEvent.BossRushActive ? -1 : CalculateMechHP(6300),
+            [NPCID.PrimeSaw] = BossRushEvent.BossRushActive ? -1 : CalculateMechHP(6300),
+            [NPCID.PrimeCannon] = BossRushEvent.BossRushActive ? -1 : CalculateMechHP(5005),
+            [NPCID.PrimeLaser] = BossRushEvent.BossRushActive ? -1 : CalculateMechHP(5005),
+            [NPCID.TheDestroyer] = BossRushEvent.BossRushActive ? 610580 : CalculateMechHP(111000),
+            [NPCID.Probe] = BossRushEvent.BossRushActive ? 15000 : CalculateMechHP(170),
             [ModContent.NPCType<BrimstoneElemental>()] = BossRushEvent.BossRushActive ? 1105000 : 51515,
             [ModContent.NPCType<CalamitasRun3>()] = BossRushEvent.BossRushActive ? 485000 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 244444 : 76250,
             [ModContent.NPCType<CalamitasRun>()] = BossRushEvent.BossRushActive ? 193380 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 55000 : 20600,
@@ -79,7 +82,11 @@ namespace InfernumMode.GlobalInstances
             [NPCID.MoonLordHand] = BossRushEvent.BossRushActive ? 275200 : 43390,
             [NPCID.MoonLordHead] = BossRushEvent.BossRushActive ? 281110 : 52525,
             [NPCID.MoonLordCore] = BossRushEvent.BossRushActive ? 510000 : 99990,
-            [ModContent.NPCType<Bumblefuck>()] = BossRushEvent.BossRushActive ? 560000 : 177550,
+            [ModContent.NPCType<ProfanedGuardianBoss>()] = BossRushEvent.BossRushActive ? -1 : 289000,
+            [ModContent.NPCType<ProfanedGuardianBoss>()] = BossRushEvent.BossRushActive ? 620000 : 160000,
+            [ModContent.NPCType<ProfanedGuardianBoss2>()] = BossRushEvent.BossRushActive ? 205000 : 72000,
+            [ModContent.NPCType<ProfanedGuardianBoss3>()] = BossRushEvent.BossRushActive ? 205000 : 72000,
+            [ModContent.NPCType<Bumblefuck>()] = BossRushEvent.BossRushActive ? 860000 : 272720,
             [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 520000,
             [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 632100 : 465432,
             [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 1600000 : 875000,
@@ -93,5 +100,18 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<Apollo>()] = 3333330,
             [ModContent.NPCType<SupremeCalamitas>()] = BossRushEvent.BossRushActive ? 3456780 : -1,
         };
+
+        public static int CalculateMechHP(int baseHP)
+        {
+            if (CalamityConfig.Instance.EarlyHardmodeProgressionRework && !BossRushEvent.BossRushActive)
+            {
+                if (!NPC.downedMechBossAny)
+                    return (int)(baseHP * 0.8f);
+
+                else if ((!NPC.downedMechBoss1 && !NPC.downedMechBoss2) || (!NPC.downedMechBoss2 && !NPC.downedMechBoss3) || (!NPC.downedMechBoss3 && !NPC.downedMechBoss1))
+                    return (int)(baseHP * 0.9f);
+            }
+            return baseHP;
+        }
     }
 }

@@ -115,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
             {
                 if (npc.justHit)
                     slowdownTimer = 18f;
-                npc.velocity = (npc.velocity * 2f + npc.SafeDirectionTo(destination) * MathHelper.Max(requiredMoveSpeed * 2.3f, (thingToDefend.position - thingToDefend.oldPos[1]).Length() * 2.3f)) / 3f;
+                npc.velocity = (npc.velocity * 2f + npc.SafeDirectionTo(destination) * MathHelper.Max(requiredMoveSpeed * 1.4f, (thingToDefend.position - thingToDefend.oldPos[1]).Length() * 1.4f)) / 3f;
                 if (npc.WithinRange(destination, npc.velocity.Length() + 10f))
                 {
                     npc.Center = destination;

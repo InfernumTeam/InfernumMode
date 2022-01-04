@@ -85,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             List<float> rotationPoints = new List<float>();
             List<Vector2> drawPoints = new List<Vector2>();
 
-            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 80f)
+            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 50f)
             {
                 rotationPoints.Clear();
                 drawPoints.Clear();
@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                     drawPoints.Add(Vector2.Lerp(projectile.Center - offsetDirection * Radius / 2f, projectile.Center + offsetDirection * Radius / 2f, i / 16f));
                 }
 
-                FireDrawer.Draw(drawPoints, -Main.screenPosition, 24);
+                FireDrawer.Draw(drawPoints, -Main.screenPosition, 16);
             }
             return false;
         }

@@ -460,7 +460,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     time += 30f;
 
                 float tentacleAngle = Utils.InverseLerp(tentacleSpawnDelay, tentacleSpawnDelay + tentacleSummonTime, attackTimer, true) * MathHelper.TwoPi;
-                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle) > MathHelper.Pi * 0.11f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle) > MathHelper.Pi * 0.14f)
                 {
                     for (int i = 0; i < 2; i++)
                     {

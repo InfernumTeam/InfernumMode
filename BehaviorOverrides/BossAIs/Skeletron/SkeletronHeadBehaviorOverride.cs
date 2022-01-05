@@ -98,6 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     Vector2 hoverDestination = target.Center - Vector2.UnitY * 325f;
                     npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.04f);
+                    npc.damage = 0;
 
                     if (phaseChangeCountdown == 35f)
                     {
@@ -552,7 +553,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             DoHoverMovement(npc, destination, acceleration);
             npc.rotation = npc.velocity.X * 0.05f;
 
-            if (attackTimer >= 520f)
+            if (attackTimer >= 660f)
             {
                 SelectNextAttack(npc);
                 attackTimer = 0f;

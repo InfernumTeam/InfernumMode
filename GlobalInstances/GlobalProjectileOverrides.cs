@@ -39,10 +39,10 @@ namespace InfernumMode.GlobalInstances
             return base.PreAI(projectile);
         }
 
-		public override bool PreDraw(Projectile projectile, SpriteBatch spriteBatch, Color lightColor)
-		{
+        public override bool PreDraw(Projectile projectile, SpriteBatch spriteBatch, Color lightColor)
+        {
             if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>())
-			{
+            {
                 Texture2D texture = Main.projectileTexture[projectile.type];
                 float clampedTime = Main.GlobalTime % 5f / 5f;
                 Vector2 origin = texture.Size() / 2f;
@@ -98,8 +98,8 @@ namespace InfernumMode.GlobalInstances
 
                 return false;
             }
-			return base.PreDraw(projectile, spriteBatch, lightColor);
-		}
+            return base.PreDraw(projectile, spriteBatch, lightColor);
+        }
 
         public override bool PreKill(Projectile projectile, int timeLeft)
         {
@@ -174,8 +174,8 @@ namespace InfernumMode.GlobalInstances
             return base.OnTileCollide(projectile, oldVelocity);
         }
 
-		public override void ModifyHitPlayer(Projectile projectile, Player target, ref int damage, ref bool crit)
-		{
+        public override void ModifyHitPlayer(Projectile projectile, Player target, ref int damage, ref bool crit)
+        {
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
@@ -185,7 +185,7 @@ namespace InfernumMode.GlobalInstances
                 target.AddBuff(ModContent.BuffType<BurningBlood>(), 120);
         }
 
-		public override bool CanHitPlayer(Projectile projectile, Player target)
+        public override bool CanHitPlayer(Projectile projectile, Player target)
         {
             if (InfernumMode.CanUseCustomAIs)
             {

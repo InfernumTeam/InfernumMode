@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
-using Terraria.ID;
 using Terraria.Graphics.Shaders;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
@@ -16,9 +14,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             get => projectile.ai[0];
             set => projectile.ai[0] = value;
         }
+        public ref float TelegraphTotalTime => ref projectile.ai[1];
         public bool NoTelegraph => projectile.localAI[0] == 1f;
-        public const float TelegraphTotalTime = 180f;
-        public const float TelegraphFadeTime = 30f;
+        public const float TelegraphFadeTime = 18f;
         public const float TelegraphWidth = 6400f;
         public override void SetStaticDefaults()
         {
@@ -32,32 +30,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.alpha = 255;
-            projectile.timeLeft = 280;
+            projectile.timeLeft = 150;
             projectile.penetrate = -1;
         }
 
         public override void AI()
         {
+            if (TelegraphTotalTime == 0f)
+                TelegraphTotalTime = 75f;
+
             TelegraphDelay++;
             if (TelegraphDelay > TelegraphTotalTime)
                 projectile.alpha = Utils.Clamp(projectile.alpha - 25, 0, 255);
 
-            if (TelegraphDelay < 135f)
-                Destination = Main.player[Player.FindClosest(projectile.Center, 1, 1)].Center;
+            if (TelegraphDelay < TelegraphTotalTime * 0.8f)
+            {
+                Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+                Vector2 idealDestination = target.Center + target.velocity * 20f;
+                if (Destination == Vector2.Zero)
+                    Destination = idealDestination;
+                Destination = Vector2.Lerp(Destination, idealDestination, 0.1f).MoveTowards(idealDestination, 5f);
+            }
         }
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            float fade = Utils.InverseLerp(150f, 115f, projectile.timeLeft, true);
+            if (projectile.timeLeft <= 45f)
+                fade = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
+            Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Vector2 origin2 = noiseTexture.Size() * 0.5f;
             if (NoTelegraph)
             {
-                float fade = Utils.InverseLerp(280f, 235f, projectile.timeLeft, true);
-                if (projectile.timeLeft <= 45f)
-                    fade = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
-
                 spriteBatch.EnterShaderRegion();
 
-                Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
-                Vector2 drawPosition = projectile.Center - Main.screenPosition;
-                Vector2 origin2 = noiseTexture.Size() * 0.5f;
                 GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);
                 GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Cyan);
                 GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Fuchsia);
@@ -91,6 +97,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             spriteBatch.Draw(laserTelegraph, projectile.Center - Main.screenPosition, null, colorInner, projectile.AngleTo(Destination), origin, scaleInner, SpriteEffects.None, 0f);
             spriteBatch.Draw(laserTelegraph, projectile.Center - Main.screenPosition, null, colorOuter, projectile.AngleTo(Destination), origin, scaleOuter, SpriteEffects.None, 0f);
 
+            spriteBatch.EnterShaderRegion();
+
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Cyan);
+            GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Fuchsia);
+            GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
+
+            spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin2, 2.7f, SpriteEffects.None, 0f);
+            spriteBatch.ExitShaderRegion();
             return false;
         }
     }

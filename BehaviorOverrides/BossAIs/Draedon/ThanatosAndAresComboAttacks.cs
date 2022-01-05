@@ -70,8 +70,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public static bool DoBehavior_ThanatosAres_ExplosionCircle(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
-            int attackDelay = 180;
-            int attackTime = 520;
+            int attackDelay = 210;
+            int attackTime = 550;
             int plasmaBurstShootRate = 85;
             int totalPlasmaPerBurst = 6;
             float plasmaBurstMaxSpread = 0.74f;

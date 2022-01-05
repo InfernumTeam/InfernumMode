@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-	public class DoGPhase1BodyBehaviorOverride : NPCBehaviorOverride
+    public class DoGPhase1BodyBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<DevourerofGodsBody>();
 
@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Reset sizes.
             if (npc.Infernum().ExtraAI[33] == 0f && head.Infernum().ExtraAI[33] == 1f)
-			{
+            {
                 if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
                 {
                     npc.width = 120;
@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     npc.frame = new Rectangle(0, 0, 142, 126);
                     typeof(DevourerofGodsBody).GetField("phase2Started", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, true);
                 }
-				else
+                else
                 {
                     npc.width = 100;
                     npc.height = 100;
@@ -58,7 +58,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             bool headOutOfWorld = head.Center.X < -10001f || head.Center.X > Main.maxTilesX * 16f + 10001f ||
                 head.Center.Y < -10001f || head.Center.Y > Main.maxTilesY * 16f + 10001f;
 
-            if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[1] == 0f && head.Infernum().ExtraAI[15] >= 1200f)
+            if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[14] == 1f/* && head.Infernum().ExtraAI[2] >= 6f*/)
+            {
+                if (head.Infernum().ExtraAI[30] >= 0f && npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[30]].Hitbox))
+                {
+                    npc.alpha += 70;
+                    if (npc.alpha > 255)
+                        npc.alpha = 255;
+                }
+                else
+                {
+                    if (head.Infernum().ExtraAI[15] % 120f > 105f)
+                        npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
+                    else
+                    {
+                        if (aheadSegment.Opacity < 0.2f)
+                            npc.Opacity = 0f;
+                        if (aheadSegment.Opacity > npc.Opacity)
+                            npc.Opacity = MathHelper.Lerp(npc.Opacity, aheadSegment.Opacity, 0.4f);
+                    }
+                }
+            }
+            else if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[30] >= 0f)
             {
                 if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[30]].Hitbox))
                 {
@@ -128,7 +149,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
+            {
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
+                directionToNextSegment = directionToNextSegment.MoveTowards((aheadSegment.rotation - npc.rotation).ToRotationVector2(), 3f);
+            }
 
             float segmentOffset = 100f;
             if (head.Infernum().ExtraAI[33] == 1f)
@@ -138,7 +162,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
                     segmentOffset = 120f;
             }
-			else
+            else
             {
                 if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
                     segmentOffset = 100f;

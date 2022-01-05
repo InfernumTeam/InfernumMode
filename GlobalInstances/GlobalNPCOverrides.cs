@@ -57,6 +57,7 @@ using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Apollo;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -375,7 +376,7 @@ namespace InfernumMode.GlobalInstances
             double realDamage = crit ? damage * 2 : damage;
             int life = npc.realLife > 0 ? Main.npc[npc.realLife].life : npc.life;
             if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                 life - realDamage <= npc.lifeMax * 0.6 && npc.Infernum().ExtraAI[33] == 0f)
+                 life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && npc.Infernum().ExtraAI[33] == 0f)
             {
                 damage = 0;
                 npc.dontTakeDamage = true;

@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.alpha = Utils.Clamp(projectile.alpha - 25, 0, 255);
 
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            projectile.velocity = (projectile.velocity * 69f + projectile.SafeDirectionTo(target.Center) * 16f) / 70f;
+            projectile.velocity = (projectile.velocity * 69f + projectile.SafeDirectionTo(target.Center) * 23f) / 70f;
             projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * 16f;
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }

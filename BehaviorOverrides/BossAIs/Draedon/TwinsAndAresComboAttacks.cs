@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int pressureTime = 240;
             int laserTelegraphTime = AresBeamTelegraph.Lifetime;
             int laserReleaseTime = AresDeathray.Lifetime;
-            int apolloPlasmaShootRate = 60;
+            int apolloPlasmaShootRate = 80;
             float apolloPlasmaSpread = 0.27f;
             float apolloPlasmaShootSpeed = 10f;
 
@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 attackDelay -= 20;
                 pressureTime += 15;
-                apolloPlasmaShootRate -= 5;
+                apolloPlasmaShootRate -= 10;
             }
 
             if (EnrageTimer > 0f)
@@ -78,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 apolloPlasmaSpread *= 3f;
             }
 
-            float artemisVerticalOffset = MathHelper.Lerp(540f, 80f, Utils.InverseLerp(50f, attackDelay + 50f, attackTimer, true));
+            float artemisVerticalOffset = MathHelper.Lerp(540f, 120f, Utils.InverseLerp(50f, attackDelay + 50f, attackTimer, true));
 
             // Inherit the attack timer from the initial mech.
             attackTimer = FindInitialMech()?.ai[1] ?? attackTimer;
@@ -245,8 +245,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 else
                     npc.velocity = npc.velocity.ClampMagnitude(0f, 22f) * 0.92f;
 
-                // Release a border of lasers to prevent from the player from just RoD-ing away.
-                float minHorizontalOffset = MathHelper.Lerp(900f, 400f, Utils.InverseLerp(0f, attackDelay + 90f, attackTimer, true));
+                // Release a border of lightning to prevent from the player from just RoD-ing away.
+                float minHorizontalOffset = MathHelper.Lerp(900f, 560f, Utils.InverseLerp(0f, attackDelay + 90f, attackTimer, true));
                 for (int i = -1; i <= 1; i += 2)
                 {
                     for (int j = 0; j < 2; j++)

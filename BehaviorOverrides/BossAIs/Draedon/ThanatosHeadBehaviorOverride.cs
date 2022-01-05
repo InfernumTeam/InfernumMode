@@ -163,7 +163,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 attackDelay++;
 
-                DoProjectileShootInterceptionMovement(npc, target, 3f);
+                DoProjectileShootInterceptionMovement(npc, target, Utils.InverseLerp(270f, 180f, attackDelay, true) * 3f);
                 return false;
             }
 
@@ -193,25 +193,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             npc.defense = 0;
             npc.takenDamageMultiplier = 1f;
             npc.ModNPC<ThanatosHead>().SmokeDrawer.ParticleSpawnRate = 9999999;
-            if (frameType == (int)ThanatosFrameType.Open)
-            {
-                // Emit light.
-                Lighting.AddLight(npc.Center, 0.35f * npc.Opacity, 0.05f * npc.Opacity, 0.05f * npc.Opacity);
-
-                // Emit smoke.
-                npc.takenDamageMultiplier = 103.184f;
-                if (npc.Opacity > 0.6f)
-                {
-                    npc.ModNPC<ThanatosHead>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
-                    npc.ModNPC<ThanatosHead>().SmokeDrawer.ParticleSpawnRate = 5;
-                }
-                npc.Calamity().DR = OpenSegmentDR;
-                npc.Calamity().unbreakableDR = false;
-                npc.chaseable = true;
-            }
-            // Emit light.
-            else
-                Lighting.AddLight(npc.Center, 0.05f * npc.Opacity, 0.2f * npc.Opacity, 0.2f * npc.Opacity);
 
             // Become vulnerable on the map.
             typeof(ThanatosHead).GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, frameType == (int)ThanatosFrameType.Open);
@@ -245,6 +226,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
                 SelectNextAttack(npc);
+
+            if (frameType == (int)ThanatosFrameType.Open)
+            {
+                // Emit light.
+                Lighting.AddLight(npc.Center, 0.35f * npc.Opacity, 0.05f * npc.Opacity, 0.05f * npc.Opacity);
+
+                // Emit smoke.
+                npc.takenDamageMultiplier = 103.184f;
+                if (npc.Opacity > 0.6f)
+                {
+                    npc.ModNPC<ThanatosHead>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
+                    npc.ModNPC<ThanatosHead>().SmokeDrawer.ParticleSpawnRate = 5;
+                }
+                npc.Calamity().DR = OpenSegmentDR;
+                npc.Calamity().unbreakableDR = false;
+                npc.chaseable = true;
+            }
+            // Emit light.
+            else
+                Lighting.AddLight(npc.Center, 0.05f * npc.Opacity, 0.2f * npc.Opacity, 0.2f * npc.Opacity);
 
             attackTimer++;
 

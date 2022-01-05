@@ -24,14 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        internal const int cvDarkMatterDamage = 325;
-        internal const int cvPortalDamage = 360;
-        internal const int cvDarkBeamDamage = 700;
-        internal const int cvExplosionDamage = 900;
-        internal const int signusScytheDamage = 340;
-        internal const int TotalTimeSpentInPhase = 750;
-        internal const float velocityConstant = 10.35f;
-        internal const float resolutionConstant = 1049088f;
+        public const float Phase2LifeRatio = 0.75f;
 
         #region AI
         public override bool PreAI(NPC npc)
@@ -131,22 +124,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead)
                 npc.TargetClosest(true);
 
-            // Edgy boss text
-            if (lifeRatio < 0.4f)
-            {
-                if (npc.Infernum().ExtraAI[1] == 0f)
-                {
-                    string key = "Mods.CalamityMod.EdgyBossText";
-                    Color messageColor = Color.Cyan;
-                    if (Main.netMode == NetmodeID.SinglePlayer)
-                        Main.NewText(Language.GetTextValue(key), messageColor);
-                    else if (Main.netMode == NetmodeID.Server)
-                        NetMessage.BroadcastChatMessage(NetworkText.FromKey(key), messageColor);
-
-                    npc.Infernum().ExtraAI[1] = 1f;
-                }
-            }
-
             npc.damage = npc.dontTakeDamage ? 0 : 4998;
 
             // Spawn segments
@@ -214,24 +191,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-
-            if (lifeRatio < 0.6f && npc.alpha <= 0)
-            {
-                npc.Infernum().ExtraAI[3] += 1f;
-                if (npc.Infernum().ExtraAI[3] >= 600 &&
-                    npc.Infernum().ExtraAI[3] % 60 == 0f &&
-                    Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Utilities.NewProjectileBetter(npc.Center, npc.velocity.SafeNormalize(Vector2.UnitY) * 16f, ModContent.ProjectileType<HomingDoGBurst>(), 380, 0f, Main.myPlayer, 0f, 0f);
-                    }
-                }
-                if (npc.Infernum().ExtraAI[3] > 720)
-                {
-                    npc.Infernum().ExtraAI[3] = 0f;
-                }
-            }
             return false;
         }
 

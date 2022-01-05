@@ -144,21 +144,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         npc.Center = npc.Center.MoveTowards(destination, 5f);
                         break;
                     case SkeletronHeadBehaviorOverride.SkeletronAttackType.HandShadowflameBurst:
-                        destination = owner.Center + new Vector2(armDirection * 460f, 360f);
+                        destination = owner.Center + new Vector2(armDirection * 540f, 360f);
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.05f);
                         npc.Center = npc.Center.MoveTowards(destination, 5f);
 
                         adjustedTimer = attackTimer % 180f;
-                        if (adjustedTimer > 50f && adjustedTimer < 170f && adjustedTimer % 45f == 44f)
+                        if (adjustedTimer > 50f && adjustedTimer < 170f && adjustedTimer % 45f == 44f && attackTimer < 520f)
                         {
                             Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                                for (int i = 0; i < 11; i++)
+                                for (int i = 0; i < 10; i++)
                                 {
-                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 11f) * 9f;
+                                    Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 10f) * 8.5f;
                                     if (BossRushEvent.BossRushActive)
                                         flameShootVelocity *= 3f;
                                     Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);

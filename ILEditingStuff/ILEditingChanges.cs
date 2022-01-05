@@ -101,6 +101,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(CalamityPlayerMiscEffects).GetMethod("OtherBuffEffects", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator CalamityPlayerModifyHitByProjectile
+        {
+            add => HookEndpointManager.Modify(typeof(CalamityPlayer).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CalamityPlayer).GetMethod("ModifyHitByProjectile", Utilities.UniversalBindingFlags), value);
+        }
+
         public static event ILContext.Manipulator CalamityNPCLifeRegen
         {
             add => HookEndpointManager.Modify(typeof(CalamityGlobalNPC).GetMethod("UpdateLifeRegen", Utilities.UniversalBindingFlags), value);
@@ -168,6 +174,7 @@ namespace InfernumMode.ILEditingStuff
             SepulcherTailModifyProjectile += FuckYou;
             DesertScourgeItemUseItem += GetRidOfDesertNuisances;
             AresBodyCanHitPlayer += LetAresHitPlayer;
+            CalamityPlayerModifyHitByProjectile += RemoveProjectileOnHitLag;
         }
 
         public static void ILEditingUnload()
@@ -195,6 +202,7 @@ namespace InfernumMode.ILEditingStuff
             SepulcherTailModifyProjectile -= FuckYou;
             DesertScourgeItemUseItem -= GetRidOfDesertNuisances;
             AresBodyCanHitPlayer -= LetAresHitPlayer;
+            CalamityPlayerModifyHitByProjectile -= RemoveProjectileOnHitLag;
         }
 
         // Why.
@@ -742,6 +750,17 @@ namespace InfernumMode.ILEditingStuff
             ILCursor cursor = new ILCursor(il);
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);
+        }
+
+        private static void RemoveProjectileOnHitLag(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            cursor.GotoNext(MoveType.Before, c => c.MatchLdcI4(267));
+            cursor.GotoPrev(MoveType.After, c => c.MatchStloc(5));
+            cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Stloc, 4);
+            cursor.Emit(OpCodes.Ldc_I4_1);
+            cursor.Emit(OpCodes.Stloc, 5);
         }
     }
 }

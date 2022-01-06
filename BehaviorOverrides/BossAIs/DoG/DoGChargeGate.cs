@@ -14,8 +14,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             get => projectile.ai[0];
             set => projectile.ai[0] = value;
         }
-        public ref float TelegraphTotalTime => ref projectile.ai[1];
         public bool NoTelegraph => projectile.localAI[0] == 1f;
+        public ref float TelegraphTotalTime => ref projectile.ai[1];
+        public ref float Lifetime => ref projectile.localAI[1];
         public const float TelegraphFadeTime = 18f;
         public const float TelegraphWidth = 6400f;
         public override void SetStaticDefaults()
@@ -30,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.alpha = 255;
-            projectile.timeLeft = 150;
+            projectile.timeLeft = 600;
             projectile.penetrate = -1;
         }
 
@@ -38,6 +39,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             if (TelegraphTotalTime == 0f)
                 TelegraphTotalTime = 75f;
+            if (Lifetime == 0f)
+                Lifetime = 225f;
+
+            if (projectile.timeLeft < 600f - Lifetime)
+                projectile.Kill();
 
             TelegraphDelay++;
             if (TelegraphDelay > TelegraphTotalTime)
@@ -54,9 +60,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         }
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            float fade = Utils.InverseLerp(150f, 115f, projectile.timeLeft, true);
-            if (projectile.timeLeft <= 45f)
-                fade = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
+            float fade = Utils.InverseLerp(600f, 565f, projectile.timeLeft, true);
+            if (projectile.timeLeft <= 600f - Lifetime + 45f)
+                fade = Utils.InverseLerp(600f - Lifetime, 600f - Lifetime + 45f, projectile.timeLeft, true);
+
             Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Vector2 origin2 = noiseTexture.Size() * 0.5f;

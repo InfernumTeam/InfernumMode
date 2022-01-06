@@ -527,7 +527,8 @@ namespace InfernumMode.GlobalInstances
                 npc.type == ModContent.NPCType<DevourerofGodsTail>() ||
                 npc.type == ModContent.NPCType<DevourerofGodsBody>())
             {
-                if (npc.Opacity < 0.1f)
+                NPC head = CalamityGlobalNPC.DoGHead >= 0 ? Main.npc[CalamityGlobalNPC.DoGHead] : null;
+                if (npc.Opacity < 0.1f || head != null && head.Infernum().ExtraAI[2] >= 6f && head.Infernum().ExtraAI[33] >= 1f)
                     rotation = float.NaN;
             }
 

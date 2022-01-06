@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.ID;
@@ -707,7 +708,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         npc.netUpdate = true;
                     }
 
-                    if (specialAttackTimer >= 1450)
+                    if (specialAttackTimer >= 1335f)
                     {
                         specialAttackTimer = 0f;
                         specialAttackState = 1f;
@@ -730,6 +731,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         if (Main.projectile.IndexInRange((int)specialAttackPortalIndex) && npc.Hitbox.Intersects(Main.projectile[(int)specialAttackPortalIndex].Hitbox))
                             npc.alpha = 255;
 
+                        // Clear away various misc projectiles.
+                        int[] projectilesToDelete = new int[]
+                        {
+                            ProjectileID.CultistBossLightningOrbArc,
+                            ModContent.ProjectileType<HomingDoGBurst>(),
+                            ModContent.ProjectileType<DoGBeamPortalN>(),
+                            ModContent.ProjectileType<DoGBeamN>(),
+                            ModContent.ProjectileType<EssenceChain>(),
+                            ModContent.ProjectileType<EssenceExplosion>(),
+                        };
+                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        {
+                            if (projectilesToDelete.Contains(Main.projectile[i].type) && Main.projectile[i].active)
+                                Main.projectile[i].active = false;
+                        }
+
                         return false;
                     }
                 }
@@ -739,13 +756,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (npc.alpha >= 255 || specialAttackType == SpecialAttackType.ChargeGates)
                 {
                     specialAttackTimer += 1f;
-                    if (specialAttackTimer >= 710)
+                    if (specialAttackTimer >= 760f)
                     {
                         specialAttackTimer = 0f;
                         specialAttackState = 2f;
                     }
 
-                    if (specialAttackTimer < 650f)
+                    if (specialAttackTimer < 675f)
                     {
                         switch (specialAttackType)
                         {
@@ -794,7 +811,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                                 }
                                 break;
                             case SpecialAttackType.CircularLaserBurst:
-                                float radius = 700 - 150f * (1f - lifeRatio);
+                                float radius = 700f - 150f * (1f - lifeRatio);
                                 if (specialAttackTimer % 25f == 24f)
                                 {
                                     for (int i = 0; i < 3; i++)
@@ -806,8 +823,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                                 }
                                 break;
                             case SpecialAttackType.ChargeGates:
-                                float wrappedAttackTimer = specialAttackTimer % 120f;
-                                int portalTelegraphTime = 45;
+                                float wrappedAttackTimer = specialAttackTimer % 135f;
+                                int portalTelegraphTime = 52;
                                 float chargeSpeed = nearDeath ? 85f : 60f;
 
                                 // Fade in.
@@ -845,9 +862,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                                         // Create a burst of homing flames.
                                         float flameBurstOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                                        for (int i = 0; i < 12; i++)
+                                        for (int i = 0; i < 8; i++)
                                         {
-                                            Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 12f + flameBurstOffsetAngle).ToRotationVector2() * 15f;
+                                            Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 8f + flameBurstOffsetAngle).ToRotationVector2() * 15f;
                                             Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
                                         }
 

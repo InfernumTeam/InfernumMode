@@ -66,7 +66,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.Infernum().ExtraAI[10] > 0f)
             {
                 npc.Calamity().CanHaveBossHealthBar = false;
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), 48f, 0.065f);
+                npc.velocity = npc.velocity.ClampMagnitude(32f, 60f);
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), 50f, 0.1f);
                 npc.damage = 0;
 
                 if (npc.Infernum().ExtraAI[10] == 1f)
@@ -76,6 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX) * 1600f;
                         npc.Infernum().ExtraAI[11] = Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                         Main.projectile[(int)npc.Infernum().ExtraAI[11]].localAI[0] = 1f;
+                        Main.projectile[(int)npc.Infernum().ExtraAI[11]].localAI[1] = 280f;
                     }
 
                     int headType = ModContent.NPCType<DoGHead>();

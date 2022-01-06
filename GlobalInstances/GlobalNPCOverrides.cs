@@ -186,7 +186,19 @@ namespace InfernumMode.GlobalInstances
                 }
 
                 // Make perf worms immune to debuffs.
-                if (CalamityGlobalNPC.PerforatorIDs.Contains(npc.type))
+                int[] perforatorIDs = new int[]
+                {
+                    ModContent.NPCType<PerforatorHeadLarge>(),
+                    ModContent.NPCType<PerforatorBodyLarge>(),
+                    ModContent.NPCType<PerforatorTailLarge>(),
+                    ModContent.NPCType<PerforatorHeadMedium>(),
+                    ModContent.NPCType<PerforatorBodyMedium>(),
+                    ModContent.NPCType<PerforatorTailMedium>(),
+                    ModContent.NPCType<PerforatorHeadSmall>(),
+                    ModContent.NPCType<PerforatorBodySmall>(),
+                    ModContent.NPCType<PerforatorTailSmall>()
+                };
+                if (perforatorIDs.Contains(npc.type))
                 {
                     for (int k = 0; k < npc.buffImmune.Length; k++)
                         npc.buffImmune[k] = true;
@@ -369,9 +381,6 @@ namespace InfernumMode.GlobalInstances
                     damage = 1500;
                 return false;
             }
-
-            if (npc.type == NPCID.TheDestroyerBody)
-                CalamityGlobalNPC.DestroyerIDs.Remove(NPCID.TheDestroyerBody);
 
             double realDamage = crit ? damage * 2 : damage;
             int life = npc.realLife > 0 ? Main.npc[npc.realLife].life : npc.life;

@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.DevourerofGods;
@@ -162,6 +163,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Chomping after attempting to eat the player.
             bool chomping = !npc.dontTakeDamage && DoChomp(npc, ref chompTime, ref jawAngle);
+
+            // Prevent the Godslayer Inferno debuff from being a problem.
+            if (Main.player[npc.target].HasBuff(ModContent.BuffType<GodSlayerInferno>()))
+                Main.player[npc.target].ClearBuff(ModContent.BuffType<GodSlayerInferno>());
 
             // Despawn.
             if (Main.player[npc.target].dead)

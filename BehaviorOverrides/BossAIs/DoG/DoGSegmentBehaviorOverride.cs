@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (aheadSegment.rotation != npc.rotation)
             {
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
-                directionToNextSegment = directionToNextSegment.MoveTowards((aheadSegment.rotation - npc.rotation).ToRotationVector2(), 3f);
+                directionToNextSegment = directionToNextSegment.MoveTowards((aheadSegment.rotation - npc.rotation).ToRotationVector2(), 1f);
             }
 
             float segmentOffset = 100f;

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.Graphics.Shaders;
+using CalamityMod.NPCs.DevourerofGods;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
@@ -42,6 +43,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Lifetime == 0f)
                 Lifetime = 225f;
 
+            if (!NoTelegraph && !NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>()))
+            {
+                projectile.Kill();
+                return;
+            }
+
             if (projectile.timeLeft < 600f - Lifetime)
                 projectile.Kill();
 
@@ -52,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (TelegraphDelay < TelegraphTotalTime * 0.8f)
             {
                 Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-                Vector2 idealDestination = target.Center + target.velocity * 20f;
+                Vector2 idealDestination = target.Center + target.velocity * new Vector2(30f, 20f);
                 if (Destination == Vector2.Zero)
                     Destination = idealDestination;
                 Destination = Vector2.Lerp(Destination, idealDestination, 0.1f).MoveTowards(idealDestination, 5f);

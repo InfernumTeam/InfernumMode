@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.tileCollide = false;
             projectile.alpha = 255;
             projectile.penetrate = -1;
-            projectile.timeLeft = 480;
+            projectile.timeLeft = 300;
             cooldownSlot = 1;
         }
 

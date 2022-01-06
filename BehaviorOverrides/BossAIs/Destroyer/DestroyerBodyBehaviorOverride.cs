@@ -45,6 +45,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             npc.Calamity().DR = 0.5f;
             npc.defense = 12;
 
+            npc.Calamity().newAI[1] = 600f;
+
             npc.buffImmune[ModContent.BuffType<CrushDepth>()] = true;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;

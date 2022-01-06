@@ -95,11 +95,13 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(CalamityWorld).GetMethod("PostUpdate", Utilities.UniversalBindingFlags), value);
         }
 
+        /*
         public static event ILContext.Manipulator CalamityPlayerOtherBuffEffects
         {
             add => HookEndpointManager.Modify(typeof(CalamityPlayerMiscEffects).GetMethod("OtherBuffEffects", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(CalamityPlayerMiscEffects).GetMethod("OtherBuffEffects", Utilities.UniversalBindingFlags), value);
         }
+        */
 
         public static event ILContext.Manipulator CalamityPlayerModifyHitByProjectile
         {
@@ -166,7 +168,7 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreDrawProjectile += ProjectilePreDrawChange;
             ModeIndicatorUIDraw += DrawInfernumIcon;
             CalamityWorldPostUpdate += PermitODRain;
-            CalamityPlayerOtherBuffEffects += DisablePlagueDarkness;
+            //CalamityPlayerOtherBuffEffects += DisablePlagueDarkness;
             CalamityNPCLifeRegen += NerfShellfishStaff;
             CalamityGenNewTemple += MakeGolemRoomInvariable;
             SepulcherHeadModifyProjectile += FuckYou;
@@ -194,7 +196,7 @@ namespace InfernumMode.ILEditingStuff
             ModifyPreDrawProjectile -= ProjectilePreDrawChange;
             ModeIndicatorUIDraw -= DrawInfernumIcon;
             CalamityWorldPostUpdate -= PermitODRain;
-            CalamityPlayerOtherBuffEffects -= DisablePlagueDarkness;
+            //CalamityPlayerOtherBuffEffects -= DisablePlagueDarkness;
             CalamityNPCLifeRegen -= NerfShellfishStaff;
             CalamityGenNewTemple -= MakeGolemRoomInvariable;
             SepulcherHeadModifyProjectile -= FuckYou;

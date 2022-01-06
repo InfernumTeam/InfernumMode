@@ -167,7 +167,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (sentinelAttackTimer >= totalSentinelAttacks * 900f)
                 sentinelAttackTimer = 0f;
 
-            DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
+            // TODO - Improve these.
+            // DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
 
             // Light
             Lighting.AddLight((int)((npc.position.X + npc.width / 2) / 16f), (int)((npc.position.Y + npc.height / 2) / 16f), 0.2f, 0.05f, 0.2f);
@@ -631,14 +632,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
                 else
                 {
-                    jawRotation = jawRotation.AngleTowards(0f, 0.07f);
+                    jawRotation = jawRotation.AngleTowards(0f, 0.08f);
                 }
             }
 
             // Lunge if near the player, and prepare to chomp.
-            if (distanceFromDestination * 0.5f < 160f && directionToPlayerOrthogonality > 0.45f && npc.velocity.Length() < idealFlySpeed * 1.7f)
+            if (distanceFromDestination * 0.5f < 180f && directionToPlayerOrthogonality > 0.45f && npc.velocity.Length() < idealFlySpeed * 2f)
             {
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.5f;
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.75f;
                 jawRotation = jawRotation.AngleLerp(idealMouthOpeningAngle, 0.55f);
 
                 if (chompTime == 0f)
@@ -827,6 +828,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                                 int portalTelegraphTime = 52;
                                 float chargeSpeed = nearDeath ? 85f : 60f;
 
+                                // Disappear if the target is dead and DoG is invisible.
+                                if (target.dead && npc.Opacity <= 0f)
+                                {
+                                    specialAttackTimer = 5f;
+                                    npc.Center = Vector2.One * -10000f;
+
+                                    // Bring segments along with.
+                                    for (int i = 0; i < Main.maxNPCs; i++)
+                                    {
+                                        if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
+                                        {
+                                            Main.npc[i].Center = npc.Center;
+                                            Main.npc[i].Opacity = 0f;
+                                            Main.npc[i].netUpdate = true;
+                                        }
+                                    }
+                                    npc.active = false;
+                                }
+
                                 // Fade in.
                                 if (wrappedAttackTimer <= portalTelegraphTime + 20f)
                                     npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.15f, 0f, 1f);
@@ -869,10 +889,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                                         }
 
                                         // Create the portal to go through.
-                                        Vector2 portalSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 1900f;
-                                        specialAttackPortalIndex = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                                        Main.projectile[(int)specialAttackPortalIndex].localAI[0] = 1f;
-                                        Main.projectile[(int)specialAttackPortalIndex].ai[1] = portalTelegraphTime;
+                                        if (!target.dead)
+                                        {
+                                            Vector2 portalSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 1900f;
+                                            specialAttackPortalIndex = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                                            Main.projectile[(int)specialAttackPortalIndex].localAI[0] = 1f;
+                                            Main.projectile[(int)specialAttackPortalIndex].ai[1] = portalTelegraphTime;
+                                        }
                                     }
                                     Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
                                 }

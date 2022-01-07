@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.tileCollide = false;
             projectile.alpha = 255;
             projectile.penetrate = -1;
-            projectile.timeLeft = 70;
+            projectile.timeLeft = 100;
         }
 
         public override void AI()
@@ -27,19 +27,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.rotation += 0.325f;
 
             Time++;
-            if (Time == 35f)
+            if (Time == 60f)
             {
                 Main.PlaySound(SoundID.Item12, projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Player closest = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-                    for (int i = 0; i < 4; i++)
-                        Projectile.NewProjectile(projectile.Center, (projectile.SafeDirectionTo(closest.Center) * 10f).RotatedBy(MathHelper.TwoPi / 4f * i), InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 85, 0f, projectile.owner);
+
+                    float shootInterpolant = Utils.InverseLerp(600f, 1450f, projectile.Distance(closest.Center), true);
+                    int shootCount = (int)MathHelper.Lerp(5f, 12f, shootInterpolant);
+                    float shootSpeed = MathHelper.Lerp(15f, 25f, shootInterpolant);
+                    for (int i = 0; i < shootCount; i++)
+                    {
+                        Vector2 shootVelocity = projectile.SafeDirectionTo(closest.Center).RotatedBy(MathHelper.Lerp(-0.6f, 0.6f, i / (float)(shootCount - 1f))) * shootSpeed;
+                        Projectile.NewProjectile(projectile.Center, shootVelocity, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 85, 0f, projectile.owner);
+                    }
                 }
             }
 
-            projectile.Opacity = Utils.InverseLerp(0f, 30f, Time, true) * Utils.InverseLerp(0f, 30f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.InverseLerp(0f, 50f, Time, true) * Utils.InverseLerp(0f, 30f, projectile.timeLeft, true);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

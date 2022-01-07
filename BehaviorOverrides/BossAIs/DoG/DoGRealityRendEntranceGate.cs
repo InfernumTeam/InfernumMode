@@ -39,9 +39,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Pow(MathHelper.Clamp(Time / 160f, 0f, 1f), 9D) * 45f + 5f;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && Time > 150f && Time % 20f == 19f)
-                Utilities.NewProjectileBetter(projectile.Center, Main.rand.NextVector2CircularEdge(18f, 18f), ModContent.ProjectileType<DoGFire>(), 300, 0f);
-
             // Play idle sounds.
             if (Main.netMode != NetmodeID.Server)
 			{

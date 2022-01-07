@@ -578,10 +578,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             // Release magic from the mouth as a telegraph.
             if (attackTimer < attackDelay)
             {
-                Dust magic = Dust.NewDustDirect(npc.Bottom - Vector2.UnitY * 30f, npc.width, 16, 264);
+                Dust magic = Dust.NewDustDirect(npc.Bottom - new Vector2(npc.width * 0.5f, 30f), npc.width, 16, 264);
                 magic.velocity = Main.rand.NextFloat(-0.43f, 0.43f).ToRotationVector2() * Main.rand.NextFloat(2f, 8f);
                 magic.velocity.X *= Main.rand.NextBool().ToDirectionInt();
-                magic.scale = Main.rand.NextFloat(0.45f, 0.7f);
+                magic.scale = Main.rand.NextFloat(1f, 1.4f);
                 magic.fadeIn = 0.6f;
                 magic.noLight = true;
                 magic.noGravity = true;
@@ -609,15 +609,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         {
                             Main.projectile[fire].ai[0] = offset + fuck;
                             Main.projectile[fire].netUpdate = true;
-
                         }
                     }
 
                     // Fire one skull directly at the target.
-                    Vector2 skullVelocity = npc.SafeDirectionTo(target.Center) * 3f;
-                    int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                    Vector2 skullVelocity = npc.SafeDirectionTo(target.Center) * 5f;
+                    int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 100, 0f);
                     if (Main.projectile.IndexInRange(skull))
-                        Main.projectile[skull].ai[0] = 0.005f;
+                        Main.projectile[skull].ai[0] = -9999f;
                 }
             }
 

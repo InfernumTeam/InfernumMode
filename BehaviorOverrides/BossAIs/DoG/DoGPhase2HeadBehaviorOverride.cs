@@ -96,9 +96,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             // Variables
-            bool canPerformSpecialAttacks = lifeRatio < 0.7;
-            bool nearDeath = lifeRatio < 0.2;
-            bool breathFireMore = lifeRatio < 0.15;
+            bool canPerformSpecialAttacks = lifeRatio < 0.7f;
+            bool nearDeath = lifeRatio < 0.2f;
+            bool breathFireMore = lifeRatio < 0.15f;
 
             // Don't take damage when fading out.
             npc.dontTakeDamage = npc.Opacity < 0.5f;
@@ -130,7 +130,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (canPerformSpecialAttacks && trapChargeTimer <= 0f)
             {
                 if (!DoSpecialAttacks(npc, target, nearDeath, ref specialAttackState, ref specialAttackTimer, ref specialAttackPortalIndex))
+                {
+                    if (horizontalRunAnticheeseCounter > 900f)
+                        horizontalRunAnticheeseCounter = 900f;
                     return false;
+                }
             }
             else
             {
@@ -142,6 +146,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     specialAttackState = 0;
             }
             specialAttackPortalIndex = -1f;
+
+            if (specialAttackState == 0f)
+                npc.Infernum().ExtraAI[2] = 0f;
 
             // Anger message
             if (nearDeath)
@@ -156,9 +163,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             time++;
 
             int totalSentinelAttacks = 1;
-            if (lifeRatio < 0.8f)
-                totalSentinelAttacks++;
             if (lifeRatio < 0.6f)
+                totalSentinelAttacks++;
+            if (lifeRatio < 0.45f)
                 totalSentinelAttacks++;
 
             // Do sentinel attacks.
@@ -204,6 +211,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             bool chomping = npc.Infernum().ExtraAI[14] == 0f && DoChomp(npc, target, ref chompTime, ref jawRotation);
 
             // Do movement and barrier sneak attack anticheese.
+            /*
             if (!target.dead && target.active)
             {
                 if (specialAttackState == 0f && trapChargeTimer >= 1f)
@@ -212,14 +220,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     DoAggressiveFlyMovement(npc, target, chomping, ref jawRotation, ref chompTime, ref time, ref flyAcceleration);
 
-                    if (specialAttackState == 0f)
+                    if (specialAttackState == 0f && !nearDeath)
                         DoAnticheeseRunChecks(npc, target, ref horizontalRunAnticheeseCounter, ref trapChargeTimer);
                 }
             }
-
+            */
             // Despawn if no valid target exists.
-            else
+            if (target.dead || !target.active)
                 Despawn(npc);
+            else
+                DoAggressiveFlyMovement(npc, target, chomping, ref jawRotation, ref chompTime, ref time, ref flyAcceleration);
 
             npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 
@@ -403,7 +413,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         if (soundInstance != null)
                         {
                             soundInstance.Pitch = -MathHelper.Lerp(0.1f, 0.4f, i / 3f);
-                            soundInstance.Volume = 0.21f;
+                            soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 1.8f, 0f, 1f);
                         }
                     }
                 }
@@ -468,7 +478,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 trapChargePortalIndex = Projectile.NewProjectile(target.Center + Main.rand.NextVector2CircularEdge(800f, 800f), Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
             }
 
-            if (trapChargeTimer == 180f)
+            if (trapChargeTimer == 120f)
             {
                 Vector2 portalPosition = Main.projectile[(int)trapChargePortalIndex].Center;
                 npc.Center = portalPosition;
@@ -486,10 +496,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
             }
 
-            if (trapChargeTimer > 240f && trapChargeTimer < 320f)
+            if (trapChargeTimer > 180f && trapChargeTimer < 260f)
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.09f);
 
-            if (trapChargeTimer > 380f && trapChargeTimer < 620f)
+            if (trapChargeTimer > 320f && trapChargeTimer < 560f)
             {
                 // Create the initial charge portal and release a bunch of homing flames.
                 if (Main.netMode != NetmodeID.MultiplayerClient && trapChargeTimer == 381f)
@@ -513,10 +523,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             trapChargeTimer++;
-            if (trapChargeTimer > 520f)
+            if (trapChargeTimer > 460f)
                 npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.4f);
 
-            if (trapChargeTimer > 580f)
+            if (trapChargeTimer > 520f)
             {
                 trapChargeTimer = totalCharges < 2f ? 0f : 1f;
 
@@ -546,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                             Main.npc[i].netUpdate = true;
                         }
                     }
-                    npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed * 0.75f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * 32f;
                     npc.Opacity = 1f;
                     npc.dontTakeDamage = false;
                     npc.netUpdate = true;
@@ -687,9 +697,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (nearDeath)
                 npc.Infernum().ExtraAI[2] = 9f;
 
-            if (npc.Infernum().ExtraAI[2] <= 3)
+            if (npc.Infernum().ExtraAI[2] <= 3f)
                 specialAttackType = SpecialAttackType.LaserWalls;
-            else if (npc.Infernum().ExtraAI[2] <= 5)
+            else if (npc.Infernum().ExtraAI[2] <= 5f)
                 specialAttackType = SpecialAttackType.CircularLaserBurst;
             else
                 specialAttackType = SpecialAttackType.ChargeGates;
@@ -813,11 +823,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                                 break;
                             case SpecialAttackType.CircularLaserBurst:
                                 float radius = 700f - 150f * (1f - lifeRatio);
-                                if (specialAttackTimer % 25f == 24f)
+                                if (specialAttackTimer % 80f == 79f)
                                 {
-                                    for (int i = 0; i < 3; i++)
+                                    float spawnOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                                    for (int i = 0; i < 6; i++)
                                     {
-                                        Vector2 spawnOffset = (specialAttackTimer * (MathHelper.Pi / 100f) + MathHelper.TwoPi * i / 3f).ToRotationVector2() * radius;
+                                        Vector2 spawnOffset = (spawnOffsetAngle + MathHelper.TwoPi * i / 6f).ToRotationVector2() * radius;
                                         Vector2 spawnPosition = target.Center + spawnOffset;
                                         Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<RealityBreakPortalLaserWall>(), 0, 0f);
                                     }

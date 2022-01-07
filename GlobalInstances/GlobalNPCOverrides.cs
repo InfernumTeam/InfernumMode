@@ -383,7 +383,7 @@ namespace InfernumMode.GlobalInstances
             }
 
             double realDamage = crit ? damage * 2 : damage;
-            int life = npc.realLife > 0 ? Main.npc[npc.realLife].life : npc.life;
+            int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
             if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
                  life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && npc.Infernum().ExtraAI[33] == 0f)
             {
@@ -537,7 +537,7 @@ namespace InfernumMode.GlobalInstances
                 npc.type == ModContent.NPCType<DevourerofGodsBody>())
             {
                 NPC head = CalamityGlobalNPC.DoGHead >= 0 ? Main.npc[CalamityGlobalNPC.DoGHead] : null;
-                if (npc.Opacity < 0.1f || head != null && head.Infernum().ExtraAI[2] >= 6f && head.Infernum().ExtraAI[33] >= 1f)
+                if (npc.Opacity < 0.1f || (head != null && head.Infernum().ExtraAI[2] >= 6f && head.Infernum().ExtraAI[33] >= 1f))
                     rotation = float.NaN;
             }
 

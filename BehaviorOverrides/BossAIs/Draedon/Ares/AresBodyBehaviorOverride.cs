@@ -254,9 +254,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
                 SelectNextAttack(npc);
 
-            // Define rotation.
-            npc.rotation = npc.velocity.X * 0.0025f;
-
             attackTimer++;
             return false;
         }

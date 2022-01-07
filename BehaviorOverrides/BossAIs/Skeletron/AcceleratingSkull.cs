@@ -37,9 +37,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             }
 
             // Move to the sides.
-            projectile.velocity.X = Utils.InverseLerp(300f, 250f, projectile.timeLeft, true) * 
-                Utils.InverseLerp(220f, 250f, projectile.timeLeft, true) *
-                IdealHorizontalOffsetSpeed;
+            if (IdealHorizontalOffsetSpeed != -9999f)
+            {
+                projectile.velocity.X = Utils.InverseLerp(300f, 250f, projectile.timeLeft, true) *
+                    Utils.InverseLerp(220f, 250f, projectile.timeLeft, true) *
+                    IdealHorizontalOffsetSpeed;
+            }
 
             // And accelerate downward.
             if (projectile.timeLeft > 270f)

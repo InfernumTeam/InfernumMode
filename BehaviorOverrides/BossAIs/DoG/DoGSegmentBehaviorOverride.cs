@@ -23,6 +23,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
             NPC head = Main.npc[(int)npc.ai[2]];
             npc.life = head.life;
+            npc.lifeMax = head.lifeMax;
+            npc.defense = 0;
             if (!head.active)
             {
                 npc.life = 0;
@@ -58,7 +60,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             bool headOutOfWorld = head.Center.X < -10001f || head.Center.X > Main.maxTilesX * 16f + 10001f ||
                 head.Center.Y < -10001f || head.Center.Y > Main.maxTilesY * 16f + 10001f;
 
-            if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[14] == 1f/* && head.Infernum().ExtraAI[2] >= 6f*/)
+            if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[14] == 1f && head.Infernum().ExtraAI[15] >= 675f)
+            {
+                head.Opacity = 0f;
+                npc.Opacity = 0f;
+            }
+            else if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[14] == 1f)
             {
                 if (head.Infernum().ExtraAI[30] >= 0f && npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[30]].Hitbox))
                 {
@@ -68,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
                 else
                 {
-                    if (head.Infernum().ExtraAI[15] % 120f > 105f)
+                    if (head.Infernum().ExtraAI[15] % 135f > 120f)
                         npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
                     else
                     {
@@ -89,7 +96,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
             }
 
-            else if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[25] > 381f)
+            else if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[25] > 0f && head.Infernum().ExtraAI[25] < 180f)
+            {
+                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
+                head.Opacity = 0f;
+            }
+
+            else if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[25] > 321f)
             {
                 if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[26]].Hitbox))
                 {
@@ -98,6 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         npc.alpha = 255;
                 }
             }
+
             else if (head.Infernum().ExtraAI[33] == 0f && head.Infernum().ExtraAI[11] >= 0f)
             {
                 if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[11]].Hitbox) || headOutOfWorld)
@@ -142,7 +156,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.Size != size)
                 npc.Size = size;
 
-            npc.dontTakeDamage = head.dontTakeDamage;
+            npc.dontTakeDamage = head.dontTakeDamage || npc.Opacity < 0.1f;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
             if (head.Infernum().ExtraAI[32] > 0f)
                 npc.life = npc.lifeMax;

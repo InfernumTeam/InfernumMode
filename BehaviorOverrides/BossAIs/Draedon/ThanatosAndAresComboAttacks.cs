@@ -537,8 +537,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             int attackDelay = 180;
             int attackTime = 560;
-            int lightningShootRate = 200;
-            int lightningBurstTime = 60;
+            int lightningShootRate = 240;
+            int lightningBurstTime = 90;
             int totalLightningShotsPerBurst = 6;
             int aresPulseBlastConjureRate = 90;
             int aresPulseBlastShootDelay = 55;
@@ -560,7 +560,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Select segment shoot attributes.
                 if (attackTimer > attackDelay && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
                 {
-                    totalSegmentsToFire = 40f;
+                    totalSegmentsToFire = 33f;
                     segmentFireTime = 90f;
 
                     segmentFireCountdown = segmentFireTime;
@@ -574,7 +574,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Ares hovers above the target.
             if (npc.type == ModContent.NPCType<AresBody>())
             {
-                Vector2 hoverDestination = target.Center - Vector2.UnitY * 400f;
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 445f;
 
                 // Decide frames.
                 frame = (int)AresBodyFrameType.Normal;
@@ -760,6 +760,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     blast.netUpdate = true;
                 }
             }
+
+            if (CurrentThanatosPhase == 4 || CurrentAresPhase == 4)
+                return true;
 
             return attackTimer > attackDelay + attackTime;
         }

@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             // And create bright light.
             Lighting.AddLight(projectile.Center, Color.Orange.ToVector3() * 1.4f);
 
-            if (!Owner.active)
+            if (!Owner.active || Owner.Infernum().ExtraAI[2] == 1f)
                 projectile.Kill();
 
             Owner.rotation = projectile.velocity.ToRotation();

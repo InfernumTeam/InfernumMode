@@ -357,7 +357,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int laserSpinTime = AresSpinningRedDeathray.Lifetime;
             float wrappedAttackTimer = attackTimer % (redirectTime + chargeupTime + laserTelegraphTime + laserSpinTime);
             bool deathraysHaveBeenFired = wrappedAttackTimer >= redirectTime + chargeupTime + laserTelegraphTime;
-            float apolloChargeSpeed = 45f;
+            float apolloChargeSpeed = 31f;
             float artemisChargeSpeed = 30f;
             int artemisChargeTime = 64;
             int artemisLaserReleaseRate = 27;

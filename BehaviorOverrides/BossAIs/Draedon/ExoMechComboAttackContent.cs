@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ExplosionCircle);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_NuclearHell);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserBarrage);
-                if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
+                if (CurrentThanatosPhase != 4 && CurrentAresPhase != 4)
                     attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ElectropulseBursts, 1.65);
 
                 do

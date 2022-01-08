@@ -220,7 +220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             ref float enrageAttackCountdown = ref npc.ai[2];
             ref float roarTimer = ref npc.localAI[1];
 
-            float idealAngerStrength = MathHelper.Lerp(0f, 0.8f, Utils.InverseLerp(800, 2300f, Math.Abs(target.Center.X - npc.Center.X), true));
+            float idealAngerStrength = MathHelper.Lerp(0f, 0.8f, Utils.InverseLerp(1150f, 2300f, Math.Abs(target.Center.X - npc.Center.X), true));
 
             // Check if the player is running in one direction.
             if (Math.Abs(Vector2.Dot(target.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)) > 0.74f && Math.Abs(target.Center.X - npc.Center.X) > 500f)

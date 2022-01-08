@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
                 if (doCircleAttack)
                 {
-                    Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center) * 10f;
+                    Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center) * 8.5f;
                     Vector2 laserShootPosition = npc.Center + laserShootVelocity * 7.5f;
 
                     // Create a dust telegraph prior to releasing lasers.

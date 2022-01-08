@@ -350,7 +350,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 laserShootVelocity = aimDirection * projectileShootSpeed;
+                        Vector2 laserShootVelocity = aimDirection * projectileShootSpeed * 0.8f;
                         int laser = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, laserShootVelocity, ModContent.ProjectileType<ArtemisLaser>(), 500, 0f);
                         if (Main.projectile.IndexInRange(laser))
                         {

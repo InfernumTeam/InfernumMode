@@ -4,6 +4,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Polterghast;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -496,7 +497,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             {
                 float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 7.25f;
                 if (phase3)
-                    moveSpeed *= 1.25f;
+                    moveSpeed *= 1.18f;
                 npc.velocity = npc.SafeDirectionTo(target.Center) * moveSpeed;
 
                 npc.rotation += 0.2f;

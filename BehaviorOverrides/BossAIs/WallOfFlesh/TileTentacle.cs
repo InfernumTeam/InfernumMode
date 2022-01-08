@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.hide = true;
-            projectile.timeLeft = 240;
+            projectile.timeLeft = 150;
         }
 
         public override void AI()

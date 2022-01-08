@@ -231,7 +231,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             {
                 animationChargeTimer = 70f;
                 Main.PlaySound(SoundID.Roar, target.Center, 0);
-                npc.velocity = npc.SafeDirectionTo(target.Center) * 14f;
+
+                float chargeSpeed = MathHelper.Lerp(6f, 14f, Utils.InverseLerp(560f, 1230f, npc.Distance(target.Center), true));
+                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                 npc.netUpdate = true;
             }
         }
@@ -291,6 +293,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 case SkeletronAttackType.SpinCharge:
                 case SkeletronAttackType.DownwardAcceleratingSkulls:
                     npc.ai[0] = (int)SkeletronAttackType.HandWaves;
+                    if (phase3 && currentAttack != SkeletronAttackType.SpinCharge)
+                        npc.ai[0] = (int)SkeletronAttackType.SpinCharge;
                     break;
                 case SkeletronAttackType.HandWaves:
                     npc.ai[0] = (int)SkeletronAttackType.HandShadowflameBurst;
@@ -329,7 +333,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int skull = Utilities.NewProjectileBetter(skullShootPosition, skullShootVelocity, ProjectileID.Skull, 100, 0f);
+                        int skull = Utilities.NewProjectileBetter(skullShootPosition, skullShootVelocity, ProjectileID.Skull, 95, 0f);
                         if (Main.projectile.IndexInRange(skull))
                         {
                             Main.projectile[skull].ai[0] = -1f;
@@ -394,8 +398,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     for (int i = 0; i < skullCount; i++)
                     {
-                        Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
-                        int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 90, 0f);
+                        Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.59f, 0.59f, i / (skullCount - 1f))) * skullSpeed;
+                        int skull = Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 90, 0f);
                         if (Main.projectile.IndexInRange(skull))
                             Main.projectile[skull].ai[0] = 0.005f;
                     }
@@ -430,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 Vector2 shootVelocity = -Vector2.UnitY.RotatedByRandom(0.75f) * Main.rand.NextFloat(8f, 12.65f);
                 if (Main.rand.NextBool(2))
                     shootVelocity.Y *= -1f;
-                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 100, 0f);
+                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 4f, shootVelocity, ModContent.ProjectileType<NonHomingSkull>(), 95, 0f);
             }
 
             npc.damage = 0;
@@ -466,18 +470,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 {
                     if (phase3)
                     {
-                        for (int i = 0; i < 8; i++)
+                        for (int i = 0; i < 3; i++)
                         {
-                            Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 14f;
-                            Utilities.NewProjectileBetter(npc.Center, skullVelocity, ModContent.ProjectileType<SpinningFireball>(), 105, 0f);
+                            Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 3f) * 10f;
+                            int skull = Utilities.NewProjectileBetter(npc.Center, skullShootVelocity, ProjectileID.Skull, 95, 0f);
+                            if (Main.projectile.IndexInRange(skull))
+                            {
+                                Main.projectile[skull].ai[0] = -1f;
+                                Main.projectile[skull].tileCollide = false;
+                            }
                         }
                     }
                     else
                     {
-                        for (int i = 0; i < 3; i++)
+                        for (int i = 0; i < 8; i++)
                         {
-                            Vector2 skullVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 3f) * 7f;
-                            Utilities.NewProjectileBetter(npc.Center, skullVelocity, ModContent.ProjectileType<NonHomingSkull>(), 95, 0f);
+                            Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 8f) * 14f;
+                            Utilities.NewProjectileBetter(npc.Center, skullShootVelocity, ModContent.ProjectileType<SpinningFireball>(), 95, 0f);
                         }
                     }
                 }
@@ -564,7 +573,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
         public static void DoBehavior_DownwardAcceleratingSkulls(NPC npc, Player target, ref float attackTimer)
         {
             int totalShots = 7;
-            int shootRate = 75;
+            int shootRate = 90;
             int attackDelay = 135;
             Vector2 destination = target.Center - Vector2.UnitY * 400f;
             Vector2 acceleration = new Vector2(0.08f, 0.12f);
@@ -594,8 +603,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float maxOffset = 18f;
-                    float openOffsetArea = Main.rand.NextFloat(-maxOffset * 0.65f, maxOffset * 0.65f);
-                    float fuck = Main.rand.NextFloat(-2f, 2f);
+                    float openOffsetArea = Main.rand.NextFloat(-maxOffset * 0.32f, maxOffset * 0.32f);
+                    float fuck = Main.rand.NextFloat(-0.6f, 0.6f);
                     for (float offset = -maxOffset; offset < maxOffset; offset += maxOffset * 0.1f)
                     {
                         // Don't fire skulls from some areas, to allow the player to have an avoidance area.
@@ -604,7 +613,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                         Vector2 shootVelocity = Vector2.UnitX * (offset + fuck) * 0.3f;
                         shootVelocity.Y += Main.rand.NextFloat(2f);
-                        int fire = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 110, 0f);
+                        int fire = Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 20f, shootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 100, 0f);
                         if (Main.projectile.IndexInRange(fire))
                         {
                             Main.projectile[fire].ai[0] = offset + fuck;
@@ -613,8 +622,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                     }
 
                     // Fire one skull directly at the target.
-                    Vector2 skullVelocity = npc.SafeDirectionTo(target.Center) * 5f;
-                    int skull = Utilities.NewProjectileBetter(npc.Center + skullVelocity * 6f, skullVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 100, 0f);
+                    Vector2 skullShootVelocity = npc.SafeDirectionTo(target.Center) * 5f;
+                    int skull = Utilities.NewProjectileBetter(npc.Center + skullShootVelocity * 6f, skullShootVelocity, ModContent.ProjectileType<AcceleratingSkull>(), 95, 0f);
                     if (Main.projectile.IndexInRange(skull))
                         Main.projectile[skull].ai[0] = -9999f;
                 }

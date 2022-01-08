@@ -175,9 +175,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                     if (npc.Infernum().ExtraAI[1] % shootRate == 0f)
                     {
-                        // Vector2 value11 = new Vector2(1f * -handSign, 3f);
-                        // Let it also be known that some nerd was multiplying a value by 1.
-
                         Vector2 eyeSpawnDelta = new Vector2(-handSign, 3f);
                         Vector2 eyeSpawnPos = npc.Center + Vector2.Normalize(ellipseVector) * ellipseVector.Length() * 0.4f + eyeSpawnDelta;
                         float velocity = BossRushEvent.BossRushActive ? 9f : 5.45f;

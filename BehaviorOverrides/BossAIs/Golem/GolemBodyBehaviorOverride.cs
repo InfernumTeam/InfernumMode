@@ -272,6 +272,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 // Custom re-attach code rather than the method so that the fight can return to normal faster
                 // Slow down for the first part
+                // TODO - Use AngleBetween for this
                 if (!(freeHead.velocity.ToRotation() < freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() + MathHelper.ToRadians(3) &&
                     freeHead.velocity.ToRotation() > freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() - MathHelper.ToRadians(3)) &&
                     !(freeHead.velocity.ToRotation() < MathHelper.WrapAngle(freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() + MathHelper.Pi) + MathHelper.ToRadians(3) &&

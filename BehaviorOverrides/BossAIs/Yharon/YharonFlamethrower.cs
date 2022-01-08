@@ -107,9 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Vector2 startOfFlame = projectile.Center - Main.screenPosition;
-            float num178 = 40f;
-            float num179 = num178 * 2f;
-            float relativeFrameCompletion = projectile.frameCounter / num178;
+            float relativeFrameCompletion = projectile.frameCounter / 40f;
             Texture2D texture2D5 = Main.projectileTexture[projectile.type];
             Color flameDrawColor;
             Color startingFlameColor = new Color(255, 255, 255, 0);
@@ -128,8 +126,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 float flameRotation = projectile.rotation + MathHelper.Pi * (flameDrawInterpolant + Main.GlobalTime * 1.2f) * 0.1f + (int)(flameDrawInterpolant * flameCount) * MathHelper.Pi * 0.4f;
                 flameDrawInterpolant %= 1f;
 
-                if ((flameDrawInterpolant <= relativeFrameCompletion % 1f || projectile.frameCounter >= num178) && 
-                    (flameDrawInterpolant >= relativeFrameCompletion % 1f || projectile.frameCounter < num179 - num178))
+                if ((flameDrawInterpolant <= relativeFrameCompletion % 1f || projectile.frameCounter >= 40f) && 
+                    (flameDrawInterpolant >= relativeFrameCompletion % 1f || projectile.frameCounter < 40f))
                 {
                     if (flameDrawInterpolant < 0.1f)
                         flameDrawColor = Color.Lerp(Color.Transparent, startingFlameColor, Utils.InverseLerp(0f, 0.1f, flameDrawInterpolant, true));

@@ -102,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                             }
                         }
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient && ownerAttackState == SkeletronHeadBehaviorOverride.SkeletronAttackType.HoverSkulls && attackTimer % 50f == 49f && attackTimer > 50f)
+                        if (Main.netMode != NetmodeID.MultiplayerClient && ownerAttackState == SkeletronHeadBehaviorOverride.SkeletronAttackType.HoverSkulls && attackTimer % 50f == 49f && attackTimer > 90f)
                         {
                             Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center) * 13f;
                             Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<ShadowflameFireball>(), 100, 0f);
@@ -120,15 +120,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                             idealPosition = owner.Center + owner.SafeDirectionTo(target.Center).RotatedBy(swipeAngularOffset) * 250f;
                         }
 
-                        npc.Center = Vector2.Lerp(npc.Center, idealPosition, 0.05f);
-                        npc.Center = npc.Center.MoveTowards(idealPosition, 5f);
+                        npc.Center = Vector2.Lerp(npc.Center, idealPosition, 0.08f);
+                        npc.Center = npc.Center.MoveTowards(idealPosition, 8f);
                         npc.velocity = Vector2.Zero;
 
                         int shootDelay = waveCounter == 1 ? 2 : 3;
                         if (Main.netMode != NetmodeID.MultiplayerClient && facingPlayer && adjustedTimer > 90f && adjustedTimer < 140f && adjustedTimer % 4f == shootDelay)
                         {
                             Vector2 skullSpawnPosition = npc.Center;
-                            Vector2 skullShootVelocity = (skullSpawnPosition - owner.Center).SafeNormalize(Vector2.UnitY) * 7.5f;
+                            Vector2 skullShootVelocity = (skullSpawnPosition - owner.Center).SafeNormalize(Vector2.UnitY) * 5.6f;
                             if (BossRushEvent.BossRushActive)
                                 skullShootVelocity *= 2f;
 
@@ -145,11 +145,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         break;
                     case SkeletronHeadBehaviorOverride.SkeletronAttackType.HandShadowflameBurst:
                         destination = owner.Center + new Vector2(armDirection * 540f, 360f);
-                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.05f);
-                        npc.Center = npc.Center.MoveTowards(destination, 5f);
+                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.08f);
+                        npc.Center = npc.Center.MoveTowards(destination, 8f);
 
-                        adjustedTimer = attackTimer % 180f;
-                        if (adjustedTimer > 50f && adjustedTimer < 170f && adjustedTimer % 45f == 44f && attackTimer < 520f)
+                        adjustedTimer = attackTimer % 210f;
+                        if (adjustedTimer > 50f && adjustedTimer < 200f && adjustedTimer % 45f == 44f && attackTimer < 520f)
                         {
                             Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
@@ -174,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         npc.Center = Vector2.Lerp(npc.Center, destination, 0.065f);
                         npc.Center = npc.Center.MoveTowards(destination, 5f);
 
-                        if (attackTimer < 450f && adjustedTimer > 45f && adjustedTimer % 7f == 6f && shouldAttack)
+                        if (attackTimer < 590f && adjustedTimer > 45f && adjustedTimer % 7f == 6f && shouldAttack)
                         {
                             Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 

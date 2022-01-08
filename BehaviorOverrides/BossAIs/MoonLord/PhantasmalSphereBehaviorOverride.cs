@@ -30,9 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 projectile.frame = 1;
                 projectile.extraUpdates = 1;
             }
-            else if (projectile.ai[0] < 30f)
-                projectile.position = Main.npc[(int)projectile.ai[1]].Center - new Vector2(projectile.width, projectile.height) / 2f - projectile.velocity;
-            else
+            else if (projectile.ai[0] >= 30f)
             {
                 int num3 = projectile.frameCounter + 1;
                 projectile.frameCounter = num3;

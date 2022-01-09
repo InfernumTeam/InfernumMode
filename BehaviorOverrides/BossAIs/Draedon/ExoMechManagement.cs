@@ -9,8 +9,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ApolloBehaviorOverride;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ThanatosHeadBehaviorOverride;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ApolloBehaviorOverride;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon

@@ -175,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 sentinelAttackTimer = 0f;
 
             // TODO - Improve these.
-            // DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
+            DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
 
             // Light
             Lighting.AddLight((int)((npc.position.X + npc.width / 2) / 16f), (int)((npc.position.Y + npc.height / 2) / 16f), 0.2f, 0.05f, 0.2f);
@@ -263,6 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Ceaseless Void Effect (Chaser Portal)
             if (sentinelAttackTimer > 0f && sentinelAttackTimer <= 900f && npc.alpha <= 0)
             {
+                sentinelAttackTimer = 1800f;
                 if (sentinelAttackTimer % 360f == 0f)
                 {
                     Vector2 spawnPosition = new Vector2(Main.rand.NextFloat(300f, 600f) * Main.rand.NextBool().ToDirectionInt(),
@@ -293,43 +294,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (sentinelAttackTimer == 900f * 2f - 1f)
                     signusAttackState = Main.rand.Next(2);
             }
-            // Signus Effect (Essence Storm)
+
+            // Signus Effect (Essence Cleave)
             if (sentinelAttackTimer > 900f * 2f && sentinelAttackTimer <= 900f * 3f && npc.alpha <= 0)
             {
-                // Left/Right
-                if (sentinelAttackTimer % 900 == 1f)
+                float wrappedAttackTimer = sentinelAttackTimer % 900f;
+                if (wrappedAttackTimer % 90f == 0f)
                 {
-                    Projectile.NewProjectile(target.Center +
-                        ((signusAttackState == 0f) ? MathHelper.Pi : MathHelper.TwoPi).ToRotationVector2() * 800f,
-                        Vector2.Zero,
-                        ModContent.ProjectileType<EssenceChain>(),
-                        0, 0f, npc.target, (signusAttackState == 0f) ? MathHelper.Pi : MathHelper.TwoPi);
+                    for (int i = 0; i < 8; i++)
+                    {
+                        int cleave = Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<EssenceCleave>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(cleave))
+                            Main.projectile[cleave].ai[0] = MathHelper.TwoPi * i / 8f;
+                    }
                 }
-                // Up
-                if (sentinelAttackTimer % 900 == 200f)
-                {
-                    Projectile.NewProjectile(target.Center - new Vector2(0f, 800f),
-                        Vector2.Zero,
-                        ModContent.ProjectileType<EssenceChain>(),
-                        0, 0f, npc.target, MathHelper.PiOver2);
-                }
-                // Right/Left
-                if (sentinelAttackTimer % 900 == 400f)
-                {
-                    Projectile.NewProjectile(target.Center + new Vector2(-800f * (signusAttackState == 0f).ToDirectionInt(), 0f),
-                        Vector2.Zero,
-                        ModContent.ProjectileType<EssenceChain>(),
-                        0, 0f, npc.target, (signusAttackState == 0f) ? MathHelper.TwoPi : MathHelper.Pi);
-                }
-                // Down
-                if (sentinelAttackTimer % 900 == 600f)
-                {
-                    Projectile.NewProjectile(target.Center +
-                        new Vector2(0f, 800f),
-                        Vector2.Zero,
-                        ModContent.ProjectileType<EssenceChain>(),
-                        0, 0f, npc.target, MathHelper.Pi * 1.5f);
-                }
+
+                if (wrappedAttackTimer % 90f == 45f)
+                    Main.PlaySound(SoundID.Item122, target.Center);
             }
         }
 
@@ -749,7 +730,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                             ModContent.ProjectileType<HomingDoGBurst>(),
                             ModContent.ProjectileType<DoGBeamPortalN>(),
                             ModContent.ProjectileType<DoGBeamN>(),
-                            ModContent.ProjectileType<EssenceChain>(),
+                            ModContent.ProjectileType<EssenceCleave>(),
                             ModContent.ProjectileType<EssenceExplosion>(),
                         };
                         for (int i = 0; i < Main.maxProjectiles; i++)

@@ -65,7 +65,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 {
                     Main.PlaySound(SoundID.Item73, projectile.position);
 
-                    Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
                     projectile.velocity = (projectile.Center - signus.Center).SafeNormalize(Vector2.UnitY) * 34.5f;
                     projectile.netUpdate = true;
                 }

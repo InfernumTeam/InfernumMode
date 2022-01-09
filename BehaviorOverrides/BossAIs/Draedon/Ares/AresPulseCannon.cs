@@ -260,7 +260,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 center = npc.Center - Main.screenPosition;
             spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/AresPulseCannonGlow");
+            texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/AresPulseCannonGlow");
 
             if (CalamityConfig.Instance.Afterimages)
             {

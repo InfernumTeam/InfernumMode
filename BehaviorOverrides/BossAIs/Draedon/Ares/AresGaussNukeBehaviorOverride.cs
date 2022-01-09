@@ -10,6 +10,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+// NOTE: This AI is currently unused. For posterity, however, it remains here.
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresGaussNukeBehaviorOverride : NPCBehaviorOverride

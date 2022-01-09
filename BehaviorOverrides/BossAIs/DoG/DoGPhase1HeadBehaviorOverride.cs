@@ -5,6 +5,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.CeaselessVoid;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.StormWeaver;
+using CalamityMod.Projectiles.Boss;
 using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -28,6 +29,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const float Phase2LifeRatio = 0.75f;
 
+        public const int PortalProjectileIndexAIIndex = 11;
+        public const int BodySegmentFadeTypeAIIndex = 37;
+
         #region AI
         public override bool PreAI(NPC npc)
         {
@@ -38,8 +42,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ref float flyAcceleration = ref npc.Infernum().ExtraAI[6];
             ref float jawAngle = ref npc.Infernum().ExtraAI[7];
             ref float chompTime = ref npc.Infernum().ExtraAI[8];
+            ref float portalIndex = ref npc.Infernum().ExtraAI[PortalProjectileIndexAIIndex];
             ref float inPhase2 = ref npc.Infernum().ExtraAI[33];
             ref float uncoilTimer = ref npc.Infernum().ExtraAI[35];
+            ref float segmentFadeType = ref npc.Infernum().ExtraAI[BodySegmentFadeTypeAIIndex];
 
             // Timer effect.
             attackTimer++;
@@ -68,60 +74,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (inPhase2 == 1f)
             {
                 typeof(DoGHead).GetField("phase2Started", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, true);
-                return DoGPhase2HeadBehaviorOverride.Phase2AI(npc);
+                return DoGPhase2HeadBehaviorOverride.Phase2AI(npc, ref portalIndex, ref segmentFadeType);
             }
 
+            // Do through the portal once ready to enter the second phase.
             if (npc.Infernum().ExtraAI[10] > 0f)
             {
-                npc.Calamity().CanHaveBossHealthBar = false;
-                npc.velocity = npc.velocity.ClampMagnitude(32f, 60f);
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), 50f, 0.1f);
-                npc.damage = 0;
-
-                if (npc.Infernum().ExtraAI[10] == 1f)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX) * 1600f;
-                        npc.Infernum().ExtraAI[11] = Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                        Main.projectile[(int)npc.Infernum().ExtraAI[11]].localAI[0] = 1f;
-                        Main.projectile[(int)npc.Infernum().ExtraAI[11]].localAI[1] = 280f;
-                    }
-
-                    int headType = ModContent.NPCType<DoGHead>();
-                    int bodyType = ModContent.NPCType<DevourerofGodsBody>();
-                    int tailType = ModContent.NPCType<DevourerofGodsTail>();
-
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        if (Main.npc[i].active && (Main.npc[i].type == headType || Main.npc[i].type == bodyType || Main.npc[i].type == tailType))
-                        {
-                            Main.npc[i].Opacity = 1f;
-                        }
-                    }
-
-                    npc.Opacity = 1f;
-                    npc.Infernum().ExtraAI[10] = 2f;
-                }
-
-                if (Main.projectile[(int)npc.Infernum().ExtraAI[11]].Hitbox.Intersects(npc.Hitbox))
-                    npc.alpha = Utils.Clamp(npc.alpha + 140, 0, 255);
-
-                if (Main.player[npc.target].dead || !Main.player[npc.target].active)
-                {
-                    npc.TargetClosest();
-                    if (Main.player[npc.target].dead || !Main.player[npc.target].active)
-                        npc.active = false;
-                }
-
+                HandlePhase2TransitionEffect(npc, ref portalIndex);
                 return false;
             }
 
             npc.dontTakeDamage = false;
             npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.25f);
-
-            // Percent life remaining
-            float lifeRatio = npc.life / (float)npc.lifeMax;
 
             // Light
             Lighting.AddLight((int)((npc.position.X + npc.width / 2) / 16f), (int)((npc.position.Y + npc.height / 2) / 16f), 0.2f, 0.05f, 0.2f);
@@ -134,39 +98,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead)
                 npc.TargetClosest(true);
 
-            npc.damage = npc.dontTakeDamage ? 0 : 4998;
+            npc.damage = npc.dontTakeDamage ? 0 : 5000;
+
+            Player target = Main.player[npc.target];
 
             // Spawn segments
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (npc.Infernum().ExtraAI[2] == 0f && npc.ai[0] == 0f)
                 {
-                    int Previous = npc.whoAmI;
-                    const int minLength = 80;
-                    const int maxLength = 81;
-                    for (int segmentSpawn = 0; segmentSpawn < maxLength; segmentSpawn++)
+                    int previousSegment = npc.whoAmI;
+                    for (int segmentSpawn = 0; segmentSpawn < 81; segmentSpawn++)
                     {
                         int segment;
-                        if (segmentSpawn >= 0 && segmentSpawn < minLength)
+                        if (segmentSpawn >= 0 && segmentSpawn < 80)
                             segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsBody"), npc.whoAmI);
                         else
                             segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsTail"), npc.whoAmI);
 
                         Main.npc[segment].realLife = npc.whoAmI;
                         Main.npc[segment].ai[2] = npc.whoAmI;
-                        Main.npc[segment].ai[1] = Previous;
-                        Main.npc[Previous].ai[0] = segment;
+                        Main.npc[segment].ai[1] = previousSegment;
+                        Main.npc[previousSegment].ai[0] = segment;
                         Main.npc[segment].Infernum().ExtraAI[34] = 80f - segmentSpawn;
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, segment, 0f, 0f, 0f, 0);
-                        Previous = segment;
+                        previousSegment = segment;
                     }
-                    npc.Infernum().ExtraAI[11] = -1f;
+                    portalIndex = -1f;
                     npc.Infernum().ExtraAI[2] = 1f;
                 }
             }
-
-            // Perform sentinel attacks as necessary.
-            DoPhase1SentinelAttacks(npc);
 
             // Chomping after attempting to eat the player.
             bool chomping = !npc.dontTakeDamage && DoChomp(npc, ref chompTime, ref jawAngle);
@@ -178,7 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (npc.position.Y < Main.topWorld + 16f)
                     npc.velocity.Y -= 1f;
 
-                if ((double)npc.position.Y < Main.topWorld + 16f)
+                if (npc.position.Y < Main.topWorld + 16f)
                 {
                     for (int a = 0; a < Main.maxNPCs; a++)
                     {
@@ -189,86 +150,84 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     }
                 }
             }
-            else
+
+            // Initially uncoil.
+            else if (uncoilTimer < 45f)
             {
-                if (uncoilTimer < 45f)
+                uncoilTimer++;
+                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 27f, 0.125f);
+            }
+
+            // Snap at the target over and over after uncoiling.
+            else
+                DoAggressiveFlyMovement(npc, chomping, ref jawAngle, ref chompTime, ref attackTimer, ref flyAcceleration);
+
+            // Idly release laserbeams.
+            if (attackTimer % 200f == 0f)
+            {
+                Main.PlaySound(SoundID.Item12, target.position);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    uncoilTimer++;
-                    npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 27f, 0.125f);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        Vector2 spawnOffset = Vector2.UnitX.RotatedBy(MathHelper.Lerp(-0.74f, 0.74f, i / 11f) + Main.rand.NextFloatDirection() * 0.1f) * 1350f + Main.rand.NextVector2Circular(30f, 30f);
+                        Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(3f, 3f);
+                        Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
+
+                        spawnOffset = -Vector2.UnitX.RotatedBy(MathHelper.Lerp(-0.74f, 0.74f, i / 11f) + Main.rand.NextFloatDirection() * 0.1f) * 1350f + Main.rand.NextVector2Circular(30f, 30f);
+                        laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(3f, 3f);
+                        Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
+                    }
                 }
-                else
-                    DoAggressiveFlyMovement(npc, chomping, ref jawAngle, ref chompTime, ref attackTimer, ref flyAcceleration);
             }
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
             return false;
         }
 
-        public static void DoPhase1SentinelAttacks(NPC npc)
+        public static void HandlePhase2TransitionEffect(NPC npc, ref float portalIndex)
         {
-            // Ceasless Void Effect (Augmented Laser Portal)
-            if (npc.Infernum().ExtraAI[4] > 0f &&
-                npc.Infernum().ExtraAI[4] <= 900f &&
-                npc.alpha <= 0)
-            {
-                if (npc.Infernum().ExtraAI[4] % 210 == 0f)
-                {
-                    Vector2 spawnPosition = new Vector2(Main.rand.NextFloat(600f, 1200f) * Main.rand.NextBool().ToDirectionInt(),
-                                                        Main.rand.NextFloat(700, 1100f) * Main.rand.NextBool().ToDirectionInt());
-                    Projectile.NewProjectile(Main.player[npc.target].Center +
-                        spawnPosition,
-                        Vector2.Zero,
-                        ModContent.ProjectileType<DoGBeamPortalN>(),
-                        0, 0f);
-                }
-            }
-            // Storm Weaver Effect (Lightning Barrage)
-            if (npc.Infernum().ExtraAI[4] > 900f &&
-                npc.Infernum().ExtraAI[4] <= 900f * 2f &&
-                npc.alpha <= 0)
-            {
-                if (npc.Infernum().ExtraAI[4] <= 900 + 60 * 4)
-                {
-                    if (npc.Infernum().ExtraAI[4] % 60 == 0f &&
-                        npc.Infernum().ExtraAI[4] < 900 + 60 * 2)
-                    {
-                        int fuck = Projectile.NewProjectile(Main.player[npc.target].Center +
-                            new Vector2(Main.rand.NextFloat(-290f, 290f), -1200f),
-                            Vector2.Zero,
-                            ModContent.ProjectileType<Lightning>(),
-                            85, 0f, npc.target);
-                        if (Main.projectile.IndexInRange(fuck))
-                            Main.projectile[fuck].ai[0] = 1f;
-                    }
+            npc.Calamity().CanHaveBossHealthBar = false;
+            npc.velocity = npc.velocity.ClampMagnitude(32f, 60f);
+            npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), 50f, 0.1f);
+            npc.damage = 0;
 
-                    else if (npc.Infernum().ExtraAI[4] % 60 == 0f &&
-                             npc.Infernum().ExtraAI[4] > 900 + 60 * 2)
-                    {
-                        int fuck = Projectile.NewProjectile(Main.player[npc.target].Center +
-                            new Vector2(Main.rand.NextFloat(-290f, 290f), -1200f),
-                            Vector2.Zero,
-                            ModContent.ProjectileType<Lightning>(),
-                            85, 0f, npc.target);
-                        if (Main.projectile.IndexInRange(fuck))
-                            Main.projectile[fuck].ai[0] = 1f;
-                    }
-                }
-            }
-            // Signus Effect (Cosmic Minefield)
-            if (npc.Infernum().ExtraAI[4] > 900f * 2f &&
-                npc.Infernum().ExtraAI[4] <= 900f * 3f &&
-                npc.alpha <= 0)
+            if (npc.Infernum().ExtraAI[10] == 1f)
             {
-                if (npc.Infernum().ExtraAI[4] % 160 == 0f)
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 3; i++)
+                    Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX) * 1600f;
+                    portalIndex = Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+
+                    Main.projectile[(int)portalIndex].localAI[0] = 1f;
+                    Main.projectile[(int)portalIndex].localAI[1] = 280f;
+                }
+
+                int headType = ModContent.NPCType<DoGHead>();
+                int bodyType = ModContent.NPCType<DevourerofGodsBody>();
+                int tailType = ModContent.NPCType<DevourerofGodsTail>();
+
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && (Main.npc[i].type == headType || Main.npc[i].type == bodyType || Main.npc[i].type == tailType))
                     {
-                        Vector2 spawnOffset = new Vector2(Main.rand.NextFloat(400f, 900f), Main.rand.NextFloat(400f, 900f));
-                        spawnOffset.X *= Main.rand.NextBool().ToDirectionInt();
-                        spawnOffset.Y *= Main.rand.NextBool().ToDirectionInt();
-                        Projectile.NewProjectile(Main.player[npc.target].Center + spawnOffset, Vector2.Zero, ModContent.ProjectileType<DoGMine>(), 0, 0f, npc.target, 1f);
+                        Main.npc[i].Opacity = 1f;
                     }
                 }
+
+                npc.Opacity = 1f;
+                npc.Infernum().ExtraAI[10] = 2f;
+            }
+
+            // Enter the portal if it's being touched.
+            if (Main.projectile[(int)portalIndex].Hitbox.Intersects(npc.Hitbox))
+                npc.alpha = Utils.Clamp(npc.alpha + 140, 0, 255);
+
+            if (Main.player[npc.target].dead || !Main.player[npc.target].active)
+            {
+                npc.TargetClosest();
+                if (Main.player[npc.target].dead || !Main.player[npc.target].active)
+                    npc.active = false;
             }
         }
 

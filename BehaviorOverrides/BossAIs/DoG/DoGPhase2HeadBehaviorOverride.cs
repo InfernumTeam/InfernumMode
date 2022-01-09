@@ -25,8 +25,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ChargeGates
         }
 
+        public enum BodySegmentFadeType
+        {
+            InhertHeadOpacity,
+            EnterPortal,
+            ApproachAheadSegmentOpacity
+        }
+
         #region AI
-        public static bool Phase2AI(NPC npc)
+        public static bool Phase2AI(NPC npc, ref float portalIndex, ref float segmentFadeType)
         {
             npc.Calamity().CanHaveBossHealthBar = true;
             ref float specialAttackState = ref npc.Infernum().ExtraAI[14];
@@ -41,11 +48,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ref float flyAcceleration = ref npc.Infernum().ExtraAI[23];
             ref float horizontalRunAnticheeseCounter = ref npc.Infernum().ExtraAI[24];
             ref float trapChargeTimer = ref npc.Infernum().ExtraAI[25];
-            ref float trapChargePortalIndex = ref npc.Infernum().ExtraAI[26];
             ref float totalCharges = ref npc.Infernum().ExtraAI[27];
             ref float fadeinTimer = ref npc.Infernum().ExtraAI[28];
-            ref float fadeinPortalIndex = ref npc.Infernum().ExtraAI[29];
-            ref float specialAttackPortalIndex = ref npc.Infernum().ExtraAI[30];
             ref float fireballShootTimer = ref npc.Infernum().ExtraAI[31];
             ref float deathTimer = ref npc.Infernum().ExtraAI[32];
 
@@ -57,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             target.Calamity().normalityRelocator = false;
             target.Calamity().spectralVeil = false;
 
-            npc.takenDamageMultiplier = 4f;
+            npc.takenDamageMultiplier = 2f;
 
             // whoAmI variable
             CalamityGlobalNPC.DoGHead = npc.whoAmI;
@@ -70,11 +74,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     npc.Center = Main.player[Player.FindClosest(npc.Center, 1, 1)].Center - Vector2.UnitY * 600f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        fadeinPortalIndex = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGRealityRendEntranceGate>(), 0, 0f);
+                        portalIndex = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGRealityRendEntranceGate>(), 0, 0f);
                 }
 
-                // Reset the special attack portal index to -1.
-                specialAttackPortalIndex = -1f;
+                npc.Opacity = 0f;
+                segmentFadeType = (int)BodySegmentFadeType.InhertHeadOpacity;
 
                 npc.Center = Main.player[Player.FindClosest(npc.Center, 1, 1)].Center - Vector2.UnitY * MathHelper.Lerp(6000f, 3000f, fadeinTimer / 280f);
                 fadeinTimer++;
@@ -82,12 +86,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (fadeinTimer >= 280f)
                 {
                     npc.Opacity = 1f;
-                    npc.Center = Main.projectile[(int)fadeinPortalIndex].Center;
+                    npc.Center = Main.projectile[(int)portalIndex].Center;
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 36f;
                     npc.netUpdate = true;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
+
+                    // Reset the special attack portal index to -1.
+                    portalIndex = -1f;
                 }
                 return false;
             }
@@ -108,6 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Stay in the world.
             npc.position.Y = MathHelper.Clamp(npc.position.Y, 180f, Main.maxTilesY * 16f - 180f);
 
+            // Do the death animation once dead.
             if (deathTimer > 0f)
             {
                 DoDeathEffects(npc, deathTimer);
@@ -117,19 +125,73 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return false;
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && nearDeath && npc.alpha == 0)
-            {
-                if (Main.rand.NextBool(950))
-                {
-                    Vector2 portalSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(475f, 820f);
-                    Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ScytheSummoningPortal>(), 0, 0f, Main.myPlayer, 0f, Main.myPlayer);
-                }
-            }
+            // Have segments by default inherit the opacity of the head.
+            segmentFadeType = (int)BodySegmentFadeType.InhertHeadOpacity;
 
             // Handle special attacks.
             if (canPerformSpecialAttacks && trapChargeTimer <= 0f)
             {
-                if (!DoSpecialAttacks(npc, target, nearDeath, ref specialAttackState, ref specialAttackTimer, ref specialAttackPortalIndex))
+                // Handle special attack transition.
+                int specialAttackDelay = 1335;
+                int specialAttackTransitionPreparationTime = 135;
+                if (specialAttackState == 0f)
+                {
+                    // The charge gate attack happens much more frequently when DoG is close to death.
+                    specialAttackTimer += nearDeath && specialAttackTimer < specialAttackDelay - specialAttackTransitionPreparationTime - 5f ? 2f : 1f;
+
+                    // Enter a portal before performing a special attack.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && specialAttackTimer == specialAttackDelay - specialAttackTransitionPreparationTime)
+                    {
+                        portalIndex = Projectile.NewProjectile(npc.Center + npc.velocity * 75f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                        Main.projectile[(int)portalIndex].localAI[0] = 1f;
+                        npc.netUpdate = true;
+                    }
+
+                    if (specialAttackTimer >= specialAttackDelay)
+                    {
+                        specialAttackTimer = 0f;
+                        specialAttackState = 1f;
+                        portalIndex = -1f;
+
+                        // Select a special attack type.
+                        npc.Infernum().ExtraAI[2] = Main.rand.Next(10);
+                        npc.netUpdate = true;
+                    }
+
+                    // Do nothing and drift into the portal.
+                    if (specialAttackTimer >= specialAttackDelay - specialAttackTransitionPreparationTime)
+                    {
+                        npc.damage = 0;
+                        npc.dontTakeDamage = true;
+                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitX) * MathHelper.Lerp(npc.velocity.Length(), 105f, 0.15f);
+
+                        // Disappear when touching the portal.
+                        // This same logic applies to body/tail segments.
+                        if (Main.projectile.IndexInRange((int)portalIndex) && npc.Hitbox.Intersects(Main.projectile[(int)portalIndex].Hitbox))
+                            npc.alpha = 255;
+
+                        segmentFadeType = (int)BodySegmentFadeType.EnterPortal;
+
+                        // Clear away various misc projectiles.
+                        int[] projectilesToDelete = new int[]
+                        {
+                            ProjectileID.CultistBossLightningOrbArc,
+                            ModContent.ProjectileType<HomingDoGBurst>(),
+                            ModContent.ProjectileType<DoGBeamPortalN>(),
+                            ModContent.ProjectileType<DoGBeamN>(),
+                            ModContent.ProjectileType<EssenceCleave>(),
+                            ModContent.ProjectileType<EssenceExplosion>(),
+                        };
+                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        {
+                            if (projectilesToDelete.Contains(Main.projectile[i].type) && Main.projectile[i].active)
+                                Main.projectile[i].active = false;
+                        }
+                        return false;
+                    }
+                }
+
+                if (specialAttackState == 1f && !DoSpecialAttacks(npc, target, nearDeath, ref specialAttackState, ref specialAttackTimer, ref portalIndex, ref segmentFadeType))
                 {
                     if (horizontalRunAnticheeseCounter > 900f)
                         horizontalRunAnticheeseCounter = 900f;
@@ -145,7 +207,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (specialAttackState > 0)
                     specialAttackState = 0;
             }
-            specialAttackPortalIndex = -1f;
+            portalIndex = -1f;
 
             if (specialAttackState == 0f)
                 npc.Infernum().ExtraAI[2] = 0f;
@@ -175,7 +237,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 sentinelAttackTimer = 0f;
 
             // TODO - Improve these.
-            DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
+            if (!nearDeath)
+                DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
 
             // Light
             Lighting.AddLight((int)((npc.position.X + npc.width / 2) / 16f), (int)((npc.position.Y + npc.height / 2) / 16f), 0.2f, 0.05f, 0.2f);
@@ -184,8 +247,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.ai[3] > 0f)
                 npc.realLife = (int)npc.ai[3];
 
-            // Fire projectiles.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            // Shoot fire projectiles.
+            if (Main.netMode != NetmodeID.MultiplayerClient && !nearDeath)
             {
                 if (npc.alpha <= 0 && !npc.WithinRange(target.Center, 500f))
                 {
@@ -210,21 +273,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Chomping after attempting to eat the player.
             bool chomping = npc.Infernum().ExtraAI[14] == 0f && DoChomp(npc, target, ref chompTime, ref jawRotation);
 
-            // Do movement and barrier sneak attack anticheese.
-            /*
-            if (!target.dead && target.active)
-            {
-                if (specialAttackState == 0f && trapChargeTimer >= 1f)
-                    DoBarrierSneakAttack(npc, target, ref trapChargeTimer, ref totalCharges, ref specialAttackTimer, ref trapChargePortalIndex);
-                else
-                {
-                    DoAggressiveFlyMovement(npc, target, chomping, ref jawRotation, ref chompTime, ref time, ref flyAcceleration);
-
-                    if (specialAttackState == 0f && !nearDeath)
-                        DoAnticheeseRunChecks(npc, target, ref horizontalRunAnticheeseCounter, ref trapChargeTimer);
-                }
-            }
-            */
             // Despawn if no valid target exists.
             if (target.dead || !target.active)
                 Despawn(npc);
@@ -260,10 +308,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public static void DoSentinelAttacks(NPC npc, Player target, ref float sentinelAttackTimer, ref float signusAttackState)
         {
-            // Ceaseless Void Effect (Chaser Portal)
+            // Storm Weaver Effect (Lightning Storm).
             if (sentinelAttackTimer > 0f && sentinelAttackTimer <= 900f && npc.alpha <= 0)
             {
-                sentinelAttackTimer = 1800f;
+                if (sentinelAttackTimer % 120f == 0f)
+                {
+                    Main.PlaySound(SoundID.Item12, target.position);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 20; i++)
+                        {
+                            Vector2 spawnOffset = Vector2.UnitX.RotatedBy(MathHelper.Lerp(-0.54f, 0.54f, i / 19f) + Main.rand.NextFloatDirection() * 0.1f) * 1350f + Main.rand.NextVector2Circular(30f, 30f);
+                            Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(5f, 5f);
+                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
+
+                            spawnOffset = -Vector2.UnitX.RotatedBy(MathHelper.Lerp(-0.54f, 0.54f, i / 19f) + Main.rand.NextFloatDirection() * 0.1f) * 1350f + Main.rand.NextVector2Circular(30f, 30f);
+                            laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(5f, 5f);
+                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
+                        }
+                    }
+                }
+            }
+
+            // Ceaseless Void Effect (Chaser Portal).
+            if (sentinelAttackTimer > 900f && sentinelAttackTimer <= 900f * 2f && npc.alpha <= 0)
+            {
                 if (sentinelAttackTimer % 360f == 0f)
                 {
                     Vector2 spawnPosition = new Vector2(Main.rand.NextFloat(300f, 600f) * Main.rand.NextBool().ToDirectionInt(),
@@ -274,28 +343,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         ModContent.ProjectileType<DoGBeamPortalN>(),
                         0, 0f);
                 }
-            }
-            // Ceaseless Void Effect (Lightning Storm)
-            if (sentinelAttackTimer > 900f && sentinelAttackTimer <= 900f * 2f && npc.alpha <= 0)
-            {
-                if (sentinelAttackTimer % 200 == 0f)
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        int fuck = Projectile.NewProjectile(target.Center +
-                            new Vector2(Main.rand.NextFloat(-290f, 290f), -1200f),
-                            Vector2.Zero,
-                            ModContent.ProjectileType<Lightning>(),
-                            85, 0f, npc.target);
-                        if (Main.projectile.IndexInRange(fuck))
-                            Main.projectile[fuck].ai[0] = 1.4f;
-                    }
-                }
                 if (sentinelAttackTimer == 900f * 2f - 1f)
                     signusAttackState = Main.rand.Next(2);
             }
 
-            // Signus Effect (Essence Cleave)
+            // Signus Effect (Essence Cleave).
             if (sentinelAttackTimer > 900f * 2f && sentinelAttackTimer <= 900f * 3f && npc.alpha <= 0)
             {
                 float wrappedAttackTimer = sentinelAttackTimer % 900f;
@@ -447,104 +499,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             return chomping;
         }
 
-        public static void DoBarrierSneakAttack(NPC npc, Player target, ref float trapChargeTimer, ref float totalCharges, ref float specialAttackTimer, ref float trapChargePortalIndex)
-        {
-            if (trapChargeTimer < 180f)
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 0f, 0.28f);
-
-            float chargeSpeed = npc.life / (float)npc.lifeMax < 0.2f ? 75f : 68f;
-            if ((int)trapChargeTimer == 45f)
-            {
-                npc.Opacity = 0f;
-                trapChargePortalIndex = Projectile.NewProjectile(target.Center + Main.rand.NextVector2CircularEdge(800f, 800f), Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-            }
-
-            if (trapChargeTimer == 120f)
-            {
-                Vector2 portalPosition = Main.projectile[(int)trapChargePortalIndex].Center;
-                npc.Center = portalPosition;
-                npc.netUpdate = true;
-
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
-                    {
-                        Main.npc[i].Center = npc.Center;
-                        Main.npc[i].netUpdate = true;
-                    }
-                }
-                npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
-            }
-
-            if (trapChargeTimer > 180f && trapChargeTimer < 260f)
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.09f);
-
-            if (trapChargeTimer > 320f && trapChargeTimer < 560f)
-            {
-                // Create the initial charge portal and release a bunch of homing flames.
-                if (Main.netMode != NetmodeID.MultiplayerClient && trapChargeTimer == 381f)
-                {
-                    trapChargePortalIndex = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                    Main.projectile[(int)trapChargePortalIndex].localAI[0] = 1f;
-
-                    // Create the homing flames.
-                    float flameBurstOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    for (int i = 0; i < 15; i++)
-                    {
-                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 15f + flameBurstOffsetAngle).ToRotationVector2() * 23f;
-                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
-                    }
-
-                    npc.netUpdate = true;
-                }
-
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), 64f, 0.2f);
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 0f, 0.8f);
-            }
-
-            trapChargeTimer++;
-            if (trapChargeTimer > 460f)
-                npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.4f);
-
-            if (trapChargeTimer > 520f)
-            {
-                trapChargeTimer = totalCharges < 2f ? 0f : 1f;
-
-                // If we do not intend to charge again, delete the lightning barriers, and do a final teleport above the player.
-                if (trapChargeTimer == 0f)
-                {
-                    // Reset the laser wall-esque attack timer.
-                    specialAttackTimer = 0f;
-                    totalCharges = 0f;
-
-                    // Delete the lightning barriers.
-                    for (int i = 0; i < Main.maxProjectiles; i++)
-                    {
-                        if (Main.projectile[i].active && Main.projectile[i].type == ModContent.ProjectileType<DoGLightningBarrier>())
-                            Main.projectile[i].Kill();
-                    }
-
-                    // Teleport.
-                    npc.Center = target.Center - Vector2.UnitY * 3300f;
-
-                    // And bring all segments to the teleport position as well.
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
-                        {
-                            Main.npc[i].Center = npc.Center;
-                            Main.npc[i].netUpdate = true;
-                        }
-                    }
-                    npc.velocity = npc.SafeDirectionTo(target.Center) * 32f;
-                    npc.Opacity = 1f;
-                    npc.dontTakeDamage = false;
-                    npc.netUpdate = true;
-                }
-            }
-        }
-
         public static void DoAggressiveFlyMovement(NPC npc, Player target, bool chomping, ref float jawRotation, ref float chompTime, ref float time, ref float flyAcceleration)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -641,39 +595,165 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        public static void DoAnticheeseRunChecks(NPC npc, Player target, ref float horizontalRunAnticheeseCounter, ref float trapChargeTimer)
+        public static void DoSpecialAttack_LaserWalls(Player target, ref float attackTimer, ref float segmentFadeType)
         {
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            float anticheeseIncrement = MathHelper.Lerp(0.08f, 1.8f, Utils.InverseLerp(400f, 2800f, npc.Distance(target.Center), true));
+            // Body segments should be invisible along with the head.
+            segmentFadeType = (int)BodySegmentFadeType.InhertHeadOpacity;
 
-            if (lifeRatio > 0.7f)
-                anticheeseIncrement *= 0.6f;
-            horizontalRunAnticheeseCounter += anticheeseIncrement;
-
-            if (horizontalRunAnticheeseCounter >= 1020f)
+            int offsetPerLaser = 95;
+            float laserWallSpeed = 16f;
+            if (attackTimer % 75f == 74f)
             {
+                Main.PlaySound(SoundID.Item12, (int)target.position.X, (int)target.position.Y);
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 2; i++)
-                    {
-                        float xOffset = Main.rand.NextFloat(1185f, 1205f);
-                        Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * xOffset, Vector2.Zero, ModContent.ProjectileType<DoGLightningBarrier>(), 655, 0f, npc.target);
+                    int shootType = ModContent.ProjectileType<DoGDeath>();
+                    float targetPosY = target.position.Y + (Main.rand.NextBool(2) ? 50f : 0f);
 
-                        xOffset = Main.rand.NextFloat(1185f, 1205f);
-                        Utilities.NewProjectileBetter(target.Center - Vector2.UnitX * xOffset, Vector2.Zero, ModContent.ProjectileType<DoGLightningBarrier>(), 655, 0f, npc.target);
+                    // Side walls
+                    for (int x = -10; x < 10; x++)
+                    {
+                        Utilities.NewProjectileBetter(target.position.X + 1000f, targetPosY + x * offsetPerLaser, -laserWallSpeed, 0f, shootType, 415, 0f);
+                        Utilities.NewProjectileBetter(target.position.X - 1000f, targetPosY + x * offsetPerLaser, laserWallSpeed, 0f, shootType, 415, 0f);
                     }
+
+                    if (Main.rand.NextBool(2))
+                    {
+                        for (int x = -5; x < 5; x++)
+                        {
+                            Utilities.NewProjectileBetter(target.position.X + 1000f, targetPosY + x * (Main.rand.NextBool(2) ? 180 : 200), -laserWallSpeed, 0f, shootType, 415, 0f);
+                            Utilities.NewProjectileBetter(target.position.X - 1000f, targetPosY + x * (Main.rand.NextBool(2) ? 180 : 200), laserWallSpeed, 0f, shootType, 415, 0f);
+                        }
+                    }
+
+                    // Lower wall
+                    for (int x = -12; x <= 12; x++)
+                        Utilities.NewProjectileBetter(target.position.X + x * offsetPerLaser, target.position.Y + 1000f, 0f, -laserWallSpeed, shootType, 415, 0f);
+
+                    // Upper wall
+                    for (int x = -20; x < 20; x++)
+                        Utilities.NewProjectileBetter(target.position.X + x * offsetPerLaser, target.position.Y - 1000f, 0f, laserWallSpeed, shootType, 415, 0f);
                 }
-                trapChargeTimer = 1f;
-                horizontalRunAnticheeseCounter = 0f;
             }
         }
 
-        public static bool DoSpecialAttacks(NPC npc, Player target, bool nearDeath, ref float specialAttackState, ref float specialAttackTimer, ref float specialAttackPortalIndex)
+        public static void DoSpecialAttack_CircularLaserBurst(NPC npc, Player target, ref float attackTimer, ref float segmentFadeType)
         {
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-            SpecialAttackType specialAttackType;
+            // Body segments should be invisible along with the head.
+            segmentFadeType = (int)BodySegmentFadeType.InhertHeadOpacity;
+
+            float radius = MathHelper.Lerp(700f, 550f, 1f - npc.life / (float)npc.lifeMax);
+            if (attackTimer % 80f == 79f)
+            {
+                float spawnOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 spawnOffset = (spawnOffsetAngle + MathHelper.TwoPi * i / 6f).ToRotationVector2() * radius;
+                    Vector2 spawnPosition = target.Center + spawnOffset;
+                    Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<RealityBreakPortalLaserWall>(), 0, 0f);
+                }
+            }
+        }
+
+        public static void DoSpecialAttack_ChargeGates(NPC npc, Player target, bool nearDeath, ref float attackTimer, ref float portalIndex, ref float segmentFadeType)
+        {
+            int portalTelegraphTime = 52;
+            float wrappedAttackTimer = attackTimer % 135f;
+            float chargeSpeed = nearDeath ? 85f : 60f;
 
             ref float initialTeleportPortal = ref npc.Infernum().ExtraAI[36];
+
+            // Disappear if the target is dead and DoG is invisible.
+            if (target.dead && npc.Opacity <= 0f)
+            {
+                attackTimer = 5f;
+                npc.Center = Vector2.One * -10000f;
+
+                // Bring segments along with.
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
+                    {
+                        Main.npc[i].Center = npc.Center;
+                        Main.npc[i].Opacity = 0f;
+                        Main.npc[i].netUpdate = true;
+                    }
+                }
+                npc.active = false;
+            }
+
+            // Fade in.
+            segmentFadeType = (int)BodySegmentFadeType.ApproachAheadSegmentOpacity;
+
+            // Create a portal to teleport from.
+            if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == 20f)
+            {
+                portalIndex = -1f;
+                Vector2 portalSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(600f, 600f);
+                initialTeleportPortal = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                Main.projectile[(int)initialTeleportPortal].ai[1] = portalTelegraphTime;
+                npc.netUpdate = true;
+            }
+
+            // Teleport and charge.
+            if (wrappedAttackTimer == portalTelegraphTime + 20f)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    npc.Center = Main.projectile[(int)initialTeleportPortal].Center;
+
+                    int segmentCount = 0;
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
+                        {
+                            Main.npc[i].Center = npc.Center;
+                            Main.npc[i].Opacity = Utils.InverseLerp(15f, 0f, segmentCount, true);
+                            Main.npc[i].netUpdate = true;
+                            segmentCount++;
+                        }
+                    }
+                    npc.velocity = npc.SafeDirectionTo(Main.projectile[(int)initialTeleportPortal].ModProjectile<DoGChargeGate>().Destination) * chargeSpeed;
+                    npc.Opacity = 1f;
+                    npc.netUpdate = true;
+
+                    // Create a burst of homing flames.
+                    float flameBurstOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < 8; i++)
+                    {
+                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 8f + flameBurstOffsetAngle).ToRotationVector2() * 15f;
+                        Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
+                    }
+
+                    // Create the portal to go through.
+                    if (!target.dead)
+                    {
+                        Vector2 portalSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 1900f;
+                        portalIndex = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                        Main.projectile[(int)portalIndex].localAI[0] = 1f;
+                        Main.projectile[(int)portalIndex].ai[1] = portalTelegraphTime;
+                    }
+                }
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
+            }
+            if (wrappedAttackTimer > portalTelegraphTime)
+            {
+                // Disappear when touching the portal.
+                // This same logic applies to body/tail segments.
+                if (Main.projectile.IndexInRange((int)portalIndex) && npc.Hitbox.Intersects(Main.projectile[(int)portalIndex].Hitbox))
+                    npc.alpha = Utils.Clamp(npc.alpha + 50, 0, 255);
+
+                if (wrappedAttackTimer > portalTelegraphTime + 20f)
+                    segmentFadeType = (int)BodySegmentFadeType.EnterPortal;
+            }
+
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
+        public static bool DoSpecialAttacks(NPC npc, Player target, bool nearDeath, ref float specialAttackState, ref float specialAttackTimer, ref float specialAttackPortalIndex, ref float segmentFadeType)
+        {
+            SpecialAttackType specialAttackType;
 
             if (nearDeath)
                 npc.Infernum().ExtraAI[2] = 9f;
@@ -685,256 +765,61 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             else
                 specialAttackType = SpecialAttackType.ChargeGates;
 
-            if (specialAttackState == 0) // Start special attack phase.
+            if (npc.alpha >= 255 || specialAttackType == SpecialAttackType.ChargeGates)
             {
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                specialAttackTimer++;
+                if (specialAttackTimer >= 760f)
                 {
-                    // The charge gate attack happens much more frequently when DoG is close to death.
-                    specialAttackTimer += nearDeath && specialAttackTimer < 1150f ? 2f : 1f;
-
-                    // Enter a portal before performing a special attack.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && (int)specialAttackTimer == 1200)
+                    // Delete lingering laser wall things.
+                    for (int i = 0; i < Main.maxProjectiles; i++)
                     {
-                        specialAttackPortalIndex = Projectile.NewProjectile(npc.Center + npc.velocity * 75f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                        Main.projectile[(int)specialAttackPortalIndex].localAI[0] = 1f;
-                        npc.netUpdate = true;
+                        if (Main.projectile[i].type == ModContent.ProjectileType<DoGDeath>())
+                            Main.projectile[i].Kill();
                     }
 
-                    if (specialAttackTimer >= 1335f)
+                    npc.Center = target.Center - Vector2.UnitY * 3300f;
+                    npc.netUpdate = true;
+
+                    for (int i = 0; i < Main.maxNPCs; i++)
                     {
-                        specialAttackTimer = 0f;
-                        specialAttackState = 1f;
-                        specialAttackPortalIndex = -1f;
-
-                        // Select a special attack type.
-                        npc.Infernum().ExtraAI[2] = Main.rand.Next(10);
-                        npc.netUpdate = true;
-                    }
-
-                    // Do nothing and drift into the portal.
-                    if (specialAttackTimer >= 1200f)
-                    {
-                        npc.damage = 0;
-                        npc.dontTakeDamage = true;
-                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitX) * MathHelper.Lerp(npc.velocity.Length(), 105f, 0.15f);
-
-                        // Disappear when touching the portal.
-                        // This same logic applies to body/tail segments.
-                        if (Main.projectile.IndexInRange((int)specialAttackPortalIndex) && npc.Hitbox.Intersects(Main.projectile[(int)specialAttackPortalIndex].Hitbox))
-                            npc.alpha = 255;
-
-                        // Clear away various misc projectiles.
-                        int[] projectilesToDelete = new int[]
+                        if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
                         {
-                            ProjectileID.CultistBossLightningOrbArc,
-                            ModContent.ProjectileType<HomingDoGBurst>(),
-                            ModContent.ProjectileType<DoGBeamPortalN>(),
-                            ModContent.ProjectileType<DoGBeamN>(),
-                            ModContent.ProjectileType<EssenceCleave>(),
-                            ModContent.ProjectileType<EssenceExplosion>(),
-                        };
-                        for (int i = 0; i < Main.maxProjectiles; i++)
-                        {
-                            if (projectilesToDelete.Contains(Main.projectile[i].type) && Main.projectile[i].active)
-                                Main.projectile[i].active = false;
-                        }
-
-                        return false;
-                    }
-                }
-            }
-            else if (specialAttackState == 1) // Enter a portal and begin the special attack.
-            {
-                if (npc.alpha >= 255 || specialAttackType == SpecialAttackType.ChargeGates)
-                {
-                    specialAttackTimer += 1f;
-                    if (specialAttackTimer >= 760f)
-                    {
-                        specialAttackTimer = 0f;
-                        specialAttackState = 2f;
-                    }
-
-                    if (specialAttackTimer < 675f)
-                    {
-                        switch (specialAttackType)
-                        {
-                            case SpecialAttackType.LaserWalls:
-                                int offsetPerLaser = 95;
-                                float laserWallSpeed = 16f;
-                                if (specialAttackTimer % 75f == 74f && specialAttackTimer <= 620f)
-                                {
-                                    Main.PlaySound(SoundID.Item12, (int)target.position.X, (int)target.position.Y);
-
-                                    float targetPosY = target.position.Y + (Main.rand.NextBool(2) ? 50f : 0f);
-
-                                    // Side walls
-                                    for (int x = -10; x < 10; x++)
-                                    {
-                                        Utilities.NewProjectileBetter(target.position.X + 1000f, targetPosY + x * offsetPerLaser, -laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
-                                        Utilities.NewProjectileBetter(target.position.X - 1000f, targetPosY + x * offsetPerLaser, laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
-                                    }
-
-                                    if (Main.rand.NextBool(2))
-                                    {
-                                        for (int x = -5; x < 5; x++)
-                                        {
-                                            Utilities.NewProjectileBetter(target.position.X + 1000f, targetPosY + x * (Main.rand.NextBool(2) ? 180 : 200), -laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
-                                            Utilities.NewProjectileBetter(target.position.X - 1000f, targetPosY + x * (Main.rand.NextBool(2) ? 180 : 200), laserWallSpeed, 0f, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
-                                        }
-                                    }
-
-                                    // Lower wall
-                                    for (int x = -12; x <= 12; x++)
-                                    {
-                                        Utilities.NewProjectileBetter(target.position.X + x * offsetPerLaser, target.position.Y + 1000f, 0f, -laserWallSpeed, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
-                                    }
-
-                                    // Upper wall
-                                    if (lifeRatio < 0.4f)
-                                    {
-                                        for (int x = -20; x < 20; x++)
-                                            Utilities.NewProjectileBetter(target.position.X + x * offsetPerLaser, target.position.Y - 1000f, 0f, laserWallSpeed, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
-                                    }
-                                    else
-                                    {
-                                        for (int x = -12; x <= 12; x++)
-                                            Utilities.NewProjectileBetter(target.position.X + x * offsetPerLaser, target.position.Y - 1000f, 0f, laserWallSpeed, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 415, 0f, Main.myPlayer, 0f, 0f);
-                                    }
-                                }
-                                break;
-                            case SpecialAttackType.CircularLaserBurst:
-                                float radius = 700f - 150f * (1f - lifeRatio);
-                                if (specialAttackTimer % 80f == 79f)
-                                {
-                                    float spawnOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                                    for (int i = 0; i < 6; i++)
-                                    {
-                                        Vector2 spawnOffset = (spawnOffsetAngle + MathHelper.TwoPi * i / 6f).ToRotationVector2() * radius;
-                                        Vector2 spawnPosition = target.Center + spawnOffset;
-                                        Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<RealityBreakPortalLaserWall>(), 0, 0f);
-                                    }
-                                }
-                                break;
-                            case SpecialAttackType.ChargeGates:
-                                float wrappedAttackTimer = specialAttackTimer % 135f;
-                                int portalTelegraphTime = 52;
-                                float chargeSpeed = nearDeath ? 85f : 60f;
-
-                                // Disappear if the target is dead and DoG is invisible.
-                                if (target.dead && npc.Opacity <= 0f)
-                                {
-                                    specialAttackTimer = 5f;
-                                    npc.Center = Vector2.One * -10000f;
-
-                                    // Bring segments along with.
-                                    for (int i = 0; i < Main.maxNPCs; i++)
-                                    {
-                                        if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
-                                        {
-                                            Main.npc[i].Center = npc.Center;
-                                            Main.npc[i].Opacity = 0f;
-                                            Main.npc[i].netUpdate = true;
-                                        }
-                                    }
-                                    npc.active = false;
-                                }
-
-                                // Fade in.
-                                if (wrappedAttackTimer <= portalTelegraphTime + 20f)
-                                    npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.15f, 0f, 1f);
-
-                                // Create a portal to teleport from.
-                                if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == 20f)
-                                {
-                                    specialAttackPortalIndex = -1f;
-                                    Vector2 portalSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(600f, 600f);
-                                    initialTeleportPortal = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                                    Main.projectile[(int)initialTeleportPortal].ai[1] = portalTelegraphTime;
-                                    npc.netUpdate = true;
-                                }
-
-                                // Teleport and charge.
-                                if (wrappedAttackTimer == portalTelegraphTime + 20f)
-                                {
-                                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                                    {
-                                        npc.Center = Main.projectile[(int)initialTeleportPortal].Center;
-
-                                        for (int i = 0; i < Main.maxNPCs; i++)
-                                        {
-                                            if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
-                                            {
-                                                Main.npc[i].Center = npc.Center;
-                                                Main.npc[i].Opacity = 0f;
-                                                Main.npc[i].netUpdate = true;
-                                            }
-                                        }
-                                        npc.velocity = npc.SafeDirectionTo(Main.projectile[(int)initialTeleportPortal].ModProjectile<DoGChargeGate>().Destination) * chargeSpeed;
-                                        npc.netUpdate = true;
-
-                                        // Create a burst of homing flames.
-                                        float flameBurstOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                                        for (int i = 0; i < 8; i++)
-                                        {
-                                            Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 8f + flameBurstOffsetAngle).ToRotationVector2() * 15f;
-                                            Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
-                                        }
-
-                                        // Create the portal to go through.
-                                        if (!target.dead)
-                                        {
-                                            Vector2 portalSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 1900f;
-                                            specialAttackPortalIndex = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                                            Main.projectile[(int)specialAttackPortalIndex].localAI[0] = 1f;
-                                            Main.projectile[(int)specialAttackPortalIndex].ai[1] = portalTelegraphTime;
-                                        }
-                                    }
-                                    Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
-                                }
-                                if (wrappedAttackTimer > portalTelegraphTime)
-                                {
-                                    // Disappear when touching the portal.
-                                    // This same logic applies to body/tail segments.
-                                    if (Main.projectile.IndexInRange((int)specialAttackPortalIndex) && npc.Hitbox.Intersects(Main.projectile[(int)specialAttackPortalIndex].Hitbox))
-                                        npc.alpha = Utils.Clamp(npc.alpha + 50, 0, 255);
-                                }
-
-                                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                                return false;
+                            Main.npc[i].Center = npc.Center;
+                            Main.npc[i].netUpdate = true;
                         }
                     }
-                    else if (specialAttackType == SpecialAttackType.ChargeGates)
-                        npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * 32f;
+                    npc.Opacity = 1f;
+                    npc.dontTakeDamage = false;
+                    specialAttackState = 0f;
+                    specialAttackTimer = 0f;
                 }
+
+                if (specialAttackTimer < 675f)
+                {
+                    switch (specialAttackType)
+                    {
+                        case SpecialAttackType.LaserWalls:
+                            DoSpecialAttack_LaserWalls(target, ref specialAttackTimer, ref segmentFadeType);
+                            break;
+                        case SpecialAttackType.CircularLaserBurst:
+                            DoSpecialAttack_CircularLaserBurst(npc, target, ref specialAttackTimer, ref segmentFadeType);
+                            break;
+                        case SpecialAttackType.ChargeGates:
+                            DoSpecialAttack_ChargeGates(npc, target, nearDeath, ref specialAttackTimer, ref specialAttackPortalIndex, ref segmentFadeType);
+                            return false;
+                    }
+                }
+
+                // Be completely invisible after the special attacks conclude.
                 else
-                    npc.alpha += 5;
-            }
-            else if (specialAttackState == 2) // Appear out of a portal above the player.
-            {
-                npc.alpha -= 5;
-                for (int i = 0; i < Main.maxProjectiles; i++)
                 {
-                    if (Main.projectile[i].type == ModContent.ProjectileType<DoGDeath>())
-                        Main.projectile[i].Kill();
+                    segmentFadeType = (int)BodySegmentFadeType.InhertHeadOpacity;
+                    npc.Opacity = 0f;
                 }
-
-                npc.Center = target.Center - Vector2.UnitY * 3300f;
-                npc.netUpdate = true;
-
-                for (int i = 0; i < Main.maxNPCs; i++)
-                {
-                    if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
-                    {
-                        Main.npc[i].Center = npc.Center;
-                        Main.npc[i].netUpdate = true;
-                    }
-                }
-                npc.velocity = npc.SafeDirectionTo(target.Center) * 32f;
-                npc.Opacity = 1f;
-                npc.dontTakeDamage = false;
-                specialAttackState = 0f;
-                specialAttackTimer = 0f;
             }
+            else
+                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.02f, 0f, 1f);
 
             return true;
         }

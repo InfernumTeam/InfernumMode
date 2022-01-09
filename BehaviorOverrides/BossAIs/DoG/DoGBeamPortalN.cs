@@ -78,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 for (float i = 0f; i < 12f; i += 1f)
                 {
                     float angle = MathHelper.TwoPi / 12f * i;
-                    Projectile.NewProjectile(projectile.Center, angle.ToRotationVector2() * 8f, ModContent.ProjectileType<DoGBeamN>(), 75, 0f);
+                    Projectile.NewProjectile(projectile.Center, angle.ToRotationVector2() * 14.5f, ModContent.ProjectileType<DoGBeamN>(), 75, 0f);
                 }
             }
 

@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 6 % Main.projFrames[projectile.type];
-            projectile.alpha = Utils.Clamp(projectile.alpha - 25, 0, 255);
+            projectile.Opacity = Utils.InverseLerp(300f, 285f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 35f, projectile.timeLeft, true);
 
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             projectile.velocity = (projectile.velocity * 69f + projectile.SafeDirectionTo(target.Center) * 23f) / 70f;

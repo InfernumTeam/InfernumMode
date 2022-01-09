@@ -18,10 +18,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
+        private static readonly FieldInfo invincibilityTimeField = typeof(DevourerofGodsBody).GetField("invinceTime", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static readonly FieldInfo bodyPhase2StartedField = typeof(DevourerofGodsBody).GetField("phase2Started", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static readonly FieldInfo tailPhase2StartedField = typeof(DevourerofGodsTail).GetField("phase2Started", BindingFlags.Instance | BindingFlags.NonPublic);
+
         public static void DoGSegmentAI(NPC npc)
         {
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
             NPC head = Main.npc[(int)npc.ai[2]];
+            bool phase2 = head.Infernum().ExtraAI[33] == 1f;
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
             npc.defense = 0;
@@ -38,21 +43,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.scale = aheadSegment.scale;
 
             // Reset sizes.
-            if (npc.Infernum().ExtraAI[33] == 0f && head.Infernum().ExtraAI[33] == 1f)
+            if (npc.Infernum().ExtraAI[33] == 0f && phase2)
             {
                 if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
                 {
                     npc.width = 120;
                     npc.height = 120;
                     npc.frame = new Rectangle(0, 0, 142, 126);
-                    typeof(DevourerofGodsBody).GetField("phase2Started", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, true);
+                    bodyPhase2StartedField.SetValue(npc.modNPC, true);
                 }
                 else
                 {
                     npc.width = 100;
                     npc.height = 100;
                     npc.frame = new Rectangle(0, 0, 106, 200);
-                    typeof(DevourerofGodsTail).GetField("phase2Started", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, true);
+                    tailPhase2StartedField.SetValue(npc.modNPC, true);
                 }
             }
             npc.Infernum().ExtraAI[33] = head.Infernum().ExtraAI[33];
@@ -60,59 +65,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             bool headOutOfWorld = head.Center.X < -10001f || head.Center.X > Main.maxTilesX * 16f + 10001f ||
                 head.Center.Y < -10001f || head.Center.Y > Main.maxTilesY * 16f + 10001f;
 
-            if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[14] == 1f && head.Infernum().ExtraAI[15] >= 675f)
-            {
-                head.Opacity = 0f;
-                npc.Opacity = 0f;
-            }
-            else if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[14] == 1f)
-            {
-                if (head.Infernum().ExtraAI[30] >= 0f && npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[30]].Hitbox))
-                {
-                    npc.alpha += 70;
-                    if (npc.alpha > 255)
-                        npc.alpha = 255;
-                }
-                else
-                {
-                    if (head.Infernum().ExtraAI[15] % 135f > 120f)
-                        npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
-                    else
-                    {
-                        if (aheadSegment.Opacity < 0.2f)
-                            npc.Opacity = 0f;
-                        if (aheadSegment.Opacity > npc.Opacity)
-                            npc.Opacity = MathHelper.Lerp(npc.Opacity, aheadSegment.Opacity, 0.4f);
-                    }
-                }
-            }
-            else if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[30] >= 0f)
-            {
-                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[30]].Hitbox))
-                {
-                    npc.alpha += 70;
-                    if (npc.alpha > 255)
-                        npc.alpha = 255;
-                }
-            }
-
-            else if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[25] > 0f && head.Infernum().ExtraAI[25] < 180f)
-            {
-                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.1f, 0f, 1f);
-                head.Opacity = 0f;
-            }
-
-            else if (head.Infernum().ExtraAI[33] == 1f && head.Infernum().ExtraAI[25] > 321f)
-            {
-                if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[26]].Hitbox))
-                {
-                    npc.alpha += 70;
-                    if (npc.alpha > 255)
-                        npc.alpha = 255;
-                }
-            }
-
-            else if (head.Infernum().ExtraAI[33] == 0f && head.Infernum().ExtraAI[11] >= 0f)
+            // Enter phase two once the tail enters the transition portal.
+            if (!phase2 && head.Infernum().ExtraAI[11] >= 0f)
             {
                 if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[11]].Hitbox) || headOutOfWorld)
                 {
@@ -142,15 +96,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
             }
             else
-                npc.Opacity = aheadSegment.Opacity;
+            {
+                // Do what the head says if not doing phase two transition stuff.
+                switch ((DoGPhase2HeadBehaviorOverride.BodySegmentFadeType)(int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.BodySegmentFadeTypeAIIndex])
+                {
+                    case DoGPhase2HeadBehaviorOverride.BodySegmentFadeType.EnterPortal:
+                        int portalIndex = (int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.PortalProjectileIndexAIIndex];
+                        if (portalIndex >= 0f && npc.Hitbox.Intersects(Main.projectile[portalIndex].Hitbox))
+                            npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.275f, 0f, 1f);
 
+                        break;
+
+                    case DoGPhase2HeadBehaviorOverride.BodySegmentFadeType.InhertHeadOpacity:
+                        npc.Opacity = head.Opacity;
+                        break;
+
+                    case DoGPhase2HeadBehaviorOverride.BodySegmentFadeType.ApproachAheadSegmentOpacity:
+                        if (aheadSegment.Opacity < 0.2f)
+                            npc.Opacity = 0f;
+                        if (aheadSegment.Opacity > npc.Opacity)
+                        {
+                            npc.Opacity = MathHelper.Lerp(npc.Opacity, aheadSegment.Opacity, 0.67f);
+                            if (aheadSegment.Opacity >= 1f)
+                                npc.Opacity = MathHelper.Lerp(npc.Opacity, aheadSegment.Opacity, 0.67f);
+                        }
+                        break;
+                }
+            }
+
+            // Reset the invicibility time variable used in the vanilla AI.
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
-                typeof(DevourerofGodsBody).GetField("invinceTime", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(npc.modNPC, 0);
+                invincibilityTimeField.SetValue(npc.modNPC, 0);
 
+            // Decide segment size stuff.
             Vector2 size = npc.Size;
-            if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && head.Infernum().ExtraAI[33] == 0f)
+            if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && phase2)
                 size = new Vector2(102f);
-            if (npc.type == ModContent.NPCType<DevourerofGodsTail>() && head.Infernum().ExtraAI[33] == 0f)
+            if (npc.type == ModContent.NPCType<DevourerofGodsTail>() && phase2)
                 size = new Vector2(82f, 90f);
 
             if (npc.Size != size)
@@ -158,8 +140,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             npc.dontTakeDamage = head.dontTakeDamage || npc.Opacity < 0.1f;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
-            if (head.Infernum().ExtraAI[32] > 0f)
-                npc.life = npc.lifeMax;
+            npc.life = npc.lifeMax;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
             if (aheadSegment.rotation != npc.rotation)
@@ -168,8 +149,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 directionToNextSegment = directionToNextSegment.MoveTowards((aheadSegment.rotation - npc.rotation).ToRotationVector2(), 1f);
             }
 
+            // Decide segment offset stuff.
             float segmentOffset = 100f;
-            if (head.Infernum().ExtraAI[33] == 1f)
+            if (phase2)
             {
                 if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
                     segmentOffset = 80f;

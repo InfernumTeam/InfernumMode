@@ -30,6 +30,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             Player target = Main.player[Main.npc[Main.wof].target];
 
+            int circleHoverCount = 0;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (!Main.npc[i].active || Main.npc[i].type != npc.type || Main.npc[i].Infernum().ExtraAI[2] == 0f)
+                    continue;
+
+                circleHoverCount++;
+            }
+
             // Attack the target independently after being "killed".
             if (npc.Infernum().ExtraAI[2] == 1f)
             {
@@ -90,12 +99,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 }
                 else
                 {
-                    if (wallAttackTimer % 24f == 23f && npc.WithinRange(hoverDestination, 50f))
+                    if (wallAttackTimer % 24f == 23f && npc.WithinRange(hoverDestination, 50f) && wallAttackTimer % 1200f > 680f)
                     {
                         Main.PlaySound(SoundID.Item12, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            float laserShootSpeed = 9f;
+                            float laserShootSpeed = 8.5f;
                             int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * Math.Sign(Main.npc[Main.wof].velocity.X) * laserShootSpeed, ProjectileID.DeathLaser, 100, 0f);
                             if (Main.projectile.IndexInRange(laser))
                             {
@@ -131,7 +140,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             attackTimer++;
 
-            int beamShootRate = 1600;
+            int beamShootRate = 1600 - circleHoverCount * 270;
             if (attackTimer % beamShootRate == (beamShootRate + npc.whoAmI * 300) % beamShootRate)
                 WallOfFleshMouthBehaviorOverride.PrepareFireBeam(npc, target);
 

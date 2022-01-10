@@ -525,11 +525,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
         {
             float adjustedTimer = attackTimer % 180f;
             Vector2 destination = target.Center - Vector2.UnitY * 400f;
-            Vector2 acceleration = new Vector2(0.22f, 0.19f);
+            Vector2 acceleration = new Vector2(0.5f, 0.35f);
             if (adjustedTimer > 45f)
             {
                 destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 100f;
-                npc.Center = npc.Center.MoveTowards(destination, 10f);
+                npc.Center = npc.Center.MoveTowards(destination, 16f);
             }
 
             // Make skeletron a little beefier due to being easy to hit.

@@ -68,9 +68,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             DetermineMouthRotation(npc, target);
 
             attackTimer++;
-            int scytheCeilingShootRate = lifeRatio < 0.5f ? 300 : 180;
-            if (attackTimer % scytheCeilingShootRate == scytheCeilingShootRate - 1f)
-                DoCeilingAndFloorAttack(npc, target, lifeRatio < 0.5f);
 
             int beamShootRate = 380;
             if (totalAttachedEyes <= 0 && attackTimer % beamShootRate == beamShootRate - 1f)
@@ -310,24 +307,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.Pi;
             else
                 npc.rotation = 0f;
-        }
-
-        internal static void DoCeilingAndFloorAttack(NPC npc, Player target, bool inPhase2)
-        {
-            if (Main.myPlayer != npc.target)
-                return;
-
-            bool targetInHell = target.Center.Y > (Main.maxTilesY - 320f) * 16f;
-
-            if (!targetInHell)
-                return;
-
-            for (float x = -1180f; x < 1180f; x += inPhase2 ? 200f : 256f)
-            {
-                Vector2 spawnPosition = target.Center + new Vector2(x, Main.screenHeight * -0.45f);
-                int scythe = Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * 2f, ModContent.ProjectileType<HellishScythe>(), 100, 0f);
-                Main.projectile[scythe].tileCollide = false;
-            }
         }
 
         internal static void PrepareFireBeam(NPC npc, Player target)

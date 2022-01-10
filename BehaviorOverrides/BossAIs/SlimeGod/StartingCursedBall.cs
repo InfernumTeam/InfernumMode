@@ -32,8 +32,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
             projectile.Opacity = Utils.InverseLerp(480f, 470f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * 0.75f;
 
-            if (Time == 0f)
-                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * 16f;
+            if (Time >= -10f && Time <= 8f)
+            {
+                float flySpeed = MathHelper.Lerp(10f, 21f, Utils.InverseLerp(-10f, 8f, Time, true));
+                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * flySpeed;
+            }
 
             if (projectile.timeLeft < 35)
                 projectile.velocity *= 0.98f;

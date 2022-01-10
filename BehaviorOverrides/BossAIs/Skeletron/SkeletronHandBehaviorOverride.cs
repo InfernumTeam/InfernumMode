@@ -146,8 +146,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         break;
                     case SkeletronHeadBehaviorOverride.SkeletronAttackType.HandShadowflameBurst:
                         destination = owner.Center + new Vector2(armDirection * 540f, 360f);
-                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.08f);
-                        npc.Center = npc.Center.MoveTowards(destination, 8f);
+                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.1f);
+                        npc.Center = npc.Center.MoveTowards(destination, 12f);
 
                         adjustedTimer = attackTimer % 210f;
                         if (adjustedTimer > 50f && adjustedTimer < 180f && adjustedTimer % 45f == 44f && attackTimer < 520f)

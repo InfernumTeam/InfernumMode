@@ -751,11 +751,6 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.QueenBee)
                 target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);
 
-            if (npc.type == ModContent.NPCType<CrimulanSGBig>() || npc.type == ModContent.NPCType<SlimeSpawnCrimson3>())
-                target.AddBuff(ModContent.BuffType<BurningBlood>(), 240);
-            if (npc.type == ModContent.NPCType<EbonianSGBig>() || npc.type == ModContent.NPCType<SlimeSpawnCorrupt2>())
-                target.AddBuff(ModContent.BuffType<Shadowflame>(), 180);
-
             if (npc.type == ModContent.NPCType<SlimeGodCore>())
             {
                 target.AddBuff(ModContent.BuffType<BurningBlood>(), 120);

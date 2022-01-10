@@ -126,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 				if (CalamityWorld.TalkedToDraedon)
 					CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonResummonText", TextColorEdgy);
 				else
-					CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonIntroductionText5", TextColorEdgy);
+					Main.NewText("My creations will not forget your failures. Choose wisely.", TextColorEdgy);
 
 				// Mark Draedon as talked to.
 				if (!CalamityWorld.TalkedToDraedon)
@@ -197,7 +197,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
 					if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
 					{
-						Main.NewText("The finest in artifical intelligence, these designed are derived from.", TextColor);
+						Main.NewText("Your efforts are very intriguing.", TextColor);
 						npc.netUpdate = true;
 					}
 

@@ -285,7 +285,7 @@ namespace InfernumMode.GlobalInstances
             {
                 for (int i = 0; i < Main.rand.Next(18, 29 + 1); i++)
                 {
-                    int soul = Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
+                    int soul = Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 95, 0f);
                     Main.projectile[soul].localAI[1] = Main.rand.NextBool().ToDirectionInt();
                 }
             }
@@ -481,6 +481,11 @@ namespace InfernumMode.GlobalInstances
 
             if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
                 damage = (int)(damage * 0.55);
+            if ((npc.type == ModContent.NPCType<AquaticScourgeBody>() || npc.type == ModContent.NPCType<AquaticScourgeBodyAlt>()) &&
+                (projectile.penetrate >= 2 || projectile.penetrate == -1))
+            {
+                damage = (int)(damage * 0.45f);
+            }
 
             if (projectile.type == ModContent.ProjectileType<Corrocloud1>() ||
                 projectile.type == ModContent.ProjectileType<Corrocloud2>() ||

@@ -67,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             Player target = Main.player[npc.target];
 
             // Manually offset the boss graphically.
-            npc.gfxOffY = -46;
+            npc.gfxOffY = -6;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             ref float attackState = ref npc.ai[0];
@@ -446,7 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             rocketShootTimer++;
             if (rocketShootTimer >= rocketReleaseRate && attackTimer > 45f && attackTimer < 210f)
             {
-                Main.PlaySound(SoundID.Item11, npc.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaBlast"), npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

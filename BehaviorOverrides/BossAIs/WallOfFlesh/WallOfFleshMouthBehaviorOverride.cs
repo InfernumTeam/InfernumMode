@@ -13,7 +13,7 @@ using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
-	public class WallOfFleshMouthBehaviorOverride : NPCBehaviorOverride
+    public class WallOfFleshMouthBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.WallofFlesh;
 
@@ -69,12 +69,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             attackTimer++;
 
+            // Have high DR when eyes are attached.
+            npc.Calamity().DR = totalAttachedEyes > 0 ? 0.98f : 0.3f;
+            npc.chaseable = totalAttachedEyes <= 0;
+
             int beamShootRate = 380;
             if (totalAttachedEyes <= 0 && attackTimer % beamShootRate == beamShootRate - 1f)
                 PrepareFireBeam(npc, target);
 
             int miscEnemyCount = NPC.CountNPCS(NPCID.LeechHead) + NPC.CountNPCS(NPCID.TheHungryII);
-            if (Main.netMode != NetmodeID.MultiplayerClient && miscEnemyCount < 3 && totalAttachedEyes <= 0 && attackTimer % 240f == 239f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && miscEnemyCount < 3 && totalAttachedEyes <= 0 && attackTimer % 180f == 179f)
             {
                 int leech = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, Main.rand.NextBool() ? NPCID.LeechHead : NPCID.TheHungryII);
                 if (Main.npc.IndexInRange(leech))
@@ -159,7 +163,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         }
 
         internal static void PerformMouthMotion(NPC npc, float lifeRatio)
-		{
+        {
             float verticalDestination = (Main.wofB + Main.wofT) / 2 - npc.height / 2;
             float horizontalSpeed = MathHelper.Lerp(4.35f, 7.4f, 1f - lifeRatio);
             if (verticalDestination < (Main.maxTilesY - 180) * 16f)
@@ -198,16 +202,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             List<float> offsetFactors = new List<float>();
             for (int i = 0; i < 4; i++)
-			{
+            {
                 float potentialOffsetFactor = Main.rand.NextFloat();
                 while (offsetFactors.Any(factor => MathHelper.Distance(factor, potentialOffsetFactor) < 0.25f))
-				{
+                {
                     i--;
                     continue;
-				}
+                }
 
                 NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.WallofFleshEye, ai0: potentialOffsetFactor);
-			}
+            }
         }
 
         internal static void AngerEffects(NPC npc, Player target)
@@ -238,10 +242,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             {
                 // Summon tentacles near the player.
                 if (Main.netMode != NetmodeID.MultiplayerClient && targetInHell && enrageAttackCountdown % 30f == 29f)
-				{
+                {
                     Vector2 spawnPosition = target.Center + Main.rand.NextVector2CircularEdge(320f, 320f);
                     for (int tries = 0; tries < 2500; tries++)
-					{
+                    {
                         int checkArea = 30 + tries / 20;   
                         Vector2 potentialSpawnPosition = target.Center + target.velocity * 10f + Main.rand.NextVector2CircularEdge(checkArea, checkArea) * 16f;
                         Tile spawnTile = CalamityUtils.ParanoidTileRetrieval((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16);
@@ -256,12 +260,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                             spawnPosition = potentialSpawnPosition;
                             break;
                         }
-					}
+                    }
 
                     spawnPosition = spawnPosition.ToTileCoordinates().ToWorldCoordinates();
                     Vector2 tentacleDirection = target.DirectionFrom(spawnPosition);
                     Utilities.NewProjectileBetter(spawnPosition, tentacleDirection, ModContent.ProjectileType<TileTentacle>(), 105, 0f);
-				}
+                }
                 enrageAttackCountdown--;
             }
 
@@ -269,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             if (roarTimer <= 0f && targetInHell && enrageAttackCountdown <= 0f && idealAngerStrength >= 0.5f && angerStrength < idealAngerStrength)
             {
                 if (Main.netMode != NetmodeID.Server)
-				{
+                {
                     roarTimer = 660f;
 
                     if (Main.LocalPlayer.Center.Y > (Main.maxTilesX - 300f) * 16f)
@@ -283,10 +287,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-				{
+                {
                     enrageAttackCountdown = 300f;
                     npc.netUpdate = true;
-				}
+                }
             }
         }
 
@@ -310,7 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         }
 
         internal static void PrepareFireBeam(NPC npc, Player target)
-		{
+        {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
@@ -318,7 +322,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             int fire = Utilities.NewProjectileBetter(npc.Center, aimDirection, ModContent.ProjectileType<FireBeamTelegraph>(), 0, 0f);
             if (Main.projectile.IndexInRange(fire))
                 Main.projectile[fire].ai[1] = npc.whoAmI;
-		}
+        }
 
         #endregion
     }

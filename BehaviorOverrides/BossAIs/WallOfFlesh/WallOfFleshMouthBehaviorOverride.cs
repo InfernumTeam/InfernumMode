@@ -276,7 +276,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 {
                     roarTimer = 660f;
 
-                    if (Main.LocalPlayer.Center.Y > (Main.maxTilesX - 300f) * 16f)
+                    if (Main.LocalPlayer.Center.Y > (Main.maxTilesY - 300f) * 16f)
                     {
                         // Scream.
                         Main.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 1, 1f, 0.3f);

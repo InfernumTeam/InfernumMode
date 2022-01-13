@@ -44,15 +44,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             {
                 int laserShootRate = 120;
                 float wallAttackTimer = Main.npc[Main.wof].ai[3];
+                float hoverSpeedFactor = 1f;
                 bool doCircleAttack = wallAttackTimer % 1200f < 600f || Main.npc[Main.wof].life > Main.npc[Main.wof].lifeMax * 0.45f;
                 Vector2 hoverOffset = (MathHelper.TwoPi * (npc.Infernum().ExtraAI[1] + wallAttackTimer / laserShootRate) / 4f).ToRotationVector2() * 360f;
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 if (!doCircleAttack)
-                    hoverDestination = Main.npc[Main.wof].Center + Vector2.UnitY * (float)Math.Sin(wallAttackTimer / 70f + npc.Infernum().ExtraAI[1] * MathHelper.E) * 350f;
+                {
+                    hoverSpeedFactor = 1.6f;
+                    hoverDestination = new Vector2(Main.npc[Main.wof].Center.X, target.Center.Y);
+                    hoverDestination.Y += (float)Math.Sin(wallAttackTimer / 70f + npc.Infernum().ExtraAI[1] * MathHelper.E) * 350f;
+                }
                 if (!Main.npc[Main.wof].WithinRange(target.Center, 4000f))
                     hoverDestination = Main.npc[Main.wof].Center;
 
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 18f, 0.9f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeedFactor * 18f, hoverSpeedFactor * 0.9f);
                 npc.damage = 0;
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.Pi;
                 npc.dontTakeDamage = true;
@@ -83,7 +88,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                         }
                     }
 
-                    if (wallAttackTimer % laserShootRate == laserShootRate - 1f)
+                    // Fire the laser. This doesn't happen if extremely close to players, to prevent cheap hits.
+                    if (wallAttackTimer % laserShootRate == laserShootRate - 1f && !npc.WithinRange(target.Center, 115f))
                     {
                         Main.PlaySound(SoundID.Item12, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -99,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 }
                 else
                 {
-                    if (wallAttackTimer % 28f == 27f && npc.WithinRange(hoverDestination, 50f) && wallAttackTimer % 1200f > 680f)
+                    if (wallAttackTimer % 28f == 27f && npc.WithinRange(hoverDestination, 80f) && wallAttackTimer % 1200f > 680f)
                     {
                         Main.PlaySound(SoundID.Item12, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)

@@ -173,7 +173,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         }
 
         internal static void DetermineTarget(NPC npc, out bool despawning)
-		{
+        {
             despawning = false;
 
             // Aquire a new target if the current one is dead or inactive.
@@ -261,11 +261,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 npc.Infernum().ExtraAI[i] = 0f;
             npc.noTileCollide = true;
             npc.netUpdate = true;
-		}
+        }
 
-		#region Specific Attacks
+        #region Specific Attacks
         internal static void DoAttack_SpawnEffects(NPC npc, Player target, float attackTimer, ref float fadeToRed, ref float frameType, ref float flapRate)
-		{
+        {
             int chargeDelay = 30;
             if (attackTimer <= 1f)
                 npc.Opacity = 0f;
@@ -283,7 +283,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             // Release a bunch of feathers that aim towards the player.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 45f)
-			{
+            {
                 for (float offsetAngle = -1.21f; offsetAngle <= 1.21f; offsetAngle += 0.1f)
                 {
                     Vector2 spawnPosition = target.Center - Vector2.UnitY.RotatedBy(offsetAngle) * 800f;
@@ -292,20 +292,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 }
             }
             if (attackTimer >= 150f)
-			{
+            {
                 // Teleport to a side of the player.
                 if (attackTimer == 150f)
-				{
+                {
                     npc.Center = target.Center + Vector2.UnitX * (npc.Center.X > target.Center.X).ToDirectionInt() * 1750f;
                     npc.netUpdate = true;
-				}
+                }
 
                 // Charge.
                 if (attackTimer == 150f + chargeDelay)
-				{
+                {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 33f;
                     npc.netUpdate = true;
-				}
+                }
 
                 // And do specific things after charging.
                 if (attackTimer >= 150f + chargeDelay)
@@ -327,7 +327,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 }
 
                 npc.alpha = Utils.Clamp(npc.alpha - 25, 0, 255);
-			}
+            }
 
             if (Math.Abs(npc.velocity.X) > 0.8f)
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
@@ -378,7 +378,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             // Line up for charge.
             if (chargeState == 0f)
-			{
+            {
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 
                 float verticalOffsetLeniance = 65f;
@@ -394,12 +394,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
                 // If within a good approximation of the player's position, prepare charging.
                 if (Math.Abs(npc.Center.X - target.Center.X) > horizontalOffset - 50f && Math.Abs(npc.Center.Y - target.Center.Y) < verticalOffsetLeniance)
-				{
+                {
                     chargeState = 1f;
                     accumulatedSpeed = 0f;
                     attackTimer = 0f;
                     npc.netUpdate = true;
-				}
+                }
 
                 // Become more and more fast the more time has passed.
                 // (Why does this comment sound funny to me?)
@@ -408,7 +408,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             // Prepare for the charge.
             else if (chargeState == 1f)
-			{
+            {
                 int chargeDelay = chargeType == DragonfollyAttackType.ThunderCharge ? 45 : 20;
                 if (chargeType == DragonfollyAttackType.OrdinaryCharge && phase2 && redirectCounter > 0f)
                     chargeDelay = 6;
@@ -420,7 +420,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 
                 if (attackTimer >= chargeDelay)
-				{
+                {
                     attackTimer = 0f;
                     chargeState = 2f;
                     npc.velocity = chargeVelocity;
@@ -433,13 +433,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
                     // Release some feathers into the air.
                     for (int i = 0; i < Main.rand.Next(4, 8 + 1); i++)
-					{
+                    {
                         Vector2 featherVelocity = Main.rand.NextVector2Circular(12f, 3f);
                         featherVelocity.Y = -Math.Abs(featherVelocity.Y);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             Projectile.NewProjectile(npc.Center + Main.rand.NextVector2CircularEdge(50f, 50f), featherVelocity, ModContent.ProjectileType<FollyFeather>(), 0, 0f);
-					}
+                    }
 
                     // If in phase 2 and doing a lightning attack, release an aura from the mouth that goes towards the player.
                     if (chargeType == DragonfollyAttackType.ThunderCharge && phase2)
@@ -465,7 +465,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             // Do the actual charge.
             else if (chargeState == 2f)
-			{
+            {
                 float horizontalSpeed = MathHelper.Lerp(29f, 34.25f, 1f - npc.life / (float)npc.lifeMax);
 
                 // Fly faster than usual after a fakeout.
@@ -482,12 +482,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 if (farEnoughAwayFromPlayer)
                 {
                     if (redirectCounter < totalRedirects && chargeType == DragonfollyAttackType.OrdinaryCharge)
-					{
+                    {
                         chargeState = 1f;
                         attackTimer = 0f;
                         redirectCounter++;
                         npc.netUpdate = true;
-					}
+                    }
 
                     npc.velocity *= chargeType != DragonfollyAttackType.ThunderCharge ? 0.3f : 0.6f;
                     GoToNextAttackState(npc);
@@ -499,7 +499,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
 
                 if (hasDoneFakeoutFlag == 0f && chargeType == DragonfollyAttackType.FakeoutCharge)
-				{
+                {
                     // Fade out for the fake out.
                     if (npc.alpha < 255)
                     {
@@ -778,128 +778,128 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         }
 
         internal static void DoAttack_LightningSupercharge(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
-		{
-			float horizontalOffset = 750f;
-			ref float chargeState = ref npc.Infernum().ExtraAI[0];
-			ref float accumulatedSpeed = ref npc.Infernum().ExtraAI[1];
-			ref float backgroundFadeToRed = ref npc.Infernum().ExtraAI[8];
+        {
+            float horizontalOffset = 750f;
+            ref float chargeState = ref npc.Infernum().ExtraAI[0];
+            ref float accumulatedSpeed = ref npc.Infernum().ExtraAI[1];
+            ref float backgroundFadeToRed = ref npc.Infernum().ExtraAI[8];
 
-			// Line up for charge.
-			if (chargeState == 0f)
-			{
-				float verticalOffsetLeniance = 75f;
-				float flySpeed = 18.5f + accumulatedSpeed;
-				float flyInertia = 4f;
-				Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * horizontalOffset;
+            // Line up for charge.
+            if (chargeState == 0f)
+            {
+                float verticalOffsetLeniance = 75f;
+                float flySpeed = 18.5f + accumulatedSpeed;
+                float flyInertia = 4f;
+                Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * horizontalOffset;
 
-				// Fly towards the destination beside the player.
-				npc.velocity = (npc.velocity * (flyInertia - 1f) + npc.SafeDirectionTo(destination) * flySpeed) / flyInertia;
-				npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
+                // Fly towards the destination beside the player.
+                npc.velocity = (npc.velocity * (flyInertia - 1f) + npc.SafeDirectionTo(destination) * flySpeed) / flyInertia;
+                npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 
-				// If within a good approximation of the player's position, scream loudly.
-				if (Math.Abs(npc.Center.X - target.Center.X) > horizontalOffset && Math.Abs(npc.Center.Y - target.Center.Y) < verticalOffsetLeniance)
-				{
-					chargeState = 1f;
-					accumulatedSpeed = 0f;
-					attackTimer = 0f;
-					npc.netUpdate = true;
-				}
+                // If within a good approximation of the player's position, scream loudly.
+                if (Math.Abs(npc.Center.X - target.Center.X) > horizontalOffset && Math.Abs(npc.Center.Y - target.Center.Y) < verticalOffsetLeniance)
+                {
+                    chargeState = 1f;
+                    accumulatedSpeed = 0f;
+                    attackTimer = 0f;
+                    npc.netUpdate = true;
+                }
 
-				// Become more and more fast the more time has passed.
-				// (Why does this comment sound funny to me?)
-				accumulatedSpeed += 0.055f;
+                // Become more and more fast the more time has passed.
+                // (Why does this comment sound funny to me?)
+                accumulatedSpeed += 0.055f;
 
                 frameType = (int)DragonfollyFrameDrawingType.FlapWings;
                 flapRate = 6f;
             }
 
-			// Scream and create a red shockwave/background.
-			else if (chargeState == 1f)
-			{
-				npc.rotation *= 0.96f;
-				npc.velocity *= 0.98f;
-				backgroundFadeToRed = MathHelper.Lerp(backgroundFadeToRed, 1f, 0.1f);
-				if (attackTimer < ScreamTime + 30f)
-				{
-					frameType = (int)DragonfollyFrameDrawingType.Screm;
-					if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == ScreamTime + 10f)
-						Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
-				}
-				else
-				{
-					frameType = (int)DragonfollyFrameDrawingType.FlapWings;
-					flapRate = 6f;
-				}
+            // Scream and create a red shockwave/background.
+            else if (chargeState == 1f)
+            {
+                npc.rotation *= 0.96f;
+                npc.velocity *= 0.98f;
+                backgroundFadeToRed = MathHelper.Lerp(backgroundFadeToRed, 1f, 0.1f);
+                if (attackTimer < ScreamTime + 30f)
+                {
+                    frameType = (int)DragonfollyFrameDrawingType.Screm;
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == ScreamTime + 10f)
+                        Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+                }
+                else
+                {
+                    frameType = (int)DragonfollyFrameDrawingType.FlapWings;
+                    flapRate = 6f;
+                }
 
-				// Reel back.
-				if (attackTimer == ScreamTime + 75f)
-				{
-					npc.velocity = npc.SafeDirectionTo(target.Center) * -8f;
-					npc.velocity.X *= 0.3f;
-					chargeState = 2f;
-					accumulatedSpeed = 0f;
-					attackTimer = 0f;
-					npc.netUpdate = true;
-				}
-			}
+                // Reel back.
+                if (attackTimer == ScreamTime + 75f)
+                {
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * -8f;
+                    npc.velocity.X *= 0.3f;
+                    chargeState = 2f;
+                    accumulatedSpeed = 0f;
+                    attackTimer = 0f;
+                    npc.netUpdate = true;
+                }
+            }
 
-			// Prepare for the charge.
-			else if (chargeState == 2f)
-			{
-				backgroundFadeToRed = 1f;
+            // Prepare for the charge.
+            else if (chargeState == 2f)
+            {
+                backgroundFadeToRed = 1f;
 
-				float flySpeed = 32.5f;
-				float flyInertia = 26f;
-				Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
-				npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity * 0.8f) / flyInertia;
-				npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
-				npc.rotation = (npc.rotation * 7f + npc.velocity.X * 0.01f) / 8f;
+                float flySpeed = 32.5f;
+                float flyInertia = 26f;
+                Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
+                npc.velocity = (npc.velocity * (flyInertia - 1f) + chargeVelocity * 0.8f) / flyInertia;
+                npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
+                npc.rotation = (npc.rotation * 7f + npc.velocity.X * 0.01f) / 8f;
 
-				if (attackTimer >= 15f)
-				{
-					npc.velocity = chargeVelocity;
-					chargeState = 3f;
-					accumulatedSpeed = 0f;
-					attackTimer = 0f;
-					npc.netUpdate = true;
+                if (attackTimer >= 15f)
+                {
+                    npc.velocity = chargeVelocity;
+                    chargeState = 3f;
+                    accumulatedSpeed = 0f;
+                    attackTimer = 0f;
+                    npc.netUpdate = true;
 
                     // Make a diving sound.
                     Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
                 }
-			}
+            }
 
-			// Do the charge and release lightning everywhere.
-			else if (chargeState == 3f)
-			{
-				npc.velocity *= 0.99f;
-				if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 16f == 15f)
-				{
-					Vector2 spawnPosition = target.Center + Vector2.UnitX * Main.rand.NextFloat(60f, 900f) * Main.rand.NextBool(2).ToDirectionInt();
-					int cloud = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<LightningCloud2>(), 0, 0f);
-					if (Main.projectile.IndexInRange(cloud))
-					{
-						Main.projectile[cloud].timeLeft = 10 + (110 - (int)attackTimer);
-						Main.projectile[cloud].netUpdate = true;
-					}
-				}
+            // Do the charge and release lightning everywhere.
+            else if (chargeState == 3f)
+            {
+                npc.velocity *= 0.99f;
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 16f == 15f)
+                {
+                    Vector2 spawnPosition = target.Center + Vector2.UnitX * Main.rand.NextFloat(60f, 900f) * Main.rand.NextBool(2).ToDirectionInt();
+                    int cloud = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<LightningCloud2>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(cloud))
+                    {
+                        Main.projectile[cloud].timeLeft = 10 + (110 - (int)attackTimer);
+                        Main.projectile[cloud].netUpdate = true;
+                    }
+                }
 
-				npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
-				npc.rotation = (npc.rotation * 7f + npc.velocity.X * 0.01f) / 8f;
-				if (attackTimer >= 60f)
-				{
-					float flyInertia = 6f;
-					float flySpeed = 25f;
-					if (!npc.WithinRange(target.Center, 315f))
-						npc.velocity = (npc.velocity * (flyInertia - 1f) + npc.SafeDirectionTo(target.Center) * flySpeed) / flyInertia;
-				}
+                npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
+                npc.rotation = (npc.rotation * 7f + npc.velocity.X * 0.01f) / 8f;
+                if (attackTimer >= 60f)
+                {
+                    float flyInertia = 6f;
+                    float flySpeed = 25f;
+                    if (!npc.WithinRange(target.Center, 315f))
+                        npc.velocity = (npc.velocity * (flyInertia - 1f) + npc.SafeDirectionTo(target.Center) * flySpeed) / flyInertia;
+                }
 
-				if (attackTimer >= 120f)
+                if (attackTimer >= 120f)
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
                     GoToNextAttackState(npc);
-				}
-			}
-		}
+                }
+            }
+        }
 
         #endregion
 

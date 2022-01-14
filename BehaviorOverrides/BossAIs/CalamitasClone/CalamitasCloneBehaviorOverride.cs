@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
@@ -91,6 +92,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Prepare to fade out and summon brothers.
             if (Main.netMode != NetmodeID.MultiplayerClient && transitionState == 0f && lifeRatio < Phase2LifeRatio)
             {
+                // Clear away projectiles.
+                int[] projectilesToDelete = new int[]
+                {
+                    ModContent.ProjectileType<AdjustingCinder>(),
+                    ModContent.ProjectileType<BrimstoneBomb>(),
+                    ModContent.ProjectileType<BrimstoneBurst>(),
+                    ModContent.ProjectileType<HomingBrimstoneBurst>(),
+                    ModContent.ProjectileType<BrimstoneGeyser>(),
+                    ModContent.ProjectileType<BrimstoneLightning>(),
+                    ModContent.ProjectileType<BrimstoneLightningTelegraph>(),
+                    ModContent.ProjectileType<BrimstoneMeteor>(),
+                    ModContent.ProjectileType<ExplodingBrimstoneFireball>(),
+                };
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if (projectilesToDelete.Contains(Main.projectile[i].type))
+                        Main.projectile[i].active = false;
+                }
+
                 transitionState = 1f;
                 brotherFadeoutTime = 1f;
                 attackTimer = 0f;
@@ -510,6 +530,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % lightningShootRate == lightningShootRate - 1f)
             {
                 Vector2 lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 350f + target.velocity.X * 42f, 40f);
+                if (Math.Abs(target.velocity.X) < 3f)
+                    lightningSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 150f, 40f);
+
                 Utilities.NewProjectileBetter(lightningSpawnPosition, Vector2.Zero, ModContent.ProjectileType<BrimstoneLightningTelegraph>(), 0, 0f);
             }
 

@@ -1,7 +1,9 @@
 using CalamityMod;
 using InfernumMode.BehaviorOverrides.BossAIs.Prime;
+using InfernumMode.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -21,12 +23,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             projectile.timeLeft = 180;
             projectile.extraUpdates = 1;
             projectile.scale = 0.15f;
+            projectile.hide = true;
             projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            projectile.scale += 0.06f;
+            projectile.scale += 0.049f;
             projectile.Opacity = Utils.InverseLerp(300f, 265f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 50f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
@@ -46,18 +49,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Lighting.AddLight(projectile.Center, Color.Red.ToVector3());
         }
 
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        {
+            ILEditingChanges.DrawCacheAdditiveLighting.Add(index);
+        }
+
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
-
             Texture2D texture = Main.projectileTexture[projectile.type];
             Color explosionColor = Color.Red * projectile.Opacity;
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < 2; i++)
                 spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
-
-            spriteBatch.ResetBlendState();
             return false;
         }
 

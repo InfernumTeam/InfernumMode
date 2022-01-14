@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             int fireDamage = shouldBeBuffed ? 380 : 160;
 
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center) * 15f;
+            Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center) * 18.5f;
             if (shouldBeBuffed)
                 shootVelocity *= 1.7f;
 

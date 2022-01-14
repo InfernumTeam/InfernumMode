@@ -273,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 attackCycleCount--;
                 hoverHorizontalOffset -= 70f;
-                initialFlameSpeed += 6f;
+                initialFlameSpeed += 2.8f;
                 flameAngularVariance *= 1.35f;
                 flameReleaseRate -= 2;
             }
@@ -692,12 +692,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         public static void DoBehavior_RisingBrimstoneFireBursts(NPC npc, Player target, bool shouldBeBuffed, ref float attackTimer)
         {
             int attackCycleCount = 2;
-            int hoverTime = 210;
+            int hoverTime = 90;
             float hoverHorizontalOffset = 485f;
             float hoverSpeed = 19f;
             float fireballSpeed = 13.5f;
             int fireballReleaseRate = 22;
-            int fireballReleaseTime = 360;
+            int fireballReleaseTime = 225;
 
             if (shouldBeBuffed)
             {

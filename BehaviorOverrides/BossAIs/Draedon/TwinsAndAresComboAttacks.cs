@@ -569,6 +569,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             }
                             else
                             {
+                                // Once the attack has gone on for half a second rotate the velocity 4 degrees every frame while rising upward.
                                 float adjustedTimer = generalAttackTimer - 50f;
                                 if (adjustedTimer > 30f)
                                     npc.velocity = npc.velocity.RotatedBy(MathHelper.TwoPi / 90f);

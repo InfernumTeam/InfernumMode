@@ -276,7 +276,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int chargeTime = 35;
             int contactDamage = 600;
             float hoverSpeed = 65f;
-            float chargeSpeed = 39f;
+            float chargeSpeed = 38f;
 
             if (ExoMechManagement.CurrentAresPhase >= 3)
             {
@@ -301,7 +301,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             float wrappedTime = attackTimer % (hoverTime + chargeTime);
 
-            if (wrappedTime < hoverTime - 15f)
+            if (wrappedTime < hoverTime - 15f || attackTimer >= (hoverTime + chargeTime) * chargeCount)
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 300f, -420f);
                 npc.Center = npc.Center.MoveTowards(hoverDestination, hoverTime * 0.3f);
@@ -335,7 +335,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.velocity *= 1.015f;
             }
 
-            if (attackTimer >= (hoverTime + chargeTime) * chargeCount + 20)
+            if (attackTimer >= (hoverTime + chargeTime) * chargeCount + 105f)
                 SelectNextAttack(npc);
         }
 

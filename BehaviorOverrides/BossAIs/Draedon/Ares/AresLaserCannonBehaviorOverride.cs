@@ -46,9 +46,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Define attack variables.
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
             int shootTime = 300;
-            int totalLasersPerBurst = 6;
+            int totalLasersPerBurst = 5;
             float aimPredictiveness = 25f;
-            float laserShootSpeed = 8f;
+            float laserShootSpeed = 7.5f;
             ref float attackTimer = ref npc.ai[0];
             ref float chargeDelay = ref npc.ai[1];
             ref float laserCounter = ref npc.ai[2];

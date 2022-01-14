@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             projectile.rotation += projectile.velocity.X * 0.02f;
             projectile.rotation += projectile.direction * 0.002f;
 
-            if (projectile.velocity.Length() > 0.5f)
+            if (projectile.velocity.Length() > 0.1f)
                 projectile.velocity *= 0.98f;
         }
 

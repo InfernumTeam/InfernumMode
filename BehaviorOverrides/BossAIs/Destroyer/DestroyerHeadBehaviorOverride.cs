@@ -259,7 +259,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int probeCount = 3;
+                    int probeCount = 2;
                     for (int i = 0; i < probeCount; i++)
                     {
                         int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);

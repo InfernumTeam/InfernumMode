@@ -649,10 +649,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
-            int laserShootDelay = 390;
+            int laserShootDelay = 300;
             float walkSpeed = MathHelper.Lerp(5f, 8.65f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
-            walkSpeed *= Utils.InverseLerp(laserShootDelay - 90f, 210f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
+            walkSpeed *= Utils.InverseLerp(laserShootDelay * 0.76f, laserShootDelay * 0.5f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
             if (BossRushEvent.BossRushActive)
                 walkSpeed *= 2.64f;
 
@@ -696,7 +696,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             }
 
             // Release slow spreads of lasers after the beams have been released.
-            if (attackTimer > laserShootDelay && attackTimer % 30f == 29f)
+            if (attackTimer > laserShootDelay && attackTimer % 25f == 24f && attackTimer < laserShootDelay + OrangeLaserbeam.LaserLifetime)
             {
                 Main.PlaySound(SoundID.Item33, npc.Center);
 
@@ -745,7 +745,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     npc.velocity.Y += 0.5f;
             }
 
-            if (attackTimer >= laserShootDelay + OrangeLaserbeam.LaserLifetime)
+            if (attackTimer >= laserShootDelay + OrangeLaserbeam.LaserLifetime + 75)
                 GotoNextAttackState(npc);
         }
         #endregion Custom Behaviors
@@ -759,11 +759,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             npc.ai[2]++;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
+            double jumpWeight = 1D + Utils.InverseLerp(640f, 1860f, npc.Center.Y - target.Center.Y, true) * 4f;
+            if (jumpWeight < 1D)
+                jumpWeight = 1D;
+
             AureusAttackType oldAttackState = (AureusAttackType)(int)npc.ai[0];
             AureusAttackType newAttackState;
-            WeightedRandom<AureusAttackType> attackSelector = new WeightedRandom<AureusAttackType>();
-            attackSelector.Add(AureusAttackType.WalkAndShootLasers, 1.5);
-            attackSelector.Add(AureusAttackType.LeapAtTarget, 1D + Utils.InverseLerp(640f, 1860f, npc.Center.Y - target.Center.Y) * 4f);
+            WeightedRandom<AureusAttackType> attackSelector = new WeightedRandom<AureusAttackType>(Main.rand);
+            attackSelector.Add(AureusAttackType.WalkAndShootLasers, 1.25);
+            attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight);
             attackSelector.Add(AureusAttackType.RocketBarrage);
 
             if (lifeRatio >= Phase3LifeRatio)

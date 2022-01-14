@@ -420,6 +420,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             int tentacleSpawnDelay = inPhase4 ? 45 : 60;
             int tentacleSummonTime = 45;
             bool canCreateTentacles = attackTimer >= tentacleSpawnDelay && attackTimer < tentacleSpawnDelay + tentacleSummonTime;
+            float tentacleAngle = Utils.InverseLerp(tentacleSpawnDelay, tentacleSpawnDelay + tentacleSummonTime, attackTimer, true) * MathHelper.TwoPi;
             ref float freeAreaAngle = ref npc.Infernum().ExtraAI[0];
             ref float freeAreaAngle2 = ref npc.Infernum().ExtraAI[1];
             ref float snapCount = ref npc.Infernum().ExtraAI[2];
@@ -435,6 +436,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                         freeAreaAngle = npc.AngleTo(target.Center) + Main.rand.NextFloatDirection() * 1.21f;
                     else
                         freeAreaAngle = (freeAreaAngle + Main.rand.NextFloat(2.28f)) % MathHelper.TwoPi;
+
+                    if (freeAreaAngle < 0f)
+                        freeAreaAngle += MathHelper.TwoPi;
                     tries++;
                 }
                 while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle.ToRotationVector2() * 200f, 1, 1) && tries < 100);
@@ -445,6 +449,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                     else
                         freeAreaAngle2 = (freeAreaAngle2 + Main.rand.NextFloat(2.28f)) % MathHelper.TwoPi;
 
+                    if (freeAreaAngle2 < 0f)
+                        freeAreaAngle2 += MathHelper.TwoPi;
                     tries++;
                 }
                 while (!Collision.CanHit(npc.Center, 1, 1, npc.Center + freeAreaAngle2.ToRotationVector2() * 200f, 1, 1) && tries < 100);
@@ -452,14 +458,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 npc.netUpdate = true;
             }
 
-            if (canCreateTentacles)
+            else if (canCreateTentacles)
             {
                 // Time is relative to when the tentacle was created and as such is synchronized.
                 float time = attackTimer - (tentacleSpawnDelay + tentacleSummonTime) - 85f;
                 if (inPhase4)
                     time += 30f;
 
-                float tentacleAngle = Utils.InverseLerp(tentacleSpawnDelay, tentacleSpawnDelay + tentacleSummonTime, attackTimer, true) * MathHelper.TwoPi;
                 if (Main.netMode != NetmodeID.MultiplayerClient && Math.Abs(tentacleAngle - freeAreaAngle) > MathHelper.Pi * 0.14f)
                 {
                     for (int i = 0; i < 2; i++)
@@ -479,7 +484,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 }
             }
 
-            if (attackTimer == tentacleSpawnDelay + 45f)
+            if (attackTimer < tentacleSpawnDelay + tentacleSummonTime + 115f && attackTimer > 25f && tentacleAngle > freeAreaAngle)
+            {
+                Vector2 dustSpawnOffset = (freeAreaAngle + Main.rand.NextFloatDirection() * 0.14f).ToRotationVector2() * Main.rand.NextFloat(140f);
+                Dust telegraphPuff = Dust.NewDustPerfect(npc.Center + dustSpawnOffset, 267);
+                telegraphPuff.velocity = dustSpawnOffset.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(4f);
+                telegraphPuff.color = Color.Lime;
+                telegraphPuff.scale = 1.2f;
+                telegraphPuff.noGravity = true;
+            }
+            if (attackTimer < tentacleSpawnDelay + tentacleSummonTime + 265f && attackTimer > 25f && tentacleAngle > freeAreaAngle2 && inPhase4)
+            {
+                Vector2 dustSpawnOffset = (freeAreaAngle2 + Main.rand.NextFloatDirection() * 0.14f).ToRotationVector2() * Main.rand.NextFloat(90f);
+                Dust telegraphPuff = Dust.NewDustPerfect(npc.Center + dustSpawnOffset, 267);
+                telegraphPuff.velocity = dustSpawnOffset.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(4f);
+                telegraphPuff.color = Color.HotPink;
+                telegraphPuff.scale = 1.2f;
+                telegraphPuff.noGravity = true;
+            }
+            if (attackTimer == tentacleSpawnDelay + tentacleSummonTime)
                 Main.PlaySound(SoundID.Item73, target.Center);
 
             if (attackTimer > tentacleSpawnDelay + tentacleSummonTime + 45f && !NPC.AnyNPCs(NPCID.PlanterasTentacle) && !NPC.AnyNPCs(ModContent.NPCType<PlanteraPinkTentacle>()))

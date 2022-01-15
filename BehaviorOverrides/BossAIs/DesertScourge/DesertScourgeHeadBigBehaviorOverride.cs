@@ -319,6 +319,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         float idealHorizontalSpeed = npc.SafeDirectionTo(target.Center).X * 12.5f;
                         npc.velocity.X = (npc.velocity.X * 14f + idealHorizontalSpeed) / 15f;
                     }
+                    
+                    // Roar as a telegraph.
+                    if (attackTimer == 85f)
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
 
                     // Slam downward.
                     if (attackTimer > 110f)

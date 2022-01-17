@@ -46,7 +46,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (aresAndTwins)
             {
                 WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
-                attackSelector.Add(ExoMechComboAttackType.AresTwins_PressureLaser);
+
+                // TODO - Replace this attack.
+                // attackSelector.Add(ExoMechComboAttackType.AresTwins_PressureLaser);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_DualLaserCharges);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_CircleAttack);
                 if (CurrentTwinsPhase != 4)

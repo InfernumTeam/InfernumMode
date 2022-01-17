@@ -23,6 +23,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void AI()
         {
+            if (projectile.ai[0] != 0f)
+            {
+                projectile.MaxUpdates = 8;
+                projectile.ai[0] = 0f;
+            }
+
             Lighting.AddLight(projectile.Center, Color.White.ToVector3() * 1.5f);
             projectile.frameCounter++;
             if (projectile.frameCounter % 8 == 7)

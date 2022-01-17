@@ -202,6 +202,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     electricity.velocity = (endOfCannon - electricity.position) * 0.04f;
                     electricity.scale = 1.25f;
                     electricity.noGravity = true;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lightningShootRate > lightningShootRate * 0.815f)
+                    {
+                        int explosion = Utilities.NewProjectileBetter(endOfCannon + npc.SafeDirectionTo(endOfCannon) * 120f, Vector2.Zero, ModContent.ProjectileType<TeslaExplosion>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(explosion))
+                            Main.projectile[explosion].ai[0] = 1f;
+                    }
                 }
 
                 // Release lightning rapidfire.
@@ -490,6 +497,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (attackTimer >= attackDelay && attackTimer % lightningShootRate == (int)(lightningShootRate * 0.45f))
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
 
+                // Release dust at the end of the cannon as a telegraph.
                 if (attackTimer >= attackDelay && attackTimer % lightningShootRate > lightningShootRate * 0.6f)
                 {
                     Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
@@ -497,6 +505,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     electricity.velocity = (endOfCannon - electricity.position) * 0.04f;
                     electricity.scale = 1.25f;
                     electricity.noGravity = true;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lightningShootRate > lightningShootRate * 0.815f)
+                    {
+                        int explosion = Utilities.NewProjectileBetter(endOfCannon + npc.SafeDirectionTo(endOfCannon) * 120f, Vector2.Zero, ModContent.ProjectileType<TeslaExplosion>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(explosion))
+                            Main.projectile[explosion].ai[0] = 1f;
+                    }
                 }
 
                 // Release lightning rapidfire.
@@ -617,6 +632,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (attackTimer >= attackDelay && attackTimer % lightningShootRate == (int)(lightningShootRate * 0.45f))
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
 
+                // Release dust at the end of the cannon as a telegraph.
                 if (attackTimer >= attackDelay && attackTimer % lightningShootRate > lightningShootRate * 0.6f)
                 {
                     Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
@@ -624,6 +640,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     electricity.velocity = (endOfCannon - electricity.position) * 0.04f;
                     electricity.scale = 1.25f;
                     electricity.noGravity = true;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lightningShootRate > lightningShootRate * 0.815f)
+                    {
+                        int explosion = Utilities.NewProjectileBetter(endOfCannon + npc.SafeDirectionTo(endOfCannon) * 120f, Vector2.Zero, ModContent.ProjectileType<TeslaExplosion>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(explosion))
+                            Main.projectile[explosion].ai[0] = 1f;
+                    }
                 }
 
                 // Release lightning rapidfire.
@@ -717,7 +740,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         // Spawns dust between the determined draw postions.
                         Vector2 prevPos = j == 1 ? blastArcSpawnStart : dustSpawnPositions[j - 1];
                         for (float k = 0; k < 1; k += 0.035f)
-						{
+                        {
                             Dust pulseLightning = Dust.NewDustPerfect(Vector2.Lerp(prevPos, dustSpawnPositions[j], k), 267, Vector2.Zero, 0, Color.Violet, 1.35f);
                             pulseLightning.noGravity = true;
                         }

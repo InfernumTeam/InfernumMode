@@ -13,6 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
+    /*
     public class AEWHeadBehaviorOverride : NPCBehaviorOverride
     {
         public enum AEWAttackType
@@ -471,4 +472,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             return false;
         }
     }
+    */
 }

@@ -154,7 +154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             npc.noGravity = false;
             npc.noTileCollide = false;
 
-            // Do no damage.
+            // Disable contact damage.
             npc.damage = 0;
 
             frameType = (int)AureusFrameType.SitAndRecharge;
@@ -171,7 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             npc.noGravity = false;
             npc.noTileCollide = false;
 
-            // Do no damage.
+            // Disable contact damage.
             npc.damage = 0;
 
             // Use less defense.
@@ -179,8 +179,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             frameType = (int)AureusFrameType.SitAndRecharge;
 
-            // Go to the next attack after 1.5 seconds, or if hit before then.
-            if (attackTimer > 150f)
+            // Go to the next attack after a brief period of time.
+            if (attackTimer > 60f)
                 GotoNextAttackState(npc);
         }
 
@@ -199,7 +199,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootRate = (int)MathHelper.Lerp(80f, 50f, 1f - lifeRatio);
-            float walkSpeed = MathHelper.Lerp(6.3f, 9.5f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(7f, 10.45f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
             if (BossRushEvent.BossRushActive)
@@ -228,12 +228,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             {
                 Main.PlaySound(SoundID.Item33, npc.Center);
 
-                int laserCount = 13;
+                int laserCount = 16;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(0.68f) * Main.rand.NextFloat(16f, 20f);
+                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(0.67f) * Main.rand.NextFloat(16f, 20f);
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 165, 0f);
                     }
 
@@ -242,39 +242,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 }
             }
 
-            // Check if tile collision ignoral is necessary.
-            int horizontalCheckArea = 80;
-            int verticalCheckArea = 20;
-            Vector2 checkPosition = new Vector2(npc.Center.X - horizontalCheckArea * 0.5f, npc.Bottom.Y - verticalCheckArea);
-            if (Collision.SolidCollision(checkPosition, horizontalCheckArea, verticalCheckArea))
-            {
-                if (npc.velocity.Y > 0f)
-                    npc.velocity.Y = 0f;
-
-                if (npc.velocity.Y > -0.2)
-                    npc.velocity.Y -= 0.025f;
-                else
-                    npc.velocity.Y -= 0.2f;
-
-                if (npc.velocity.Y < -4f)
-                    npc.velocity.Y = -4f;
-
-                // Walk upwards to reach the target if below them.
-                if (npc.Center.Y > target.Bottom.Y && npc.velocity.Y > -14f)
-                    npc.velocity.Y -= 0.15f;
-
-            }
-            else
-            {
-                if (npc.velocity.Y < 0f)
-                    npc.velocity.Y = 0f;
-
-                if (npc.velocity.Y < 0.1)
-                    npc.velocity.Y += 0.025f;
-                else
-                    npc.velocity.Y += 0.5f;
-            }
-
+            DoTileCollisionStuff(npc, target);
             if (attackTimer >= 540f)
                 GotoNextAttackState(npc);
         }
@@ -380,8 +348,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             }
                         }
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient && lifeRatio < 0.7f)
+                        // Create a shockwave.
+                        // In phase 2, create astral flames that rise upward.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
                             Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 200, 0f);
+                            if (lifeRatio < Phase2LifeRatio)
+                            {
+                                for (int i = 0; i < 6; i++)
+                                {
+                                    Vector2 crystalVelocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(12f, 18f);
+                                    Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralFlame>(), 165, 0f);
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -450,7 +430,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedByRandom(1.16f) * Main.rand.NextFloat(16f, 19f);
+                    Vector2 rocketShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f).RotatedByRandom(1.16f) * Main.rand.NextFloat(18f, 20.5f);
                     Utilities.NewProjectileBetter(npc.Center + rocketShootVelocity * 3f, rocketShootVelocity, ModContent.ProjectileType<AstralMissile>(), 165, 0f);
 
                     rocketShootTimer = 0f;
@@ -472,10 +452,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
+            ref float enrageCountdown = ref npc.Infernum().ExtraAI[0];
 
             int laserShootDelay = 390;
             float laserSpeed = 7.4f;
-            float walkSpeed = MathHelper.Lerp(5f, 8.65f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(8f, 12f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 
@@ -484,6 +465,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (BossRushEvent.BossRushActive)
                 laserSpeed *= 2.5f;
             laserSpeed += npc.Distance(target.Center) * 0.01f;
+
+            // Enrage if the player moves too far away.
+            if (!npc.WithinRange(target.Center, 1250f) && enrageCountdown <= 0f)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                enrageCountdown = 240f;
+                npc.netUpdate = true;
+            }
+
+            // Handle enrage interactions.
+            if (enrageCountdown > 0f)
+            {
+                laserSpeed *= 1.625f;
+                walkSpeed += 5f;
+                enrageCountdown--;
+            }
 
             if (shouldSlowDown)
             {
@@ -518,39 +515,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 }
             }
 
-            // Check if tile collision ignoral is necessary.
-            int horizontalCheckArea = 80;
-            int verticalCheckArea = 20;
-            Vector2 checkPosition = new Vector2(npc.Center.X - horizontalCheckArea * 0.5f, npc.Bottom.Y - verticalCheckArea);
-            if (Collision.SolidCollision(checkPosition, horizontalCheckArea, verticalCheckArea))
-            {
-                if (npc.velocity.Y > 0f)
-                    npc.velocity.Y = 0f;
-
-                if (npc.velocity.Y > -0.2)
-                    npc.velocity.Y -= 0.025f;
-                else
-                    npc.velocity.Y -= 0.2f;
-
-                if (npc.velocity.Y < -4f)
-                    npc.velocity.Y = -4f;
-
-                // Walk upwards to reach the target if below them.
-                if (npc.Center.Y > target.Bottom.Y && npc.velocity.Y > -14f)
-                    npc.velocity.Y -= 0.15f;
-
-            }
-            else
-            {
-                if (npc.velocity.Y < 0f)
-                    npc.velocity.Y = 0f;
-
-                if (npc.velocity.Y < 0.1)
-                    npc.velocity.Y += 0.025f;
-                else
-                    npc.velocity.Y += 0.5f;
-            }
-
+            DoTileCollisionStuff(npc, target);
             if (attackTimer >= laserShootDelay + 270f)
                 GotoNextAttackState(npc);
         }
@@ -650,7 +615,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootDelay = 300;
-            float walkSpeed = MathHelper.Lerp(5f, 8.65f, 1f - lifeRatio);
+            float walkSpeed = MathHelper.Lerp(8.5f, 13f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= Utils.InverseLerp(laserShootDelay * 0.76f, laserShootDelay * 0.5f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
             if (BossRushEvent.BossRushActive)
@@ -712,6 +677,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 }
             }
 
+            // Release a volley of lasers that gains more spread the longer the laser has been moving.
+            // This is done to prevent people from RoD-ing away to avoid the laserbeams.
+            if (attackTimer > laserShootDelay && attackTimer < laserShootDelay + OrangeLaserbeam.LaserLifetime)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float laserLifetimeCompletion = Utils.InverseLerp(laserShootDelay, laserShootDelay + OrangeLaserbeam.LaserLifetime, attackTimer, true);
+
+                    for (int i = 0; i < 1 + laserLifetimeCompletion * 2f; i++)
+                    {
+                        float laserRotation = MathHelper.Pi * laserLifetimeCompletion * OrangeLaserbeam.FullCircleRotationFactor;
+                        Vector2 laserShootVelocity = Vector2.UnitY.RotatedByRandom(laserRotation) * Main.rand.NextFloat(9f, 18f);
+                        Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), 180, 0f);
+                    }
+                }
+            }
+
+            DoTileCollisionStuff(npc, target);
+            if (attackTimer >= laserShootDelay + OrangeLaserbeam.LaserLifetime + 75)
+                GotoNextAttackState(npc);
+        }
+        #endregion Custom Behaviors
+
+        #region Misc AI Operations
+        public static void DoTileCollisionStuff(NPC npc, Player target)
+        {
             // Check if tile collision ignoral is necessary.
             int horizontalCheckArea = 80;
             int verticalCheckArea = 20;
@@ -744,13 +735,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 else
                     npc.velocity.Y += 0.5f;
             }
-
-            if (attackTimer >= laserShootDelay + OrangeLaserbeam.LaserLifetime + 75)
-                GotoNextAttackState(npc);
         }
-        #endregion Custom Behaviors
 
-        #region Misc AI Operations
         public static void GotoNextAttackState(NPC npc)
         {
             Player target = Main.player[npc.target];

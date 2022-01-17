@@ -53,8 +53,10 @@ namespace InfernumMode
             if (item.type == ModContent.ItemType<ResurrectionButterfly>())
                 item.damage = 44;
 
+            /*
             if (item.type == ModContent.ItemType<Skullmasher>())
                 item.damage = 737;
+            */
 
             if (item.type == ModContent.ItemType<FinalDawn>())
                 item.damage = 855;

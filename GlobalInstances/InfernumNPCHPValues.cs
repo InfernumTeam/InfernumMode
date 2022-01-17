@@ -75,7 +75,7 @@ namespace InfernumMode.GlobalInstances
             [ModContent.NPCType<SoulSeeker>()] = BossRushEvent.BossRushActive ? 24000 : 2100,
             [NPCID.Plantera] = BossRushEvent.BossRushActive ? 575576 : 110500,
             [ModContent.NPCType<Leviathan>()] = BossRushEvent.BossRushActive ? 1200000 : 103103,
-            [ModContent.NPCType<Siren>()] = BossRushEvent.BossRushActive ? 400000 : 39250,
+            [ModContent.NPCType<Siren>()] = BossRushEvent.BossRushActive ? 450000 : 58750,
             [ModContent.NPCType<AureusSpawn>()] = 25000,
             [ModContent.NPCType<PlaguebringerGoliath>()] = BossRushEvent.BossRushActive ? 666666 : 111776,
             [NPCID.CultistBoss] = BossRushEvent.BossRushActive ? 727272 : 56000,

@@ -280,11 +280,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             int singDelay = 90;
             int singClefFireRate = leviathanAlive ? 8 : 11;
             int singClefCount = leviathanAlive ? 25 : 15;
-            float clefShootSpeed = leviathanAlive ? 13f : 15.5f;
+            float clefShootSpeed = leviathanAlive ? 15f : 18f;
             if (enraged)
             {
                 singClefFireRate = 5;
-                clefShootSpeed = 17.67f;
+                clefShootSpeed = 20f;
             }
             if (BossRushEvent.BossRushActive)
             {
@@ -320,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             npc.rotation = npc.velocity.X * 0.02f;
             npc.spriteDirection = npc.direction;
 
-            float bubbleShootSpeed = 10f;
+            float bubbleShootSpeed = 14f;
             Vector2 destination = target.Center - Vector2.UnitY * 300f;
             destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 300f;
             DoDefaultMovement(npc, destination, Vector2.One * 6f, 0.14f);
@@ -347,7 +347,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             int hoverTime = 50;
             int spinTime = 250;
             int chargeTime = 40;
-            float chargeSpeed = MathHelper.Lerp(25f, 31f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(28f, 33.5f, 1f - lifeRatio);
             float totalSpins = 2f;
             if (enraged)
             {
@@ -359,7 +359,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             {
                 hoverTime = 30;
                 chargeTime = 20;
-                chargeSpeed = 37f;
+                chargeSpeed = 43.5f;
                 totalSpins = 2f;
             }
             if (BossRushEvent.BossRushActive)

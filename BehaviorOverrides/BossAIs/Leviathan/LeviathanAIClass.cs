@@ -295,7 +295,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 60f);
 
                     int vomitCount = 9;
-                    int vomitTime = anahitaFightingToo ? 65 : 75;
+                    int vomitTime = anahitaFightingToo ? 67 : 78;
                     if (BossRushEvent.BossRushActive)
                         vomitTime = 64;
                     if (!sirenAlive)
@@ -354,11 +354,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
                     if (attackTimer == redirectTime)
                     {
-                        float chargeSpeed = sirenAlive ? 23.5f : 37.5f;
+                        float chargeSpeed = sirenAlive ? 26f : 37.5f;
                         if (BossRushEvent.BossRushActive)
                             chargeSpeed *= 1.3f;
                         if (outOfOcean)
-                            chargeSpeed = 46f;
+                            chargeSpeed = 50f;
                         npc.velocity = Vector2.UnitX * npc.direction * chargeSpeed;
                         if (outOfOcean)
                             npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;

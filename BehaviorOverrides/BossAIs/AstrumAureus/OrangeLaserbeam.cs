@@ -13,7 +13,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
     public class OrangeLaserbeam : BaseLaserbeamProjectile
     {
         public int OwnerIndex => (int)projectile.ai[1];
-        public const int LaserLifetime = 110;
+        public const int LaserLifetime = 145;
+        public const float FullCircleRotationFactor = 0.84f;
         public override float Lifetime => LaserLifetime;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.Orange;
@@ -57,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             projectile.Center = Main.npc[GlobalNPCOverrides.AstrumAureus].Center - Vector2.UnitY * 12f;
             projectile.Opacity = 1f;
-            RotationalSpeed = MathHelper.Pi / 180f * 1.38f;
+            RotationalSpeed = MathHelper.Pi / Lifetime * FullCircleRotationFactor;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;

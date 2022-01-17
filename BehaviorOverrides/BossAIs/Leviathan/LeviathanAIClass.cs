@@ -308,14 +308,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         {
                             for (int i = 0; i < 3; i++)
                             {
-                                Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitX * npc.direction).RotatedBy(MathHelper.Lerp(-0.4f, 0.4f, i / 2f)) * 9f;
+                                Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitX * npc.direction).RotatedBy(MathHelper.Lerp(-0.4f, 0.4f, i / 2f)) * 10f;
                                 if (!sirenAlive)
                                     shootVelocity *= Main.rand.NextFloat(1.3f, 1.5f);
                                 if (BossRushEvent.BossRushActive)
                                     shootVelocity *= 2f;
 
                                 shootVelocity = shootVelocity.RotatedByRandom(0.21f);
-                                int meteor = Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanBomb>(), 150, 0f);
+                                int meteor = Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<LeviathanBomb>(), 175, 0f);
                                 if (Main.projectile.IndexInRange(meteor))
                                     Main.projectile[meteor].timeLeft += 180;
                             }
@@ -354,7 +354,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
                     if (attackTimer == redirectTime)
                     {
-                        float chargeSpeed = sirenAlive ? 26f : 37.5f;
+                        float chargeSpeed = sirenAlive ? 28f : 39f;
                         if (BossRushEvent.BossRushActive)
                             chargeSpeed *= 1.3f;
                         if (outOfOcean)

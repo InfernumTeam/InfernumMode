@@ -56,12 +56,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 18; i++)
             {
-                Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 9f;
+                Vector2 shootVelocity = (MathHelper.TwoPi * i / 18f).ToRotationVector2() * 13f;
                 if (BossRushEvent.BossRushActive)
                     shootVelocity *= 2f;
-                Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<FrostMist>(), 115, 0f);
+
+                Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<FrostMist>(), 170, 0f);
             }
         }
 

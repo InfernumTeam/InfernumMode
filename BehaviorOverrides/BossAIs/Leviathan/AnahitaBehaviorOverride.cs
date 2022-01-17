@@ -243,8 +243,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             npc.spriteDirection = npc.direction;
 
             int totalBubbles = enraged ? 15 : 8;
-            int bubbleShootRate = leviathanAlive ? 45 : 22;
-            float bubbleShootSpeed = 10f;
+            int bubbleShootRate = leviathanAlive ? 40 : 18;
+            float bubbleShootSpeed = 14.5f;
             if (enraged)
             {
                 bubbleShootRate = 13;
@@ -280,11 +280,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             int singDelay = 90;
             int singClefFireRate = leviathanAlive ? 8 : 11;
             int singClefCount = leviathanAlive ? 25 : 15;
-            float clefShootSpeed = leviathanAlive ? 15f : 18f;
+            float clefShootSpeed = leviathanAlive ? 15.5f : 19f;
             if (enraged)
             {
                 singClefFireRate = 5;
-                clefShootSpeed = 20f;
+                clefShootSpeed = 23f;
             }
             if (BossRushEvent.BossRushActive)
             {
@@ -345,14 +345,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             ref float atlantisCooldown = ref npc.Infernum().ExtraAI[0];
 
             int hoverTime = 50;
-            int spinTime = 250;
+            int spinTime = 210;
             int chargeTime = 40;
-            float chargeSpeed = MathHelper.Lerp(28f, 33.5f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(29f, 34.5f, 1f - lifeRatio);
             float totalSpins = 2f;
             if (enraged)
             {
                 hoverTime = 40;
-                spinTime = 300;
+                spinTime = 270;
                 chargeSpeed += 6f;
             }
             if (outOfOcean)
@@ -371,7 +371,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             }
 
             float spinAngularVelocity = MathHelper.TwoPi * totalSpins / spinTime;
-            bool shouldJustCharge = (attackTimer >= hoverTime + spinTime / 2 && attackTimer <= hoverTime + spinTime / 2 + chargeTime) || attackTimer <= hoverTime + 45;
+            bool shouldNotSpin = (attackTimer >= hoverTime + spinTime / 2 && attackTimer <= hoverTime + spinTime / 2 + chargeTime) || attackTimer <= hoverTime + 45;
 
             if (attackTimer < hoverTime)
             {
@@ -442,7 +442,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     }
                 }
 
-                if (!shouldJustCharge)
+                if (!shouldNotSpin)
                 {
                     npc.velocity = npc.velocity.RotatedBy(spinAngularVelocity * npc.direction);
                     npc.rotation += spinAngularVelocity * npc.direction;

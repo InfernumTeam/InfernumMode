@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         {
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            Lighting.AddLight(projectile.Center, 0.4f, 0.4f, 0.4f);
+            Lighting.AddLight(projectile.Center, 0.5f, 0.5f, 0.5f);
 
             Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
@@ -54,13 +54,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/AstrumAureus/AstralMissileGlowmask");
             Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
+            Utilities.DrawAfterimagesCentered(projectile, Color.White, ProjectileID.Sets.TrailingMode[projectile.type], 1, glowmask);
             return false;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 180);
-
-        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
 
         public override void Kill(int timeLeft)
         {

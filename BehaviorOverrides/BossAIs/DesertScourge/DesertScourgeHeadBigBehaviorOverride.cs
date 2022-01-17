@@ -63,8 +63,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
             Player target = Main.player[npc.target];
             bool outOfBiome = !target.ZoneDesert && !BossRushEvent.BossRushActive;
-            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 600f);
-            bool enraged = enrageTimer > 450f;
+            enrageTimer = MathHelper.Clamp(enrageTimer + outOfBiome.ToDirectionInt(), 0f, 720f);
+            bool enraged = enrageTimer > 660f;
 
             npc.defense = npc.defDefense;
             npc.Calamity().CurrentlyEnraged = outOfBiome;

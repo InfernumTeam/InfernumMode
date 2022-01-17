@@ -159,6 +159,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += WoFLavaColorChange2;
             IL.Terraria.Main.DoDraw += DrawSignusBlack;
             On.Terraria.Player.KillMe += RemoveTheDamnCancerousDoGInstakill;
+            On.Terraria.Player.UpdateBiomes += MakeDesertRequirementsMoreLenient;
             ModifyPreAINPC += NPCPreAIChange;
             ModifySetDefaultsNPC += NPCSetDefaultsChange;
             ModifyFindFrameNPC += NPCFindFrameChange;
@@ -187,6 +188,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw -= WoFLavaColorChange2;
             IL.Terraria.Main.DoDraw -= DrawSignusBlack;
             On.Terraria.Player.KillMe -= RemoveTheDamnCancerousDoGInstakill;
+            On.Terraria.Player.UpdateBiomes -= MakeDesertRequirementsMoreLenient;
             ModifyPreAINPC -= NPCPreAIChange;
             ModifySetDefaultsNPC -= NPCSetDefaultsChange;
             ModifyFindFrameNPC -= NPCFindFrameChange;
@@ -214,6 +216,12 @@ namespace InfernumMode.ILEditingStuff
                 return;
 
             orig(self, damageSource, dmg, hitDirection, pvp);
+        }
+
+        internal static void MakeDesertRequirementsMoreLenient(On.Terraria.Player.orig_UpdateBiomes orig, Player self)
+        {
+            orig(self);
+            self.ZoneDesert = Main.sandTiles > 300;
         }
 
         internal static int RemoveCultistGore(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)

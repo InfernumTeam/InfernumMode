@@ -303,53 +303,6 @@ namespace InfernumMode.GlobalInstances
                     netMessage.Send();
                 }
             }
-
-            // Drop challenge drops.
-            if (!CalamityWorld.malice)
-            {
-                if (ChallengeDropHandling.ChallengeDropTable.TryGetValue(npc.type, out int[] loot))
-                {
-                    if (npc.type == NPCID.Spazmatism)
-                    {
-                        if (!NPC.AnyNPCs(NPCID.Retinazer))
-                        {
-                            for (int i = 0; i < loot.Length; i++)
-                                DropHelper.DropItem(npc, loot[i]);
-                        }
-                        return;
-                    }
-                    if (npc.type == NPCID.Retinazer)
-                    {
-                        if (!NPC.AnyNPCs(NPCID.Spazmatism))
-                        {
-                            for (int i = 0; i < loot.Length; i++)
-                                DropHelper.DropItem(npc, loot[i]);
-                        }
-                        return;
-                    }
-                    if (npc.type == ModContent.NPCType<Siren>())
-                    {
-                        if (!NPC.AnyNPCs(ModContent.NPCType<Leviathan>()))
-                        {
-                            for (int i = 0; i < loot.Length; i++)
-                                DropHelper.DropItem(npc, loot[i]);
-                        }
-                        return;
-                    }
-                    if (npc.type == ModContent.NPCType<Leviathan>())
-                    {
-                        if (!NPC.AnyNPCs(ModContent.NPCType<Siren>()))
-                        {
-                            for (int i = 0; i < loot.Length; i++)
-                                DropHelper.DropItem(npc, loot[i]);
-                        }
-                        return;
-                    }
-
-                    for (int i = 0; i < loot.Length; i++)
-                        DropHelper.DropItem(npc, loot[i]);
-                }
-            }
         }
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)

@@ -631,6 +631,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             if (initializedFlag == 0f)
             {
                 npc.alpha = 255;
+                npc.Center = target.Center - Vector2.UnitY * 420f;
                 initializedFlag = 1f;
             }
 

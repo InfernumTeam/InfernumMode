@@ -118,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             int totalFireballsPerBurst = (int)(TotalSplitsToPerform - splitCounter + 1f);
             float flySpeed = enraged ? 11f : 8f;
             float turnSpeedFactor = enraged ? 1.7f : 1f;
-            flySpeed *= MathHelper.Lerp(1f, 1.425f, splitCounter / TotalSplitsToPerform);
+            flySpeed *= MathHelper.Lerp(1f, 1.35f, splitCounter / TotalSplitsToPerform);
             if (splitCounter == 0f)
             {
                 flySpeed *= 1.15f;
@@ -131,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             // Periodically release fireballs.
             int shootRate = splitCounter >= TotalSplitsToPerform - 1f ? 92 : 120;
             if (splitCounter == TotalSplitsToPerform)
-                shootRate += 12;
+                shootRate += 18;
 
             if (BossRushEvent.BossRushActive)
                 shootRate = 38;

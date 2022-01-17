@@ -26,7 +26,7 @@ namespace InfernumMode.Items
             item.consumable = false;
         }
 
-        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<GiantClam>())/* && player.Calamity().ZoneSunkenSea*/;
+        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(NPCID.SkeletronHead) && !Main.dayTime;
 
         public override void AddRecipes()
         {

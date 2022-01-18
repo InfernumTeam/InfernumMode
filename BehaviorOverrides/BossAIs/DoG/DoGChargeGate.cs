@@ -79,8 +79,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 spriteBatch.EnterShaderRegion();
 
                 GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);
-                GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Cyan);
-                GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Fuchsia);
+                GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(new Color(0.2f, 1f, 1f, 0f));
+                GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(new Color(1f, 0.2f, 1f, 0f));
                 GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
                 spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin2, 3.5f, SpriteEffects.None, 0f);

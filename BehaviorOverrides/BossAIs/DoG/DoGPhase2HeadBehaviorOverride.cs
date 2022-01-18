@@ -15,7 +15,6 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-    // TODO - Refactor this AI. It really needs it.
     public static class DoGPhase2HeadBehaviorOverride
     {
         public enum SpecialAttackType
@@ -32,10 +31,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ApproachAheadSegmentOpacity
         }
 
+        public const int PassiveMovementTimeP2 = 360;
+        public const int AggressiveMovementTimeP2 = 720;
+
         #region AI
-        public static bool Phase2AI(NPC npc, ref float portalIndex, ref float segmentFadeType)
+        public static bool Phase2AI(NPC npc, float phaseCycleTimer, ref float portalIndex, ref float segmentFadeType)
         {
-            npc.Calamity().CanHaveBossHealthBar = true;
             ref float specialAttackState = ref npc.Infernum().ExtraAI[14];
             ref float specialAttackTimer = ref npc.Infernum().ExtraAI[15];
             ref float nearDeathFlag = ref npc.Infernum().ExtraAI[16];
@@ -236,10 +237,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (sentinelAttackTimer >= totalSentinelAttacks * 900f)
                 sentinelAttackTimer = 0f;
 
-            // TODO - Improve these.
-            if (!nearDeath)
-                DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
-
             // Light
             Lighting.AddLight((int)((npc.position.X + npc.width / 2) / 16f), (int)((npc.position.Y + npc.height / 2) / 16f), 0.2f, 0.05f, 0.2f);
 
@@ -271,11 +268,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.active = false;
 
             // Chomping after attempting to eat the player.
-            bool chomping = npc.Infernum().ExtraAI[14] == 0f && DoChomp(npc, target, ref chompTime, ref jawRotation);
+            bool chomping = npc.Infernum().ExtraAI[14] == 0f && DoChomp(npc, ref chompTime, ref jawRotation);
 
             // Despawn if no valid target exists.
             if (target.dead || !target.active)
                 Despawn(npc);
+            else if (phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) < PassiveMovementTimeP2 && !nearDeath)
+            {
+                DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
+                DoPassiveFlyMovement(npc, ref jawRotation, ref chompTime);
+            }
             else
                 DoAggressiveFlyMovement(npc, target, chomping, ref jawRotation, ref chompTime, ref time, ref flyAcceleration);
 
@@ -309,7 +311,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public static void DoSentinelAttacks(NPC npc, Player target, ref float sentinelAttackTimer, ref float signusAttackState)
         {
             // Storm Weaver Effect (Lightning Storm).
-            if (sentinelAttackTimer > 0f && sentinelAttackTimer <= 900f && npc.alpha <= 0)
+            int attackTime = 450;
+            if (sentinelAttackTimer > 0f && sentinelAttackTimer <= attackTime && npc.alpha <= 24)
             {
                 if (sentinelAttackTimer % 120f == 0f)
                 {
@@ -331,7 +334,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             // Ceaseless Void Effect (Chaser Portal).
-            if (sentinelAttackTimer > 900f && sentinelAttackTimer <= 900f * 2f && npc.alpha <= 0)
+            if (sentinelAttackTimer > attackTime && sentinelAttackTimer <= attackTime * 2f && npc.alpha <= 24)
             {
                 if (sentinelAttackTimer % 360f == 0f)
                 {
@@ -343,21 +346,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         ModContent.ProjectileType<DoGBeamPortalN>(),
                         0, 0f);
                 }
-                if (sentinelAttackTimer == 900f * 2f - 1f)
+                if (sentinelAttackTimer == attackTime * 2f - 1f)
                     signusAttackState = Main.rand.Next(2);
             }
 
             // Signus Effect (Essence Cleave).
-            if (sentinelAttackTimer > 900f * 2f && sentinelAttackTimer <= 900f * 3f && npc.alpha <= 0)
+            if (sentinelAttackTimer > attackTime * 2f && sentinelAttackTimer <= attackTime * 3f && npc.alpha <= 24)
             {
-                float wrappedAttackTimer = sentinelAttackTimer % 900f;
+                float wrappedAttackTimer = sentinelAttackTimer % attackTime;
                 if (wrappedAttackTimer % 90f == 0f)
                 {
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < 12; i++)
                     {
                         int cleave = Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<EssenceCleave>(), 0, 0f);
                         if (Main.projectile.IndexInRange(cleave))
-                            Main.projectile[cleave].ai[0] = MathHelper.TwoPi * i / 8f;
+                            Main.projectile[cleave].ai[0] = MathHelper.TwoPi * i / 12f;
                     }
                 }
 
@@ -471,7 +474,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        public static bool DoChomp(NPC npc, Player target, ref float chompTime, ref float jawRotation)
+        public static bool DoChomp(NPC npc, ref float chompTime, ref float jawRotation)
         {
             bool chomping = chompTime > 0f;
             float idealChompAngle = MathHelper.ToRadians(-18f);
@@ -497,6 +500,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
             }
             return chomping;
+        }
+
+        public static void DoPassiveFlyMovement(NPC npc, ref float jawRotation, ref float chompTime)
+        {
+            chompTime = 0f;
+            jawRotation = jawRotation.AngleTowards(0f, 0.08f);
+
+            // Move towards the target.
+            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 180f;
+            if (!npc.WithinRange(destination, 250f))
+            {
+                float flySpeed = MathHelper.Lerp(27f, 34f, 1f - npc.life / (float)npc.lifeMax);
+                Vector2 idealVelocity = npc.SafeDirectionTo(destination) * flySpeed;
+                npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f).RotateTowards(idealVelocity.ToRotation(), 0.032f);
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
+            }
         }
 
         public static void DoAggressiveFlyMovement(NPC npc, Player target, bool chomping, ref float jawRotation, ref float chompTime, ref float time, ref float flyAcceleration)

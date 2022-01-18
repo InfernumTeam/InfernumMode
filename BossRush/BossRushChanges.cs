@@ -40,7 +40,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Crabulon;
 using InfernumMode.BehaviorOverrides.BossAIs.Destroyer;
 using InfernumMode.BehaviorOverrides.BossAIs.DukeFishron;
 using InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu;
-using InfernumMode.BehaviorOverrides.BossAIs.Guardians;
+using InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;

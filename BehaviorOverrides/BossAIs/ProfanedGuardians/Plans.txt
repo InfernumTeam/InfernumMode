@@ -1,0 +1,33 @@
+First Phase
+
+The second begins when only the attacker guardian remains
+
+Healer:
+
+- Does not do direct contact damage
+- Crystal gleams and 6 beams appear from it in an even spread and home in on targets. When a beam hits a player it
+disspiates and all guardians are given a high temporary DR boost
+- Fires crystal shards which home and accelerate
+
+Defender:
+
+- Does not do direct contact damage
+- Attempts to hover near the most vulnerable guardian, acting as a meat shield
+Works with the healer at times to create blasts of magically charged rocks
+
+Attacker:
+- Charges from the side over and over while releasing profaned spears
+- Vulnerable until reaching 75%
+
+Second Phase
+- The attacker guardian charges energy and obtains ARMS
+- Cycles through 3 attacks. Their intensity increases significantly from 75% to 25%. Once below 25% a new attack appears
+
+Attacks:
+- The attacker guardian makes its arms move inward and temporarily disappear before doing a spin charge while releasing
+fire
+- Teleports near the player in a flash, sits in place for a moment, and releases a barrage of flaming spears. This is
+initially telegraphed with a specific sound
+- Hovers to the top left/right of the player and creates barrages of light from the fingers of the arm which is closest
+to the target
+- Rapidly punches the player with the arms

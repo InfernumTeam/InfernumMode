@@ -2,7 +2,7 @@
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
-using InfernumMode.BehaviorOverrides.BossAIs.Guardians;
+using InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

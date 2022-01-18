@@ -21,6 +21,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         private static readonly FieldInfo invincibilityTimeField = typeof(DevourerofGodsBody).GetField("invinceTime", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo bodyPhase2StartedField = typeof(DevourerofGodsBody).GetField("phase2Started", BindingFlags.Instance | BindingFlags.NonPublic);
         private static readonly FieldInfo tailPhase2StartedField = typeof(DevourerofGodsTail).GetField("phase2Started", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static readonly FieldInfo bodyPhase2StartedField2 = typeof(DevourerofGodsBody).GetField("Phase2Started", BindingFlags.Instance | BindingFlags.NonPublic);
+        private static readonly FieldInfo tailPhase2StartedField2 = typeof(DevourerofGodsTail).GetField("Phase2Started", BindingFlags.Instance | BindingFlags.NonPublic);
 
         public static void DoGSegmentAI(NPC npc)
         {
@@ -50,14 +52,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     npc.width = 120;
                     npc.height = 120;
                     npc.frame = new Rectangle(0, 0, 142, 126);
-                    bodyPhase2StartedField.SetValue(npc.modNPC, true);
+                    bodyPhase2StartedField?.SetValue(npc.modNPC, true);
+                    bodyPhase2StartedField2?.SetValue(npc.modNPC, true);
                 }
                 else
                 {
                     npc.width = 100;
                     npc.height = 100;
                     npc.frame = new Rectangle(0, 0, 106, 200);
-                    tailPhase2StartedField.SetValue(npc.modNPC, true);
+                    tailPhase2StartedField?.SetValue(npc.modNPC, true);
+                    tailPhase2StartedField2?.SetValue(npc.modNPC, true);
                 }
             }
             npc.Infernum().ExtraAI[33] = head.Infernum().ExtraAI[33];

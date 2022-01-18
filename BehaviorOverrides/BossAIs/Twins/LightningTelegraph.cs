@@ -6,7 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Guardians
+namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class LightningTelegraph : BaseLaserbeamProjectile
     {

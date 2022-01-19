@@ -4,6 +4,7 @@ using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -16,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             Phase1Charges,
             Phase2Transition,
-            FireCast,
+            SpinCharge,
             RayZap
         }
 
@@ -66,7 +67,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float shouldHandsBeInvisibleFlag = ref npc.localAI[2];
 
+            shouldHandsBeInvisibleFlag = 0f;
             switch ((AttackGuardianAttackState)attackState)
             {
                 case AttackGuardianAttackState.Phase1Charges:
@@ -74,6 +77,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     break;
                 case AttackGuardianAttackState.Phase2Transition:
                     DoBehavior_Phase2Transition(npc, target, ref attackTimer);
+                    break;
+                case AttackGuardianAttackState.SpinCharge:
+                    DoBehavior_SpinCharge(npc, target, ref attackTimer, ref shouldHandsBeInvisibleFlag);
                     break;
             }
             attackTimer++;
@@ -154,7 +160,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         }
 
         public static void DoBehavior_Phase2Transition(NPC npc, Player target, ref float attackTimer)
-		{
+        {
             float phase2TransitionTime = 180f;
             if (attackTimer < phase2TransitionTime)
             {
@@ -177,9 +183,127 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
             }
 
-            npc.ai[0] = (int)AttackGuardianAttackState.FireCast;
+            npc.ai[0] = (int)AttackGuardianAttackState.SpinCharge;
             attackTimer = 0f;
             npc.netUpdate = true;
+        }
+
+        public static void DoBehavior_SpinCharge(NPC npc, Player target, ref float attackTimer, ref float shouldHandsBeInvisibleFlag)
+        {
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+            ref float arcDirection = ref npc.ai[2];
+            shouldHandsBeInvisibleFlag = (attackTimer > 45f).ToInt();
+
+            // Fade out.
+            if (attackTimer <= 30f)
+                npc.velocity *= 0.96f;
+
+            // Reel back.
+            if (attackTimer == 30f)
+            {
+                npc.Center = target.Center + (MathHelper.PiOver2 * Main.rand.Next(4)).ToRotationVector2() * 600f;
+                npc.velocity = -npc.SafeDirectionTo(target.Center);
+                npc.rotation = npc.AngleTo(target.Center);
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                if (npc.spriteDirection == -1)
+                    npc.rotation += MathHelper.Pi;
+
+                npc.netUpdate = true;
+            }
+
+            // Move back and re-appear.
+            if (attackTimer > 30f && attackTimer < 75f)
+            {
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(1f, 6f, Utils.InverseLerp(30f, 75, attackTimer, true));
+                npc.alpha = Utils.Clamp(npc.alpha - 15, 0, 255);
+            }
+
+            // Charge and fire a spear.
+            if (attackTimer == 75f)
+            {
+                arcDirection = (Math.Cos(npc.AngleTo(target.Center)) > 0).ToDirectionInt();
+                npc.velocity = npc.SafeDirectionTo(target.Center) * 24f;
+                if (BossRushEvent.BossRushActive)
+                    npc.velocity *= 1.5f;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 spawnPosition = npc.Center - npc.velocity.SafeNormalize(Vector2.Zero) * 40f;
+                    Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.Zero) * 40f, ModContent.ProjectileType<ProfanedSpear>(), 210, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, npc.velocity.SafeNormalize(Vector2.Zero) * 47f, ModContent.ProjectileType<ProfanedSpear>(), 200, 0f);
+                }
+
+                npc.netUpdate = true;
+            }
+
+            // Arc around a bit.
+            if (attackTimer >= 75f && attackTimer < 150f)
+            {
+                npc.velocity = npc.velocity.RotatedBy(arcDirection * MathHelper.TwoPi / 75f);
+
+                if (!npc.WithinRange(target.Center, 180f))
+                    npc.Center += npc.SafeDirectionTo(target.Center) * (12f + target.velocity.Length() * 0.15f);
+
+                npc.rotation = npc.velocity.ToRotation();
+                if (npc.spriteDirection == -1)
+                    npc.rotation += MathHelper.Pi;
+
+                int lightReleaseTime = 24;
+                int spearReleaseTime = -1;
+                if (lifeRatio < 0.65f)
+                    lightReleaseTime -= 4;
+                if (lifeRatio < 0.45f)
+                {
+                    lightReleaseTime -= 4;
+                    spearReleaseTime = 50;
+                }
+                if (lifeRatio < 0.25f)
+                    lightReleaseTime -= 5;
+
+                // Release crystal lights when spinning.
+                if (attackTimer % lightReleaseTime == 0)
+                {
+                    Main.PlaySound(SoundID.Item101, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.PiOver2 * Main.rand.NextFloatDirection()) * 3f;
+                        int shot = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 160, 0f);
+                        Main.projectile[shot].ai[1] = Main.rand.NextFloat();
+                    }
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && spearReleaseTime >= 1f && attackTimer % spearReleaseTime == 0f)
+                {
+                    for (int i = 0; i < 18; i++)
+                    {
+                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 18f) * 19f;
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 170, 0f);
+                    }
+                }
+            }
+
+            // Slow down and fade out again.
+            if (attackTimer >= 150f)
+            {
+                npc.velocity *= 0.94f;
+                npc.alpha = Utils.Clamp(npc.alpha + 30, 0, 255);
+            }
+
+            // Prepare for the next attack.
+            if (attackTimer >= 180f)
+            {
+                attackTimer = 0f;
+                npc.Center = target.Center - Vector2.UnitY * 400f;
+
+                npc.ai[0] = (int)AttackGuardianAttackState.SpinCharge;
+                arcDirection = 0f;
+
+                npc.alpha = 0;
+                npc.rotation = 0f;
+                npc.velocity = Vector2.Zero;
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                npc.netUpdate = true;
+            }
         }
     }
 }

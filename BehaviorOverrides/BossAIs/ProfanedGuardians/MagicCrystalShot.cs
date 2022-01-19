@@ -61,27 +61,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             {
                 Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
                 Vector2 idealVelocity = projectile.SafeDirectionTo(target.Center) * 21f;
-
-                if (projectile.Hitbox.Intersects(Target.Hitbox))
-                {
-                    if (!Main.dedServ)
-                    {
-                        for (int i = 0; i < 16; i++)
-                        {
-                            Dust light = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(16f, 16f), 261);
-                            light.velocity = Main.rand.NextVector2Circular(8f, 8f);
-                            light.scale = Main.rand.NextFloat(0.9f, 1.4f);
-                            light.color = CalamityUtils.MulticolorLerp((projectile.ai[1] + Main.rand.NextFloat(-0.15f, 0.15f)) % 0.999f, ColorSet);
-                            light.noGravity = true;
-                        }
-                    }
-
-                    Target.HealEffect((int)HealAmount);
-                    Target.life = Utils.Clamp(Target.life + (int)HealAmount, 0, Target.lifeMax);
-
-                    projectile.Kill();
-                }
-
                 projectile.velocity = Vector2.SmoothStep(projectile.velocity, idealVelocity, MathHelper.Lerp(0.07f, 0.15f, Utils.InverseLerp(140f, 30f, projectile.timeLeft, true)));
             }
 

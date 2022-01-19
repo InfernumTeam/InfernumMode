@@ -60,17 +60,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
             }
 
-            if (ShouldBeInvisible)
-                npc.alpha = Utils.Clamp(npc.alpha + 40, 0, 255);
-            else
-                npc.alpha = Utils.Clamp(npc.alpha - 12, 0, 255);
+            // Fade in and out as necessary.
+            npc.alpha = Utils.Clamp(npc.alpha + (ShouldBeInvisible ? 40 : -12), 0, 255);
 
             Vector2 destination = Vector2.Zero;
             npc.target = Main.npc[CalamityGlobalNPC.doughnutBoss].target;
             npc.rotation = AttackerGuardian.AngleTo(npc.Center);
 
             UsingPointerFinger = false;
-            destination = AttackerGuardian.Center + new Vector2(110f * HandSide, -120f + 30f * (float)Math.Sin(AttackTime / 16f + HandSide * 2.1f));
+            destination = AttackerGuardian.Center + new Vector2(HandSide * 110f, -120f + (float)Math.Sin(AttackTime / 16f + HandSide * 2.1f) * 30f);
 
             FingerOutwardness = 34f;
             FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(9f), 0.25f);

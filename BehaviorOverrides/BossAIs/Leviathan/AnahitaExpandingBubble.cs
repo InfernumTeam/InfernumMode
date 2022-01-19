@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 if (BossRushEvent.BossRushActive)
                     shootVelocity *= 2f;
 
-                Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<FrostMist>(), 170, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<FrostMist>(), 160, 0f);
             }
         }
 

@@ -74,6 +74,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float enrageCountdown = ref npc.ai[3];
+            ref float nextAttackType = ref npc.Infernum().ExtraAI[5];
+            ref float onlyDoOneJump = ref npc.Infernum().ExtraAI[6];
             ref float frameType = ref npc.localAI[0];
 
             // Reset things every frame.
@@ -91,6 +93,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Handle enrage interactions.
             if (enraged)
                 npc.Calamity().CurrentlyEnraged = true;
+            if (enrageCountdown > 0f)
+                enrageCountdown--;
 
             // Despawn if necessary.
             npc.timeLeft = 3600;
@@ -109,13 +113,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     DoAttack_WalkAndShootLasers(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType);
                     break;
                 case AureusAttackType.LeapAtTarget:
-                    DoAttack_LeapAtTarget(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType);
+                    DoAttack_LeapAtTarget(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType, ref onlyDoOneJump);
                     break;
                 case AureusAttackType.RocketBarrage:
                     DoAttack_RocketBarrage(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType);
                     break;
                 case AureusAttackType.AstralLaserBursts:
-                    DoAttack_AstralLaserBursts(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType, ref enrageCountdown);
+                    DoAttack_AstralLaserBursts(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType, ref enrageCountdown, ref nextAttackType, ref onlyDoOneJump);
                     break;
                 case AureusAttackType.CreateAureusSpawnRing:
                     DoAttack_CreateAureusSpawnRing(npc, lifeRatio, ref attackTimer, ref frameType);
@@ -170,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             // Go to the next attack after 1.5 seconds, or if hit before then.
             if (attackTimer > 90f || npc.justHit)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_Recharge(NPC npc, float attackTimer, ref float frameType)
@@ -190,7 +194,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             // Go to the next attack after a brief period of time.
             if (attackTimer > 60f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_WalkAndShootLasers(NPC npc, Player target, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType)
@@ -262,10 +266,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             DoTileCollisionStuff(npc, target);
             if (attackTimer >= 540f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
-        public static void DoAttack_LeapAtTarget(NPC npc, Player target, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType)
+        public static void DoAttack_LeapAtTarget(NPC npc, Player target, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType, ref float onlyDoOneJump)
         {
             // Reset tile collision.
             npc.noTileCollide = false;
@@ -331,7 +335,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                 // Attempt to stomp on the target.
                 case 1:
-                    if (npc.velocity.Y == 0f)
+                    if (npc.velocity.Y == 0f && attackTimer > 30f)
                     {
                         frameType = (int)AureusFrameType.Stomp;
 
@@ -342,12 +346,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         jumpIntensity = 0f;
 
                         // Determine whether the attack should be repeated.
+                        int stompCount = onlyDoOneJump == 1f ? 4 : 1;
                         stompCounter++;
-                        if (stompCounter >= 4f)
+                        if (stompCounter >= stompCount)
                         {
                             npc.noTileCollide = false;
                             npc.noGravity = false;
-                            GotoNextAttackState(npc);
+                            onlyDoOneJump = 0f;
+                            SelectNextAttack(npc);
                         }
                         else
                         {
@@ -474,10 +480,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             }
 
             if (attackTimer >= 270f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
-        public static void DoAttack_AstralLaserBursts(NPC npc, Player target, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType, ref float enrageCountdown)
+        public static void DoAttack_AstralLaserBursts(NPC npc, Player target, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType, ref float enrageCountdown, ref float nextAttack, ref float onlyDoOneJump)
         {
             // Adjust directioning.
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -501,10 +507,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             laserSpeed += npc.Distance(target.Center) * 0.01f;
 
             // Enrage if the player moves too far away.
-            if (!npc.WithinRange(target.Center, 1250f) && enrageCountdown <= 0f)
+            if (!npc.WithinRange(target.Center, 1250f) && enrageCountdown <= 0f && attackTimer > laserShootDelay)
             {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
-                enrageCountdown = 480f;
+                enrageCountdown = 360f;
                 npc.netUpdate = true;
             }
 
@@ -513,6 +519,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             {
                 laserSpeed *= 1.65f;
                 walkSpeed += 5f;
+            }
+
+            // Jump to get to the target if far.
+            if (attackTimer < laserShootDelay && !npc.WithinRange(target.Center, 1350f))
+            {
+                nextAttack = (int)AureusAttackType.LeapAtTarget;
+                onlyDoOneJump = 1f;
+                SelectNextAttack(npc);
+                return;
             }
 
             if (shouldSlowDown)
@@ -550,7 +565,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             DoTileCollisionStuff(npc, target);
             if (attackTimer >= laserShootDelay + 270f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_CreateAureusSpawnRing(NPC npc, float lifeRatio, ref float attackTimer, ref float frameType)
@@ -580,14 +595,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             // After 30 frames after the above stuff go to the next attack.
             if (attackTimer >= 30f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_CelestialRain(NPC npc, Player target, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType)
         {
             frameType = (int)AureusFrameType.Idle;
 
-            int cometShootRate = lifeRatio < Phase3LifeRatio ? 3 : 6;
+            int cometShootRate = lifeRatio < Phase3LifeRatio ? 4 : 7;
             ref float rainAngle = ref npc.Infernum().ExtraAI[0];
 
             // Slow down horziontally.
@@ -624,7 +639,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cometShootRate == cometShootRate - 1f && attackTimer > 120f)
             {
-                int cometDamage = 170;
+                int cometDamage = 160;
                 Vector2 cometSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-1050, 1050f), -780f);
                 Vector2 shootDirection = Vector2.UnitY.RotatedBy(rainAngle);
                 Vector2 shootVelocity = shootDirection * 14.5f;
@@ -639,7 +654,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             }
 
             if (attackTimer > 520f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_AstralDrillLaser(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float frameType)
@@ -653,7 +668,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             float horizontalDistanceFromTarget = MathHelper.Distance(target.Center.X, npc.Center.X);
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
-            int laserShootDelay = 300;
+            int laserShootDelay = 210;
             float walkSpeed = MathHelper.Lerp(8.5f, 13f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= Utils.InverseLerp(laserShootDelay * 0.76f, laserShootDelay * 0.5f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
@@ -735,7 +750,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             DoTileCollisionStuff(npc, target);
             if (attackTimer >= laserShootDelay + OrangeLaserbeam.LaserLifetime + 75)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
         #endregion Custom Behaviors
 
@@ -746,7 +761,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             int horizontalCheckArea = 80;
             int verticalCheckArea = 20;
             Vector2 checkPosition = new Vector2(npc.Center.X - horizontalCheckArea * 0.5f, npc.Bottom.Y - verticalCheckArea);
-            if (Collision.SolidCollision(checkPosition, horizontalCheckArea, verticalCheckArea))
+            bool onPlatforms = false;
+            for (int i = (int)(npc.BottomLeft.X / 16f); i < (int)(npc.BottomRight.X / 16f); i++)
+            {
+                Tile tile = CalamityUtils.ParanoidTileRetrieval(i, (int)(npc.Bottom.Y / 16f) + 1);
+                if (CalamityUtils.IsTileSolidGround(tile))
+                {
+                    onPlatforms = true;
+                    break;
+                }
+            }
+            if (target.Top.Y > npc.Bottom.Y)
+                onPlatforms = false;
+
+            if (Collision.SolidCollision(checkPosition, horizontalCheckArea, verticalCheckArea) || onPlatforms)
             {
                 if (npc.velocity.Y > 0f)
                     npc.velocity.Y = 0f;
@@ -776,7 +804,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             }
         }
 
-        public static void GotoNextAttackState(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             Player target = Main.player[npc.target];
 
@@ -809,7 +837,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             do
                 newAttackState = attackSelector.Get();
-            while (newAttackState == oldAttackState);
+            while (newAttackState == oldAttackState || (int)newAttackState == (int)npc.Infernum().ExtraAI[7]);
 
             // Recharge once the attack counter every few attacks.
             if (npc.ai[2] >= 4f)
@@ -818,8 +846,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 npc.ai[2] = 0f;
             }
 
+            if (npc.Infernum().ExtraAI[5] > 0f)
+            {
+                newAttackState = (AureusAttackType)npc.Infernum().ExtraAI[5];
+                npc.Infernum().ExtraAI[5] = 0f;
+                npc.ai[2]--;
+            }
+
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;
+
+            if (newAttackState != AureusAttackType.Recharge)
+                npc.Infernum().ExtraAI[7] = npc.ai[0];
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
             npc.netUpdate = true;

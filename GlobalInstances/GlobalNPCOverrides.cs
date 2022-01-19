@@ -461,6 +461,9 @@ namespace InfernumMode.GlobalInstances
                 damage = (int)(damage * 0.425);
             }
 
+            if (npc.type == ModContent.NPCType<AstrumAureus>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
+                damage = (int)(damage * 0.667);
+
             bool isPhantasmDragon = npc.type == NPCID.CultistDragonBody1 || npc.type == NPCID.CultistDragonBody2 || npc.type == NPCID.CultistDragonBody3 || npc.type == NPCID.CultistDragonBody4 || npc.type == NPCID.CultistDragonTail;
             if (isPhantasmDragon && (projectile.penetrate == -1 || projectile.penetrate > 1))
                 damage = (int)(damage * 0.24);

@@ -118,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             ref float attackTimer = ref npc.ai[2];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldSummonLeviathan = lifeRatio < 0.5f;
+            bool shouldSummonLeviathan = lifeRatio < 0.6f;
             bool leviathanAlive = Main.npc.IndexInRange(CalamityGlobalNPC.leviathan) && Main.npc[CalamityGlobalNPC.leviathan].active;
             bool enraged = !leviathanAlive && shouldSummonLeviathan;
             bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400) && !BossRushEvent.BossRushActive;
@@ -216,7 +216,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     DoBehavior_MistBubble(npc, target, headPosition, enraged, ref attackTimer);
                     break;
                 case AnahitaAttackType.AtlantisCharge:
-                    DoBehavior_AtlantisCharge(npc, target, headPosition, lifeRatio, outOfOcean, enraged, ref attackTimer);
+                    DoBehavior_AtlantisCharge(npc, target, lifeRatio, outOfOcean, enraged, ref attackTimer);
                     break;
             }
 
@@ -263,7 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (attackTimer % bubbleShootRate == bubbleShootRate - 1)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaBubble>(), 150, 0f);
+                    Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaBubble>(), 145, 0f);
                 Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
             }
 
@@ -306,7 +306,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 Main.PlaySound(SoundID.Item26, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * clefShootSpeed, ModContent.ProjectileType<SirenSong>(), 150, 0f);
+                    Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * clefShootSpeed, ModContent.ProjectileType<SirenSong>(), 145, 0f);
             }
 
             DoDefaultMovement(npc, destination, Vector2.One * 12f, 0.16f);
@@ -328,7 +328,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (attackTimer == 75f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaExpandingBubble>(), 160, 0f);
+                    Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaExpandingBubble>(), 150, 0f);
 
                 Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
             }
@@ -337,7 +337,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_AtlantisCharge(NPC npc, Player target, Vector2 headPosition, float lifeRatio, bool outOfOcean, bool enraged, ref float attackTimer)
+        public static void DoBehavior_AtlantisCharge(NPC npc, Player target, float lifeRatio, bool outOfOcean, bool enraged, ref float attackTimer)
         {
             // Force Anahita to use charging frames.
             npc.ai[0] = 3f;
@@ -368,6 +368,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 chargeTime = 20;
                 chargeSpeed = 48f;
                 totalSpins = 2f;
+            }
+
+            // Spin faster if the Leviathan isn't around.
+            if (!NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()))
+            {
+                totalSpins *= 1.5f;
+                chargeSpeed *= 1.4f;
             }
 
             float spinAngularVelocity = MathHelper.TwoPi * totalSpins / spinTime;
@@ -464,7 +471,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 if (aimingAtPlayer && closeToPlayer && Main.netMode != NetmodeID.MultiplayerClient && atlantisCooldown <= 0f)
                 {
                     for (float offset = 0f; offset < 110f; offset += 10f)
-                        Utilities.NewProjectileBetter(npc.Center + spearDirection * (15f + offset), spearDirection * (70f + offset * 0.4f), ModContent.ProjectileType<AtlantisSpear>(), 180, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + spearDirection * (15f + offset), spearDirection * (70f + offset * 0.4f), ModContent.ProjectileType<AtlantisSpear>(), 175, 0f);
                     atlantisCooldown = 30f;
                 }
 

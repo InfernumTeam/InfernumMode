@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Ares;
@@ -160,6 +161,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.Main.DoDraw += DrawSignusBlack;
             On.Terraria.Player.KillMe += RemoveTheDamnCancerousDoGInstakill;
             On.Terraria.Player.UpdateBiomes += MakeDesertRequirementsMoreLenient;
+            On.Terraria.NPC.Collision_DecideFallThroughPlatforms += LetAureusWalkOnPlatforms;
             ModifyPreAINPC += NPCPreAIChange;
             ModifySetDefaultsNPC += NPCSetDefaultsChange;
             ModifyFindFrameNPC += NPCFindFrameChange;
@@ -189,6 +191,7 @@ namespace InfernumMode.ILEditingStuff
             IL.Terraria.Main.DoDraw -= DrawSignusBlack;
             On.Terraria.Player.KillMe -= RemoveTheDamnCancerousDoGInstakill;
             On.Terraria.Player.UpdateBiomes -= MakeDesertRequirementsMoreLenient;
+            On.Terraria.NPC.Collision_DecideFallThroughPlatforms -= LetAureusWalkOnPlatforms;
             ModifyPreAINPC -= NPCPreAIChange;
             ModifySetDefaultsNPC -= NPCSetDefaultsChange;
             ModifyFindFrameNPC -= NPCFindFrameChange;
@@ -207,6 +210,17 @@ namespace InfernumMode.ILEditingStuff
             DesertScourgeItemUseItem -= GetRidOfDesertNuisances;
             AresBodyCanHitPlayer -= LetAresHitPlayer;
             CalamityPlayerModifyHitByProjectile -= RemoveProjectileOnHitLag;
+        }
+
+        internal static bool LetAureusWalkOnPlatforms(On.Terraria.NPC.orig_Collision_DecideFallThroughPlatforms orig, NPC npc)
+        {
+            if (npc.type == ModContent.NPCType<AstrumAureus>())
+            {
+                if (Main.player[npc.target].position.Y > npc.Bottom.Y)
+                    return true;
+                return false;
+            }
+            return orig(npc);
         }
 
         // Why.
@@ -310,7 +324,7 @@ namespace InfernumMode.ILEditingStuff
         }
 
         private static readonly object hookPreAI = typeof(NPCLoader).GetField("HookPreAI", Utilities.UniversalBindingFlags).GetValue(null);
-        private static FieldInfo hookListArrayField = typeof(NPCLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags);
+        private static readonly FieldInfo hookListArrayField = typeof(NPCLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags);
 
         private static void NPCPreAIChange(ILContext context)
         {

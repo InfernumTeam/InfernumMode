@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             npc.aiStyle = aiType = -1;
             npc.damage = 70;
 			npc.width = npc.height = 36;
-            npc.lifeMax = 650;
+            npc.lifeMax = 420;
             npc.knockBackResist = 0f;
             npc.noGravity = true;
             npc.noTileCollide = true;

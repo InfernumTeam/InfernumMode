@@ -13,7 +13,7 @@ Defender:
 
 - Does not do direct contact damage
 - Attempts to hover near the most vulnerable guardian, acting as a meat shield
-Works with the healer at times to create blasts of magically charged rocks
+- Shoots blasts of magically charged rocks
 
 Attacker:
 - Charges from the side over and over while releasing profaned spears

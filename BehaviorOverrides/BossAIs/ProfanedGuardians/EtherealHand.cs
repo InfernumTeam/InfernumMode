@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         internal NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
         internal bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
         internal float AttackTime => AttackerGuardian.ai[1];
-        internal AttackerGuardianBehaviorOverride.Phase2GuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.Phase2GuardianAttackState)(int)AttackerGuardian.ai[0];
+        internal AttackerGuardianBehaviorOverride.AttackGuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.AttackGuardianAttackState)(int)AttackerGuardian.ai[0];
         internal Vector2 PointerFingerPosition => npc.Center + (npc.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
 
         internal const float HandSize = 56f;
@@ -70,43 +70,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             npc.rotation = AttackerGuardian.AngleTo(npc.Center);
 
             UsingPointerFinger = false;
-            switch (AttackerState)
-            {
-                case AttackerGuardianBehaviorOverride.Phase2GuardianAttackState.ReelBackSpin:
-                    destination = AttackerGuardian.Center + new Vector2(110f * HandSide, MathHelper.Lerp(-1f, 1f, Utils.InverseLerp(-6f, 6f, AttackerGuardian.velocity.Y, true)) * 110f);
-                    destination.Y -= MathHelper.Lerp(0f, 60f, Utils.InverseLerp(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y), true));
+            destination = AttackerGuardian.Center + new Vector2(110f * HandSide, -120f + 30f * (float)Math.Sin(AttackTime / 16f + HandSide * 2.1f));
 
-                    FingerOutwardness = MathHelper.Lerp(26f, 37f, (float)Math.Cos(Main.GlobalTime * 1.2f) * 0.5f + 0.5f);
-                    FingerSpacingOffset = MathHelper.Lerp(MathHelper.ToRadians(7f), MathHelper.ToRadians(15f), Utils.InverseLerp(26f, 42f, FingerOutwardness, true));
-                    break;
-                case AttackerGuardianBehaviorOverride.Phase2GuardianAttackState.FireCast:
-                    destination = AttackerGuardian.Center + new Vector2(110f * HandSide, -120f + 30f * (float)Math.Sin(AttackTime / 16f + HandSide * 2.1f));
-
-                    FingerOutwardness = 34f;
-                    FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(9f), 0.25f);
-                    break;
-                case AttackerGuardianBehaviorOverride.Phase2GuardianAttackState.RayZap:
-                    FingerOutwardness = 36f;
-                    FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(10f), 0.3f);
-
-                    UsingPointerFinger = (Target.Center.X - AttackerGuardian.Center.X > 0).ToDirectionInt() == HandSide;
-                    destination = AttackerGuardian.Center + new Vector2(180f * HandSide, -60f + 80f * (float)Math.Sin(AttackTime / 16f + HandSide * 1.8f) * (!UsingPointerFinger).ToInt());
-
-                    if (UsingPointerFinger)
-                    {
-                        npc.rotation = (Target.Center - PointerFingerPosition + Target.velocity * 20f).ToRotation() + FingerSpacingOffset * 5f;
-                        if (Utilities.AnyProjectiles(ModContent.ProjectileType<ZapRay>()))
-                            npc.rotation = npc.oldRot[1];
-                    }
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient && AttackTime % 90f == 89f && UsingPointerFinger)
-                    {
-                        int ray = Utilities.NewProjectileBetter(npc.Center, (Target.Center - PointerFingerPosition + Target.velocity * 20f).SafeNormalize(Vector2.UnitX * HandSide), ModContent.ProjectileType<ZapRay>(), 400, 0f);
-                        Main.projectile[ray].ai[1] = npc.whoAmI;
-                    }
-
-                    break;
-            }
+            FingerOutwardness = 34f;
+            FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(9f), 0.25f);
 
             if (ShouldBeInvisible)
                 destination = AttackerGuardian.Center + AttackerGuardian.SafeDirectionTo(npc.Center);
@@ -134,14 +101,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             float distanceFromAttacker = npc.Distance(AttackerGuardian.Center);
             int totalPoints = 20 + (int)(distanceFromAttacker / 40f);
-
-            // Create a line telegraph a little bit before zapping a ray.
-            if (AttackerState == AttackerGuardianBehaviorOverride.Phase2GuardianAttackState.RayZap && AttackTime % 90f > 60f && UsingPointerFinger)
-            {
-                float width = (float)Math.Sin(Utils.InverseLerp(60f, 90f, AttackTime % 90f, true) * MathHelper.Pi) * 3f + 1f;
-                Vector2 endPosition = PointerFingerPosition + (Target.Center - PointerFingerPosition + Target.velocity * 20f).SafeNormalize(Vector2.UnitX * HandSide) * 2400f;
-                spriteBatch.DrawLineBetter(PointerFingerPosition, endPosition, Color.LightGoldenrodYellow, width);
-            }
 
             Vector2 sagLocation = Vector2.Lerp(AttackerGuardian.Center, npc.Center, 0.5f);
             sagLocation.Y += AttackerGuardian.velocity.Y * -10f;

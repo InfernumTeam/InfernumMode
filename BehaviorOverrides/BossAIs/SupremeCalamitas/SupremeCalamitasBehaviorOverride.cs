@@ -1522,7 +1522,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                         if (attackTimer % 120f == 119f)
                         {
-                            Vector2 blastSpawnPosition = target.Center + Main.rand.NextVector2Circular(1050f, 1050f);
+                            Vector2 blastSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(1050f, 1050f);
                             Vector2 blastShootVelocity = (target.Center - blastSpawnPosition).SafeNormalize(Vector2.UnitY) * blastShootSpeed * 1.6f;
                             Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 600, 0f, Main.myPlayer);
                         }

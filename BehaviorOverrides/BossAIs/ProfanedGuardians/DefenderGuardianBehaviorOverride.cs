@@ -1,7 +1,5 @@
-﻿using CalamityMod.Dusts;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;

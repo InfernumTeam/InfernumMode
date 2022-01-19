@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             Phase1Charges,
             Phase2Transition,
-            SpinCharge,
+            SpearBarrage,
             RayZap
         }
 
@@ -78,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 case AttackGuardianAttackState.Phase2Transition:
                     DoBehavior_Phase2Transition(npc, target, ref attackTimer);
                     break;
-                case AttackGuardianAttackState.SpinCharge:
+                case AttackGuardianAttackState.SpearBarrage:
                     DoBehavior_SpinCharge(npc, target, ref attackTimer, ref shouldHandsBeInvisibleFlag);
                     break;
             }
@@ -183,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
             }
 
-            npc.ai[0] = (int)AttackGuardianAttackState.SpinCharge;
+            npc.ai[0] = (int)AttackGuardianAttackState.SpearBarrage;
             attackTimer = 0f;
             npc.netUpdate = true;
         }
@@ -295,7 +295,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 attackTimer = 0f;
                 npc.Center = target.Center - Vector2.UnitY * 400f;
 
-                npc.ai[0] = (int)AttackGuardianAttackState.SpinCharge;
+                npc.ai[0] = (int)AttackGuardianAttackState.SpearBarrage;
                 arcDirection = 0f;
 
                 npc.alpha = 0;

@@ -5,10 +5,13 @@ using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+
+using static InfernumMode.BehaviorOverrides.BossAIs.DoG.DoGPhase2HeadBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
@@ -189,6 +192,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Texture2D glowmaskTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlow");
                 Vector2 drawPosition2 = npc.Center - Main.screenPosition;
                 Vector2 origin2 = bodyTexture2.Size() * 0.5f;
+
+                // Draw head backimages as a telegraph.
+                float aggressiveFade = GetAggressiveFade;
+                float passiveFade = GetPassveFade;
+                if (aggressiveFade > 0f || passiveFade > 0f)
+                {
+                    Color afterimageColor = Color.Transparent;
+                    if (aggressiveFade > 0f)
+                        afterimageColor = Color.Lerp(afterimageColor, AggressiveFadeColor, (float)Math.Sqrt(aggressiveFade));
+                    if (passiveFade > 0f)
+                        afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
+                    afterimageColor.A = 50;
+                    float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
+
+                    for (int i = 0; i < 12; i++)
+                    {
+                        Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
+                        spriteBatch.Draw(bodyTexture2, drawPosition2 + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                    }
+                }
+
                 spriteBatch.Draw(bodyTexture2, drawPosition2, null, npc.GetAlpha(lightColor), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
                 spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
                 return false;
@@ -221,11 +245,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.Infernum().ExtraAI[33] == 1f)
             {
                 npc.scale = 1f;
-                Texture2D bodyTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Tail");
+                Texture2D tailTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Tail");
                 Texture2D glowmaskTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlow");
                 Vector2 drawPosition2 = npc.Center - Main.screenPosition;
-                Vector2 origin2 = bodyTexture2.Size() * 0.5f;
-                spriteBatch.Draw(bodyTexture2, drawPosition2, null, npc.GetAlpha(lightColor), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                Vector2 origin2 = tailTexture2.Size() * 0.5f;
+
+                // Draw head backimages as a telegraph.
+                float aggressiveFade = GetAggressiveFade;
+                float passiveFade = GetPassveFade;
+                if (aggressiveFade > 0f || passiveFade > 0f)
+                {
+                    Color afterimageColor = Color.Transparent;
+                    if (aggressiveFade > 0f)
+                        afterimageColor = Color.Lerp(afterimageColor, AggressiveFadeColor, (float)Math.Sqrt(aggressiveFade));
+                    if (passiveFade > 0f)
+                        afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
+                    afterimageColor.A = 50;
+                    float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
+
+                    for (int i = 0; i < 12; i++)
+                    {
+                        Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
+                        spriteBatch.Draw(tailTexture2, drawPosition2 + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                    }
+                }
+
+                spriteBatch.Draw(tailTexture2, drawPosition2, null, npc.GetAlpha(lightColor), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
                 spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
                 return false;
             }

@@ -295,13 +295,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * hoverSpeed, hoverSpeed / 60f);
 
                     int vomitCount = 9;
-                    int vomitTime = anahitaFightingToo ? 67 : 78;
+                    int vomitTime = anahitaFightingToo ? 74 : 78;
                     if (BossRushEvent.BossRushActive)
                         vomitTime = 64;
                     if (!sirenAlive)
                         vomitTime = 62;
 
-                    if (attackTimer % vomitTime >= 15f && attackTimer % vomitTime <= 50f && usingBelchFrames)
+                    if (attackTimer % vomitTime == 38f)
                     {
                         npc.frameCounter += 2;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -322,7 +322,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         }
 
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarMeteor"), npc.Center);
-                        attackTimer += 50 - vomitTime % 50;
                     }
 
                     if (attackTimer % vomitTime >= 50f && attackTimer % vomitTime <= 75f)

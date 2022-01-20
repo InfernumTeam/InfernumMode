@@ -34,6 +34,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public const int PassiveMovementTimeP2 = 360;
         public const int AggressiveMovementTimeP2 = 720;
 
+        public static float GetAggressiveFade
+        {
+            get
+            {
+                NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
+                float phaseCycleTimer = npc.Infernum().ExtraAI[12] % (PassiveMovementTimeP2 + AggressiveMovementTimeP2);
+                float aggressiveFade = Utils.InverseLerp(PassiveMovementTimeP2 - 120f, PassiveMovementTimeP2, phaseCycleTimer, true);
+                aggressiveFade *= Utils.InverseLerp(1f, 0.8f, aggressiveFade, true);
+                if (npc.life < npc.lifeMax * 0.2f)
+                    aggressiveFade = 0f;
+
+                return aggressiveFade;
+            }
+        }
+
+        public static float GetPassveFade
+        {
+            get
+            {
+                NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
+                float phaseCycleTimer = npc.Infernum().ExtraAI[12] % (PassiveMovementTimeP2 + AggressiveMovementTimeP2);
+                float passiveFade = Utils.InverseLerp(PassiveMovementTimeP2 + AggressiveMovementTimeP2 - 120f, PassiveMovementTimeP2 + AggressiveMovementTimeP2, phaseCycleTimer, true);
+                passiveFade *= Utils.InverseLerp(1f, 0.8f, passiveFade, true);
+                if (npc.life < npc.lifeMax * 0.2f)
+                    passiveFade = 0f;
+
+                return passiveFade;
+            }
+        }
+        public static readonly Color PassiveFadeColor = Color.DeepSkyBlue;
+        public static readonly Color AggressiveFadeColor = Color.Red;
+
         #region AI
         public static bool Phase2AI(NPC npc, float phaseCycleTimer, ref float portalIndex, ref float segmentFadeType)
         {
@@ -106,7 +138,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Variables
             bool canPerformSpecialAttacks = lifeRatio < 0.7f;
             bool nearDeath = lifeRatio < 0.2f;
-            bool breathFireMore = lifeRatio < 0.15f;
 
             // Don't take damage when fading out.
             npc.dontTakeDamage = npc.Opacity < 0.5f;
@@ -244,25 +275,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.ai[3] > 0f)
                 npc.realLife = (int)npc.ai[3];
 
-            // Shoot fire projectiles.
-            if (Main.netMode != NetmodeID.MultiplayerClient && !nearDeath)
-            {
-                if (npc.alpha <= 0 && !npc.WithinRange(target.Center, 500f))
-                {
-                    fireballShootTimer++;
-                    if (fireballShootTimer >= 150f && fireballShootTimer % (breathFireMore ? 60f : 120f) == 0f)
-                    {
-                        for (int i = 0; i < 4; i++)
-                        {
-                            Vector2 flameShootVelocity = npc.velocity.RotatedBy(MathHelper.Lerp(-0.4f, 0.4f, i / 3f)) * Main.rand.NextFloat(1.2f, 1.5f);
-                            Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
-                        }
-                    }
-                }
-                else if (npc.WithinRange(target.Center, 250f))
-                    fireballShootTimer--;
-            }
-
             // Despawn
             if (!NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DevourerofGodsTail")))
                 npc.active = false;
@@ -333,18 +345,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 }
             }
 
-            // Ceaseless Void Effect (Chaser Portal).
+            // Ceaseless Void Effect (Infernal Blasts).
             if (sentinelAttackTimer > attackTime && sentinelAttackTimer <= attackTime * 2f && npc.alpha <= 24)
             {
-                if (sentinelAttackTimer % 360f == 0f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && sentinelAttackTimer % 70f == 69f && !npc.WithinRange(target.Center, 300f))
                 {
-                    Vector2 spawnPosition = new Vector2(Main.rand.NextFloat(300f, 600f) * Main.rand.NextBool().ToDirectionInt(),
-                                       Main.rand.NextFloat(300, 600f) * Main.rand.NextBool().ToDirectionInt());
-                    Projectile.NewProjectile(target.Center +
-                        spawnPosition,
-                        Vector2.Zero,
-                        ModContent.ProjectileType<DoGBeamPortalN>(),
-                        0, 0f);
+                    for (int i = 0; i < 12; i++)
+                    {
+                        Vector2 flameShootVelocity = npc.velocity.RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, i / 11f)) * Main.rand.NextFloat(1.3f, 1.65f);
+                        Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
+                    }
+
+                    for (int i = 0; i < 8; i++)
+                    {
+                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 18f;
+                        Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
+                    }
                 }
                 if (sentinelAttackTimer == attackTime * 2f - 1f)
                     signusAttackState = Main.rand.Next(2);
@@ -508,10 +524,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             jawRotation = jawRotation.AngleTowards(0f, 0.08f);
 
             // Move towards the target.
-            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 180f;
-            if (!npc.WithinRange(destination, 250f))
+            Vector2 destination = Main.player[npc.target].Center;
+            if (!npc.WithinRange(destination, 160f))
             {
-                float flySpeed = MathHelper.Lerp(27f, 34f, 1f - npc.life / (float)npc.lifeMax);
+                float flySpeed = MathHelper.Lerp(29f, 38f, 1f - npc.life / (float)npc.lifeMax);
                 Vector2 idealVelocity = npc.SafeDirectionTo(destination) * flySpeed;
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f).RotateTowards(idealVelocity.ToRotation(), 0.032f);
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
@@ -881,6 +897,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * i * (jawBaseOffset + (float)Math.Sin(jawRotation) * 24f);
                 jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (58f + (float)Math.Sin(jawRotation) * 30f);
                 spriteBatch.Draw(jawTexture, jawPosition, null, npc.GetAlpha(lightColor), npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
+            }
+
+            // Draw head backimages as a telegraph.
+            float aggressiveFade = GetAggressiveFade;
+            float passiveFade = GetPassveFade;
+            if (aggressiveFade > 0f || passiveFade > 0f)
+            {
+                Color afterimageColor = Color.Transparent;
+                if (aggressiveFade > 0f)
+                    afterimageColor = Color.Lerp(afterimageColor, AggressiveFadeColor, (float)Math.Sqrt(aggressiveFade));
+                if (passiveFade > 0f)
+                    afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
+                afterimageColor.A = 50;
+                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
+
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
+                    spriteBatch.Draw(headTexture, drawPosition + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+                }
             }
 
             spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);

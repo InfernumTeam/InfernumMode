@@ -118,12 +118,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             ref float attackTimer = ref npc.ai[2];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldSummonLeviathan = lifeRatio < 0.6f;
+            bool shouldSummonLeviathan = lifeRatio < 0.5f;
             bool leviathanAlive = Main.npc.IndexInRange(CalamityGlobalNPC.leviathan) && Main.npc[CalamityGlobalNPC.leviathan].active;
             bool enraged = !leviathanAlive && shouldSummonLeviathan;
             bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400) && !BossRushEvent.BossRushActive;
             float? leviathanLifeRatio = !leviathanAlive ? null : new float?(Main.npc[CalamityGlobalNPC.leviathan].life / (float)Main.npc[CalamityGlobalNPC.leviathan].lifeMax);
-            bool shouldWaitForLeviathan = (leviathanLifeRatio.HasValue && leviathanLifeRatio.Value >= 0.6f) || Utilities.AnyProjectiles(ModContent.ProjectileType<LeviathanSpawner>());
+            bool shouldWaitForLeviathan = (leviathanLifeRatio.HasValue && leviathanLifeRatio.Value >= 0.5f) || Utilities.AnyProjectiles(ModContent.ProjectileType<LeviathanSpawner>());
 
             // Play idle water sounds.
             if (Main.rand.NextBool(180))
@@ -347,7 +347,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             int hoverTime = 50;
             int spinTime = 210;
             int chargeTime = 40;
-            float chargeSpeed = MathHelper.Lerp(29f, 34.5f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(27f, 30f, 1f - lifeRatio);
             float totalSpins = 2f;
             if (enraged)
             {

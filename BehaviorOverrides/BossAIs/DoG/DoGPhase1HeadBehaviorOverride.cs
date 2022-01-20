@@ -270,10 +270,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             jawRotation = jawRotation.AngleTowards(0f, 0.08f);
 
             // Move towards the target.
-            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 300f;
-            if (!npc.WithinRange(destination, 480f))
+            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 50f;
+            if (!npc.WithinRange(destination, 250f))
             {
-                Vector2 idealVelocity = npc.SafeDirectionTo(destination) * 23.5f;
+                Vector2 idealVelocity = npc.SafeDirectionTo(destination) * 27f;
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f).RotateTowards(idealVelocity.ToRotation(), 0.032f);
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
             }

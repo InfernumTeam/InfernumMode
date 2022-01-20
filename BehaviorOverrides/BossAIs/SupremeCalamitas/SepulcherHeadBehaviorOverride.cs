@@ -238,7 +238,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     NPC segmentToFireFrom = Main.rand.Next(segments);
                     Vector2 soulShootVelocity = (segmentToFireFrom.rotation - MathHelper.PiOver2).ToRotationVector2();
-                    soulShootVelocity = Vector2.Lerp(soulShootVelocity, segmentToFireFrom.SafeDirectionTo(target.Center + target.velocity * 50f), 0.75f) * 9f;
+                    soulShootVelocity = Vector2.Lerp(soulShootVelocity, segmentToFireFrom.SafeDirectionTo(target.Center + target.velocity * 50f), 0.75f) * 17f;
                     int spirit = Utilities.NewProjectileBetter(segmentToFireFrom.Center, soulShootVelocity, ModContent.ProjectileType<SepulcherSpirit2>(), 540, 0f);
 
                     if (Main.projectile.IndexInRange(spirit))
@@ -288,7 +288,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Determine a charge velocity to adjust to.
             if (attackTimer == hoverRedirectTime)
             {
-                Vector2 idealChargeVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 10f) * MathHelper.Lerp(33.5f, 39f, 1f - lifeRatio);
+                Vector2 idealChargeVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 10f) * MathHelper.Lerp(37f, 45f, 1f - lifeRatio);
                 idealChargeVelocityX = idealChargeVelocity.X;
                 idealChargeVelocityY = idealChargeVelocity.Y;
                 npc.netUpdate = true;
@@ -308,9 +308,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Main.PlaySound(SoundID.DD2_FlameburstTowerShot, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < 17; i++)
+                    for (int i = 0; i < 35; i++)
                     {
-                        Vector2 hellblastVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-1.1f, 1.1f, i / 16f)) * 6f;
+                        Vector2 hellblastVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 35f) * 5f;
                         Utilities.NewProjectileBetter(npc.Center, hellblastVelocity, ModContent.ProjectileType<BrimstoneHellblast>(), 540, 0f);
                     }
                 }
@@ -349,8 +349,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 35f == 34f && !npc.WithinRange(target.Center, 100f) && attackTimer < 400f && attackTimer > 60f)
             {
-                Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 17f;
-                Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<DarkMagicBurst>(), 540, 0f);
+                Vector2 shootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 21f;
+                int magicBurst = Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<DarkMagicBurst>(), 540, 0f);
+                if (Main.projectile.IndexInRange(magicBurst))
+                    Main.projectile[magicBurst].ai[0] = 1.5f;
             }
 
             if (attackTimer > 460f)

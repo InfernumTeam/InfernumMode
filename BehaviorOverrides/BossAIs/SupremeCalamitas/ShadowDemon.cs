@@ -139,14 +139,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 npc.velocity *= 0.96f;
                 npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.15f);
-                if (WrappedAttackTimer == 65f)
+                if (WrappedAttackTimer == 65f && SupremeCalamitasBehaviorOverride.CurrentAttack(Main.npc[CalamityGlobalNPC.SCal]) != SupremeCalamitasBehaviorOverride.SCalAttackType.LightningLines)
                 {
                     Main.PlaySound(SoundID.DD2_SkyDragonsFuryShot, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 3; i++)
+                        for (int i = 0; i < 16; i++)
                         {
-                            Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.3f, 0.3f, i / 2f)) * 7f;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.TwoPi * i / 16f) * 5.5f;
                             Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast>(), 550, 0f);
                         }
                     }

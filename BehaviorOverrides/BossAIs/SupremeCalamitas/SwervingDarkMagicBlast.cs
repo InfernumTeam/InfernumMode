@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (projectile.WithinRange(target.Center, 700f))
                 {
                     bool canNoLongerHome = attackTimer >= swerveTime + 125f;
-                    float newSpeed = MathHelper.Clamp(projectile.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 13f, canNoLongerHome ? 28.5f : 23f);
+                    float newSpeed = MathHelper.Clamp(projectile.velocity.Length() + (canNoLongerHome ? 0.075f : 0.024f), 13f, canNoLongerHome ? 36f : 29.5f);
                     if (!target.dead && target.active && !projectile.WithinRange(target.Center, 220f) && !canNoLongerHome)
                         projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(target.Center) * projectile.velocity.Length(), 0.075f);
 

@@ -26,7 +26,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
     {
         public enum SCalAttackType
         {
-            AcceleratingRedirectingSkulls,
             MagicChargeBlasts,
             DarkMagicFireballFan,
             SwervingBlasts,
@@ -65,13 +64,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static readonly SCalAttackType[] Subphase1Pattern = new SCalAttackType[]
         {
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.DarkMagicFireballFan,
             SCalAttackType.SwervingBlasts,
             SCalAttackType.MagicChargeBlasts,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.DarkMagicFireballFan,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.SwervingBlasts,
             SCalAttackType.MagicChargeBlasts,
             SCalAttackType.DarkMagicFireballFan,
@@ -82,11 +78,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.RedirectingFlames,
             SCalAttackType.SwervingBlasts,
             SCalAttackType.MagicChargeBlasts,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.DarkMagicFireballFan,
             SCalAttackType.RedirectingFlames,
             SCalAttackType.LightningLines,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.SwervingBlasts,
             SCalAttackType.MagicChargeBlasts,
             SCalAttackType.LightningLines,
@@ -99,21 +93,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.RedirectingFlames,
             SCalAttackType.LightningLines2,
             SCalAttackType.SwervingBlasts,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.MagicChargeBlasts,
             SCalAttackType.LightningLines,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.LightningLines2,
             SCalAttackType.RedirectingFlames,
             SCalAttackType.DarkMagicFireballFan,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.SkullWalls,
             SCalAttackType.RedirectingFlames,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.MagicChargeBlasts,
             SCalAttackType.SwervingBlasts,
             SCalAttackType.LightningLines2,
-            SCalAttackType.AcceleratingRedirectingSkulls,
         };
         public static readonly SCalAttackType[] Subphase4Pattern = new SCalAttackType[]
         {
@@ -123,20 +112,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.LightningLines2,
             SCalAttackType.DanceOfHell,
             SCalAttackType.SwervingBlasts,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.MagicChargeBlasts,
             SCalAttackType.DanceOfHell,
             SCalAttackType.LightningLines,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.LightningLines2,
             SCalAttackType.DanceOfHell,
             SCalAttackType.RedirectingFlames,
             SCalAttackType.DarkMagicFireballFan,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.DanceOfHell,
             SCalAttackType.SkullWalls,
             SCalAttackType.RedirectingFlames,
-            SCalAttackType.AcceleratingRedirectingSkulls,
             SCalAttackType.DanceOfHell,
             SCalAttackType.MagicChargeBlasts,
             SCalAttackType.SwervingBlasts,
@@ -223,7 +208,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Dust.QuickDustLine(oldPosition, npc.Center, 300f, Color.Red);
 
                 // Define the arena.
-                Vector2 arenaArea = new Vector2(164f, 164f);
+                Vector2 arenaArea = new Vector2(140f, 140f);
                 npc.Infernum().arenaRectangle = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
                 int left = (int)(npc.Infernum().arenaRectangle.Center().X / 16 - arenaArea.X * 0.5f);
                 int right = (int)(npc.Infernum().arenaRectangle.Center().X / 16 + arenaArea.X * 0.5f);
@@ -412,10 +397,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             switch (CurrentAttack(npc))
             {
-                case SCalAttackType.AcceleratingRedirectingSkulls:
-                    npc.damage = 0;
-                    DoBehavior_AcceleratingRedirectingSkulls(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, (int)currentPhase, ref attackTimer);
-                    break;
                 case SCalAttackType.MagicChargeBlasts:
                     DoBehavior_MagicChargeBlasts(npc, target, ref frameType, ref frameChangeSpeed, enrageFactor, (int)currentPhase, ref attackTimer);
                     break;
@@ -737,100 +718,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_AcceleratingRedirectingSkulls(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
-        {
-            int attackCycleCount = 2;
-            int hoverTime = 210;
-            float hoverHorizontalOffset = 600f;
-            float hoverSpeed = 28f;
-            float initialFlameSpeed = 10f;
-            float flameAngularVariance = 1.08f;
-            int flameReleaseRate = 9;
-            int flameReleaseTime = 180;
-
-            if (currentPhase >= 1)
-            {
-                initialFlameSpeed += 1.75f;
-                flameAngularVariance += 0.11f;
-                flameReleaseTime -= 30;
-            }
-
-            if (currentPhase >= 2)
-            {
-                initialFlameSpeed += 1.75f;
-                flameReleaseRate -= 1;
-            }
-
-            if (currentPhase >= 3)
-            {
-                initialFlameSpeed += 3.2f;
-                flameReleaseRate -= 3;
-            }
-            initialFlameSpeed *= enrageFactor * 0.45f + 1f;
-
-            ref float attackCycleCounter = ref npc.Infernum().ExtraAI[0];
-            ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
-
-            // Attempt to hover to the side of the target.
-            Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverHorizontalOffset;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
-
-            // Prepare the attack after either enough time has passed or if sufficiently close to the hover destination.
-            // This is done to ensure that the attack begins once the boss is close to the target.
-            if (attackSubstate == 0f && (attackTimer > hoverTime || npc.WithinRange(hoverDestination, 110f)))
-            {
-                attackSubstate = 1f;
-                attackTimer = 0f;
-                npc.netUpdate = true;
-            }
-
-            // Release skulls.
-            if (attackSubstate == 1f)
-            {
-                frameType = (int)SCalFrameType.OutwardHandCast;
-                frameChangeSpeed = 0.2f;
-
-                if (attackTimer % flameReleaseRate == flameReleaseRate - 1f && attackTimer % 90f > 20f && attackTimer > 45f)
-                {
-                    Main.PlaySound(SoundID.Item73, target.Center);
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int dartDamage = 540;
-                        float idealDirection = npc.AngleTo(target.Center);
-                        Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 42f, -Vector2.UnitY).RotatedByRandom(flameAngularVariance) * initialFlameSpeed;
-
-                        int cinder = Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AdjustingDarkMagicSkull>(), dartDamage, 0f);
-                        if (Main.projectile.IndexInRange(cinder))
-                            Main.projectile[cinder].ai[0] = idealDirection;
-                    }
-                }
-
-                if (attackTimer > flameReleaseTime)
-                {
-                    attackTimer = 0f;
-                    attackSubstate = 0f;
-                    attackCycleCounter++;
-
-                    if (attackCycleCounter > attackCycleCount)
-                        SelectNewAttack(npc);
-                    npc.netUpdate = true;
-                }
-            }
-            else
-            {
-                frameType = (int)SCalFrameType.UpwardDraft;
-                frameChangeSpeed = 0.15f;
-            }
-        }
-
         public static void DoBehavior_MagicChargeBlasts(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
         {
             int chargeCount = 3;
             int fadeoutTime = 30;
             int chargeTime = 15;
-            int bombCount = 4 + (int)(enrageFactor * 3f);
+            int bombCount = 5 + (int)(enrageFactor * 3f);
             float chargeSpeed = 35f + enrageFactor * 10f;
             float spawnOffsetMax = 480f;
             Vector2 hoverDestination = target.Center;
@@ -1133,8 +1026,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int attackDelay = attackTimer < 185f ? 185 : 40;
             int telegraphTime = 32 - (int)(enrageFactor * 6f);
             int afterShootDelay = 12;
-            int lightningCount = 11;
-            float lightningAngleArea = 0.94f;
+            int lightningCount = 14;
+            float lightningAngleArea = 1.23f;
             float hoverSpeed = 29f;
 
             if (currentPhase >= 2)

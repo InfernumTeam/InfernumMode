@@ -87,8 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         internal Color ColorFunction(float completionRatio)
 		{
-            Color baseColor = ILEditingChanges.BlendLavaColors(Color.OrangeRed);
-            return baseColor * projectile.Opacity;
+            return Color.OrangeRed * projectile.Opacity;
 		}
 
         internal float WidthFunction(float completionRatio) => MathHelper.Lerp(56f, 63f, (float)Math.Abs(Math.Cos(Main.GlobalTime * 2f))) * projectile.Opacity;
@@ -118,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFGeyserTexture"]);
 
             GameShaders.Misc["Infernum:WoFGeyserTexture"].UseSaturation(-1f);
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].UseColor(ILEditingChanges.BlendLavaColors(Color.Orange));
+            GameShaders.Misc["Infernum:WoFGeyserTexture"].UseColor(Color.Lerp(Color.Orange, Color.Red, 0.5f));
             GameShaders.Misc["Infernum:WoFGeyserTexture"].SetShaderTexture(ModContent.GetTexture("Terraria/Misc/Perlin"));
 
             List<Vector2> points = new List<Vector2>();

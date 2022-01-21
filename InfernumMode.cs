@@ -34,11 +34,11 @@ namespace InfernumMode
 
         public override void Load()
         {
-            OverridingListManager.Load();
-            ILEditingChanges.ILEditingLoad();
-
             Instance = this;
             CalamityMod = ModLoader.GetMod("CalamityMod");
+
+            OverridingListManager.Load();
+            HookManager.Load();
 
             Filters.Scene["InfernumMode:HiveMind"] = new Filter(new HiveMindScreenShaderData("FilterMiniTower").UseColor(HiveMindSkyColor).UseOpacity(0.6f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:HiveMind"] = new HiveMindSky();
@@ -180,7 +180,7 @@ namespace InfernumMode
         public override void Unload()
         {
             OverridingListManager.Unload();
-            ILEditingChanges.ILEditingUnload();
+            HookManager.Unload();
             Instance = null;
             CalamityMod = null;
         }

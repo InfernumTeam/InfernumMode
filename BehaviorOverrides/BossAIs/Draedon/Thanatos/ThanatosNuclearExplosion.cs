@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
         {
-            ILEditingChanges.DrawCacheAdditiveLighting.Add(index);
+            DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

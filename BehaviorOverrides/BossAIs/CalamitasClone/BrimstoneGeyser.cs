@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 LavaDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFGeyserTexture"]);
 
             GameShaders.Misc["Infernum:WoFGeyserTexture"].UseSaturation(-1f);
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].UseColor(ILEditingChanges.BlendLavaColors(Color.Orange));
+            GameShaders.Misc["Infernum:WoFGeyserTexture"].UseColor(Color.Orange);
             GameShaders.Misc["Infernum:WoFGeyserTexture"].SetShaderTexture(ModContent.GetTexture("Terraria/Misc/Perlin"));
 
             List<Vector2> points = new List<Vector2>();

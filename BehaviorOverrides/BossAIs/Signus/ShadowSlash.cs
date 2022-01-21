@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
         {
-            ILEditingChanges.DrawCacheProjsOverSignusBlackening.Add(index);
+            DrawBlackEffectHook.DrawCacheProjsOverSignusBlackening.Add(index);
         }
     }
 }

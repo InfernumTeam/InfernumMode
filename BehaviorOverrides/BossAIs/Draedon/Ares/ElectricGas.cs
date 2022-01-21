@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
 		public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
 		{
-			ILEditingChanges.DrawCacheAdditiveLighting.Add(index);
+			DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
 		}
 
 		public override bool CanDamage() => projectile.Opacity > 0.6f;

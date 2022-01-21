@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
     public class EerieLimb : ModNPC
     {
         public Vector2 IdealPosition;
-        public Limb[] Limbs = new Limb[3];
+        public LimbCollection Limbs;
         public PrimitiveTrailCopy LimbDrawer = null;
         public NPC Polterghast => Main.npc[CalamityGlobalNPC.ghostBoss];
         public Player Target => Main.player[npc.target];
@@ -58,17 +58,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             if (npc.localAI[0] == 0f)
             {
-                Limbs = new Limb[2];
-                for (int i = 0; i < Limbs.Length; i++)
-                {
-                    Vector2 direction = Main.rand.NextVector2Unit() * i / Limbs.Length * 160f;
-                    Limbs[i] = new Limb(npc.Center + direction, direction.ToRotation());
-                }
+                Limbs = new LimbCollection(new ModifiedCyclicCoordinateDescentUpdateRule(0.15f, MathHelper.PiOver2), 160f, 160f, 160f);
                 DecideNewPositionToStickTo();
                 npc.localAI[0] = 1f;
             }
 
-            UpdateLimbs();
+            Limbs.Update(Polterghast.Center, IdealPosition);
 
             float moveSpeed = 28f + Polterghast.velocity.Length() * 1.2f;
             if (!npc.WithinRange(IdealPosition, moveSpeed + 4f))
@@ -106,20 +101,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             npc.target = Polterghast.target;
-        }
-
-        public void UpdateLimbs()
-        {
-            float horizontalTotalDistance = npc.Center.X - Limbs[0].StartingPoint.X;
-            float verticalTotalDistance = npc.Center.Y - Limbs[0].StartingPoint.Y;
-            Limb.UpdateRotationOfDualSet(Limbs, Direction, npc.Center);
-
-            Limbs[0].StartingPoint = Polterghast.Center;
-
-            float firstLimbEndAngleOffset = Math.Abs((float)Math.Atan(verticalTotalDistance / horizontalTotalDistance)) * -Direction;
-            firstLimbEndAngleOffset += MathHelper.Pi + MathHelper.PiOver2 * Direction;
-
-            Limbs[1].StartingPoint = Limbs[0].StartingPoint + firstLimbEndAngleOffset.ToRotationVector2() * 240f * Direction;
         }
 
         public void DecideNewPositionToStickTo()
@@ -163,15 +144,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                 bool farFromOtherLimbs = false;
                 for (int j = 0; j < Main.maxNPCs; j++)
-				{
+                {
                     if (Main.npc[j].type != npc.type || !Main.npc[j].active || j == npc.whoAmI)
                         continue;
                     if (!Main.npc[j].WithinRange(endPosition, 650f) || Main.npc[j].WithinRange(endPosition, 140f))
-					{
+                    {
                         farFromOtherLimbs = true;
                         break;
-					}
-				}
+                    }
+                }
 
                 if (farFromOtherLimbs)
                     continue;
@@ -186,13 +167,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             // If no position was found, go to a default position.
             IdealPosition = Polterghast.Center + (MathHelper.TwoPi * npc.ai[0] / 4f).ToRotationVector2() * 570f * Main.rand.NextFloat(0.7f, 1.3f);
+            if (!Polterghast.WithinRange(IdealPosition, 400f))
+                IdealPosition = Polterghast.Center + Polterghast.SafeDirectionTo(IdealPosition) * 400f;
+
             npc.netUpdate = true;
         }
 
         internal float PrimitiveWidthFunction(float completionRatio)
         {
-            float pulse = MathHelper.Lerp(-2f, 6f, (float)Math.Sin(Main.GlobalTime * 2.6f) * 0.5f + 0.5f);
-            return MathHelper.Lerp(14f, 16f + pulse, (float)Math.Sin(MathHelper.Pi * completionRatio)) * MathHelper.Clamp(Polterghast.scale, 0.75f, 1.5f);
+            float pulse = MathHelper.Lerp(-0.4f, 2f, (float)Math.Sin(Main.GlobalTime * 4.6f) * 0.5f + 0.5f);
+            return MathHelper.Lerp(9.5f, 12f + pulse, (float)Math.Sin(MathHelper.Pi * completionRatio)) * MathHelper.Clamp(Polterghast.scale, 0.75f, 1.5f);
         }
 
         internal Color PrimitiveColorFunction(float completionRatio)
@@ -210,30 +194,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Color baseColor = Color.Lerp(Color.Cyan, Color.Red, redFade);
             if (!actsAsBorder)
                 baseColor *= Utils.InverseLerp(54f, 45f, Polterghast.ai[2], true);
-            return baseColor * Utils.InverseLerp(0.02f, 0.05f, completionRatio, true) * Utils.InverseLerp(0.98f, 0.95f, completionRatio, true);
+            return baseColor * Utils.InverseLerp(0.02f, 0.1f, completionRatio, true) * Utils.InverseLerp(0.98f, 0.9f, completionRatio, true);
         }
 
-		public override bool CanHitPlayer(Player target, ref int cooldownSlot)
-		{
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+        {
             if (Polterghast.ai[2] > 48f)
                 return false;
 
             bool actsAsBorder = AttackTimer >= 140f && AttackTimer < 310f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.BeastialExplosion;
             bool impaling = AttackTimer % 150f > 105f && CurrentAttack == PolterghastBehaviorOverride.PolterghastAttackType.Impale;
             if (actsAsBorder || impaling)
-			{
+            {
                 float _ = 0f;
                 float lineWidth = PrimitiveWidthFunction(0f);
-                if (Collision.CheckAABBvLineCollision(target.TopLeft, target.Size, Polterghast.Center, Limbs[1].StartingPoint, lineWidth, ref _))
-                    return true;
-                if (Collision.CheckAABBvLineCollision(target.TopLeft, target.Size, Limbs[1].StartingPoint, npc.Center, lineWidth, ref _))
-                    return true;
+                for (int i = 0; i < Limbs.Limbs.Length; i++)
+                {
+                    if (Collision.CheckAABBvLineCollision(target.TopLeft, target.Size, Limbs.Limbs[i].ConnectPoint, Limbs.Limbs[i].EndPoint, lineWidth, ref _))
+                        return true;
+                }
             }
 
             return false;
-		}
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
             if (LimbDrawer is null)
@@ -244,25 +229,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             GameShaders.Misc["Infernum:PolterghastEctoplasm"].SetShaderTexture(ModContent.GetTexture("Terraria/Misc/Perlin"));
 
-            for (int i = 0; i < Limbs.Length; i++)
+            for (int i = 0; i < Limbs.Limbs.Length; i++)
             {
-                if (Limbs[i] is null)
+                if (Limbs.Limbs[i] is null)
                     return false;
 
-                for (int j = 0; j < 3; j++)
+                Vector2 offsetToNext = Vector2.Zero;
+                if (i < Limbs.Limbs.Length - 1)
+                    offsetToNext = Limbs.Limbs[i + 1].EndPoint - Limbs.Limbs[i].EndPoint;
+                Vector2 directionToNext = offsetToNext.SafeNormalize(Vector2.Zero);
+
+                for (int j = 4; j >= 0; j--)
                 {
-                    GameShaders.Misc["Infernum:PolterghastEctoplasm"].UseOpacity((float)Math.Pow(MathHelper.Lerp(1f, 0.05f, j / 3f), 4D));
+                    GameShaders.Misc["Infernum:PolterghastEctoplasm"].UseOpacity((float)Math.Pow(MathHelper.Lerp(0.9f, 0.05f, j / 4f), 4D));
                     GameShaders.Misc["Infernum:PolterghastEctoplasm"].UseSaturation(i);
+
                     if (j > 0 && npc.velocity == Vector2.Zero)
                         continue;
 
-                    Vector2 end = i == Limbs.Length - 1 ? npc.Center - Vector2.UnitY * 10f : Limbs[i + 1].StartingPoint;
-                    if (i == Limbs.Length - 1)
+                    Vector2 end = i == Limbs.Limbs.Length - 1 ? npc.Center - Vector2.UnitY * 10f : Limbs.Limbs[i + 1].ConnectPoint;
+                    if (i == Limbs.Limbs.Length - 1)
                         end -= npc.velocity * j * 0.85f;
+                    end += directionToNext * Utils.InverseLerp(15f, 175f, offsetToNext.Length(), true) * 20f;
 
                     List<Vector2> drawPositions = new List<Vector2>();
-                    for (int k = 0; k <= 8; k++)
-                        drawPositions.Add(Vector2.Lerp(Limbs[i].StartingPoint, end, k / 8f));
+                    for (int k = 0; k < 20; k++)
+                        drawPositions.Add(Vector2.Lerp(Limbs.Limbs[i].ConnectPoint, end, k / 19f));
 
                     LimbDrawer.Draw(drawPositions, -Main.screenPosition, 38);
                 }

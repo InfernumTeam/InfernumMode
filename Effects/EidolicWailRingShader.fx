@@ -58,11 +58,11 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     color *= lerp(0.8, 1.2, tex2D(uImage1, noiseCoords));
     float distanceRatio = distance(input.TextureCoordinates.xy, float2(0.5, 0.5)) * 1.414;
     
-    float opacity = color.a * pow((1 - (inverseLerp(distanceRatio, 0.15, 0.965))), 3);
+    float opacity = color.a * pow((1 - (inverseLerp(distanceRatio, 0.15, 0.965))), 0.4);
     opacity *= lerp(1, 1.9, inverseLerp(distanceRatio, 0.67, 0.6));
-    opacity *= lerp(1, 2.9, inverseLerp(distanceRatio, 0.1, 0) * inverseLerp(distanceRatio, 1, 0.9));
-    opacity *= uOpacity;
-    return color * opacity * 1.125;
+    opacity *= pow(uOpacity, 0.45) * inverseLerp(distanceRatio, 0.85, 0.6);
+    float4 endColor = color * opacity;
+    return endColor * lerp(0.9, 1.4, pow(endColor.r, 4));
 }
 technique Technique1
 {

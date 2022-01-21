@@ -187,6 +187,7 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => CalamityPlayerModifyHitByProjectile -= RemoveProjectileOnHitLag;
     }
 
+    /*
     public class UseDeathContactDamageHook : IHookEdit
     {
         internal static FieldInfo EnemyStatsField = typeof(NPCStats).GetNestedType("EnemyStats", Utilities.UniversalBindingFlags).GetField("ContactDamageValues", Utilities.UniversalBindingFlags);
@@ -225,4 +226,5 @@ namespace InfernumMode.ILEditingStuff
 
         public void Unload() => NPCStatsDefineContactDamage -= UseDeathContactDamageInInfernum;
     }
+    */
 }

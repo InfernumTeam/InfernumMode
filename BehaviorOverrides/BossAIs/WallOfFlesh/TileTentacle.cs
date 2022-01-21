@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -55,8 +56,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             if (projectile.timeLeft > 60f)
                 projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(target.Center) * 9f, 0.08f);
-			else
-			{
+            else
+            {
                 projectile.velocity.X *= 0.975f;
 
                 if (projectile.velocity.Y < 11f)
@@ -70,13 +71,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         }
 
         internal Color ColorFunction(float completionRatio)
-		{
+        {
             Color endColors = new Color(158, 48, 83);
             Color middleColor = new Color(184, 78, 113);
             Color witherColor = new Color(61, 28, 32);
             Color baseColor = Color.Lerp(endColors, middleColor, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi * 0.7f)));
             return Color.Lerp(baseColor, witherColor, Utils.InverseLerp(60f, 0f, projectile.timeLeft, true)) * projectile.Opacity;
-		}
+        }
 
         internal float WidthFunction(float completionRatio)
         {
@@ -86,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             return MathHelper.Lerp(0f, 9f, widthCompletion) * Utils.InverseLerp(0f, 60f, projectile.timeLeft, true);
         }
 
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             for (int i = 0; i < ControlPoints.Length - 1; i++)
             {
@@ -100,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             return false;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (TentacleDrawer is null)
                 TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFTentacleTexture"]);
@@ -113,18 +114,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             };
             points.AddRange(ControlPoints);
             points.Add(projectile.Center);
-            TentacleDrawer.Draw(new BezierCurveCopy(points.ToArray()).GetPoints(20), -Main.screenPosition, 35);
+            TentacleDrawer.Draw(new BezierCurve(points.ToArray()).GetPoints(20), -Main.screenPosition, 35);
             return false;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
 
-		public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
-		{
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        {
             drawCacheProjsBehindNPCs.Add(index);
         }
-	}
+    }
 }

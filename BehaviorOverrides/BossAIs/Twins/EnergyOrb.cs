@@ -1,3 +1,4 @@
+using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-	public class EnergyOrb : ModNPC
+    public class EnergyOrb : ModNPC
     {
         public Player Target => Main.player[npc.target];
         public NPC Owner => Main.npc[(int)npc.ai[0]];
@@ -20,13 +21,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Energy Orb");
-			NPCID.Sets.TrailingMode[npc.type] = 0;
+            NPCID.Sets.TrailingMode[npc.type] = 0;
             NPCID.Sets.TrailCacheLength[npc.type] = 7;
         }
 
         public override void SetDefaults()
         {
-			npc.npcSlots = 1f;
+            npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.width = npc.height = 40;
             npc.damage = 120;
@@ -39,15 +40,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             npc.scale = 1.15f;
         }
 
-		public override void AI()
+        public override void AI()
         {
             npc.life = npc.lifeMax;
             if (!Main.npc.IndexInRange((int)npc.ai[0]) || !Owner.active)
-			{
-				npc.active = false;
-				npc.netUpdate = true;
-				return;
-			}
+            {
+                npc.active = false;
+                npc.netUpdate = true;
+                return;
+            }
 
             npc.target = Owner.target;
             npc.timeLeft = 3600;
@@ -136,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             }
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Vector2[] baseOldPositions = npc.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
             if (baseOldPositions.Length <= 2)
@@ -144,7 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             Texture2D npcTexture = Main.npcTexture[npc.type];
             Vector2 origin = npcTexture.Size() * 0.5f;
-            List<Vector2> adjustedOldPositions = new BezierCurveCopy(baseOldPositions).GetPoints(30 + (int)npc.Distance(npc.oldPos.Last()) / 13);
+            List<Vector2> adjustedOldPositions = new BezierCurve(baseOldPositions).GetPoints(30 + (int)npc.Distance(npc.oldPos.Last()) / 13);
             for (int i = 0; i < adjustedOldPositions.Count; i++)
             {
                 float completionRatio = i / (float)adjustedOldPositions.Count;

@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.DataStructures;
 using InfernumMode.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -86,9 +87,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         }
 
         internal Color ColorFunction(float completionRatio)
-		{
+        {
             return Color.OrangeRed * projectile.Opacity;
-		}
+        }
 
         internal float WidthFunction(float completionRatio) => MathHelper.Lerp(56f, 63f, (float)Math.Abs(Math.Cos(Main.GlobalTime * 2f))) * projectile.Opacity;
 
@@ -101,17 +102,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (Time < 55f)
-			{
+            {
                 float telegraphFade = Utils.InverseLerp(0f, 8f, Time, true) * Utils.InverseLerp(55f, 45f, Time, true);
                 float telegraphWidth = telegraphFade * 4f;
                 Color telegraphColor = Color.Crimson * telegraphFade;
                 Vector2 start = projectile.Center - Vector2.UnitY * 2000f;
                 Vector2 end = projectile.Center + Vector2.UnitY * 2000f;
                 Utilities.DrawLineBetter(spriteBatch, start, end, telegraphColor, telegraphWidth);
-			}
+            }
 
             if (TentacleDrawer is null)
                 TentacleDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFGeyserTexture"]);
@@ -123,17 +124,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             List<Vector2> points = new List<Vector2>();
             for (int i = 0; i <= 8; i++)
                 points.Add(Vector2.Lerp(projectile.Center, projectile.Center - Vector2.UnitY * GeyserHeight, i / 8f));
-            TentacleDrawer.Draw(new BezierCurveCopy(points.ToArray()).GetPoints(20), Vector2.UnitX * 10f - Main.screenPosition, 35);
+            TentacleDrawer.Draw(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * 10f - Main.screenPosition, 35);
 
             GameShaders.Misc["Infernum:WoFGeyserTexture"].UseSaturation(1f);
-            TentacleDrawer.Draw(new BezierCurveCopy(points.ToArray()).GetPoints(20), Vector2.UnitX * -10f - Main.screenPosition, 35);
+            TentacleDrawer.Draw(new BezierCurve(points.ToArray()).GetPoints(20), Vector2.UnitX * -10f - Main.screenPosition, 35);
 
             return false;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
-	}
+            target.Calamity().lastProjectileHit = projectile;
+        }
+    }
 }

@@ -1,3 +1,4 @@
+using CalamityMod.DataStructures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-	public class HomingEnergyOrb : ModProjectile
+    public class HomingEnergyOrb : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -50,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             Texture2D projectileTexture = Main.projectileTexture[projectile.type];
             Vector2 origin = projectileTexture.Size() * 0.5f;
-            List<Vector2> adjustedOldPositions = new BezierCurveCopy(baseOldPositions).GetPoints(40);
+            List<Vector2> adjustedOldPositions = new BezierCurve(baseOldPositions).GetPoints(40);
             for (int i = 0; i < adjustedOldPositions.Count; i++)
             {
                 float completionRatio = i / (float)adjustedOldPositions.Count;

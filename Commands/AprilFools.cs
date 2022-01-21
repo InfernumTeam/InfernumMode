@@ -2,9 +2,9 @@
 using Terraria;
 using Terraria.ModLoader;
 
-
 namespace InfernumMode.Commands
 {
+    /*
     class AprilFools : ModCommand
     {
         public override CommandType Type => CommandType.Chat;
@@ -16,4 +16,5 @@ namespace InfernumMode.Commands
             Main.NewText($"April fools override set to: {Utilities.OverrideAprilFirst}", Color.DarkTurquoise);
         }
     }
+    */
 }

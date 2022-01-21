@@ -1,4 +1,5 @@
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.DataStructures;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -163,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 sagLocation.Y += MathHelper.Lerp(0f, 60f, Utils.InverseLerp(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y), true));
             }
 
-            Vector2[] drawPoints = new BezierCurveCopy(AttackerGuardian.Center, sagLocation, npc.Center).GetPoints(totalPoints).ToArray();
+            Vector2[] drawPoints = new BezierCurve(AttackerGuardian.Center, sagLocation, npc.Center).GetPoints(totalPoints).ToArray();
 
             for (int i = 0; i < 5; i++)
             {

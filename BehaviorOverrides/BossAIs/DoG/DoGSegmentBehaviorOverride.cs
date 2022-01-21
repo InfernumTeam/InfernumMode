@@ -31,7 +31,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
             NPC head = Main.npc[(int)npc.ai[2]];
-            bool phase2 = head.Infernum().ExtraAI[33] == 1f;
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
             npc.defense = 0;
@@ -48,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.scale = aheadSegment.scale;
 
             // Reset sizes.
-            if (npc.Infernum().ExtraAI[33] == 0f && phase2)
+            if (npc.Infernum().ExtraAI[33] == 0f && InPhase2)
             {
                 if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
                 {
@@ -73,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 head.Center.Y < -10001f || head.Center.Y > Main.maxTilesY * 16f + 10001f;
 
             // Enter phase two once the tail enters the transition portal.
-            if (!phase2 && head.Infernum().ExtraAI[11] >= 0f)
+            if (!InPhase2 && head.Infernum().ExtraAI[11] >= 0f)
             {
                 if (npc.Hitbox.Intersects(Main.projectile[(int)head.Infernum().ExtraAI[11]].Hitbox) || headOutOfWorld)
                 {
@@ -85,8 +84,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         int tailType = ModContent.NPCType<DevourerofGodsTail>();
                         if (npc.type == tailType)
                         {
+                            InPhase2 = true;
                             Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[10] = 0f;
-                            Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] = 1f;
                             Main.npc[CalamityGlobalNPC.DoGHead].netUpdate = true;
                         }
 
@@ -105,20 +104,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             else
             {
                 // Do what the head says if not doing phase two transition stuff.
-                switch ((DoGPhase2HeadBehaviorOverride.BodySegmentFadeType)(int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.BodySegmentFadeTypeAIIndex])
+                switch ((BodySegmentFadeType)(int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.BodySegmentFadeTypeAIIndex])
                 {
-                    case DoGPhase2HeadBehaviorOverride.BodySegmentFadeType.EnterPortal:
+                    case BodySegmentFadeType.EnterPortal:
                         int portalIndex = (int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.PortalProjectileIndexAIIndex];
                         if (portalIndex >= 0f && npc.Hitbox.Intersects(Main.projectile[portalIndex].Hitbox))
                             npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.275f, 0f, 1f);
 
                         break;
 
-                    case DoGPhase2HeadBehaviorOverride.BodySegmentFadeType.InhertHeadOpacity:
+                    case BodySegmentFadeType.InhertHeadOpacity:
                         npc.Opacity = head.Opacity;
                         break;
 
-                    case DoGPhase2HeadBehaviorOverride.BodySegmentFadeType.ApproachAheadSegmentOpacity:
+                    case BodySegmentFadeType.ApproachAheadSegmentOpacity:
                         if (aheadSegment.Opacity < 0.2f)
                             npc.Opacity = 0f;
                         if (aheadSegment.Opacity > npc.Opacity)
@@ -137,9 +136,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Decide segment size stuff.
             Vector2 size = npc.Size;
-            if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && phase2)
+            if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && InPhase2)
                 size = new Vector2(102f);
-            if (npc.type == ModContent.NPCType<DevourerofGodsTail>() && phase2)
+            if (npc.type == ModContent.NPCType<DevourerofGodsTail>() && InPhase2)
                 size = new Vector2(82f, 90f);
 
             if (npc.Size != size)
@@ -158,7 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Decide segment offset stuff.
             float segmentOffset = 100f;
-            if (phase2)
+            if (InPhase2)
             {
                 if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
                     segmentOffset = 80f;
@@ -185,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            if (npc.Infernum().ExtraAI[33] == 1f)
+            if (InPhase2)
             {
                 npc.scale = 1f;
                 Texture2D bodyTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Body");
@@ -194,17 +193,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Vector2 origin2 = bodyTexture2.Size() * 0.5f;
 
                 // Draw head backimages as a telegraph.
-                float aggressiveFade = GetAggressiveFade;
-                float passiveFade = GetPassveFade;
-                if (aggressiveFade > 0f || passiveFade > 0f)
+                float aggressiveFade2 = GetAggressiveFade;
+                float passiveFade2 = GetPassiveFade;
+                if (aggressiveFade2 > 0f || passiveFade2 > 0f)
                 {
                     Color afterimageColor = Color.Transparent;
-                    if (aggressiveFade > 0f)
-                        afterimageColor = Color.Lerp(afterimageColor, AggressiveFadeColor, (float)Math.Sqrt(aggressiveFade));
-                    if (passiveFade > 0f)
-                        afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
+                    if (aggressiveFade2 > 0f)
+                        afterimageColor = Color.Lerp(afterimageColor, AggressiveFadeColor, (float)Math.Sqrt(aggressiveFade2));
+                    if (passiveFade2 > 0f)
+                        afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade2));
                     afterimageColor.A = 50;
-                    float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
+                    float afterimageOffsetFactor = MathHelper.Max(aggressiveFade2, passiveFade2) * 24f;
 
                     for (int i = 0; i < 12; i++)
                     {
@@ -222,6 +221,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1BodyGlowmask");
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = bodyTexture.Size() * 0.5f;
+
+            // Draw head backimages as a telegraph.
+            float aggressiveFade = GetAggressiveFade;
+            float passiveFade = GetPassiveFade;
+            if (aggressiveFade > 0f || passiveFade > 0f)
+            {
+                Color afterimageColor = Color.Transparent;
+                if (aggressiveFade > 0f)
+                    afterimageColor = Color.Lerp(afterimageColor, AggressiveFadeColor, (float)Math.Sqrt(aggressiveFade));
+                if (passiveFade > 0f)
+                    afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
+                afterimageColor.A = 50;
+                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
+
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
+                    spriteBatch.Draw(bodyTexture, drawPosition + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                }
+            }
             spriteBatch.Draw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             return false;
@@ -242,7 +261,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            if (npc.Infernum().ExtraAI[33] == 1f)
+            if (InPhase2)
             {
                 npc.scale = 1f;
                 Texture2D tailTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Tail");
@@ -251,17 +270,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Vector2 origin2 = tailTexture2.Size() * 0.5f;
 
                 // Draw head backimages as a telegraph.
-                float aggressiveFade = GetAggressiveFade;
-                float passiveFade = GetPassveFade;
-                if (aggressiveFade > 0f || passiveFade > 0f)
+                float aggressiveFade2 = GetAggressiveFade;
+                float passiveFade2 = GetPassiveFade;
+                if (aggressiveFade2 > 0f || passiveFade2 > 0f)
                 {
                     Color afterimageColor = Color.Transparent;
-                    if (aggressiveFade > 0f)
-                        afterimageColor = Color.Lerp(afterimageColor, AggressiveFadeColor, (float)Math.Sqrt(aggressiveFade));
-                    if (passiveFade > 0f)
-                        afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
+                    if (aggressiveFade2 > 0f)
+                        afterimageColor = Color.Lerp(afterimageColor, AggressiveFadeColor, (float)Math.Sqrt(aggressiveFade2));
+                    if (passiveFade2 > 0f)
+                        afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade2));
                     afterimageColor.A = 50;
-                    float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
+                    float afterimageOffsetFactor = MathHelper.Max(aggressiveFade2, passiveFade2) * 24f;
 
                     for (int i = 0; i < 12; i++)
                     {
@@ -279,6 +298,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1TailGlowmask");
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = tailTexture.Size() * 0.5f;
+
+            // Draw head backimages as a telegraph.
+            float aggressiveFade = GetAggressiveFade;
+            float passiveFade = GetPassiveFade;
+            if (aggressiveFade > 0f || passiveFade > 0f)
+            {
+                Color afterimageColor = Color.Transparent;
+                if (aggressiveFade > 0f)
+                    afterimageColor = Color.Lerp(afterimageColor, AggressiveFadeColor, (float)Math.Sqrt(aggressiveFade));
+                if (passiveFade > 0f)
+                    afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
+                afterimageColor.A = 50;
+                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
+
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
+                    spriteBatch.Draw(tailTexture, drawPosition + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                }
+            }
             spriteBatch.Draw(tailTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             return false;

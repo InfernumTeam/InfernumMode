@@ -41,13 +41,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ref float chompTime = ref npc.Infernum().ExtraAI[8];
             ref float portalIndex = ref npc.Infernum().ExtraAI[PortalProjectileIndexAIIndex];
             ref float phaseCycleTimer = ref npc.Infernum().ExtraAI[12];
-            ref float inPhase2 = ref npc.Infernum().ExtraAI[33];
+            ref float passiveAttackDelay = ref npc.Infernum().ExtraAI[13];
             ref float uncoilTimer = ref npc.Infernum().ExtraAI[35];
             ref float segmentFadeType = ref npc.Infernum().ExtraAI[BodySegmentFadeTypeAIIndex];
 
-            // Timer effect.
+            // Increment timers.
             attackTimer++;
             phaseCycleTimer++;
+            passiveAttackDelay++;
 
             // Adjust scale.
             npc.scale = 1.2f;
@@ -70,14 +71,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Main.player[npc.target].HasBuff(ModContent.BuffType<WhisperingDeath>()))
                 Main.player[npc.target].ClearBuff(ModContent.BuffType<WhisperingDeath>());
 
-            if (inPhase2 == 1f)
+            if (DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 npc.Calamity().CanHaveBossHealthBar = true;
 
                 typeof(DoGHead).GetField("phase2Started", Utilities.UniversalBindingFlags)?.SetValue(npc.modNPC, true);
                 typeof(DoGHead).GetField("Phase2Started", Utilities.UniversalBindingFlags)?.SetValue(npc.modNPC, true);
 
-                return DoGPhase2HeadBehaviorOverride.Phase2AI(npc, phaseCycleTimer, ref portalIndex, ref segmentFadeType);
+                return DoGPhase2HeadBehaviorOverride.Phase2AI(npc, phaseCycleTimer, ref passiveAttackDelay, ref portalIndex, ref segmentFadeType);
             }
 
             // Do through the portal once ready to enter the second phase.
@@ -165,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 DoPassiveFlyMovement(npc, ref jawRotation, ref chompTime);
 
                 // Idly release laserbeams.
-                if (phaseCycleTimer % 150f == 0f)
+                if (phaseCycleTimer % 150f == 0f && passiveAttackDelay >= 300f)
                 {
                     Main.PlaySound(SoundID.Item12, target.position);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -270,8 +271,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             jawRotation = jawRotation.AngleTowards(0f, 0.08f);
 
             // Move towards the target.
-            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 50f;
-            if (!npc.WithinRange(destination, 250f))
+            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 430f;
+            if (!npc.WithinRange(destination, 150f))
             {
                 Vector2 idealVelocity = npc.SafeDirectionTo(destination) * 27f;
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f).RotateTowards(idealVelocity.ToRotation(), 0.032f);
@@ -372,7 +373,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         #region Drawing
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            if (npc.Infernum().ExtraAI[33] == 1f)
+            if (DoGPhase2HeadBehaviorOverride.InPhase2)
                 return DoGPhase2HeadBehaviorOverride.PreDraw(npc, spriteBatch, lightColor);
 
             SpriteEffects spriteEffects = SpriteEffects.None;

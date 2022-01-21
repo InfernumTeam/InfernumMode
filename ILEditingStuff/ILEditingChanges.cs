@@ -152,6 +152,12 @@ namespace InfernumMode.ILEditingStuff
             remove => HookEndpointManager.Unmodify(typeof(AresBody).GetMethod("CanHitPlayer", Utilities.UniversalBindingFlags), value);
         }
 
+        public static event ILContext.Manipulator NPCStatsDefineContactDamage
+        {
+            add => HookEndpointManager.Modify(typeof(NPCStats).GetMethod("GetNPCDamage", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(NPCStats).GetMethod("GetNPCDamage", Utilities.UniversalBindingFlags), value);
+        }
+
         public static void ILEditingLoad()
         {
             On.Terraria.Gore.NewGore += RemoveCultistGore;
@@ -180,6 +186,7 @@ namespace InfernumMode.ILEditingStuff
             DesertScourgeItemUseItem += GetRidOfDesertNuisances;
             AresBodyCanHitPlayer += LetAresHitPlayer;
             CalamityPlayerModifyHitByProjectile += RemoveProjectileOnHitLag;
+            NPCStatsDefineContactDamage += UseDeathContactDamageInInfernum;
         }
 
         public static void ILEditingUnload()
@@ -210,6 +217,7 @@ namespace InfernumMode.ILEditingStuff
             DesertScourgeItemUseItem -= GetRidOfDesertNuisances;
             AresBodyCanHitPlayer -= LetAresHitPlayer;
             CalamityPlayerModifyHitByProjectile -= RemoveProjectileOnHitLag;
+            NPCStatsDefineContactDamage -= UseDeathContactDamageInInfernum;
         }
 
         internal static bool LetAureusWalkOnPlatforms(On.Terraria.NPC.orig_Collision_DecideFallThroughPlatforms orig, NPC npc)
@@ -259,7 +267,7 @@ namespace InfernumMode.ILEditingStuff
             return baseColor;
         }
 
-        private static void WoFLavaColorChange(ILContext il)
+        internal static void WoFLavaColorChange(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
 
@@ -281,7 +289,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Stloc, 155);
         }
 
-        private static void WoFLavaColorChange2(ILContext il)
+        internal static void WoFLavaColorChange2(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
 
@@ -307,7 +315,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Stloc, 9);
         }
 
-        private static void ItemCheckChange(ILContext instructionContext)
+        internal static void ItemCheckChange(ILContext instructionContext)
         {
             var c = new ILCursor(instructionContext);
             // Attempt to match a section of code which involves the value 3032. Other values can be used, including not just numbers.
@@ -326,7 +334,7 @@ namespace InfernumMode.ILEditingStuff
         private static readonly object hookPreAI = typeof(NPCLoader).GetField("HookPreAI", Utilities.UniversalBindingFlags).GetValue(null);
         private static readonly FieldInfo hookListArrayField = typeof(NPCLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags);
 
-        private static void NPCPreAIChange(ILContext context)
+        internal static void NPCPreAIChange(ILContext context)
         {
             ILCursor cursor = new ILCursor(context);
             cursor.Emit(OpCodes.Ldarg_0);
@@ -352,7 +360,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ret);
         }
 
-        private static void NPCSetDefaultsChange(ILContext context)
+        internal static void NPCSetDefaultsChange(ILContext context)
         {
             ILCursor cursor = new ILCursor(context);
             cursor.Emit(OpCodes.Ldarg_0);
@@ -389,7 +397,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ret);
         }
 
-        private static void NPCPreDrawChange(ILContext context)
+        internal static void NPCPreDrawChange(ILContext context)
         {
             ILCursor cursor = new ILCursor(context);
             cursor.Emit(OpCodes.Ldarg_0);
@@ -414,7 +422,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ret);
         }
 
-        private static void NPCFindFrameChange(ILContext context)
+        internal static void NPCFindFrameChange(ILContext context)
         {
             ILCursor cursor = new ILCursor(context);
 
@@ -446,7 +454,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ret);
         }
 
-        private static void NPCCheckDeadChange(ILContext context)
+        internal static void NPCCheckDeadChange(ILContext context)
         {
             ILCursor cursor = new ILCursor(context);
 
@@ -471,7 +479,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ret);
         }
 
-        private static void ProjectilePreAIChange(ILContext context)
+        internal static void ProjectilePreAIChange(ILContext context)
         {
             ILCursor cursor = new ILCursor(context);
             cursor.Emit(OpCodes.Ldarg_0);
@@ -498,7 +506,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ret);
         }
 
-        private static void ProjectilePreDrawChange(ILContext context)
+        internal static void ProjectilePreDrawChange(ILContext context)
         {
             ILCursor cursor = new ILCursor(context);
             cursor.Emit(OpCodes.Ldarg_0);
@@ -529,7 +537,7 @@ namespace InfernumMode.ILEditingStuff
         }
 
         public static float frameNumber = 0f;
-        private static void DrawInfernumModeUI()
+        internal static void DrawInfernumModeUI()
         {
             // The mode indicator should only be displayed when the inventory is open, to prevent obstruction.
             if (!Main.playerInventory)
@@ -601,7 +609,7 @@ namespace InfernumMode.ILEditingStuff
                 Main.instance.MouseTextHackZoom(string.Empty);
         }
 
-        private static void DrawInfernumIcon(ILContext il)
+        internal static void DrawInfernumIcon(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
 
@@ -623,7 +631,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Brtrue, endOfMethod);
         }
 
-        private static void DrawSignusBlack(ILContext il)
+        internal static void DrawSignusBlack(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
 
@@ -679,7 +687,7 @@ namespace InfernumMode.ILEditingStuff
             });
         }
 
-        private static void PermitODRain(ILContext il)
+        internal static void PermitODRain(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
 
@@ -697,7 +705,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Nop);
         }
 
-        private static void DisablePlagueDarkness(ILContext il)
+        internal static void DisablePlagueDarkness(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
 
@@ -711,7 +719,7 @@ namespace InfernumMode.ILEditingStuff
             });
         }
 
-        private static void NerfShellfishStaff(ILContext il)
+        internal static void NerfShellfishStaff(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
 
@@ -731,7 +739,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ldc_I4, 30);
         }
 
-        private static void MakeGolemRoomInvariable(ILContext il)
+        internal static void MakeGolemRoomInvariable(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
 
@@ -747,13 +755,13 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Stloc, 32);
         }        
 
-        private static void FuckYou(ILContext il)
+        internal static void FuckYou(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
             cursor.Emit(OpCodes.Ret);
         }
 
-        private static void GetRidOfDesertNuisances(ILContext il)
+        internal static void GetRidOfDesertNuisances(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
             cursor.Emit(OpCodes.Ldarg_1);
@@ -769,14 +777,14 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ret);
         }
 
-        private static void LetAresHitPlayer(ILContext il)
+        internal static void LetAresHitPlayer(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);
         }
 
-        private static void RemoveProjectileOnHitLag(ILContext il)
+        internal static void RemoveProjectileOnHitLag(ILContext il)
         {
             ILCursor cursor = new ILCursor(il);
             cursor.GotoNext(MoveType.Before, c => c.MatchLdcI4(267));
@@ -785,6 +793,21 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Stloc, 4);
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Stloc, 5);
+        }
+
+        internal static void UseDeathContactDamageInInfernum(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            cursor.GotoNext(MoveType.After, c => c.MatchLdloc(8));
+            cursor.Emit(OpCodes.Ldloc, 6);
+            cursor.Emit(OpCodes.Ldloc, 8);
+            cursor.EmitDelegate<Func<int, int, int>>((deathDamage, determinedDamage) =>
+            {
+                if (PoDWorld.InfernumMode)
+                    return Math.Max(deathDamage, determinedDamage);
+                return determinedDamage;
+            });
+            cursor.Emit(OpCodes.Stloc, 8);
         }
     }
 }

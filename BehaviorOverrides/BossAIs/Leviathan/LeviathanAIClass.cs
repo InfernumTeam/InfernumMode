@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             npc.Calamity().newAI[3] = spawnAnimationTime;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool anahitaFightingToo = lifeRatio < 0.6f;
+            bool anahitaFightingToo = lifeRatio < AnahitaBehaviorOverride.AnahitaReturnLifeRatio;
             bool sirenAlive = Main.npc.IndexInRange(CalamityGlobalNPC.siren) && Main.npc[CalamityGlobalNPC.siren].active;
             bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400) && !BossRushEvent.BossRushActive;
 

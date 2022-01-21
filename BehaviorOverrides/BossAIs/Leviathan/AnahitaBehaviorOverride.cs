@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             AtlantisCharge
         }
 
-        internal static readonly AnahitaAttackType[] Phase1AttackPattern = new AnahitaAttackType[]
+        public static readonly AnahitaAttackType[] Phase1AttackPattern = new AnahitaAttackType[]
         {
             AnahitaAttackType.FloatTowardsPlayer,
             AnahitaAttackType.BubbleBurst,
@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             AnahitaAttackType.AtlantisCharge,
         };
 
-        internal static readonly AnahitaAttackType[] Phase2AttackPattern = new AnahitaAttackType[]
+        public static readonly AnahitaAttackType[] Phase2AttackPattern = new AnahitaAttackType[]
         {
             AnahitaAttackType.FloatTowardsPlayer,
             AnahitaAttackType.BubbleBurst,
@@ -58,6 +58,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             AnahitaAttackType.FloatTowardsPlayer,
             AnahitaAttackType.AtlantisCharge,
         };
+
+        public const float LeviathanSummonLifeRatio = 0.5f;
+        public const float AnahitaReturnLifeRatio = 0.5f;
 
         public override bool PreAI(NPC npc)
         {
@@ -118,12 +121,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             ref float attackTimer = ref npc.ai[2];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldSummonLeviathan = lifeRatio < 0.5f;
+            bool shouldSummonLeviathan = lifeRatio < LeviathanSummonLifeRatio;
             bool leviathanAlive = Main.npc.IndexInRange(CalamityGlobalNPC.leviathan) && Main.npc[CalamityGlobalNPC.leviathan].active;
             bool enraged = !leviathanAlive && shouldSummonLeviathan;
             bool outOfOcean = target.position.X > 9400f && target.position.X < (Main.maxTilesX * 16 - 9400) && !BossRushEvent.BossRushActive;
             float? leviathanLifeRatio = !leviathanAlive ? null : new float?(Main.npc[CalamityGlobalNPC.leviathan].life / (float)Main.npc[CalamityGlobalNPC.leviathan].lifeMax);
-            bool shouldWaitForLeviathan = (leviathanLifeRatio.HasValue && leviathanLifeRatio.Value >= 0.5f) || Utilities.AnyProjectiles(ModContent.ProjectileType<LeviathanSpawner>());
+            bool shouldWaitForLeviathan = (leviathanLifeRatio.HasValue && leviathanLifeRatio.Value >= AnahitaReturnLifeRatio) || Utilities.AnyProjectiles(ModContent.ProjectileType<LeviathanSpawner>());
 
             // Play idle water sounds.
             if (Main.rand.NextBool(180))

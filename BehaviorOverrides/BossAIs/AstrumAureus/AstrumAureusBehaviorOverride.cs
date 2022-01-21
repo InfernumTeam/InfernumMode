@@ -346,7 +346,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         jumpIntensity = 0f;
 
                         // Determine whether the attack should be repeated.
-                        int stompCount = onlyDoOneJump == 1f ? 4 : 1;
+                        int stompCount = onlyDoOneJump == 0f ? 4 : 1;
                         stompCounter++;
                         if (stompCounter >= stompCount)
                         {
@@ -495,7 +495,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootDelay = 225;
-            float laserSpeed = 7.4f;
+            float laserSpeed = 12.75f;
             float walkSpeed = MathHelper.Lerp(8f, 12f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
@@ -829,7 +829,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (lifeRatio < Phase2LifeRatio)
             {
                 attackSelector.Add(AureusAttackType.CreateAureusSpawnRing, 0.85);
-                attackSelector.Add(AureusAttackType.CelestialRain);
+                if (oldAttackState != AureusAttackType.LeapAtTarget)
+                    attackSelector.Add(AureusAttackType.CelestialRain);
             }
 
             if (lifeRatio < Phase3LifeRatio && !NPC.AnyNPCs(ModContent.NPCType<AureusSpawn>()))

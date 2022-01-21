@@ -3,6 +3,7 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Items.Placeables.Banners;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.BehaviorOverrides.BossAIs.DesertScourge;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -98,15 +99,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             Player target = Main.player[npc.target];
 
-            if (!(Main.sandTiles > 1000 && target.Center.Y > (Main.worldSurface - 180f) * 16D))
-                enrageTimer++;
+            if (target.Center.Y > (Main.worldSurface - 100f) * 16D)
+                enrageTimer--;
             else
                 enrageTimer++;
             enrageTimer = MathHelper.Clamp(enrageTimer, 0f, 480f);
 
             bool pissedOff = enrageTimer >= 300f;
 
-            if ((!target.active || target.dead || !npc.WithinRange(target.Center, pissedOff ? 2250f : 4200f)) && npc.target != 255)
+            if ((!target.active || target.dead || !npc.WithinRange(target.Center, 4700f)) && npc.target != 255)
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * 18f, 0.05f);
                 npc.rotation = npc.velocity.Y * npc.direction * 0.02f;
@@ -162,6 +163,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     DoAttack_SharkWaves(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
                     break;
             }
+
+            if (npc.velocity.HasNaNs())
+                npc.velocity = -Vector2.UnitY;
+
             attackTimer++;
 
             return false;
@@ -172,7 +177,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             bool inTiles = Collision.SolidCollision(npc.Center - Vector2.One * 36f, 72, 72);
             bool canCharge = inTiles && npc.WithinRange(target.Center, 750f) && !npc.WithinRange(target.Center, 280f) && attackTimer >= 60f;
             float swimAcceleration = MathHelper.Lerp(0.85f, 1.05f, 1f - lifeRatio);
-            float chargeSpeed = npc.Distance(target.Center) * 0.01f + MathHelper.Lerp(18.5f, 21f, 1f - lifeRatio);
+            float chargeSpeed = npc.Distance(target.Center) * 0.01f + MathHelper.Lerp(21f, 26f, 1f - lifeRatio);
             int chargeCount = 3;
 
             ref float chargingFlag = ref npc.Infernum().ExtraAI[0];
@@ -220,7 +225,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                         for (int i = 0; i < 27; i++)
                         {
                             Vector2 sandVelocity = (MathHelper.TwoPi * i / 27f).ToRotationVector2() * 6f;
-                            int sand = Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandBlast>(), 155, 0f);
+                            int sand = Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandstormBlast2>(), 175, 0f);
                             if (Main.projectile.IndexInRange(sand))
                                 Main.projectile[sand].tileCollide = false;
                         }
@@ -458,12 +463,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             ref float verticalSwimDirection = ref npc.Infernum().ExtraAI[0];
             DefaultJumpMovement(npc, ref target, swimAcceleration, swimAcceleration * 30f, ref verticalSwimDirection);
 
+            if (attackTimer == 25f)
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
+
             // Summon sand sharks.
             if (attackTimer % sharkSummonRate == sharkSummonRate - 1f && attackTimer < 320f)
             {
-                for (float dx = -1100f; dx < 1100f; dx += 175f)
+                for (float dx = -1100f; dx < 1100f; dx += 185f)
 				{
-                    Vector2 spawnPosition = target.Center + new Vector2(dx, -850f);
+                    Vector2 spawnPosition = target.Center + new Vector2(dx, -1100f);
                     Vector2 shootVelocity = Vector2.UnitY * 8f;
                     int shark = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SwervingSandShark>(), 165, 0f);
 

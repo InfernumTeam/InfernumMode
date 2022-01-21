@@ -15,8 +15,8 @@ namespace InfernumMode
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Infernal Chalice");
-            Tooltip.SetDefault("Makes bosses even more absurd unless Boss Rush is active\n" +
-                               "Death Mode must be active to use this item\n" +
+            Tooltip.SetDefault("Makes bosses absurd unless Boss Rush is active\n" +
+                               "Revengeance Mode must be active to use this item\n" +
                                "Infernum");
             Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(6, 8));
         }
@@ -35,7 +35,7 @@ namespace InfernumMode
             item.consumable = false;
         }
 
-        public override bool CanUseItem(Player player) => CalamityWorld.death && !BossRushEvent.BossRushActive;
+        public override bool CanUseItem(Player player) => CalamityWorld.revenge && !BossRushEvent.BossRushActive;
 
         public override void ModifyTooltips(List<TooltipLine> tooltips) => tooltips.FirstOrDefault(x => x.Name == "Tooltip2" && x.mod == "Terraria").overrideColor = Color.DarkRed;
 

@@ -21,14 +21,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             set => npc.localAI[2] = value.ToInt();
         }
 
-        internal NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
-        internal bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
-        internal float AttackTime => AttackerGuardian.ai[1];
-        internal AttackerGuardianBehaviorOverride.AttackGuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.AttackGuardianAttackState)(int)AttackerGuardian.ai[0];
-        internal bool PunchingTarget => AttackerState == AttackerGuardianBehaviorOverride.AttackGuardianAttackState.ThrowingHands && AttackTime > 45f && AttackerGuardian.WithinRange(Target.Center, 250f);
-        internal Vector2 PointerFingerPosition => npc.Center + (npc.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
+        public NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
+        public bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
+        public float AttackTime => AttackerGuardian.ai[1];
+        public AttackerGuardianBehaviorOverride.AttackGuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.AttackGuardianAttackState)(int)AttackerGuardian.ai[0];
+        public bool PunchingTarget => AttackerState == AttackerGuardianBehaviorOverride.AttackGuardianAttackState.ThrowingHands && AttackTime > 45f && AttackerGuardian.WithinRange(Target.Center, 250f);
+        public Vector2 PointerFingerPosition => npc.Center + (npc.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
 
-        internal const float HandSize = 56f;
+        public const float HandSize = 56f;
 
         public override void SetStaticDefaults()
         {
@@ -64,26 +64,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Fade in and out as necessary.
             npc.alpha = Utils.Clamp(npc.alpha + (ShouldBeInvisible ? 40 : -12), 0, 255);
 
-            Vector2 destination = Vector2.Zero;
-            npc.target = Main.npc[CalamityGlobalNPC.doughnutBoss].target;
+            // Inherit the current target from the attacker guardian.
+            npc.target = AttackerGuardian.target;
+
+            // Point away from the attacker guardian.
             npc.rotation = AttackerGuardian.AngleTo(npc.Center);
 
+            // Reset hand attributes and the hover destination.
             UsingPointerFinger = false;
-            destination = AttackerGuardian.Center + new Vector2(HandSide * 110f, -120f + (float)Math.Sin(AttackTime / 16f + HandSide * 2.1f) * 30f);
-
             FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(9f), 0.25f);
+            Vector2 destination = AttackerGuardian.Center;
+            destination += new Vector2(HandSide * 110f, (float)Math.Sin(AttackTime / 16f + HandSide * 2.1f) * 30f - 120f);
 
             switch (AttackerState)
             {
                 case AttackerGuardianBehaviorOverride.AttackGuardianAttackState.MagicFingerBolts:
-                    FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(10f), 0.3f);
-
+                    // Have the finger closest to the target use the pointer finger.
                     UsingPointerFinger = (Target.Center.X - AttackerGuardian.Center.X > 0).ToDirectionInt() == HandSide;
-                    destination = AttackerGuardian.Center + new Vector2(180f * HandSide, -60f + 80f * (float)Math.Sin(AttackTime / 16f + HandSide * 1.8f) * (!UsingPointerFinger).ToInt());
 
+                    // Determine a new finger spacing offest and hover destination.
+                    FingerSpacingOffset = MathHelper.Lerp(FingerSpacingOffset, MathHelper.ToRadians(10f), 0.3f);
+                    destination = AttackerGuardian.Center;
+                    destination += new Vector2(HandSide * 180f, (float)Math.Sin(AttackTime / 16f + HandSide * 1.8f) * (!UsingPointerFinger).ToInt() * 60f - 60f);
+
+                    // Have the pointer finger point ahead of the target.
                     if (UsingPointerFinger)
                         npc.rotation = (Target.Center - PointerFingerPosition + Target.velocity * 20f).ToRotation() + FingerSpacingOffset * 5f;
 
+                    // Release magic bursts periodically.
                     if (AttackTime % 24f == 23f && UsingPointerFinger && AttackTime > 90f)
                     {
                         Main.PlaySound(SoundID.DD2_KoboldIgnite, npc.Center);
@@ -97,8 +105,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     break;
             }
 
+            // Punch the target. This involves resetting the hover destination rapidly and playing sounds periodically.
             if (PunchingTarget)
             {
+                // Make a fingers come close to the hand.
                 FingerOutwardness = MathHelper.Lerp(FingerOutwardness, 8f, 0.2f);
 
                 float punchInterpolant = (float)Math.Sin(AttackTime / 4f + (HandSide == 1f ? MathHelper.Pi : 0f)) * 0.5f + 0.5f;
@@ -106,16 +116,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 destination += AttackerGuardian.SafeDirectionTo(Target.Center) * MathHelper.Lerp(28f, 156f, punchInterpolant);
                 destination += AttackerGuardian.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.PiOver2 * HandSide) * punchInterpolant * 70f;
 
+                // Create punch sounds.
                 if (AttackTime % 15f == 14f)
                     Main.PlaySound(SoundID.Item74, npc.Center);
             }
+
+            // Make the finger outwardness interpolant towards its traditional value when not punching.
             else
                 FingerOutwardness = MathHelper.Lerp(FingerOutwardness, 35f, 0.2f);
 
+            // Close in on the attacker guardian's center when the hands should be invisible.
             if (ShouldBeInvisible)
                 destination = AttackerGuardian.Center + AttackerGuardian.SafeDirectionTo(npc.Center);
 
-            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(8f + (AttackerGuardian.position - AttackerGuardian.oldPos[1]).Length() * 1.25f, npc.Distance(destination));
+            float hoverSpeed = MathHelper.Min((AttackerGuardian.position - AttackerGuardian.oldPos[1]).Length() * 1.25f + 8f, npc.Distance(destination));
+            npc.velocity = npc.SafeDirectionTo(destination) * hoverSpeed;
+
+            // Perform NaN safety.
             if (npc.velocity.HasNaNs())
                 npc.velocity = Vector2.UnitY;
         }

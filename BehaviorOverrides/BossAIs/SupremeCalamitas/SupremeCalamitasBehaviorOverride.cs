@@ -1022,16 +1022,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public static void DoBehavior_LightningLines(NPC npc, Player target, ref float frameType, ref float frameChangeSpeed, float enrageFactor, int currentPhase, ref float attackTimer)
         {
-            int attackCycleCount = 4;
+            int attackCycleCount = 5;
             int attackDelay = attackTimer < 185f ? 185 : 40;
             int telegraphTime = 32 - (int)(enrageFactor * 6f);
             int afterShootDelay = 12;
-            int lightningCount = 14;
+            int lightningCount = 19;
             float lightningAngleArea = 1.23f;
             float hoverSpeed = 29f;
 
             if (currentPhase >= 2)
-                lightningCount += 3;
+                lightningCount += 4;
 
             if (currentPhase >= 3)
                 lightningCount += 6;
@@ -1046,8 +1046,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Hover to the top left/right of the target.
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * 385f;
-            hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 540f;
+            float offsetInterpolant = Utils.InverseLerp(0f, attackCycleCount * (attackDelay + telegraphTime + afterShootDelay), attackTimer, true);
+            offsetInterpolant = MathHelper.Lerp(1f, 0.6f, offsetInterpolant);
+            Vector2 hoverDestination = target.Center - Vector2.UnitY * offsetInterpolant * 385f;
+            hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * offsetInterpolant * 540f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 35f);
             npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.085f);
 

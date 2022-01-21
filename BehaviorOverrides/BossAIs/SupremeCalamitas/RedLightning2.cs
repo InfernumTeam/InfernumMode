@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 			ProjectileID.Sets.TrailCacheLength[projectile.type] = TrailPointCount;
 		}
 
-		public override int Lifetime => 60;
+		public override int Lifetime => 45;
 		public override int TrailPointCount => 60;
 
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

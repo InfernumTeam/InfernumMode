@@ -52,6 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int lightning = Utilities.NewProjectileBetter(projectile.Center, projectile.velocity * 10f, ModContent.ProjectileType<RedLightning2>(), lightningDamage, 0f);
             if (Main.projectile.IndexInRange(lightning))
             {
+                Main.projectile[lightning].Center -= projectile.velocity * 400f;
                 Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
                 Main.projectile[lightning].ai[1] = Main.rand.Next(100);
             }

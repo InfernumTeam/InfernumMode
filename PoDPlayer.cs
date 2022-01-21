@@ -235,9 +235,9 @@ namespace InfernumMode
             {
                 player.mount.Dismount(player);
             }
-            if (PoDWorld.InfernumMode && !CalamityWorld.death)
+            if (PoDWorld.InfernumMode && !CalamityWorld.revenge)
             {
-                CalamityWorld.death = true;
+                CalamityWorld.revenge = true;
             }
             if (PoDWorld.InfernumMode && CalamityWorld.DoGSecondStageCountdown > 600)
             {

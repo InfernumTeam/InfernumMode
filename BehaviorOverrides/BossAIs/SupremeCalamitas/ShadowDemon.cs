@@ -87,11 +87,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 hoverDestination.X += (Main.npc[CalamityGlobalNPC.SCal].Center.X < npc.Center.X).ToDirectionInt() * 250f;
                 if (!npc.WithinRange(hoverDestination, 100f))
                 {
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 26f, 0.75f);
-                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * 29f, 0.05f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 26f, 165f);
+                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination) * 29f, 0.08f);
                 }
                 else
-                    npc.velocity *= 0.92f;
+                    npc.velocity *= 0.95f;
 
                 if (npc.Opacity <= 0f)
                     npc.active = false;

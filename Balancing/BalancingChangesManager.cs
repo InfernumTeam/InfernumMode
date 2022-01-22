@@ -1,4 +1,3 @@
-using CalamityMod;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.Crabulon;
@@ -17,7 +16,6 @@ using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 using static Terraria.ModLoader.ModContent;
 

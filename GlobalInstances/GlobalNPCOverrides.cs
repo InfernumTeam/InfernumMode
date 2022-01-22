@@ -2,18 +2,13 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.Calamitas;
-using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Ravager;
-using CalamityMod.Projectiles.Ranged;
-using CalamityMod.Projectiles.DraedonsArsenal;
-using CalamityMod.Projectiles.Rogue;
 using CalamityMod.World;
 using InfernumMode.Buffs;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
-using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -27,12 +22,8 @@ using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
-
-using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.AstrumAureus;
-using CalamityMod.Projectiles.Melee;
-using CalamityMod.Projectiles.Magic;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
@@ -46,8 +37,6 @@ using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.NPCs.ExoMechs;
-using CalamityMod.NPCs.ExoMechs.Artemis;
-using CalamityMod.NPCs.ExoMechs.Apollo;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Balancing;
 
@@ -167,9 +156,9 @@ namespace InfernumMode.GlobalInstances
             if (InfernumMode.CanUseCustomAIs)
             {
                 // Correct an enemy's life depending on its cached true life value.
-                if (InfernumNPCHPValues.HPValues.ContainsKey(npc.type) && InfernumNPCHPValues.HPValues[npc.type] >= 0 && InfernumNPCHPValues.HPValues[npc.type] != npc.lifeMax)
+                if (NPCHPValues.HPValues.ContainsKey(npc.type) && NPCHPValues.HPValues[npc.type] >= 0 && NPCHPValues.HPValues[npc.type] != npc.lifeMax)
                 {
-                    npc.life = npc.lifeMax = InfernumNPCHPValues.HPValues[npc.type];
+                    npc.life = npc.lifeMax = NPCHPValues.HPValues[npc.type];
 
                     if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
                         BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;

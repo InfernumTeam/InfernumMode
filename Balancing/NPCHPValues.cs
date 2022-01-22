@@ -1,4 +1,5 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Apollo;
@@ -15,11 +16,13 @@ using CalamityMod.NPCs.BrimstoneElemental;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.PlaguebringerGoliath;
 using CalamityMod.NPCs.Calamitas;
+using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -29,13 +32,10 @@ using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
 using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
-using CalamityMod.NPCs.ProfanedGuardians;
-using CalamityMod;
-using Terraria;
 
-namespace InfernumMode.GlobalInstances
+namespace InfernumMode.Balancing
 {
-    public static class InfernumNPCHPValues
+    public static class NPCHPValues
     {
         public static Dictionary<int, int> HPValues => new Dictionary<int, int>()
         {

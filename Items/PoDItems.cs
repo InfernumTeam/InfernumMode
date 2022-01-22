@@ -6,6 +6,7 @@ using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Rogue;
 using CalamityMod.Items.Weapons.Summon;
 using CalamityMod.NPCs.DevourerofGods;
+using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -25,40 +26,8 @@ namespace InfernumMode
                 item.maxStack = 1;
             }
 
-            if (item.type == ModContent.ItemType<StickySpikyBall>())
-                item.damage = 6;
-
-            if (item.type == ModContent.ItemType<FlashBullet>())
-                item.damage = 4;
-
-            if (item.type == ModContent.ItemType<NapalmArrow>())
-                item.damage = 9;
-
-            if (item.type == ModContent.ItemType<MeteorFist>())
-                item.damage = 10;
-
-            if (item.type == ItemID.StarCannon)
-                item.damage = 24;
-
-            if (item.type == ModContent.ItemType<SeasSearing>())
-                item.damage = 39;
-
-            if (item.type == ModContent.ItemType<HivePod>())
-                item.damage = 74;
-
-            if (item.type == ModContent.ItemType<HeavenfallenStardisk>())
-                item.damage = 87;
-
-            if (item.type == ModContent.ItemType<ResurrectionButterfly>())
-                item.damage = 44;
-
-            /*
-            if (item.type == ModContent.ItemType<Skullmasher>())
-                item.damage = 737;
-            */
-
-            if (item.type == ModContent.ItemType<FinalDawn>())
-                item.damage = 855;
+            if (ItemDamageValues.DamageValues.TryGetValue(item.type, out int newDamage))
+                item.damage = newDamage;
         }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)

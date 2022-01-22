@@ -1,4 +1,3 @@
-using CalamityMod.Events;
 using CalamityMod.NPCs;
 using InfernumMode.InverseKinematics;
 using Microsoft.Xna.Framework;

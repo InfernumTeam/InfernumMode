@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.DataStructures;
-using InfernumMode.ILEditingStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

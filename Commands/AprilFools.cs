@@ -1,8 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ModLoader;
-
-namespace InfernumMode.Commands
+﻿namespace InfernumMode.Commands
 {
     /*
     class AprilFools : ModCommand

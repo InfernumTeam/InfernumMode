@@ -3,7 +3,6 @@ using CalamityMod.NPCs.StormWeaver;
 using InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using System.Reflection;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Dusts;
-using CalamityMod.NPCs.Yharon;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;

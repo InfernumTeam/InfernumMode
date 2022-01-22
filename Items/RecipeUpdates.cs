@@ -2,12 +2,11 @@
 using CalamityMod.Items.SummonItems;
 using System.Linq;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Items
 {
-	public static class RecipeUpdates
+    public static class RecipeUpdates
     {
         public static void SetRecipeResultStack(int itemType, int newStack)
         {

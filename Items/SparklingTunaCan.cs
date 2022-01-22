@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod;
 using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.Items.Placeables;
 

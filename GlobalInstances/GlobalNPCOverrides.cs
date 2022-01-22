@@ -1,6 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Items.Accessories;
-using CalamityMod.Items.Dyes;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.Calamitas;
@@ -22,12 +20,9 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
-using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
-using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
@@ -38,16 +33,12 @@ using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Magic;
-using CalamityMod.Projectiles.Summon;
 using CalamityMod.NPCs.GreatSandShark;
-using CalamityMod.Projectiles.Typeless;
-using CalamityMod.Projectiles.Hybrid;
 using CalamityMod.NPCs.SupremeCalamitas;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using CalamityMod.Events;
 using CalamityMod.UI;
 using System.Linq;
-using InfernumMode.Items;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Crabulon;
 using CalamityMod.Buffs.DamageOverTime;
@@ -58,6 +49,7 @@ using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.Balancing;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -367,125 +359,7 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return;
 
-            bool isDesertScourge = npc.type == ModContent.NPCType<DesertScourgeHead>() || npc.type == ModContent.NPCType<DesertScourgeBody>();
-            isDesertScourge |= npc.type == ModContent.NPCType<DesertScourgeTail>() || npc.type == ModContent.NPCType<DesertNuisanceHead>();
-            isDesertScourge |= npc.type == ModContent.NPCType<DesertNuisanceBody>() || npc.type == ModContent.NPCType<DesertNuisanceTail>();
-            bool isSplitEoW = npc.type == NPCID.EaterofWorldsBody && npc.realLife >= 0 && Main.npc[npc.realLife].ai[2] >= 1f;
-
-            if (isDesertScourge && (projectile.type == ProjectileID.JestersArrow || projectile.type == ProjectileID.UnholyArrow || projectile.type == ProjectileID.WaterBolt))
-                damage = (int)(damage * 0.45f);
-
-            if (isDesertScourge && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.425f);
-
-            if (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare)
-                damage = (int)(damage * 0.8f);
-
-            if (isDesertScourge && (projectile.type == ProjectileID.Flare || projectile.type == ProjectileID.BlueFlare))
-                damage = (int)(damage * 0.75f);
-
-            if (npc.type == NPCID.KingSlime && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.67f);
-
-            if (isSplitEoW && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.45f);
-
-            if (projectile.type == ModContent.ProjectileType<AshenStalagmiteProj>() && projectile.Calamity().stealthStrike)
-                damage = (int)(damage * 0.65f);
-
-            if (npc.type == ModContent.NPCType<CrabulonIdle>() && projectile.type == ModContent.ProjectileType<SeafoamBubble>())
-                damage = (int)(damage * 0.785f);
-
-            if (npc.type == NPCID.EaterofWorldsBody && projectile.type == ModContent.ProjectileType<ScourgeoftheDesertProj>() && projectile.Calamity().stealthStrike)
-                damage = (int)(damage * 0.75f);
-
-            if (npc.type == NPCID.EaterofWorldsBody && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.4f);
-
-            if (npc.type == NPCID.BrainofCthulhu && projectile.type == ModContent.ProjectileType<SeafoamBubble>())
-                damage = (int)(damage * 0.75f);
-
-            if ((npc.type == ModContent.NPCType<PerforatorBodyMedium>() ||
-                npc.type == ModContent.NPCType<PerforatorBodyLarge>()) && (projectile.penetrate >= 2 || projectile.penetrate == -1))
-            {
-                damage = (int)(damage * 0.4f);
-            }
-
-            if ((npc.type == ModContent.NPCType<PerforatorBodySmall>() ||
-                npc.type == ModContent.NPCType<PerforatorBodyLarge>()) && (projectile.type == ModContent.ProjectileType<InfernalKrisCinder>()))
-            {
-                damage = (int)(damage * 0.3f);
-            }
-
-            bool isInkCloud = projectile.type == ModContent.ProjectileType<InkCloud>() || projectile.type == ModContent.ProjectileType<InkCloud2>() || projectile.type == ModContent.ProjectileType<InkCloud3>();
-            if (isInkCloud && (npc.type == ModContent.NPCType<SlimeSpawnCrimson3>() || npc.type == ModContent.NPCType<SlimeSpawnCorrupt2>()))
-                damage = (int)(damage * 0.6f);
-            if ((npc.type == ModContent.NPCType<SlimeSpawnCrimson3>() || npc.type == ModContent.NPCType<SlimeSpawnCorrupt2>()) &&
-                (projectile.penetrate >= 2 || projectile.penetrate == -1))
-            {
-                damage = (int)(damage * 0.5f);
-            }
-
-            if (npc.type == NPCID.WallofFleshEye && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.785);
-
-            if (npc.type == NPCID.WallofFleshEye && projectile.type == ModContent.ProjectileType<TrackingDiskLaser>())
-                damage = (int)(damage * 0.625);
-
-            if (projectile.type == ModContent.ProjectileType<SporeBomb>() || projectile.type == ModContent.ProjectileType<LeafArrow>() || projectile.type == ModContent.ProjectileType<IcicleArrowProj>())
-                damage = (int)(damage * 0.55);
-            if ((npc.type == ModContent.NPCType<AquaticScourgeBody>() || npc.type == ModContent.NPCType<AquaticScourgeBodyAlt>()) &&
-                (projectile.penetrate >= 2 || projectile.penetrate == -1))
-            {
-                damage = (int)(damage * 0.45f);
-            }
-
-            if (projectile.type == ModContent.ProjectileType<Corrocloud1>() ||
-                projectile.type == ModContent.ProjectileType<Corrocloud2>() ||
-                projectile.type == ModContent.ProjectileType<Corrocloud3>())
-            {
-                damage = (int)(damage * 0.65);
-            }
-
-            if ((projectile.type == ModContent.ProjectileType<Corrocloud1>() ||
-                projectile.type == ModContent.ProjectileType<Corrocloud2>() ||
-                projectile.type == ModContent.ProjectileType<Corrocloud3>()) && npc.type == ModContent.NPCType<Leviathan>())
-            {
-                damage = (int)(damage * 0.55);
-            }
-
-            if ((projectile.type == ModContent.ProjectileType<Corrocloud1>() ||
-                projectile.type == ModContent.ProjectileType<Corrocloud2>() ||
-                projectile.type == ModContent.ProjectileType<Corrocloud3>()) && npc.type == ModContent.NPCType<AstrumAureus>())
-            {
-                damage = (int)(damage * 0.425);
-            }
-
-            if (npc.type == ModContent.NPCType<AstrumAureus>() && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.667);
-
-            bool isPhantasmDragon = npc.type == NPCID.CultistDragonBody1 || npc.type == NPCID.CultistDragonBody2 || npc.type == NPCID.CultistDragonBody3 || npc.type == NPCID.CultistDragonBody4 || npc.type == NPCID.CultistDragonTail;
-            if (isPhantasmDragon && (projectile.penetrate == -1 || projectile.penetrate > 1))
-                damage = (int)(damage * 0.24);
-
-            if (npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsTail>() &&
-                (projectile.type == ModContent.ProjectileType<PhantasmalRuinGhost>() || projectile.type == ModContent.ProjectileType<PhantasmalRuinProj>()) || projectile.type == ProjectileID.LostSoulFriendly)
-            {
-                damage = (int)(damage * 0.6);
-            }
-
-            if (npc.type == ModContent.NPCType<DevourerofGodsBody>() && (projectile.type == ProjectileID.MoonlordBullet || projectile.type == ProjectileID.MoonlordArrow || projectile.type == ProjectileID.MoonlordArrowTrail))
-                damage = (int)(damage * 0.45);
-
-            if (npc.type == InfernumMode.CalamityMod.NPCType("Providence") && projectile.minion && projectile.type == ModContent.ProjectileType<HolyFireBulletProj>())
-                damage = (int)(damage * 0.6);
-
-            bool isExoTwin = npc.type == ModContent.NPCType<Artemis>() || npc.type == ModContent.NPCType<Apollo>();
-            if (isExoTwin && projectile.type == ModContent.ProjectileType<Galaxia2>())
-                damage = (int)(damage * 1.25);
-
-            if (npc.type == ModContent.NPCType<SupremeCalamitas>() && projectile.type == ModContent.ProjectileType<InfernadoFriendly>())
-                damage = (int)(damage * 0.55);
+            BalancingChangesManager.ApplyFromProjectile(npc, ref damage, projectile);
         }
 
         public override void BossHeadRotation(NPC npc, ref float rotation)

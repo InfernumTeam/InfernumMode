@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-	public class EssenceSlice : ModProjectile
+    public class EssenceSlice : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
         public const int Lifetime = 240;

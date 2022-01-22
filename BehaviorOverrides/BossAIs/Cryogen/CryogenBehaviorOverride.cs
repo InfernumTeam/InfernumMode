@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.NPCs.Cryogen;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;

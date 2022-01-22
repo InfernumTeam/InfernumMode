@@ -447,11 +447,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     canSpawnDust = false;
 
                 float dustCount = Main.rand.Next(12, 38);
-                float ai1 = attackTimer;
                 if (canSpawnDust)
                 {
                     float initialAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    for (float i = 0f; i < dustCount; i = ai1 + 1f)
+                    for (float i = 0f; i < dustCount; i++)
                     {
                         Dust dust = Main.dust[Dust.NewDust(dustSpawnPos, 0, 0, 229, 0f, 0f, 0, default, 1f)];
                         dust.noGravity = true;
@@ -459,7 +458,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         dust.velocity = Vector2.UnitY.RotatedBy(initialAngle + MathHelper.TwoPi * i / dustCount) * Main.rand.NextFloat(1.6f, 9.6f);
                         dust.fadeIn = Main.rand.NextFloat(0.4f, 1.4f);
                         dust.scale = Main.rand.NextFloat(1f, 3f);
-                        ai1 = i;
                     }
                 }
             }

@@ -2,7 +2,6 @@
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Items.Placeables.Banners;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.DesertScourge;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;

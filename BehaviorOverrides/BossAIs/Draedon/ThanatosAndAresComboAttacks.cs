@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;

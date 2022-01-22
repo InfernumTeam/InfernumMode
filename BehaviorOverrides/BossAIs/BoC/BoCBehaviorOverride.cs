@@ -330,7 +330,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
 
             int teleportFadeTime = 35;
-            int chargeTime = 45;
 
             Vector2 teleportDestination = target.Center + Vector2.UnitY * 435f;
             if (!DoTeleportFadeEffect(npc, attackTimer, teleportDestination, teleportFadeTime))

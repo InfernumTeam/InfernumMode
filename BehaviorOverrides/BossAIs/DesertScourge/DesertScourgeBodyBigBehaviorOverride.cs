@@ -26,8 +26,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             NPC aheadSegment = Main.npc[(int)npc.ai[1]];
 
             npc.target = aheadSegment.target;
-            Player target = Main.player[npc.target];
-
             if (aheadSegment.alpha < 128)
                 npc.alpha = Utils.Clamp(npc.alpha - 42, 0, 255);
 

@@ -1,9 +1,6 @@
 ﻿using InfernumMode.OverridingSystem;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {

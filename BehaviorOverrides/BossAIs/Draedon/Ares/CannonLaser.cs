@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.NPCs.ExoMechs.Ares;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -10,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-	public class CannonLaser : ModProjectile
+    public class CannonLaser : ModProjectile
 	{
 		public float TelegraphDelay
 		{

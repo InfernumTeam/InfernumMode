@@ -1,4 +1,5 @@
 using CalamityMod.Events;
+using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.BossRush;
@@ -38,6 +39,7 @@ namespace InfernumMode
             CalamityMod = ModLoader.GetMod("CalamityMod");
 
             OverridingListManager.Load();
+            BalancingChangesManager.Load();
             HookManager.Load();
 
             Filters.Scene["InfernumMode:HiveMind"] = new Filter(new HiveMindScreenShaderData("FilterMiniTower").UseColor(HiveMindSkyColor).UseOpacity(0.6f), EffectPriority.VeryHigh);
@@ -180,6 +182,7 @@ namespace InfernumMode
         public override void Unload()
         {
             OverridingListManager.Unload();
+            BalancingChangesManager.Unload();
             HookManager.Unload();
             Instance = null;
             CalamityMod = null;

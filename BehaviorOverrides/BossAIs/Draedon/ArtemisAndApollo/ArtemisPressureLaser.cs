@@ -4,13 +4,12 @@ using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
-using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-	public class ArtemisPressureLaser : BaseLaserbeamProjectile
+    public class ArtemisPressureLaser : BaseLaserbeamProjectile
 	{
 		public int OwnerIndex
 		{

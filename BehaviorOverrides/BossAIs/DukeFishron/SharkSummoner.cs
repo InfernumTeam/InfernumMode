@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -12,7 +11,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 {
     public class SharkSummoner : ModProjectile
     {
-        internal PrimitiveTrailCopy TornadoDrawer;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()
@@ -41,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 projectile.scale = 1f;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Vector2 top = projectile.Center - Vector2.UnitY * 3000f;
             Vector2 bottom = projectile.Center + Vector2.UnitY * 3000f;
@@ -63,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

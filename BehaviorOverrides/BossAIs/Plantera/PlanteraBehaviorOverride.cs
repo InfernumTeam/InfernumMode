@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

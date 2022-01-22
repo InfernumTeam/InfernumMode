@@ -1,14 +1,11 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.NPCs;
 using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;

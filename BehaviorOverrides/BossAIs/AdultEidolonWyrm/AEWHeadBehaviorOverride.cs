@@ -1,17 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs;
-using CalamityMod.NPCs.Abyss;
-using CalamityMod.World;
-using InfernumMode.OverridingSystem;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-
-namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
+﻿namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
     /*
     public class AEWHeadBehaviorOverride : NPCBehaviorOverride

@@ -1,6 +1,5 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
-using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -9,7 +8,6 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {

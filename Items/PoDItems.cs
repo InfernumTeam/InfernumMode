@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
 using CalamityMod.Items.Ammo;
-using CalamityMod.Items.Fishing.AstralCatches;
 using CalamityMod.Items.TreasureBags;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Rogue;

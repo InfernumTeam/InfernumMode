@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using CalamityMod.NPCs;
+﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;

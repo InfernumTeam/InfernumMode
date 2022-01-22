@@ -2,7 +2,6 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.NPCs.SunkenSea;
 
 namespace InfernumMode.Items
 {

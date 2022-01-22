@@ -1,11 +1,8 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.ExoMechs.Ares;
-using CalamityMod.Projectiles.Summon;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;

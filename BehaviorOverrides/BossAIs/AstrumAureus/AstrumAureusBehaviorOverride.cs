@@ -2,7 +2,6 @@
 using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumAureus;
-using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using InfernumMode.GlobalInstances;

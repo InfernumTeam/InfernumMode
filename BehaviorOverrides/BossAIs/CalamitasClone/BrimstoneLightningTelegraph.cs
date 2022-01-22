@@ -1,6 +1,5 @@
 using CalamityMod.Events;
 using CalamityMod.World;
-using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-	public class BrimstoneLightningTelegraph : ModProjectile
+    public class BrimstoneLightningTelegraph : ModProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()

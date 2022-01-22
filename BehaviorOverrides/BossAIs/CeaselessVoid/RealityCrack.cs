@@ -1,5 +1,4 @@
-﻿using CalamityMod;
-using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+﻿using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;

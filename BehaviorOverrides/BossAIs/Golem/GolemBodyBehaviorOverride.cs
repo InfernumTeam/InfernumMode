@@ -6,7 +6,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using InfernumMode.Tiles;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {

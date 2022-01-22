@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             AresTwins_CircleAttack,
             AresTwins_ElectromagneticPlasmaStar,
             ThanatosAres_ExplosionCircle,
-            ThanatosAres_NuclearHell,
+            ThanatosAres_LaserCircle,
             ThanatosAres_LaserBarrage,
             ThanatosAres_ElectropulseBursts
         }
@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ExplosionCircle);
-                attackSelector.Add(ExoMechComboAttackType.ThanatosAres_NuclearHell);
+                attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserCircle);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserBarrage);
                 if (CurrentThanatosPhase != 4 && CurrentAresPhase != 4)
                     attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ElectropulseBursts, 1.65);

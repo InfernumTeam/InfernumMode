@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.extraUpdates = 1;
-            projectile.timeLeft = 600;
+            projectile.timeLeft = 960;
             projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }

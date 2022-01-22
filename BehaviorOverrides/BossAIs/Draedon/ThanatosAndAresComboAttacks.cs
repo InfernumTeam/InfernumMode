@@ -14,6 +14,7 @@ using Terraria.ModLoader;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
+using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -23,7 +24,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             [ExoMechComboAttackType.ThanatosAres_ExplosionCircle] = new int[] { ModContent.NPCType<AresTeslaCannon>(), 
                                                                                 ModContent.NPCType<AresPlasmaFlamethrower>() },
-            [ExoMechComboAttackType.ThanatosAres_NuclearHell] = new int[] { ModContent.NPCType<AresLaserCannon>() },
             [ExoMechComboAttackType.ThanatosAres_LaserBarrage] = new int[] { ModContent.NPCType<AresLaserCannon>(),
                                                                              ModContent.NPCType<AresTeslaCannon>() },
             [ExoMechComboAttackType.ThanatosAres_ElectropulseBursts] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
@@ -58,8 +58,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 case ExoMechComboAttackType.ThanatosAres_ExplosionCircle:
                     return DoBehavior_ThanatosAres_ExplosionCircle(npc, target, ref attackTimer, ref frame);
-                case ExoMechComboAttackType.ThanatosAres_NuclearHell:
-                    return DoBehavior_ThanatosAres_NuclearHell(npc, target, ref attackTimer, ref frame);
+                case ExoMechComboAttackType.ThanatosAres_LaserCircle:
+                    return DoBehavior_ThanatosAres_LaserCircle(npc, target, ref attackTimer, ref frame);
                 case ExoMechComboAttackType.ThanatosAres_LaserBarrage:
                     return DoBehavior_ThanatosAres_LaserBarrage(npc, target, ref attackTimer, ref frame);
                 case ExoMechComboAttackType.ThanatosAres_ElectropulseBursts:
@@ -245,103 +245,107 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             return attackTimer > attackDelay + attackTime;
         }
 
-        public static bool DoBehavior_ThanatosAres_NuclearHell(NPC npc, Player target, ref float attackTimer, ref float frame)
+        public static bool DoBehavior_ThanatosAres_LaserCircle(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
-            int attackDelay = 120;
-            int attackTime = 480;
-            int thanatosNukeShootRate = 100;
-            int laserBurstShootRate = 64;
-            float laserBurstShootSpeed = 12f;
+            int attackDelay = 180;
+            int telegraphTime = 60;
+            int attackTime = 780;
+            int spinTime = attackTime - attackDelay;
+            int totalLasers = 5;
+            ref float generalAngularOffset = ref npc.Infernum().ExtraAI[0];
 
-            // Thanatos periodically releases nukes from the mouth. Its head is always open.
+            // Thanatos spins around the target with its head always open while releasing lasers inward.
             if (npc.type == ModContent.NPCType<ThanatosHead>())
             {
+                NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+                Vector2 spinDestination = aresBody.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 2000f;
+                npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
+                npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
+                if (npc.WithinRange(spinDestination, 40f))
+                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                else
+                    npc.rotation = npc.rotation.AngleTowards((attackTimer + 8f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.25f);
+
+                ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
+                ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
+                ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
+
+                // Select segment shoot attributes.
+                int segmentShootDelay = 115;
+                if (attackTimer > attackDelay && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
+                {
+                    totalSegmentsToFire = 24f;
+                    segmentFireTime = 90f;
+
+                    segmentFireCountdown = segmentFireTime;
+                    npc.netUpdate = true;
+                }
+
+                if (segmentFireCountdown > 0f)
+                    segmentFireCountdown--;
+
                 // Decide frames.
                 frame = (int)ThanatosFrameType.Open;
-
-                DoProjectileShootInterceptionMovement(npc, target, 1.3f);
-                if (attackTimer > attackDelay && attackTimer % thanatosNukeShootRate == thanatosNukeShootRate - 1f)
-                {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Vector2 nukeShootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 19f;
-                        Utilities.NewProjectileBetter(npc.Center, nukeShootVelocity, ModContent.ProjectileType<ThanatosNuke>(), 0, 0f, npc.target);
-
-                        npc.netUpdate = true;
-                    }
-                }
             }
-            
-            // Ares hovers above the target.
+
+            // Ares sits in place, creating four large exo overload laser bursts.
             if (npc.type == ModContent.NPCType<AresBody>())
             {
-                Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
-
                 // Decide frames.
                 frame = (int)AresBodyFrameType.Normal;
 
-                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
-            }
-
-            // Ares's laser cannon releases streams of 3 lasers at the target periodically.
-            if (npc.type == ModContent.NPCType<AresLaserCannon>())
-            {
-                // Choose a direction and rotation.
-                // Rotation is relative to predictiveness.
-                float aimPredictiveness = 15f;
-                Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
-                Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 74f + Vector2.UnitY * 8f;
-                float idealRotation = aimDirection.ToRotation();
-
-                if (npc.spriteDirection == 1)
-                    idealRotation += MathHelper.Pi;
-                if (idealRotation < 0f)
-                    idealRotation += MathHelper.TwoPi;
-                if (idealRotation > MathHelper.TwoPi)
-                    idealRotation -= MathHelper.TwoPi;
-                npc.ai[3] = idealRotation;
-                npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.065f);
-
-                int direction = Math.Sign(target.Center.X - npc.Center.X);
-                if (direction != 0)
+                // Create telegraphs.
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == attackDelay - telegraphTime)
                 {
-                    npc.direction = direction;
-
-                    if (npc.spriteDirection != -npc.direction)
-                        npc.rotation += MathHelper.Pi;
-
-                    npc.spriteDirection = -npc.direction;
+                    generalAngularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < totalLasers; i++)
+                    {
+                        Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
+                        int telegraph = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeamTelegraph>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(telegraph))
+                        {
+                            Main.projectile[telegraph].ai[1] = npc.whoAmI;
+                            Main.projectile[telegraph].localAI[0] = telegraphTime;
+                            Main.projectile[telegraph].netUpdate = true;
+                        }
+                    }
+                    npc.netUpdate = true;
                 }
 
-                // Release dust at the end of the cannon as a telegraph.
-                if (attackTimer >= attackDelay && attackTimer % laserBurstShootRate > laserBurstShootRate * 0.7f)
+                // Create laser bursts.
+                if (attackTimer == attackDelay)
                 {
-                    Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
-                    Dust laser = Dust.NewDustPerfect(dustSpawnPosition, 182);
-                    laser.velocity = (endOfCannon - laser.position) * 0.04f;
-                    laser.scale = 1.25f;
-                    laser.noGravity = true;
-                }
-
-                // Periodically release bursts of lasers.
-                if (attackTimer >= attackDelay && attackTimer % laserBurstShootRate == laserBurstShootRate - 1f)
-                {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 7; i++)
+                        for (int i = 0; i < totalLasers; i++)
                         {
-                            float laserShootSpread = MathHelper.Lerp(-0.44f, 0.44f, i / 6f) + Main.rand.NextFloatDirection() * 0.04f;
-                            Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(laserShootSpread) * laserBurstShootSpeed;
-                            int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<CannonLaser>(), 530, 0f);
-                            if (Main.projectile.IndexInRange(laser))
-                                Main.projectile[laser].ai[1] = npc.whoAmI;
+                            Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
+                            int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), 900, 0f);
+                            if (Main.projectile.IndexInRange(deathray))
+                            {
+                                Main.projectile[deathray].ai[1] = npc.whoAmI;
+                                Main.projectile[deathray].ModProjectile<AresSpinningDeathBeam>().LifetimeThing = spinTime;
+                                Main.projectile[deathray].netUpdate = true;
+                            }
                         }
+                        generalAngularOffset = 0f;
+                        npc.netUpdate = true;
                     }
                 }
+
+                if (attackTimer > attackDelay)
+                {
+                    float angularVelocity = Utils.InverseLerp(attackDelay, attackDelay + 60f, attackTimer, true) * MathHelper.Pi / 155f;
+                    generalAngularOffset += angularVelocity;
+                }
+
+                // Slow down.
+                if (!npc.WithinRange(target.Center, 1900f))
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, target.Center, 24f, 75f);
+                else
+                    npc.velocity *= 0.9f;
             }
 
             return attackTimer > attackDelay + attackTime;

@@ -130,12 +130,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                             if (ExoMechManagement.CurrentThanatosPhase >= 3)
                                 generalShootSpeedFactor *= 1.15f;
                         }
+
+                        if ((int)headAttackType == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle)
+                            generalShootSpeedFactor *= 0.5f;
                         
                         switch ((int)headAttackType)
                         {
                             // Fire regular lasers.
                             case (int)ThanatosHeadAttackType.ProjectileShooting_RedLaser:
                             case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserBarrage:
+                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle:
                                 int type = ModContent.ProjectileType<ThanatosLaser>();
                                 float predictionFactor = 21f;
                                 float shootSpeed = generalShootSpeedFactor * 11f;

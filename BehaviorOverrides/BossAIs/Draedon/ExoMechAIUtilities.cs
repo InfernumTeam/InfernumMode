@@ -54,8 +54,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 idealRotation += MathHelper.TwoPi;
             if (idealRotation > MathHelper.TwoPi)
                 idealRotation -= MathHelper.TwoPi;
-            currentDirection = idealRotation;
             npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.065f);
+            currentDirection = npc.rotation;
+            if (Math.Sin(currentDirection) < 0f)
+                currentDirection += MathHelper.Pi;
 
             int direction = Math.Sign(target.Center.X - npc.Center.X);
             if (direction != 0)

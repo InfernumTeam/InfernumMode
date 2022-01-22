@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.IO;
 using Terraria;
 using Terraria.ID;
@@ -105,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 			}
 
 			// Set start of telegraph to the npc center.
-			projectile.Center = ThingToAttachTo.Center + ThingToAttachTo.ai[3].ToRotationVector2() * ThingToAttachTo.direction * 64f + Vector2.UnitY * 16f;
+			projectile.Center = ThingToAttachTo.Center + ThingToAttachTo.ai[3].ToRotationVector2() * 64f + Vector2.UnitY * 16f;
 
 			if (Destination == Vector2.Zero)
 			{

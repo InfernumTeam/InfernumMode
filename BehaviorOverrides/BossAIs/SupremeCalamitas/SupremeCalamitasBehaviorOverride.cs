@@ -250,6 +250,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             frameType = (int)SCalFrameType.UpwardDraft;
             frameChangeSpeed = 0.15f;
 
+            // Prevent the player from using rage and adrenaline past a point.
+            if (lifeRatio < Phase4LifeRatio)
+                target.Infernum().MakeAnxious(45);
+
             // Determine the enrage factor.
             npc.Calamity().unbreakableDR = false;
             npc.Calamity().DR = 0.3f;

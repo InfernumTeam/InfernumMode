@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static CalamityMod.NPCs.ExoMechs.Draedon;
+using InfernumMode.Buffs;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -260,6 +261,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     break;
             }
+
+            // Disable rage and adrenaline past a point.
+            if (ExoMechManagement.CurrentThanatosPhase >= 5 || ExoMechManagement.CurrentAresPhase >= 5 || ExoMechManagement.CurrentTwinsPhase >= 5)
+                playerToFollow.Infernum().MakeAnxious(45);
 
             if (talkTimer > ExoMechChooseDelay + 10f && !ExoMechIsPresent)
             {

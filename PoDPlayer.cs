@@ -4,6 +4,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
 using Microsoft.Xna.Framework;
@@ -228,6 +229,11 @@ namespace InfernumMode
         }
         #endregion Saving and Loading
         #region Misc Effects
+        public void MakeAnxious(int time)
+        {
+            player.DelBuff(Player.MaxBuffs - 1);
+            player.AddBuff(ModContent.BuffType<Anxiety>(), time);
+        }
         public override void PostUpdateMiscEffects()
         {
             NPC.MoonLordCountdown = 0;

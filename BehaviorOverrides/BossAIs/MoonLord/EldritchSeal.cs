@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Projectiles.Summon;
+using InfernumMode.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
@@ -125,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (npc.ai[0] != 3f)
             {
                 npc.position = Main.npc[(int)npc.ai[3]].Center + SpinAngle.ToRotationVector2() * 900f;
-                Main.LocalPlayer.Calamity().adrenaline = 0;
+                Main.LocalPlayer.AddBuff(ModContent.BuffType<Anxiety>(), 45);
             }
             else
             {

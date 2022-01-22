@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -86,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
 
             if (below20)
-                target.Calamity().rage = target.Calamity().adrenaline = 0;
+                target.Infernum().MakeAnxious(45);
 
             if (fadeoutCountdown > 0f)
                 fadeoutCountdown--;

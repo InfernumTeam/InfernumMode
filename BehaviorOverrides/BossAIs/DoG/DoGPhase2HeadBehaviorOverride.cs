@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -33,6 +34,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const int PassiveMovementTimeP2 = 360;
         public const int AggressiveMovementTimeP2 = 720;
+        public const float CanUseSpecialAttacksLifeRatio = 0.7f;
+        public const float FinalPhaseLifeRatio = 0.2f;
+        public const float RipperRemovalLifeRatio = 0.35f;
 
         public static bool InPhase2
         {
@@ -57,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 float phaseCycleTimer = npc.Infernum().ExtraAI[12] % (passiveMoveTime + aggressiveMoveTime);
                 float aggressiveFade = Utils.InverseLerp(passiveMoveTime - 120f, passiveMoveTime, phaseCycleTimer, true);
                 aggressiveFade *= Utils.InverseLerp(1f, 0.8f, aggressiveFade, true);
-                if (npc.life < npc.lifeMax * 0.2f)
+                if (npc.life < npc.lifeMax * FinalPhaseLifeRatio)
                     aggressiveFade = 0f;
                 if (npc.Infernum().ExtraAI[14] != 0f)
                     return 0f;
@@ -77,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 float phaseCycleTimer = npc.Infernum().ExtraAI[12] % (passiveMoveTime + aggressiveMoveTime);
                 float passiveFade = Utils.InverseLerp(passiveMoveTime + aggressiveMoveTime - 120f, passiveMoveTime + aggressiveMoveTime, phaseCycleTimer, true);
                 passiveFade *= Utils.InverseLerp(1f, 0.8f, passiveFade, true);
-                if (npc.life < npc.lifeMax * 0.2f)
+                if (npc.life < npc.lifeMax * FinalPhaseLifeRatio)
                     passiveFade = 0f;
                 if (npc.Infernum().ExtraAI[14] != 0f)
                     return 0f;
@@ -159,8 +163,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             // Variables
-            bool canPerformSpecialAttacks = lifeRatio < 0.7f;
-            bool nearDeath = lifeRatio < 0.2f;
+            bool canPerformSpecialAttacks = lifeRatio < CanUseSpecialAttacksLifeRatio;
+            bool nearDeath = lifeRatio < FinalPhaseLifeRatio;
+
+            // Prevent the player from using rage and adrenaline past a point.
+            if (lifeRatio < RipperRemovalLifeRatio)
+                target.Infernum().MakeAnxious(45);
 
             // Don't take damage when fading out.
             npc.dontTakeDamage = npc.Opacity < 0.5f;

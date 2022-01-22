@@ -1,5 +1,4 @@
-﻿using InfernumMode.MachineLearning.Optimizers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -14,10 +13,9 @@ namespace InfernumMode.MachineLearning.Architecture
         internal int InputCount;
         internal Func<double, double, double> CostFunction;
         internal List<Layer> Layers = new List<Layer>();
-        internal BaseOptimizer Optimizer = null;
 
         public double LearningRate;
-        public double[] Outputs => Layers.Last().Outputs;
+        public GeneralMatrix Outputs => Layers.Last().Outputs;
 
         public NeuralNetwork(double learningRate, int inputCount, Func<double, double, double> costFunction)
         {
@@ -25,12 +23,6 @@ namespace InfernumMode.MachineLearning.Architecture
             InputCount = inputCount;
             CostFunction = costFunction;
         }
-
-        /// <summary>
-        /// Gives the network a custom optimizer.
-        /// </summary>
-        /// <param name="optimizer">The optimizer to use.</param>
-        public void UseOptimizer(BaseOptimizer optimizer) => Optimizer = optimizer;
 
         /// <summary>
         /// Adds a new layer to the network.
@@ -46,7 +38,7 @@ namespace InfernumMode.MachineLearning.Architecture
                 neuronCount = 1;
             }
             else
-                inputCount = Layers.Last().Outputs.Length;
+                inputCount = Layers.Last().Outputs.TotalRows;
 
             Layers.Add(new Layer(inputCount, neuronCount, LearningRate, activationFunction, CostFunction));
         }
@@ -55,7 +47,7 @@ namespace InfernumMode.MachineLearning.Architecture
         /// Updates the outputs of the network, allowing optional overriding of the outputs.
         /// </summary>
         /// <param name="newInputs">The new inputs to send. This does not need to be inputted.</param>
-        public void UpdateOutputs(double[] newInputs = null)
+        public void UpdateOutputs(GeneralMatrix? newInputs = null)
         {
             // Don't bother doing anything if no layers exist yet.
             if (Layers.Count == 0)
@@ -66,7 +58,7 @@ namespace InfernumMode.MachineLearning.Architecture
                 Layers[i].UpdateOutputs(Layers[i - 1].Outputs);
         }
 
-        public double[] Train(double[] newInputs, double[] expectedValues, out double loss)
+        public GeneralMatrix? Train(GeneralMatrix newInputs, GeneralMatrix expectedValues, out double loss)
         {
             // Default to 0 for the loss.
             loss = 0D;
@@ -77,16 +69,16 @@ namespace InfernumMode.MachineLearning.Architecture
 
             // Update inputs.
             UpdateOutputs(newInputs);
-            double[] outputs = Outputs;
+            GeneralMatrix outputs = Outputs;
 
             // Define the loss after outputs have been calculated by comparing them to expected values.
             for (int i = 0; i < Layers.Last().Outputs.Length; i++)
-                loss += CostFunction(Layers.Last().Outputs[i], expectedValues[i]) / (float)Layers.Last().Outputs.Length;
+                loss += CostFunction(Layers.Last().Outputs[i, 0], expectedValues[i, 0]) / (float)Layers.Last().Outputs.Length;
 
             // Update all weights and biases in the network.
-            Layers.Last().Backpropagate(expectedValues, Optimizer);
+            Layers.Last().Backpropagate(expectedValues);
             for (int i = Layers.Count - 2; i >= 0; i--)
-                Layers[i].Backpropagate(Layers[i + 1], Optimizer);
+                Layers[i].Backpropagate(Layers[i + 1]);
 
             return outputs;
         }

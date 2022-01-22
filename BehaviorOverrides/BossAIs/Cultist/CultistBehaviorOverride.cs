@@ -91,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             float right = initialXPosition + 2700f;
 
             // Restrict the player's position.
-            target.Center = Vector2.Clamp(target.Center, new Vector2(left, -100f), new Vector2(right, Main.maxTilesY * 16f + 100f));
+            target.Center = Vector2.Clamp(target.Center, new Vector2(left + target.width * 0.5f, -100f), new Vector2(right - target.width * 0.5f, Main.maxTilesY * 16f + 100f));
             if (target.Center.X < left + 160f)
             {
                 Dust magic = Dust.NewDustPerfect(new Vector2(left - 12f, target.Center.Y), 261);

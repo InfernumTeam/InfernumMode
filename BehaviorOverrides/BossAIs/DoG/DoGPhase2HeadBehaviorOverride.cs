@@ -36,7 +36,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public static bool InPhase2
         {
-            get => Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] == 1f;
+            get
+            {
+                if (CalamityGlobalNPC.DoGHead < 0)
+                    return false;
+
+                return Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] == 1f;
+            }
             set => Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] = value.ToInt();
         }
 

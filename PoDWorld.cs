@@ -1,10 +1,14 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.GameContent.Generation;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.World.Generation;
 
 namespace InfernumMode
 {
@@ -76,6 +80,7 @@ namespace InfernumMode
             DraedonSuccesses = reader.ReadInt32();
         }
         #endregion
+
         #region Updating
         public override void PostUpdate()
         {
@@ -83,5 +88,29 @@ namespace InfernumMode
                 CalamityGlobalNPC.draedon = -1;
         }
         #endregion Updating
+
+        #region Great Sand Shark Desert Area
+        public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
+        {
+            int floatingIslandIndex = tasks.FindIndex(g => g.Name == "Floating Islands");
+            if (floatingIslandIndex != -1)
+                tasks.Insert(floatingIslandIndex, new PassLegacy("Desert Digout Area", GenerateUndergroundDesertArea));
+        }
+
+        public static void GenerateUndergroundDesertArea(GenerationProgress progress)
+        {
+            Vector2 cutoutAreaCenter = WorldGen.UndergroundDesertLocation.Center.ToVector2();
+
+            for (int i = 0; i < 4; i++)
+            {
+                cutoutAreaCenter += WorldGen.genRand.NextVector2Circular(15f, 15f);
+                WorldUtils.Gen(cutoutAreaCenter.ToPoint(), new Shapes.Mound(75, 48), Actions.Chain(
+                    new Modifiers.Blotches(12),
+                    new Actions.ClearTile(),
+                    new Actions.PlaceWall(WallID.Sandstone)
+                    ));
+            }
+        }
+        #endregion Great Sand Shark Desert Area
     }
 }

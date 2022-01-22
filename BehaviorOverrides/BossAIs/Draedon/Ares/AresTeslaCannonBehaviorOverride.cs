@@ -30,16 +30,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
 
-            // Define the life ratio.
-            npc.life = aresBody.life;
-            npc.lifeMax = aresBody.lifeMax;
-
-            // Shamelessly steal variables from Ares.
-            npc.target = aresBody.target;
-            npc.Opacity = aresBody.Opacity;
-            npc.dontTakeDamage = aresBody.dontTakeDamage;
-            int projectileDamageBoost = (int)aresBody.Infernum().ExtraAI[8];
             Player target = Main.player[npc.target];
 
             // Define attack variables.
@@ -133,7 +125,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), projectileDamageBoost + 500, 0f);
+                    int teslaOrbDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 500;
+                    int electricOrb = Utilities.NewProjectileBetter(endOfCannon, aimDirection * orbShootSpeed, ModContent.ProjectileType<AresTeslaOrb>(), teslaOrbDamage, 0f);
                     if (Main.projectile.IndexInRange(electricOrb))
                         Main.projectile[electricOrb].ai[0] = orbCounter;
 
@@ -150,21 +143,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     // Release sparks once Ares is in the second phase.
                     if (ExoMechManagement.CurrentAresPhase >= 2)
                     {
+                        int teslaSparkDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 500;
                         float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                         for (int i = 0; i < 7; i++)
                         {
                             Vector2 sparkVelocity = (MathHelper.TwoPi * i / 7f + offsetAngle).ToRotationVector2() * 6.5f;
-                            Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 6f, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), projectileDamageBoost + 500, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + sparkVelocity * 6f, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), teslaSparkDamage, 0f);
                         }
                     }
 
                     // As well as a of electric clouds in the third phase.
                     if (ExoMechManagement.CurrentAresPhase >= 3)
                     {
+                        int teslaGasDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 530;
                         for (int i = 0; i < 85; i++)
                         {
                             Vector2 cloudShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 23f) - npc.velocity.SafeNormalize(-Vector2.UnitY) * 10f;
-                            Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<ElectricGas>(), projectileDamageBoost + 530, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + cloudShootVelocity * 3f, cloudShootVelocity, ModContent.ProjectileType<ElectricGas>(), teslaGasDamage, 0f);
                         }
                     }
                 }

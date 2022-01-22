@@ -5,21 +5,21 @@ namespace InfernumMode.Balancing
 {
     public class PierceResistBalancingRule : IBalancingRule
     {
-        public float DamageReductionFactor;
-        public PierceResistBalancingRule(float damageReductionFactor) => DamageReductionFactor = damageReductionFactor;
+        public float DamageMultiplier;
+        public PierceResistBalancingRule(float damageMultiplier) => DamageMultiplier = damageMultiplier;
 
         public bool AppliesTo(NPC npc, NPCHitContext hitContext) => hitContext.Pierce > 1 || hitContext.Pierce == -1;
 
-        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageReductionFactor);
+        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
     }
 
     public class ProjectileResistBalancingRule : IBalancingRule
     {
-        public float DamageReductionFactor;
+        public float DamageMultiplier;
         public int[] ApplicableProjectileTypes;
-        public ProjectileResistBalancingRule(float damageReductionFactor, params int[] projTypes)
+        public ProjectileResistBalancingRule(float damageMultiplier, params int[] projTypes)
         {
-            DamageReductionFactor = damageReductionFactor;
+            DamageMultiplier = damageMultiplier;
             ApplicableProjectileTypes = projTypes;
         }
 
@@ -33,16 +33,16 @@ namespace InfernumMode.Balancing
             return true;
         }
 
-        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageReductionFactor);
+        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
     }
 
     public class StealthStrikeBalancingRule : IBalancingRule
     {
-        public float DamageReductionFactor;
+        public float DamageMultiplier;
         public int[] ApplicableProjectileTypes;
-        public StealthStrikeBalancingRule(float damageReductionFactor, params int[] projTypes)
+        public StealthStrikeBalancingRule(float damageMultiplier, params int[] projTypes)
         {
-            DamageReductionFactor = damageReductionFactor;
+            DamageMultiplier = damageMultiplier;
             ApplicableProjectileTypes = projTypes;
         }
 
@@ -56,7 +56,7 @@ namespace InfernumMode.Balancing
             return hitContext.IsStealthStrike;
         }
 
-        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageReductionFactor);
+        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
     }
 
     public class NPCSpecificRequirementBalancingRule : IBalancingRule

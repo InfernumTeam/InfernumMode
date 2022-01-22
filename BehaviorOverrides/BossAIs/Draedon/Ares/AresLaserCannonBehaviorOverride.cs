@@ -30,15 +30,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
 
-            // Define the life ratio.
-            npc.life = aresBody.life;
-            npc.lifeMax = aresBody.lifeMax;
-
-            // Shamelessly steal variables from Ares.
-            npc.target = aresBody.target;
-            npc.Opacity = aresBody.Opacity;
-            npc.dontTakeDamage = aresBody.dontTakeDamage;
             int projectileDamageBoost = (int)aresBody.Infernum().ExtraAI[8];
             Player target = Main.player[npc.target];
 
@@ -135,10 +128,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)
             {
                 Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
-                Dust electricity = Dust.NewDustPerfect(dustSpawnPosition, 182);
-                electricity.velocity = (endOfCannon - electricity.position) * 0.04f;
-                electricity.scale = 1.25f;
-                electricity.noGravity = true;
+                Dust laser = Dust.NewDustPerfect(dustSpawnPosition, 182);
+                laser.velocity = (endOfCannon - laser.position) * 0.04f;
+                laser.scale = 1.25f;
+                laser.noGravity = true;
             }
 
             // Fire lasers.
@@ -148,13 +141,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    int laserDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 530;
                     for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 shootVelocity = aimDirection * laserShootSpeed;
+                        Vector2 laserShootVelocity = aimDirection * laserShootSpeed;
                         if (laserCount > 1)
-                            shootVelocity = shootVelocity.RotatedBy(MathHelper.Lerp(-0.41f, 0.41f, i / (float)(laserCount - 1f)));
-                        shootVelocity = shootVelocity.RotatedByRandom(0.07f);
-                        int laser = Utilities.NewProjectileBetter(endOfCannon, shootVelocity, ModContent.ProjectileType<CannonLaser>(), projectileDamageBoost + 530, 0f);
+                            laserShootVelocity = laserShootVelocity.RotatedBy(MathHelper.Lerp(-0.41f, 0.41f, i / (float)(laserCount - 1f)));
+                        laserShootVelocity = laserShootVelocity.RotatedByRandom(0.07f);
+                        int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<CannonLaser>(), laserDamage, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].ai[1] = npc.whoAmI;
                     }

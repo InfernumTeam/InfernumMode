@@ -117,6 +117,8 @@ namespace InfernumMode.Balancing
         public static void ApplyFromProjectile(NPC npc, ref int damage, Projectile proj)
         {
             NPCHitContext hitContext = NPCHitContext.ConstructFromProjectile(proj);
+
+            // Apply universal balancing rules.
             foreach (IBalancingRule[] balancingRules in UniversalBalancingChanges)
             {
                 foreach (IBalancingRule balancingRule in balancingRules)
@@ -126,6 +128,7 @@ namespace InfernumMode.Balancing
                 }
             }
 
+            // As well as rules specific to NPCs.
             foreach (NPCBalancingChange balanceChange in NPCSpecificBalancingChanges)
             {
                 if (npc.type != balanceChange.NPCType)

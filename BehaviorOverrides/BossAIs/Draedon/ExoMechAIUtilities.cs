@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -36,6 +37,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.netUpdate = true;
                 npc.netSpam = 0;
             }
+        }
+
+        public static void HaveArmsInheritAresBodyAttributes(NPC npc)
+        {
+            // Do nothing if Ares is not present.
+            if (CalamityGlobalNPC.draedonExoMechPrime == -1)
+                return;
+
+            // Locate Ares' body as an NPC.
+            NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+
+            // Define the life ratio.
+            npc.life = aresBody.life;
+            npc.lifeMax = aresBody.lifeMax;
+
+            // Shamelessly steal variables from Ares.
+            npc.target = aresBody.target;
+            npc.Opacity = aresBody.Opacity;
+            npc.dontTakeDamage = aresBody.dontTakeDamage;
         }
 
         public static Vector2 PerformAresArmDirectioning(NPC npc, NPC aresBody, Player target, Vector2 aimDirection, bool currentlyDisabled, bool doingHoverCharge, ref float currentDirection)

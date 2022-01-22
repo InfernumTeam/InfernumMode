@@ -96,13 +96,6 @@ namespace InfernumMode.GlobalInstances
         #region Get Alpha
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
-            if (npc.type == NPCID.MoonLordHand ||
-                npc.type == NPCID.MoonLordHead ||
-                npc.type == NPCID.MoonLordCore)
-            {
-                if (PoDWorld.InfernumMode)
-                    return new Color(7, 81, 81);
-            }
             if (npc.type == ModContent.NPCType<CalamitasRun3>() && PoDWorld.InfernumMode)
             {
                 bool brotherAlive = false;
@@ -126,15 +119,6 @@ namespace InfernumMode.GlobalInstances
             return base.GetAlpha(npc, drawColor);
         }
         #endregion
-
-        public override void BossHeadSlot(NPC npc, ref int index)
-        {
-            if (!PoDWorld.InfernumMode)
-                return;
-
-            if (npc.type == ModContent.NPCType<CryogenNPC>())
-                index = ModContent.GetModBossHeadSlot("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon");
-        }
 
         public override void SetDefaults(NPC npc)
         {
@@ -349,37 +333,6 @@ namespace InfernumMode.GlobalInstances
                 return;
 
             BalancingChangesManager.ApplyFromProjectile(npc, ref damage, projectile);
-        }
-
-        public override void BossHeadRotation(NPC npc, ref float rotation)
-        {
-            if (!InfernumMode.CanUseCustomAIs)
-                return;
-
-            if (npc.type == ModContent.NPCType<DevourerofGodsHead>() ||
-                npc.type == ModContent.NPCType<DevourerofGodsTail>() ||
-                npc.type == ModContent.NPCType<DevourerofGodsBody>())
-            {
-                NPC head = CalamityGlobalNPC.DoGHead >= 0 ? Main.npc[CalamityGlobalNPC.DoGHead] : null;
-                if (npc.Opacity < 0.1f || (head != null && head.Infernum().ExtraAI[2] >= 6f && head.Infernum().ExtraAI[33] >= 1f))
-                    rotation = float.NaN;
-            }
-
-            if (npc.type == ModContent.NPCType<Siren>())
-            {
-                if (npc.Opacity < 0.1f)
-                    rotation = float.NaN;
-            }
-
-            if (npc.type == ModContent.NPCType<Signus>())
-                rotation = float.NaN;
-
-            // Prevent Yharon from showing himself amongst his illusions in Subphase 10.
-            if (npc.type == ModContent.NPCType<YharonNPC>())
-            {
-                if (npc.life / (float)npc.lifeMax <= 0.05f && npc.Infernum().ExtraAI[2] == 1f)
-                    rotation = float.NaN;
-            }
         }
 
         public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)

@@ -78,6 +78,7 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<AquaticAberration>()] = BossRushEvent.BossRushActive ? -1 : 900,
             [ModContent.NPCType<Siren>()] = BossRushEvent.BossRushActive ? 450000 : 67560,
             [ModContent.NPCType<AureusSpawn>()] = 25000,
+            [ModContent.NPCType<AstrumAureus>()] = BossRushEvent.BossRushActive ? 1230680 : 123474,
             [ModContent.NPCType<PlaguebringerGoliath>()] = BossRushEvent.BossRushActive ? 666666 : 111776,
             [NPCID.CultistBoss] = BossRushEvent.BossRushActive ? 727272 : 56000,
             [NPCID.MoonLordHand] = BossRushEvent.BossRushActive ? 275200 : 43390,

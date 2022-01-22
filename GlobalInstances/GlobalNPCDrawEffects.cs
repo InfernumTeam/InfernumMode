@@ -1,4 +1,11 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod.NPCs;
+using CalamityMod.NPCs.Cryogen;
+using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.Leviathan;
+using CalamityMod.NPCs.Signus;
+using CalamityMod.NPCs.Yharon;
+using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -15,12 +22,10 @@ namespace InfernumMode.GlobalInstances
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
             // Give a dark tint to the moon lord.
-            if (npc.type == NPCID.MoonLordHand ||
-                npc.type == NPCID.MoonLordHead ||
-                npc.type == NPCID.MoonLordCore)
+            if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead || npc.type == NPCID.MoonLordCore)
             {
-                if (PoDWorld.InfernumMode)
-                    return new Color(7, 81, 81);
+                if (InfernumMode.CanUseCustomAIs)
+                    return MoonLordCoreBehaviorOverride.OverallTint;
             }
             return base.GetAlpha(npc, drawColor);
         }
@@ -29,13 +34,35 @@ namespace InfernumMode.GlobalInstances
         #region Map Icon Manipulation
         public override void BossHeadSlot(NPC npc, ref int index)
         {
-            if ((npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsBody>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTail>()) &&
-                PoDWorld.InfernumMode && npc.alpha >= 252)
+            if (!InfernumMode.CanUseCustomAIs)
+                return;
+
+            bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
+            if (isDoG)
             {
-                index = -1;
+                NPC head = CalamityGlobalNPC.DoGHead >= 0 ? Main.npc[CalamityGlobalNPC.DoGHead] : null;
+                if (npc.Opacity < 0.1f || (head != null && head.Infernum().ExtraAI[2] >= 6f && head.Infernum().ExtraAI[33] >= 1f))
+                    index = -1;
             }
+
+            // Make Anahita completely invisible on the map when sufficiently faded out.
+            if (npc.type == ModContent.NPCType<Siren>() && npc.Opacity < 0.1f)
+                index = -1;
+
+            // Make Signus completely invisible on the map.
+            if (npc.type == ModContent.NPCType<Signus>())
+                index = -1;
+
+            // Prevent Yharon from showing himself amongst his illusions in Subphase 10.
+            if (npc.type == ModContent.NPCType<Yharon>())
+            {
+                if (npc.life / (float)npc.lifeMax <= 0.05f && npc.Infernum().ExtraAI[2] == 1f)
+                    index = -1;
+            }
+
+            // Have Cryogen use a custom map icon.
+            if (npc.type == ModContent.NPCType<Cryogen>())
+                index = ModContent.GetModBossHeadSlot("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon");
         }
         #endregion
 
@@ -44,14 +71,9 @@ namespace InfernumMode.GlobalInstances
         {
             if (InfernumMode.CanUseCustomAIs)
             {
-                // DoG alpha effects
-                if (npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead>() ||
-                    npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsBody>() ||
-                    npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTail>())
-                {
-                    if (npc.alpha >= 252)
-                        return false;
-                }
+                bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
+                if (isDoG && npc.alpha >= 252)
+                    return false;
 
                 if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type))
                     return (bool)OverridingListManager.InfernumPreDrawOverrideList[npc.type].DynamicInvoke(npc, spriteBatch, drawColor);
@@ -66,12 +88,9 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
 
-            if ((npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsBody>() ||
-                npc.type == ModContent.NPCType<CalamityMod.NPCs.DevourerofGods.DevourerofGodsTail>()) && npc.alpha >= 252)
-            {
+            bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
+            if (isDoG && npc.alpha >= 252)
                 return false;
-            }
 
             if (npc.type == NPCID.EaterofWorldsBody)
                 return false;

@@ -28,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public const int ArenaHeight = 150;
         public const int ArenaHorizontalStandSpace = 70;
         public const int ArenaStandSpaceHeight = 19;
+        public static readonly Color OverallTint = new Color(7, 81, 81);
         public override int NPCOverrideType => NPCID.MoonLordCore;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;

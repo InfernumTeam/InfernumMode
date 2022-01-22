@@ -40,6 +40,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public const float Phase1ArmChargeupTime = 240f;
+        public const int ProjectileDamageBoostIndex = 8;
+        public static int ProjectileDamageBoost
+        {
+            get
+            {
+                if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechPrime))
+                    return 0;
+
+                return (int)Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[ProjectileDamageBoostIndex];
+            }
+            set
+            {
+                if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechPrime))
+                    return;
+
+                Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[ProjectileDamageBoostIndex] = value;
+            }
+        }
 
         #region AI
         public override bool PreAI(NPC npc)
@@ -64,7 +82,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float armsHaveBeenSummoned = ref npc.ai[3];
             ref float armCycleCounter = ref npc.Infernum().ExtraAI[5];
             ref float armCycleTimer = ref npc.Infernum().ExtraAI[6];
-            ref float projectileDamageBoost = ref npc.Infernum().ExtraAI[8];
             ref float hasSummonedComplementMech = ref npc.Infernum().ExtraAI[ExoMechManagement.HasSummonedComplementMechIndex];
             ref float complementMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
@@ -184,7 +201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.08f, 0f, 1f);
 
             // Reset things.
-            projectileDamageBoost = ExoMechManagement.CurrentAresPhase >= 4 ? 50f : 0f;
+            ProjectileDamageBoost = ExoMechManagement.CurrentAresPhase >= 4 ? 50 : 0;
 
             // Despawn if the target is gone.
             if (!target.active || target.dead)

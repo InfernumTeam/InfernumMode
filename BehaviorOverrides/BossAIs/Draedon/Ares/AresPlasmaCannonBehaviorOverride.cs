@@ -30,16 +30,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
 
-            // Define the life ratio.
-            npc.life = aresBody.life;
-            npc.lifeMax = aresBody.lifeMax;
-
-            // Shamelessly steal variables from Ares.
-            npc.target = aresBody.target;
-            npc.Opacity = aresBody.Opacity;
-            npc.dontTakeDamage = aresBody.dontTakeDamage;
-            int projectileDamageBoost = (int)aresBody.Infernum().ExtraAI[8];
             Player target = Main.player[npc.target];
 
             // Define attack variables.
@@ -127,6 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                     for (int i = 0; i < fireballCount; i++)
                     {
+                        int flameDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 500;
                         Vector2 flameShootVelocity = aimDirection * flameShootSpeed;
                         int fireballType = ModContent.ProjectileType<AresPlasmaFireball>();
                         if (ExoMechManagement.CurrentAresPhase >= 2)
@@ -138,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                                 flameShootVelocity *= Main.rand.NextFloat(0.6f, 0.9f);
                         }
 
-                        Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, projectileDamageBoost + 500, 0f);
+                        Utilities.NewProjectileBetter(endOfCannon, flameShootVelocity, fireballType, flameDamage, 0f);
                     }
 
                     npc.netUpdate = true;

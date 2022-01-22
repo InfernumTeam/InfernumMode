@@ -60,16 +60,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
 
-            // Define the life ratio.
-            npc.life = aresBody.life;
-            npc.lifeMax = aresBody.lifeMax;
-
-            // Shamelessly steal variables from Ares.
-            npc.target = aresBody.target;
-            npc.Opacity = aresBody.Opacity;
-            npc.dontTakeDamage = aresBody.dontTakeDamage;
-            int projectileDamageBoost = (int)aresBody.Infernum().ExtraAI[8];
             Player target = Main.player[npc.target];
 
             // Disable HP bars.
@@ -154,9 +146,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    int blastDamage = AresBodyBehaviorOverride.ProjectileDamageBoost + 500;
                     Vector2 blastShootVelocity = aimDirection * blastShootSpeed;
                     Vector2 blastSpawnPosition = endOfCannon + blastShootVelocity * 8.4f;
-                    Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<AresPulseBlast>(), projectileDamageBoost + 500, 0f);
+                    Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<AresPulseBlast>(), blastDamage, 0f);
 
                     npc.netUpdate = true;
                 }

@@ -263,7 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 900 : 1200;
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
-            DoHoverMovement(npc, hoverDestination, 24f, 75f);
+            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
 
             if (attackTimer > attackTime)
                 SelectNextAttack(npc);
@@ -705,34 +705,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 }
             }
             return false;
-        }
-
-        public static void DoHoverMovement(NPC npc, Vector2 destination, float flySpeed, float hyperSpeedCap)
-        {
-            float distanceFromDestination = npc.Distance(destination);
-            float hyperSpeedInterpolant = Utils.InverseLerp(50f, 2400f, distanceFromDestination, true);
-
-            // Scale up velocity over time if too far from destination.
-            float speedUpFactor = Utils.InverseLerp(50f, 1600f, npc.Distance(destination), true) * 1.76f;
-            flySpeed *= 1f + speedUpFactor;
-
-            // Reduce speed when very close to the destination, to prevent swerving movement.
-            if (flySpeed > distanceFromDestination)
-                flySpeed = distanceFromDestination;
-
-            // Define the max velocity.
-            Vector2 maxVelocity = (destination - npc.Center) / 24f;
-            if (maxVelocity.Length() > hyperSpeedCap)
-                maxVelocity = maxVelocity.SafeNormalize(Vector2.Zero) * hyperSpeedCap;
-
-            npc.velocity = Vector2.Lerp(npc.SafeDirectionTo(destination) * flySpeed, maxVelocity, hyperSpeedInterpolant);
-            if (npc.WithinRange(destination, 30f) && Vector2.Distance(npc.oldPosition + npc.Size * 0.5f, destination) >= 30f)
-            {
-                npc.Center = destination;
-                npc.velocity = Vector2.Zero;
-                npc.netUpdate = true;
-                npc.netSpam = 0;
-            }
         }
         #endregion AI
 

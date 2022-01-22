@@ -117,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 // Hover in place.
                 Vector2 hoverDestination = target.Center + new Vector2(twinsHoverSide * 600f, artemisVerticalOffset);
-                DoHoverMovement(npc, hoverDestination, 17f, 60f);
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 17f, 60f);
                 if (attackTimer >= attackDelay + 50f)
                 {
                     npc.velocity.Y *= 0.5f;
@@ -172,7 +172,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 // Hover in place.
                 Vector2 hoverDestination = target.Center + new Vector2(twinsHoverSide * 600f + hoverOffsetX, hoverOffsetY - 550f);
-                DoHoverMovement(npc, hoverDestination, 37f, 75f);
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 37f, 75f);
 
                 // Decide rotation.
                 Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * 12f);
@@ -243,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (!aresSlowdownPreparationInProgress)
                 {
                     Vector2 hoverDestination = target.Center - Vector2.UnitY * 410f;
-                    DoHoverMovement(npc, hoverDestination, 24f, 75f);
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
                 }
                 else
                     npc.velocity = npc.velocity.ClampMagnitude(0f, 22f) * 0.92f;
@@ -403,7 +403,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (!deathraysHaveBeenFired && attackSubstate == 0f)
                 {
                     Vector2 hoverDestination = target.Center + new Vector2(twinsHoverSide * 600f, -400f);
-                    DoHoverMovement(npc, hoverDestination, 30f, 75f);
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 75f);
 
                     // Decide rotation.
                     npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
@@ -417,7 +417,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         default:
                             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 850f, -450f);
                             Vector2 chargeVelocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * artemisChargeSpeed;
-                            DoHoverMovement(npc, hoverDestination, 20f, 60f);
+                            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 20f, 60f);
 
                             // Determine rotation.
                             npc.rotation = chargeVelocity.ToRotation() + MathHelper.PiOver2;
@@ -494,7 +494,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (!deathraysHaveBeenFired && attackSubstate == 0f)
                 {
                     Vector2 hoverDestination = target.Center + new Vector2(twinsHoverSide * 600f, -400f);
-                    DoHoverMovement(npc, hoverDestination, 30f, 75f);
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 75f);
 
                     // Decide rotation.
                     npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
@@ -659,7 +659,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     npc.netUpdate = true;
                 }
                 else if (wrappedAttackTimer < redirectTime)
-                    DoHoverMovement(npc, hoverDestination, 25f, 50f);
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 25f, 50f);
 
                 // Cease any movement once done redirecting.
                 else
@@ -788,7 +788,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 canFire = (attackTimer > attackDelay).ToInt();
 
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 435f;
-                DoHoverMovement(npc, hoverDestination, 24f, 75f);
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
 
                 // Decide the frame.
                 frame = (int)AresBodyFrameType.Normal;
@@ -810,7 +810,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     }
 
                     Vector2 hoverDestination = target.Center + hoverOffsetAngle.ToRotationVector2() * new Vector2(700f, 380f);
-                    DoHoverMovement(npc, hoverDestination, 40f, 95f);
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 40f, 95f);
 
                     Vector2 aimDestination = target.Center + target.velocity * 11.5f;
                     Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
@@ -880,7 +880,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             // Do hover movement.
-            DoHoverMovement(npc, hoverDestination, 25f, 75f);
+            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 25f, 75f);
 
             // All three mechs come together to form an electromagnetic star.
             // After the star is created, all three mechs will use energy to power it up. To keep the target occupied, Ares' core will release homing energy bolts during the chargeup period.

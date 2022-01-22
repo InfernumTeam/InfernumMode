@@ -27,7 +27,7 @@ namespace InfernumMode
         internal static Mod CalamityMod = null;
         internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && PoDWorld.InfernumMode;
 
-        internal static bool BossRushApplies => true;
+        internal static bool BossRushApplies => false;
 
         internal static readonly Color HiveMindSkyColor = new Color(53, 42, 81);
 

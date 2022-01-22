@@ -87,45 +87,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             float horizontalOffset = doingHoverCharge ? 250f : 375f;
             float verticalOffset = doingHoverCharge ? 150f : 100f;
             Vector2 hoverDestination = aresBody.Center + new Vector2(horizontalOffset, verticalOffset);
-            AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 65f, 115f);
+            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 65f, 115f);
             npc.Infernum().ExtraAI[0] = MathHelper.Clamp(npc.Infernum().ExtraAI[0] + doingHoverCharge.ToDirectionInt(), 0f, 15f);
 
             // Check to see if this arm should be used for special things in a combo attack.
+            float _ = 0f;
             if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
             {
-                float _ = 0f;
                 ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref aresBody.ai[1], ref _);
                 return false;
             }
 
-            // Choose a direction and rotation.
-            // Rotation is relative to predictiveness, unless disabled.
+            // Calculate the direction and rotation this arm should use.
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
-            Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 66f + Vector2.UnitY * 16f;
-            float idealRotation = aimDirection.ToRotation();
-            if (currentlyDisabled)
-                idealRotation = MathHelper.Clamp(npc.velocity.X * -0.016f, -0.81f, 0.81f) + MathHelper.PiOver2;
-            if (doingHoverCharge)
-                idealRotation = aresBody.velocity.ToRotation() - MathHelper.PiOver2;
-
-            if (npc.spriteDirection == 1)
-                idealRotation += MathHelper.Pi;
-            if (idealRotation < 0f)
-                idealRotation += MathHelper.TwoPi;
-            if (idealRotation > MathHelper.TwoPi)
-                idealRotation -= MathHelper.TwoPi;
-            npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.065f);
-
-            int direction = Math.Sign(target.Center.X - npc.Center.X);
-            if (direction != 0)
-            {
-                npc.direction = direction;
-
-                if (npc.spriteDirection != -npc.direction)
-                    npc.rotation += MathHelper.Pi;
-
-                npc.spriteDirection = -npc.direction;
-            }
+            ExoMechAIUtilities.PerformAresArmDirectioning(npc, aresBody, target, aimDirection, currentlyDisabled, doingHoverCharge, ref _);
+            float rotationToEndOfCannon = npc.rotation;
+            if (rotationToEndOfCannon < 0f)
+                rotationToEndOfCannon += MathHelper.Pi;
+            Vector2 endOfCannon = npc.Center + rotationToEndOfCannon.ToRotationVector2() * 66f + Vector2.UnitY * 16f;
 
             // Create a dust telegraph before firing.
             if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)

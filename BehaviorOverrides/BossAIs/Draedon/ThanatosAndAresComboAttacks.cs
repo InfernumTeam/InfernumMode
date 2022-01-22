@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Decide frames.
                 frame = (int)AresBodyFrameType.Normal;
 
-                DoHoverMovement(npc, hoverDestination, 24f, 75f);
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
             }
 
             // Ares' plasma arm releases bursts of plasma that slow down and explode.
@@ -282,7 +282,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Decide frames.
                 frame = (int)AresBodyFrameType.Normal;
 
-                DoHoverMovement(npc, hoverDestination, 24f, 75f);
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
             }
 
             // Ares's laser cannon releases streams of 3 lasers at the target periodically.
@@ -400,7 +400,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Decide frames.
                 frame = (int)AresBodyFrameType.Normal;
 
-                DoHoverMovement(npc, hoverDestination, 24f, 75f);
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
             }
 
             // Ares' laser arm periodically releases bursts of lasers.
@@ -594,7 +594,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Decide frames.
                 frame = (int)AresBodyFrameType.Normal;
 
-                DoHoverMovement(npc, hoverDestination, 24f, 75f);
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
             }
 
             // Ares' tesla cannon releases streams of lightning in a circular spread from time to time.

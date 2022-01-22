@@ -243,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             // Move to the appropriate side of the target.
-            AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 30f, 84f);
+            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
 
             // Determine frames.
             frame = (int)Math.Round(MathHelper.Lerp(startingFrame, endingFrame, phaseTransitionAnimationTime / Phase2TransitionTime));
@@ -329,7 +329,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             npc.rotation = aimDirection.ToRotation() + MathHelper.PiOver2;
 
             // Move to the appropriate side of the target.
-            AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 30f, 84f);
+            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
 
             // Fire a plasma burst/laser shot and select a new offset.
             if (attackTimer >= shootRate)
@@ -404,7 +404,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
                     // Hover to the top left/right of the target.
-                    AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 48f, 92f);
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 48f, 92f);
 
                     npc.frameCounter++;
                     frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, (float)npc.frameCounter / 36f % 1f));
@@ -543,7 +543,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
                     // Hover to the top left/right of the target.
-                    AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 50f, 92f);
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 50f, 92f);
 
                     npc.frameCounter++;
                     frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
@@ -687,7 +687,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
 
                     npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
-                    AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination, 30f, 84f);
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
 
                     // Begin hovering in place once sufficiently close to the hover position.
                     if (npc.WithinRange(hoverDestination, 50f))
@@ -812,7 +812,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             laserShootRate -= 4;
 
                         // Do movement.
-                        AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);
+                        ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);
 
                         // Play a laser preparation sound.
                         if (attackTimer == 15f)
@@ -854,7 +854,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             plasmaShootRate -= 8;
 
                         // Do movement.
-                        AresBodyBehaviorOverride.DoHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);
+                        ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);
 
                         if (attackTimer >= 15f && attackTimer % plasmaShootRate == plasmaShootRate - 1f)
                         {

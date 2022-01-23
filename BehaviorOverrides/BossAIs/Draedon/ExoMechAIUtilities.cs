@@ -30,13 +30,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 maxVelocity = maxVelocity.SafeNormalize(Vector2.Zero) * hyperSpeedCap;
 
             npc.velocity = Vector2.Lerp(npc.SafeDirectionTo(destination) * flySpeed, maxVelocity, hyperSpeedInterpolant);
-            if (npc.WithinRange(destination, 30f) && Vector2.Distance(npc.oldPosition + npc.Size * 0.5f, destination) >= 30f)
-            {
-                npc.Center = destination;
-                npc.velocity = Vector2.Zero;
-                npc.netUpdate = true;
-                npc.netSpam = 0;
-            }
         }
 
         public static void HaveArmsInheritAresBodyAttributes(NPC npc)

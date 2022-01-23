@@ -68,10 +68,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public static bool DoBehavior_AresTwins_ThermoplasmaDance(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
         {
-            int redirectTime = 90;
+            int redirectTime = 135;
             int spinTime = 480;
             int spinSlowdownTime = 60;
-            int twinsShootRate = 40;
+            int twinsShootRate = 50;
             int laserShootCount = 3;
             int hoverTime = 35;
             int chargeTime = 45;
@@ -125,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 plasmaShootVelocity = aimDirection * 9f;
+                        Vector2 plasmaShootVelocity = aimDirection * 8f;
                         int plasma = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, plasmaShootVelocity, ModContent.ProjectileType<ApolloPlasmaFireball>(), 500, 0f);
                         if (Main.projectile.IndexInRange(plasma))
                             Main.projectile[plasma].ai[0] = Main.rand.NextBool().ToDirectionInt();
@@ -147,7 +147,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         for (int i = 0; i < laserShootCount; i++)
                         {
                             float laserOffsetRotation = MathHelper.Lerp(-0.39f, 0.39f, i / (float)(laserShootCount - 1f));
-                            Vector2 laserShootVelocity = aimDirection.RotatedBy(laserOffsetRotation) * 6f;
+                            Vector2 laserShootVelocity = aimDirection.RotatedBy(laserOffsetRotation) * 5.25f;
                             int laser = Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, laserShootVelocity, ModContent.ProjectileType<ArtemisLaserInfernum>(), 500, 0f);
                             if (Main.projectile.IndexInRange(laser))
                             {
@@ -197,8 +197,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     npc.damage = aresContactDamage;
                     if (wrappedTime == hoverTime + 1f)
                     {
-                        npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f - Vector2.UnitY * 305f) * chargeSpeed;
-                        npc.netUpdate = true;                        
+                        npc.velocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * chargeSpeed;
+                        npc.netUpdate = true;
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), target.Center);
                     }
 
@@ -280,7 +280,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         // Hover into position.
                         case 0:
                         default:
-                            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 850f, -450f);
+                            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 850f, -500f);
                             Vector2 chargeVelocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * artemisChargeSpeed;
                             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 20f, 60f);
 

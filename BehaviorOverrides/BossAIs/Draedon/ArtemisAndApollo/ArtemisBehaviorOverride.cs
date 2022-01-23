@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float attackTimer = ref npc.ai[1];
             ref float hoverSide = ref npc.ai[2];
             ref float phaseTransitionAnimationTime = ref npc.ai[3];
-            ref float frame = ref npc.localAI[0];
+            ref float frameType = ref npc.localAI[0];
             ref float hasDoneInitializations = ref npc.localAI[1];
             ref float hasSummonedComplementMech = ref npc.Infernum().ExtraAI[7];
             ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
@@ -119,45 +119,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             {
                 npc.dontTakeDamage = true;
                 npc.ModNPC<Artemis>().ChargeFlash = 0f;
-                DoBehavior_DoPhaseTransition(npc, target, ref frame, hoverSide, phaseTransitionAnimationTime);
+                DoBehavior_DoPhaseTransition(npc, target, ref frameType, hoverSide, phaseTransitionAnimationTime);
                 return false;
             }
 
+            // Perform specific attack behaviors.
             switch ((TwinsAttackType)(int)attackState)
             {
                 case TwinsAttackType.BasicShots:
-                    DoBehavior_BasicShots(npc, target, false, hoverSide, ref frame, ref attackTimer);
+                    DoBehavior_BasicShots(npc, target, false, hoverSide, ref frameType, ref attackTimer);
                     break;
                 case TwinsAttackType.FireCharge:
-                    DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
+                    DoBehavior_FireCharge(npc, target, hoverSide, ref frameType, ref attackTimer);
                     break;
                 case TwinsAttackType.SpecialAttack_PlasmaCharges:
-                    DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
+                    DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frameType, ref attackTimer);
                     break;
                 case TwinsAttackType.SpecialAttack_LaserRayScarletBursts:
-                    DoBehavior_LaserRayScarletBursts(npc, target, ref frame, ref attackTimer);
+                    DoBehavior_LaserRayScarletBursts(npc, target, ref frameType, ref attackTimer);
                     break;
                 case TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames:
-                    DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);
+                    DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frameType, ref attackTimer);
                     break;
             }
 
-            switch ((ExoMechComboAttackContent.ExoMechComboAttackType)attackState)
-            {
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser:
-                    ExoMechComboAttackContent.DoBehavior_AresTwins_PressureLaser(npc, target, hoverSide, ref attackTimer, ref frame);
-                    break;
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges:
-                    ExoMechComboAttackContent.DoBehavior_AresTwins_DualLaserCharges(npc, target, hoverSide, ref attackTimer, ref frame);
-                    break;
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_CircleAttack:
-                    ExoMechComboAttackContent.DoBehavior_AresTwins_CircleAttack(npc, target, hoverSide, ref attackTimer, ref frame);
-                    break;
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar:
-                    ExoMechComboAttackContent.DoBehavior_AresTwins_ElectromagneticPlasmaStar(npc, target, hoverSide, ref attackTimer, ref frame);
-                    break;
-            }
-
+            // Perform specific combo attack behaviors.
+            ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, hoverSide, ref attackTimer, ref frameType);
             return false;
         }
 

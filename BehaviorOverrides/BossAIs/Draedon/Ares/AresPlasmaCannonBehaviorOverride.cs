@@ -75,7 +75,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 attackTimer = chargeDelay;
 
             // Hover near Ares.
-            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge;
+            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge ||
+                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ThermoplasmaDance;
             float horizontalOffset = doingHoverCharge ? 250f : 375f;
             float verticalOffset = doingHoverCharge ? 150f : 100f;
             Vector2 hoverDestination = aresBody.Center + new Vector2(horizontalOffset, verticalOffset);
@@ -87,6 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
             {
                 ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref aresBody.ai[1], ref _);
+                ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, 1f, ref aresBody.ai[1], ref _);
                 return false;
             }
 

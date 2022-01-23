@@ -98,8 +98,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 65f, 115f);
             npc.Infernum().ExtraAI[0] = MathHelper.Clamp(npc.Infernum().ExtraAI[0] + doingHoverCharge.ToDirectionInt(), 0f, 15f);
 
-            // Calculate the direction and rotation this arm should use.
+            // Check to see if this arm should be used for special things in a combo attack.
             float _ = 0f;
+            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
+            {
+                ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref aresBody.ai[1], ref _);
+                ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, 1f, ref aresBody.ai[1], ref _);
+                return false;
+            }
+
+            // Calculate the direction and rotation this arm should use.
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
             ExoMechAIUtilities.PerformAresArmDirectioning(npc, aresBody, target, aimDirection, currentlyDisabled, doingHoverCharge, ref _);
             float rotationToEndOfCannon = npc.rotation;

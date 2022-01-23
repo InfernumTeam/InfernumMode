@@ -80,8 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 				return;
 			}
 
-			bool notUsingReleventAttack = Main.npc[OwnerIndex].ai[0] != (int)ApolloBehaviorOverride.TwinsAttackType.SpecialAttack_LaserRayScarletBursts &&
-				Main.npc[OwnerIndex].ai[0] != (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser;
+			bool notUsingReleventAttack = Main.npc[OwnerIndex].ai[0] != (int)ApolloBehaviorOverride.TwinsAttackType.SpecialAttack_LaserRayScarletBursts;
 			if (Main.npc[OwnerIndex].Opacity <= 0f || notUsingReleventAttack)
 			{
 				projectile.Kill();

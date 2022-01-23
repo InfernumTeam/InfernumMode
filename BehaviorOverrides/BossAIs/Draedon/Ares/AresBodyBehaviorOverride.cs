@@ -249,26 +249,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     break;
             }
 
-            switch ((ExoMechComboAttackContent.ExoMechComboAttackType)attackState)
-            {
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser:
-                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_PressureLaser(npc, target, 1f, ref attackTimer, ref frameType))
-                        SelectNextAttack(npc);
-                    break;
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges:
-                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_DualLaserCharges(npc, target, 1f, ref attackTimer, ref frameType))
-                        SelectNextAttack(npc);
-                    break;
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_CircleAttack:
-                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_CircleAttack(npc, target, 1f, ref attackTimer, ref frameType))
-                        SelectNextAttack(npc);
-                    break;
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar:
-                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_ElectromagneticPlasmaStar(npc, target, 1f, ref attackTimer, ref frameType))
-                        SelectNextAttack(npc);
-                    break;
-            }
-
+            // Perform specific combo attack behaviors.
+            if (ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, 1f, ref attackTimer, ref frameType))
+                SelectNextAttack(npc);
             if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
                 SelectNextAttack(npc);
 
@@ -656,7 +639,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 aresBody.ai[0] == (int)AresBodyAttackType.HoverCharge ||
                 aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts ||
-                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser ||
+                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ThermoplasmaDance ||
                 aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges ||
                 aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle)
             {

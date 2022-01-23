@@ -190,6 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.netUpdate = true;
             }
 
+            // Perform specific attack behaviors.
             switch ((TwinsAttackType)(int)attackState)
             {
                 case TwinsAttackType.BasicShots:
@@ -209,25 +210,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     break;
             }
 
-            switch ((ExoMechComboAttackContent.ExoMechComboAttackType)attackState)
-            {
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_PressureLaser:
-                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_PressureLaser(npc, target, hoverSide, ref attackTimer, ref frame))
-                        SelectNextAttack(npc);
-                    break;
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges:
-                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_DualLaserCharges(npc, target, hoverSide, ref attackTimer, ref frame))
-                        SelectNextAttack(npc);
-                    break;
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_CircleAttack:
-                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_CircleAttack(npc, target, hoverSide, ref attackTimer, ref frame))
-                        SelectNextAttack(npc);
-                    break;
-                case ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar:
-                    if (ExoMechComboAttackContent.DoBehavior_AresTwins_ElectromagneticPlasmaStar(npc, target, hoverSide, ref attackTimer, ref frame))
-                        SelectNextAttack(npc);
-                    break;
-            }
+            // Perform specific combo attack behaviors.
+            if (ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, hoverSide, ref attackTimer, ref frame))
+                SelectNextAttack(npc);
 
             attackTimer++;
             return false;

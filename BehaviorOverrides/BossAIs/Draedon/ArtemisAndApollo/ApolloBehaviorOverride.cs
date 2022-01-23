@@ -262,7 +262,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
         {
             int totalShots = 8;
-            float shootRate = 52f;
+            float shootRate = 50f;
             float projectileShootSpeed = 10f;
             float predictivenessFactor = 18.5f;
             if (npc.type == ModContent.NPCType<Artemis>())
@@ -282,11 +282,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             {
                 shootRate -= 20f;
                 projectileShootSpeed *= 1.35f;
+                totalShots += 4;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
             {
                 shootRate -= 5f;
-                totalShots += 8;
+                totalShots += 6;
             }
 
             // Artemis' projectiles do not speed up.
@@ -294,7 +295,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 projectileShootSpeed = 10f;
 
             if (calmTheFuckDown)
-                shootRate += 25;
+                shootRate += 18;
 
             ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
@@ -308,7 +309,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Vector2 hoverDestination = target.Center;
             hoverDestination.X += hoverOffsetX;
             hoverDestination.Y += hoverOffsetY;
-            hoverDestination += Vector2.UnitX * hoverSide * 780f;
+            hoverDestination += Vector2.UnitX * hoverSide * 720f;
 
             // Determine rotation.
             npc.rotation = aimDirection.ToRotation() + MathHelper.PiOver2;
@@ -629,7 +630,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int shootDelay = 48;
             int burstReleaseRate = 30;
             float spinRadius = 540f;
-            float spinArc = MathHelper.Pi * 1.15f;
+            float spinArc = MathHelper.Pi * 1.225f;
 
             npc.dontTakeDamage = false;
 
@@ -874,6 +875,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.ai[0] = Main.player[npc.target].Infernum().TwinsSpecialAttackTypeSelector.MakeSelection() + 2;
                 if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(3))
                     npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
+                npc.ai[0] = (int)TwinsAttackType.SpecialAttack_LaserRayScarletBursts;
             }
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))

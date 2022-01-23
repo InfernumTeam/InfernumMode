@@ -667,7 +667,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     // Play a telegraph sound on the first frame of the laserbeam.
                     // This is do so that the player can be perfectly aware that a sweep is coming.
                     if (attackTimer == 1f)
-                        Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ArtemisLaserSweepTelegraph"), target.Center);
+                        Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
 
                     npc.frameCounter++;
                     frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));

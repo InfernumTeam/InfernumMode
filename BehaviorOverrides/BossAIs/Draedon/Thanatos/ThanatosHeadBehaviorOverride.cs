@@ -540,7 +540,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Play a telegraph before the attack begins as a warning.
             if (attackTimer == 1f)
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ArtemisLaserSweepTelegraph"), target.Center);
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
 
             // Decide frames.
             frameType = (int)ThanatosFrameType.Open;

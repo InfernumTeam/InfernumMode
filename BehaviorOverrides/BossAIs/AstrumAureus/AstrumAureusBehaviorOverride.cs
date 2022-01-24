@@ -78,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             ref float frameType = ref npc.localAI[0];
 
             // Reset things every frame.
-            npc.defDefense = 4;
+            npc.defDefense = 15;
             npc.damage = npc.defDamage;
             npc.defense = npc.defDefense;
 

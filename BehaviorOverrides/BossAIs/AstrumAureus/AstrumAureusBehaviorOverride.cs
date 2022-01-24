@@ -78,6 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             ref float frameType = ref npc.localAI[0];
 
             // Reset things every frame.
+            npc.defDefense = 4;
             npc.damage = npc.defDamage;
             npc.defense = npc.defDefense;
 
@@ -312,8 +313,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             if (enraged)
                                 jumpIntensity *= 1.4f;
 
-                            if (jumpIntensity > 3.6f)
-                                jumpIntensity = 3.6f;
+                            if (jumpIntensity > 3f)
+                                jumpIntensity = 3f;
 
                             // Fly upward.
                             npc.velocity.Y = -17.5f;
@@ -494,7 +495,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootDelay = 225;
-            float laserSpeed = 12.75f;
+            float laserSpeed = 9.75f;
             float walkSpeed = MathHelper.Lerp(8f, 12f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;

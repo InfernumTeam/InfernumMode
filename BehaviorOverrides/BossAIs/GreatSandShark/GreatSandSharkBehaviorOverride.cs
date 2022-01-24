@@ -379,7 +379,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Do the charge specific behaviors.
             if (chargeState == 1f)
-			{
+            {
                 // Create sand dust.
                 int dustCount = 8;
                 for (int i = 0; i < dustCount; i++)
@@ -398,7 +398,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 npc.velocity *= 1.01f;
 
                 if (attackTimer > chargeTime)
-				{
+                {
                     chargeCounter++;
                     attackTimer = 0f;
                     chargeState = 0f;
@@ -408,7 +408,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
                     npc.netUpdate = true;
                 }
-			}
+            }
         }
 
         public static void DoAttack_DuststormBurst(NPC npc, Player target, int desertTextureVariant, float lifeRatio, ref float attackTimer)
@@ -471,7 +471,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (attackTimer % sharkSummonRate == sharkSummonRate - 1f && attackTimer < 320f)
             {
                 for (float dx = -1100f; dx < 1100f; dx += 200f)
-				{
+                {
                     Vector2 spawnPosition = target.Center + new Vector2(dx, -1100f);
                     Vector2 shootVelocity = Vector2.UnitY * 8f;
                     int shark = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SwervingSandShark>(), 165, 0f);
@@ -489,6 +489,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             bool inTiles = Collision.SolidCollision(npc.Center - Vector2.One * 16f - Vector2.UnitY * 24f, 32, 32);
             bool eligableToCharge = inTiles && !npc.WithinRange(target.Center, 150f) && target.velocity.Y > -2f;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+
+            if (lifeRatio < Phase3LifeRatio)
+            {
+                swimAcceleration *= 1.33f;
+                jumpSpeed *= 1.25f;
+            }
 
             // Rapidly approach the target and attempt to charge at them if eligable.
             if (eligableToCharge)
@@ -543,28 +550,56 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public static void SelectNextAttack(NPC npc)
         {
-            Player target = Main.player[npc.target];
+            ref float attackIndex = ref npc.Infernum().ExtraAI[5];
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            GreatSandSharkAttackState previousAttackState = (GreatSandSharkAttackState)(int)npc.ai[0];
-
-            WeightedRandom<GreatSandSharkAttackState> attackSelector = new WeightedRandom<GreatSandSharkAttackState>(Main.rand);
-            attackSelector.Add(GreatSandSharkAttackState.SandSwimChargeRush);
-            attackSelector.Add(GreatSandSharkAttackState.DustDevils);
-            attackSelector.Add(GreatSandSharkAttackState.FastCharges);
-
-            if (npc.WithinRange(target.Center, 850f))
-                attackSelector.Add(GreatSandSharkAttackState.ODSandSharkSummon);
-            if (lifeRatio < Phase2LifeRatio)
+            GreatSandSharkAttackState[] phase1AttackTable = new GreatSandSharkAttackState[]
             {
-                attackSelector.Add(GreatSandSharkAttackState.DuststormBurst, 2D);
-                attackSelector.Add(GreatSandSharkAttackState.SandFlames, 2D);
-            }
-            if (lifeRatio < Phase3LifeRatio)
-                attackSelector.Add(GreatSandSharkAttackState.SharkWaves, 992.5D);
+                GreatSandSharkAttackState.SandSwimChargeRush,
+                GreatSandSharkAttackState.DustDevils,
+                GreatSandSharkAttackState.FastCharges,
+                GreatSandSharkAttackState.FastCharges,
+                GreatSandSharkAttackState.ODSandSharkSummon,
+                GreatSandSharkAttackState.DustDevils,
+                GreatSandSharkAttackState.FastCharges,
+                GreatSandSharkAttackState.SandSwimChargeRush,
+            };
+            GreatSandSharkAttackState[] phase2AttackTable = new GreatSandSharkAttackState[]
+            {
+                GreatSandSharkAttackState.FastCharges,
+                GreatSandSharkAttackState.DustDevils,
+                GreatSandSharkAttackState.FastCharges,
+                GreatSandSharkAttackState.SandSwimChargeRush,
+                GreatSandSharkAttackState.ODSandSharkSummon,
+                GreatSandSharkAttackState.DustDevils,
+                GreatSandSharkAttackState.FastCharges,
+                GreatSandSharkAttackState.DuststormBurst,
+                GreatSandSharkAttackState.SandSwimChargeRush,
+                GreatSandSharkAttackState.SandFlames,
+            };
+            GreatSandSharkAttackState[] phase3AttackTable = new GreatSandSharkAttackState[]
+            {
+                GreatSandSharkAttackState.FastCharges,
+                GreatSandSharkAttackState.DustDevils,
+                GreatSandSharkAttackState.FastCharges,
+                GreatSandSharkAttackState.SharkWaves,
+                GreatSandSharkAttackState.SandSwimChargeRush,
+                GreatSandSharkAttackState.ODSandSharkSummon,
+                GreatSandSharkAttackState.DustDevils,
+                GreatSandSharkAttackState.FastCharges,
+                GreatSandSharkAttackState.DuststormBurst,
+                GreatSandSharkAttackState.SandSwimChargeRush,
+                GreatSandSharkAttackState.SharkWaves,
+                GreatSandSharkAttackState.SandFlames,
+            };
 
-            do
-                npc.ai[0] = (int)attackSelector.Get();
-            while ((int)npc.ai[0] == (int)previousAttackState);
+            attackIndex++;
+
+            npc.ai[0] = (int)phase1AttackTable[(int)attackIndex % phase1AttackTable.Length];
+            if (lifeRatio < Phase2LifeRatio)
+                npc.ai[0] = (int)phase2AttackTable[(int)attackIndex % phase2AttackTable.Length];
+            if (lifeRatio < Phase3LifeRatio)
+                npc.ai[0] = (int)phase3AttackTable[(int)attackIndex % phase3AttackTable.Length];
 
             npc.ai[1] = 0f;
 

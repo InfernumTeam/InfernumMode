@@ -253,9 +253,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         laserSpread += 0.07f;
                     }
 
+                    float openAreaAngle = Main.rand.NextFloatDirection() * laserSpread * 0.6f;
                     for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedByRandom(laserSpread) * Main.rand.NextFloat(16f, 20f);
+                        float shootOffsetAngle = MathHelper.Lerp(-laserSpread, laserSpread, i / (float)(laserCount - 1f)) + Main.rand.NextFloatDirection() * 0.02f;
+                        if (MathHelper.Distance(openAreaAngle, shootOffsetAngle) < 0.0567f)
+                            continue;
+
+                        Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f).RotatedBy(shootOffsetAngle) * Main.rand.NextFloat(16f, 20f);
                         Utilities.NewProjectileBetter(npc.Center + laserShootVelocity * 2f, laserShootVelocity, ModContent.ProjectileType<AstralLaser>(), laserDamage, 0f);
                     }
 
@@ -391,8 +396,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             {
                                 for (int i = 0; i < 6; i++)
                                 {
-                                    Vector2 crystalVelocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(12f, 18f);
-                                    Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralFlame>(), crystalDamage, 0f);
+                                    Vector2 crystalVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.9f) * Main.rand.NextFloat(12f, 18f);
+                                    Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralMissile>(), crystalDamage, 0f);
                                 }
                             }
                         }
@@ -458,7 +463,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             npc.velocity.X *= 0.9f;
 
             rocketShootTimer++;
-            if (rocketShootTimer >= rocketReleaseRate && attackTimer > 45f && attackTimer < 210f)
+            if (rocketShootTimer >= rocketReleaseRate && attackTimer > 75f && attackTimer < 240f)
             {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaBlast"), npc.Center);
 
@@ -479,7 +484,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 }
             }
 
-            if (attackTimer >= 270f)
+            if (attackTimer >= 300f)
                 SelectNextAttack(npc);
         }
 
@@ -495,7 +500,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootDelay = 225;
-            float laserSpeed = 9.75f;
+            float laserSpeed = 9.25f;
             float walkSpeed = MathHelper.Lerp(8f, 12f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
@@ -602,7 +607,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         {
             frameType = (int)AureusFrameType.Idle;
 
-            int cometShootRate = lifeRatio < Phase3LifeRatio ? 4 : 7;
+            int cometShootRate = lifeRatio < Phase3LifeRatio ? 3 : 6;
             ref float rainAngle = ref npc.Infernum().ExtraAI[0];
 
             // Slow down horziontally.
@@ -688,6 +693,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             else
                 npc.velocity.X = (npc.velocity.X * 15f + walkSpeed) / 16f;
 
+            // Play a charge sound as a telegraph prior to firing.
+            if (attackTimer == laserShootDelay - 155f)
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+
             // Adjust frames.
             frameType = Math.Abs(walkSpeed) > 0f ? (int)AureusFrameType.Walk : (int)AureusFrameType.Idle;
 
@@ -715,7 +724,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             }
 
             // Release slow spreads of lasers after the beams have been released.
-            if (attackTimer > laserShootDelay && attackTimer % 25f == 24f && attackTimer < laserShootDelay + OrangeLaserbeam.LaserLifetime)
+            if (attackTimer > laserShootDelay && attackTimer % 18f == 17f && attackTimer < laserShootDelay + OrangeLaserbeam.LaserLifetime)
             {
                 Main.PlaySound(SoundID.Item33, npc.Center);
 

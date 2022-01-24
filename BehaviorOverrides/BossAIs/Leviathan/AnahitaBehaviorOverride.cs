@@ -347,7 +347,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             ref float atlantisCooldown = ref npc.Infernum().ExtraAI[0];
 
-            int hoverTime = 50;
+            int hoverTime = 90;
             int spinTime = 210;
             int chargeTime = 40;
             float chargeSpeed = MathHelper.Lerp(27f, 30f, 1f - lifeRatio);
@@ -381,7 +381,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             }
 
             float spinAngularVelocity = MathHelper.TwoPi * totalSpins / spinTime;
-            bool shouldNotSpin = (attackTimer >= hoverTime + spinTime / 2 && attackTimer <= hoverTime + spinTime / 2 + chargeTime) || attackTimer <= hoverTime + 45;
+
+            if (attackTimer == 5f)
+                Main.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
 
             if (attackTimer < hoverTime)
             {
@@ -413,7 +415,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             }
 
             // Do the actual charge.
-            if (attackTimer == hoverTime || attackTimer == hoverTime + spinTime / 2)
+            int wrappedAttackTimer = (int)(attackTimer - hoverTime) % (int)(spinTime / totalSpins);
+            bool shouldCharge = attackTimer >= hoverTime && wrappedAttackTimer == 1;
+            bool shouldNotSpin = wrappedAttackTimer < 45;
+            if (shouldCharge)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                 int idealDirection = Math.Sign(target.Center.X - npc.Center.X);
@@ -471,10 +476,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 // Poke the target with Atlantis if close to them and pointing towards them.
                 bool aimingAtPlayer = currentDirection.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.ToRadians(54f);
                 bool closeToPlayer = npc.WithinRange(target.Center, 180f);
-                if (aimingAtPlayer && closeToPlayer && Main.netMode != NetmodeID.MultiplayerClient && atlantisCooldown <= 0f)
+                if (aimingAtPlayer && closeToPlayer && atlantisCooldown <= 0f)
                 {
-                    for (float offset = 0f; offset < 110f; offset += 10f)
-                        Utilities.NewProjectileBetter(npc.Center + spearDirection * (15f + offset), spearDirection * (70f + offset * 0.4f), ModContent.ProjectileType<AtlantisSpear>(), 175, 0f);
+                    Main.PlaySound(SoundID.DD2_KoboldIgnite, target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (float offset = 0f; offset < 110f; offset += 10f)
+                            Utilities.NewProjectileBetter(npc.Center + spearDirection * (15f + offset), spearDirection * (70f + offset * 0.4f), ModContent.ProjectileType<AtlantisSpear>(), 175, 0f);
+                    }
                     atlantisCooldown = 30f;
                 }
 

@@ -53,6 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override void Kill(int timeLeft)
         {
+            Main.PlaySound(SoundID.Item66, projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

@@ -828,8 +828,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             AureusAttackType oldAttackState = (AureusAttackType)(int)npc.ai[0];
             AureusAttackType newAttackState;
             WeightedRandom<AureusAttackType> attackSelector = new WeightedRandom<AureusAttackType>(Main.rand);
-            attackSelector.Add(AureusAttackType.WalkAndShootLasers, 1.25);
-            attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight);
+            attackSelector.Add(AureusAttackType.WalkAndShootLasers);
+            if (oldAttackState != AureusAttackType.CelestialRain)
+                attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight);
             attackSelector.Add(AureusAttackType.RocketBarrage);
 
             if (lifeRatio >= Phase3LifeRatio)
@@ -848,6 +849,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             do
                 newAttackState = attackSelector.Get();
             while (newAttackState == oldAttackState || (int)newAttackState == (int)npc.Infernum().ExtraAI[7]);
+
+            // Always use a consistent attack after the spawn activation.
+            if (oldAttackState == AureusAttackType.SpawnActivation)
+                newAttackState = AureusAttackType.WalkAndShootLasers;
 
             // Recharge once the attack counter every few attacks.
             if (npc.ai[2] >= 4f)

@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
         {
             LeviathanAttackType.LazilyHover,
             LeviathanAttackType.BubbleBelch,
-            LeviathanAttackType.BubbleBelch,
+            LeviathanAttackType.Charge,
             LeviathanAttackType.CallForHelp,
             LeviathanAttackType.LazilyHover,
             LeviathanAttackType.MeteorVomiting,

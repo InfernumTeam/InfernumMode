@@ -349,8 +349,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             int hoverTime = 90;
             int spinTime = 210;
-            int chargeTime = 40;
-            float chargeSpeed = MathHelper.Lerp(27f, 30f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(23f, 26f, 1f - lifeRatio);
             float totalSpins = 2f;
             if (enraged)
             {
@@ -361,14 +360,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (outOfOcean)
             {
                 hoverTime = 30;
-                chargeTime = 20;
                 chargeSpeed = 43.5f;
                 totalSpins = 2f;
             }
             if (BossRushEvent.BossRushActive)
             {
                 hoverTime = 25;
-                chargeTime = 20;
                 chargeSpeed = 48f;
                 totalSpins = 2f;
             }
@@ -377,7 +374,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (!NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()))
             {
                 totalSpins *= 1.5f;
-                chargeSpeed *= 1.4f;
+                chargeSpeed *= 1.3f;
             }
 
             float spinAngularVelocity = MathHelper.TwoPi * totalSpins / spinTime;

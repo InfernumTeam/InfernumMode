@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        public const bool ReadyToUseBuffedAI = true;
+        public const bool ReadyToUseBuffedAI = false;
 
         #region Enumerations
         public enum CloneAttackType

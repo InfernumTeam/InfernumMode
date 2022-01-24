@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
             // Wave up and down over time.
-            Vector2 moveOffset = Vector2.UnitX * (float)Math.Sin(Time / 12f) * 5f;
+            Vector2 moveOffset = Vector2.UnitX * (float)Math.Sin(Time / 17f) * 5f;
             projectile.Center += moveOffset;
 
             projectile.rotation = (projectile.velocity + moveOffset).ToRotation();

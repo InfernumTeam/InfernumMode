@@ -875,7 +875,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.ai[0] = Main.player[npc.target].Infernum().TwinsSpecialAttackTypeSelector.MakeSelection() + 2;
                 if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(3))
                     npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
-                npc.ai[0] = (int)TwinsAttackType.SpecialAttack_LaserRayScarletBursts;
             }
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))

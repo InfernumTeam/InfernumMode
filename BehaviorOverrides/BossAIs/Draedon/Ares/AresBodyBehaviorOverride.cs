@@ -323,11 +323,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     {
                         for (int i = 0; i < 12; i++)
                         {
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 12f) * 20f;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 12f) * 8f;
                             Vector2 coreSpawnPosition = npc.Center + Vector2.UnitY * 26f;
                             Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
 
-                            shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 12f) * 12f;
+                            shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 12f) * 8f;
                             Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
                         }
                     }

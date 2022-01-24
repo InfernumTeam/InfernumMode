@@ -102,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead)
                 npc.TargetClosest(true);
 
-            npc.damage = npc.dontTakeDamage ? 0 : 5000;
+            npc.damage = npc.dontTakeDamage ? 0 : 2500;
 
             Player target = Main.player[npc.target];
 

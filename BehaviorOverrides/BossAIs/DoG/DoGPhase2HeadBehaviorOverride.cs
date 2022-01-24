@@ -172,7 +172,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Don't take damage when fading out.
             npc.dontTakeDamage = npc.Opacity < 0.5f;
-            npc.damage = npc.dontTakeDamage ? 0 : 6000;
+            npc.damage = npc.dontTakeDamage ? 0 : 3000;
             npc.Calamity().DR = 0.3f;
 
             // Stay in the world.

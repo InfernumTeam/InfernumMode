@@ -89,5 +89,27 @@ namespace InfernumMode
             if (item.type == ModContent.ItemType<StarterBag>())
                 DropHelper.DropItemCondition(player, ModContent.ItemType<Death2>(), Main.expertMode);
         }
+
+        public override void OpenVanillaBag(string context, Player player, int arg)
+        {
+            // Only apply bag drop contents in Infernum Mode and on boss bags.
+            if (context != "bossBag" || !InfernumMode.CanUseCustomAIs)
+                return;
+
+            if (arg == ItemID.EaterOfWorldsBossBag)
+            {
+                int itemCount = Main.rand.Next(30, 60);
+                player.QuickSpawnItem(ItemID.DemoniteOre, itemCount);
+                itemCount = Main.rand.Next(10, 20);
+                player.QuickSpawnItem(ItemID.ShadowScale, itemCount);
+            }
+            if (arg == ItemID.BrainOfCthulhuBossBag)
+            {
+                int itemCount = Main.rand.Next(30, 60);
+                player.QuickSpawnItem(ItemID.CrimtaneOre, itemCount);
+                itemCount = Main.rand.Next(10, 20);
+                player.QuickSpawnItem(ItemID.TissueSample, itemCount);
+            }
+        }
     }
 }

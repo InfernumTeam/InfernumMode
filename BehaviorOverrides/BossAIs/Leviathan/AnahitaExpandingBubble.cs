@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
@@ -29,6 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 240;
+            projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
 
@@ -50,6 +52,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
         public float WidthFunction(float completionRatio) => Radius * projectile.scale * (float)Math.Sin(MathHelper.Pi * completionRatio);
 
         public Color ColorFunction(float completionRatio) => Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime)) * 0.5f) * projectile.Opacity;
+
+        public override void ModifyDamageHitbox(ref Rectangle hitbox)
+        {
+            hitbox = Utils.CenteredRectangle(projectile.Center, Vector2.One * Radius * 1.36f);
+        }
 
         public override void Kill(int timeLeft)
         {

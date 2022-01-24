@@ -24,8 +24,8 @@ namespace InfernumMode
         public override void SetDefaults()
         {
             item.rare = ItemRarityID.Red;
-            item.width = 38;
-            item.height = 82;
+            item.width = 50;
+            item.height = 96;
             item.useAnimation = 45;
             item.useTime = 45;
             item.channel = true;

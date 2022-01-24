@@ -20,8 +20,8 @@ namespace InfernumMode
 
         public override void SetDefaults()
         {
-            projectile.width = 38;
-            projectile.height = 80;
+            projectile.width = 50;
+            projectile.height = 96;
             projectile.aiStyle = -1;
             projectile.ignoreWater = true;
             projectile.tileCollide = false;

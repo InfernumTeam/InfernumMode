@@ -48,10 +48,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.width = npc.height = 140;
             npc.defense = 20;
             npc.DR_NERD(0.25f);
-            npc.LifeMaxNERB(84720, 84720);
+            npc.LifeMaxNERB(108820, 108820);
             npc.lifeMax /= 2;
             npc.aiStyle = -1;
             npc.modNPC.aiType = -1;
+            npc.modNPC.music = MusicID.Boss5;
             npc.knockBackResist = 0f;
             npc.value = Item.buyPrice(0, 40, 0, 0);
             for (int k = 0; k < npc.buffImmune.Length; k++)
@@ -180,7 +181,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             float swimAcceleration = MathHelper.Lerp(0.85f, 1.05f, 1f - lifeRatio);
             float chargeSpeed = npc.Distance(target.Center) * 0.01f + MathHelper.Lerp(21f, 26f, 1f - lifeRatio);
             int chargeCount = 3;
-
+            int blastCount = (int)MathHelper.Lerp(30f, 42f, 1f - lifeRatio);
+            float blastSpeed = MathHelper.Lerp(8f, 10f, 1f - lifeRatio);
+            
             ref float chargingFlag = ref npc.Infernum().ExtraAI[0];
             ref float chargeCountdown = ref npc.Infernum().ExtraAI[1];
             ref float chargeInterpolantTimer = ref npc.Infernum().ExtraAI[2];
@@ -223,9 +226,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     // Release a radial spread of sand. There is a lot, but is is slow, and is supposed to be maneuvered through.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 27; i++)
+                        for (int i = 0; i < blastCount; i++)
                         {
-                            Vector2 sandVelocity = (MathHelper.TwoPi * i / 27f).ToRotationVector2() * 6f;
+                            Vector2 sandVelocity = (MathHelper.TwoPi * i / blastCount).ToRotationVector2() * blastSpeed;
                             int sand = Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandstormBlast2>(), 175, 0f);
                             if (Main.projectile.IndexInRange(sand))
                                 Main.projectile[sand].tileCollide = false;
@@ -308,7 +311,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int hoverTime = 28;
             float hoverSpeed = 28f;
             int chargeTime = 35;
-            float chargeSpeed = MathHelper.Lerp(19f, 23f, 1f - lifeRatio);
+            float chargeSpeed = MathHelper.Lerp(22f, 27.5f, 1f - lifeRatio);
             int chargeCount = 5;
             float idealRotation = npc.AngleTo(target.Center);
 

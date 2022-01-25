@@ -57,6 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             ref float enrageTimer = ref npc.Infernum().ExtraAI[ComplementMechEnrageTimerIndex];
+            ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
@@ -171,6 +172,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 return false;
             }
 
+            // Handle the final phase transition.
+            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentTwinsPhase >= 6)
+            {
+                npc.ModNPC<Apollo>().ChargeComboFlash = 0f;
+                attackState = (int)TwinsAttackType.BasicShots;
+                finalPhaseAnimationTime++;
+                npc.dontTakeDamage = true;
+                DoBehavior_DoFinalPhaseTransition(npc, target, ref frame, hoverSide, finalPhaseAnimationTime);
+                return false;
+            }
+
             // Use combo attacks as necessary.
             if (ExoMechManagement.TotalMechs >= 2 && (int)attackState < 100)
             {
@@ -257,6 +269,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             if (phaseTransitionAnimationTime == chargeupSoundTime + 75f)
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireEnd"), npc.Center);
+        }
+
+        public static void DoBehavior_DoFinalPhaseTransition(NPC npc, Player target, ref float frame, float hoverSide, float phaseTransitionAnimationTime)
+        {
+            Vector2 hoverDestination = target.Center + Vector2.UnitX * hoverSide * 780f;
+
+            // Determine rotation.
+            npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+
+            // Move to the appropriate side of the target.
+            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
+
+            // Determine frames.
+            frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, phaseTransitionAnimationTime / 45f % 1f));
+
+            // Play the transition sound at the start.
+            if (phaseTransitionAnimationTime == 3f && npc.type == ModContent.NPCType<Apollo>())
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
         }
 
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
@@ -1035,7 +1065,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             spriteBatch.EnterShaderRegion();
 
+            float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex], true);
+            if (finalPhaseGlowInterpolant > 0f)
+            {
+                float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
+                for (int i = 0; i < 8; i++)
+                {
+                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    color.A = 0;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                }
+            }
             drawInstance(Vector2.Zero, baseInstanceColor);
+
             if (instanceCount > 1)
             {
                 baseInstanceColor *= 0.04f;

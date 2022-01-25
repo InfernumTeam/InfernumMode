@@ -197,6 +197,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Texture2D texture = Main.npcTexture[npc.type];
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
+            Vector2 center = npc.Center - Main.screenPosition;
             Color afterimageBaseColor = aresBody.Infernum().ExtraAI[13] == 1f ? Color.Red : Color.White;
             int numAfterimages = 5;
 
@@ -210,7 +211,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 }
             }
 
-            Vector2 center = npc.Center - Main.screenPosition;
+            float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, aresBody.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex], true);
+            if (finalPhaseGlowInterpolant > 0f)
+            {
+                float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
+                for (int i = 0; i < 8; i++)
+                {
+                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    color.A = 0;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 0.8f + 0.5f).ToRotationVector2() * backAfterimageOffset;
+                    spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+
             spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresPlasmaFlamethrowerGlow");

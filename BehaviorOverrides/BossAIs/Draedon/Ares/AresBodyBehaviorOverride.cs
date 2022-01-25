@@ -89,21 +89,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float enraged = ref npc.Infernum().ExtraAI[13];
             ref float backarmSwapTimer = ref npc.Infernum().ExtraAI[14];
             ref float laserPulseArmAreSwapped = ref npc.Infernum().ExtraAI[15];
+            ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
-
-            // Go through the attack cycle.
-            if (armCycleTimer >= 600f)
-            {
-                armCycleCounter += enraged == 1f ? 6f : 1f;
-                armCycleTimer = 0f;
-            }
-            else
-                armCycleTimer++;
-
-            if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] > 0f)
-                enraged = 1f;
 
             // Make the laser and pulse arms swap sometimes.
             if (backarmSwapTimer > 960f)
@@ -212,6 +201,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     npc.active = false;
             }
 
+            // Handle the final phase transition.
+            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentAresPhase >= 6)
+            {
+                attackState = (int)AresBodyAttackType.IdleHover;
+                finalPhaseAnimationTime++;
+                npc.dontTakeDamage = true;
+                DoBehavior_DoFinalPhaseTransition(npc, target, ref frameType, finalPhaseAnimationTime);
+                return false;
+            }
+
             // Use combo attacks as necessary.
             if (ExoMechManagement.TotalMechs >= 2 && (int)attackState < 100)
             {
@@ -224,12 +223,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.netUpdate = true;
             }
 
+            // Reset the attack type if it was a combo attack but the respective mech is no longer present.
             if (((finalMech != null && finalMech.Opacity > 0f) || ExoMechManagement.CurrentAresPhase >= 6) && attackState >= 100f)
             {
                 attackTimer = 0f;
                 attackState = 0f;
                 npc.netUpdate = true;
             }
+
+            // Go through the attack cycle.
+            if (armCycleTimer >= 600f)
+            {
+                armCycleCounter += enraged == 1f ? 6f : 1f;
+                armCycleTimer = 0f;
+            }
+            else
+                armCycleTimer++;
+
+            if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] > 0f)
+                enraged = 1f;
 
             // Perform specific behaviors.
             switch ((AresBodyAttackType)(int)attackState)
@@ -258,6 +270,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             attackTimer++;
             return false;
+        }
+
+        public static void DoBehavior_DoFinalPhaseTransition(NPC npc, Player target, ref float frame, float phaseTransitionAnimationTime)
+        {
+            npc.velocity *= 0.925f;
+            npc.rotation = 0f;
+
+            // Determine frames.
+            frame = (int)AresBodyFrameType.Laugh;
+
+            // Play the transition sound at the start.
+            if (phaseTransitionAnimationTime == 3f)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
         }
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
@@ -636,13 +661,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechComboAttackContent.AffectedAresArms.TryGetValue((ExoMechComboAttackContent.ExoMechComboAttackType)aresBody.ai[0], out int[] activeArms))
                 return !activeArms.Contains(npc.type);
 
+            bool chargingUp = aresBody.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex] > 0f &&
+                aresBody.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex] < ExoMechManagement.FinalPhaseTransitionTime;
             if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.HoverCharge ||
                 aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts ||
                 aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ThermoplasmaDance ||
                 aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges ||
-                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle)
+                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle ||
+                chargingUp)
             {
                 return true;
             }
@@ -819,7 +847,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Texture2D texture = Main.npcTexture[npc.type];
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
+            Vector2 center = npc.Center - Main.screenPosition;
             int numAfterimages = 5;
+
+            float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex], true);
+            if (finalPhaseGlowInterpolant > 0f)
+            {
+                float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
+                for (int i = 0; i < 8; i++)
+                {
+                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    color.A = 0;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                }
+            }
 
             if (CalamityConfig.Instance.Afterimages)
             {
@@ -834,7 +876,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 }
             }
 
-            Vector2 center = npc.Center - Main.screenPosition;
             spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresBodyGlow");

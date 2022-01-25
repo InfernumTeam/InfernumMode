@@ -45,12 +45,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float attackTimer = ref npc.ai[1];
             ref float hoverSide = ref npc.ai[2];
             ref float phaseTransitionAnimationTime = ref npc.ai[3];
-            ref float frameType = ref npc.localAI[0];
+            ref float frame = ref npc.localAI[0];
             ref float hasDoneInitializations = ref npc.localAI[1];
-            ref float hasSummonedComplementMech = ref npc.Infernum().ExtraAI[7];
-            ref float complementMechIndex = ref npc.Infernum().ExtraAI[10];
-            ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[11];
-            ref float finalMechIndex = ref npc.Infernum().ExtraAI[12];
+            ref float hasSummonedComplementMech = ref npc.Infernum().ExtraAI[ExoMechManagement.HasSummonedComplementMechIndex];
+            ref float complementMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
+            ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
+            ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
+            ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             NPC finalMech = ExoMechManagement.FindFinalMech();
             NPC apollo = Main.npc[npc.realLife];
 
@@ -70,6 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             npc.life = apollo.life;
             npc.lifeMax = apollo.lifeMax;
 
+            // Inherit a bunch of things from Apollo, the "manager" of the twins' AI.
             TwinsAttackType apolloAttackType = (TwinsAttackType)(int)apollo.ai[0];
             if (apolloAttackType != TwinsAttackType.SpecialAttack_LaserRayScarletBursts && apolloAttackType != TwinsAttackType.SpecialAttack_PlasmaCharges)
             {
@@ -78,10 +80,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
             hoverSide = -apollo.ai[2];
             phaseTransitionAnimationTime = apollo.ai[3];
-            npc.Infernum().ExtraAI[ExoMechManagement.HasSummonedComplementMechIndex] = apollo.Infernum().ExtraAI[ExoMechManagement.HasSummonedComplementMechIndex];
-            npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex] = apollo.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
-            npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex] = apollo.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
-            npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex] = apollo.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
+            hasSummonedComplementMech = apollo.Infernum().ExtraAI[ExoMechManagement.HasSummonedComplementMechIndex];
+            complementMechIndex = apollo.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
+            wasNotInitialSummon = apollo.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
+            finalMechIndex = apollo.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
+            finalPhaseAnimationTime = apollo.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             npc.Calamity().newAI[0] = (int)Artemis.Phase.Charge;
 
             // Get a target.
@@ -119,7 +122,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             {
                 npc.dontTakeDamage = true;
                 npc.ModNPC<Artemis>().ChargeFlash = 0f;
-                DoBehavior_DoPhaseTransition(npc, target, ref frameType, hoverSide, phaseTransitionAnimationTime);
+                DoBehavior_DoPhaseTransition(npc, target, ref frame, hoverSide, phaseTransitionAnimationTime);
+                return false;
+            }
+
+            // Handle the final phase transition.
+            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentTwinsPhase >= 6)
+            {
+                npc.ModNPC<Artemis>().ChargeFlash = 0f;
+                attackState = (int)TwinsAttackType.BasicShots;
+                finalPhaseAnimationTime++;
+                npc.dontTakeDamage = true;
+                DoBehavior_DoFinalPhaseTransition(npc, target, ref frame, hoverSide, finalPhaseAnimationTime);
                 return false;
             }
 
@@ -127,24 +141,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             switch ((TwinsAttackType)(int)attackState)
             {
                 case TwinsAttackType.BasicShots:
-                    DoBehavior_BasicShots(npc, target, false, hoverSide, ref frameType, ref attackTimer);
+                    DoBehavior_BasicShots(npc, target, false, hoverSide, ref frame, ref attackTimer);
                     break;
                 case TwinsAttackType.FireCharge:
-                    DoBehavior_FireCharge(npc, target, hoverSide, ref frameType, ref attackTimer);
+                    DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
                     break;
                 case TwinsAttackType.SpecialAttack_PlasmaCharges:
-                    DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frameType, ref attackTimer);
+                    DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
                     break;
                 case TwinsAttackType.SpecialAttack_LaserRayScarletBursts:
-                    DoBehavior_LaserRayScarletBursts(npc, target, ref frameType, ref attackTimer);
+                    DoBehavior_LaserRayScarletBursts(npc, target, ref frame, ref attackTimer);
                     break;
                 case TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames:
-                    DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frameType, ref attackTimer);
+                    DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);
                     break;
             }
 
             // Perform specific combo attack behaviors.
-            ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, hoverSide, ref attackTimer, ref frameType);
+            ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, hoverSide, ref attackTimer, ref frame);
             return false;
         }
 
@@ -271,6 +285,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             spriteBatch.EnterShaderRegion();
 
+            float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex], true);
+            if (finalPhaseGlowInterpolant > 0f)
+            {
+                float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
+                for (int i = 0; i < 8; i++)
+                {
+                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    color.A = 0;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                }
+            }
             drawInstance(Vector2.Zero, baseInstanceColor);
             if (instanceCount > 1)
             {

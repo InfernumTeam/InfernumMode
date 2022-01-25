@@ -4,6 +4,7 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
@@ -32,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override int NPCOverrideType => ModContent.NPCType<ThanatosHead>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public const int SegmentCount = 100;
         public const float OpenSegmentDR = 0f;
@@ -63,6 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             ref float attackDelay = ref npc.Infernum().ExtraAI[13];
+            ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
@@ -163,9 +165,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.damage = 0;
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 attackDelay++;
-
                 DoProjectileShootInterceptionMovement(npc, target, Utils.InverseLerp(270f, 180f, attackDelay, true) * 3f);
                 return false;
+            }
+
+            // Handle the final phase transition.
+            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentThanatosPhase >= 6)
+            {
+                frameType = (int)ThanatosFrameType.Closed;
+                attackState = (int)ThanatosHeadAttackType.ProjectileShooting_RedLaser;
+                finalPhaseAnimationTime++;
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
+                DoBehavior_DoFinalPhaseTransition(npc, target, finalPhaseAnimationTime);
+
+                // The delay before returning is to ensure that DR code is executed that reflects the fact that Thanatos' head segment is closed.
+                if (finalPhaseAnimationTime >= 3f)
+                    return false;
             }
 
             // Use combo attacks as necessary.
@@ -685,6 +701,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.velocity *= 1.2f;
         }
 
+        public static void DoBehavior_DoFinalPhaseTransition(NPC npc, Player target, float phaseTransitionAnimationTime)
+        {
+            DoProjectileShootInterceptionMovement(npc, target, 0.6f);
+
+            // Play the transition sound at the start.
+            if (phaseTransitionAnimationTime == 3f)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             ThanatosHeadAttackType oldAttackType = (ThanatosHeadAttackType)(int)npc.ai[0];
@@ -754,6 +779,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (npc.frame.Y >= frameHeight * finalFrame)
                     npc.frame.Y = frameHeight * finalFrame;
             }
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                spriteEffects = SpriteEffects.FlipHorizontally;
+
+            Texture2D texture = Main.npcTexture[npc.type];
+            Vector2 origin = new Vector2(Main.npcTexture[npc.type].Width / 2, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type] / 2);
+
+            Vector2 center = npc.Center - Main.screenPosition;
+
+            float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex], true);
+            if (finalPhaseGlowInterpolant > 0f)
+            {
+                float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
+                for (int i = 0; i < 8; i++)
+                {
+                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    color.A = 0;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    spriteBatch.Draw(texture, center + drawOffset, npc.frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                }
+            }
+            spriteBatch.Draw(texture, center, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosHeadGlow");
+            spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            return false;
         }
     }
 }

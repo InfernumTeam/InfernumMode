@@ -21,9 +21,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int ComplementMechIndexIndex = 10;
         public const int WasNotInitialSummonIndex = 11;
         public const int FinalMechIndexIndex = 12;
+        public const int FinalPhaseTimerIndex = 16;
         public const float Phase2LifeRatio = 0.85f;
         public const float Phase3LifeRatio = 0.625f;
         public const float Phase4LifeRatio = 0.5f;
+        public const int FinalPhaseTransitionTime = 290;
         public const float ComplementMechInvincibilityThreshold = 0.5f;
 
         public static bool ComplementMechIsPresent(NPC npc)

@@ -3,6 +3,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Skies;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -341,6 +342,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.damage = contactDamage;
                 if (wrappedTime == hoverTime + 1f)
                 {
+                    // Create lightning bolts in the sky.
+                    int lightningBoltCount = ExoMechManagement.CurrentAresPhase >= 6 ? 35 : 20;
+                    if (Main.netMode != NetmodeID.Server)
+                        ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
+
                     npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * chargeSpeed;
                     npc.netUpdate = true;
 
@@ -531,10 +537,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.netUpdate = true;
             }
 
-            // Create laser bursts and tesla sparks.
+            // Create laser bursts.
             if (attackTimer == shootDelay + telegraphTime - 1f)
             {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
+
+                // Create lightning bolts in the sky.
+                int lightningBoltCount = ExoMechManagement.CurrentAresPhase >= 6 ? 55 : 30;
+                if (Main.netMode != NetmodeID.Server)
+                    ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -568,7 +579,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts)
             {
                 if (adjustedTimer == (int)(spinTime * 0.5f) - 60)
+                {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+
+                    // Create lightning bolts in the sky.
+                    int lightningBoltCount = ExoMechManagement.CurrentAresPhase >= 6 ? 55 : 30;
+                    if (Main.netMode != NetmodeID.Server)
+                        ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
+                }
 
                 if (adjustedTimer < spinTime * 0.5f)
                     spinSpeed *= Utils.InverseLerp(spinTime * 0.5f, spinTime * 0.5f - 45f, adjustedTimer, true);

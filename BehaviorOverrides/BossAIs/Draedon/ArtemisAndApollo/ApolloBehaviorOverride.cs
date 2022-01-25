@@ -3,6 +3,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Skies;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -588,6 +589,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     // Charge and release sparks.
                     if (attackTimer >= waitTime && attackDelay >= 45f)
                     {
+                        // Create lightning bolts in the sky.
+                        int lightningBoltCount = ExoMechManagement.CurrentTwinsPhase >= 6 ? 55 : 30;
+                        if (Main.netMode != NetmodeID.Server)
+                            ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
+
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
 
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * chargePredictiveness) * chargeSpeed;
@@ -838,7 +844,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         if (attackTimer >= 15f && attackTimer % 70f == 20f)
                             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireLoop"), target.Center);
 
-                        if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= 15f && attackTimer % laserShootRate == laserShootRate - 1f)
+                        bool shouldFire = attackTimer >= 15f && attackTimer % laserShootRate == laserShootRate - 1f;
+                        if (shouldFire)
+                            ExoMechsSky.CreateLightningBolt(4);
+                        if (Main.netMode != NetmodeID.MultiplayerClient && shouldFire)
                         {
                             for (int i = -1; i <= 1; i++)
                             {
@@ -893,6 +902,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             npc.frameCounter = 0f;
             
             TwinsAttackType oldAttackType = (TwinsAttackType)(int)npc.ai[0];
+            ref float previousSpecialAttack = ref npc.Infernum().ExtraAI[17];
 
             // Update learning stuff.
             ExoMechManagement.DoPostAttackSelections(npc);
@@ -900,11 +910,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             npc.ai[0] = (int)TwinsAttackType.BasicShots;
             if (oldAttackType == TwinsAttackType.BasicShots)
             {
-                npc.ai[0] = (int)TwinsAttackType.FireCharge;
-                if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
-                    npc.ai[0] = Main.player[npc.target].Infernum().TwinsSpecialAttackTypeSelector.MakeSelection() + 2;
-                if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(3))
-                    npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
+                int tries = 0;
+                do
+                {
+                    npc.ai[0] = (int)TwinsAttackType.FireCharge;
+                    if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(3))
+                        npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
+                    if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
+                        npc.ai[0] = Main.player[npc.target].Infernum().TwinsSpecialAttackTypeSelector.MakeSelection() + 2;
+                    tries++;
+
+                    if (tries >= 1000)
+                        break;
+                }
+                while (previousSpecialAttack == npc.ai[0]);
+                previousSpecialAttack = npc.ai[0];
             }
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))

@@ -334,7 +334,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     npc.TargetClosest();
 
                     int redirectTime = sirenAlive ? 60 : 45;
-                    int chargeTime = sirenAlive ? 60 : 32;
+                    int chargeTime = sirenAlive ? 46 : 30;
                     ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
                     if (outOfOcean)
                     {

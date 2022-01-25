@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.Skies;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -584,6 +585,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     }
                 }
             }
+
+            // Create lightning bolts in the sky.
+            if (Main.netMode != NetmodeID.Server && attackTimer % 3f == 2f)
+                ExoMechsSky.CreateLightningBolt();
 
             if (attackTimer > attackTime + cooloffTime)
                 SelectNextAttack(npc);

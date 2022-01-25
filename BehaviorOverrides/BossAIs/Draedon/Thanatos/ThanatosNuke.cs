@@ -1,3 +1,4 @@
+using CalamityMod.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -54,6 +55,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeMechGaussRifle"), projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<ThanatosNuclearExplosion>(), 1200, 0f);
+
+            // Create lightning bolts in the sky.
+            int lightningBoltCount = ExoMechManagement.CurrentThanatosPhase >= 6 ? 35 : 20;
+            if (Main.netMode != NetmodeID.Server)
+                ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
         }
 
         public override bool CanDamage() => false;

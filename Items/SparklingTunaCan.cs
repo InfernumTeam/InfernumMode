@@ -20,7 +20,7 @@ namespace InfernumMode.Items
         {
             item.width = 28;
             item.height = 34;
-            item.rare = ItemRarityID.Cyan;
+            item.rare = ItemRarityID.Green;
             item.useAnimation = 45;
             item.useTime = 45;
             item.useStyle = ItemUseStyleID.EatingUsing;

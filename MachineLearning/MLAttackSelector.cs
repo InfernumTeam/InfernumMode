@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
+using Terraria;
 using Terraria.ModLoader.IO;
 using Terraria.Utilities;
 
@@ -37,7 +38,7 @@ namespace InfernumMode.MachineLearning
 
         public int MakeSelection()
         {
-            WeightedRandom<int> rng = new WeightedRandom<int>();
+            WeightedRandom<int> rng = new WeightedRandom<int>(Main.rand);
             for (int i = 0; i < Weights.Length; i++)
                 rng.Add(i, Weights[i]);
 

@@ -173,7 +173,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             Vector2 lineStart = projectile.Center + projectile.rotation.ToRotationVector2() * FireMaxLength * fadeOut;
             Vector2 lineEnd = projectile.Center + projectile.rotation.ToRotationVector2() * FireMaxLength * fadeIn;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), lineStart, lineEnd, 40f * projectile.scale, ref completelyUselessFuckYouLmao);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), lineStart, lineEnd, projectile.scale * 66f, ref completelyUselessFuckYouLmao);
         }
     }
 }

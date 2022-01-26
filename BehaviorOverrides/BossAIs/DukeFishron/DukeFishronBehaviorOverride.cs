@@ -26,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public enum DukeAttackType
         {
             Charge,
+            ChargeWait,
             BubbleSpit,
             BubbleSpin,
             StationaryBubbleCharge,
@@ -46,14 +47,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         #region Pattern Lists
         public static readonly DukeAttackType[] Subphase1Pattern = new DukeAttackType[]
         {
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
             DukeAttackType.BubbleSpit,
             DukeAttackType.SharkTornadoSummon,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
             DukeAttackType.StationaryBubbleCharge,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
             DukeAttackType.BubbleSpit,
@@ -63,6 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public static readonly DukeAttackType[] Subphase2Pattern = new DukeAttackType[]
         {
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
@@ -70,11 +75,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             DukeAttackType.SharkTornadoSummon,
             DukeAttackType.StationaryBubbleCharge,
             DukeAttackType.TidalWave,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
             DukeAttackType.TidalWave,
             DukeAttackType.SharkTornadoSummon,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
             DukeAttackType.StationaryBubbleCharge,
@@ -256,14 +263,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             switch ((DukeAttackType)(int)aiState)
             {
                 case DukeAttackType.Charge:
-                    int angularAimTime = 6;
+                    int angularAimTime = 4;
                     int chargeTime = 40;
-                    float chargeSpeed = 23f;
+                    float chargeSpeed = 28f;
                     int decelerationTime = 14;
                     float chargeDeceleration = 0.8f;
                     if (enraged || inPhase3)
                     {
-                        angularAimTime -= 5;
+                        angularAimTime = 0;
                         chargeTime -= 10;
                         chargeSpeed *= 1.3f;
                     }
@@ -278,7 +285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (BossRushEvent.BossRushActive)
                     {
                         chargeTime -= 8;
-                        chargeSpeed *= 1.75f;
+                        chargeSpeed *= 1.5f;
                     }
 
                     if (attackTimer < angularAimTime)
@@ -306,12 +313,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         npc.netUpdate = true;
                     }
 
-                    frameDrawType = (int)DukeFrameDrawingType.FinFlapping;
-                    if (attackTimer >= angularAimTime)
-                    {
-                        if (attackTimer < angularAimTime + chargeTime)
-                            GenerateParticles(npc);
-                    }
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+                    if (attackTimer >= angularAimTime && attackTimer < angularAimTime + chargeTime)
+                        GenerateParticles(npc);
 
                     // And decelerate over time.
                     if (attackTimer >= angularAimTime + chargeTime &&
@@ -322,6 +326,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     }
 
                     if (attackTimer >= angularAimTime + chargeTime + decelerationTime)
+                        goToNextAIState();
+                    break;
+
+                case DukeAttackType.ChargeWait:
+                    npc.damage = 0;
+                    int waitDelay = 30;
+                    ref float horizontalHoverOffset = ref npc.Infernum().ExtraAI[0];
+
+                    // Hover near the target.
+                    if (horizontalHoverOffset == 0f)
+                        horizontalHoverOffset = Math.Sign(target.Center.X - npc.Center.X) * 500f;
+                    Vector2 hoverDestination = target.Center + new Vector2(horizontalHoverOffset, -350f) - npc.velocity;
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 22f, 1.05f);
+
+                    // Look at the target.
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                    npc.rotation = npc.AngleTo(target.Center);
+
+                    if (npc.spriteDirection == 1)
+                        npc.rotation += MathHelper.Pi;
+
+                    // Handle frames.
+                    frameDrawType = (int)DukeFrameDrawingType.FinFlapping;
+                    npc.frameCounter++;
+
+                    if (attackTimer >= waitDelay)
                         goToNextAIState();
                     break;
 
@@ -445,7 +475,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (BossRushEvent.BossRushActive)
                         bubbleShootRate = 15;
                     
-                    frameDrawType = (int)DukeFrameDrawingType.FinFlapping;
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
 
                     // Fly a bit above the target.
                     if (attackSubstate == 0f)
@@ -576,6 +606,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         waveSpeed *= 1.35f;
                     }
 
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+
                     int lungeMaxTime = 180;
                     if (attackTimer < redirectTime)
                     {
@@ -639,6 +671,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                     if (BossRushEvent.BossRushActive)
                         initialChargeSpeed *= 1.2f;
+
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
 
                     if (attackTimer < hoverTime)
                     {
@@ -708,13 +742,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         goToNextAIState();
                     break;
                 case DukeAttackType.TeleportCharge:
-                    chargeSpeed = enraged ? 35f : 30f;
-                    
+                    chargeSpeed = enraged ? 35f : 31f;
                     if (inPhase4)
                         chargeSpeed += 3f;
 
                     if (BossRushEvent.BossRushActive)
                         chargeSpeed *= 1.15f;
+
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
 
                     // Fadeout effects, flying, and damage disabling.
                     if (attackTimer < 45f)
@@ -724,7 +759,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         hoverDirection = ref npc.Infernum().ExtraAI[0];
                         if (hoverDirection == 0f)
                             hoverDirection = Math.Sign((npc.Center - target.Center).X);
-                        Vector2 hoverDestination = target.Center + new Vector2(hoverDirection * 400f, -200f);
+                        hoverDestination = target.Center + new Vector2(hoverDirection * 400f, -200f);
                         npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 1.2f);
                         npc.alpha += 25;
                     }

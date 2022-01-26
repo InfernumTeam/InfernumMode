@@ -106,6 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             ref float specialAttackStartDelay = ref npc.Infernum().ExtraAI[0];
             ref float specialAttackType = ref npc.Infernum().ExtraAI[1];
             ref float specialAttackTimer = ref npc.Infernum().ExtraAI[2];
+            ref float attackDelay = ref npc.Infernum().ExtraAI[5];
             ref float horizontalArenaCenterX = ref npc.Infernum().ExtraAI[6];
 
             for (int i = 0; i < Main.maxNPCs; i++)
@@ -128,8 +129,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             int darkMagicFireballShootRate = 75;
             int fireballsPerBurst = shouldBeBuffed ? 11 : 8;
-            float darkMagicFireballSpeed = shouldBeBuffed ? 16f : 11.5f;
             int jumpDelay = !leftClawActive || !rightClawActive ? 270 : 210;
+            float darkMagicFireballSpeed = shouldBeBuffed ? 16f : 11.5f;
             float gravity = 0.625f;
             if (!anyLimbsArePresent)
             {
@@ -170,6 +171,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
 
             npc.dontTakeDamage = anyLimbsArePresent;
+            npc.gfxOffY = -12;
+
+            // Make the attack delay pass.
+            attackDelay++;
+            if (attackDelay < 135f)
+                shouldNotAttack = true;
 
             // Handle special attacks. Only applicable once limbs are gone.
             if (specialAttackStartDelay < 720f)

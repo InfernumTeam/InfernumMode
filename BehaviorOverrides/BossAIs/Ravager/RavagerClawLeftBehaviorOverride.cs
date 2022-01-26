@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
 
             npc.spriteDirection = leftClaw.ToDirectionInt();
-            npc.damage = npc.defDamage;
+            npc.damage = npc.defDamage - 15;
             if (attackState < 2 && free)
                 attackState = (int)RavagerClawAttackState.Hover;
 
@@ -190,8 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     punchTimer++;
                     break;
                 case RavagerClawAttackState.AccelerationPunch:
-
-                    npc.damage = npc.defDamage + 45;
+                    npc.damage = npc.defDamage + 30;
 
                     // Emit dust.
                     if (punchTimer % 12f == 11f)

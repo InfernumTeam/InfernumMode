@@ -13,7 +13,7 @@ using PlaguebringerBoss = CalamityMod.NPCs.PlaguebringerGoliath.PlaguebringerGol
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
-	public class PlaguebringerGoliathBehaviorOverride : NPCBehaviorOverride
+    public class PlaguebringerGoliathBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<PlaguebringerBoss>();
 
@@ -55,14 +55,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             // Fly away if the target is gone.
             if (!target.active || target.dead)
-			{
+            {
                 npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 24f, 0.025f);
                 npc.rotation = npc.velocity.X * 0.02f;
                 if (!npc.WithinRange(target.Center, 4200f))
                     npc.active = false;
 
                 return false;
-			}
+            }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float enrageFactor = 1f - lifeRatio;
@@ -123,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             int maxChargeCount = (int)Math.Ceiling(5f + enrageFactor * 1.4f);
             int chargeTime = (int)(48f - enrageFactor * 13f);
             bool canDoDiagonalCharges = enrageFactor > 0.3f;
-            float chargeSpeed = enrageFactor * 11f + 24f;
+            float chargeSpeed = enrageFactor * 11f + 27.5f;
             float hoverSpeed = enrageFactor * 6f + 19f;
 
             if (chargeTime < 28)
@@ -134,7 +134,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             ref float chargeTimer = ref npc.Infernum().ExtraAI[2];
             ref float chargeState = ref npc.Infernum().ExtraAI[3];
             ref float hoverTimer = ref npc.Infernum().ExtraAI[4];
-            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 600f, hoverOffsetY);
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 660f, hoverOffsetY);
 
             if (NPC.AnyNPCs(ModContent.NPCType<SmallDrone>()))
             {
@@ -226,7 +226,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             frameType = (int)PBGFrameType.Fly;
             switch ((int)attackState)
-			{
+            {
                 // Attempt to hover near the target.
                 case 0:
                     Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, -360f);
@@ -241,10 +241,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
                     missileShootTimer = 0f;
                     if (attackTimer >= 120f)
-					{
+                    {
                         attackState++;
                         attackTimer = 0f;
-					}
+                    }
                     break;
 
                 // Slow down and release a bunch of missiles.
@@ -253,10 +253,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
                     missileShootTimer++;
                     if (missileShootTimer >= missileShootRate)
-					{
+                    {
                         Main.PlaySound(SoundID.Item11, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-						{
+                        {
                             Vector2 abdomenPosition = npc.Center + Vector2.UnitY.RotatedBy(npc.rotation) * new Vector2(npc.spriteDirection, 1f) * 108f;
                             Vector2 shootDirection = (abdomenPosition - npc.Center).SafeNormalize(Vector2.UnitY);
                             shootDirection = shootDirection.RotateTowards(npc.SafeDirectionTo(target.Center).ToRotation(), Main.rand.NextFloat(0.74f, 1.04f));
@@ -268,17 +268,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     }
 
                     if (attackTimer >= 120f)
-					{
+                    {
                         attackCycleCounter++;
                         if (attackCycleCounter >= attackCycleCount)
                             GotoNextAttackState(npc);
-						else
-						{
+                        else
+                        {
                             attackTimer = 0f;
                             attackState = 0f;
-						}
+                        }
                         npc.netUpdate = true;
-					}
+                    }
                     break;
             }
 
@@ -435,12 +435,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (chargeTimer > chargeTime - 15f)
                     npc.velocity *= 0.97f;
 
-				// Otherwise, release missiles.
-				else if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 12f == 11f)
-				{
+                // Otherwise, release missiles.
+                else if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 12f == 11f)
+                {
                     Vector2 missileShootVelocity = new Vector2(npc.velocity.X * 0.6f, 12f);
                     Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 2f, missileShootVelocity, ModContent.ProjectileType<PlagueMissile>(), 160, 0f);
-				}
+                }
 
                 if (chargeTimer >= chargeTime)
                 {
@@ -549,23 +549,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (summonTimer % summonRate == summonRate - 1f)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient && NPC.CountNPCS(ModContent.NPCType<ExplosivePlagueCharger>()) < 9)
-					{
+                    {
                         Vector2 chargerSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * new Vector2(2f, 1f) * Main.rand.NextFloat(100f, 180f);
                         NPC.NewNPC((int)chargerSpawnPosition.X, (int)chargerSpawnPosition.Y, ModContent.NPCType<ExplosivePlagueCharger>());
-					}
+                    }
                 }
 
                 if (summonTimer >= 120f)
-				{
+                {
                     summonTimer = 0f;
                     chargeState = 0f;
                     npc.netUpdate = true;
-				}
+                }
             }
         }
 
         public static void DoBehavior_DroneSummoning(NPC npc, Player target, float enrageFactor, float attackTimer)
-		{
+        {
             int droneSummonCount = 4;
 
             // Slow down.
@@ -574,26 +574,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             // Summon drones once ready.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 75f)
-			{
+            {
                 List<int> drones = new List<int>();
                 for (int i = 0; i < droneSummonCount; i++)
-				{
+                {
                     int drone = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SmallDrone>());
                     Main.npc[drone].target = npc.target;
                     drones.Add(drone);
                 }
 
                 for (int i = 0; i < drones.Count; i++)
-				{
+                {
                     Main.npc[drones[i]].ai[0] = -35f;
                     Main.npc[drones[i]].ai[1] = drones[(i + 1) % drones.Count];
                     Main.npc[drones[i]].ai[2] = MathHelper.TwoPi * (i + 0.5f) / drones.Count;
-				}
+                }
             }
 
             if (attackTimer >= SmallDrone.LaserAttackTime + 125f)
                 GotoNextAttackState(npc);
-		}
+        }
 
         public static void DoBehavior_CarpetBombing2(NPC npc, Player target, float enrageFactor, ref float frameType)
         {
@@ -690,15 +690,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 {
                     float bombRotation = Main.rand.NextBool(2).ToInt() * Main.rand.NextFloatDirection() * 0.16f;
                     for (float horizontalOffset = -1900f; horizontalOffset < 1900f; horizontalOffset += 90f)
-					{
+                    {
                         int telegraph = Utilities.NewProjectileBetter(target.Center + Vector2.UnitX * horizontalOffset, Vector2.Zero, ModContent.ProjectileType<BombingTelegraph>(), 0, 0f);
                         if (Main.projectile.IndexInRange(telegraph))
-						{
+                        {
                             Main.projectile[telegraph].ai[0] = bombingDelay;
                             Main.projectile[telegraph].owner = target.whoAmI;
                             Main.projectile[telegraph].rotation = bombRotation;
                         }
-					}
+                    }
                 }
 
                 if (bombingTimer == bombingDelay)
@@ -822,7 +822,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         }
 
         public static void DoBehavior_BombConstructors(NPC npc, Player target, float enrageFactor, ref float attackTimer)
-		{
+        {
             // Move over the target.
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 420f;
             if (!npc.WithinRange(hoverDestination, 195f))
@@ -834,18 +834,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             // Release a swarm of drones and a nuke.
             if (attackTimer == 1f)
-			{
+            {
                 Main.NewText("NUCLEAR CORE GENERATED. INITIATING BUILD PROCEDURE!", Color.Lime);
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-				{
+                {
                     for (int i = 0; i < 4; i++)
                         NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BuilderDroneSmall>(), npc.whoAmI, Target: npc.target);
                     NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BuilderDroneBig>(), npc.whoAmI, Target: npc.target);
                     NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y + 24, ModContent.NPCType<PlagueNuke>(), npc.whoAmI, Target: npc.target);
                 }
                 npc.netUpdate = true;
-			}
+            }
 
             if (attackTimer > PlagueNuke.BuildTime + PlagueNuke.ExplodeDelay + 120f)
                 GotoNextAttackState(npc);

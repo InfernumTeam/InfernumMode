@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             frameType = (int)ThanatosFrameType.Closed;
 
             // Reset damage.
-            npc.defDamage = 1600;
+            npc.defDamage = 1111;
             npc.damage = npc.defDamage;
 
             // Define attack variables.

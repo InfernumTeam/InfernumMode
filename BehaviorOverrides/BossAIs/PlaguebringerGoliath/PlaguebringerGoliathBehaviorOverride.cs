@@ -76,6 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float attackDelay = ref npc.ai[2];
             ref float frameType = ref npc.localAI[0];
 
             // Continuously reset things.
@@ -85,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             switch ((PBGAttackType)(int)attackType)
             {
                 case PBGAttackType.Charge:
-                    DoBehavior_Charge(npc, target, enrageFactor, ref frameType);
+                    DoBehavior_Charge(npc, target, attackDelay < 100f, enrageFactor, ref frameType);
                     break;
                 case PBGAttackType.MissileLaunch:
                     DoBehavior_MissileLaunch(npc, target, ref attackTimer, enrageFactor, ref frameType);
@@ -100,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     DoBehavior_ExplodingPlagueChargers(npc, target, enrageFactor, ref frameType);
                     break;
                 case PBGAttackType.DroneSummoning:
-                    DoBehavior_DroneSummoning(npc, target, enrageFactor, attackTimer);
+                    DoBehavior_DroneSummoning(npc, attackTimer);
                     break;
                 case PBGAttackType.CarpetBombing2:
                     DoBehavior_CarpetBombing2(npc, target, enrageFactor, ref frameType);
@@ -109,16 +110,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     DoBehavior_CarpetBombing3(npc, target, enrageFactor, ref frameType, attackTimer);
                     break;
                 case PBGAttackType.BombConstructors:
-                    DoBehavior_BombConstructors(npc, target, enrageFactor, ref attackTimer);
+                    DoBehavior_BombConstructors(npc, target, ref attackTimer);
                     break;
             }
 
+            attackDelay++;
             attackTimer++;
             return false;
         }
 
         #region Specific Behaviors
-        public static void DoBehavior_Charge(NPC npc, Player target, float enrageFactor, ref float frameType)
+        public static void DoBehavior_Charge(NPC npc, Player target, bool shouldntChargeYet, float enrageFactor, ref float frameType)
         {
             int maxChargeCount = (int)Math.Ceiling(5f + enrageFactor * 1.4f);
             int chargeTime = (int)(48f - enrageFactor * 13f);
@@ -155,15 +157,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Hover until reaching the destination.
             if (chargeState == 1f)
             {
+                bool fuckingChargeAnyway = hoverTimer > 90f;
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 255f))
+                if (npc.WithinRange(hoverDestination, 255f) || fuckingChargeAnyway)
                 {
                     npc.velocity *= 0.935f;
 
                     // Do the charge.
-                    if (npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f)
+                    if ((npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f && !shouldntChargeYet) || fuckingChargeAnyway)
                     {
                         hoverTimer = 0f;
                         chargeState = 2f;
@@ -393,15 +396,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Hover until reaching the destination.
             if (chargeState == 1f)
             {
+                bool fuckingChargeAnyway = hoverTimer > 75f;
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 195f) || hoverTimer >= 75f)
+                if (npc.WithinRange(hoverDestination, 195f) || fuckingChargeAnyway)
                 {
                     npc.velocity *= 0.95f;
 
                     // Do the charge.
-                    if (npc.WithinRange(hoverDestination, 135f) && hoverTimer > 30f)
+                    if ((npc.WithinRange(hoverDestination, 135f) && hoverTimer > 30f) || fuckingChargeAnyway)
                     {
                         hoverTimer = 0f;
                         chargeState = 2f;
@@ -483,15 +487,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Hover until reaching the destination.
             if (chargeState == 1f)
             {
+                bool fuckingChargeAnyway = hoverTimer > 75f;
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 255f) || hoverTimer > 50f)
+                if ((npc.WithinRange(hoverDestination, 255f) || hoverTimer > 50f) || fuckingChargeAnyway)
                 {
                     npc.velocity *= 0.935f;
 
                     // Do the charge.
-                    if (npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f)
+                    if ((npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f) || fuckingChargeAnyway)
                     {
                         hoverTimer = 0f;
                         chargeState = 2f;
@@ -564,7 +569,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
         }
 
-        public static void DoBehavior_DroneSummoning(NPC npc, Player target, float enrageFactor, float attackTimer)
+        public static void DoBehavior_DroneSummoning(NPC npc, float attackTimer)
         {
             int droneSummonCount = 4;
 
@@ -623,15 +628,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Hover until reaching the destination.
             if (chargeState == 1f)
             {
+                bool fuckingChargeAnyway = hoverTimer > 60f;
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 255f) || hoverTimer > 50f)
+                if (npc.WithinRange(hoverDestination, 255f) || fuckingChargeAnyway)
                 {
                     npc.velocity *= 0.935f;
 
                     // Do the charge.
-                    if (npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f)
+                    if ((npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f) || fuckingChargeAnyway)
                     {
                         hoverTimer = 0f;
                         chargeState = 2f;
@@ -746,15 +752,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Hover until reaching the destination.
             if (chargeState == 1f)
             {
+                bool fuckingChargeAnyway = hoverTimer > 60f;
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
-                if (npc.WithinRange(hoverDestination, 255f) || hoverTimer > 50f)
+                if (npc.WithinRange(hoverDestination, 255f) || fuckingChargeAnyway)
                 {
                     npc.velocity *= 0.935f;
 
                     // Do the charge.
-                    if (npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f)
+                    if ((npc.WithinRange(hoverDestination, 175f) && hoverTimer > 18f) || fuckingChargeAnyway)
                     {
                         hoverTimer = 0f;
                         chargeState = 2f;
@@ -821,7 +828,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
         }
 
-        public static void DoBehavior_BombConstructors(NPC npc, Player target, float enrageFactor, ref float attackTimer)
+        public static void DoBehavior_BombConstructors(NPC npc, Player target, ref float attackTimer)
         {
             // Move over the target.
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 420f;
@@ -844,6 +851,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BuilderDroneBig>(), npc.whoAmI, Target: npc.target);
                     NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y + 24, ModContent.NPCType<PlagueNuke>(), npc.whoAmI, Target: npc.target);
                 }
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer > 10f && attackTimer < PlagueNuke.BuildTime + PlagueNuke.ExplodeDelay && !NPC.AnyNPCs(ModContent.NPCType<PlagueNuke>()))
+            {
+                attackTimer = PlagueNuke.BuildTime + PlagueNuke.ExplodeDelay;
                 npc.netUpdate = true;
             }
 

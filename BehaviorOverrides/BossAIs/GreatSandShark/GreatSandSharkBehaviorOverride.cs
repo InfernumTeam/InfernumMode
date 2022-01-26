@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.width = npc.height = 140;
             npc.defense = 20;
             npc.DR_NERD(0.25f);
-            npc.LifeMaxNERB(108820, 108820);
+            npc.LifeMaxNERB(141466, 141466);
             npc.lifeMax /= 2;
             npc.aiStyle = -1;
             npc.modNPC.aiType = -1;

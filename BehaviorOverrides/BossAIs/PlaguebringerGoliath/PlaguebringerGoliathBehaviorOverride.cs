@@ -123,13 +123,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public static void DoBehavior_Charge(NPC npc, Player target, bool shouldntChargeYet, float enrageFactor, ref float frameType)
         {
             int maxChargeCount = (int)Math.Ceiling(5f + enrageFactor * 1.4f);
-            int chargeTime = (int)(48f - enrageFactor * 13f);
+            int chargeTime = (int)(48f - enrageFactor * 15f);
             bool canDoDiagonalCharges = enrageFactor > 0.3f;
-            float chargeSpeed = enrageFactor * 11f + 27.5f;
+            float chargeSpeed = enrageFactor * 12.5f + 28f;
             float hoverSpeed = enrageFactor * 6f + 19f;
 
-            if (chargeTime < 28)
-                chargeTime = 28;
+            if (chargeTime < 26)
+                chargeTime = 26;
 
             ref float chargeCount = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[1];
@@ -232,11 +232,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             {
                 // Attempt to hover near the target.
                 case 0:
-                    Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, -360f);
+                    Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 720f, -360f);
                     Vector2 hoverDestination = target.Center + hoverOffset;
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 21f, 1f);
-                    npc.Center = npc.Center.MoveTowards(hoverDestination, 4f);
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 29f, 2f);
+                    npc.Center = npc.Center.MoveTowards(hoverDestination, 5f);
 
                     // Make the attack go by way quicker once in position.
                     if (npc.WithinRange(hoverDestination, 35f))
@@ -292,15 +292,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public static void DoBehavior_PlagueVomit(NPC npc, Player target, ref float attackTimer, float enrageFactor, ref float frameType)
         {
             int attackCycleCount = enrageFactor > 1f - Phase3LifeRatio ? 1 : 2;
-            int vomitShootRate = (int)(55f - enrageFactor * 25f);
-            float vomitShootSpeed = 11f;
+            int vomitShootRate = (int)(55f - enrageFactor * 29f);
+            float vomitShootSpeed = 14f;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float bombingCount = ref npc.Infernum().ExtraAI[1];
             ref float vomitShootTimer = ref npc.Infernum().ExtraAI[2];
             ref float attackCycleCounter = ref npc.Infernum().ExtraAI[3];
 
-            if (vomitShootRate < 15)
-                vomitShootRate = 15;
+            if (vomitShootRate < 12)
+                vomitShootRate = 12;
 
             frameType = (int)PBGFrameType.Fly;
             switch ((int)attackState)
@@ -440,9 +440,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.velocity *= 0.97f;
 
                 // Otherwise, release missiles.
-                else if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 12f == 11f)
+                else if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 10f == 9f)
                 {
-                    Vector2 missileShootVelocity = new Vector2(npc.velocity.X * 0.6f, 12f);
+                    Vector2 missileShootVelocity = new Vector2(npc.velocity.X * 0.6f, 15f);
+                    missileShootVelocity += Main.rand.NextVector2Circular(1.25f, 1.25f);
                     Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 2f, missileShootVelocity, ModContent.ProjectileType<PlagueMissile>(), 160, 0f);
                 }
 
@@ -487,7 +488,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Hover until reaching the destination.
             if (chargeState == 1f)
             {
-                bool fuckingChargeAnyway = hoverTimer > 75f;
+                bool fuckingChargeAnyway = hoverTimer > 25f;
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 

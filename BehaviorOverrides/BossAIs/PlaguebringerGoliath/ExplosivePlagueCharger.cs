@@ -86,11 +86,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 npc.checkDead();
                 npc.active = false;
             }
+
+            // Gradually die.
+            npc.life -= npc.life / 540;
+            if (npc.life <= 0)
+            {
+                npc.HitEffect();
+                npc.checkDead();
+            }
         }
 
         public override bool PreNPCLoot() => false;
 
-		public override bool CheckDead()
+        public override bool CheckDead()
         {
             Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.position);
 

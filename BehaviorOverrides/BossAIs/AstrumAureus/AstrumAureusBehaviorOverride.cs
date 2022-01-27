@@ -27,6 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             WalkAndShootLasers,
             LeapAtTarget,
             RocketBarrage,
+            MeteorSlam,
             AstralLaserBursts,
             CreateAureusSpawnRing,
             CelestialRain,
@@ -113,7 +114,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     DoAttack_WalkAndShootLasers(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType);
                     break;
                 case AureusAttackType.LeapAtTarget:
-                    DoAttack_LeapAtTarget(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType, ref onlyDoOneJump);
+                case AureusAttackType.MeteorSlam:
+                    bool meteorSlam = (AureusAttackType)(int)attackState == AureusAttackType.MeteorSlam;
+                    DoAttack_LeapAtTarget(npc, target, meteorSlam, enraged, lifeRatio, ref attackTimer, ref frameType, ref onlyDoOneJump);
                     break;
                 case AureusAttackType.RocketBarrage:
                     DoAttack_RocketBarrage(npc, target, enraged, lifeRatio, ref attackTimer, ref frameType);
@@ -274,7 +277,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_LeapAtTarget(NPC npc, Player target, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType, ref float onlyDoOneJump)
+        public static void DoAttack_LeapAtTarget(NPC npc, Player target, bool meteorSlam, bool enraged, float lifeRatio, ref float attackTimer, ref float frameType, ref float onlyDoOneJump)
         {
             // Reset tile collision.
             npc.noTileCollide = false;
@@ -302,7 +305,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         // Slow down.
                         npc.velocity.X *= 0.8f;
 
-                        // Jump after a delay..
+                        // Jump after a delay.
                         if (attackTimer >= 50f)
                         {
                             npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
@@ -323,6 +326,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                             // Fly upward.
                             npc.velocity.Y = -17.5f;
+
+                            // Play a sound as an indicator if doing a meteor slam.
+                            if (meteorSlam)
+                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
 
                             npc.noTileCollide = true;
 
@@ -351,7 +358,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         jumpIntensity = 0f;
 
                         // Determine whether the attack should be repeated.
-                        int stompCount = onlyDoOneJump == 0f ? 4 : 1;
+                        int stompCount = meteorSlam ? 3 : 4;
+                        if (onlyDoOneJump == 1f)
+                            stompCount = 1;
+
                         stompCounter++;
                         if (stompCounter >= stompCount)
                         {
@@ -383,21 +393,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         // In phase 2, create astral flames that rise upward.
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int shockwaveDamage = 200;
-                            int crystalDamage = 155;
-                            if (enraged)
+                            if (meteorSlam)
                             {
-                                shockwaveDamage = (int)(shockwaveDamage * EnragedDamageFactor);
-                                crystalDamage = (int)(crystalDamage * EnragedDamageFactor);
-                            }
+                                int meteorDamage = 205;
+                                if (enraged)
+                                    meteorDamage = (int)(meteorDamage * EnragedDamageFactor);
 
-                            Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
-                            if (lifeRatio < Phase2LifeRatio)
-                            {
-                                for (int i = 0; i < 6; i++)
+                                for (int i = 0; i < 2; i++)
                                 {
-                                    Vector2 crystalVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.9f) * Main.rand.NextFloat(12f, 18f);
-                                    Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralMissile>(), crystalDamage, 0f);
+                                    Vector2 spawnPosition = npc.Top + new Vector2(MathHelper.Lerp(-900f, 900f, i) + target.velocity.X * 60f, -570f);
+                                    Vector2 showerDirection = (target.Center - spawnPosition + target.velocity * 100f).SafeNormalize(Vector2.UnitY);
+                                    if (showerDirection.Y < 0.4f)
+                                    {
+                                        showerDirection.Y = 0.4f;
+                                        showerDirection = showerDirection.SafeNormalize(Vector2.UnitY);
+                                    }
+
+                                    Utilities.NewProjectileBetter(spawnPosition, showerDirection * 16f, ModContent.ProjectileType<AstralMeteor>(), meteorDamage, 0f, Main.myPlayer);
+                                }
+                            }
+                            else
+                            {
+                                int shockwaveDamage = 200;
+                                int crystalDamage = 155;
+                                if (enraged)
+                                {
+                                    shockwaveDamage = (int)(shockwaveDamage * EnragedDamageFactor);
+                                    crystalDamage = (int)(crystalDamage * EnragedDamageFactor);
+                                }
+
+                                Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
+                                if (lifeRatio < Phase2LifeRatio)
+                                {
+                                    for (int i = 0; i < 6; i++)
+                                    {
+                                        Vector2 crystalVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.9f) * Main.rand.NextFloat(12f, 18f);
+                                        Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralMissile>(), crystalDamage, 0f);
+                                    }
                                 }
                             }
                         }
@@ -830,7 +862,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             WeightedRandom<AureusAttackType> attackSelector = new WeightedRandom<AureusAttackType>(Main.rand);
             attackSelector.Add(AureusAttackType.WalkAndShootLasers);
             if (oldAttackState != AureusAttackType.CelestialRain)
-                attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight);
+            {
+                attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight * 0.5);
+                attackSelector.Add(AureusAttackType.MeteorSlam, jumpWeight * 10.5);
+            }
             attackSelector.Add(AureusAttackType.RocketBarrage);
 
             if (lifeRatio >= Phase3LifeRatio)
@@ -839,7 +874,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (lifeRatio < Phase2LifeRatio)
             {
                 attackSelector.Add(AureusAttackType.CreateAureusSpawnRing, 0.85);
-                if (oldAttackState != AureusAttackType.LeapAtTarget)
+                if (oldAttackState != AureusAttackType.LeapAtTarget && oldAttackState != AureusAttackType.MeteorSlam)
                     attackSelector.Add(AureusAttackType.CelestialRain);
             }
 

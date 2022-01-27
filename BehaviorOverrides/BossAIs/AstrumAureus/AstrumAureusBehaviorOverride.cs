@@ -329,7 +329,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                             // Play a sound as an indicator if doing a meteor slam.
                             if (meteorSlam)
-                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
 
                             npc.noTileCollide = true;
 

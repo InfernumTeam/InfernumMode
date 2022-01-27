@@ -1,4 +1,8 @@
 using CalamityMod.Events;
+using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
@@ -147,6 +151,16 @@ namespace InfernumMode
             {
                 music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/MechBosses");
                 priority = MusicPriority.BossLow;
+            }
+
+            bool areExoMechsAround = NPC.AnyNPCs(ModContent.NPCType<AresBody>()) ||
+                NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()) ||
+                NPC.AnyNPCs(ModContent.NPCType<Apollo>());
+
+            if (areExoMechsAround)
+            {
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/ExoMechBosses");
+                priority = MusicPriority.BossHigh;
             }
         }
 

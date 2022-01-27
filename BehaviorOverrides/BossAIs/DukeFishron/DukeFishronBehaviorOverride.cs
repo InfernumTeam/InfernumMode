@@ -270,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     float chargeDeceleration = 0.8f;
                     if (enraged || inPhase3)
                     {
-                        angularAimTime = 0;
+                        angularAimTime = 2;
                         chargeTime -= 10;
                         chargeSpeed *= 1.3f;
                     }
@@ -591,9 +591,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     break;
 
                 case DukeAttackType.TidalWave:
-                    int redirectTime = inPhase3 ? 60 : 90;
-                    float lungeSpeed = enraged ? 24f : 18f;
-                    float waveSpeed = enraged ? 20f : 12.5f;
+                    int redirectTime = inPhase3 ? 32 : 45;
+                    float lungeSpeed = enraged ? 30f : 22f;
+                    float waveSpeed = enraged ? 20f : 13.5f;
                     if (inPhase3)
                     {
                         lungeSpeed *= 1.4f;

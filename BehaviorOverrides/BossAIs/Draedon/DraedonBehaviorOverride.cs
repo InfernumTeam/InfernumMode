@@ -263,7 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Disable rage and adrenaline past a point.
-            if (ExoMechManagement.CurrentThanatosPhase >= 5 || ExoMechManagement.CurrentAresPhase >= 5 || ExoMechManagement.CurrentTwinsPhase >= 5)
+            if (ExoMechManagement.CurrentThanatosPhase >= 3 || ExoMechManagement.CurrentAresPhase >= 3 || ExoMechManagement.CurrentTwinsPhase >= 3)
                 playerToFollow.Infernum().MakeAnxious(45);
 
             if (talkTimer > ExoMechChooseDelay + 10f && !ExoMechIsPresent)
@@ -275,7 +275,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (!ExoMechIsPresent && npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
                 npc.modNPC.music = InfernumMode.CalamityMod.GetSoundSlot(SoundType.Music, "Sounds/Music/DraedonAmbience");
             if (ExoMechIsPresent)
-                npc.modNPC.music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("ExoMechs") ?? MusicID.Boss3;
+                npc.modNPC.music = InfernumMode.Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/ExoMechBosses");
 
             talkTimer++;
             return false;

@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             AresTwins_ThermoplasmaDance = 100,
             AresTwins_DualLaserCharges,
             AresTwins_CircleAttack,
-            AresTwins_ElectromagneticPlasmaStar,
+            AresTwins_LaserFlameHell,
             ThanatosAres_ExplosionCircle,
             ThanatosAres_LaserCircle,
             ThanatosAres_LaserBarrage,
@@ -50,8 +50,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_ThermoplasmaDance);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_DualLaserCharges);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_CircleAttack);
+
+                /*
                 if (CurrentTwinsPhase != 4)
-                    attackSelector.Add(ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar, 1.5);
+                    attackSelector.Add(ExoMechComboAttackType.AresTwins_LaserFlameHell, 1.35);
+                */
 
                 do
                     newAttack = attackSelector.Get();

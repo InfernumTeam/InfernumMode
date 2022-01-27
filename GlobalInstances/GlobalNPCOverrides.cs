@@ -3,7 +3,6 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.Calamitas;
 using CalamityMod.NPCs.DevourerofGods;
-using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.World;
 using InfernumMode.Buffs;
@@ -16,13 +15,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
-using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
-using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
-using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
-using YharonNPC = CalamityMod.NPCs.Yharon.Yharon;
-using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.SupremeCalamitas;
@@ -39,6 +31,11 @@ using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.NPCs.ExoMechs;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.Balancing;
+
+using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
+using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
+using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
+using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -171,9 +168,9 @@ namespace InfernumMode.GlobalInstances
 
                 if (OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type))
                 {
-                    // Use timed DR if enabled.
+                    // Disable the effects of timed DR.
                     if (npc.Calamity().KillTime > 0 && npc.Calamity().AITimer < npc.Calamity().KillTime)
-                        npc.Calamity().AITimer++;
+                        npc.Calamity().AITimer = npc.Calamity().KillTime;
 
                     // If any boss NPC is active, apply Zen to nearby players to reduce spawn rate.
                     if (Main.netMode != NetmodeID.Server && CalamityConfig.Instance.BossZen && (npc.Calamity().KillTime > 0 || npc.type == ModContent.NPCType<Draedon>()))

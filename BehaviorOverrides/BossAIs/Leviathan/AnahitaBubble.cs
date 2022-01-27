@@ -56,9 +56,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             for (int i = 0; i < 7; i++)
             {
-                Vector2 shootVelocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 11f;
+                Vector2 shootVelocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 18f;
                 if (BossRushEvent.BossRushActive)
-                    shootVelocity *= 2f;
+                    shootVelocity *= 1.6f;
 
                 Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<WaterSpear>(), 155, 0f);
             }

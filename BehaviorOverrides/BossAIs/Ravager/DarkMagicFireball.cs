@@ -18,8 +18,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override void SetDefaults()
         {
-            projectile.width = 36;
-            projectile.height = 36;
+            projectile.width = 26;
+            projectile.height = 84;
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
@@ -58,6 +58,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<DarkFlames>(), 180);
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) =>
+            projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size());
+
+		public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<DarkFlames>(), 180);
     }
 }

@@ -702,13 +702,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 return true;
             }
 
-            if (aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar)
-            {
-                if (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresPulseCannon>())
-                    return aresBody.ai[1] < ElectromagneticStar.ChargeupTime + 60f;
-                return true;
-            }
-
             if (aresBody.Opacity <= 0f)
                 return true;
 

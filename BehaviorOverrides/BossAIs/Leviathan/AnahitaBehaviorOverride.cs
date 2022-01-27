@@ -347,55 +347,52 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             ref float atlantisCooldown = ref npc.Infernum().ExtraAI[0];
 
-            int hoverTime = 90;
-            int spinTime = 210;
-            float chargeSpeed = MathHelper.Lerp(23f, 26f, 1f - lifeRatio);
-            float totalSpins = 2f;
+            int hoverTime = 35;
+            int chargeTime = 36;
+            float chargeSpeed = MathHelper.Lerp(25f, 29f, 1f - lifeRatio);
+            float totalCharges = 3f;
             if (enraged)
             {
-                hoverTime = 40;
-                spinTime = 270;
+                chargeTime = 270;
                 chargeSpeed += 6f;
             }
             if (outOfOcean)
             {
-                hoverTime = 30;
                 chargeSpeed = 43.5f;
-                totalSpins = 2f;
             }
             if (BossRushEvent.BossRushActive)
             {
-                hoverTime = 25;
                 chargeSpeed = 48f;
-                totalSpins = 2f;
             }
 
             // Spin faster if the Leviathan isn't around.
             if (!NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()))
             {
-                totalSpins *= 1.5f;
-                chargeSpeed *= 1.3f;
+                totalCharges = 4f;
+                chargeSpeed *= 1.5f;
             }
-
-            float spinAngularVelocity = MathHelper.TwoPi * totalSpins / spinTime;
 
             if (attackTimer == 5f)
                 Main.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
 
-            if (attackTimer < hoverTime)
+            int wrappedAttackTimer = (int)(attackTimer % (hoverTime + chargeTime));
+            if (wrappedAttackTimer < hoverTime)
             {
                 float idealRotation = npc.AngleTo(target.Center);
                 if (npc.spriteDirection == 1)
                     idealRotation += MathHelper.Pi;
 
-                npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.04f);
+                npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.12f);
 
                 Vector2 destination = target.Center;
                 destination.X -= Math.Sign(target.Center.X - npc.Center.X) * 400f;
-                destination.Y -= 500f;
+                destination.Y -= 300f;
                 destination -= npc.velocity;
 
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 15f, 1.85f);
+                npc.Center = Vector2.Lerp(npc.Center, new Vector2(destination.X, npc.Center.Y), 0.01f);
+                npc.Center = Vector2.Lerp(npc.Center, new Vector2(npc.Center.X, destination.Y), 0.03f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 22f, 1.85f);
+
                 int idealDirection = Math.Sign(target.Center.X - npc.Center.X);
                 if (idealDirection != 0)
                 {
@@ -412,9 +409,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             }
 
             // Do the actual charge.
-            int wrappedAttackTimer = (int)(attackTimer - hoverTime) % (int)(spinTime / totalSpins);
-            bool shouldCharge = attackTimer >= hoverTime && wrappedAttackTimer == 1;
-            bool shouldNotSpin = wrappedAttackTimer < 45;
+            bool shouldCharge = wrappedAttackTimer == hoverTime;
             if (shouldCharge)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
@@ -430,8 +425,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 }
             }
 
-            // Spin around and actually use Atlantis.
-            if (attackTimer > hoverTime)
+            // Use Atlantis after charging.
+            if (wrappedAttackTimer > hoverTime)
             {
                 // Do a bit more damage than usual when charging.
                 npc.damage = (int)(npc.defDamage * 1.667);
@@ -454,19 +449,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     }
                 }
 
-                if (!shouldNotSpin)
-                {
-                    npc.velocity = npc.velocity.RotatedBy(spinAngularVelocity * npc.direction);
-                    npc.rotation += spinAngularVelocity * npc.direction;
-                    if (!npc.WithinRange(target.Center, 120f))
-                        npc.Center += npc.SafeDirectionTo(target.Center) * chargeSpeed * 0.3f;
-                }
-
                 Vector2 currentDirection = (npc.position - npc.oldPos[1]).SafeNormalize(Vector2.Zero);
                 Vector2 spearDirection = currentDirection.RotatedBy(npc.direction * MathHelper.Pi * -0.08f);
 
+                npc.velocity *= 1.003f;
                 npc.rotation = currentDirection.ToRotation();
-
                 if (npc.spriteDirection == 1)
                     npc.rotation += MathHelper.Pi;
 
@@ -488,7 +475,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     atlantisCooldown--;
             }
 
-            if (attackTimer >= hoverTime + spinTime)
+            if (attackTimer >= (hoverTime + chargeTime) * totalCharges)
             {
                 npc.ai[0] = 0f;
                 npc.rotation = 0f;

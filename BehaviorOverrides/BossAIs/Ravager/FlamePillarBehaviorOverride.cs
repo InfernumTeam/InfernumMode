@@ -82,9 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int fireballsPerBurst = shouldBeBuffed ? 5 : 4;
+                    int fireballsPerBurst = shouldBeBuffed ? 10 : 8;
                     int darkMagicFireballDamage = shouldBeBuffed ? 335 : 215;
-                    float darkMagicFireballSpeed = shouldBeBuffed ? 17f : 11f;
+                    float darkMagicFireballSpeed = shouldBeBuffed ? 20.25f : 15.5f;
                     for (int i = 0; i < fireballsPerBurst; i++)
                     {
                         Vector2 darkMagicFireballVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / fireballsPerBurst) * darkMagicFireballSpeed;

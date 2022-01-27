@@ -55,18 +55,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             switch ((ExoMechComboAttackType)initialMech.ai[0])
             {
                 case ExoMechComboAttackType.AresTwins_ThermoplasmaDance:
-                    return DoBehavior_AresTwins_ThermoplasmaDance(npc, target, twinsHoverSide, ref attackTimer, ref frameType);
+                    return DoBehavior_AresTwins_ThermoplasmaDance(npc, target, ref attackTimer, ref frameType);
                 case ExoMechComboAttackType.AresTwins_DualLaserCharges:
                     return DoBehavior_AresTwins_DualLaserCharges(npc, target, twinsHoverSide, ref attackTimer, ref frameType);
                 case ExoMechComboAttackType.AresTwins_CircleAttack:
-                    return DoBehavior_AresTwins_CircleAttack(npc, target, twinsHoverSide, ref attackTimer, ref frameType);
-                case ExoMechComboAttackType.AresTwins_ElectromagneticPlasmaStar:
-                    return DoBehavior_AresTwins_ElectromagneticPlasmaStar(npc, target, twinsHoverSide, ref attackTimer, ref frameType);
+                    return DoBehavior_AresTwins_CircleAttack(npc, target, ref attackTimer, ref frameType);
+                case ExoMechComboAttackType.AresTwins_LaserFlameHell:
+                    return DoBehavior_AresTwins_LaserFlameHell(npc, target, twinsHoverSide, ref attackTimer, ref frameType);
             }
             return false;
         }
 
-        public static bool DoBehavior_AresTwins_ThermoplasmaDance(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
+        public static bool DoBehavior_AresTwins_ThermoplasmaDance(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
             int redirectTime = 135;
             int spinTime = 480;
@@ -619,7 +619,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             return attackTimer >= (redirectTime + chargeupTime + laserTelegraphTime + laserSpinTime) * laserBurstCount;
         }
 
-        public static bool DoBehavior_AresTwins_CircleAttack(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
+        public static bool DoBehavior_AresTwins_CircleAttack(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
             int attackDelay = 120;
             int normalTwinsAttackTime = 360;
@@ -723,123 +723,64 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             return attackTimer > attackDelay + normalTwinsAttackTime;
         }
 
-        public static bool DoBehavior_AresTwins_ElectromagneticPlasmaStar(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
+        public static bool DoBehavior_AresTwins_LaserFlameHell(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
         {
-            int attackDelay = 60;
-            int starCreationTime = ElectromagneticStar.ChargeupTime;
-            int starAnimationTime = attackDelay + starCreationTime;
-            int starAttackTime = ElectromagneticStar.AttackTime;
+            int flamethrowerHoverTime = 95;
+            float flamethrowerFlySpeed = 40f;
 
-            if (CalamityGlobalNPC.draedonExoMechPrime == -1 || CalamityGlobalNPC.draedonExoMechTwinGreen == -1)
-                return true;
-
-            int potentialStarIndex = (int)Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[0];
-            Projectile star = potentialStarIndex >= 0 && Main.projectile[potentialStarIndex].type == ModContent.ProjectileType<ElectromagneticStar>() ? Main.projectile[potentialStarIndex] : null;
-
-            Vector2 hoverDestination = target.Center + new Vector2(twinsHoverSide * 600f, -425f);
-            if (npc.type == ModContent.NPCType<AresBody>())
-                hoverDestination = target.Center - Vector2.UnitY * 580f;
-
-            // Determine rotation for the twins.
-            else
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
-
-            // Do hover movement.
-            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 25f, 75f);
-
-            // All three mechs come together to form an electromagnetic star.
-            // After the star is created, all three mechs will use energy to power it up. To keep the target occupied, Ares' core will release homing energy bolts during the chargeup period.
-            if (attackTimer < starAnimationTime)
-            {
-                // Have ares prepare the star.
-                if (Main.netMode != NetmodeID.MultiplayerClient && npc.type == ModContent.NPCType<AresBody>() && attackTimer == attackDelay)
-                {
-                    npc.Infernum().ExtraAI[0] = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ElectromagneticStar>(), 1600, 0f);
-                    npc.netUpdate = true;
-                }
-
-                // Start releasing cinders from the core.
-                if (Main.netMode != NetmodeID.MultiplayerClient && npc.type == ModContent.NPCType<AresBody>() && attackTimer >= attackDelay && attackTimer % 12f == 11f && star != null)
-                {
-                    Vector2 coreSpawnPosition = npc.Center + Vector2.UnitY * 26f;
-                    Utilities.NewProjectileBetter(coreSpawnPosition, Main.rand.NextVector2CircularEdge(12f, 12f), ModContent.ProjectileType<ExoburstSpark>(), 550, 0f);
-                }
-
-                NPC plasmaArm = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<AresPlasmaFlamethrower>())];
-                NPC teslaArm = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<AresTeslaCannon>())];
-                NPC artemis = Main.npc[CalamityGlobalNPC.draedonExoMechTwinRed];
-                NPC apollo = Main.npc[CalamityGlobalNPC.draedonExoMechTwinGreen];
-                List<NPC> thingsThatCanSpawnFuel = new List<NPC>()
-                {
-                    plasmaArm,
-                    teslaArm,
-                    artemis,
-                    apollo
-                };
-                for (int i = 0; i < thingsThatCanSpawnFuel.Count; i++)
-                {
-                    if (star is null || npc.type != ModContent.NPCType<AresBody>())
-                        break;
-
-                    if (!Main.rand.NextBool(15))
-                        continue;
-
-                    Color color = Color.Lime;
-                    if (thingsThatCanSpawnFuel[i].type == teslaArm.type)
-                        color = Color.Cyan;
-                    if (thingsThatCanSpawnFuel[i].type == artemis.type)
-                        color = Color.Orange;
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int fuel = Projectile.NewProjectile(thingsThatCanSpawnFuel[i].Center, thingsThatCanSpawnFuel[i].SafeDirectionTo(star.Center).RotatedByRandom(0.57f) * 9f, ModContent.ProjectileType<StarFuelProjectileThingIdk>(), 0, 0f);
-                        if (Main.projectile.IndexInRange(fuel))
-                            Main.projectile[fuel].ModProjectile<StarFuelProjectileThingIdk>().FuelColor = color;
-                    }
-                }
-
-                // Hold the star in place above the player.
-                if (star != null)
-                    star.Center = target.Center - Vector2.UnitY * 350f;
-            }
-
-            // Release a border of lasers to prevent from the player from just RoD-ing away.
-            float minHorizontalOffset = MathHelper.Lerp(1000f, 540f, Utils.InverseLerp(0f, attackDelay + 90f, attackTimer, true));
-            if (npc.type == ModContent.NPCType<AresBody>())
-            {
-                for (int i = -1; i <= 1; i += 2)
-                {
-                    for (int j = 0; j < 2; j++)
-                    {
-                        if (!Main.rand.NextBool(3))
-                            break;
-
-                        float horizontalOffset = Main.rand.NextFloat(minHorizontalOffset, 1900f) * i;
-                        if (Main.rand.NextFloat() < 0.6f)
-                            horizontalOffset = minHorizontalOffset * i + Main.rand.NextFloat(0f, 30f) * -i;
-
-                        Vector2 laserSpawnPosition = new Vector2(npc.Center.X + horizontalOffset, target.Center.Y + Main.rand.NextBool().ToDirectionInt() * 1600f);
-                        Vector2 laserShootVelocity = Vector2.UnitY * Math.Sign(target.Center.Y - laserSpawnPosition.Y) * Main.rand.NextFloat(7f, 8f);
-                        if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool(5))
-                        {
-                            int lightning = Utilities.NewProjectileBetter(laserSpawnPosition, laserShootVelocity, ModContent.ProjectileType<ExoLightning>(), 750, 0f);
-                            if (Main.projectile.IndexInRange(lightning))
-                            {
-                                Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
-                                Main.projectile[lightning].ai[1] = Main.rand.Next(100);
-                            }
-                        }
-                    }
-                }
-                frame = (int)AresBodyFrameType.Laugh;
-            }
-            else
+            // Apollo performs multiple flamethrower dashes in succession.
+            if (npc.type == ModContent.NPCType<Apollo>())
             {
                 npc.frameCounter++;
                 frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
+
+                float wrappedAttackTimer = attackTimer % (flamethrowerHoverTime + ApolloFlamethrower.Lifetime + 15f);
+
+                // Look at the target and hover towards the top left/right of the target.
+                if (wrappedAttackTimer < flamethrowerHoverTime + 15f)
+                {
+                    Vector2 mouthpiecePosition = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 85f;
+                    Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * twinsHoverSide * 1020f, -375f);
+
+                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination - npc.velocity) * 45f, 1.5f);
+
+                    // Begin the delay if the destination is reached.
+                    if (npc.WithinRange(hoverDestination, 50f) && wrappedAttackTimer < flamethrowerHoverTime - 2f)
+                        attackTimer += flamethrowerHoverTime - wrappedAttackTimer - 1f;
+
+                    // Release fire and smoke from the mouth as a telegraph.
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 dustSpawnPosition = mouthpiecePosition + Main.rand.NextVector2Circular(8f, 8f);
+                        Vector2 dustVelocity = npc.SafeDirectionTo(dustSpawnPosition).RotatedByRandom(0.45f) * Main.rand.NextFloat(2f, 5f);
+                        Dust hotStuff = Dust.NewDustPerfect(dustSpawnPosition, Main.rand.NextBool() ? 31 : 107);
+                        hotStuff.velocity = dustVelocity + npc.velocity;
+                        hotStuff.fadeIn = 0.8f;
+                        hotStuff.scale = Main.rand.NextFloat(1f, 1.45f);
+                        hotStuff.alpha = 200;
+                    }
+                }
+
+                // Begin the charge and emit a flamethrower after a tiny delay.
+                else if (wrappedAttackTimer == flamethrowerHoverTime + 15f)
+                {
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * flamethrowerFlySpeed;
+
+                    Main.PlaySound(SoundID.DD2_BetsyFlameBreath, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int flamethrower = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ApolloFlamethrower>(), 620, 0f);
+                        if (Main.projectile.IndexInRange(flamethrower))
+                            Main.projectile[flamethrower].ai[1] = npc.whoAmI;
+                    }
+
+                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                    frame += 10f;
+                }
             }
 
-            return attackTimer >= attackDelay + starCreationTime + starAnimationTime + starAttackTime;
+            return false;
         }
     }
 }

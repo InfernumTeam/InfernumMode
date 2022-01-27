@@ -166,6 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Texture2D texture = Main.npcTexture[npc.type];
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
+            Vector2 center = npc.Center - Main.screenPosition;
             Color afterimageBaseColor = aresBody.Infernum().ExtraAI[13] == 1f ? Color.Red : Color.White;
             int numAfterimages = 5;
 
@@ -179,7 +180,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 }
             }
 
-            Vector2 center = npc.Center - Main.screenPosition;
+            ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
             spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresGaussNukeGlow");

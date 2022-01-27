@@ -84,5 +84,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
             return aimDirection;
         }
+
+        public static void DrawFinalPhaseGlow(SpriteBatch spriteBatch, NPC npc, Texture2D texture, Vector2 drawCenter, Rectangle frame, Vector2 origin)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                spriteEffects = SpriteEffects.FlipHorizontally;
+
+            float finalPhaseGlowTimer = npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+            if (npc.realLife >= 0)
+                finalPhaseGlowTimer = Main.npc[npc.realLife].Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+
+            float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, finalPhaseGlowTimer, true);
+            if (finalPhaseGlowInterpolant > 0f)
+            {
+                float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
+                for (int i = 0; i < 8; i++)
+                {
+                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    color.A = 0;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.Perforator;
+using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Projectiles.DraedonsArsenal;
 using CalamityMod.Projectiles.Magic;
@@ -89,6 +90,11 @@ namespace InfernumMode.Balancing
 
                 // Astrum Aureus.
                 new NPCBalancingChange(NPCType<AstrumAureus>(), Do(new PierceResistBalancingRule(0.67f))),
+
+                // Ravager.
+                new NPCBalancingChange(NPCType<RavagerLegLeft>(), Do(new PierceResistBalancingRule(0.75f))),
+                new NPCBalancingChange(NPCType<RavagerLegRight>(), Do(new PierceResistBalancingRule(0.75f))),
+                new NPCBalancingChange(NPCType<RavagerHead>(), Do(new PierceResistBalancingRule(0.75f))),
 
                 // Cultist.
                 new NPCBalancingChange(NPCID.CultistDragonBody1, Do(new PierceResistBalancingRule(0.24f))),

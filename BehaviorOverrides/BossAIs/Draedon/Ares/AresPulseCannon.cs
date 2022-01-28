@@ -72,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int shootTime = 180;
             int totalFlamesPerBurst = 3;
             float blastShootSpeed = 7.5f;
-            float aimPredictiveness = 15f;
+            float aimPredictiveness = 27f;
 
             // Nerf things while Ares' complement mech is present.
             if (ExoMechManagement.CurrentAresPhase == 4)

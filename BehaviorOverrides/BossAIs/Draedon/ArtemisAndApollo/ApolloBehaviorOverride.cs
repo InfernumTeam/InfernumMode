@@ -381,7 +381,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 }
 
                 hoverOffsetX = Main.rand.NextFloat(-50f, 50f);
-                hoverOffsetY = Main.rand.NextFloat(-250f, 250f);
+                hoverOffsetY = (float)Math.Pow(Main.rand.NextFloat(), 2.4D) * Main.rand.NextBool().ToDirectionInt() * 200f;
                 attackTimer = 0f;
                 shootCounter++;
                 npc.netUpdate = true;

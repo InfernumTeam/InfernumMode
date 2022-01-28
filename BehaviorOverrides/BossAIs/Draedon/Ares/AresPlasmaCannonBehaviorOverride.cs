@@ -71,8 +71,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
 
             // Don't do anything if this arm should be disabled.
-            if (currentlyDisabled && attackTimer >= chargeDelay)
-                attackTimer = chargeDelay;
+            if (currentlyDisabled)
+                attackTimer = 1f;
 
             // Hover near Ares.
             bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge ||
@@ -212,6 +212,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
+            ExoMechAIUtilities.DrawAresArmTelegraphEffect(spriteBatch, npc, Color.Lime, texture, center, frame, origin);
             spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresPlasmaFlamethrowerGlow");

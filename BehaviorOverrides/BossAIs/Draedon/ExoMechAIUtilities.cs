@@ -85,6 +85,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             return aimDirection;
         }
 
+        public static void DrawAresArmTelegraphEffect(SpriteBatch spriteBatch, NPC npc, Color telegraphColor, Texture2D texture, Vector2 drawCenter, Rectangle frame, Vector2 origin)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                spriteEffects = SpriteEffects.FlipHorizontally;
+
+            float telegraphGlowInterpolant = npc.ai[0] / npc.ai[1];
+            if (telegraphGlowInterpolant >= 1f)
+                telegraphGlowInterpolant = 0f;
+
+            if (telegraphGlowInterpolant > 0f)
+            {
+                float whiteFade = (float)Math.Sin(Main.GlobalTime * 20f) * 0.5f + 0.5f;
+                telegraphColor = Color.Lerp(telegraphColor, Color.White, whiteFade);
+                telegraphColor *= Utils.InverseLerp(0f, 0.65f, telegraphGlowInterpolant, true) * (float)Math.Pow(Utils.InverseLerp(1f, 0.85f, telegraphGlowInterpolant, true), 2D);
+
+                float backAfterimageOffset = telegraphGlowInterpolant * 10f;
+                backAfterimageOffset += Utils.InverseLerp(0.85f, 1f, telegraphGlowInterpolant, true) * 20f;
+                for (int i = 0; i < 13; i++)
+                {
+                    Color color = telegraphColor * 0.6f;
+                    color.A = 0;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 13f).ToRotationVector2() * backAfterimageOffset;
+                    spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+        }
+
         public static void DrawFinalPhaseGlow(SpriteBatch spriteBatch, NPC npc, Texture2D texture, Vector2 drawCenter, Rectangle frame, Vector2 origin)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
@@ -99,11 +127,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (finalPhaseGlowInterpolant > 0f)
             {
                 float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 12; i++)
                 {
-                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    Color color = Main.hslToRgb((i / 12f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
                     color.A = 0;
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }

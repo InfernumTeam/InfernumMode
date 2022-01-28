@@ -114,11 +114,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (spawnAnimationTime < 180f)
             {
                 npc.damage = 0;
+                npc.dontTakeDamage = true;
+
                 float minSpawnVelocity = 0.4f;
                 float maxSpawnVelocity = 4f;
                 float velocityY = maxSpawnVelocity - MathHelper.Lerp(minSpawnVelocity, maxSpawnVelocity, spawnAnimationTime / 180f);
                 npc.velocity = Vector2.UnitY * -velocityY;
-
                 npc.Opacity = MathHelper.Clamp(spawnAnimationTime / 180f, 0f, 1f);
                 spawnAnimationTime++;
                 return false;
@@ -333,8 +334,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 case LeviathanAttackType.Charge:
                     npc.TargetClosest();
 
+                    slowdownTime = 25;
                     int redirectTime = sirenAlive ? 60 : 45;
-                    int chargeTime = sirenAlive ? 46 : 30;
+                    int chargeTime = sirenAlive ? 41 : 28;
                     ref float hoverOffsetAngle = ref npc.Infernum().ExtraAI[1];
                     if (outOfOcean)
                     {
@@ -351,6 +353,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         npc.spriteDirection = npc.direction;
                     }
 
+                    // Initiate the charge.
                     if (attackTimer == redirectTime)
                     {
                         float chargeSpeed = sirenAlive ? 28f : 39f;
@@ -364,7 +367,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarCharge"), target.Center);
                     }
 
+                    // Slow down after charging.
                     if (attackTimer >= redirectTime + chargeTime)
+                        npc.velocity *= 0.95f;
+
+                    if (attackTimer >= redirectTime + chargeTime + slowdownTime)
                         goToNextAIState();
                     break;
             }

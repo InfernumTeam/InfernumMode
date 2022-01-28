@@ -46,13 +46,13 @@ namespace InfernumMode.OverridingSystem
                 switch (context)
                 {
                     case NPCOverrideContext.NPCAI:
-                        OverridingListManager.InfernumNPCPreAIOverrideList[instance.NPCOverrideType] = methodAsDelegate;
+                        OverridingListManager.InfernumNPCPreAIOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCPreAIDelegate(n => (bool)method.Invoke(instance, new object[] { n }));
                         break;
                     case NPCOverrideContext.NPCSetDefaults:
                         OverridingListManager.InfernumSetDefaultsOverrideList[instance.NPCOverrideType] = methodAsDelegate;
                         break;
                     case NPCOverrideContext.NPCPreDraw:
-                        OverridingListManager.InfernumPreDrawOverrideList[instance.NPCOverrideType] = methodAsDelegate;
+                        OverridingListManager.InfernumPreDrawOverrideList[instance.NPCOverrideType] = new OverridingListManager.NPCPreDrawDelegate((n, s, c) => (bool)method.Invoke(instance, new object[] { n, s, c }));
                         break;
                     case NPCOverrideContext.NPCFindFrame:
                         OverridingListManager.InfernumFrameOverrideList[instance.NPCOverrideType] = methodAsDelegate;

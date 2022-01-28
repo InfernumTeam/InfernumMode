@@ -162,7 +162,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (isEitherExoTwin)
             {
                 // Do hover movement.
-                Vector2 hoverDestination = target.Center + twinsSpinRotation.ToRotationVector2() * 720f;
+                Vector2 hoverDestination = target.Center + twinsSpinRotation.ToRotationVector2() * 810f;
                 npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.033f);
                 if (attackTimer >= redirectTime)
                     npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.08f);
@@ -183,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 float wrappedTime = attackTimer % (hoverTime + chargeTime);
 
-                if (wrappedTime < hoverTime - 15f)
+                if (wrappedTime < hoverTime - 15f || attackTimer < redirectTime)
                 {
                     Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 300f, -420f);
                     npc.Center = npc.Center.MoveTowards(hoverDestination, hoverTime * 0.3f);
@@ -205,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     // Release rockets upward.
                     if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 8f == 7f)
                     {
-                        Vector2 rocketShootVelocity = -Vector2.UnitY.RotatedByRandom(0.49f) * Main.rand.NextFloat(14f, 19f);
+                        Vector2 rocketShootVelocity = -Vector2.UnitY.RotatedByRandom(0.49f) * Main.rand.NextFloat(12f, 16f);
                         Utilities.NewProjectileBetter(npc.Center, rocketShootVelocity, ModContent.ProjectileType<AresRocket>(), 550, 0f);
                     }
 
@@ -219,7 +219,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static bool DoBehavior_AresTwins_DualLaserCharges(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
         {
             int laserBurstCount = 2;
-            int redirectTime = 75;
+            int redirectTime = 195;
             int chargeupTime = 40;
             int laserTelegraphTime = AresBeamTelegraph.Lifetime;
             int laserSpinTime = AresSpinningRedDeathray.Lifetime;
@@ -230,7 +230,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int artemisChargeTime = 64;
             int artemisLaserReleaseRate = 27;
             int artemisLaserBurstCount = 8;
-            float maxLaserTurnSpeed = MathHelper.TwoPi / 240f;
+            float maxLaserTurnSpeed = MathHelper.TwoPi / 306f;
 
             if (CurrentTwinsPhase != 4)
             {
@@ -499,6 +499,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ref float hoverDestinationY = ref npc.Infernum().ExtraAI[1];
                 ref float laserRotationalOffset = ref npc.Infernum().ExtraAI[2];
                 ref float laserDirection = ref npc.Infernum().ExtraAI[3];
+                ref float hasInitialized = ref npc.Infernum().ExtraAI[4];
 
                 Vector2 hoverDestination = new Vector2(hoverDestinationX, hoverDestinationY);
 
@@ -517,7 +518,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         if (tries >= 1000)
                             break;
                     }
-                    while (npc.WithinRange(hoverDestination, 800f) || Collision.SolidCollision(hoverDestination - Vector2.One * 200f, 400, 400));
+                    while (npc.WithinRange(hoverDestination, 700f) || Collision.SolidCollision(hoverDestination - Vector2.One * 200f, 400, 400));
+
+                    if (hasInitialized == 0f)
+                    {
+                        hoverDestination = target.Center - Vector2.UnitY * 450f;
+                        hasInitialized = 1f;
+                    }
 
                     hoverDestinationX = hoverDestination.X;
                     hoverDestinationY = hoverDestination.Y;
@@ -652,7 +659,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Decide whether to fire or not.
                 canFire = (attackTimer > attackDelay).ToInt();
 
-                Vector2 hoverDestination = target.Center - Vector2.UnitY * 435f;
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 485f;
                 ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
 
                 // Decide the frame.
@@ -674,7 +681,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         hoverOffsetAngle += MathHelper.Pi;
                     }
 
-                    Vector2 hoverDestination = target.Center + hoverOffsetAngle.ToRotationVector2() * new Vector2(700f, 380f);
+                    Vector2 hoverDestination = target.Center + hoverOffsetAngle.ToRotationVector2() * new Vector2(700f, 430f);
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 40f, 95f);
 
                     Vector2 aimDestination = target.Center + target.velocity * 11.5f;

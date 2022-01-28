@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void SetDefaults()
         {
             npc.npcSlots = 5f;
-            npc.damage = 100;
+            npc.damage = 0;
             npc.width = 170;
             npc.height = 120;
             npc.defense = 80;

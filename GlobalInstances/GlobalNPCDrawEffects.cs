@@ -76,7 +76,7 @@ namespace InfernumMode.GlobalInstances
                     return false;
 
                 if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type))
-                    return (bool)OverridingListManager.InfernumPreDrawOverrideList[npc.type].DynamicInvoke(npc, spriteBatch, drawColor);
+                    return OverridingListManager.InfernumPreDrawOverrideList[npc.type].Invoke(npc, spriteBatch, drawColor);
             }
             return base.PreDraw(npc, spriteBatch, drawColor);
         }

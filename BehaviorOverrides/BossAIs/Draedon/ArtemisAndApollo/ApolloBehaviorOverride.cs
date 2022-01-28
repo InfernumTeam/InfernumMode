@@ -240,6 +240,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Determine rotation.
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
+            // Disable contact damage.
+            npc.damage = 0;
+
             // Move to the appropriate side of the target.
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
 
@@ -943,6 +946,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Increment the attack counter. It is used when determining if the mechs should swap sides.
             npc.Infernum().ExtraAI[5]++;
+
+            // Reset flame tails.
+            if (npc.type == ModContent.NPCType<Artemis>())
+                npc.ModNPC<Artemis>().ChargeFlash = 0f;
+            if (npc.type == ModContent.NPCType<Apollo>())
+                npc.ModNPC<Apollo>().ChargeComboFlash = 0f;
 
             // Inform Apollo of the attack state change if Artemis calls this method, as Artemis' state relies on Apollo's.
             if (npc.type == ModContent.NPCType<Artemis>() && Main.npc.IndexInRange(npc.realLife) && Main.npc[npc.realLife].active && Main.npc[npc.realLife].type != ModContent.NPCType<Artemis>())

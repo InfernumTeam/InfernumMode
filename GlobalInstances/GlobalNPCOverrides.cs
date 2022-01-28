@@ -186,7 +186,7 @@ namespace InfernumMode.GlobalInstances
                             npc.Calamity().dashImmunityTime[i]--;
                     }
 
-                    return (bool)OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].DynamicInvoke(npc);
+                    return OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].Invoke(npc);
                 }
             }
             return base.PreAI(npc);

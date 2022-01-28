@@ -181,7 +181,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 		{
-			return CalamityUtils.CircularHitboxCollision(projHitbox.Center(), projectile.Size.Length() * 0.5f, targetHitbox);
+			return CalamityUtils.CircularHitboxCollision(projHitbox.Center(), projectile.Size.Length() * 0.425f, targetHitbox);
 		}
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

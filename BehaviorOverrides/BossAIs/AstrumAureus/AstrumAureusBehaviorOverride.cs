@@ -77,11 +77,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             ref float nextAttackType = ref npc.Infernum().ExtraAI[5];
             ref float onlyDoOneJump = ref npc.Infernum().ExtraAI[6];
             ref float frameType = ref npc.localAI[0];
+            ref float phase2AnimationTimer = ref npc.localAI[1];
 
             // Reset things every frame.
-            npc.defDefense = 24;
+            npc.defDefense = 27;
             npc.damage = npc.defDamage;
             npc.defense = npc.defDefense;
+            npc.Calamity().DR = 0.4f;
 
             // Reset gravity affection and tile collision.
             npc.noGravity = false;
@@ -96,6 +98,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 npc.Calamity().CurrentlyEnraged = true;
             if (enrageCountdown > 0f)
                 enrageCountdown--;
+
+            // Start glowing in Phase 2.
+            if (lifeRatio < Phase2LifeRatio)
+                phase2AnimationTimer++;
 
             // Despawn if necessary.
             npc.timeLeft = 3600;
@@ -289,6 +295,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (attackTimer == 1f)
                 npc.frame.Y = 0;
 
+            int jumpDelay = meteorSlam ? 85 : 50;
+            int attackTransitionDelay = meteorSlam ? 50 : 1;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float stompCounter = ref npc.Infernum().ExtraAI[1];
             ref float jumpIntensity = ref npc.Infernum().ExtraAI[2];
@@ -306,7 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         npc.velocity.X *= 0.8f;
 
                         // Jump after a delay.
-                        if (attackTimer >= 50f)
+                        if (attackTimer >= jumpDelay)
                         {
                             npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
                             npc.velocity.X = npc.spriteDirection * 21f;
@@ -367,8 +375,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         {
                             npc.noTileCollide = false;
                             npc.noGravity = false;
-                            onlyDoOneJump = 0f;
-                            SelectNextAttack(npc);
+                            attackTimer = 0f;
+                            attackState = 2f;
+                            npc.netUpdate = true;
                         }
                         else
                         {
@@ -398,7 +407,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                             if (meteorSlam)
                             {
-                                int meteorDamage = 190;
+                                int meteorDamage = 180;
                                 if (enraged)
                                     meteorDamage = (int)(meteorDamage * EnragedDamageFactor);
 
@@ -473,6 +482,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                         EnforceCustomGravity(npc);
                         npc.noGravity = true;
+                    }
+                    break;
+
+                // Sit in place for a moment to allow the target to compose themselves.
+                case 2:
+                    // Slow down.
+                    npc.velocity.X *= 0.8f;
+
+                    if (attackTimer > attackTransitionDelay)
+                    {
+                        onlyDoOneJump = 0f;
+                        attackTimer = 0f;
+                        attackState = 0f;
+                        npc.netUpdate = true;
+                        SelectNextAttack(npc);
                     }
                     break;
             }
@@ -1007,8 +1031,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 }
             }
 
-            // Draw the normal texture.
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
+
+            // Draw the second phase back afterimage if applicable.
+            float backAfterimageInterpolant = Utils.InverseLerp(0f, 180f, npc.localAI[1], true) * npc.Opacity;
+            if (backAfterimageInterpolant > 0f)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    float colorInterpolant = (float)Math.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTime * 10f) * 0.5f + 0.5f;
+                    Color backAfterimageColor = Color.Lerp(new Color(109, 242, 196, 0), new Color(255, 119, 102, 0), colorInterpolant);
+                    backAfterimageColor *= backAfterimageInterpolant;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
+                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backAfterimageColor, rotation, origin, scale, spriteEffects, 0f);
+                }
+            }
+
+            // Draw the normal texture.
             spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), rotation, origin, scale, spriteEffects, 0f);
 
             // And draw glowmasks (and their afterimages) if not recharging.

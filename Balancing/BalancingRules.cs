@@ -1,3 +1,4 @@
+using CalamityMod;
 using System.Linq;
 using Terraria;
 
@@ -31,6 +32,24 @@ namespace InfernumMode.Balancing
                 return false;
 
             return true;
+        }
+
+        public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);
+    }
+
+    public class ClassResistBalancingRule : IBalancingRule
+    {
+        public float DamageMultiplier;
+        public ClassType ApplicableClass;
+        public ClassResistBalancingRule(float damageMultiplier, ClassType classType)
+        {
+            DamageMultiplier = damageMultiplier;
+            ApplicableClass = classType;
+        }
+
+        public bool AppliesTo(NPC npc, NPCHitContext hitContext)
+        {
+            return hitContext.Class == ApplicableClass;
         }
 
         public void ApplyBalancingChange(NPC npc, ref int damage) => damage = (int)(damage * DamageMultiplier);

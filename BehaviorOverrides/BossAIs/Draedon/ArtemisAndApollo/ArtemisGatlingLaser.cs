@@ -30,8 +30,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
 		public override void SetDefaults()
 		{
-			projectile.width = 22;
-			projectile.height = 22;
+			projectile.width = 16;
+			projectile.height = 76;
 			projectile.hostile = true;
 			projectile.ignoreWater = true;
 			projectile.tileCollide = false;
@@ -186,7 +186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
 		{
-			return CalamityUtils.CircularHitboxCollision(projHitbox.Center(), projectile.Size.Length() * 0.425f, targetHitbox);
+			return projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size());
 		}
 
 		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

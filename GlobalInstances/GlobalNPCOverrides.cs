@@ -36,6 +36,7 @@ using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
+using CalamityMod.Items.Materials;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -251,6 +252,10 @@ namespace InfernumMode.GlobalInstances
                     Main.projectile[soul].localAI[1] = Main.rand.NextBool().ToDirectionInt();
                 }
             }
+
+            // Increase GSS yields.
+            if (npc.type == ModContent.NPCType<GreatSandShark>())
+                DropHelper.DropItem(npc, ModContent.ItemType<GrandScale>(), 3);
 
             if (npc.type == InfernumMode.CalamityMod.NPCType("DevourerofGodsHead"))
             {

@@ -572,14 +572,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public static void DoBehavior_DroneSummoning(NPC npc, float attackTimer)
         {
-            int droneSummonCount = 4;
-
-            // Slow down.
-            npc.velocity *= 0.97f;
-            npc.rotation = npc.velocity.X * 0.0125f;
-
-            // Summon drones once ready.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 75f)
+            void summonDrones(int droneSummonCount, int moveIncrement, int spinDirection, float angularOffsetPerIncrement)
             {
                 List<int> drones = new List<int>();
                 for (int i = 0; i < droneSummonCount; i++)
@@ -593,11 +586,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 {
                     Main.npc[drones[i]].ai[0] = -35f;
                     Main.npc[drones[i]].ai[1] = drones[(i + 1) % drones.Count];
-                    Main.npc[drones[i]].ai[2] = MathHelper.TwoPi * (i + 0.5f) / drones.Count;
+                    Main.npc[drones[i]].ai[2] = MathHelper.TwoPi * (i + angularOffsetPerIncrement) / drones.Count;
+                    Main.npc[drones[i]].ModNPC<SmallDrone>().SpinDirection = spinDirection;
+                    Main.npc[drones[i]].ModNPC<SmallDrone>().MoveIncrement = moveIncrement;
                 }
             }
 
-            if (attackTimer >= SmallDrone.LaserAttackTime + 125f)
+            // Slow down.
+            npc.velocity *= 0.97f;
+            npc.rotation = npc.velocity.X * 0.0125f;
+
+            // Summon drones once ready.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int moveIncrement = (int)Math.Round((attackTimer - 75f) / SmallDrone.TimeOffsetPerIncrement);
+                if (attackTimer == 75f)
+                    summonDrones(4, moveIncrement, 1, 0.5f);
+                if (attackTimer == SmallDrone.TimeOffsetPerIncrement + 75f)
+                    summonDrones(4, moveIncrement, 1, 0f);
+                if (attackTimer == SmallDrone.TimeOffsetPerIncrement * 2f + 75f)
+                    summonDrones(6, moveIncrement, 1, Main.rand.NextFloat());
+            }
+
+            if (attackTimer >= SmallDrone.TimeOffsetPerIncrement * 2f + 375f)
                 GotoNextAttackState(npc);
         }
 
@@ -905,6 +916,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     break;
             }
 
+            newAttackState = PBGAttackType.DroneSummoning;
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;
             for (int i = 0; i < 8; i++)

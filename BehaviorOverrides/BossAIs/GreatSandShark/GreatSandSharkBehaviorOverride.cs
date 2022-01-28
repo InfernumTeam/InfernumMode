@@ -182,7 +182,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             float chargeSpeed = npc.Distance(target.Center) * 0.01f + MathHelper.Lerp(21f, 26f, 1f - lifeRatio);
             int chargeCount = 3;
             int blastCount = (int)MathHelper.Lerp(30f, 42f, 1f - lifeRatio);
-            float blastSpeed = MathHelper.Lerp(8f, 10f, 1f - lifeRatio);
+            float blastSpeed = MathHelper.Lerp(9f, 12f, 1f - lifeRatio);
             
             ref float chargingFlag = ref npc.Infernum().ExtraAI[0];
             ref float chargeCountdown = ref npc.Infernum().ExtraAI[1];
@@ -232,6 +232,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                             int sand = Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandstormBlast2>(), 175, 0f);
                             if (Main.projectile.IndexInRange(sand))
                                 Main.projectile[sand].tileCollide = false;
+
+                            if (lifeRatio < Phase2LifeRatio)
+                            {
+                                sandVelocity = (MathHelper.TwoPi * (i + 0.5f) / blastCount).ToRotationVector2() * blastSpeed * 0.67f;
+                                sand = Utilities.NewProjectileBetter(npc.Center + sandVelocity * 3f, sandVelocity, ModContent.ProjectileType<SandstormBlast2>(), 175, 0f);
+                                if (Main.projectile.IndexInRange(sand))
+                                    Main.projectile[sand].tileCollide = false;
+                            }
                         }
                     }
 
@@ -260,7 +268,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
         public static void DoAttack_DustDevils(NPC npc, Player target, int desertTextureVariant, float lifeRatio, ref float attackTimer)
         {
-            int dustDevilReleaseRate = (int)MathHelper.Lerp(10f, 7f, 1f - lifeRatio);
+            int dustDevilReleaseRate = (int)MathHelper.Lerp(9f, 6f, 1f - lifeRatio);
             float swimAcceleration = MathHelper.Lerp(0.4f, 0.65f, 1f - lifeRatio);
 
             ref float verticalSwimDirection = ref npc.Infernum().ExtraAI[0];
@@ -270,7 +278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (attackTimer % dustDevilReleaseRate == dustDevilReleaseRate - 1f && attackTimer < 540f)
             {
                 Vector2 spawnPosition = target.Center + Vector2.UnitY * Main.rand.NextFloatDirection() * 850f;
-                spawnPosition.X += Main.rand.NextBool(2).ToDirectionInt() * 800f;
+                spawnPosition.X += Main.rand.NextBool().ToDirectionInt() * 800f;
                 Vector2 shootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * 6f;
                 int dustDevil = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<DustDevil>(), 160, 0f);
 

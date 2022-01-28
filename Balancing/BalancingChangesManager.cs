@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs.AquaticScourge;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.Crabulon;
@@ -13,6 +14,7 @@ using CalamityMod.Projectiles.Magic;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Ranged;
 using CalamityMod.Projectiles.Rogue;
+using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using System.Collections.Generic;
 using Terraria;
@@ -90,6 +92,9 @@ namespace InfernumMode.Balancing
 
                 // Astrum Aureus.
                 new NPCBalancingChange(NPCType<AstrumAureus>(), Do(new PierceResistBalancingRule(0.67f))),
+
+                // The Plaguebringer Goliath.
+                new NPCBalancingChange(NPCType<SmallDrone>(), Do(new ClassResistBalancingRule(1.55f, ClassType.Summon))),
 
                 // Ravager.
                 new NPCBalancingChange(NPCType<RavagerLegLeft>(), Do(new PierceResistBalancingRule(0.75f))),

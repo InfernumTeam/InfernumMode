@@ -53,6 +53,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (initialMech is null)
                 return false;
 
+            int thanatosIndex = NPC.FindFirstNPC(ModContent.NPCType<ThanatosHead>());
+            if (thanatosIndex >= 0 && initialMech.ai[0] >= 100f)
+            {
+                if (Main.npc[thanatosIndex].Infernum().ExtraAI[13] < 240f)
+                {
+                    npc.velocity *= 0.9f;
+                    npc.rotation *= 0.9f;
+                    return true;
+                }
+            }
+
             Player target = Main.player[initialMech.target];
             switch ((ExoMechComboAttackType)initialMech.ai[0])
             {
@@ -139,7 +150,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
 
                 // Release dust at the end of the cannon as a telegraph.
-                if (attackTimer >= attackDelay && attackTimer % plasmaBurstShootRate > plasmaBurstShootRate * 0.7f)
+                if (attackTimer >= attackDelay && (attackTimer - attackDelay) % plasmaBurstShootRate > plasmaBurstShootRate * 0.7f)
                 {
                     Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
                     Dust plasma = Dust.NewDustPerfect(dustSpawnPosition, 107);
@@ -149,7 +160,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
 
                 // Periodically release bursts of plasma bombs.
-                if (attackTimer >= attackDelay && attackTimer % plasmaBurstShootRate == plasmaBurstShootRate - 1f)
+                if (attackTimer >= attackDelay)
+                {
+                    npc.ai[0] = (attackTimer - attackDelay) % plasmaBurstShootRate;
+                    npc.ai[1] = plasmaBurstShootRate;
+                }
+                if (attackTimer >= attackDelay && (attackTimer - attackDelay) % plasmaBurstShootRate == plasmaBurstShootRate - 1f)
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
 
@@ -194,7 +210,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
 
                 // Release dust at the end of the cannon as a telegraph.
-                if (attackTimer >= attackDelay && attackTimer % lightningShootRate > lightningShootRate * 0.6f)
+                float wrappedAttackTimer = (attackTimer - attackDelay) % lightningShootRate;
+                if (attackTimer >= attackDelay && wrappedAttackTimer > lightningShootRate * 0.6f)
                 {
                     Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
                     Dust electricity = Dust.NewDustPerfect(dustSpawnPosition, 229);
@@ -202,7 +219,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     electricity.scale = 1.25f;
                     electricity.noGravity = true;
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lightningShootRate > lightningShootRate * 0.815f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer > lightningShootRate * 0.815f)
                     {
                         int explosion = Utilities.NewProjectileBetter(endOfCannon + npc.SafeDirectionTo(endOfCannon) * 120f, Vector2.Zero, ModContent.ProjectileType<TeslaExplosion>(), 0, 0f);
                         if (Main.projectile.IndexInRange(explosion))
@@ -212,7 +229,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 // Release lightning rapidfire.
                 int timeBetweenLightningBurst = lightningBurstTime / totalLightningShotsPerBurst;
-                bool canFireLightning = attackTimer % lightningShootRate >= lightningShootRate - lightningBurstTime && attackTimer % timeBetweenLightningBurst == timeBetweenLightningBurst - 1f;
+                bool canFireLightning = wrappedAttackTimer >= lightningShootRate - lightningBurstTime && attackTimer % timeBetweenLightningBurst == timeBetweenLightningBurst - 1f;
+                if (attackTimer >= attackDelay)
+                {
+                    npc.ai[0] = wrappedAttackTimer;
+                    npc.ai[1] = lightningShootRate;
+                }
                 if (attackTimer >= attackDelay && canFireLightning)
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), npc.Center);
@@ -255,7 +277,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float generalAngularOffset = ref npc.Infernum().ExtraAI[0];
 
             // Thanatos spins around the target with its head always open while releasing lasers inward.
-            if (npc.type == ModContent.NPCType<ThanatosHead>())
+            if (npc.type == ModContent.NPCType<ThanatosHead>() && CalamityGlobalNPC.draedonExoMechPrime != -1)
             {
                 NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
                 Vector2 spinDestination = aresBody.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 2000f;
@@ -501,7 +523,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
 
                 // Release dust at the end of the cannon as a telegraph.
-                if (attackTimer >= attackDelay && attackTimer % lightningShootRate > lightningShootRate * 0.6f)
+                float wrappedAttackTimer = (attackTimer - attackDelay) % lightningShootRate;
+                if (attackTimer >= attackDelay && wrappedAttackTimer > lightningShootRate * 0.6f)
                 {
                     Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
                     Dust electricity = Dust.NewDustPerfect(dustSpawnPosition, 229);
@@ -509,7 +532,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     electricity.scale = 1.25f;
                     electricity.noGravity = true;
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % lightningShootRate > lightningShootRate * 0.815f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer > lightningShootRate * 0.815f)
                     {
                         int explosion = Utilities.NewProjectileBetter(endOfCannon + npc.SafeDirectionTo(endOfCannon) * 120f, Vector2.Zero, ModContent.ProjectileType<TeslaExplosion>(), 0, 0f);
                         if (Main.projectile.IndexInRange(explosion))
@@ -519,7 +542,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 // Release lightning rapidfire.
                 int timeBetweenLightningBurst = lightningBurstTime / totalLightningShotsPerBurst;
-                bool canFireLightning = attackTimer % lightningShootRate >= lightningShootRate - lightningBurstTime && attackTimer % timeBetweenLightningBurst == timeBetweenLightningBurst - 1f;
+                bool canFireLightning = wrappedAttackTimer >= lightningShootRate - lightningBurstTime && attackTimer % timeBetweenLightningBurst == timeBetweenLightningBurst - 1f;
+                if (attackTimer >= attackDelay)
+                {
+                    npc.ai[0] = wrappedAttackTimer;
+                    npc.ai[1] = lightningShootRate;
+                }
                 if (attackTimer >= attackDelay && canFireLightning)
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), npc.Center);

@@ -2,6 +2,7 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Skies;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
@@ -666,6 +667,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 return true;
 
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+
+            int thanatosIndex = NPC.FindFirstNPC(ModContent.NPCType<ThanatosHead>());
+            if (thanatosIndex >= 0 && aresBody.ai[0] >= 100f && Main.npc[thanatosIndex].Infernum().ExtraAI[13] < 240f)
+                return true;
 
             // The pulse and laser arm are disabled for 2.5 seconds once they swap.
             if (aresBody.Infernum().ExtraAI[14] < 150f && (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresPulseCannon>()))

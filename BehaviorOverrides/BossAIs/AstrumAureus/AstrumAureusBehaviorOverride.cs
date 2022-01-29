@@ -301,6 +301,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             ref float stompCounter = ref npc.Infernum().ExtraAI[1];
             ref float jumpIntensity = ref npc.Infernum().ExtraAI[2];
 
+            if (jumpDelay > 75 && lifeRatio < Phase2LifeRatio)
+                jumpDelay -= 20;
+
             switch ((int)attackState)
             {
                 // Wait in anticipation of being able to jump.

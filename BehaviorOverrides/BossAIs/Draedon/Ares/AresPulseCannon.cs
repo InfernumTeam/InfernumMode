@@ -54,6 +54,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             if (CalamityGlobalNPC.draedonExoMechPrime < 0)
             {
+                npc.life = 0;
+                npc.HitEffect();
                 npc.active = false;
                 return;
             }
@@ -189,6 +191,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] % 72f / 72f));
 
             npc.frame = new Rectangle(currentFrame / 12 * 150, currentFrame % 12 * 148, 150, 148);
+        }
+
+        public override void HitEffect(int hitDirection, double damage)
+        {
+            for (int k = 0; k < 3; k++)
+                Dust.NewDust(npc.position, npc.width, npc.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1f);
+
+            if (npc.life <= 0)
+            {
+                for (int i = 0; i < 2; i++)
+                    Dust.NewDust(npc.position, npc.width, npc.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
+
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust exoEnergy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 107, 0f, 0f, 0, new Color(0, 255, 255), 2.5f);
+                    exoEnergy.noGravity = true;
+                    exoEnergy.velocity *= 3f;
+
+                    exoEnergy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
+                    exoEnergy.velocity *= 2f;
+                    exoEnergy.noGravity = true;
+                }
+
+                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/AresPulseCannon1"), npc.scale);
+                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase1"), npc.scale);
+                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase2"), npc.scale);
+                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase3"), npc.scale);
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

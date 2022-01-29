@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             frameType = (int)ThanatosFrameType.Closed;
 
             // Reset damage.
-            npc.defDamage = 1111;
+            npc.defDamage = 825;
             npc.damage = npc.defDamage;
 
             // Define attack variables.
@@ -700,7 +700,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Enforce a lower bound on the speed factor.
             if (generalSpeedFactor < 1f)
                 generalSpeedFactor = 1f;
-            generalSpeedFactor *= speedMultiplier;
+            generalSpeedFactor *= speedMultiplier * 0.9f;
             flyAcceleration *= 1f + (speedMultiplier - 1f) * 1.3f;
 
             float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(destination));

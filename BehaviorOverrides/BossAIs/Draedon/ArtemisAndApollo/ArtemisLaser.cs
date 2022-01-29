@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public override void SetDefaults()
         {
-            projectile.width = 16;
+            projectile.width = 12;
             projectile.height = 76;
             projectile.hostile = true;
             projectile.ignoreWater = true;

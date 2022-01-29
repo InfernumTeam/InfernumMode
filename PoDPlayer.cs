@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
+using CalamityMod.Items.Armor;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.World;
@@ -9,6 +10,7 @@ using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
@@ -61,6 +63,8 @@ namespace InfernumMode
             }
             set => twinsSpecialAttackTypeSelector = value;
         }
+
+        public static bool ApplyEarlySpeedNerfs => InfernumMode.CalamityMod.Version < new Version("1.5.0.004");
 
         #region Skies
         public override void UpdateBiomeVisuals()
@@ -292,6 +296,18 @@ namespace InfernumMode
                     shadowflame.noGravity = true;
                 }
             }
+        }
+        #endregion
+        #region Fuck
+        public override void UpdateEquips(ref bool wallSpeedBuff, ref bool tileSpeedBuff, ref bool tileRangeBuff)
+        {
+            if (!ApplyEarlySpeedNerfs)
+                return;
+
+            if (player.armor[0].type == ModContent.ItemType<AuricTeslaCuisses>())
+                player.moveSpeed -= 0.1f;
+            if (player.armor[0].type == ModContent.ItemType<AuricTeslaPlumedHelm>())
+                player.moveSpeed -= 0.15f;
         }
         #endregion
     }

@@ -111,5 +111,14 @@ namespace InfernumMode
                 player.QuickSpawnItem(ItemID.TissueSample, itemCount);
             }
         }
+
+        public override void UpdateAccessory(Item item, Player player, bool hideVisual)
+        {
+            if (!PoDPlayer.ApplyEarlySpeedNerfs)
+                return;
+
+            if (item.prefix == PrefixID.Quick2)
+                player.moveSpeed -= 0.02f;
+        }
     }
 }

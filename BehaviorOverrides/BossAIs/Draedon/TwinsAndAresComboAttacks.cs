@@ -75,7 +75,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int laserShootCount = 3;
             int hoverTime = 35;
             int chargeTime = 45;
-            int aresContactDamage = 600;
             float hoverSpeed = 34f;
             float chargeSpeed = 32f;
             float spinAngularVelocity = MathHelper.ToRadians(3f);
@@ -86,14 +85,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 twinsShootRate -= 8;
                 chargeTime += 6;
-                aresContactDamage += 50;
                 spinAngularVelocity *= 1.33f;
             }
 
             if (EnrageTimer > 0f)
             {
                 twinsShootRate -= 21;
-                aresContactDamage += 300;
                 spinAngularVelocity *= 2f;
             }
 
@@ -194,7 +191,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 else
                 {
-                    npc.damage = aresContactDamage;
                     if (wrappedTime == hoverTime + 1f)
                     {
                         npc.velocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * chargeSpeed;

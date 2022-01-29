@@ -30,6 +30,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Despawn if Apollo is not present.
             if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active)
             {
+                npc.life = 0;
+                npc.HitEffect();
                 npc.active = false;
                 return false;
             }

@@ -24,6 +24,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Die if Ares is not present.
             if (CalamityGlobalNPC.draedonExoMechPrime == -1)
             {
+                npc.life = 0;
+                npc.HitEffect();
                 npc.active = false;
                 return false;
             }

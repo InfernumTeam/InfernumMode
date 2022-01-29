@@ -33,16 +33,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ref float segmentAttackIndex = ref npc.ai[0];
             frameType = (int)ThanatosFrameType.Closed;
 
-            // Die if the head is not present.
-            if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active)
+            // Die if necessary segments are not present.
+            if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active || !Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)
             {
-                npc.active = false;
-                return;
-            }
-
-            // Die if the ahead segment is not present.
-            if (!Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)
-            {
+                npc.life = 0;
+                npc.HitSound = null;
+                npc.DeathSound = null;
+                npc.HitEffect();
                 npc.active = false;
                 return;
             }
@@ -144,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                             case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle:
                                 int type = ModContent.ProjectileType<ThanatosLaser>();
                                 float predictionFactor = 21f;
-                                float shootSpeed = generalShootSpeedFactor * 11f;
+                                float shootSpeed = generalShootSpeedFactor * 10f;
 
                                 // Predictive laser.
                                 Vector2 projectileDestination = target.Center + target.velocity * predictionFactor;
@@ -171,7 +168,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                             // Fire pulse lasers.
                             case (int)ThanatosHeadAttackType.ProjectileShooting_PurpleLaser:
                                 type = ModContent.ProjectileType<PulseLaser>();
-                                shootSpeed = generalShootSpeedFactor * 10f;
+                                shootSpeed = generalShootSpeedFactor * 9.25f;
 
                                 projectileDestination = target.Center;
                                 laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);
@@ -187,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                             // Fire plasma lasers.
                             case (int)ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
                                 type = ModContent.ProjectileType<PlasmaLaser>();
-                                shootSpeed = generalShootSpeedFactor * 9.5f;
+                                shootSpeed = generalShootSpeedFactor * 9f;
 
                                 projectileDestination = target.Center;
                                 laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
@@ -203,7 +200,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                             // Fire rockets.
                             case (int)ThanatosHeadAttackType.RocketCharge:
                                 type = ModContent.ProjectileType<ThanatosRocket>();
-                                shootSpeed = generalShootSpeedFactor * 11f;
+                                shootSpeed = generalShootSpeedFactor * 10.5f;
 
                                 projectileDestination = target.Center;
                                 Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 530, 0f, Main.myPlayer, 0f, npc.whoAmI);
@@ -215,7 +212,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                                 if (npc.whoAmI % 2 == 0)
                                     type = ModContent.ProjectileType<ElectricLaser>();
 
-                                shootSpeed = generalShootSpeedFactor * 10f;
+                                shootSpeed = generalShootSpeedFactor * 9.25f;
 
                                 projectileDestination = target.Center;
                                 laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);

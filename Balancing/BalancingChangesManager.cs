@@ -154,7 +154,7 @@ namespace InfernumMode.Balancing
         }
 
         // This function simply concatenates a bunch of balancing rules into an array.
-        // It looks a lot nicer than constantly typing "new IItemTweak[]".
+        // It looks a lot nicer than constantly typing "new IBalancingRule[]".
         internal static IBalancingRule[] Do(params IBalancingRule[] r) => r;
     }
 }

@@ -102,6 +102,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 else
                     npc.rotation = npc.rotation.AngleTowards((attackTimer + 8f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.25f);
 
+                ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
+                ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
+                ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
+
+                // Select segment opening attributes.
+                int segmentShootDelay = 45;
+                if (attackTimer > attackDelay && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
+                {
+                    totalSegmentsToFire = 900f;
+                    segmentFireTime = 180f;
+
+                    segmentFireCountdown = segmentFireTime;
+                    npc.netUpdate = true;
+                }
+
+                if (segmentFireCountdown > 0f)
+                    segmentFireCountdown = MathHelper.Clamp(segmentFireCountdown - 0.99f, 0f, 1000f);
+
                 // Decide frames.
                 frame = (int)ThanatosFrameType.Open;
             }
@@ -174,7 +192,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         for (int i = 0; i < totalPlasmaPerBurst; i++)
                         {
                             Vector2 plasmaShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(plasmaBurstMaxSpread) * Main.rand.NextFloat(0.85f, 1f) * plasmaShootSpeed;
-                            Utilities.NewProjectileBetter(endOfCannon, plasmaShootVelocity, ModContent.ProjectileType<PlasmaBomb>(), 530, 0f);
+                            Utilities.NewProjectileBetter(endOfCannon, plasmaShootVelocity, ModContent.ProjectileType<PlasmaBomb>(), 500, 0f);
                         }
                     }
                 }
@@ -480,7 +498,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         {
                             float laserShootSpread = MathHelper.Lerp(-0.65f, 0.65f, i / 8f) + Main.rand.NextFloatDirection() * 0.04f;
                             Vector2 laserShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(laserShootSpread) * aresLaserBurstShootSpeed;
-                            int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<CannonLaser>(), 530, 0f);
+                            int laser = Utilities.NewProjectileBetter(endOfCannon, laserShootVelocity, ModContent.ProjectileType<CannonLaser>(), 500, 0f);
                             if (Main.projectile.IndexInRange(laser))
                                 Main.projectile[laser].ai[1] = npc.whoAmI;
                         }
@@ -783,7 +801,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         for (int i = 0; i < 3; i++)
                         {
-                            int blast = Utilities.NewProjectileBetter(pulseBlastSpawnPosition, Vector2.Zero, ModContent.ProjectileType<AresUnstablePulseBlast>(), 650, 0f);
+                            int blast = Utilities.NewProjectileBetter(pulseBlastSpawnPosition, Vector2.Zero, ModContent.ProjectileType<AresUnstablePulseBlast>(), 550, 0f);
                             if (Main.projectile.IndexInRange(blast))
                                 Main.projectile[blast].ai[0] = MathHelper.Lerp(-0.46f, 0.46f, i / 2f);
                         }

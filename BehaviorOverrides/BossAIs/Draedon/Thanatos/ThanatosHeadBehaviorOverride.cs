@@ -37,6 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public const int SegmentCount = 100;
+        public const int TransitionSoundDelay = 80;
         public const float OpenSegmentDR = 0f;
         public const float ClosedSegmentDR = 0.98f;
 
@@ -278,6 +279,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Handle movement.
             DoAggressiveChargeMovement(npc, target, attackTimer, 1f);
 
+            // Play a sound prior to switching attacks.
+            if (attackTimer == 720f - TransitionSoundDelay)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+
             if (attackTimer > 720f)
                 SelectNextAttack(npc);
         }
@@ -337,6 +342,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             if (segmentFireCountdown > 0f)
                 segmentFireCountdown--;
+
+            // Play a sound prior to switching attacks.
+            if (attackTimer == 600f - TransitionSoundDelay)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
 
             if (attackTimer > 600f)
                 SelectNextAttack(npc);
@@ -398,6 +407,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (segmentFireCountdown > 0f)
                 segmentFireCountdown--;
 
+            // Play a sound prior to switching attacks.
+            if (attackTimer == 600f - TransitionSoundDelay)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+
             if (attackTimer > 600f)
                 SelectNextAttack(npc);
         }
@@ -458,6 +471,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (segmentFireCountdown > 0f)
                 segmentFireCountdown--;
 
+            // Play a sound prior to switching attacks.
+            if (attackTimer == 600f - TransitionSoundDelay)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+
             if (attackTimer > 600f)
                 SelectNextAttack(npc);
         }
@@ -501,6 +518,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 }
             }
 
+            // Play a sound prior to switching attacks.
+            if (attackTimer == nukeShootRate * (nukeShootCount + 0.8f) - TransitionSoundDelay)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+
             if (attackTimer >= nukeShootRate * (nukeShootCount + 0.8f))
                 SelectNextAttack(npc);
         }
@@ -541,6 +562,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             if (segmentFireCountdown > 0f)
                 segmentFireCountdown--;
+
+            // Play a sound prior to switching attacks.
+            if (attackTimer == 600f - TransitionSoundDelay)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
 
             if (attackTimer > 600f)
                 SelectNextAttack(npc);
@@ -589,6 +614,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Create lightning bolts in the sky.
             if (Main.netMode != NetmodeID.Server && attackTimer % 3f == 2f)
                 ExoMechsSky.CreateLightningBolt();
+
+            // Play a sound prior to switching attacks.
+            if (attackTimer == attackTime + cooloffTime - TransitionSoundDelay)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
 
             if (attackTimer > attackTime + cooloffTime)
                 SelectNextAttack(npc);

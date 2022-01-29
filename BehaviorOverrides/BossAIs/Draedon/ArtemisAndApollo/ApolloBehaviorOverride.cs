@@ -352,7 +352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 30f, 84f);
 
             // Fire a plasma burst/laser shot and select a new offset.
-            if (attackTimer >= shootRate)
+            if (attackTimer >= shootRate && npc.WithinRange(hoverDestination, 140f))
             {
                 if (npc.type == ModContent.NPCType<Apollo>())
                 {
@@ -366,7 +366,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             Main.projectile[plasma].ai[0] = shootCounter % 2f;
                     }
                 }
-                else if (npc.WithinRange(hoverDestination, 100f))
+                else
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
@@ -967,6 +967,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 if (npc.Infernum().ExtraAI[5] % 5f == 2f)
                     npc.ai[2] *= -1f;
                 artemis.netUpdate = true;
+            }
+
+            // Delete leftover Artemis lasers.
+            foreach (Projectile laser in Utilities.AllProjectilesByID(ModContent.ProjectileType<ArtemisLaser>()))
+            {
+                laser.Kill();
             }
 
             npc.netUpdate = true;

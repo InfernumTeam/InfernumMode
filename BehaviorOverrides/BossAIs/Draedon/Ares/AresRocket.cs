@@ -91,7 +91,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], Color.White, 1);
+            Color rocketColor = new Color(185, 185, 185, 0);
+            CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], rocketColor, 1);
             return false;
         }
 

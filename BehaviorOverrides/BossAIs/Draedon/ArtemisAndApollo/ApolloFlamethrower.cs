@@ -48,11 +48,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (fadeOut < 0f)
                 fadeOut = 0f;
 
-            // Release homing plasma sparks periodically.
-            if (Main.netMode != NetmodeID.MultiplayerClient && Time % 8f == 7f)
+            // Release plasma sparks periodically.
+            if (Main.netMode != NetmodeID.MultiplayerClient && Time % 6f == 5f)
             {
-                Vector2 meteorShootVelocity = new Vector2(Owner.direction * -0.3f, -1f).RotatedByRandom(0.77f) * Main.rand.NextFloat(14f, 21f);
-                Utilities.NewProjectileBetter(projectile.Center, meteorShootVelocity, ModContent.ProjectileType<PlasmaSpark>(), 500, 0f);
+                Vector2 sparkShootVelocity = new Vector2(Owner.direction * -0.3f, -1f).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.77f);
+                sparkShootVelocity = sparkShootVelocity.ToRotation().AngleLerp(-MathHelper.PiOver2, 0.75f).ToRotationVector2() * Main.rand.NextFloat(34f, 41f);
+                Utilities.NewProjectileBetter(projectile.Center, sparkShootVelocity, ModContent.ProjectileType<ApolloFallingPlasmaSpark>(), 500, 0f);
             }
 
             // Cast lights.

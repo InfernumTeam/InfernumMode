@@ -282,6 +282,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     }
                 }
                 npc.Calamity().DR = OpenSegmentDR;
+                if (head.ai[0] >= 100f)
+                    npc.takenDamageMultiplier *= 2f;
+
                 npc.Calamity().unbreakableDR = false;
                 npc.chaseable = true;
             }

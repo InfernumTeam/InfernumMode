@@ -241,6 +241,7 @@ namespace InfernumMode
             int deleteIndex = Player.MaxBuffs - 1;
             int[] buffsToSkip = new int[]
             {
+                BuffID.ChaosState,
                 BuffID.PotionSickness,
                 BuffID.ManaSickness,
                 ModContent.BuffType<ManaBurn>()

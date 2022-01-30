@@ -301,7 +301,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool dontFireYet, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
         {
             int totalShots = 8;
-            float shootRate = 50f;
+            float shootRate = 44f;
             float projectileShootSpeed = 8.75f;
             float predictivenessFactor = 23f;
 
@@ -309,7 +309,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
-                shootRate -= 12f;
+                shootRate -= 6f;
             if (ExoMechManagement.CurrentTwinsPhase == 3)
             {
                 shootRate -= 8f;
@@ -330,8 +330,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Artemis' projectiles do not speed up.
             if (npc.type == ModContent.NPCType<Artemis>())
                 projectileShootSpeed = 10f;
-            else
-                predictivenessFactor *= 0.4f;
 
             if (calmTheFuckDown)
                 shootRate += 18;
@@ -536,7 +534,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             int waitTime = 8;
             int chargeTime = 45;
-            int totalCharges = 6;
+            int totalCharges = 5;
             int sparkCount = 18;
             int homingSparkCount = 3;
             float chargeSpeed = 54f;

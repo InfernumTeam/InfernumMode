@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Slow down over time.
-            projectile.velocity *= 0.98f;
+            projectile.velocity *= 0.96f;
         }
 
         public override bool CanHitPlayer(Player target) => projectile.Opacity == 1f;

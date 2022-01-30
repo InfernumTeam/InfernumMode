@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs.Ares;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -121,7 +122,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             float finalPhaseGlowTimer = npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             if (npc.realLife >= 0)
+            {
                 finalPhaseGlowTimer = Main.npc[npc.realLife].Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+                if (Main.npc[npc.realLife].type == ModContent.NPCType<AresBody>())
+                {
+                    float telegraphGlowInterpolant = npc.ai[0] / npc.ai[1];
+                    if (telegraphGlowInterpolant >= 1f)
+                        telegraphGlowInterpolant = 0f;
+                    finalPhaseGlowTimer *= 1f - Utils.InverseLerp(0f, 0.85f, telegraphGlowInterpolant, true) * Utils.InverseLerp(1f, 0.85f, telegraphGlowInterpolant, true);
+                }
+            }
 
             float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, finalPhaseGlowTimer, true);
             if (finalPhaseGlowInterpolant > 0f)

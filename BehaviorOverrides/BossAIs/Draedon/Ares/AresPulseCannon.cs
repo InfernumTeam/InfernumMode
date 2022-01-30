@@ -72,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Define attack variables.
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
             int shootTime = 180;
-            int totalFlamesPerBurst = 3;
+            int totalPulseBlastsPerBurst = 3;
             float blastShootSpeed = 7.5f;
             float aimPredictiveness = 27f;
 
@@ -83,20 +83,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase >= 5)
             {
                 shootTime += 60;
-                totalFlamesPerBurst += 2;
+                totalPulseBlastsPerBurst += 2;
                 blastShootSpeed *= 1.25f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
-                shootTime += 30;
-                totalFlamesPerBurst++;
+                shootTime -= 16;
+                totalPulseBlastsPerBurst++;
             }
 
             // Get very pissed off if Ares is enraged.
             if (aresBody.Infernum().ExtraAI[13] == 1f)
-                totalFlamesPerBurst += 5;
+                totalPulseBlastsPerBurst += 5;
 
-            int shootRate = shootTime / totalFlamesPerBurst;
+            int shootRate = shootTime / totalPulseBlastsPerBurst;
 
             // Initialize delays and other timers.
             if (ChargeDelay == 0f)

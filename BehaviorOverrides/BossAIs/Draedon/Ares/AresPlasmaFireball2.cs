@@ -132,9 +132,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 			if (Main.netMode != NetmodeID.MultiplayerClient && projectile.ai[1] != -1f)
 			{
 				int type = ModContent.ProjectileType<PlasmaGas>();
-				for (int i = 0; i < 90; i++)
+				for (int i = 0; i < 50; i++)
 				{
-					Vector2 plasmaVelocity = Main.rand.NextVector2Circular(16f, 16f);
+					Vector2 plasmaVelocity = Main.rand.NextVector2Circular(13f, 13f);
 					Projectile.NewProjectile(projectile.Center, plasmaVelocity, type, projectile.damage, 0f, Main.myPlayer);
 				}
 

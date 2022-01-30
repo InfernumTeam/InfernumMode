@@ -666,6 +666,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             frameType = (int)AureusFrameType.Idle;
 
             int cometShootRate = lifeRatio < Phase3LifeRatio ? 3 : 6;
+            int meteorShootRate = lifeRatio < Phase3LifeRatio ? 90 : 125;
             ref float rainAngle = ref npc.Infernum().ExtraAI[0];
 
             // Slow down horziontally.
@@ -700,20 +701,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 Utilities.CreateGenericDustExplosion(npc.Center, ModContent.DustType<AstralOrange>(), 60, 11f, 1.8f);
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cometShootRate == cometShootRate - 1f && attackTimer > 120f)
+            if (attackTimer > 120f)
             {
-                int cometDamage = 160;
-                Vector2 cometSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-1050, 1050f), -780f);
-                Vector2 shootDirection = Vector2.UnitY.RotatedBy(rainAngle);
-                Vector2 shootVelocity = shootDirection * 14.5f;
-                if (enraged)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cometShootRate == cometShootRate - 1f)
                 {
-                    cometDamage = (int)(cometDamage * EnragedDamageFactor);
-                    shootVelocity *= 1.3f;
-                }
+                    int cometDamage = 160;
+                    Vector2 cometSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-1050, 1050f), -780f);
+                    Vector2 shootDirection = Vector2.UnitY.RotatedBy(rainAngle);
+                    Vector2 shootVelocity = shootDirection * 14.5f;
+                    if (enraged)
+                    {
+                        cometDamage = (int)(cometDamage * EnragedDamageFactor);
+                        shootVelocity *= 1.3f;
+                    }
 
-                int cometType = ModContent.ProjectileType<AstralBlueComet>();
-                Utilities.NewProjectileBetter(cometSpawnPosition, shootVelocity, cometType, cometDamage, 0f);
+                    int cometType = ModContent.ProjectileType<AstralBlueComet>();
+                    Utilities.NewProjectileBetter(cometSpawnPosition, shootVelocity, cometType, cometDamage, 0f);
+                }
+                if (attackTimer % meteorShootRate == meteorShootRate - 1f)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int meteorDamage = 195;
+                        Vector2 meteorSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-550, 550f), -720f);
+                        Vector2 shootVelocity = (target.Center - meteorSpawnPosition).SafeNormalize(Vector2.UnitY) * 12f;
+                        if (enraged)
+                        {
+                            meteorDamage = (int)(meteorDamage * EnragedDamageFactor);
+                            shootVelocity *= 1.3f;
+                        }
+
+                        int meteorType = ModContent.ProjectileType<AstralMeteor>();
+                        Utilities.NewProjectileBetter(meteorSpawnPosition, shootVelocity, meteorType, meteorDamage, 0f);
+                    }
+                }
             }
 
             if (attackTimer > 520f)

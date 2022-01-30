@@ -55,9 +55,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
-                shootTime += 30;
-                totalFlamesPerBurst++;
-                aimPredictiveness -= 3f;
+                shootTime -= 30;
+                totalFlamesPerBurst += 2;
+                aimPredictiveness -= 2f;
             }
 
             // Get very pissed off if Ares is enraged.

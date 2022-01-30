@@ -289,7 +289,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
-            int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 900 : 1200;
+            int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 1350 : 1200;
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
 
@@ -576,7 +576,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Make the laser spin.
             float adjustedTimer = attackTimer - (shootDelay + telegraphTime);
-            float spinSpeed = Utils.InverseLerp(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 204f;
+            float spinSpeed = Utils.InverseLerp(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 190f;
             if (npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts)
             {
                 if (adjustedTimer == (int)(spinTime * 0.5f) - 60)

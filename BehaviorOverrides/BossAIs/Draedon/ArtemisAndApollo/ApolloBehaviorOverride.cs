@@ -338,13 +338,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (shootCounter < 0f)
                 shootCounter = 0f;
 
-            float projectileShootSpeed = MathHelper.Lerp(1.6f, 4.1f, Utils.InverseLerp(0f, 210f, generalAttackTimer, true));
+            float projectileShootSpeed = MathHelper.Lerp(1.9f, 4.7f, Utils.InverseLerp(0f, 210f, generalAttackTimer, true));
             Vector2 hoverDestination = target.Center;
             hoverDestination.X += hoverOffsetX;
             hoverDestination += Vector2.UnitY * hoverSide * 660f;
 
             if (ExoMechManagement.CurrentTwinsPhase <= 2)
-                projectileShootSpeed *= 1.5f;
+                projectileShootSpeed *= 1.3f;
 
             // Determine rotation.
             npc.rotation = aimDirection.ToRotation() + MathHelper.PiOver2;

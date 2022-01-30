@@ -576,7 +576,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Make the laser spin.
             float adjustedTimer = attackTimer - (shootDelay + telegraphTime);
-            float spinSpeed = Utils.InverseLerp(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 160f;
+            float spinSpeed = Utils.InverseLerp(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 204f;
             if (npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts)
             {
                 if (adjustedTimer == (int)(spinTime * 0.5f) - 60)
@@ -593,7 +593,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     spinSpeed *= Utils.InverseLerp(spinTime * 0.5f, spinTime * 0.5f - 45f, adjustedTimer, true);
                 else
                     spinSpeed *= -Utils.InverseLerp(spinTime * 0.5f, spinTime * 0.5f + 45f, adjustedTimer, true);
-                spinSpeed *= 0.77f;
+                spinSpeed *= 0.84f;
             }
 
             generalAngularOffset += spinSpeed * laserDirectionSign;

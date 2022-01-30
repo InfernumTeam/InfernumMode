@@ -129,21 +129,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Ares' body hovers above the player, slowly moving back and forth horizontally.
             if (npc.type == ModContent.NPCType<AresBody>())
             {
-                if (attackTimer == 1f)
-                {
-                    // Clear away old projectiles.
-                    int[] projectilesToDelete = new int[]
-                    {
-                        ModContent.ProjectileType<PlasmaBomb>(),
-                        ModContent.ProjectileType<TypicalPlasmaSpark>(),
-                    };
-                    for (int i = 0; i < Main.maxProjectiles; i++)
-                    {
-                        if (projectilesToDelete.Contains(Main.projectile[i].type))
-                            Main.projectile[i].active = false;
-                    }
-                }
-
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 425f;
                 if (attackTimer > attackDelay)
                     hoverDestination.X += (float)Math.Sin((attackTimer - attackDelay) * MathHelper.TwoPi / 180f) * 90f;
@@ -334,7 +319,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (attackTimer > attackDelay && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
                 {
                     totalSegmentsToFire = 24f;
-                    segmentFireTime = 90f;
+                    segmentFireTime = 92f;
 
                     segmentFireCountdown = segmentFireTime;
                     npc.netUpdate = true;
@@ -350,6 +335,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Ares sits in place, creating four large exo overload laser bursts.
             if (npc.type == ModContent.NPCType<AresBody>())
             {
+                if (attackTimer == 2f)
+                {
+                    // Clear away old projectiles.
+                    int[] projectilesToDelete = new int[]
+                    {
+                        ModContent.ProjectileType<PlasmaBomb>(),
+                        ModContent.ProjectileType<TypicalPlasmaSpark>(),
+                    };
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        if (projectilesToDelete.Contains(Main.projectile[i].type))
+                            Main.projectile[i].active = false;
+                    }
+                }
+
                 // Decide frames.
                 frame = (int)AresBodyFrameType.Normal;
 
@@ -634,7 +634,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Decide frames.
                 frame = (int)ThanatosFrameType.Closed;
 
-                int segmentShootDelay = 190;
+                int segmentShootDelay = 195;
                 ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
                 ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
                 ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
@@ -645,7 +645,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Select segment shoot attributes.
                 if (attackTimer > attackDelay && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
                 {
-                    totalSegmentsToFire = 33f;
+                    totalSegmentsToFire = 20f;
                     segmentFireTime = 90f;
 
                     segmentFireCountdown = segmentFireTime;
@@ -853,9 +853,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     blast.netUpdate = true;
                 }
             }
-
-            if (CurrentThanatosPhase == 4 || CurrentAresPhase == 4)
-                return true;
 
             return attackTimer > attackDelay + attackTime;
         }

@@ -129,6 +129,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Ares' body hovers above the player, slowly moving back and forth horizontally.
             if (npc.type == ModContent.NPCType<AresBody>())
             {
+                if (attackTimer == 1f)
+                {
+                    // Clear away old projectiles.
+                    int[] projectilesToDelete = new int[]
+                    {
+                        ModContent.ProjectileType<PlasmaBomb>(),
+                        ModContent.ProjectileType<TypicalPlasmaSpark>(),
+                    };
+                    for (int i = 0; i < Main.maxProjectiles; i++)
+                    {
+                        if (projectilesToDelete.Contains(Main.projectile[i].type))
+                            Main.projectile[i].active = false;
+                    }
+                }
+
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 425f;
                 if (attackTimer > attackDelay)
                     hoverDestination.X += (float)Math.Sin((attackTimer - attackDelay) * MathHelper.TwoPi / 180f) * 90f;

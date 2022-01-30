@@ -36,10 +36,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Die if necessary segments are not present.
             if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active || !Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)
             {
-                npc.life = 0;
-                npc.HitSound = null;
-                npc.DeathSound = null;
-                npc.HitEffect();
                 npc.active = false;
                 return;
             }

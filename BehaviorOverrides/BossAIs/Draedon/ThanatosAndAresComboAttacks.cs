@@ -95,6 +95,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<ThanatosHead>())
             {
                 Vector2 spinDestination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 2000f;
+
+                npc.damage = 0;
                 npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
                 npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
                 if (npc.WithinRange(spinDestination, 40f))
@@ -299,6 +301,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
                 Vector2 spinDestination = aresBody.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 2000f;
+
+                npc.damage = 0;
                 npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
                 npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
                 if (npc.WithinRange(spinDestination, 40f))
@@ -382,8 +386,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
 
                 // Slow down.
-                if (!npc.WithinRange(target.Center, 1900f))
-                    ExoMechAIUtilities.DoSnapHoverMovement(npc, target.Center, 24f, 75f);
+                if (!npc.WithinRange(target.Center, 1900f) || attackTimer < attackDelay - 75f)
+                    ExoMechAIUtilities.DoSnapHoverMovement(npc, target.Center - Vector2.UnitY * 450f, 24f, 75f);
                 else
                     npc.velocity *= 0.9f;
             }
@@ -413,6 +417,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 // Decide frames.
                 frame = (int)ThanatosFrameType.Closed;
+                npc.damage = 0;
 
                 int segmentShootDelay = 115;
                 ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];

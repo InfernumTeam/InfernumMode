@@ -54,6 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+            ref float sideSwitchAttackDelay = ref npc.Infernum().ExtraAI[18];
             NPC finalMech = ExoMechManagement.FindFinalMech();
             NPC apollo = Main.npc[npc.realLife];
 
@@ -87,6 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             wasNotInitialSummon = apollo.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             finalMechIndex = apollo.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             finalPhaseAnimationTime = apollo.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+            sideSwitchAttackDelay = apollo.Infernum().ExtraAI[18];
             npc.Calamity().newAI[0] = (int)Artemis.Phase.Charge;
 
             // Get a target.
@@ -143,7 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             switch ((TwinsAttackType)(int)attackState)
             {
                 case TwinsAttackType.BasicShots:
-                    DoBehavior_BasicShots(npc, target, false, hoverSide, ref frame, ref attackTimer);
+                    DoBehavior_BasicShots(npc, target, sideSwitchAttackDelay > 0f, false, hoverSide, ref frame, ref attackTimer);
                     break;
                 case TwinsAttackType.FireCharge:
                     DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);

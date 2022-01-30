@@ -47,6 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override bool PreAI(NPC npc)
         {
             npc.damage = npc.defDamage;
+            npc.defense = npc.defDefense;
             npc.dontTakeDamage = false;
 
             npc.TargetClosest();
@@ -227,7 +228,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (missileShootRate < 6)
                 missileShootRate = 6;
 
+            npc.defense += 16;
             frameType = (int)PBGFrameType.Fly;
+
             switch ((int)attackState)
             {
                 // Attempt to hover near the target.
@@ -302,7 +305,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (vomitShootRate < 12)
                 vomitShootRate = 12;
 
+            npc.defense += 16;
             frameType = (int)PBGFrameType.Fly;
+
             switch ((int)attackState)
             {
                 // Attempt to hover near the target.
@@ -916,7 +921,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     break;
             }
 
-            newAttackState = PBGAttackType.DroneSummoning;
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;
             for (int i = 0; i < 8; i++)

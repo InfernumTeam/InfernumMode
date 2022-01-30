@@ -567,8 +567,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 superchargeTimer++;
 
                 // Roar as a telegraph.
-                if (attackTimer == 140f)
+                if (attackTimer == 130f)
+                {
                     Main.PlaySound(SoundID.Roar, target.Center, 0);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                }
                 if (attackTimer > 95f)
                     frameType = (int)PrimeFrameType.OpenMouth;
 
@@ -580,7 +583,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // Their purpose is to act as a "border".
                 if (attackTimer == 165f)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 12; i++)
@@ -603,7 +606,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 if (attackTimer > 165f)
                 {
                     frameType = (int)PrimeFrameType.Spikes;
-                    laserOffsetAngle += Utils.InverseLerp(165f, 215f, attackTimer, true) * laserSignDirection * MathHelper.Pi / 300f;
+                    laserOffsetAngle += Utils.InverseLerp(165f, 255f, attackTimer, true) * laserSignDirection * MathHelper.Pi / 300f;
                 }
 
                 // Release electric sparks periodically, along with missiles.

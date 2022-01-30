@@ -52,21 +52,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (PrimeHeadBehaviorOverride.AnyArms && projectile.timeLeft < HealTime)
                 projectile.timeLeft = HealTime;
 
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                if (!Main.projectile[i].active || !Main.projectile[i].friendly || !projectile.WithinRange(Main.projectile[i].Center, Radius * 0.9f))
-                    continue;
-
-                Projectile proj = Main.projectile[i];
-                if (proj.timeLeft > 10 && proj.damage > 0)
-                {
-                    proj.friendly = false;
-                    proj.velocity = Vector2.Reflect(proj.velocity, projectile.SafeDirectionTo(Main.player[Player.FindClosest(proj.Center, 1, 1)].Center));
-                    proj.penetrate = 1;
-                    proj.netUpdate = true;
-                }
-            }
-
             CalamityGlobalProjectile.ExpandHitboxBy(projectile, (int)(Radius * projectile.scale), (int)(Radius * projectile.scale));
         }
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

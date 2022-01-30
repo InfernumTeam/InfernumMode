@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Items.Armor;
 using CalamityMod.NPCs;
@@ -12,8 +13,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -235,7 +238,17 @@ namespace InfernumMode
         #region Misc Effects
         public void MakeAnxious(int time)
         {
-            player.DelBuff(Player.MaxBuffs - 1);
+            int deleteIndex = Player.MaxBuffs - 1;
+            int[] buffsToSkip = new int[]
+            {
+                BuffID.PotionSickness,
+                BuffID.ManaSickness,
+                ModContent.BuffType<ManaBurn>()
+            };
+            while (buffsToSkip.Contains(player.buffType[deleteIndex]) && deleteIndex > 0)
+                deleteIndex--;
+
+            player.DelBuff(deleteIndex);
             player.AddBuff(ModContent.BuffType<Anxiety>(), time);
         }
         public override void PostUpdateMiscEffects()

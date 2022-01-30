@@ -12,6 +12,10 @@ using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ApolloBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
+using System.Linq;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -94,6 +98,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             return null;
         }
 
+        public static void ClearAwayTransitionProjectiles()
+        {
+            // Clear away old projectiles.
+            int[] projectilesToDelete = new int[]
+            {
+                ModContent.ProjectileType<ArtemisLaser>(),
+                ModContent.ProjectileType<ArtemisGatlingLaser>(),
+                ModContent.ProjectileType<PlasmaGas>(),
+                ModContent.ProjectileType<ElectricGas>(),
+                ModContent.ProjectileType<TeslaSpark>(),
+                ModContent.ProjectileType<AresTeslaOrb>(),
+                ModContent.ProjectileType<ApolloChargeFlameExplosion>(),
+                ModContent.ProjectileType<ArtemisChargeFlameExplosion>(),
+                ModContent.ProjectileType<ExofireSpark>(),
+                ModContent.ProjectileType<PlasmaSpark>(),
+                ModContent.ProjectileType<PulseLaser>(),
+                ModContent.ProjectileType<ThanatosLaser>(),
+                ModContent.ProjectileType<PlasmaLaser>(),
+                ModContent.ProjectileType<AresRocket>(),
+            };
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (projectilesToDelete.Contains(Main.projectile[i].type))
+                    Main.projectile[i].active = false;
+            }
+        }
+
         public static void SummonComplementMech(NPC npc)
         {
             MakeDraedonSayThings(1);
@@ -101,6 +132,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Don't summon NPCs clientside.
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
+
+            // Clear away projectiles.
+            ClearAwayTransitionProjectiles();
 
             // Thanatos and twins summon Ares.
             // Only Apollo does the summoning.
@@ -144,6 +178,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Don't summon NPCs clientside.
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
+
+            // Clear away projectiles.
+            ClearAwayTransitionProjectiles();
 
             // Ares and Thanatos summon the twins.
             // Only Apollo is spawned since Apollo summons Artemis directly in its AI.

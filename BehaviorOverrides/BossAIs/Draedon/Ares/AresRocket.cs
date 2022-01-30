@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Set AI to stop homing, start accelerating if the rocket has gotten close enough to the player.
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            if (projectile.WithinRange(target.Center, 480f) || projectile.ai[0] == 1f || projectile.timeLeft < 360)
+            if (projectile.WithinRange(target.Center, 480f) || projectile.ai[0] == 1f || projectile.timeLeft < 525)
             {
                 projectile.ai[0] = 1f;
 

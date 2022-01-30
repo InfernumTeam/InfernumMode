@@ -434,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     for (int i = 0; i < totalLasers; i++)
                     {
                         Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
-                        int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeam>(), 900, 0f);
+                        int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeam>(), 960, 0f);
                         if (Main.projectile.IndexInRange(deathray))
                         {
                             Main.projectile[deathray].ai[1] = npc.whoAmI;

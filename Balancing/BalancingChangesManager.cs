@@ -5,7 +5,9 @@ using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.SupremeCalamitas;
@@ -14,6 +16,7 @@ using CalamityMod.Projectiles.Magic;
 using CalamityMod.Projectiles.Melee;
 using CalamityMod.Projectiles.Ranged;
 using CalamityMod.Projectiles.Rogue;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using System.Collections.Generic;
@@ -51,6 +54,8 @@ namespace InfernumMode.Balancing
             int inkCloud1 = ProjectileType<InkCloud>();
             int inkCloud2 = ProjectileType<InkCloud2>();
             int inkCloud3 = ProjectileType<InkCloud3>();
+
+            float aresPierceResistFactor = 0.8f;
 
             NPCSpecificBalancingChanges = new List<NPCBalancingChange>()
             {
@@ -113,6 +118,14 @@ namespace InfernumMode.Balancing
                 // Exo Mechs.
                 new NPCBalancingChange(NPCType<Artemis>(), Do(new ProjectileResistBalancingRule(1.25f, ProjectileType<Galaxia2>()))),
                 new NPCBalancingChange(NPCType<Apollo>(), Do(new ProjectileResistBalancingRule(1.25f, ProjectileType<Galaxia2>()))),
+                new NPCBalancingChange(NPCType<AresBody>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
+                new NPCBalancingChange(NPCType<AresLaserCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
+                new NPCBalancingChange(NPCType<AresPlasmaFlamethrower>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
+                new NPCBalancingChange(NPCType<AresTeslaCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
+                new NPCBalancingChange(NPCType<AresGaussNuke>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
+                new NPCBalancingChange(NPCType<AresPulseCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
+                new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),
+                new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),
 
                 // Supreme Calamitas.
                 new NPCBalancingChange(NPCType<SupremeCalamitas>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<InfernadoFriendly>()))),

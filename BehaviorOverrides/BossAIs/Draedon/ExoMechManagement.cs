@@ -32,6 +32,82 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int FinalPhaseTransitionTime = 290;
         public const float ComplementMechInvincibilityThreshold = 0.5f;
 
+        public static int CurrentAresPhase
+        {
+            get
+            {
+                if (CalamityGlobalNPC.draedonExoMechPrime == -1)
+                    return 0;
+
+                NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
+
+                if (FindFinalMech() is null && aresBody.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
+                    return TotalMechs == 1 ? 6 : 3;
+                if (FindFinalMech() == aresBody)
+                    return 5;
+                if (ComplementMechIsPresent(aresBody) || aresBody.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
+                    return 4;
+                if (aresBody.life <= aresBody.lifeMax * Phase3LifeRatio)
+                    return 3;
+                if (aresBody.life <= aresBody.lifeMax * Phase2LifeRatio)
+                    return 2;
+
+                return 1;
+            }
+        }
+
+        public static int CurrentThanatosPhase
+        {
+            get
+            {
+                if (CalamityGlobalNPC.draedonExoMechWorm == -1)
+                    return 0;
+
+                NPC thanatosHead = Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
+
+                if (FindFinalMech() is null && thanatosHead.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
+                    return TotalMechs == 1 ? 6 : 3;
+                if (FindFinalMech() == thanatosHead)
+                    return 5;
+                if (ComplementMechIsPresent(thanatosHead) || thanatosHead.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
+                    return 4;
+                if (thanatosHead.life <= thanatosHead.lifeMax * Phase3LifeRatio)
+                    return 3;
+                if (thanatosHead.life <= thanatosHead.lifeMax * Phase2LifeRatio)
+                    return 2;
+
+                return 1;
+            }
+        }
+
+        public static int CurrentTwinsPhase
+        {
+            get
+            {
+                if (!NPC.AnyNPCs(ModContent.NPCType<Apollo>()))
+                    return 0;
+
+                NPC apollo = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Apollo>())];
+
+                // Check to ensure that Apollo's phase 2 animation has finished.
+                if (apollo.ai[3] < Phase2TransitionTime)
+                    return 1;
+
+                if (FindFinalMech() is null && apollo.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
+                    return TotalMechs == 1 ? 6 : 3;
+                if (FindFinalMech() == apollo)
+                    return 5;
+                if (ComplementMechIsPresent(apollo) || apollo.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
+                    return 4;
+                if (apollo.life <= apollo.lifeMax * Phase3LifeRatio)
+                    return 3;
+                if (apollo.life <= apollo.lifeMax * Phase2LifeRatio)
+                    return 2;
+
+                return 1;
+            }
+        }
+
         public static bool ComplementMechIsPresent(NPC npc)
         {
             // Ares summons Thanatos.
@@ -47,6 +123,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 return CalamityGlobalNPC.draedonExoMechWorm != -1;
 
             return false;
+        }
+
+        public static bool ShouldHaveSecondComboPhaseResistance(NPC npc)
+        {
+            if (npc.realLife >= 0)
+                return ShouldHaveSecondComboPhaseResistance(Main.npc[npc.realLife]);
+
+            return FindFinalMech() is null && npc.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f && TotalMechs > 1 && npc == FindInitialMech();
         }
 
         public static NPC FindInitialMech()
@@ -237,82 +321,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
 
                 return count;
-            }
-        }
-
-        public static int CurrentAresPhase
-        {
-            get
-            {
-                if (CalamityGlobalNPC.draedonExoMechPrime == -1)
-                    return 0;
-
-                NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-
-                if (FindFinalMech() is null && aresBody.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
-                    return TotalMechs == 1 ? 6 : 3;
-                if (FindFinalMech() == aresBody)
-                    return 5;
-                if (ComplementMechIsPresent(aresBody) || aresBody.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
-                    return 4;
-                if (aresBody.life <= aresBody.lifeMax * Phase3LifeRatio)
-                    return 3;
-                if (aresBody.life <= aresBody.lifeMax * Phase2LifeRatio)
-                    return 2;
-
-                return 1;
-            }
-        }
-
-        public static int CurrentThanatosPhase
-        {
-            get
-            {
-                if (CalamityGlobalNPC.draedonExoMechWorm == -1)
-                    return 0;
-
-                NPC thanatosHead = Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
-
-                if (FindFinalMech() is null && thanatosHead.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
-                    return TotalMechs == 1 ? 6 : 3;
-                if (FindFinalMech() == thanatosHead)
-                    return 5;
-                if (ComplementMechIsPresent(thanatosHead) || thanatosHead.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
-                    return 4;
-                if (thanatosHead.life <= thanatosHead.lifeMax * Phase3LifeRatio)
-                    return 3;
-                if (thanatosHead.life <= thanatosHead.lifeMax * Phase2LifeRatio)
-                    return 2;
-
-                return 1;
-            }
-        }
-
-        public static int CurrentTwinsPhase
-        {
-            get
-            {
-                if (!NPC.AnyNPCs(ModContent.NPCType<Apollo>()))
-                    return 0;
-
-                NPC apollo = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Apollo>())];
-
-                // Check to ensure that Apollo's phase 2 animation has finished.
-                if (apollo.ai[3] < Phase2TransitionTime)
-                    return 1;
-
-                if (FindFinalMech() is null && apollo.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
-                    return TotalMechs == 1 ? 6 : 3;
-                if (FindFinalMech() == apollo)
-                    return 5;
-                if (ComplementMechIsPresent(apollo) || apollo.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
-                    return 4;
-                if (apollo.life <= apollo.lifeMax * Phase3LifeRatio)
-                    return 3;
-                if (apollo.life <= apollo.lifeMax * Phase2LifeRatio)
-                    return 2;
-
-                return 1;
             }
         }
 

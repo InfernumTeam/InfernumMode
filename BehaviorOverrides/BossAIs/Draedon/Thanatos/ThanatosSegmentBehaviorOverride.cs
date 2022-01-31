@@ -292,6 +292,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             else
                 Lighting.AddLight(npc.Center, 0.05f * npc.Opacity, 0.2f * npc.Opacity, 0.2f * npc.Opacity);
 
+            if (head.Infernum().ExtraAI[17] >= 1f)
+                npc.takenDamageMultiplier *= 0.5f;
+
             // Handle smoke updating.
             if (npc.type == ModContent.NPCType<ThanatosBody1>())
                 npc.ModNPC<ThanatosBody1>().SmokeDrawer.Update();

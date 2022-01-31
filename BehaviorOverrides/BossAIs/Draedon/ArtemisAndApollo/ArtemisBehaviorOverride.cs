@@ -94,6 +94,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Get a target.
             Player target = Main.player[npc.target];
 
+            // Become more resistant to damage as necessary.
+            npc.takenDamageMultiplier = 1f;
+            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
+                npc.takenDamageMultiplier *= 0.5f;
+
             // Become invincible and disappear if the final mech is present.
             npc.Calamity().newAI[1] = 0f;
             if (finalMech != null && finalMech != apollo)

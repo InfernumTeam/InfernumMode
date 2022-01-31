@@ -134,6 +134,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             npc.TargetClosest(false);
             Player target = Main.player[npc.target];
 
+            // Become more resistant to damage as necessary.
+            npc.takenDamageMultiplier = 1f;
+            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
+                npc.takenDamageMultiplier *= 0.5f;
+
             // Become invincible and disappear if the final mech is present.
             npc.Calamity().newAI[1] = 0f;
             if (finalMech != null && finalMech != npc)
@@ -303,27 +308,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int totalShots = 15;
             int shootRate = 43;
             int shotsPerBurst = 3;
-            float shootSpread = 0.49f;
+            float shootSpread = 0.58f;
             float predictivenessFactor = 25f;
 
             Vector2 aimDestination = target.Center + target.velocity * new Vector2(1f, 1.5f) * predictivenessFactor;
             Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
-                shootRate -= 8;
+                shootRate -= 6;
             if (ExoMechManagement.CurrentTwinsPhase == 3)
             {
-                shootRate -= 8;
+                shootRate -= 6;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 5)
             {
-                shootRate -= 6;
+                shootRate -= 8;
                 shootSpread *= 1.5f;
                 totalShots += 3;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
             {
-                shootRate -= 5;
+                shootRate -= 8;
                 totalShots += 3;
             }
 
@@ -341,7 +346,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             float projectileShootSpeed = MathHelper.Lerp(1.9f, 4.7f, Utils.InverseLerp(0f, 210f, generalAttackTimer, true));
             Vector2 hoverDestination = target.Center;
             hoverDestination.X += hoverOffsetX;
-            hoverDestination += Vector2.UnitY * hoverSide * 660f;
+            hoverDestination += Vector2.UnitY * hoverSide * 540f;
 
             if (ExoMechManagement.CurrentTwinsPhase <= 2)
                 projectileShootSpeed *= 1.3f;

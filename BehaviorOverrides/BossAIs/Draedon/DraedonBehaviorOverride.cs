@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 npc.TargetClosest(false);
                 playerToFollow = Main.player[npc.target];
-                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonTeleport"), playerToFollow.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonTeleport"), playerToFollow.Center);
             }
 
             // Pick someone else to pay attention to if the old target is gone.

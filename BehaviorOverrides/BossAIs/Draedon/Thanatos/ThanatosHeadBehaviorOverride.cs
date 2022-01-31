@@ -67,6 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             ref float attackDelay = ref npc.Infernum().ExtraAI[13];
             ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+            ref float secondComboPhaseResistanceBoostFlag = ref npc.Infernum().ExtraAI[17];
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
@@ -265,6 +266,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Emit light.
             else
                 Lighting.AddLight(npc.Center, 0.05f * npc.Opacity, 0.2f * npc.Opacity, 0.2f * npc.Opacity);
+
+            secondComboPhaseResistanceBoostFlag = 0f;
+            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc) && npc == complementMech)
+            {
+                secondComboPhaseResistanceBoostFlag = 1f;
+                npc.takenDamageMultiplier *= 0.5f;
+            }
 
             attackTimer++;
 

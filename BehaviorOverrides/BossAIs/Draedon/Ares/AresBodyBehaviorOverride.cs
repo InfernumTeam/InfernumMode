@@ -105,6 +105,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
             backarmSwapTimer++;
 
+            // Become more resistant to damage as necessary.
+            npc.takenDamageMultiplier = 1f;
+            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
+                npc.takenDamageMultiplier *= 0.5f;
+
             if (Main.netMode != NetmodeID.MultiplayerClient && armsHaveBeenSummoned == 0f)
             {
                 int totalArms = 4;

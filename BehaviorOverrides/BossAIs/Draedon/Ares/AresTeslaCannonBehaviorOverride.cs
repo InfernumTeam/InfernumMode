@@ -86,6 +86,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (currentlyDisabled)
                 attackTimer = 1f;
 
+            // Become more resistant to damage as necessary.
+            npc.takenDamageMultiplier = 1f;
+            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
+                npc.takenDamageMultiplier *= 0.5f;
+
             // Hover near Ares.
             bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge ||
                 aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ThermoplasmaDance;

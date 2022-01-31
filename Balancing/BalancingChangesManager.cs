@@ -126,6 +126,10 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCType<AresPulseCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
                 new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),
                 new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new ProjectileResistBalancingRule(0.2f, ProjectileType<WavePounderBoom>()))),
+                new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileType<DragonRageStaff>()))),
+                new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileType<DragonRageStaff>()))),
+                new NPCBalancingChange(NPCType<ThanatosBody1>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<DragonRageFireball>()))),
+                new NPCBalancingChange(NPCType<ThanatosBody2>(), Do(new ProjectileResistBalancingRule(0.4f, ProjectileType<DragonRageFireball>()))),
 
                 // Supreme Calamitas.
                 new NPCBalancingChange(NPCType<SupremeCalamitas>(), Do(new ProjectileResistBalancingRule(0.55f, ProjectileType<InfernadoFriendly>()))),

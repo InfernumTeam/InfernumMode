@@ -303,7 +303,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int totalShots = 15;
             int shootRate = 43;
             int shotsPerBurst = 3;
-            float shootSpread = 0.41f;
+            float shootSpread = 0.49f;
             float predictivenessFactor = 25f;
 
             Vector2 aimDestination = target.Center + target.velocity * new Vector2(1f, 1.5f) * predictivenessFactor;
@@ -318,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (ExoMechManagement.CurrentTwinsPhase >= 5)
             {
                 shootRate -= 6;
-                shootSpread *= 1.6f;
+                shootSpread *= 1.5f;
                 totalShots += 3;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
@@ -522,13 +522,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         default:
                             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 850f, -500f);
                             Vector2 chargeVelocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * artemisChargeSpeed;
-                            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 20f, 60f);
+                            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 29f, 60f);
 
                             // Determine rotation.
                             npc.rotation = chargeVelocity.ToRotation() + MathHelper.PiOver2;
 
                             // Prepare the charge.
-                            if (generalAttackTimer > 45f && npc.WithinRange(hoverDestination, 40f))
+                            if (generalAttackTimer > 45f && (npc.WithinRange(hoverDestination, 105f) || generalAttackTimer > 125f))
                             {
                                 generalAttackTimer = 0f;
                                 attackSubstate = 1f;
@@ -997,6 +997,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
                     if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
                         npc.ai[0] = (int)(Main.rand.NextBool() ? TwinsAttackType.SpecialAttack_LaserRayScarletBursts : TwinsAttackType.SpecialAttack_PlasmaCharges);
+                    npc.ai[0] = (int)TwinsAttackType.SpecialAttack_LaserRayScarletBursts;
                     tries++;
 
                     if (tries >= 1000)

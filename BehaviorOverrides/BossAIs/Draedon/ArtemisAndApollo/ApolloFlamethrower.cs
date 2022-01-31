@@ -120,7 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int flameCount = (int)(FireMaxLength / 6f);
             for (float i = 0f; i < flameCount; i++)
             {
-                float flameOffsetDirectionAngle = MathHelper.Lerp(-0.075f, 0.075f, Utils.RandomFloat(ref flameDrawerSeed));
+                float flameOffsetDirectionAngle = MathHelper.Lerp(-0.05f, 0.05f, Utils.RandomFloat(ref flameDrawerSeed));
                 Vector2 flameDirection = (projectile.rotation + flameOffsetDirectionAngle).ToRotationVector2();
                 Vector2 endOfFlame = startOfFlame + flameDirection * FireMaxLength;
                 float flameDrawInterpolant = relativeFrameCompletion + i / flameCount;

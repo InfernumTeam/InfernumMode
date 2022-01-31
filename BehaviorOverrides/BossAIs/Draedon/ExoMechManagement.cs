@@ -117,6 +117,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<ThanatosLaser>(),
                 ModContent.ProjectileType<PlasmaLaser>(),
                 ModContent.ProjectileType<AresRocket>(),
+                ModContent.ProjectileType<AresSpinningDeathBeam>(),
+                ModContent.ProjectileType<AresSpinningRedDeathray>(),
             };
             for (int i = 0; i < Main.maxProjectiles; i++)
             {

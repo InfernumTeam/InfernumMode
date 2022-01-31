@@ -89,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     }
 
                     // Fire the laser. This doesn't happen if extremely close to players, to prevent cheap hits.
-                    if (wallAttackTimer % laserShootRate == laserShootRate - 1f && !npc.WithinRange(target.Center, 115f))
+                    if (wallAttackTimer % laserShootRate == laserShootRate - 1f && !npc.WithinRange(target.Center, 115f) && npc.WithinRange(hoverDestination, 105f))
                     {
                         Main.PlaySound(SoundID.Item12, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)

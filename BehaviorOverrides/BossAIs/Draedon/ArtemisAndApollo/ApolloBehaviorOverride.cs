@@ -170,7 +170,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (phaseTransitionAnimationTime < Phase2TransitionTime && lifeRatio < ExoMechManagement.Phase3LifeRatio)
             {
                 if (phaseTransitionAnimationTime == 1f)
+                {
                     SelectNextAttack(npc);
+                    foreach (Projectile flamethrower in Utilities.AllProjectilesByID(ModContent.ProjectileType<ApolloFlamethrower>()))
+                        flamethrower.Kill();
+                }
 
                 npc.ModNPC<Apollo>().ChargeComboFlash = 0f;
                 attackState = (int)TwinsAttackType.BasicShots;
@@ -183,6 +187,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Handle the final phase transition.
             if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentTwinsPhase >= 6)
             {
+                if (finalPhaseAnimationTime == 1f)
+                {
+                    foreach (Projectile flamethrower in Utilities.AllProjectilesByID(ModContent.ProjectileType<ApolloFlamethrower>()))
+                        flamethrower.Kill();
+                }
+
                 npc.ModNPC<Apollo>().ChargeComboFlash = 0f;
                 attackState = (int)TwinsAttackType.BasicShots;
                 finalPhaseAnimationTime++;

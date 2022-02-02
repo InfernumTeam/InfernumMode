@@ -94,11 +94,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Thanatos spins around the target with its head always open.
             if (npc.type == ModContent.NPCType<ThanatosHead>())
             {
-                Vector2 spinDestination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 2000f;
+                Vector2 spinDestination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * 1200f;
 
                 npc.damage = 0;
                 npc.velocity = npc.SafeDirectionTo(spinDestination) * MathHelper.Min(npc.Distance(spinDestination), 34f);
-                npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.2f + 35f);
+                npc.Center = npc.Center.MoveTowards(spinDestination, target.velocity.Length() * 1.1f + 26f);
                 if (npc.WithinRange(spinDestination, 40f))
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 else
@@ -109,11 +109,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
 
                 // Select segment opening attributes.
-                int segmentShootDelay = 45;
+                int segmentShootDelay = 300;
                 if (attackTimer > attackDelay && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
                 {
                     totalSegmentsToFire = 900f;
-                    segmentFireTime = 180f;
+                    segmentFireTime = 300f;
 
                     segmentFireCountdown = segmentFireTime;
                     npc.netUpdate = true;
@@ -205,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 // Choose a direction and rotation.
                 // Rotation is relative to predictiveness.
-                float aimPredictiveness = 25f;
+                float aimPredictiveness = 30f;
                 Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
                 Vector2 endOfCannon = npc.Center + aimDirection.SafeNormalize(Vector2.Zero) * 84f + Vector2.UnitY * 8f;
                 float idealRotation = aimDirection.ToRotation();
@@ -239,7 +239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     electricity.scale = 1.25f;
                     electricity.noGravity = true;
 
-                    if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer > lightningShootRate * 0.815f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer > lightningShootRate * 0.815f && Main.rand.NextBool())
                     {
                         int explosion = Utilities.NewProjectileBetter(endOfCannon + npc.SafeDirectionTo(endOfCannon) * 120f, Vector2.Zero, ModContent.ProjectileType<TeslaExplosion>(), 0, 0f);
                         if (Main.projectile.IndexInRange(explosion))
@@ -273,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 lightningShootVelocity = npc.SafeDirectionTo(endOfCannon) * 8f;
-                        int lightning = Utilities.NewProjectileBetter(endOfCannon, lightningShootVelocity, ModContent.ProjectileType<TerateslaLightningBlast>(), 800, 0f);
+                        int lightning = Utilities.NewProjectileBetter(endOfCannon, lightningShootVelocity, ModContent.ProjectileType<TerateslaLightningBlast>(), 500, 0f);
                         Utilities.NewProjectileBetter(endOfCannon + lightningShootVelocity * 15f, Vector2.Zero, ModContent.ProjectileType<TeslaExplosion>(), 0, 0f);
                         if (Main.projectile.IndexInRange(lightning))
                         {
@@ -332,7 +332,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 frame = (int)ThanatosFrameType.Open;
             }
 
-            // Ares sits in place, creating four large exo overload laser bursts.
+            // Ares sits in place, creating five large exo overload laser bursts.
             if (npc.type == ModContent.NPCType<AresBody>())
             {
                 if (attackTimer == 2f)
@@ -396,7 +396,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (attackTimer > attackDelay)
                 {
-                    float angularVelocity = Utils.InverseLerp(attackDelay, attackDelay + 60f, attackTimer, true) * MathHelper.Pi / 155f;
+                    float angularVelocity = Utils.InverseLerp(attackDelay, attackDelay + 60f, attackTimer, true) * MathHelper.Pi / 180f;
                     generalAngularOffset += angularVelocity;
                 }
 

@@ -315,7 +315,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
-                shootRate -= 6;
+                shootRate -= 4;
             if (ExoMechManagement.CurrentTwinsPhase == 3)
             {
                 shootRate -= 6;
@@ -328,7 +328,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
             {
-                shootRate -= 8;
+                shootRate -= 9;
                 totalShots += 3;
             }
 

@@ -86,8 +86,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ExplosionCircle);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserCircle);
+
+                /* This attack is bad. Replace it eventually.
                 if (CurrentAresPhase == 4 && CurrentThanatosPhase == 4)
                     attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ElectropulseBursts);
+                */
 
                 do
                     newAttack = attackSelector.Get();

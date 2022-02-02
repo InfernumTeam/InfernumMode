@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     {
         internal PrimitiveTrailCopy LightningDrawer;
 
-        public const int Lifetime = 75;
+        public const int Lifetime = 45;
         public ref float InitialVelocityAngle => ref projectile.ai[0];
 
         // Technically not a ratio, and more of a seed, but it is used in a 0-2pi squash

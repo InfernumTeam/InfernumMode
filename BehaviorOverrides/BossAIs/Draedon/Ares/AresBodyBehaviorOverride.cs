@@ -307,7 +307,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int chargeCount = 7;
             int hoverTime = 35;
             int chargeTime = 35;
-            int contactDamage = 600;
+            int contactDamage = 550;
             float hoverSpeed = 65f;
             float chargeSpeed = 38f;
 
@@ -358,13 +358,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 12; i++)
+                        for (int i = 0; i < 7; i++)
                         {
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 12f) * 8f;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 7f) * 8f;
                             Vector2 coreSpawnPosition = npc.Center + Vector2.UnitY * 26f;
                             Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
 
-                            shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 12f) * 8f;
+                            shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 7f) * 8f;
                             Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
                         }
                     }

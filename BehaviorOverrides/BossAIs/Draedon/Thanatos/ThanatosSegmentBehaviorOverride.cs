@@ -95,16 +95,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     if (willShootProjectile)
                     {
                         string soundType = "LaserCannon";
-                        switch (headAttackType)
-                        {
-                            case ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
-                                soundType = "PlasmaCasterFire";
-                                break;
-                            case ThanatosHeadAttackType.RocketCharge:
-                                soundType = "PlasmaBlast";
-                                break;
-                        }
-
                         SoundEffectInstance sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, $"Sounds/Item/{soundType}"), target.Center);
                         if (sound != null)
                             sound.Volume *= 0.5f;
@@ -131,97 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         
                         switch ((int)headAttackType)
                         {
-                            // Fire regular lasers.
-                            case (int)ThanatosHeadAttackType.ProjectileShooting_RedLaser:
-                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserBarrage:
-                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle:
-                                int type = ModContent.ProjectileType<ThanatosLaser>();
-                                float predictionFactor = 21f;
-                                float shootSpeed = generalShootSpeedFactor * 10f;
-
-                                // Predictive laser.
-                                Vector2 projectileDestination = target.Center + target.velocity * predictionFactor;
-                                int laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
-                                if (Main.projectile.IndexInRange(laser))
-                                {
-                                    Main.projectile[laser].owner = npc.target;
-                                    Main.projectile[laser].ModProjectile<ThanatosLaser>().InitialDestination = projectileDestination;
-                                    Main.projectile[laser].ai[1] = npc.whoAmI;
-                                }
-
-                                // Opposite laser.
-                                projectileDestination = target.Center - target.velocity * predictionFactor;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
-                                if (Main.projectile.IndexInRange(laser))
-                                {
-                                    Main.projectile[laser].owner = npc.target;
-                                    Main.projectile[laser].ModProjectile<ThanatosLaser>().InitialDestination = projectileDestination;
-                                    Main.projectile[laser].ai[1] = npc.whoAmI;
-                                    Main.projectile[laser].netUpdate = true;
-                                }
-                                break;
-
-                            // Fire pulse lasers.
-                            case (int)ThanatosHeadAttackType.ProjectileShooting_PurpleLaser:
-                                type = ModContent.ProjectileType<PulseLaser>();
-                                shootSpeed = generalShootSpeedFactor * 9.25f;
-
-                                projectileDestination = target.Center;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);
-                                if (Main.projectile.IndexInRange(laser))
-                                {
-                                    Main.projectile[laser].owner = npc.target;
-                                    Main.projectile[laser].ModProjectile<PulseLaser>().InitialDestination = projectileDestination;
-                                    Main.projectile[laser].ai[1] = npc.whoAmI;
-                                    Main.projectile[laser].netUpdate = true;
-                                }
-                                break;
-
-                            // Fire plasma lasers.
-                            case (int)ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
-                                type = ModContent.ProjectileType<PlasmaLaser>();
-                                shootSpeed = generalShootSpeedFactor * 9f;
-
-                                projectileDestination = target.Center;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
-                                if (Main.projectile.IndexInRange(laser))
-                                {
-                                    Main.projectile[laser].owner = npc.target;
-                                    Main.projectile[laser].ModProjectile<PlasmaLaser>().InitialDestination = projectileDestination;
-                                    Main.projectile[laser].ai[1] = npc.whoAmI;
-                                    Main.projectile[laser].netUpdate = true;
-                                }
-                                break;
-
-                            // Fire rockets.
-                            case (int)ThanatosHeadAttackType.RocketCharge:
-                                type = ModContent.ProjectileType<ThanatosRocket>();
-                                shootSpeed = generalShootSpeedFactor * 10.5f;
-
-                                projectileDestination = target.Center;
-                                Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 530, 0f, Main.myPlayer, 0f, npc.whoAmI);
-                                break;
-
-                            // Fire pulse and electricity lasers.
-                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_ElectropulseBursts:
-                                type = ModContent.ProjectileType<PulseLaser>();
-                                if (npc.whoAmI % 2 == 0)
-                                    type = ModContent.ProjectileType<ElectricLaser>();
-
-                                shootSpeed = generalShootSpeedFactor * 9.25f;
-
-                                projectileDestination = target.Center;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);
-                                if (Main.projectile.IndexInRange(laser))
-                                {
-                                    Main.projectile[laser].owner = npc.target;
-                                    if (npc.whoAmI % 2 == 0)
-                                        Main.projectile[laser].ModProjectile<ElectricLaser>().InitialDestination = projectileDestination;
-                                    else
-                                        Main.projectile[laser].ModProjectile<PulseLaser>().InitialDestination = projectileDestination;
-                                    Main.projectile[laser].ai[1] = npc.whoAmI;
-                                    Main.projectile[laser].netUpdate = true;
-                                }
+                            case (int)ThanatosHeadAttackType.UndergroundHitscanRays:
                                 break;
                         }
                     }

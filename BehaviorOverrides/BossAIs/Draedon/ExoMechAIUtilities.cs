@@ -137,11 +137,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (finalPhaseGlowInterpolant > 0f)
             {
                 float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
-                for (int i = 0; i < 12; i++)
+                for (int i = 0; i < 6; i++)
                 {
-                    Color color = Main.hslToRgb((i / 12f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    Color color = Main.hslToRgb((i / 12f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f);
                     color.A = 0;
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }

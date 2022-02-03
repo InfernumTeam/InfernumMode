@@ -6,6 +6,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
@@ -23,12 +24,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public enum ThanatosHeadAttackType
         {
-            ProjectileShooting_RedLaser,
             AggressiveCharge,
-            ProjectileShooting_PurpleLaser,
-            ProjectileShooting_GreenLaser,
-            VomitNukes,
-            RocketCharge,
+            TopwardSlam,
+            UndergroundHitscanRays,
             MaximumOverdrive
         }
 
@@ -176,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentThanatosPhase >= 6)
             {
                 frameType = (int)ThanatosFrameType.Closed;
-                attackState = (int)ThanatosHeadAttackType.ProjectileShooting_RedLaser;
+                attackState = (int)ThanatosHeadAttackType.AggressiveCharge;
                 finalPhaseAnimationTime++;
                 npc.damage = 0;
                 npc.dontTakeDamage = true;
@@ -224,20 +222,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 case ThanatosHeadAttackType.AggressiveCharge:
                     DoBehavior_AggressiveCharge(npc, target, ref attackTimer, ref frameType);
                     break;
-                case ThanatosHeadAttackType.ProjectileShooting_RedLaser:
-                    DoBehavior_ProjectileShooting_RedLaser(npc, target, ref attackTimer, ref frameType);
+                case ThanatosHeadAttackType.TopwardSlam:
+                    DoBehavior_TopwardSlam(npc, target, ref attackTimer, ref frameType);
                     break;
-                case ThanatosHeadAttackType.ProjectileShooting_PurpleLaser:
-                    DoBehavior_ProjectileShooting_PurpleLaser(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
-                    DoBehavior_ProjectileShooting_GreenLaser(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.VomitNukes:
-                    DoBehavior_VomitNuke(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.RocketCharge:
-                    DoBehavior_RocketCharge(npc, target, ref attackTimer, ref frameType);
+                case ThanatosHeadAttackType.UndergroundHitscanRays:
+                    DoBehavior_UndergroundHitscanRays(npc, target, ref attackTimer, ref frameType);
                     break;
                 case ThanatosHeadAttackType.MaximumOverdrive:
                     DoBehavior_MaximumOverdrive(npc, target, ref attackTimer, ref frameType);
@@ -295,288 +284,138 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_ProjectileShooting_RedLaser(NPC npc, Player target, ref float attackTimer, ref float frameType)
-        {
-            // Decide frames.
-            frameType = (int)ThanatosFrameType.Closed;
-
-            int segmentShootDelay = 100;
-            ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
-            ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
-            ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
-
-            if (ExoMechManagement.CurrentThanatosPhase == 4)
-                segmentShootDelay += 60;
-
-            // Temporarily disable damage.
-            if (attackTimer < 150f)
-                npc.damage = 0;
-
-            // Do movement.
-            DoProjectileShootInterceptionMovement(npc, target);
-
-            // Select segment shoot attributes.
-            if (attackTimer % segmentShootDelay == segmentShootDelay - 1f)
-            {
-                totalSegmentsToFire = 20f;
-                segmentFireTime = 75f;
-
-                if (ExoMechManagement.CurrentThanatosPhase == 4)
-                {
-                    totalSegmentsToFire -= 4f;
-                    segmentFireTime += 10f;
-                }
-                else
-                {
-                    if (ExoMechManagement.CurrentThanatosPhase >= 2)
-                        totalSegmentsToFire += 6f;
-                }
-                if (ExoMechManagement.CurrentThanatosPhase >= 3)
-                    totalSegmentsToFire += 4f;
-                if (ExoMechManagement.CurrentThanatosPhase >= 5)
-                {
-                    totalSegmentsToFire += 4f;
-                    segmentFireTime += 10f;
-                }
-                if (ExoMechManagement.CurrentThanatosPhase >= 6)
-                {
-                    totalSegmentsToFire += 6f;
-                    segmentFireTime += 8f;
-                }
-
-                segmentFireCountdown = segmentFireTime;
-                npc.netUpdate = true;
-            }
-
-            if (segmentFireCountdown > 0f)
-                segmentFireCountdown--;
-
-            // Play a sound prior to switching attacks.
-            if (attackTimer == 600f - TransitionSoundDelay)
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
-
-            if (attackTimer > 600f)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_ProjectileShooting_PurpleLaser(NPC npc, Player target, ref float attackTimer, ref float frameType)
-        {
-            // Decide frames.
-            frameType = (int)ThanatosFrameType.Closed;
-
-            int segmentShootDelay = 80;
-            ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
-            ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
-            ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
-
-            if (ExoMechManagement.CurrentThanatosPhase == 4)
-                segmentShootDelay += 60;
-
-            // Temporarily disable damage.
-            if (attackTimer < 150f)
-                npc.damage = 0;
-
-            // Do movement.
-            DoProjectileShootInterceptionMovement(npc, target);
-
-            // Select segment shoot attributes.
-            if (attackTimer % segmentShootDelay == segmentShootDelay - 1f)
-            {
-                totalSegmentsToFire = 20f;
-                segmentFireTime = 60f;
-
-                if (ExoMechManagement.CurrentThanatosPhase == 4)
-                {
-                    totalSegmentsToFire -= 4f;
-                    segmentFireTime += 10f;
-                }
-                else
-                {
-                    if (ExoMechManagement.CurrentThanatosPhase >= 2)
-                        totalSegmentsToFire += 6f;
-                }
-                if (ExoMechManagement.CurrentThanatosPhase >= 3)
-                    totalSegmentsToFire += 4f;
-                if (ExoMechManagement.CurrentThanatosPhase >= 5)
-                {
-                    totalSegmentsToFire += 4f;
-                    segmentFireTime += 10f;
-                }
-                if (ExoMechManagement.CurrentThanatosPhase >= 6)
-                {
-                    totalSegmentsToFire += 6f;
-                    segmentFireTime += 8f;
-                }
-
-                segmentFireCountdown = segmentFireTime;
-                npc.netUpdate = true;
-            }
-
-            if (segmentFireCountdown > 0f)
-                segmentFireCountdown--;
-
-            // Play a sound prior to switching attacks.
-            if (attackTimer == 600f - TransitionSoundDelay)
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
-
-            if (attackTimer > 600f)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_ProjectileShooting_GreenLaser(NPC npc, Player target, ref float attackTimer, ref float frameType)
-        {
-            // Decide frames.
-            frameType = (int)ThanatosFrameType.Closed;
-
-            int segmentShootDelay = 120;
-            ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
-            ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
-            ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
-
-            if (ExoMechManagement.CurrentThanatosPhase == 4)
-                segmentShootDelay += 75;
-
-            // Temporarily disable damage.
-            if (attackTimer < 150f)
-                npc.damage = 0;
-
-            // Do movement.
-            DoProjectileShootInterceptionMovement(npc, target);
-
-            // Select segment shoot attributes.
-            if (attackTimer % segmentShootDelay == segmentShootDelay - 1f)
-            {
-                totalSegmentsToFire = 30f;
-                segmentFireTime = 80f;
-
-                if (ExoMechManagement.CurrentThanatosPhase == 4)
-                {
-                    totalSegmentsToFire -= 6f;
-                    segmentFireTime += 10f;
-                }
-                else
-                {
-                    if (ExoMechManagement.CurrentThanatosPhase >= 2)
-                        totalSegmentsToFire += 6f;
-                }
-                if (ExoMechManagement.CurrentThanatosPhase >= 3)
-                    totalSegmentsToFire += 4f;
-                if (ExoMechManagement.CurrentThanatosPhase >= 5)
-                {
-                    totalSegmentsToFire += 4f;
-                    segmentFireTime += 10f;
-                }
-                if (ExoMechManagement.CurrentThanatosPhase >= 6)
-                {
-                    totalSegmentsToFire += 6f;
-                    segmentFireTime += 8f;
-                }
-
-                segmentFireCountdown = segmentFireTime;
-                npc.netUpdate = true;
-            }
-
-            if (segmentFireCountdown > 0f)
-                segmentFireCountdown--;
-
-            // Play a sound prior to switching attacks.
-            if (attackTimer == 600f - TransitionSoundDelay)
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
-
-            if (attackTimer > 600f)
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_VomitNuke(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_TopwardSlam(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             // Decide frames.
             frameType = (int)ThanatosFrameType.Open;
 
-            int nukeShootCount = 3;
-            int nukeShootRate = 95;
+            int hoverRedirectTime = 240;
+            float redirectSpeedMultiplier = 1f;
+            float initialChargeSpeed = 36f;
+            float maxChargeSpeed = 62f;
+            int timeToReachMaxChargeSpeed = 30;
+            int chargeTime = 56;
+            int chargeCount = 4;
+            bool canFireSparks = false;
 
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+
+            if (ExoMechManagement.CurrentThanatosPhase >= 2)
+            {
+                hoverRedirectTime -= 40;
+                redirectSpeedMultiplier += 0.075f;
+                initialChargeSpeed += 5f;
+                maxChargeSpeed += 3f;
+            }
+            if (ExoMechManagement.CurrentThanatosPhase >= 3)
+            {
+                redirectSpeedMultiplier += 0.1f;
+                initialChargeSpeed += 3f;
+                maxChargeSpeed += 3.5f;
+                chargeTime -= 8;
+                canFireSparks = true;
+            }
             if (ExoMechManagement.CurrentThanatosPhase >= 5)
             {
-                nukeShootCount += 2;
-                nukeShootRate -= 30;
+                timeToReachMaxChargeSpeed -= 5;
+                redirectSpeedMultiplier += 0.1f;
+                initialChargeSpeed += 6f;
+                maxChargeSpeed += 4.5f;
+                chargeTime -= 8;
             }
             if (ExoMechManagement.CurrentThanatosPhase >= 6)
             {
-                nukeShootCount++;
-                nukeShootRate -= 20;
+                timeToReachMaxChargeSpeed -= 6;
+                redirectSpeedMultiplier += 0.1f;
+                initialChargeSpeed += 6f;
+                maxChargeSpeed += 8f;
+                chargeTime -= 10;
+                chargeCount++;
             }
 
-            // Temporarily disable damage.
-            if (attackTimer < 150f)
-                npc.damage = 0;
+            float chargeAcceleration = (float)Math.Pow(maxChargeSpeed / initialChargeSpeed, 1D / timeToReachMaxChargeSpeed);
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -400f);
+            Vector2 hoverDestination = target.Center + hoverOffset;
 
-            DoProjectileShootInterceptionMovement(npc, target, 0.6f);
-
-            // Fire the nuke.
-            if (attackTimer % nukeShootRate == nukeShootRate - 1f)
+            // Attempt to get into position for a charge.
+            if (attackTimer < hoverRedirectTime)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
+                float idealHoverSpeed = MathHelper.Lerp(43.5f, 80f, attackTimer / hoverRedirectTime);
+                idealHoverSpeed *= Utils.InverseLerp(35f, 300f, npc.Distance(target.Center), true) * redirectSpeedMultiplier;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.135f);
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.024f, true) * idealVelocity.Length();
+                npc.velocity = npc.velocity.MoveTowards(idealVelocity, redirectSpeedMultiplier * 3f);
+
+                // Stop hovering if close to the hover destination and prepare the charge.
+                if (npc.WithinRange(hoverDestination, 90f) && attackTimer > 45f)
                 {
-                    Vector2 nukeShootVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 18f;
-                    Utilities.NewProjectileBetter(npc.Center, nukeShootVelocity, ModContent.ProjectileType<ThanatosNuke>(), 0, 0f, npc.target);
+                    attackTimer = hoverRedirectTime;
+                    idealVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 12f) * initialChargeSpeed;
+                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 7.5f).RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.66f);
+                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * initialChargeSpeed;
 
                     npc.netUpdate = true;
                 }
             }
 
-            // Play a sound prior to switching attacks.
-            if (attackTimer == nukeShootRate * (nukeShootCount + 0.8f) - TransitionSoundDelay)
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
-
-            if (attackTimer >= nukeShootRate * (nukeShootCount + 0.8f))
-                SelectNextAttack(npc);
-        }
-
-        public static void DoBehavior_RocketCharge(NPC npc, Player target, ref float attackTimer, ref float frameType)
-        {
-            // Decide frames.
-            frameType = (int)ThanatosFrameType.Open;
-
-            // Handle movement.
-            DoAggressiveChargeMovement(npc, target, attackTimer, 0.8f);
-
-            int segmentShootDelay = 120;
-            ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
-            ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
-            ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
-
-            // Select segment shoot attributes.
-            if (attackTimer % segmentShootDelay == segmentShootDelay - 1f)
+            // Play a telegraph sound and release sparks after the charge begins.
+            if (attackTimer == hoverRedirectTime + 1f)
             {
-                totalSegmentsToFire = 18f;
-                segmentFireTime = 100f;
-
-                if (ExoMechManagement.CurrentThanatosPhase >= 5)
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient && canFireSparks)
                 {
-                    totalSegmentsToFire += 3f;
-                    segmentFireTime += 10f;
+                    for (int i = 0; i < 18; i++)
+                    {
+                        Vector2 sparkVelocity = (MathHelper.TwoPi * i / 18f).ToRotationVector2() * 24f;
+                        Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<LaserSpark>(), 500, 0f);
+                    }
                 }
-                if (ExoMechManagement.CurrentThanatosPhase >= 6)
-                {
-                    totalSegmentsToFire += 3f;
-                    segmentFireTime += 8f;
-                }
-
-                segmentFireCountdown = segmentFireTime;
-                npc.netUpdate = true;
             }
 
-            if (segmentFireCountdown > 0f)
-                segmentFireCountdown--;
+            // Accelerate after the charge has begun.
+            if (attackTimer > hoverRedirectTime && npc.velocity.Length() < maxChargeSpeed)
+                npc.velocity *= chargeAcceleration;
 
-            // Play a sound prior to switching attacks.
-            if (attackTimer == 600f - TransitionSoundDelay)
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+            if (attackTimer > hoverRedirectTime + chargeTime)
+            {
+                npc.velocity = npc.velocity.ClampMagnitude(0f, 35f) * 0.56f;
+                chargeCounter++;
+                if (chargeCounter >= chargeCount)
+                    SelectNextAttack(npc);
 
-            if (attackTimer > 600f)
-                SelectNextAttack(npc);
+                attackTimer = 0f;
+            }
+        }
+
+        public static void DoBehavior_UndergroundHitscanRays(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        {
+            int redirectTime = 270;
+            float undergroundChargeSpeed = 9f;
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 2200f, 960f);
+            Vector2 hoverDestination = target.Center + hoverOffset;
+
+            // Attempt to get into position for the underground charge.
+            if (attackTimer < redirectTime)
+            {
+                float idealHoverSpeed = MathHelper.Lerp(43.5f, 80f, attackTimer / redirectTime);
+                idealHoverSpeed *= Utils.InverseLerp(35f, 300f, npc.Distance(target.Center), true);
+
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.135f);
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.024f, true) * idealVelocity.Length();
+                npc.velocity = npc.velocity.MoveTowards(idealVelocity, 3f);
+
+                // Stop hovering if close to the hover destination and prepare the charge.
+                if (npc.WithinRange(hoverDestination, 90f) && attackTimer > 45f)
+                {
+                    attackTimer = redirectTime;
+                    idealVelocity = Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * -undergroundChargeSpeed;
+                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 5f).RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.72f);
+                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * undergroundChargeSpeed;
+
+                    npc.netUpdate = true;
+                }
+            }
         }
 
         public static void DoBehavior_MaximumOverdrive(NPC npc, Player target, ref float attackTimer, ref float frameType)
@@ -759,20 +598,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ExoMechManagement.DoPostAttackSelections(npc);
 
             bool wasCharging = oldAttackType == ThanatosHeadAttackType.AggressiveCharge ||
-                oldAttackType == ThanatosHeadAttackType.RocketCharge ||
                 oldAttackType == ThanatosHeadAttackType.MaximumOverdrive;
 
             if (wasCharging)
             {
-                npc.ai[0] = Main.player[npc.target].Infernum().ThanatosLaserTypeSelector.MakeSelection() + 1;
-                if (Main.rand.NextBool(4) && ExoMechManagement.CurrentThanatosPhase >= 3)
-                    npc.ai[0] = (int)ThanatosHeadAttackType.VomitNukes;
+                npc.ai[0] = (int)ThanatosHeadAttackType.TopwardSlam;
             }
             else
             {
                 npc.ai[0] = (int)ThanatosHeadAttackType.AggressiveCharge;
-                if (ExoMechManagement.CurrentThanatosPhase >= 5 && Main.rand.NextBool())
-                    npc.ai[0] = (int)ThanatosHeadAttackType.RocketCharge;
                 if (ExoMechManagement.CurrentThanatosPhase >= 6 && Main.rand.NextFloat() < 0.67f)
                     npc.ai[0] = (int)ThanatosHeadAttackType.MaximumOverdrive;
             }

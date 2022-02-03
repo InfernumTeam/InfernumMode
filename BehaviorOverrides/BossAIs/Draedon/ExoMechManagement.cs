@@ -197,9 +197,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<ArtemisChargeFlameExplosion>(),
                 ModContent.ProjectileType<ExofireSpark>(),
                 ModContent.ProjectileType<PlasmaSpark>(),
-                ModContent.ProjectileType<PulseLaser>(),
-                ModContent.ProjectileType<ThanatosLaser>(),
-                ModContent.ProjectileType<PlasmaLaser>(),
                 ModContent.ProjectileType<AresRocket>(),
                 ModContent.ProjectileType<AresSpinningDeathBeam>(),
                 ModContent.ProjectileType<AresSpinningRedDeathray>(),
@@ -338,22 +335,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static void DoPostAttackSelections(NPC npc)
         {
             Player player = Main.player[npc.target];
-            if (npc.type == ModContent.NPCType<ThanatosHead>())
-            {
-                var attack = (ThanatosHeadAttackType)(int)npc.ai[0];
-
-                int attackToReinforce = -1;
-                if (attack == ThanatosHeadAttackType.ProjectileShooting_RedLaser)
-                    attackToReinforce = 0;
-                if (attack == ThanatosHeadAttackType.ProjectileShooting_PurpleLaser)
-                    attackToReinforce = 1;
-                if (attack == ThanatosHeadAttackType.ProjectileShooting_GreenLaser)
-                    attackToReinforce = 2;
-
-                if (attackToReinforce != -1)
-                    player.Infernum().ThanatosLaserTypeSelector.BiasAwayFrom(attackToReinforce);
-            }
-
             if (npc.type == ModContent.NPCType<Apollo>())
             {
                 var attack = (TwinsAttackType)(int)npc.ai[0];
@@ -371,24 +352,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public static void RecordAttackDeath(Player player)
         {
-            int thanatos = CalamityGlobalNPC.draedonExoMechWorm;
             int ares = CalamityGlobalNPC.draedonExoMechPrime;
             int apollo = CalamityGlobalNPC.draedonExoMechTwinGreen;
-            if (thanatos != -1)
-            {
-                var attack = (ThanatosHeadAttackType)(int)Main.npc[thanatos].ai[0];
-
-                int attackToReinforce = -1;
-                if (attack == ThanatosHeadAttackType.ProjectileShooting_RedLaser)
-                    attackToReinforce = 0;
-                if (attack == ThanatosHeadAttackType.ProjectileShooting_PurpleLaser)
-                    attackToReinforce = 1;
-                if (attack == ThanatosHeadAttackType.ProjectileShooting_GreenLaser)
-                    attackToReinforce = 2;
-
-                if (attackToReinforce != -1)
-                    player.Infernum().ThanatosLaserTypeSelector.BiasInFavorOf(attackToReinforce);
-            }
 
             if (ares != -1)
             {

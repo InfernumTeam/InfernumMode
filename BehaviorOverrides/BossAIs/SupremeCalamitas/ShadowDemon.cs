@@ -147,7 +147,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         for (int i = 0; i < 16; i++)
                         {
                             Vector2 shootVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.TwoPi * i / 16f) * 5.5f;
-                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast>(), 550, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast>(), 500, 0f);
                         }
                     }
                 }

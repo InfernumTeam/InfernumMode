@@ -314,7 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Player target = Main.player[npc.target];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float phase2InvincibilityTime = 900f;
+            float phase2InvincibilityTime = 300f;
             float transitionTimer = 120f;
 
             ref float attackType = ref npc.ai[0];

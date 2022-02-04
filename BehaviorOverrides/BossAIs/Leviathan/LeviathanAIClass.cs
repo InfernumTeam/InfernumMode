@@ -225,8 +225,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     break;
                 case LeviathanAttackType.CallForHelp:
                     int countedMinions = NPC.CountNPCS(ModContent.NPCType<AquaticAberration>()) * 2;
-                    int hoverTime = sirenAlive ? 90 : 45;
-                    int slowdownTime = sirenAlive ? 60 : 30;
+                    int hoverTime = sirenAlive ? 60 : 30;
+                    int slowdownTime = sirenAlive ? 40 : 20;
                     if (!anahitaFightingToo)
                     {
                         hoverTime -= 8;
@@ -284,7 +284,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         attackTimer = hoverTime + slowdownTime + 35f;
                     }
 
-                    if (attackTimer >= hoverTime + slowdownTime + 120f)
+                    if (attackTimer >= hoverTime + slowdownTime + 70f)
                         goToNextAIState();
                     break;
                 case LeviathanAttackType.MeteorVomiting:

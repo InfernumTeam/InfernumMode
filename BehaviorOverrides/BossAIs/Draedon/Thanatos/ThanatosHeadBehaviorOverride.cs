@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         {
             AggressiveCharge,
             TopwardSlam,
-            UndergroundHitscanRays,
+            ExoBomb,
             MaximumOverdrive
         }
 
@@ -225,8 +225,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 case ThanatosHeadAttackType.TopwardSlam:
                     DoBehavior_TopwardSlam(npc, target, ref attackTimer, ref frameType);
                     break;
-                case ThanatosHeadAttackType.UndergroundHitscanRays:
-                    DoBehavior_UndergroundHitscanRays(npc, target, ref attackTimer, ref frameType);
+                case ThanatosHeadAttackType.ExoBomb:
+                    DoBehavior_ExoBomb(npc, target, ref attackTimer, ref frameType);
                     break;
                 case ThanatosHeadAttackType.MaximumOverdrive:
                     DoBehavior_MaximumOverdrive(npc, target, ref attackTimer, ref frameType);
@@ -377,6 +377,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (attackTimer > hoverRedirectTime && npc.velocity.Length() < maxChargeSpeed)
                 npc.velocity *= chargeAcceleration;
 
+            // Play a sound prior to switching attacks.
+            if (chargeCounter >= chargeCount - 1f && attackTimer == hoverRedirectTime + 1f)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+
             if (attackTimer > hoverRedirectTime + chargeTime)
             {
                 npc.velocity = npc.velocity.ClampMagnitude(0f, 35f) * 0.56f;
@@ -388,34 +392,62 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
         }
 
-        public static void DoBehavior_UndergroundHitscanRays(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        public static void DoBehavior_ExoBomb(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
-            int redirectTime = 270;
-            float undergroundChargeSpeed = 9f;
-            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 2200f, 960f);
-            Vector2 hoverDestination = target.Center + hoverOffset;
+            // Decide frames.
+            frameType = (int)ThanatosFrameType.Open;
 
-            // Attempt to get into position for the underground charge.
-            if (attackTimer < redirectTime)
+            int initialRedirectTime = 360;
+            int intendedSpinTime = 105;
+            float spinSpeed = 51f;
+            float totalRotations = 1f;
+
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 800f, -340f);
+            Vector2 hoverDestination = target.Center + hoverOffset;
+            ref float spinTime = ref npc.Infernum().ExtraAI[0];
+
+            // Initialize the spin time. This is done via a variable because it's possible that the spin time will otherwise switch if Thanatos changes subphases mid-attack, potentially
+            // resulting in strange behaviors.
+            if (spinTime == 0f)
             {
-                float idealHoverSpeed = MathHelper.Lerp(43.5f, 80f, attackTimer / redirectTime);
+                spinTime = intendedSpinTime;
+                npc.netUpdate = true;
+            }
+
+            // Attempt to get into position for a charge.
+            if (attackTimer < initialRedirectTime)
+            {
+                float idealHoverSpeed = MathHelper.Lerp(43.5f, 72.5f, attackTimer / initialRedirectTime);
                 idealHoverSpeed *= Utils.InverseLerp(35f, 300f, npc.Distance(target.Center), true);
 
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.135f);
-                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.024f, true) * idealVelocity.Length();
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.045f, true) * idealVelocity.Length();
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 3f);
 
-                // Stop hovering if close to the hover destination and prepare the charge.
+                // Stop hovering if close to the hover destination and prepare the spin.
                 if (npc.WithinRange(hoverDestination, 90f) && attackTimer > 45f)
                 {
-                    attackTimer = redirectTime;
-                    idealVelocity = Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * -undergroundChargeSpeed;
-                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 5f).RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.72f);
-                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * undergroundChargeSpeed;
-
+                    attackTimer = initialRedirectTime;
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * -spinSpeed;
                     npc.netUpdate = true;
                 }
             }
+
+            // Create the exo bomb.
+            if (attackTimer == initialRedirectTime + 1f)
+            {
+                Vector2 bombSpawnPosition = npc.Center + npc.velocity.RotatedBy(MathHelper.PiOver2) * spinTime / totalRotations / MathHelper.TwoPi;
+                int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ExolaserBomb>(), 1000, 0f);
+                if (Main.projectile.IndexInRange(bomb))
+                    Main.projectile[bomb].ModProjectile<ExolaserBomb>().GrowTime = (int)spinTime;
+            }
+
+            // Spin.
+            if (attackTimer >= initialRedirectTime)
+                npc.velocity = npc.velocity.RotatedBy(MathHelper.TwoPi * totalRotations / spinTime);
+
+            if (attackTimer == initialRedirectTime + spinTime)
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_MaximumOverdrive(NPC npc, Player target, ref float attackTimer, ref float frameType)
@@ -602,7 +634,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             if (wasCharging)
             {
-                npc.ai[0] = (int)ThanatosHeadAttackType.TopwardSlam;
+                npc.ai[0] = (int)ThanatosHeadAttackType.ExoBomb;
             }
             else
             {

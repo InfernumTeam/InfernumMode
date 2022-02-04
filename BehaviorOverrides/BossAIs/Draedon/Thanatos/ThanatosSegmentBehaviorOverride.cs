@@ -121,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         
                         switch ((int)headAttackType)
                         {
-                            case (int)ThanatosHeadAttackType.UndergroundHitscanRays:
+                            case (int)ThanatosHeadAttackType.ExoBomb:
                                 break;
                         }
                     }

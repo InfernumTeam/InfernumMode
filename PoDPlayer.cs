@@ -215,6 +215,9 @@ namespace InfernumMode
             else
                 return;
 
+            if (CalamityConfig.Instance.DisableScreenShakes)
+                return;
+
             Main.screenPosition += Main.rand.NextVector2CircularEdge(CurrentScreenShakePower, CurrentScreenShakePower);
         }
         #endregion

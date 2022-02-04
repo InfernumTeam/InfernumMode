@@ -13,8 +13,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public NPC Owner => Main.npc[(int)projectile.ai[1]];
         public ref float Time => ref projectile.ai[0];
         public const float FlameRotation = MathHelper.Pi / 25f;
-        public const float FadeinTime = 40f;
-        public const float FadeoutTime = 35f;
+        public const float FadeinTime = 30f;
+        public const float FadeoutTime = 45f;
         public const float Lifetime = FadeinTime + FadeoutTime;
         public const float FireMaxLength = 1950f;
 

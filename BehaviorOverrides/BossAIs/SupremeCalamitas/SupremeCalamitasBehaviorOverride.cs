@@ -202,11 +202,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Handle initializations.
             if (npc.localAI[0] == 0f)
             {
-                // Teleport above the player.
-                Vector2 oldPosition = npc.Center;
-                npc.Center = target.Center - Vector2.UnitY * 160f;
-                Dust.QuickDustLine(oldPosition, npc.Center, 300f, Color.Red);
-
                 // Define the arena.
                 Vector2 arenaArea = new Vector2(140f, 140f);
                 npc.Infernum().arenaRectangle = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
@@ -233,12 +228,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             else
                                 WorldGen.SquareTileFrame(i, j, true);
                         }
-
-                        // Erase old arena tiles.
-                        else if (CalamityUtils.ParanoidTileRetrieval(i, j).type == arenaTileType)
-                            Main.tile[i, j].active(false);
                     }
                 }
+
+                // Teleport above the player.
+                Vector2 oldPosition = npc.Center;
+                npc.Center = target.Center - Vector2.UnitY * 160f;
+                Dust.QuickDustLine(oldPosition, npc.Center, 300f, Color.Red);
 
                 attackTextDelay = 180f;
 
@@ -791,7 +787,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         for (int i = 0; i < bombCount; i++)
                         {
                             Vector2 bombSpawnPosition = (npc.Center + target.Center) * 0.5f + Main.rand.NextVector2Circular(spawnOffsetMax, spawnOffsetMax);
-                            Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkMagicBomb>(), 550, 0f);
+                            Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkMagicBomb>(), 500, 0f);
                         }
                     }
 
@@ -820,7 +816,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int shootTime = 50;
             int shootRate = 2;
             float shootSpeed = enrageFactor * 3f + 10.5f;
-            float angularVariance = 1.53f;
+            float angularVariance = 1.64f;
 
             if (currentPhase >= 1)
             {
@@ -884,7 +880,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 float shootRotationalOffset = MathHelper.Lerp(-angularVariance, angularVariance, Utils.InverseLerp(attackDelay, attackDelay + shootTime, wrappedAttackTimer, true));
                 Vector2 shootVelocity = (shootRotationalOffset + npc.AngleTo(target.Center)).ToRotationVector2() * shootSpeed;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 540, 0f);
+                {
+                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity.SafeNormalize(Vector2.Zero), ModContent.ProjectileType<FanTelegraphLine>(), 0, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 500, 0f);
+                }
 
                 Main.PlaySound(SoundID.Item73, target.Center);
             }
@@ -959,7 +958,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         npc.TargetClosest();
 
                         Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * shotCounter / fireBurstCount) * 12f;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<SwervingDarkMagicBlast>(), 540, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<SwervingDarkMagicBlast>(), 500, 0f);
 
                         shotCounter++;
                         npc.netUpdate = true;
@@ -1013,7 +1012,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center);
                     flameShootVelocity = Vector2.Lerp(flameShootVelocity, -Vector2.UnitY.RotatedByRandom(0.92f), 0.7f) * 13f;
-                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 550, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 500, 0f);
                 }
             }
 
@@ -1130,16 +1129,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Vector2 spawnPosition = target.Center + new Vector2(1400f, verticalOffset);
                         Vector2 shootVelocity = Vector2.UnitX * -12f;
 
-                        Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 580, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 530, 0f);
 
                         spawnPosition = target.Center + new Vector2(-1100f, verticalOffset);
-                        Utilities.NewProjectileBetter(spawnPosition, -shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 580, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, -shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 530, 0f);
                     }
 
                     for (int i = 0; i < 7; i++)
                     {
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.79f, 0.79f, i / 6f)) * 3f;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 580, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 530, 0f);
                     }
                 }
             }
@@ -1183,7 +1182,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     Vector2 blastSpawnPosition = target.Center + Vector2.UnitX * Main.rand.NextBool().ToDirectionInt() * 1000f;
                     Vector2 blastShootVelocity = (target.Center - blastSpawnPosition).SafeNormalize(Vector2.UnitY) * 8.5f;
-                    Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 600, 0f, Main.myPlayer);
+                    Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 550, 0f, Main.myPlayer);
                 }
             }
 
@@ -1235,11 +1234,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int projectileType = ModContent.ProjectileType<AcceleratingDarkMagicBurst>();
-                            int damage = 640;
+                            int damage = 580;
 
-                            for (int i = 0; i < 12; i++)
+                            for (int i = 0; i < 7; i++)
                             {
-                                Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 11f;
+                                Vector2 shootVelocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 11f;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, projectileType, damage, 0f);
                             }
 
@@ -1320,7 +1319,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer % 2f == 1f)
                             {
                                 Vector2 flameShootVelocity = shootAngle.ToRotationVector2() * 16f;
-                                Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 600, 0f);
+                                Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 560, 0f);
                             }
                         }
 
@@ -1354,7 +1353,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             float shootOffsetAngle = MathHelper.Lerp(-0.71f, 0.71f, i / 4f);
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * teleportShootSpeed;
-                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 600, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 560, 0f);
                         }
                     }
 
@@ -1383,30 +1382,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             if (attackTimer < finalBulletHellTime / 3f)
                             {
                                 Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
-                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
                             }
 
                             // Release blasts from both horizontal sides.
                             else if (attackTimer < finalBulletHellTime * 2f / 3f)
                             {
                                 Vector2 blastSpawnPosition = target.Center + new Vector2(1000f, Main.rand.NextFloatDirection() * 1000f);
-                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
 
                                 blastSpawnPosition = target.Center + new Vector2(-1000f, Main.rand.NextFloatDirection() * 1000f);
-                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
                             }
 
                             // Release blasts from above and both horizontal sides.
                             else
                             {
                                 Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
-                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
 
                                 blastSpawnPosition = target.Center + new Vector2(1000f, Main.rand.NextFloatDirection() * 1000f);
-                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
 
                                 blastSpawnPosition = target.Center + new Vector2(-1000f, Main.rand.NextFloatDirection() * 1000f);
-                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
                             }
                         }
 
@@ -1415,7 +1414,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloatDirection() * 1000f);
                             Vector2 blastShootVelocity = Vector2.UnitX * Math.Sign(target.Center.X - blastSpawnPosition.X) * blastShootSpeed * 1.6f;
-                            int skull = Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 600, 0f, Main.myPlayer);
+                            int skull = Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 560, 0f, Main.myPlayer);
                             Main.projectile[skull].timeLeft = 270;
                         }
 
@@ -1423,7 +1422,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             Vector2 blastSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(1050f, 1050f);
                             Vector2 blastShootVelocity = (target.Center - blastSpawnPosition).SafeNormalize(Vector2.UnitY) * blastShootSpeed * 1.6f;
-                            Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 600, 0f, Main.myPlayer);
+                            Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 560, 0f, Main.myPlayer);
                         }
                     }
 

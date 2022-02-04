@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             if (projectile.alpha == 0)
                 Lighting.AddLight(projectile.Center, CrystalColor.ToVector3() * 0.7f);
 
-            projectile.velocity *= 1.004f;
+            projectile.velocity *= 1.003f;
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             EmitIdleDust();

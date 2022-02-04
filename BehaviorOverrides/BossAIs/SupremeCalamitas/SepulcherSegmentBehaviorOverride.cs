@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetDefaults(NPC npc)
         {
-            npc.damage = 450;
+            npc.damage = 300;
             npc.npcSlots = 5f;
             npc.width = npc.height = 24;
             npc.defense = 0;
@@ -56,8 +56,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.friendly = false;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
-            npc.Calamity().DR = npc.type == ModContent.NPCType<SCalWormBody>() ? 0.99999f : 0.2f;
-            if (npc.Calamity().DR > 0.99f)
+            npc.Calamity().DR = npc.type == ModContent.NPCType<SCalWormBody>() ? 0.9f : 0.2f;
+            if (npc.Calamity().DR > 0.2f)
                 npc.Calamity().unbreakableDR = true;
 
             Vector2 directionToNextSegment = aheadSegment.Center - npc.Center;
@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults;
 
-		public override void SetDefaults(NPC npc)
+        public override void SetDefaults(NPC npc)
         {
             npc.damage = 0;
             npc.npcSlots = 5f;
@@ -105,10 +105,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.netAlways = true;
         }
 
-		public override bool PreAI(NPC npc)
+        public override bool PreAI(NPC npc)
         {
             SepulcherBodyBehaviorOverride.SegmentBehavior(npc);
             return base.PreAI(npc);
-		}
-	}
+        }
+    }
 }

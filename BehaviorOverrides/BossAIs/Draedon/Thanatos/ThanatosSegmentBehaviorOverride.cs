@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
-            npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
+            npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale * 0.9f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
 
             // Locate the head as an NPC.

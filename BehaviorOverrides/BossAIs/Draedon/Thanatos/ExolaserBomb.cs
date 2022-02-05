@@ -37,21 +37,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Radius = projectile.scale * 100f;
 
             if (!NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()) && projectile.timeLeft > 30)
-                projectile.timeLeft = 30;
+                projectile.timeLeft = 60;
 
-            if (projectile.timeLeft < 30f)
+            if (projectile.timeLeft < 60f)
             {
-                projectile.scale = MathHelper.Lerp(projectile.scale, 0.015f, 0.1f);
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.InverseLerp(18f, 8f, projectile.timeLeft, true) * 12f;
+                projectile.scale = MathHelper.Lerp(projectile.scale, 0.015f, 0.06f);
+                Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.InverseLerp(18f, 8f, projectile.timeLeft, true) * 15f;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 18f);
+                    Utilities.NewProjectileBetter(projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<ExolaserSpark>(), 500, 0f);
+                }
             }
             else
                 projectile.scale = MathHelper.Lerp(0.04f, 7.5f, MathHelper.Clamp(Time / GrowTime, 0f, 1f));
 
-            if (projectile.velocity != Vector2.Zero && projectile.velocity.Length() < 30f)
+            if (projectile.velocity != Vector2.Zero)
             {
-                if (projectile.timeLeft > 160)
-                    projectile.timeLeft = 160;
-                projectile.velocity *= 1.024f;
+                if (projectile.timeLeft > 110)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), projectile.Center);
+                    projectile.timeLeft = 110;
+                }
+
+                if (projectile.velocity.Length() < 24f)
+                    projectile.velocity *= 1.024f;
             }
 
             Time++;
@@ -77,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 rotationPoints.Clear();
                 drawPoints.Clear();
 
-                float adjustedAngle = offsetAngle + MathHelper.Pi * -0.37f;
+                float adjustedAngle = offsetAngle + CalamityUtils.PerlinNoise2D(offsetAngle, Main.GlobalTime * 0.06f, 3, 185) * 3f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 for (int i = 0; i < 16; i++)
                 {
@@ -87,20 +98,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                 FireDrawer.Draw(drawPoints, -Main.screenPosition, 30);
             }
+
+            float giantTwinkleSize = Utils.InverseLerp(55f, 8f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 8f, projectile.timeLeft, true);
+            if (giantTwinkleSize > 0f)
+            {
+                float twinkleScale = giantTwinkleSize * 4.75f;
+                Texture2D twinkleTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/LargeStar");
+                Vector2 drawPosition = projectile.Center - Main.screenPosition;
+                float secondaryTwinkleRotation = Main.GlobalTime * 7.13f;
+
+                spriteBatch.SetBlendState(BlendState.Additive);
+
+                for (int i = 0; i < 2; i++)
+                {
+                    spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, 0f, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1f, 1.85f), SpriteEffects.None, 0f);
+                    spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, secondaryTwinkleRotation, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1.3f, 1f), SpriteEffects.None, 0f);
+                }
+                spriteBatch.ResetBlendState();
+            }
+
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
             Utilities.CreateGenericDustExplosion(projectile.Center, 235, 105, 30f, 2.25f);
-            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), projectile.Center);
+            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-
+            for (int i = 0; i < 120; i++)
+            {
+                Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 34f);
+                Utilities.NewProjectileBetter(projectile.Center + sparkVelocity * 3f, sparkVelocity, ModContent.ProjectileType<ExolaserSpark>(), 500, 0f);
+            }
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 300);
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+
+        }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(projectile.Center, targetHitbox, Radius * 0.85f);
     }

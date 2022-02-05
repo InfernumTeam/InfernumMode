@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
 		public override void SetDefaults()
 		{
-			projectile.width = projectile.height = 80;
+			projectile.width = projectile.height = 50;
 			projectile.penetrate = -1;
 			projectile.tileCollide = false;
 			projectile.magic = true;
@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 			Vector2 drawPosition = projectile.Center - Main.screenPosition;
 			float opacity = Utils.InverseLerp(0f, 0.08f, LightPower, true) * projectile.Opacity * 0.8f;
 			Color drawColor = Color.Lerp(Color.Cyan, Color.White, 0.5f) * opacity;
-			Vector2 scale = projectile.Size / texture.Size() * projectile.scale;
+			Vector2 scale = projectile.Size / texture.Size() * projectile.scale * 1.35f;
 
 			for (int i = 0; i < 2; i++)
 				spriteBatch.Draw(texture, drawPosition, null, drawColor, projectile.rotation, origin, scale, SpriteEffects.None, 0f);

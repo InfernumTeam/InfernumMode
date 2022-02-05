@@ -2,11 +2,14 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Skies;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
@@ -27,6 +30,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             AggressiveCharge,
             TopwardSlam,
             ExoBomb,
+            ExoLightBarrage,
+            RefractionRotorRays,
             MaximumOverdrive
         }
 
@@ -228,6 +233,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 case ThanatosHeadAttackType.ExoBomb:
                     DoBehavior_ExoBomb(npc, target, ref attackTimer, ref frameType);
                     break;
+                case ThanatosHeadAttackType.RefractionRotorRays:
+                    DoBehavior_RefractionRotorRays(npc, target, ref attackTimer, ref frameType);
+                    break;
+                case ThanatosHeadAttackType.ExoLightBarrage:
+                    DoBehavior_ExoLightBarrage(npc, target, ref attackTimer, ref frameType);
+                    break;
                 case ThanatosHeadAttackType.MaximumOverdrive:
                     DoBehavior_MaximumOverdrive(npc, target, ref attackTimer, ref frameType);
                     break;
@@ -267,7 +278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             return false;
         }
-        
+
         public static void DoBehavior_AggressiveCharge(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             // Decide frames.
@@ -398,9 +409,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             frameType = (int)ThanatosFrameType.Open;
 
             int initialRedirectTime = 360;
+            int spinBufferTime = 300;
             int intendedSpinTime = 105;
+            int postSpinChargeTime = 85;
+            float chargeSpeed = 37f;
             float spinSpeed = 51f;
             float totalRotations = 1f;
+
+            if (ExoMechManagement.CurrentThanatosPhase >= 2)
+            {
+                intendedSpinTime -= 15;
+                chargeSpeed += 6f;
+                spinSpeed += 5f;
+            }
+            if (ExoMechManagement.CurrentThanatosPhase >= 3)
+            {
+                intendedSpinTime -= 15;
+                chargeSpeed += 4f;
+                spinSpeed += 5f;
+            }
+            if (ExoMechManagement.CurrentThanatosPhase >= 5)
+            {
+                intendedSpinTime -= 15;
+                spinSpeed += 5f;
+            }
+            if (ExoMechManagement.CurrentThanatosPhase >= 6)
+            {
+                intendedSpinTime -= 25;
+                chargeSpeed += 8f;
+                spinSpeed += 5f;
+            }
 
             Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 800f, -340f);
             Vector2 hoverDestination = target.Center + hoverOffset;
@@ -417,6 +455,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Attempt to get into position for a charge.
             if (attackTimer < initialRedirectTime)
             {
+                // Disable contact damage.
+                npc.damage = 0;
+
                 float idealHoverSpeed = MathHelper.Lerp(43.5f, 72.5f, attackTimer / initialRedirectTime);
                 idealHoverSpeed *= Utils.InverseLerp(35f, 300f, npc.Distance(target.Center), true);
 
@@ -443,11 +484,269 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Spin.
-            if (attackTimer >= initialRedirectTime)
+            if (attackTimer >= initialRedirectTime && attackTimer < initialRedirectTime + spinBufferTime)
+            {
                 npc.velocity = npc.velocity.RotatedBy(MathHelper.TwoPi * totalRotations / spinTime);
 
-            if (attackTimer == initialRedirectTime + spinTime)
+                if (attackTimer >= initialRedirectTime + spinTime && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.1f)
+                {
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * npc.velocity.Length();
+
+                    float bombSpeed = MathHelper.Lerp(17f, 39f, Utils.InverseLerp(750f, 1500f, npc.Distance(target.Center), true));
+                    foreach (Projectile exoBomb in Utilities.AllProjectilesByID(ModContent.ProjectileType<ExolaserBomb>()))
+                    {
+                        exoBomb.velocity = exoBomb.SafeDirectionTo(target.Center + target.velocity * 25f) * bombSpeed;
+                        exoBomb.netUpdate = true;
+                    }
+                    attackTimer = initialRedirectTime + spinBufferTime;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Charge.
+            if (attackTimer >= initialRedirectTime + spinBufferTime)
+                npc.velocity *= npc.velocity.Length() > chargeSpeed ? 0.98f : 1.02f;
+
+            // Play a sound prior to switching attacks.
+            if (attackTimer == initialRedirectTime + spinBufferTime + postSpinChargeTime - TransitionSoundDelay)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+
+            if (attackTimer == initialRedirectTime + spinBufferTime + postSpinChargeTime)
                 SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_RefractionRotorRays(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        {
+            // Decide frames.
+            frameType = (int)ThanatosFrameType.Open;
+
+            int slowdownTime = 100;
+            int chargePreparationTime = 60;
+            int redirectTime = 90;
+            int chargeTime = 75;
+            int lasersPerRotor = 5;
+            int rotorReleaseRate = 4;
+            int chargeCount = 2;
+            float initialChargeSpeed = 24f;
+            float finalChargeSpeed = 45f;
+            float rotorSpeed = 25f;
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+
+            if (ExoMechManagement.CurrentThanatosPhase >= 2)
+            {
+                slowdownTime -= 15;
+                redirectTime -= 5;
+            }
+
+            if (ExoMechManagement.CurrentThanatosPhase >= 3)
+            {
+                slowdownTime -= 10;
+                chargePreparationTime -= 8;
+                redirectTime -= 5;
+                chargeTime -= 5;
+                finalChargeSpeed += 6f;
+            }
+
+            if (ExoMechManagement.CurrentThanatosPhase >= 5)
+            {
+                slowdownTime -= 12;
+                chargePreparationTime -= 8;
+                redirectTime -= 5;
+                lasersPerRotor++;
+                rotorReleaseRate--;
+                chargeCount++;
+                finalChargeSpeed += 6f;
+            }
+
+            if (ExoMechManagement.CurrentThanatosPhase >= 6)
+            {
+                slowdownTime -= 12;
+                chargePreparationTime -= 8;
+                redirectTime -= 5;
+                chargeTime -= 8;
+                lasersPerRotor++;
+                finalChargeSpeed += 6f;
+            }
+
+            // Approach the player at an increasingly slow speed.
+            if (attackTimer < slowdownTime)
+            {
+                float speedMultiplier = MathHelper.Lerp(0.75f, 0.385f, attackTimer / slowdownTime);
+                DoAggressiveChargeMovement(npc, target, attackTimer, speedMultiplier);
+            }
+
+            // Continue moving in the current direction, but continue slowing down.
+            if (attackTimer >= slowdownTime && attackTimer < slowdownTime + chargePreparationTime)
+                npc.velocity = (npc.velocity * 0.96f).ClampMagnitude(8f, 27f);
+
+            // Play a telegraph sound to alert the player of the impending charge.
+            if (attackTimer == slowdownTime + chargePreparationTime / 2)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
+
+            // Begin the charge.
+            if (attackTimer >= slowdownTime + chargePreparationTime && attackTimer < slowdownTime + chargePreparationTime + redirectTime)
+            {
+                Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * initialChargeSpeed;
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.075f).MoveTowards(idealVelocity, 2.75f);
+
+                // Sometimes charge early if aimed at the target and the redirect is more than halfway done.
+                if (attackTimer >= chargePreparationTime + redirectTime * 0.5f && npc.velocity.AngleBetween(idealVelocity) < 0.15f)
+                {
+                    npc.velocity = idealVelocity;
+                    attackTimer = slowdownTime + chargePreparationTime + redirectTime;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Charge and release refraction rotors.
+            if (attackTimer >= slowdownTime + chargePreparationTime + redirectTime)
+            {
+                npc.velocity = npc.velocity.MoveTowards(npc.velocity.SafeNormalize(Vector2.UnitY) * finalChargeSpeed, 2f);
+
+                if (attackTimer % rotorReleaseRate == rotorReleaseRate - 1f)
+                {
+                    var segments = (from n in Main.npc.Take(Main.maxNPCs)
+                                   where n.active && n.type == ModContent.NPCType<ThanatosBody1>() && !n.WithinRange(target.Center, 400f)
+                                   orderby n.Distance(target.Center)
+                                   select n).ToList();
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && segments.Count > 1)
+                    {
+                        NPC segmentToFireFrom = segments[Main.rand.Next(0, segments.Count / 3)];
+                        Vector2 rotorShootVelocity = segmentToFireFrom.SafeDirectionTo(target.Center).RotatedByRandom(1.6f) * rotorSpeed;
+                        int rotor = Utilities.NewProjectileBetter(segmentToFireFrom.Center, rotorShootVelocity, ModContent.ProjectileType<RefractionRotor>(), 540, 0f);
+                        if (Main.projectile.IndexInRange(rotor))
+                            Main.projectile[rotor].ai[0] = lasersPerRotor;
+                    }
+                }
+            }
+
+            // Play a sound prior to switching attacks.
+            if (attackTimer == slowdownTime + chargePreparationTime + redirectTime + chargeTime - TransitionSoundDelay && chargeCounter >= chargeCount - 1f)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+
+            // Perform the attack again if necessary.
+            if (attackTimer >= slowdownTime + chargePreparationTime + redirectTime + chargeTime)
+            {
+                chargeCounter++;
+                attackTimer = 0f;
+                if (chargeCounter >= chargeCount)
+                    SelectNextAttack(npc);
+            }
+        }
+
+        public static void DoBehavior_ExoLightBarrage(NPC npc, Player target, ref float attackTimer, ref float frameType)
+        {
+            // Decide frames.
+            frameType = (int)ThanatosFrameType.Open;
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            int initialRedirectTime = 360;
+            int lightTelegraphTime = 70;
+            int lightLaserFireDelay = 20;
+            int lightLaserShootTime = LightOverloadRay.Lifetime;
+            int redirectCount = 3;
+            float pointAtTargetSpeed = 2f;
+            float lightRaySpreadDegrees = 125f;
+            ref float hoverOffsetDirection = ref npc.Infernum().ExtraAI[0];
+            ref float redirectCounter = ref npc.Infernum().ExtraAI[3];
+
+            // Initialize a hover offset direction.
+            if (hoverOffsetDirection == 0f)
+            {
+                hoverOffsetDirection = Main.rand.Next(4) * MathHelper.TwoPi / 4f + MathHelper.PiOver4;
+                npc.netUpdate = true;
+            }
+
+            int totalLightRays = (int)(lightRaySpreadDegrees * 0.257f); 
+            float lightRaySpread = MathHelper.ToRadians(lightRaySpreadDegrees);
+            Vector2 outerHoverOffset = hoverOffsetDirection.ToRotationVector2() * 1200f;
+            Vector2 outerHoverDestination = target.Center + outerHoverOffset;
+
+            // Attempt to get into position for the light attack.
+            if (attackTimer < initialRedirectTime)
+            {
+                float idealHoverSpeed = MathHelper.Lerp(43.5f, 72.5f, attackTimer / initialRedirectTime);
+                idealHoverSpeed *= Utils.InverseLerp(35f, 300f, npc.Distance(target.Center), true);
+
+                Vector2 idealVelocity = npc.SafeDirectionTo(outerHoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.135f);
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.045f, true) * idealVelocity.Length();
+                npc.velocity = npc.velocity.MoveTowards(idealVelocity, 8f);
+
+                // Stop hovering if close to the hover destination and prepare to move towards the target.
+                if (npc.WithinRange(outerHoverDestination, 90f) && attackTimer > 45f)
+                {
+                    attackTimer = initialRedirectTime;
+                    npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * npc.velocity.Length(), 0.85f);
+                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), pointAtTargetSpeed, 0.4f);
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Slow down, move towards the target (while maintaining the current direction) and create a laser telegraph.
+            if (attackTimer >= initialRedirectTime && attackTimer < initialRedirectTime + lightTelegraphTime)
+            {
+                // Create light telegraphs.
+                if (attackTimer == initialRedirectTime + 1f)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < totalLightRays; i++)
+                        {
+                            float lightRayAngularOffset = MathHelper.Lerp(-lightRaySpread, lightRaySpread, i / (float)(totalLightRays - 1f));
+
+                            int lightRayTelegraph = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightRayTelegraph>(), 0, 0f);
+                            if (Main.projectile.IndexInRange(lightRayTelegraph))
+                            {
+                                Main.projectile[lightRayTelegraph].ModProjectile<LightRayTelegraph>().RayHue = i / (float)(totalLightRays - 1f);
+                                Main.projectile[lightRayTelegraph].ModProjectile<LightRayTelegraph>().MaximumSpread = lightRayAngularOffset;
+                                Main.projectile[lightRayTelegraph].ModProjectile<LightRayTelegraph>().Lifetime = lightTelegraphTime;
+                                Main.projectile[lightRayTelegraph].netUpdate = true;
+                            }
+                        }
+                    }
+                }
+
+                // Approach the ideal position.
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), pointAtTargetSpeed, 0.05f);
+            }
+
+            // Create a massive laser.
+            if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserFireDelay)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int light = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightOverloadRay>(), 1200, 0f);
+                    if (Main.projectile.IndexInRange(light))
+                        Main.projectile[light].ModProjectile<LightOverloadRay>().LaserSpread = lightRaySpread * 0.7f;
+                }
+            }
+
+            // Create explosions that make sparks after the lasers are fired.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= initialRedirectTime + lightTelegraphTime + lightLaserFireDelay && attackTimer % 12f == 11f)
+            {
+                Vector2 targetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
+                Vector2 spawnPosition = target.Center - targetDirection.RotatedByRandom(1.1f) * Main.rand.NextFloat(325f, 650f) * new Vector2(1f, 0.6f);
+                Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<AresBeamExplosion>(), 550, 0f);
+            }
+
+            // Play a sound prior to switching attacks.
+            if (attackTimer == initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay - TransitionSoundDelay && redirectCounter >= redirectCount - 1f)
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
+
+            if (attackTimer >= initialRedirectTime + lightTelegraphTime + lightLaserShootTime + lightLaserFireDelay)
+            {
+                attackTimer = 0f;
+                hoverOffsetDirection += MathHelper.PiOver2;
+                redirectCounter++;
+                if (redirectCounter >= redirectCount)
+                    SelectNextAttack(npc);
+            }
         }
 
         public static void DoBehavior_MaximumOverdrive(NPC npc, Player target, ref float attackTimer, ref float frameType)
@@ -634,7 +933,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             if (wasCharging)
             {
-                npc.ai[0] = (int)ThanatosHeadAttackType.ExoBomb;
+                npc.ai[0] = (int)ThanatosHeadAttackType.TopwardSlam;
+                if (Main.rand.NextBool() && ExoMechManagement.CurrentThanatosPhase >= 2)
+                    npc.ai[0] = (int)ThanatosHeadAttackType.RefractionRotorRays;
+                if (Main.rand.NextBool() && ExoMechManagement.CurrentThanatosPhase >= 3)
+                    npc.ai[0] = (int)ThanatosHeadAttackType.ExoBomb;
+                if (Main.rand.NextBool() && ExoMechManagement.CurrentThanatosPhase >= 5)
+                    npc.ai[0] = (int)ThanatosHeadAttackType.ExoLightBarrage;
             }
             else
             {

@@ -723,7 +723,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 {
                     int light = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightOverloadRay>(), 1200, 0f);
                     if (Main.projectile.IndexInRange(light))
-                        Main.projectile[light].ModProjectile<LightOverloadRay>().LaserSpread = lightRaySpread * 0.7f;
+                        Main.projectile[light].ModProjectile<LightOverloadRay>().LaserSpread = lightRaySpread * 0.64f;
                 }
             }
 
@@ -936,9 +936,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.ai[0] = (int)ThanatosHeadAttackType.TopwardSlam;
                 if (Main.rand.NextBool() && ExoMechManagement.CurrentThanatosPhase >= 2)
                     npc.ai[0] = (int)ThanatosHeadAttackType.RefractionRotorRays;
-                if (Main.rand.NextBool() && ExoMechManagement.CurrentThanatosPhase >= 3)
+                if (Main.rand.NextBool(3) && ExoMechManagement.CurrentThanatosPhase >= 3)
                     npc.ai[0] = (int)ThanatosHeadAttackType.ExoBomb;
-                if (Main.rand.NextBool() && ExoMechManagement.CurrentThanatosPhase >= 5)
+                if (Main.rand.NextBool(3) && ExoMechManagement.CurrentThanatosPhase >= 5)
                     npc.ai[0] = (int)ThanatosHeadAttackType.ExoLightBarrage;
             }
             else

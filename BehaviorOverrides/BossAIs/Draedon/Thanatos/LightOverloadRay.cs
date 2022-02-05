@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             projectile.Opacity = Utils.InverseLerp(0f, 10f, Time, true) * Utils.InverseLerp(0f, 8f, projectile.timeLeft, true);
             projectile.velocity = Vector2.Zero;
             projectile.Center = StartingPosition;
-            LaserLength = MathHelper.Lerp(LaserLength, 4000f, 0.1f);
+            LaserLength = MathHelper.Lerp(LaserLength, 9000f, 0.1f);
             Time++;
         }
 
@@ -75,14 +75,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             return false;
         }
 
-        public float LaserWidthFunction(float completionRatio) => projectile.Opacity * 45f;
+        public float LaserWidthFunction(float completionRatio) => projectile.Opacity * Utils.InverseLerp(0.96f, 0.8f, completionRatio, true) * 45f;
 
         public Color LaserColorFunction(float completionRatio)
         {
             float hue = (RayHue * 2.4f + Main.GlobalTime * 0.77f) % 1f;
             Color color = CalamityUtils.MulticolorLerp(hue, CalamityUtils.ExoPalette);
             color = Color.Lerp(color, Color.Wheat, 0.4f) * projectile.Opacity * 1.3f;
-            color *= Utils.InverseLerp(0.96f, 0.9f, completionRatio, true);
+            color *= Utils.InverseLerp(0.96f, 0.8f, completionRatio, true);
             return color;
         }
 
@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 rotationPoints.Clear();
                 drawPoints.Clear();
 
-                float offsetAngle = Thanatos.rotation - MathHelper.PiOver2 + MathHelper.Lerp(-LaserSpread, LaserSpread, i / 59f);
+                float offsetAngle = Thanatos.rotation - MathHelper.PiOver2 + MathHelper.Lerp(-LaserSpread * projectile.Opacity, LaserSpread * projectile.Opacity, i / 59f);
                 for (int j = 0; j < 8; j++)
                 {
                     rotationPoints.Add(offsetAngle);
@@ -114,7 +114,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     drawPoints.Add(Vector2.Lerp(start, end, j / 8f));
                 }
 
-                LaserDrawer.Draw(drawPoints, -Main.screenPosition, 20);
                 LaserDrawer.Draw(drawPoints, -Main.screenPosition, 20);
             }
 

@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 						fireballVelocity = fireballVelocity.RotateTowards(npc.AngleTo(target.Center), MathHelper.Pi / 5f).RotatedByRandom(0.16f);
 						fireballVelocity = fireballVelocity.RotatedBy(MathHelper.Lerp(-0.27f, 0.27f, i / 2f));
 
-						int fireball = Utilities.NewProjectileBetter(npc.Center + fireballVelocity, fireballVelocity, ProjectileID.CultistBossFireBallClone, 110, 0f);
+						int fireball = Utilities.NewProjectileBetter(npc.Center + fireballVelocity, fireballVelocity, ProjectileID.CultistBossFireBallClone, 180, 0f);
 						if (!Main.projectile.IndexInRange(fireball))
 							Main.projectile[fireball].tileCollide = false;
 					}

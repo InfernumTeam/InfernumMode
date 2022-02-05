@@ -318,14 +318,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int totalShots = 15;
             int shootRate = 43;
             int shotsPerBurst = 3;
-            float shootSpread = 0.58f;
+            float shootSpread = 0.75f;
             float predictivenessFactor = 25f;
 
             Vector2 aimDestination = target.Center + target.velocity * new Vector2(1f, 1.5f) * predictivenessFactor;
             Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
+            {
                 shootRate -= 4;
+                shootSpread *= 1.2f;
+            }
             if (ExoMechManagement.CurrentTwinsPhase == 3)
             {
                 shootRate -= 6;
@@ -333,7 +336,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (ExoMechManagement.CurrentTwinsPhase >= 5)
             {
                 shootRate -= 8;
-                shootSpread *= 1.5f;
+                shootSpread *= 1.3f;
                 totalShots += 3;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)

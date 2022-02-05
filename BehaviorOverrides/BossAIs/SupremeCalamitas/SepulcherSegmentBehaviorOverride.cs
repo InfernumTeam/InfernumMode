@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.friendly = false;
             npc.dontTakeDamage = aheadSegment.dontTakeDamage;
             npc.damage = npc.dontTakeDamage ? 0 : npc.defDamage;
-            npc.Calamity().DR = npc.type == ModContent.NPCType<SCalWormBody>() ? 0.9f : 0.2f;
+            npc.Calamity().DR = npc.type == ModContent.NPCType<SCalWormBody>() ? 0.94f : 0.2f;
             if (npc.Calamity().DR > 0.2f)
                 npc.Calamity().unbreakableDR = true;
 

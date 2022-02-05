@@ -152,17 +152,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.netUpdate = true;
             }
 
+            // Define the enrage factor.
+            float enrageFactor = MathHelper.Lerp(NPC.CountNPCS(ModContent.NPCType<BrimstoneHeart>()) / 3f, 0f, 1f);
+
             // Define rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-
-            // Define whether this NPC can be homed in on.
-            npc.canGhostHeal = npc.chaseable = !NPC.AnyNPCs(ModContent.NPCType<BrimstoneHeart>());
 
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
             // Wait a little bit before attacking, so that the target has time to prepare.
-            if (attackDelay < 60f)
+            if (attackDelay < 120f)
             {
                 npc.dontTakeDamage = true;
                 attackDelay++;
@@ -175,29 +175,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             switch (AttackCycle[(int)attackCycleCounter % AttackCycle.Count])
             {
                 case SepulcherAttackState.SnapCharges:
-                    DoBehavior_SnapCharges(npc, target, lifeRatio, ref attackTimer);
+                    DoBehavior_SnapCharges(npc, target, enrageFactor, lifeRatio, ref attackTimer);
                     break;
                 case SepulcherAttackState.SoulCast:
-                    DoBehavior_SoulCast(npc, target, ref attackTimer);
+                    DoBehavior_SoulCast(npc, target, enrageFactor, ref attackTimer);
                     break;
                 case SepulcherAttackState.HellblastSlam:
-                    DoBehavior_HellblastSlam(npc, target, lifeRatio, ref attackTimer);
+                    DoBehavior_HellblastSlam(npc, target, enrageFactor, lifeRatio, ref attackTimer);
                     break;
                 case SepulcherAttackState.BrimstoneFlameBurst:
-                    DoBehavior_BrimstoneFlameBurst(npc, target, ref attackTimer);
+                    DoBehavior_BrimstoneFlameBurst(npc, target, enrageFactor, ref attackTimer);
                     break;
             }
             attackTimer++;
             return false;
         }
 
-        public static void DoBehavior_SnapCharges(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        public static void DoBehavior_SnapCharges(NPC npc, Player target, float enrageFactor, float lifeRatio, ref float attackTimer)
         {
             float idealRotation = npc.AngleTo(target.Center);
             float movementSpeed = MathHelper.Lerp(24.5f, 29f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
             movementSpeed *= Utils.InverseLerp(-5f, 60f, attackTimer, true);
+
             float acceleration = movementSpeed / 550f;
             acceleration *= Utils.InverseLerp(240f, 150f, npc.Distance(target.Center), true) + 1f;
+
+            // Move faster if enraged.
+            if (enrageFactor > 0f)
+            {
+                movementSpeed *= MathHelper.Lerp(1f, 1.5f, enrageFactor);
+                acceleration *= MathHelper.Lerp(1f, 1.5f, enrageFactor);
+            }
 
             if (!npc.WithinRange(target.Center, 160f))
             {
@@ -212,11 +220,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 GotoNextAttack(npc);
         }
 
-        public static void DoBehavior_SoulCast(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_SoulCast(NPC npc, Player target, float enrageFactor, ref float attackTimer)
         {
             float idealRotation = npc.AngleTo(target.Center);
             float movementSpeed = 14f;
             float acceleration = movementSpeed / 400f;
+            float soulShootSpeed = MathHelper.Lerp(17f, 27f, enrageFactor);
             acceleration *= Utils.InverseLerp(240f, 150f, npc.Distance(target.Center), true) * 1.25f + 1f;
 
             if (!npc.WithinRange(target.Center, 160f))
@@ -239,7 +248,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     NPC segmentToFireFrom = Main.rand.Next(segments);
                     Vector2 soulShootVelocity = (segmentToFireFrom.rotation - MathHelper.PiOver2).ToRotationVector2();
-                    soulShootVelocity = Vector2.Lerp(soulShootVelocity, segmentToFireFrom.SafeDirectionTo(target.Center + target.velocity * 50f), 0.75f) * 17f;
+                    soulShootVelocity = Vector2.Lerp(soulShootVelocity, segmentToFireFrom.SafeDirectionTo(target.Center + target.velocity * 50f), 0.75f) * soulShootSpeed;
                     int spirit = Utilities.NewProjectileBetter(segmentToFireFrom.Center, soulShootVelocity, ModContent.ProjectileType<SepulcherSpirit2>(), 500, 0f);
 
                     if (Main.projectile.IndexInRange(spirit))
@@ -254,7 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 GotoNextAttack(npc);
         }
 
-        public static void DoBehavior_HellblastSlam(NPC npc, Player target, float lifeRatio, ref float attackTimer)
+        public static void DoBehavior_HellblastSlam(NPC npc, Player target, float enrageFactor, float lifeRatio, ref float attackTimer)
         {
             int hoverRedirectTime = 240;
             Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt(), -1f) * 435f;
@@ -263,6 +272,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int chargeTime = 45;
             int chargeSlowdownTime = 25;
             int chargeCount = 3;
+            float chargeSpeed = MathHelper.Lerp(29f, 39f, enrageFactor);
             ref float idealChargeVelocityX = ref npc.Infernum().ExtraAI[0];
             ref float idealChargeVelocityY = ref npc.Infernum().ExtraAI[1];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[2];
@@ -279,8 +289,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (npc.WithinRange(hoverDestination, 80f))
                 {
                     attackTimer = hoverRedirectTime;
-                    if (npc.velocity.Length() > 29f)
-                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 29f;
+                    if (npc.velocity.Length() > chargeSpeed)
+                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * chargeSpeed;
 
                     npc.netUpdate = true;
                 }
@@ -290,6 +300,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (attackTimer == hoverRedirectTime)
             {
                 Vector2 idealChargeVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 10f) * MathHelper.Lerp(33.5f, 39.5f, 1f - lifeRatio);
+                idealChargeVelocity *= MathHelper.Lerp(1f, 1.35f, enrageFactor);
                 idealChargeVelocityX = idealChargeVelocity.X;
                 idealChargeVelocityY = idealChargeVelocity.Y;
                 npc.netUpdate = true;
@@ -335,10 +346,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-        public static void DoBehavior_BrimstoneFlameBurst(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_BrimstoneFlameBurst(NPC npc, Player target, float enrageFactor, ref float attackTimer)
         {
             float idealRotation = npc.AngleTo(target.Center);
-            float movementSpeed = 15f;
+            float movementSpeed = MathHelper.Lerp(15f, 26f, enrageFactor);
             float acceleration = movementSpeed / 550f;
 
             if (!npc.WithinRange(target.Center, 100f))

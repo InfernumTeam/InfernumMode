@@ -358,6 +358,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.024f, true) * idealVelocity.Length();
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, redirectSpeedMultiplier * 3f);
 
+                // Play a telegraph sound.
+                if (npc.WithinRange(hoverDestination, 400f) && attackTimer > 45f)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), npc.Center);
+                    attackTimer = hoverRedirectTime - 90f;
+                    npc.netUpdate = true;
+                }
+
                 // Stop hovering if close to the hover destination and prepare the charge.
                 if (npc.WithinRange(hoverDestination, 90f) && attackTimer > 45f)
                 {

@@ -87,7 +87,7 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCType<SlimeSpawnCorrupt2>(), Do(new ProjectileResistBalancingRule(0.6f, inkCloud1, inkCloud2, inkCloud3), new PierceResistBalancingRule(0.5f))),
                 new NPCBalancingChange(NPCType<SlimeSpawnCrimson3>(), Do(new ProjectileResistBalancingRule(0.6f, inkCloud1, inkCloud2, inkCloud3), new PierceResistBalancingRule(0.5f))),
 
-                // Wall of Flehsh.
+                // Wall of Flesh.
                 new NPCBalancingChange(NPCID.WallofFleshEye, Do(new PierceResistBalancingRule(0.785f), new ProjectileResistBalancingRule(0.625f, ProjectileType<TrackingDiskLaser>()))),
                 new NPCBalancingChange(NPCID.WallofFleshEye, Do(new PierceResistBalancingRule(0.785f), new ProjectileResistBalancingRule(0.625f, ProjectileType<TrackingDiskLaser>()))),
 
@@ -107,10 +107,10 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCType<RavagerHead>(), Do(new PierceResistBalancingRule(0.75f))),
 
                 // Cultist.
-                new NPCBalancingChange(NPCID.CultistDragonBody1, Do(new PierceResistBalancingRule(0.24f))),
-                new NPCBalancingChange(NPCID.CultistDragonBody2, Do(new PierceResistBalancingRule(0.24f))),
-                new NPCBalancingChange(NPCID.CultistDragonBody3, Do(new PierceResistBalancingRule(0.24f))),
-                new NPCBalancingChange(NPCID.CultistDragonBody4, Do(new PierceResistBalancingRule(0.24f))),
+                new NPCBalancingChange(NPCID.CultistDragonBody1, Do(new PierceResistBalancingRule(0.1f))),
+                new NPCBalancingChange(NPCID.CultistDragonBody2, Do(new PierceResistBalancingRule(0.1f))),
+                new NPCBalancingChange(NPCID.CultistDragonBody3, Do(new PierceResistBalancingRule(0.1f))),
+                new NPCBalancingChange(NPCID.CultistDragonBody4, Do(new PierceResistBalancingRule(0.1f))),
 
                 // The Devourer of Gods.
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileID.MoonlordBullet, ProjectileID.MoonlordArrow, ProjectileID.MoonlordArrowTrail))),

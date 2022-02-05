@@ -472,7 +472,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         if (BossRushEvent.BossRushActive)
                             fireballShootVelocity *= 1.5f;
 
-                        Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 150, 0f);
+                        Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 175, 0f);
                     }
                     frameType = (int)CultistFrameState.HoldArmsOut;
                 }
@@ -498,7 +498,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         Vector2 fireballSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(1035f, 1185f);
                         Vector2 fireballShootVelocity = (target.Center + target.velocity * 25f - fireballSpawnPosition).SafeNormalize(Vector2.UnitY) * 7f;
 
-                        int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 165, 0f);
+                        int fireball = Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ProjectileID.CultistBossFireBall, 185, 0f);
                         if (Main.projectile.IndexInRange(fireball) && phase2)
                             Main.projectile[fireball].tileCollide = false;
                     }
@@ -665,7 +665,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                                     if (BossRushEvent.BossRushActive)
                                         lightningVelocity *= 1.3f;
 
-                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 160, 0f);
+                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 180, 0f);
                                     Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();
                                     Main.projectile[lightning].ai[1] = Main.rand.Next(100);
                                     Main.projectile[lightning].tileCollide = false;
@@ -790,7 +790,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     Vector2 lightSpawnPosition = target.Center + target.velocity * 15f + Main.rand.NextVector2Circular(920f, 920f) * (BossRushEvent.BossRushActive ? 1.45f : 1f);
                     lightSpawnPosition += target.velocity * Main.rand.NextFloat(5f, 32f);
                     CreateTeleportTelegraph(npc.Center, lightSpawnPosition, 150, true, 1);
-                    int light = Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 170, 0f);
+                    int light = Utilities.NewProjectileBetter(lightSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightBurst>(), 185, 0f);
                     if (Main.projectile.IndexInRange(light))
                         Main.projectile[light].ai[0] = 215f - adjustedTime + Main.rand.Next(20);
                 }
@@ -1031,7 +1031,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     for (int i = 0; i < 5; i++)
                     {
                         Vector2 shootVelocity = (target.Center - iceMassSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * i / 5f) * 3.2f;
-                        Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), 155, 0f);
+                        Utilities.NewProjectileBetter(iceMassSpawnPosition, shootVelocity, ModContent.ProjectileType<IceMass>(), 180, 0f);
                     }
 
                     npc.Center = teleportPosition;

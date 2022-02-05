@@ -1039,13 +1039,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (currentPhase >= 3)
                 lightningCount += 6;
 
+            int attackCounter = (int)(attackTimer / (attackDelay + telegraphTime + afterShootDelay));
             float wrappedAttackTimer = attackTimer % (attackDelay + telegraphTime + afterShootDelay);
 
             // Slow down prior to creating lines.
             if (wrappedAttackTimer > attackDelay)
             {
-                hoverSpeed = 0f;
+                if (attackCounter == 0)
+                    hoverSpeed = 0f;
                 npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, hoverSpeed / 30f);
+                hoverSpeed = 0f;
             }
 
             // Hover to the top left/right of the target.

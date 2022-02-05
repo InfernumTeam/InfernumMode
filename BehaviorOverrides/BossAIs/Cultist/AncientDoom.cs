@@ -105,8 +105,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 if (BossRushEvent.BossRushActive)
                     doomVelocity *= 1.5f;
 
-                Utilities.NewProjectileBetter(projectile.Center, doomVelocity, ModContent.ProjectileType<DarkPulse>(), 130, 0f);
-                Utilities.NewProjectileBetter(projectile.Center, doomVelocity * 0.25f, ModContent.ProjectileType<DarkPulse>(), 130, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, doomVelocity, ModContent.ProjectileType<DarkPulse>(), 170, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, doomVelocity * 0.25f, ModContent.ProjectileType<DarkPulse>(), 170, 0f);
             }
             for (int i = 0; i < 9; i++)
             {

@@ -862,7 +862,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     npc.ai[0] = (int)ProvidenceAttackType.BurningAir;
                     break;
                 case 3:
-                    npc.ai[0] = phase2 && !Main.dayTime ? (int)ProvidenceAttackType.AttackerGuardians : (int)ProvidenceAttackType.BootlegRadianceSpears;
+                    npc.ai[0] = phase2 && Main.dayTime ? (int)ProvidenceAttackType.AttackerGuardians : (int)ProvidenceAttackType.BootlegRadianceSpears;
                     break;
                 case 4:
                     npc.ai[0] = (int)ProvidenceAttackType.Starburst;
@@ -889,7 +889,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     npc.ai[0] = phase2 ? (int)ProvidenceAttackType.CrystalFlames : (int)ProvidenceAttackType.BootlegRadianceSpears;
                     break;
                 case 12:
-                    npc.ai[0] = phase2 && !Main.dayTime ? (int)ProvidenceAttackType.AttackerGuardians : (int)ProvidenceAttackType.Starburst;
+                    npc.ai[0] = phase2 && Main.dayTime ? (int)ProvidenceAttackType.AttackerGuardians : (int)ProvidenceAttackType.Starburst;
                     break;
                 case 13:
                     npc.ai[0] = inRainbowCrystalState ? (int)ProvidenceAttackType.CrystalRainbowDeathray : (int)ProvidenceAttackType.BurningAir;

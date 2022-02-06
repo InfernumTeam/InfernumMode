@@ -40,7 +40,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         {
             FinFlapping,
             IdleFins,
-            OpenMouth
+            OpenMouth,
+            OpenMouthFinFlapping
         }
         #endregion
 
@@ -158,6 +159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             ref float hasEyes01Flag = ref npc.Infernum().ExtraAI[9];
             ref float attackDelay = ref npc.Infernum().ExtraAI[10];
             ref float teleportChargeCount = ref npc.Infernum().ExtraAI[11];
+            ref float eyeGlowmaskOpacity = ref npc.Infernum().ExtraAI[12];
 
             bool enraged = target.position.Y < 300f || target.position.Y > Main.worldSurface * 16.0 ||
                            target.position.X > 6000f && target.position.X < (Main.maxTilesX * 16 - 6000);
@@ -168,6 +170,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             npc.Calamity().CurrentlyEnraged = enraged;
 
             Vector2 mouthPosition = (npc.rotation + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi).ToRotationVector2() * (npc.Size + Vector2.UnitY * 55f) * 0.6f + npc.Center;
+            mouthPosition.Y += 12f;
 
             if (attackDelay < 60f)
             {
@@ -243,6 +246,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 if (phaseTransitionTime >= 95f)
                     frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
 
+                if (phaseTransitionPhase == 0f)
+                    eyeGlowmaskOpacity = phaseTransitionTime / 120f;
+
                 if (phaseTransitionTime >= 120f)
                 {
                     phaseTransitionPhase++;
@@ -313,7 +319,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         npc.netUpdate = true;
                     }
 
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
                     if (attackTimer >= angularAimTime && attackTimer < angularAimTime + chargeTime)
                         GenerateParticles(npc);
 
@@ -376,7 +382,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                     ref float hoverDirection = ref npc.Infernum().ExtraAI[0];
 
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
                     // Play sound and assign hover direction.
                     if (hoverDirection == 0f)
@@ -423,7 +429,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                     spinSpeed *= totalSpins * 0.5f;
 
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
                     if (attackTimer == 1f)
                     {
@@ -475,7 +481,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (BossRushEvent.BossRushActive)
                         bubbleShootRate = 15;
                     
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
                     // Fly a bit above the target.
                     if (attackSubstate == 0f)
@@ -835,18 +841,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public override void FindFrame(NPC npc, int frameHeight)
         {
+            npc.frame.Width = 202;
             DukeFrameDrawingType frameDrawType = (DukeFrameDrawingType)(int)npc.ai[3];
             switch (frameDrawType)
             {
                 case DukeFrameDrawingType.FinFlapping:
                     int frame = (int)(npc.frameCounter / 7) % 6;
+                    npc.frame.X = 0;
                     npc.frame.Y = frame * frameHeight;
                     break;
                 case DukeFrameDrawingType.IdleFins:
+                    npc.frame.X = 0;
                     npc.frame.Y = 0;
                     break;
                 case DukeFrameDrawingType.OpenMouth:
+                    npc.frame.X = 0;
                     npc.frame.Y = 7 * frameHeight;
+                    break;
+                case DukeFrameDrawingType.OpenMouthFinFlapping:
+                    frame = (int)(npc.frameCounter / 7) % 4 + 7;
+                    npc.frame.X = 202;
+                    npc.frame.Y = (frame - 7) * frameHeight;
                     break;
             }
             npc.frameCounter++;
@@ -854,10 +869,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            bool hasEyes = npc.Infernum().ExtraAI[9] == 1f;
-            Texture2D eyeTexture = Main.dukeFishronTexture;
-            Texture2D dukeTexture = Main.npcTexture[npc.type];
-            Vector2 origin = dukeTexture.Size() / new Vector2(1f, Main.npcFrameCount[npc.type]) / 2f;
+            bool hasEyes = npc.Infernum().ExtraAI[9] == 1f || npc.Infernum().ExtraAI[12] > 0f;
+            Texture2D eyeTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronGlowmask");
+            Texture2D dukeTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronResprite");
+            Vector2 origin = npc.frame.Size() * 0.5f;
             void drawOldDukeInstance(Color color, Vector2 drawPosition, int direction)
             {
                 SpriteEffects spriteEffects = direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
@@ -869,7 +884,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                 if (hasEyes)
                 {
-                    Color eyeColor = Color.Lerp(Color.White, Color.Yellow, 0.5f);
+                    Color eyeColor = Color.Lerp(Color.White, Color.Yellow, 0.5f) * npc.Infernum().ExtraAI[12];
                     spriteBatch.Draw(eyeTexture, drawPosition - Main.screenPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }

@@ -85,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     if (Main.myPlayer == projectile.owner && projectile.alpha == 0)
                     {
                         Vector2 spawnPosition = projectile.Center - Vector2.UnitX * projectile.spriteDirection * 40f;
-                        Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitX * projectile.spriteDirection * 45f, ModContent.ProjectileType<ProfanedSpear>(), 290, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitX * projectile.spriteDirection * 45f, ModContent.ProjectileType<ProfanedSpear2>(), 290, 0f);
 
                         for (int i = 0; i < 25; i++)
                         {
@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         {
                             Vector2 spawnPosition = projectile.Center;
                             Vector2 shootVelocity = baseShootDirection.RotatedBy(MathHelper.TwoPi * i / 13f) * 18f;
-                            Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<ProfanedSpear>(), 300, 0f);
+                            Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<ProfanedSpear2>(), 300, 0f);
                         }
                     }
 

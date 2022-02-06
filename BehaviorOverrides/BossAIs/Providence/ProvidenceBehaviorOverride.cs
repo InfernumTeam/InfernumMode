@@ -457,11 +457,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                     Vector2 sideSpearSpawnPosition = target.Center + Vector2.UnitX * 800f;
                     Vector2 sideSpearVelocity = Vector2.UnitX * -33f;
-                    Utilities.NewProjectileBetter(sideSpearSpawnPosition, sideSpearVelocity, ModContent.ProjectileType<ProfanedSpear>(), 280, 0f);
+                    Utilities.NewProjectileBetter(sideSpearSpawnPosition, sideSpearVelocity, ModContent.ProjectileType<ProfanedSpear2>(), 280, 0f);
 
                     sideSpearSpawnPosition = target.Center + Vector2.UnitX * -800f;
                     sideSpearVelocity = Vector2.UnitX * 33f;
-                    Utilities.NewProjectileBetter(sideSpearSpawnPosition, sideSpearVelocity, ModContent.ProjectileType<ProfanedSpear>(), 280, 0f);
+                    Utilities.NewProjectileBetter(sideSpearSpawnPosition, sideSpearVelocity, ModContent.ProjectileType<ProfanedSpear2>(), 280, 0f);
                 }
                 skySpearWaveCount++;
             }
@@ -615,6 +615,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int totalMeteorShowers = 4;
             int meteorShowerFireRate = 40;
             int totalMeteorsPerBurst = 2;
+            int attackTransitionDelay = 135;
 
             if (!Main.dayTime)
             {
@@ -632,9 +633,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 npc.Center = Vector2.Lerp(npc.Center, target.Center - Vector2.UnitY * 440f, 0.28f);
 
             // Release a bunch of holy blast meteors from above Providence 
-            if (Main.netMode != NetmodeID.MultiplayerClient &&
-                attackTimer % meteorShowerFireRate == meteorShowerFireRate - 1 &&
-                completedMeteorShowers < totalMeteorShowers)
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % meteorShowerFireRate == meteorShowerFireRate - 1 && completedMeteorShowers < totalMeteorShowers)
             {
                 for (int i = 0; i < totalMeteorsPerBurst; i++)
                 {
@@ -644,10 +643,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     Utilities.NewProjectileBetter(spawnPosition, showerDirection * 16f, ModContent.ProjectileType<HolyBlast>(), 280, 0f, Main.myPlayer);
                 }
                 completedMeteorShowers++;
+                if (completedMeteorShowers >= totalMeteorShowers)
+                    attackTimer = 0f;
+
                 npc.netUpdate = true;
             }
 
-            if (completedMeteorShowers >= totalMeteorShowers)
+            if (completedMeteorShowers >= totalMeteorShowers && attackTimer > attackTransitionDelay)
                 SelectNextAttack(npc, phase2, inRainbowCrystalState);
         }
 
@@ -690,9 +692,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // This is done to prevent cheap shots.
                 bool veryCloseToPlayer = npc.WithinRange(target.Center, 180f);
 
-                if (!veryCloseToPlayer &&
-                    burstCounter < totalCrystalBursts &&
-                    burstTimer >= crystalBurstShootRate)
+                if (!veryCloseToPlayer && burstCounter < totalCrystalBursts && burstTimer >= crystalBurstShootRate)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -775,14 +775,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float farAwayEnrageInterpolant = Utils.InverseLerp(500f, 1900f, npc.Distance(target.Center), true);
+                    float farAwayEnrageInterpolant = Utils.InverseLerp(800f, 2400f, npc.Distance(target.Center), true);
                     float crystalShootSpeed = MathHelper.Lerp(5f, 31f, farAwayEnrageInterpolant);
                     Vector2 shootPosition = crystalCenter;
                     Vector2 shootVelocity = ((attackTimer - shootDelay) * MathHelper.TwoPi / 120f).ToRotationVector2() * crystalShootSpeed;
 
                     // Approach a velocity that points directly at the player with a bit of variance the farther away they ary.
                     Vector2 offsetPointVelocity = npc.SafeDirectionTo(target.Center) * crystalShootSpeed + Main.rand.NextVector2Circular(crystalShootSpeed, crystalShootSpeed) * 0.3f;
-                    shootVelocity = Vector2.Lerp(shootVelocity, offsetPointVelocity, farAwayEnrageInterpolant);
+                    shootVelocity = Vector2.Lerp(shootVelocity, offsetPointVelocity, (float)Math.Pow(farAwayEnrageInterpolant, 2D));
 
                     Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<RainbowCrystal2>(), 280, 0f, Main.myPlayer);
                     Utilities.NewProjectileBetter(shootPosition, -shootVelocity, ModContent.ProjectileType<RainbowCrystal2>(), 280, 0f, Main.myPlayer);

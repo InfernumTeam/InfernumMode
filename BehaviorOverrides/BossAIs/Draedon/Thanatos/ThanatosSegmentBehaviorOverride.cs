@@ -121,7 +121,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         
                         switch ((int)headAttackType)
                         {
-                            case (int)ThanatosHeadAttackType.ExoBomb:
+                            // Fire regular lasers.
+                            case (int)ThanatosHeadAttackType.LaserBarrage:
+                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserBarrage:
+                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle:
+                                int type = ModContent.ProjectileType<ThanatosLaser>();
+                                float predictionFactor = 21f;
+                                float shootSpeed = generalShootSpeedFactor * 10f;
+
+                                // Predictive laser.
+                                Vector2 projectileDestination = target.Center + target.velocity * predictionFactor;
+                                int laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                if (Main.projectile.IndexInRange(laser))
+                                {
+                                    Main.projectile[laser].owner = npc.target;
+                                    Main.projectile[laser].ModProjectile<ThanatosLaser>().InitialDestination = projectileDestination;
+                                    Main.projectile[laser].ai[1] = npc.whoAmI;
+                                }
+
+                                // Opposite laser.
+                                projectileDestination = target.Center - target.velocity * predictionFactor;
+                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                if (Main.projectile.IndexInRange(laser))
+                                {
+                                    Main.projectile[laser].owner = npc.target;
+                                    Main.projectile[laser].ModProjectile<ThanatosLaser>().InitialDestination = projectileDestination;
+                                    Main.projectile[laser].ai[1] = npc.whoAmI;
+                                    Main.projectile[laser].netUpdate = true;
+                                }
                                 break;
                         }
                     }
@@ -228,6 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody1Glow");
             spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            npc.ModNPC<ThanatosBody1>().SmokeDrawer.DrawSet(npc.Center);
             return false;
         }
     }
@@ -265,6 +293,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody2Glow");
             spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            npc.ModNPC<ThanatosBody2>().SmokeDrawer.DrawSet(npc.Center);
             return false;
         }
     }

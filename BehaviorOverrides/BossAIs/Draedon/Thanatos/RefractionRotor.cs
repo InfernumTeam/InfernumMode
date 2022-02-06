@@ -14,7 +14,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public ref float TotalLasersToFire => ref projectile.ai[0];
         public ref float LaserShootOffsetAngle => ref projectile.ai[1];
         public Player Target => Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-        public float PointAtTargetInterpolant => Utils.InverseLerp(2400f, 3200f, projectile.Distance(Target.Center), true);
+        public float PointAtTargetInterpolant => Utils.InverseLerp(1600f, 2500f, projectile.Distance(Target.Center), true);
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Refraction Rotor");
@@ -123,11 +123,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 for (int i = 0; i < TotalLasersToFire; i++)
                 {
+                    float laserShootSpeed = MathHelper.Lerp(21f, 35f, PointAtTargetInterpolant);
                     Vector2 laserDirection = (MathHelper.TwoPi * i / TotalLasersToFire + LaserShootOffsetAngle).ToRotationVector2();
                     Vector2 aimedOffset = (Utils.RandomNextSeed((ulong)(i + projectile.identity)) * MathHelper.E % MathHelper.TwoPi).ToRotationVector2() * 0.2f;
                     Vector2 aimedDirection = (projectile.SafeDirectionTo(Target.Center) + aimedOffset).SafeNormalize(Vector2.UnitY);
                     laserDirection = Vector2.Lerp(laserDirection, aimedDirection, PointAtTargetInterpolant);
-                    Vector2 laserVelocity = laserDirection * 21f;
+                    Vector2 laserVelocity = laserDirection * laserShootSpeed;
                     int spark = Utilities.NewProjectileBetter(projectile.Center, laserVelocity, ModContent.ProjectileType<ExolaserSpark>(), 500, 0f);
                     if (Main.projectile.IndexInRange(spark))
                         Main.projectile[spark].MaxUpdates = 3;

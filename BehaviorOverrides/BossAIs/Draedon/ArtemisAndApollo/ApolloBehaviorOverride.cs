@@ -107,6 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     ModContent.ProjectileType<ArtemisChargeFlameExplosion>(),
                     ModContent.ProjectileType<ExofireSpark>(),
                     ModContent.ProjectileType<PlasmaSpark>(),
+                    ModContent.ProjectileType<ApolloFlamethrower>()
                 };
 
                 for (int i = 0; i < Main.maxProjectiles; i++)
@@ -321,7 +322,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             float shootSpread = 0.75f;
             float predictivenessFactor = 25f;
 
-            Vector2 aimDestination = target.Center + target.velocity * new Vector2(1f, 1.5f) * predictivenessFactor;
+            Vector2 aimDestination = target.Center + target.velocity * new Vector2(1f, 1.1f) * predictivenessFactor;
             Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
@@ -364,7 +365,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.netUpdate = true;
             }
 
-            float projectileShootSpeed = MathHelper.Lerp(1.9f, 4.7f, Utils.InverseLerp(0f, 210f, generalAttackTimer, true));
+            float projectileShootSpeed = MathHelper.Lerp(2.7f, 7f, Utils.InverseLerp(0f, 210f, generalAttackTimer, true));
             Vector2 hoverDestination = target.Center;
             hoverDestination.X += hoverOffsetX;
             hoverDestination += Vector2.UnitY * hoverSide * 540f;

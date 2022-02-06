@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     {
         public int Lifetime;
         public NPC Thanatos => Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
-        public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread).ToRotationVector2() * projectile.Opacity * 135f;
+        public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread).ToRotationVector2() * projectile.Opacity * 275f;
 
         public Color RayColor => CalamityUtils.MulticolorLerp(RayHue, CalamityUtils.ExoPalette);
         public Color HueDownscaledRayColor => RayColor * 0.66f;
@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Fade in, grow, and spread out.
             float fadeInInterpolant = Utils.InverseLerp(0f, Lifetime * 0.45f, Time, true) * Utils.InverseLerp(Lifetime, Lifetime - 12f, Time, true);
-            float lightOffset = MathHelper.Lerp(20f, (float)Math.Sin(Time / 7f) * 45f + 1000f, fadeInInterpolant);
+            float lightOffset = MathHelper.Lerp(20f, (float)Math.Sin(Time / 7f) * 75f + 1850f, fadeInInterpolant);
             float offsetAngleFactor = MathHelper.Lerp(0.7f, 1f, (float)Math.Cos(Time / 23f) * 0.5f + 0.5f);
             CurrentSpread = MathHelper.Lerp(CurrentSpread, MaximumSpread, 0.015f);
             projectile.Opacity = fadeInInterpolant;

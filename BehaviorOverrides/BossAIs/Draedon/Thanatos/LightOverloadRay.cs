@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         {
             float hue = (RayHue * 2.4f + Main.GlobalTime * 0.77f) % 1f;
             Color color = CalamityUtils.MulticolorLerp(hue, CalamityUtils.ExoPalette);
-            color = Color.Lerp(color, Color.Wheat, 0.4f) * projectile.Opacity * 1.3f;
+            color = Color.Lerp(color, Color.Wheat, 0.4f) * projectile.Opacity;
             color *= Utils.InverseLerp(0.96f, 0.8f, completionRatio, true);
             return color;
         }
@@ -99,6 +99,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             List<float> rotationPoints = new List<float>();
             List<Vector2> drawPoints = new List<Vector2>();
 
+            var oldBlendState = Main.instance.GraphicsDevice.BlendState;
+            Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
             for (int i = 0; i < 60; i++)
             {
                 RayHue = i / 59f;
@@ -115,9 +117,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 }
 
                 LaserDrawer.Draw(drawPoints, -Main.screenPosition, 20);
+                LaserDrawer.Draw(drawPoints, -Main.screenPosition, 20);
             }
-
-            spriteBatch.ResetBlendState();
+            Main.instance.GraphicsDevice.BlendState = oldBlendState;
             return false;
         }
 

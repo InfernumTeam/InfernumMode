@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             frameType = (int)ThanatosFrameType.Closed;
 
             // Reset damage.
-            npc.defDamage = 750;
+            npc.defDamage = 775;
             npc.damage = npc.defDamage;
 
             // Define attack variables.
@@ -107,6 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     previous = lol;
                 }
 
+                npc.ai[0] = (int)ThanatosHeadAttackType.LaserBarrage;
                 finalMechIndex = -1f;
                 complementMechIndex = -1f;
                 segmentsSpawned++;
@@ -741,6 +742,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Vector2 outerHoverOffset = hoverOffsetDirection.ToRotationVector2() * 1200f;
             Vector2 outerHoverDestination = target.Center + outerHoverOffset;
 
+            // Clamp Thanatos' position to stay in the world.
+            // This is very important, as the telegraph might simply not appear if Thanatos is too high up.
+            if (npc.position.Y < 1000f)
+                npc.position.Y = 1000f;
+
             // Attempt to get into position for the light attack.
             if (attackTimer < initialRedirectTime)
             {
@@ -1000,6 +1006,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public static void SelectNextAttack(NPC npc)
         {
+            ref float previousSpecialAttack = ref npc.Infernum().ExtraAI[18];
+
             ThanatosHeadAttackType oldAttackType = (ThanatosHeadAttackType)(int)npc.ai[0];
             // Update learning stuff.
             ExoMechManagement.DoPostAttackSelections(npc);
@@ -1009,15 +1017,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             if (wasCharging)
             {
-                npc.ai[0] = (int)ThanatosHeadAttackType.TopwardSlam;
-                if (Main.rand.NextBool())
-                    npc.ai[0] = (int)ThanatosHeadAttackType.LaserBarrage;
-                if (Main.rand.NextBool() && ExoMechManagement.CurrentThanatosPhase >= 2)
-                    npc.ai[0] = (int)ThanatosHeadAttackType.RefractionRotorRays;
-                if (Main.rand.NextBool(3) && ExoMechManagement.CurrentThanatosPhase >= 3)
-                    npc.ai[0] = (int)ThanatosHeadAttackType.ExoBomb;
-                if (Main.rand.NextBool(3) && ExoMechManagement.CurrentThanatosPhase >= 5)
-                    npc.ai[0] = (int)ThanatosHeadAttackType.ExoLightBarrage;
+                do
+                {
+                    npc.ai[0] = (int)ThanatosHeadAttackType.TopwardSlam;
+                    if (Main.rand.NextBool())
+                        npc.ai[0] = (int)ThanatosHeadAttackType.LaserBarrage;
+                    if (Main.rand.NextBool() && ExoMechManagement.CurrentThanatosPhase >= 2)
+                        npc.ai[0] = (int)ThanatosHeadAttackType.RefractionRotorRays;
+                    if (Main.rand.NextBool(3) && ExoMechManagement.CurrentThanatosPhase >= 3)
+                        npc.ai[0] = (int)ThanatosHeadAttackType.ExoBomb;
+                    if (Main.rand.NextBool(3) && ExoMechManagement.CurrentThanatosPhase >= 5)
+                        npc.ai[0] = (int)ThanatosHeadAttackType.ExoLightBarrage;
+                }
+                while (npc.ai[0] == previousSpecialAttack);
+                previousSpecialAttack = npc.ai[0];
             }
             else
             {

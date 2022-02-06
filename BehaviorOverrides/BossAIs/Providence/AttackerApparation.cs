@@ -70,11 +70,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 case AttackState.TopLeftCharge:
                     projectile.velocity = projectile.SafeDirectionTo(Target.Center) * 22.5f;
                     projectile.spriteDirection = (projectile.velocity.X < 0).ToDirectionInt();
-
+                    if (!Main.dayTime)
+                        projectile.velocity *= 1.4f;
                     break;
                 case AttackState.HorizontalCharge:
                     projectile.rotation = 0f;
                     projectile.velocity = Vector2.UnitX * -DirectionBias * 31f;
+                    if (!Main.dayTime)
+                        projectile.velocity *= 1.4f;
+
                     projectile.spriteDirection = (projectile.velocity.X < 0).ToDirectionInt();
 
                     // Fire a spear and a lot of fire.
@@ -234,6 +238,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     break;
                 case AttackState.HorizontalCharge:
                     projectile.velocity.X *= 1.005f;
+                    if (!Main.dayTime)
+                        projectile.velocity *= 1.003f;
 
                     if (AttackTimer >= 45f)
                         projectile.velocity.X *= 0.9f;
@@ -259,7 +265,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

@@ -75,7 +75,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 drawPos = projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY);
-            Color baseColor = DarknessVariant ? Color.LightCyan : new Color(255, 200, 100, 255);
+            Color baseColor = new Color(255, 200, 100, 255);
+            if (!Main.dayTime)
+                baseColor = CalamityUtils.MulticolorLerp(projectile.identity / 6f % 0.6f, ProvidenceBehaviorOverride.NightPalette);
+
             baseColor *= projectile.Opacity * 0.5f;
             baseColor.A = 0;
             Color colorA = baseColor;

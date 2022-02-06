@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace CalamityMod.Projectiles.Ranged
 {
-	public class PrismRay : BaseLaserbeamProjectile
+    public class PrismRay : BaseLaserbeamProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
@@ -64,20 +64,20 @@ namespace CalamityMod.Projectiles.Ranged
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.EnterShaderRegion(spriteBatch);
+            spriteBatch.EnterShaderRegion();
 
             // Apply a super special shader to the laser.
+            Texture2D laserTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTextureTransparent");
+            if (!Main.dayTime)
+                laserTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTextureTransparentNight");
+
             MiscShaderData gradientShader = GameShaders.Misc["Infernum:GradientWingShader"];
             gradientShader.UseImage("Images/Misc/Noise");
             gradientShader.UseOpacity(0.7f);
+            gradientShader.SetShaderTexture(laserTexture);
 
-            // Use reflection to set the image (fuck you Terraria).
-            typeof(MiscShaderData).GetField("_uImage", BindingFlags.NonPublic | BindingFlags.Instance).
-                SetValue(gradientShader, new Ref<Texture2D>(ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTextureTransparent")));
-
-            // And draw the wings.
+            // And draw the laser.
             gradientShader.Apply(null);
-
             base.PreDraw(spriteBatch, lightColor);
 
             Utilities.ExitShaderRegion(spriteBatch);

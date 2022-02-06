@@ -351,10 +351,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float hoverOffsetX = ref npc.Infernum().ExtraAI[0];
             ref float shootCounter = ref npc.Infernum().ExtraAI[1];
             ref float generalAttackTimer = ref npc.Infernum().ExtraAI[2];
+            ref float angleOffsetSeed = ref npc.Infernum().ExtraAI[3];
 
             generalAttackTimer++;
             if (shootCounter < 0f)
                 shootCounter = 0f;
+
+            // Initialize a seed.
+            if (angleOffsetSeed == 0f)
+            {
+                angleOffsetSeed = Main.rand.Next();
+                npc.netUpdate = true;
+            }
 
             float projectileShootSpeed = MathHelper.Lerp(1.9f, 4.7f, Utils.InverseLerp(0f, 210f, generalAttackTimer, true));
             Vector2 hoverDestination = target.Center;
@@ -375,10 +383,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             {
                 if (npc.WithinRange(hoverDestination, 200f) && !dontFireYet)
                 {
+                    ulong seed = (ulong)angleOffsetSeed;
                     for (int i = 0; i < shotsPerBurst; i++)
                     {
                         float offsetAngle = MathHelper.Lerp(-shootSpread, shootSpread, i / (float)(shotsPerBurst - 1f));
+                        offsetAngle += MathHelper.Lerp(-0.1f, 0.1f, seed / 1000f % 1f);
                         Vector2 projectileShootVelocity = aimDirection.RotatedBy(offsetAngle) * projectileShootSpeed;
+
+                        // Select the next seed.
+                        seed = Utils.RandomNextSeed(seed);
 
                         if (npc.type == ModContent.NPCType<Apollo>())
                         {
@@ -390,7 +403,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                                 int plasma = Utilities.NewProjectileBetter(npc.Center, projectileShootVelocity, ModContent.ProjectileType<ApolloTelegraphedPlasmaSpark>(), 500, 0f);
                                 if (Main.projectile.IndexInRange(plasma))
                                 {
-                                    Main.projectile[plasma].ModProjectile<ApolloTelegraphedPlasmaSpark>().InitialDestination = aimDestination + projectileShootVelocity.SafeNormalize(Vector2.UnitY) * 1000f;
+                                    Main.projectile[plasma].ModProjectile<ApolloTelegraphedPlasmaSpark>().InitialDestination = aimDestination + projectileShootVelocity.SafeNormalize(Vector2.UnitY) * 2400f;
                                     Main.projectile[plasma].ai[1] = npc.whoAmI;
                                     Main.projectile[plasma].netUpdate = true;
                                 }
@@ -406,7 +419,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                                 int laser = Utilities.NewProjectileBetter(npc.Center, projectileShootVelocity, ModContent.ProjectileType<ArtemisLaser>(), 500, 0f);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
-                                    Main.projectile[laser].ModProjectile<ArtemisLaser>().InitialDestination = aimDestination + projectileShootVelocity.SafeNormalize(Vector2.UnitY) * 1000f;
+                                    Main.projectile[laser].ModProjectile<ArtemisLaser>().InitialDestination = aimDestination + projectileShootVelocity.SafeNormalize(Vector2.UnitY) * 2400f;
                                     Main.projectile[laser].ai[1] = npc.whoAmI;
                                     Main.projectile[laser].netUpdate = true;
                                 }
@@ -415,6 +428,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     }
                 }
 
+                angleOffsetSeed = Main.rand.Next();
                 hoverOffsetX = Main.rand.NextFloat(-50f, 50f);
                 attackTimer = 0f;
                 shootCounter++;

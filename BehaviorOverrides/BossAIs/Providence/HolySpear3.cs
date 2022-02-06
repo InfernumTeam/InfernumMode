@@ -61,6 +61,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
 			Texture2D spearTexture = Main.projectileTexture[projectile.type];
 			Color baseColor = Color.OrangeRed;
+			if (!Main.dayTime)
+				baseColor = CalamityUtils.MulticolorLerp(projectile.identity / 6f % 0.65f, ProvidenceBehaviorOverride.NightPalette);
+
 			baseColor.A = 128;
 
 			float fadeFactor = Utils.InverseLerp(15f, 30f, projectile.timeLeft, true) * Utils.InverseLerp(360f, 340f, projectile.timeLeft, true) * (1f + 0.2f * (float)Math.Cos(Main.GlobalTime % 80f / 0.5f * MathHelper.TwoPi * 3f)) * 0.8f;

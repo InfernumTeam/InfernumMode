@@ -39,7 +39,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public float SunWidthFunction(float completionRatio) => Radius * projectile.scale * (float)Math.Sin(MathHelper.Pi * completionRatio);
 
-        public Color SunColorFunction(float completionRatio) => Color.Lerp(Color.Yellow, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * projectile.Opacity;
+        public Color SunColorFunction(float completionRatio)
+        {
+            Color sunColor = Main.dayTime ? Color.Yellow : Color.Cyan;
+            return Color.Lerp(sunColor, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * projectile.Opacity;
+        }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {

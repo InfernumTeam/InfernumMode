@@ -93,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (LaserDrawer is null)
                 LaserDrawer = new PrimitiveTrailCopy(LaserWidthFunction, LaserColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
-            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.58f);
+            GameShaders.Misc["Infernum:Fire"].UseSaturation(0.14f);
             GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"));
 
             List<float> rotationPoints = new List<float>();

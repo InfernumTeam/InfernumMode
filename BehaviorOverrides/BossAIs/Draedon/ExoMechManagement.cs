@@ -326,8 +326,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedon))
                 return;
 
-            Main.npc[CalamityGlobalNPC.draedon].localAI[0] = statementType;
-            Main.npc[CalamityGlobalNPC.draedon].ai[0] = DraedonNPC.ExoMechPhaseDialogueTime;
+            if (Main.npc[CalamityGlobalNPC.draedon].localAI[0] < statementType)
+            {
+                Main.npc[CalamityGlobalNPC.draedon].localAI[0] = statementType;
+                Main.npc[CalamityGlobalNPC.draedon].ai[0] = DraedonNPC.ExoMechPhaseDialogueTime;
+            }
         }
 
         // Bias attacks back to a normal on completion.

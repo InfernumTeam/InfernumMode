@@ -442,26 +442,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 totalSegmentsToFire = 20f;
                 segmentFireTime = 75f;
 
-                if (ExoMechManagement.CurrentThanatosPhase == 4)
-                {
-                    totalSegmentsToFire -= 4f;
-                    segmentFireTime += 10f;
-                }
-                else
-                {
-                    if (ExoMechManagement.CurrentThanatosPhase >= 2)
-                        totalSegmentsToFire += 6f;
-                }
+                if (ExoMechManagement.CurrentThanatosPhase >= 2)
+                    totalSegmentsToFire += 3f;
                 if (ExoMechManagement.CurrentThanatosPhase >= 3)
-                    totalSegmentsToFire += 4f;
+                    totalSegmentsToFire += 3f;
                 if (ExoMechManagement.CurrentThanatosPhase >= 5)
                 {
-                    totalSegmentsToFire += 4f;
+                    totalSegmentsToFire += 3f;
                     segmentFireTime += 10f;
                 }
                 if (ExoMechManagement.CurrentThanatosPhase >= 6)
                 {
-                    totalSegmentsToFire += 6f;
+                    totalSegmentsToFire += 5f;
                     segmentFireTime += 8f;
                 }
 
@@ -488,7 +480,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             int initialRedirectTime = 360;
             int spinBufferTime = 300;
             int intendedSpinTime = 105;
-            int postSpinChargeTime = 85;
+            int postSpinChargeTime = 165;
             float chargeSpeed = 37f;
             float spinSpeed = 51f;
             float totalRotations = 1f;
@@ -569,7 +561,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * npc.velocity.Length();
 
-                    float bombSpeed = MathHelper.Lerp(17f, 39f, Utils.InverseLerp(750f, 1500f, npc.Distance(target.Center), true));
+                    float bombSpeed = MathHelper.Lerp(15f, 35f, Utils.InverseLerp(750f, 1500f, npc.Distance(target.Center), true));
                     foreach (Projectile exoBomb in Utilities.AllProjectilesByID(ModContent.ProjectileType<ExolaserBomb>()))
                     {
                         exoBomb.velocity = exoBomb.SafeDirectionTo(target.Center + target.velocity * 25f) * bombSpeed;
@@ -601,6 +593,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             int chargePreparationTime = 60;
             int redirectTime = 90;
             int chargeTime = 75;
+            int attackShiftDelay = 120;
             int lasersPerRotor = 5;
             int rotorReleaseRate = 5;
             int chargeCount = 2;
@@ -699,11 +692,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Play a sound prior to switching attacks.
-            if (attackTimer == slowdownTime + chargePreparationTime + redirectTime + chargeTime - TransitionSoundDelay && chargeCounter >= chargeCount - 1f)
+            if (attackTimer == slowdownTime + chargePreparationTime + redirectTime + chargeTime + attackShiftDelay - TransitionSoundDelay && chargeCounter >= chargeCount - 1f)
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThanatosTransition"), target.Center);
 
             // Perform the attack again if necessary.
-            if (attackTimer >= slowdownTime + chargePreparationTime + redirectTime + chargeTime)
+            if (attackTimer >= slowdownTime + chargePreparationTime + redirectTime + chargeTime + attackShiftDelay)
             {
                 chargeCounter++;
                 attackTimer = 0f;
@@ -744,8 +737,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             // Clamp Thanatos' position to stay in the world.
             // This is very important, as the telegraph might simply not appear if Thanatos is too high up.
-            if (npc.position.Y < 1000f)
-                npc.position.Y = 1000f;
+            if (npc.position.Y < 600f)
+                npc.position.Y = 600f;
 
             // Attempt to get into position for the light attack.
             if (attackTimer < initialRedirectTime)
@@ -836,7 +829,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             int attackTime = 720;
             int cooloffTime = 360;
             float chargeSpeedInterpolant = Utils.InverseLerp(0f, 45f, attackTimer, true) * Utils.InverseLerp(attackTime, attackTime - 45f, attackTimer, true);
-            float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.4f, chargeSpeedInterpolant);
+            float chargeSpeedFactor = MathHelper.Lerp(0.3f, 1.3f, chargeSpeedInterpolant);
 
             ref float coolingOff = ref npc.Infernum().ExtraAI[0];
 
@@ -952,8 +945,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     generalSpeedFactor *= 1.1f;
                 if (ExoMechManagement.CurrentThanatosPhase >= 5)
                 {
-                    generalSpeedFactor *= 1.21f;
-                    flyAcceleration *= 1.21f;
+                    generalSpeedFactor *= 1.18f;
+                    flyAcceleration *= 1.18f;
                 }
             }
 

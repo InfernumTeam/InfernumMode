@@ -71,6 +71,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             bool moving = ExistTimer >= BuildTime && !Unfinished;
 
             // Attempt to hit the target if moving.
+            List<NPC> builders = Main.npc.Where(n =>
+            {
+                return n.active && (n.type == ModContent.NPCType<BuilderDroneSmall>() || n.type == ModContent.NPCType<BuilderDroneBig>());
+            }).ToList();
             if (moving)
             {
                 npc.velocity = (npc.velocity * 39f + npc.SafeDirectionTo(Target.Center) * 14f) / 40f;
@@ -93,11 +97,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
             else
             {
-                List<NPC> builders = Main.npc.Where(n =>
-                {
-                    return n.active && (n.type == ModContent.NPCType<BuilderDroneSmall>() || n.type == ModContent.NPCType<BuilderDroneBig>());
-                }).ToList();
-
                 // Stop being built mid-way if the builders are all gone.
                 if (builders.Count == 0)
 				{

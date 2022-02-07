@@ -63,10 +63,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             if (projectile.Opacity < 1f)
                 return false;
 
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < 45; i++)
             {
                 float _ = 0f;
-                float offsetAngle = MathHelper.Lerp(-LaserSpread, LaserSpread, i / 59f);
+                float offsetAngle = MathHelper.Lerp(-LaserSpread, LaserSpread, i / 44f);
                 Vector2 start = StartingPosition;
                 Vector2 end = start + (Thanatos.rotation - MathHelper.PiOver2 + offsetAngle).ToRotationVector2() * LaserLength;
                 if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, projectile.scale * 50f, ref _))
@@ -101,13 +101,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < 45; i++)
             {
-                RayHue = i / 59f;
+                RayHue = i / 44f;
                 rotationPoints.Clear();
                 drawPoints.Clear();
 
-                float offsetAngle = Thanatos.rotation - MathHelper.PiOver2 + MathHelper.Lerp(-LaserSpread * projectile.Opacity, LaserSpread * projectile.Opacity, i / 59f);
+                float offsetAngle = Thanatos.rotation - MathHelper.PiOver2 + MathHelper.Lerp(-LaserSpread * projectile.Opacity, LaserSpread * projectile.Opacity, i / 44f);
                 for (int j = 0; j < 8; j++)
                 {
                     rotationPoints.Add(offsetAngle);

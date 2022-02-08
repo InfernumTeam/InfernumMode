@@ -71,10 +71,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             bool thanatosIsFiring = headAttackType != ThanatosHeadAttackType.AggressiveCharge && head.Infernum().ExtraAI[1] > 0f;
             bool segmentShouldContiuouslyBeOpen = headAttackType == ThanatosHeadAttackType.MaximumOverdrive && head.Infernum().ExtraAI[0] == 1f;
 
-            // Prevent the player for dashing through segments during the spin combo attack by becoming completely invincible.
-            if ((int)head.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_ExplosionCircle)
-                npc.dontTakeDamage = true;
-
             // Handle segment opening/closing and projectile firing.
             if (thanatosIsFiring && canBeOpen)
             {
@@ -123,7 +119,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         {
                             // Fire regular lasers.
                             case (int)ThanatosHeadAttackType.LaserBarrage:
-                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserBarrage:
                             case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle:
                                 int type = ModContent.ProjectileType<ThanatosLaser>();
                                 float predictionFactor = 21f;

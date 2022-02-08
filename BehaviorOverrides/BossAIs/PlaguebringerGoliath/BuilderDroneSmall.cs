@@ -85,14 +85,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Randomly play sounds to indicate building.
             if (Main.rand.NextBool(45))
             {
-                NPC nuke = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<BuilderDroneBig>())];
+                NPC nuke = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<PlagueNuke>())];
                 Vector2 end = nuke.Center + Main.rand.NextVector2Circular(8f, 8f);
-                Dust.QuickDust(npc.Center, Color.Lime).scale = 2f;
-                Dust.QuickDust(end, Color.Lime).scale = 2f;
+                Dust.QuickDust(npc.Center, Color.Lime).scale = 1.4f;
+                Dust.QuickDust(end, Color.Lime).scale = 1.4f;
                 for (float num2 = 0f; num2 < 1f; num2 += 0.01f)
-                {
                     Dust.QuickDust(Vector2.Lerp(npc.Center, end, num2), Color.Lime).scale = 0.95f;
-                }
+
                 switch (Main.rand.Next(4))
                 {
                     case 0:

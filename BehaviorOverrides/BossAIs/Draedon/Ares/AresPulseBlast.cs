@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.Opacity = 0f;
-            projectile.timeLeft = 120;
+            projectile.timeLeft = 80;
             cooldownSlot = 1;
         }
 

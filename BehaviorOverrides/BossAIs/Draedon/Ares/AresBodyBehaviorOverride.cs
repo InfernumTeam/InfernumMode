@@ -681,10 +681,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (aresBody.Infernum().ExtraAI[14] < 150f && (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresPulseCannon>()))
                 return true;
 
-            // The tesla arm is disabled when on the same side as the laser arm during the laser barrage combo attack.
-            if (npc.type == ModContent.NPCType<AresTeslaCannon>() && aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserBarrage && aresBody.Infernum().ExtraAI[15] == 1f)
-                return true;
-
             // If Ares is specifically using a combo attack that specifies certain arms should be active, go based on which ones should be active.
             if (ExoMechComboAttackContent.AffectedAresArms.TryGetValue((ExoMechComboAttackContent.ExoMechComboAttackType)aresBody.ai[0], out int[] activeArms))
                 return !activeArms.Contains(npc.type);

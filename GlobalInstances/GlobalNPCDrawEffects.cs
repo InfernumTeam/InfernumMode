@@ -1,6 +1,7 @@
 ﻿using CalamityMod.NPCs;
 using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.Yharon;
@@ -27,6 +28,17 @@ namespace InfernumMode.GlobalInstances
                 if (InfernumMode.CanUseCustomAIs)
                     return MoonLordCoreBehaviorOverride.OverallTint;
             }
+
+            if (npc.type == ModContent.NPCType<ThanatosHead>() ||
+                npc.type == ModContent.NPCType<ThanatosBody1>() ||
+                npc.type == ModContent.NPCType<ThanatosBody2>() ||
+                npc.type == ModContent.NPCType<ThanatosTail>())
+            {
+                bool dealsNoContactDamage = npc.damage == 0;
+                npc.Infernum().ExtraAI[20] = MathHelper.Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
+                return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 1.2f, npc.Infernum().ExtraAI[20]);
+            }
+
             return base.GetAlpha(npc, drawColor);
         }
         #endregion

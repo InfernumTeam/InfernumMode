@@ -278,8 +278,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     }
                     
                     int shockwaveDamage = shouldBeBuffed ? 380 : 250;
-                    if (Main.netMode != NetmodeID.MultiplayerClient && !anyLimbsArePresent)
-                        Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        if (!anyLimbsArePresent)
+                            NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BreakableRockPillar>(), npc.whoAmI);
+                        else
+                            Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
+                    }
 
                     jumpState = 0f;
                     npc.netUpdate = true;
@@ -310,7 +315,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         {
             int sitStillTime = (int)MathHelper.Lerp(720f, 560f, 1f - lifeRatio);
             int soulTorrentReleaseTime = shouldBeBuffed ? 295 : 240;
-            int soulShootRate = (int)MathHelper.Lerp(14f, 8f, 1f - lifeRatio);
+            int soulShootRate = (int)MathHelper.Lerp(33f, 24f, 1f - lifeRatio);
             ref float attackState = ref npc.Infernum().ExtraAI[3];
 
             switch ((int)attackState)
@@ -429,6 +434,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<RavagerScreamBoom>(), 0, 0f);
+
+                            for (int i = 0; i < Main.maxNPCs; i++)
+                            {
+                                bool isClaw = Main.npc[i].type == ModContent.NPCType<RavagerClawLeft>() || Main.npc[i].type == ModContent.NPCType<RavagerClawRight>();
+                                if (Main.npc[i].active && isClaw)
+                                {
+                                    Main.npc[i].ai[0] = (int)RavagerClawLeftBehaviorOverride.RavagerClawAttackState.BlueFireBursts;
+                                    Main.npc[i].ai[1] = 0f;
+                                    Main.npc[i].netUpdate = true;
+                                }
+                            }
                         }
                         else
                         {
@@ -475,6 +491,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     // Go to the next attack.
                     if (attackTimer >= soulTorrentReleaseTime + 45f)
                     {
+                        for (int i = 0; i < Main.maxNPCs; i++)
+                        {
+                            bool isClaw = Main.npc[i].type == ModContent.NPCType<RavagerClawLeft>() || Main.npc[i].type == ModContent.NPCType<RavagerClawRight>();
+                            if (Main.npc[i].active && isClaw)
+                            {
+                                Main.npc[i].ai[0] = (int)RavagerClawLeftBehaviorOverride.RavagerClawAttackState.Hover;
+                                Main.npc[i].ai[1] = 0f;
+                                Main.npc[i].netUpdate = true;
+                            }
+                        }
+
                         attackState = 0f;
                         specialAttackType = (specialAttackType + 1f) % (int)RavagerAttackType.Count;
                         specialAttackStartDelay = 0f;

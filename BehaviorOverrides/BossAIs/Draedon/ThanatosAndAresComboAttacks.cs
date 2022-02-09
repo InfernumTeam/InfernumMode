@@ -208,10 +208,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static bool DoBehavior_ThanatosAres_ElectricCage(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
             int attackDelay = 150;
-            int aresShootRate = 50;
+            int aresShootRate = 70;
             int aresCircularBoltCount = 18;
             int aresShotBoltCount = 7;
-            int thanatosShootRate = 75;
+            int thanatosShootRate = 85;
             int lasersPerRotor = 9;
             float rotorSpeed = 23f;
             bool aresShouldAttack = attackTimer % 360f > 210f && attackTimer > attackDelay;
@@ -365,7 +365,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
 
                 // Get pissed off if the player attempts to leave the arm borders.
-                if (!target.Hitbox.Intersects(borderArea) && !enraged)
+                if (!target.Hitbox.Intersects(borderArea) && !enraged && attackTimer > attackDelay)
                 {
                     if (Main.player[Main.myPlayer].active && !Main.player[Main.myPlayer].dead)
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AresEnraged"), target.Center);

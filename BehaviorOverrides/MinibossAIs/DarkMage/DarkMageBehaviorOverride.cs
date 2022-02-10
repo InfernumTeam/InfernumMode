@@ -1,6 +1,7 @@
 ﻿using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Events;
@@ -16,7 +17,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
         {
             DarkMagicShots,
             SkeletonSummoning,
-            RedirectingFlames
+            RedirectingFlames,
+            DarkMagicCircles
         }
 
         public override int NPCOverrideType => NPCID.DD2DarkMageT1;
@@ -46,11 +48,58 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             }
         }
 
+        public static void ClearPickoffNPCs()
+        {
+            int[] pickOffNPCs = new int[]
+            {
+                NPCID.DD2GoblinT1,
+                NPCID.DD2GoblinT2,
+                NPCID.DD2GoblinT3,
+                NPCID.DD2GoblinBomberT1,
+                NPCID.DD2GoblinBomberT2,
+                NPCID.DD2GoblinBomberT3,
+                NPCID.DD2WyvernT1,
+                NPCID.DD2WyvernT2,
+                NPCID.DD2WyvernT3,
+                NPCID.DD2JavelinstT1,
+                NPCID.DD2JavelinstT2,
+                NPCID.DD2JavelinstT3,
+                NPCID.DD2WitherBeastT2,
+                NPCID.DD2WitherBeastT3,
+                NPCID.DD2KoboldWalkerT2,
+                NPCID.DD2KoboldWalkerT3,
+                NPCID.DD2KoboldFlyerT2,
+                NPCID.DD2KoboldFlyerT3,
+                NPCID.DD2LightningBugT3,
+            };
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && pickOffNPCs.Contains(Main.npc[i].type))
+                {
+                    if (Main.npc[i].Opacity > 0.8f)
+                    {
+                        for (int j = 0; j < 10; j++)
+                        {
+                            Dust magic = Dust.NewDustDirect(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height, 27);
+                            magic.velocity.Y -= 3f;
+                            magic.velocity *= Main.rand.NextFloat(1f, 1.25f);
+                            magic.alpha = 128;
+                            magic.noGravity = true;
+                        }
+                    }
+                    Main.npc[i].active = false;
+                }
+            }
+        }
+
         public override bool PreAI(NPC npc)
         {
             // Select a target.
             TargetClosestDarkMage(npc);
             NPCAimedTarget target = npc.GetTargetData();
+
+            // Clear pickoff enemies.
+            ClearPickoffNPCs();
 
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -107,6 +156,9 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                     break;
                 case DarkMageAttackType.RedirectingFlames:
                     DoBehavior_RedirectingFlames(npc, target, ref attackTimer, ref currentFrame);
+                    break;
+                case DarkMageAttackType.DarkMagicCircles:
+                    DoBehavior_DarkMagicCircles(npc, target, ref attackTimer, ref currentFrame);
                     break;
             }
 
@@ -171,7 +223,19 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 if (shootCounter >= shootCount)
                 {
                     shootCounter = 0f;
-                    npc.ai[0] = (int)DarkMageAttackType.RedirectingFlames;
+                    switch (Main.rand.Next(2))
+                    {
+                        case 0:
+                            npc.ai[0] = (int)DarkMageAttackType.DarkMagicCircles;
+                            break;
+                        case 1:
+                            npc.ai[0] = (int)DarkMageAttackType.RedirectingFlames;
+                            break;
+                        case 2:
+                            npc.ai[0] = (int)DarkMageAttackType.SkeletonSummoning;
+                            break;
+                    }
+                    npc.netUpdate = true;
                 }
                 else
                     shootCounter++;
@@ -205,6 +269,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             {
                 npc.ai[0] = (int)DarkMageAttackType.DarkMagicShots;
                 attackTimer = 0f;
+                npc.netUpdate = true;
             }
         }
 
@@ -250,6 +315,61 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             {
                 npc.ai[0] = (int)DarkMageAttackType.DarkMagicShots;
                 attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_DarkMagicCircles(NPC npc, NPCAimedTarget target, ref float attackTimer, ref float currentFrame)
+        {
+            int castTime = 32;
+            int shootTime = 180;
+            int shootRate = 30;
+            int sitTime = 60;
+
+            npc.velocity *= 0.96f;
+            npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+
+            // Play a cast sound.
+            if (attackTimer == castTime)
+                Main.PlaySound(SoundID.DD2_DarkMageCastHeal, npc.Center);
+
+            if (attackTimer < castTime)
+                currentFrame = MathHelper.Lerp(29f, 27f, (float)Math.Sin(attackTimer / castTime * MathHelper.TwoPi) * 0.5f + 0.5f);
+            else if (attackTimer < castTime + shootTime)
+                currentFrame = MathHelper.Lerp(30f, 40f, (attackTimer - castTime) / (shootTime / 3f) % 1f);
+            else
+                currentFrame = MathHelper.Lerp(0f, 4f, attackTimer / 32f % 1f);
+
+            // Release dark magic circles towards the target.
+            if (attackTimer >= castTime && attackTimer < castTime + shootTime && attackTimer % shootRate == shootRate - 1f)
+            {
+                Vector2 spawnPosition = npc.Center + new Vector2(npc.direction * 10f, -16f);
+
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    var sound = Main.PlaySound(SoundID.DD2_DarkMageHealImpact, target.Center);
+                    sound.Volume = MathHelper.Clamp(sound.Volume * 1.6f, 0f, 1f);
+                }
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust fire = Dust.NewDustPerfect(spawnPosition + Main.rand.NextVector2Circular(5f, 5f), 267);
+                    fire.velocity -= Vector2.UnitY.RotatedByRandom(0.23f) * Main.rand.NextFloat(1f, 2.5f);
+                    fire.color = Color.Lerp(Color.OrangeRed, Color.Purple, Main.rand.NextFloat(0.7f));
+                    fire.noGravity = true;
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 flameShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 15f;
+                    Utilities.NewProjectileBetter(spawnPosition, flameShootVelocity, ModContent.ProjectileType<DarkMagicCircle>(), 175, 0f);
+                }
+            }
+
+            if (attackTimer >= castTime + shootTime + sitTime)
+            {
+                npc.ai[0] = (int)DarkMageAttackType.DarkMagicShots;
+                attackTimer = 0f;
+                npc.netUpdate = true;
             }
         }
 

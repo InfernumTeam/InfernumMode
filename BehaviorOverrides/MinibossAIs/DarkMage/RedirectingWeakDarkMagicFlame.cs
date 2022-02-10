@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -16,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
         {
             DisplayName.SetDefault("Dark Flame");
             Main.projFrames[projectile.type] = 6;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 7;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 12;
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
         }
 
@@ -71,22 +72,30 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 
         public Color FlameTrailColorFunction(float completionRatio)
         {
-            float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * 0.9f;
+            float trailOpacity = Utils.InverseLerp(0.75f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * 0.9f;
             Color startingColor = Color.Lerp(Color.White, Color.IndianRed, 0.25f);
-            Color middleColor = Color.Lerp(Color.Maroon, Color.Red, 0.4f);
+            Color middleColor = Color.Lerp(Color.Pink, Color.Red, 0.4f);
             Color endColor = Color.Lerp(Color.Purple, Color.Black, 0.35f);
             Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
-            color.A = 184;
+            color.A = (byte)(trailOpacity * 255);
             return color * projectile.Opacity;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            if (TrailDrawer is null)
+                TrailDrawer = new PrimitiveTrailCopy(FlameTrailWidthFunction, FlameTrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
+
+            // Prepare the flame trail shader with its map texture.
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
-            Color color = projectile.GetAlpha(Color.Lerp(Color.Violet, new Color(1f, 1f, 1f, 0f), projectile.identity / 5f * 0.6f));
+            Color color = projectile.GetAlpha(Color.Lerp(Color.Violet, new Color(1f, 1f, 1f, 1f), projectile.identity / 5f * 0.6f));
+
+            TrailDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 30);
             spriteBatch.Draw(texture, drawPosition, frame, color, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
         }

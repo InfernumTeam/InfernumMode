@@ -601,7 +601,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     // Fall through tiles in the way.
                     if (!target.dead)
                     {
-                        if ((target.position.Y > npc.Bottom.Y && npc.velocity.Y > 0f) || (target.position.Y < npc.Bottom.Y && npc.velocity.Y < 0f))
+                        if ((target.position.Y + 40f > npc.Bottom.Y && npc.velocity.Y > 0f) || (target.position.Y < npc.Bottom.Y && npc.velocity.Y < 0f))
                             npc.noTileCollide = true;
                         else if ((npc.velocity.Y > 0f && npc.Bottom.Y > target.Top.Y) || (Collision.CanHit(npc.position, npc.width, npc.height, target.Center, 1, 1) && !Collision.SolidCollision(npc.position, npc.width, npc.height)))
                             npc.noTileCollide = false;
@@ -630,12 +630,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             // Create the shockwave.
                             Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
 
-                            // And embers that fly outward.
-                            for (int i = 0; i < 20; i++)
+                            // And embers that fly upward.
+                            for (int i = 0; i < 30; i++)
                             {
                                 Vector2 emberSpawnPosition = npc.Bottom + new Vector2(Main.rand.NextFloatDirection() * npc.width * 0.5f, 15f);
-                                Vector2 emberShootVelocity = -Vector2.UnitY.RotatedByRandom(0.75f) * Main.rand.NextFloat(12f, 16f);
-                                Utilities.NewProjectileBetter(emberSpawnPosition, emberShootVelocity, ModContent.ProjectileType<DarkMagicEmber>(), emberDamage, 0f);
+                                Vector2 emberShootVelocity = Vector2.UnitY * Main.rand.NextFloat(3f, 7f);
+                                emberShootVelocity.X += MathHelper.Lerp(-29f, 29f, i / 29f) + Main.rand.NextFloatDirection() * 0.3f;
+                                Utilities.NewProjectileBetter(emberSpawnPosition, emberShootVelocity, ModContent.ProjectileType<RisingDarkMagicFireball>(), emberDamage, 0f);
                             }
                         }
 

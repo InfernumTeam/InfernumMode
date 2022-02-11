@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
                     enemySpawnTimer++;
 
                 bool minibossShouldSpawn = OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID);
-                if (enemySpawnTimer >= CalamityGlobalAI.DD2EventEnemySpawnRate || minibossShouldSpawn)
+                if ((enemySpawnTimer >= CalamityGlobalAI.DD2EventEnemySpawnRate || minibossShouldSpawn) && DD2Event.TimeLeftBetweenWaves <= 0f)
                 {
                     if (enemySpawnTimer >= CalamityGlobalAI.DD2EventEnemySpawnRate * 3 || minibossShouldSpawn)
                         enemySpawnTimer = 0f;
@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
                     {
                         if (!minibossShouldSpawn)
                             DD2Event.SpawnMonsterFromGate(npc.Bottom);
-                        else if (!NPC.AnyNPCs(minibossID))
+                        else if (!NPC.AnyNPCs(minibossID) && minibossID != NPCID.DD2Betsy)
                         {
                             int miniboss = NPC.NewNPC((int)npc.Bottom.X, (int)npc.Bottom.Y, minibossID);
                             if (Main.npc.IndexInRange(miniboss))

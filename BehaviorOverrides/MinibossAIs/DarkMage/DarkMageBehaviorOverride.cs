@@ -33,9 +33,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             OldOnesArmyMinibossChanges.TargetClosestMiniboss(npc);
             NPCAimedTarget target = npc.GetTargetData();
 
-            // Clear pickoff enemies.
-            OldOnesArmyMinibossChanges.ClearPickoffOOAEnemies();
-
             bool isBuffed = npc.type == NPCID.DD2DarkMageT3;
             bool wasSpawnedInValidContext = npc.Infernum().ExtraAI[5] == 1f;
             ref float attackState = ref npc.ai[0];
@@ -50,6 +47,11 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             // Despawn if spawned in an incorrect context.
             if (Main.netMode != NetmodeID.MultiplayerClient && !wasSpawnedInValidContext)
                 npc.active = false;
+            else
+            {
+                // Clear pickoff enemies.
+                OldOnesArmyMinibossChanges.ClearPickoffOOAEnemies();
+            }
 
             // Fade in after appearing from the portal.
             if (fadeInTimer < 60f)
@@ -173,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 if (shootCounter >= shootCount)
                 {
                     shootCounter = 0f;
-                    int attackSelection = Main.rand.Next(isBuffed ? 2 : 3);
+                    int attackSelection = Main.rand.Next(isBuffed ? 3 : 2);
                     switch (attackSelection)
                     {
                         case 0:

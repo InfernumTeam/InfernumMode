@@ -43,9 +43,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             OldOnesArmyMinibossChanges.TargetClosestMiniboss(npc);
             NPCAimedTarget target = npc.GetTargetData();
 
-            // Clear pickoff enemies.
-            OldOnesArmyMinibossChanges.ClearPickoffOOAEnemies();
-
             bool isBuffed = npc.type == NPCID.DD2OgreT3;
             bool wasSpawnedInValidContext = npc.Infernum().ExtraAI[5] == 1f;
             ref float attackState = ref npc.ai[0];
@@ -63,6 +60,11 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             // Despawn if spawned in an incorrect context.
             if (Main.netMode != NetmodeID.MultiplayerClient && !wasSpawnedInValidContext)
                 npc.active = false;
+            else
+            {
+                // Clear pickoff enemies.
+                OldOnesArmyMinibossChanges.ClearPickoffOOAEnemies();
+            }
 
             // Fade in after appearing from the portal.
             if (fadeInTimer < 60f)

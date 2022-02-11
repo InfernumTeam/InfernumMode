@@ -2,7 +2,6 @@
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
-using System.Reflection;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Events;
@@ -15,45 +14,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
         public override int NPCOverrideType => NPCID.DD2LanePortal;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
-        private static readonly MethodInfo oldOnesArmyStatusMethod = typeof(DD2Event).GetMethod("GetInvasionStatus", Utilities.UniversalBindingFlags);
-
-        public static void GetOldOnesArmyStatus(out int currentWave, out int requiredKillCount, out int currentKillCount, bool currentlyInCheckProgress = false)
-        {
-            currentWave = requiredKillCount = currentKillCount = 0;
-            object[] parameters = new object[] { currentWave, requiredKillCount, currentKillCount, currentlyInCheckProgress };
-            oldOnesArmyStatusMethod.Invoke(null, parameters);
-            currentWave = (int)parameters[0];
-            requiredKillCount = (int)parameters[1];
-            currentKillCount = (int)parameters[2];
-        }
-
-        public static bool GetMinibossToSummon(out int minibossID)
-        {
-            minibossID = -1;
-            GetOldOnesArmyStatus(out int currentWave, out int requiredKillCount, out int currentKillCount);
-
-            int currentTier = 1;
-            if (DD2Event.ReadyForTier2)
-                currentTier = 2;
-            if (DD2Event.ReadyForTier3)
-                currentTier = 3;
-
-            float waveCompletion = MathHelper.Clamp(currentKillCount / (float)requiredKillCount, 0f, 1f);
-            bool atEndOfWave = waveCompletion >= 0.9f;
-            if (currentWave == 5 && currentTier == 1 && atEndOfWave)
-                minibossID = NPCID.DD2DarkMageT1;
-            if (currentWave == 6 && currentTier == 2 && atEndOfWave)
-                minibossID = NPCID.DD2OgreT2;
-            if (currentWave == 5 && currentTier == 3 && atEndOfWave)
-                minibossID = NPCID.DD2DarkMageT3;
-            if (currentWave == 6 && currentTier == 3 && atEndOfWave)
-                minibossID = NPCID.DD2OgreT3;
-            if (currentWave == 7 && currentTier == 3)
-                minibossID = NPCID.DD2Betsy;
-
-            return minibossID != -1;
-        }
 
         public override bool PreAI(NPC npc)
         {
@@ -80,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
                 if (!DD2Event.EnemySpawningIsOnHold)
                     enemySpawnTimer++;
 
-                bool minibossShouldSpawn = GetMinibossToSummon(out int minibossID);
+                bool minibossShouldSpawn = OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID);
                 if (enemySpawnTimer >= CalamityGlobalAI.DD2EventEnemySpawnRate || minibossShouldSpawn)
                 {
                     if (enemySpawnTimer >= CalamityGlobalAI.DD2EventEnemySpawnRate * 3 || minibossShouldSpawn)

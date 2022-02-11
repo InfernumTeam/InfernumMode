@@ -137,7 +137,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static int GiveDD2MinibossesPointPriority(On.Terraria.GameContent.Events.DD2Event.orig_GetMonsterPointsWorth orig, int slainMonsterID)
         {
-            if (EtherianPortalBehaviorOverride.GetMinibossToSummon(out int minibossID) && PoDWorld.InfernumMode)
+            if (OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID) && PoDWorld.InfernumMode)
                 return slainMonsterID == minibossID ? 99999 : 0;
 
             return orig(slainMonsterID);

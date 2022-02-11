@@ -25,85 +25,16 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 
-        public static void TargetClosestDarkMage(NPC searcher, bool faceTarget = true)
-        {
-            NPCUtils.TargetSearchFlag targetFlags = NPCUtils.TargetSearchFlag.All;
-
-            // If a player exists and is nearby, only attack players.
-            if (Main.player[Player.FindClosest(searcher.Center, 1, 1)].WithinRange(searcher.Center, 1600f))
-                targetFlags = NPCUtils.TargetSearchFlag.Players;
-
-            var playerFilter = NPCUtils.SearchFilters.OnlyPlayersInCertainDistance(searcher.Center, 1600f);
-            var npcFilter = new NPCUtils.SearchFilter<NPC>(NPCUtils.SearchFilters.OnlyCrystal);
-
-            NPCUtils.TargetSearchResults searchResults = NPCUtils.SearchForTarget(searcher, targetFlags, playerFilter, npcFilter);
-            if (searchResults.FoundTarget)
-            {
-                searcher.target = searchResults.NearestTargetIndex;
-                searcher.targetRect = searchResults.NearestTargetHitbox;
-                if (searcher.ShouldFaceTarget(ref searchResults, null) && faceTarget)
-                {
-                    searcher.FaceTarget();
-                }
-            }
-        }
-
-        public static void ClearPickoffNPCs()
-        {
-            int[] pickOffNPCs = new int[]
-            {
-                NPCID.DD2GoblinT1,
-                NPCID.DD2GoblinT2,
-                NPCID.DD2GoblinT3,
-                NPCID.DD2GoblinBomberT1,
-                NPCID.DD2GoblinBomberT2,
-                NPCID.DD2GoblinBomberT3,
-                NPCID.DD2WyvernT1,
-                NPCID.DD2WyvernT2,
-                NPCID.DD2WyvernT3,
-                NPCID.DD2JavelinstT1,
-                NPCID.DD2JavelinstT2,
-                NPCID.DD2JavelinstT3,
-                NPCID.DD2WitherBeastT2,
-                NPCID.DD2WitherBeastT3,
-                NPCID.DD2KoboldWalkerT2,
-                NPCID.DD2KoboldWalkerT3,
-                NPCID.DD2KoboldFlyerT2,
-                NPCID.DD2KoboldFlyerT3,
-                NPCID.DD2LightningBugT3,
-                NPCID.DD2DrakinT2,
-                NPCID.DD2DrakinT3,
-            };
-            for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (Main.npc[i].active && pickOffNPCs.Contains(Main.npc[i].type))
-                {
-                    if (Main.npc[i].Opacity > 0.8f)
-                    {
-                        for (int j = 0; j < 10; j++)
-                        {
-                            Dust magic = Dust.NewDustDirect(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height, 27);
-                            magic.velocity.Y -= 3f;
-                            magic.velocity *= Main.rand.NextFloat(1f, 1.25f);
-                            magic.alpha = 128;
-                            magic.noGravity = true;
-                        }
-                    }
-                    Main.npc[i].active = false;
-                }
-            }
-        }
-
         public override bool PreAI(NPC npc) => DoAI(npc);
 
         public static bool DoAI(NPC npc)
         {
             // Select a target.
-            TargetClosestDarkMage(npc);
+            OldOnesArmyMinibossChanges.TargetClosestMiniboss(npc);
             NPCAimedTarget target = npc.GetTargetData();
 
             // Clear pickoff enemies.
-            ClearPickoffNPCs();
+            OldOnesArmyMinibossChanges.ClearPickoffOOAEnemies();
 
             bool isBuffed = npc.type == NPCID.DD2DarkMageT3;
             bool wasSpawnedInValidContext = npc.Infernum().ExtraAI[5] == 1f;

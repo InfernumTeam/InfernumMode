@@ -1,5 +1,6 @@
 using CalamityMod.NPCs;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
+using InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -130,5 +131,20 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => IL.Terraria.Player.ItemCheck += DisableMoonLordBuilding;
 
         public void Unload() => IL.Terraria.Player.ItemCheck -= DisableMoonLordBuilding;
+    }
+
+    public class ChangeHowMinibossesSpawnInDD2EventHook : IHookEdit
+    {
+        internal static int GiveDD2MinibossesPointPriority(On.Terraria.GameContent.Events.DD2Event.orig_GetMonsterPointsWorth orig, int slainMonsterID)
+        {
+            if (EtherianPortalBehaviorOverride.GetMinibossToSummon(out int minibossID) && PoDWorld.InfernumMode)
+                return slainMonsterID == minibossID ? 99999 : 0;
+
+            return orig(slainMonsterID);
+        }
+
+        public void Load() => On.Terraria.GameContent.Events.DD2Event.GetMonsterPointsWorth += GiveDD2MinibossesPointPriority;
+
+        public void Unload() => On.Terraria.GameContent.Events.DD2Event.GetMonsterPointsWorth -= GiveDD2MinibossesPointPriority;
     }
 }

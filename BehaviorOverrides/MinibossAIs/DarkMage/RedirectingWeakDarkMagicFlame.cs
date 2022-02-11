@@ -13,6 +13,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
     {
         public PrimitiveTrailCopy TrailDrawer = null;
         public ref float Time => ref projectile.ai[0];
+        public bool FromBuffedDarkMage => projectile.ai[1] == 1f;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Flame");
@@ -46,7 +47,10 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             else
             {
                 if (!projectile.WithinRange(closestPlayer.Center, 220f))
-                    projectile.velocity = projectile.velocity.MoveTowards(projectile.SafeDirectionTo(closestPlayer.Center) * projectile.velocity.Length(), 0.45f) * 1.02f;
+                {
+                    float acceleration = FromBuffedDarkMage ? 1.032f : 1.02f;
+                    projectile.velocity = projectile.velocity.MoveTowards(projectile.SafeDirectionTo(closestPlayer.Center) * projectile.velocity.Length(), 0.45f) * acceleration;
+                }
             }
 
             if (Time == 50f)
@@ -54,9 +58,19 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 
             if (Time > 100f)
             {
+                float minSpeed = 6f;
+                float maxSpeed = 15f;
+                float acceleration = 1.013f;
+                if (FromBuffedDarkMage)
+                {
+                    minSpeed += 4.5f;
+                    maxSpeed += 5.5f;
+                    acceleration *= 1.3f;
+                }
+
                 float angularOffset = (float)Math.Cos((projectile.Center * new Vector2(1.4f, 1f)).Length() / 275f + projectile.identity * 0.89f) * 0.01f;
                 projectile.velocity = projectile.velocity.RotatedBy(angularOffset);
-                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(projectile.velocity.Length() * 1.013f, 6f, 15f);
+                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(projectile.velocity.Length() * acceleration, minSpeed, maxSpeed);
             }
 
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;

@@ -71,6 +71,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 NPCID.DD2KoboldFlyerT2,
                 NPCID.DD2KoboldFlyerT3,
                 NPCID.DD2LightningBugT3,
+                NPCID.DD2DrakinT2,
+                NPCID.DD2DrakinT3,
             };
             for (int i = 0; i < Main.maxNPCs; i++)
             {
@@ -92,7 +94,9 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             }
         }
 
-        public override bool PreAI(NPC npc)
+        public override bool PreAI(NPC npc) => DoAI(npc);
+
+        public static bool DoAI(NPC npc)
         {
             // Select a target.
             TargetClosestDarkMage(npc);
@@ -101,6 +105,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             // Clear pickoff enemies.
             ClearPickoffNPCs();
 
+            bool isBuffed = npc.type == NPCID.DD2DarkMageT3;
+            bool wasSpawnedInValidContext = npc.Infernum().ExtraAI[5] == 1f;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float currentFrame = ref npc.localAI[0];
@@ -109,6 +115,10 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             // Reset things.
             npc.dontTakeDamage = false;
             npc.noTileCollide = true;
+
+            // Despawn if spawned in an incorrect context.
+            if (Main.netMode != NetmodeID.MultiplayerClient && !wasSpawnedInValidContext)
+                npc.active = false;
 
             // Fade in after appearing from the portal.
             if (fadeInTimer < 60f)
@@ -149,13 +159,13 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             switch ((DarkMageAttackType)(int)attackState)
             {
                 case DarkMageAttackType.DarkMagicShots:
-                    DoBehavior_DarkMagicShots(npc, target, ref attackTimer, ref currentFrame);
+                    DoBehavior_DarkMagicShots(npc, target, isBuffed, ref attackTimer, ref currentFrame);
                     break;
                 case DarkMageAttackType.SkeletonSummoning:
-                    DoBehavior_SkeletonSummoning(npc, target, ref attackTimer, ref currentFrame);
+                    DoBehavior_SkeletonSummoning(npc, target, isBuffed, ref attackTimer, ref currentFrame);
                     break;
                 case DarkMageAttackType.RedirectingFlames:
-                    DoBehavior_RedirectingFlames(npc, target, ref attackTimer, ref currentFrame);
+                    DoBehavior_RedirectingFlames(npc, target, isBuffed, ref attackTimer, ref currentFrame);
                     break;
                 case DarkMageAttackType.DarkMagicCircles:
                     DoBehavior_DarkMagicCircles(npc, target, ref attackTimer, ref currentFrame);
@@ -166,14 +176,22 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             return false;
         }
 
-        public static void DoBehavior_DarkMagicShots(NPC npc, NPCAimedTarget target, ref float attackTimer, ref float currentFrame)
+        public static void DoBehavior_DarkMagicShots(NPC npc, NPCAimedTarget target, bool isBuffed, ref float attackTimer, ref float currentFrame)
         {
             int moveTime = 90;
             int chargeShootTime = 42;
             int totalShots = 5;
             int shootRate = 4;
-            int shootTime = totalShots * shootRate;
             int shootCount = 3;
+            if (isBuffed)
+            {
+                moveTime -= 30;
+                chargeShootTime -= 16;
+                totalShots++;
+                shootRate--;
+                shootCount--;
+            }
+            int shootTime = totalShots * shootRate;
             ref float shootCounter = ref npc.Infernum().ExtraAI[0];
 
             if (shootCounter > 0f)
@@ -207,10 +225,11 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 currentFrame = MathHelper.Lerp(8f, 12f, Utils.InverseLerp(moveTime + chargeShootTime, moveTime + chargeShootTime + shootTime, attackTimer, true));
                 if (Main.netMode != NetmodeID.MultiplayerClient && (attackTimer - moveTime - chargeShootTime) % shootRate == shootRate - 1f)
                 {
+                    int darkMagicDamage = isBuffed ? 185 : 90;
                     float offsetAngle = MathHelper.Lerp(-0.48f, 0.48f, Utils.InverseLerp(0f, shootTime, attackTimer - moveTime - chargeShootTime, true));
                     Vector2 spawnPosition = npc.Center + new Vector2(npc.direction * 10f, -16f);
                     Vector2 shootVelocity = (target.Center - spawnPosition + target.Velocity * 10f).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * 16f;
-                    Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.DD2DarkMageBolt, 130, 0f, Main.myPlayer, 0f, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.DD2DarkMageBolt, darkMagicDamage, 0f, Main.myPlayer, 0f, 0f);
 
                     // Decide the direction.
                     npc.spriteDirection = (shootVelocity.X > 0f).ToDirectionInt();
@@ -223,16 +242,17 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 if (shootCounter >= shootCount)
                 {
                     shootCounter = 0f;
-                    switch (Main.rand.Next(2))
+                    int attackSelection = Main.rand.Next(isBuffed ? 2 : 3);
+                    switch (attackSelection)
                     {
                         case 0:
-                            npc.ai[0] = (int)DarkMageAttackType.DarkMagicCircles;
+                            npc.ai[0] = (int)DarkMageAttackType.SkeletonSummoning;
                             break;
                         case 1:
                             npc.ai[0] = (int)DarkMageAttackType.RedirectingFlames;
                             break;
                         case 2:
-                            npc.ai[0] = (int)DarkMageAttackType.SkeletonSummoning;
+                            npc.ai[0] = (int)DarkMageAttackType.DarkMagicCircles;
                             break;
                     }
                     npc.netUpdate = true;
@@ -245,10 +265,12 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             npc.rotation = npc.velocity.X * 0.04f;
         }
 
-        public static void DoBehavior_SkeletonSummoning(NPC npc, NPCAimedTarget target, ref float attackTimer, ref float currentFrame)
+        public static void DoBehavior_SkeletonSummoning(NPC npc, NPCAimedTarget target, bool isBuffed, ref float attackTimer, ref float currentFrame)
         {
             int castTime = 32;
             int summonTime = 85;
+            if (isBuffed)
+                summonTime -= 20;
 
             npc.velocity *= 0.96f;
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -259,13 +281,19 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 currentFrame = MathHelper.Lerp(30f, 40f, (attackTimer - castTime) / summonTime);
 
             // Summon skeletons.
+            bool shouldMoveOnToNextAttack = false;
             if (attackTimer == castTime + 4f)
             {
-                Projectile.NewProjectile(npc.Center + new Vector2(npc.direction * 24f, -40f), Vector2.Zero, ProjectileID.DD2DarkMageRaise, 0, 0f);
-                DD2Event.RaiseGoblins(npc.Center);
+                shouldMoveOnToNextAttack = !DD2Event.CanRaiseGoblinsHere(npc.Center);
+
+                if (!shouldMoveOnToNextAttack)
+                {
+                    Projectile.NewProjectile(npc.Center + new Vector2(npc.direction * 24f, -40f), Vector2.Zero, ProjectileID.DD2DarkMageRaise, 0, 0f);
+                    DD2Event.RaiseGoblins(npc.Center);
+                }
             }
 
-            if (attackTimer >= castTime + summonTime)
+            if (attackTimer >= castTime + summonTime || shouldMoveOnToNextAttack)
             {
                 npc.ai[0] = (int)DarkMageAttackType.DarkMagicShots;
                 attackTimer = 0f;
@@ -273,12 +301,17 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             }
         }
 
-        public static void DoBehavior_RedirectingFlames(NPC npc, NPCAimedTarget target, ref float attackTimer, ref float currentFrame)
+        public static void DoBehavior_RedirectingFlames(NPC npc, NPCAimedTarget target, bool isBuffed, ref float attackTimer, ref float currentFrame)
         {
             int castTime = 32;
             int shootTime = 85;
             int shootRate = 10;
             int sitTime = 120;
+            if (isBuffed)
+            {
+                shootRate -= 4;
+                sitTime -= 40;
+            }
 
             npc.velocity *= 0.96f;
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -305,9 +338,12 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    int flameDamage = isBuffed ? 180 : 90;
                     Vector2 flameShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitX * npc.spriteDirection);
                     flameShootVelocity = Vector2.Lerp(flameShootVelocity, -Vector2.UnitY.RotatedByRandom(0.92f), 0.7f) * 13f;
-                    Utilities.NewProjectileBetter(spawnPosition, flameShootVelocity, ModContent.ProjectileType<RedirectingWeakDarkMagicFlame>(), 120, 0f);
+                    int flame = Utilities.NewProjectileBetter(spawnPosition, flameShootVelocity, ModContent.ProjectileType<RedirectingWeakDarkMagicFlame>(), flameDamage, 0f);
+                    if (Main.projectile.IndexInRange(flame))
+                        Main.projectile[flame].ai[1] = isBuffed.ToInt();
                 }
             }
 
@@ -361,7 +397,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 flameShootVelocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 15f;
-                    Utilities.NewProjectileBetter(spawnPosition, flameShootVelocity, ModContent.ProjectileType<DarkMagicCircle>(), 175, 0f);
+                    Utilities.NewProjectileBetter(spawnPosition, flameShootVelocity, ModContent.ProjectileType<DarkMagicCircle>(), 185, 0f);
                 }
             }
 

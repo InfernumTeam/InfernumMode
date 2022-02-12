@@ -46,6 +46,8 @@ namespace InfernumMode
             if (currentWave == 7 && currentTier == 3)
                 minibossID = NPCID.DD2Betsy;
 
+            minibossID = NPCID.DD2OgreT3;
+
             return minibossID != -1;
         }
 
@@ -95,15 +97,16 @@ namespace InfernumMode
             }
         }
 
-        public static void TargetClosestMiniboss(NPC searcher, bool faceTarget = true)
+        public static void TargetClosestMiniboss(NPC searcher, bool faceTarget = true, bool prioritizeCrystal = false)
         {
             NPCUtils.TargetSearchFlag targetFlags = NPCUtils.TargetSearchFlag.All;
 
             // If a player exists and is nearby, only attack players.
-            if (Main.player[Player.FindClosest(searcher.Center, 1, 1)].WithinRange(searcher.Center, 1600f))
+            float playerSearchDistance = prioritizeCrystal ? 160f : 1600f;
+            if (Main.player[Player.FindClosest(searcher.Center, 1, 1)].WithinRange(searcher.Center, playerSearchDistance))
                 targetFlags = NPCUtils.TargetSearchFlag.Players;
 
-            var playerFilter = NPCUtils.SearchFilters.OnlyPlayersInCertainDistance(searcher.Center, 1600f);
+            var playerFilter = NPCUtils.SearchFilters.OnlyPlayersInCertainDistance(searcher.Center, playerSearchDistance);
             var npcFilter = new NPCUtils.SearchFilter<NPC>(NPCUtils.SearchFilters.OnlyCrystal);
 
             NPCUtils.TargetSearchResults searchResults = NPCUtils.SearchForTarget(searcher, targetFlags, playerFilter, npcFilter);

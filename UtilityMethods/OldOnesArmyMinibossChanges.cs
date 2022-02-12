@@ -46,8 +46,6 @@ namespace InfernumMode
             if (currentWave == 7 && currentTier == 3)
                 minibossID = NPCID.DD2Betsy;
 
-            minibossID = NPCID.DD2OgreT3;
-
             return minibossID != -1;
         }
 

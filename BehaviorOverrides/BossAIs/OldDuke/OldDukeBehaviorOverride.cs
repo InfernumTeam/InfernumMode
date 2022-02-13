@@ -180,7 +180,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             ref float phaseTransitionTimer = ref npc.Infernum().ExtraAI[7];
             ref float phaseTransitionSharkSpawnOffset = ref npc.Infernum().ExtraAI[8];
             ref float despawnTimer = ref npc.Infernum().ExtraAI[9];
-            
+
             // Enter new phases.
             if (phaseTransitionState == 0f && lifeRatio < Phase2LifeRatio)
             {
@@ -655,7 +655,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             // Handle frames.
             npc.frameCounter += 1.5f;
             frameType = (int)OldDukeFrameType.FlapWings;
-            
+
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % bubbleSummonRate == bubbleSummonRate - 1f)
             {
                 Vector2 bubbleSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f + target.velocity.X * 60f, 800f);

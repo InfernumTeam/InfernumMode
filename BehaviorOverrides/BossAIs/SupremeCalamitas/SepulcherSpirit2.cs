@@ -59,18 +59,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Time++;
         }
 
-		public override void Kill(int timeLeft)
-		{
+        public override void Kill(int timeLeft)
+        {
             Main.PlaySound(SoundID.NPCDeath52, projectile.Center);
             for (int i = 0; i < 5; i++)
-			{
+            {
                 Dust fire = Dust.NewDustDirect(projectile.Center - Vector2.One * 12f, 6, 6, 267);
                 fire.color = Color.Red;
                 fire.noGravity = true;
-			}
-		}
+            }
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             lightColor = Main.hslToRgb(SpiritHue, 1f, 0.5f);
             Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1, Main.projectileTexture[projectile.type], false);

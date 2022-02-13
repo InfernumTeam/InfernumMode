@@ -3,7 +3,6 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
-using InfernumMode.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -426,7 +425,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
             npc.dontTakeDamage = true;
             npc.damage = 0;
-                
+
             void destroySegment(int index, ref float destroyedSegments)
             {
                 if (Main.rand.NextBool(5))

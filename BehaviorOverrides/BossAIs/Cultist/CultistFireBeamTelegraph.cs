@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
-	public class CultistFireBeamTelegraph : ModProjectile
+    public class CultistFireBeamTelegraph : ModProjectile
     {
         public ref float TargetIndex => ref projectile.ai[0];
         public Player Target => Main.player[(int)TargetIndex];
@@ -27,11 +27,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         {
             // Determine an initial target.
             if (Main.netMode != NetmodeID.MultiplayerClient && projectile.localAI[0] == 0f)
-			{
+            {
                 TargetIndex = Player.FindClosest(projectile.Center, 1, 1);
                 projectile.localAI[0] = 1f;
                 projectile.netUpdate = true;
-			}
+            }
 
             projectile.scale = Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * Utils.InverseLerp(85f, 75f, projectile.timeLeft, true);
             projectile.scale = MathHelper.SmoothStep(0.04f, 4f, projectile.scale);
@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool ShouldUpdatePosition() => false;
 
-		public override void Kill(int timeLeft)
+        public override void Kill(int timeLeft)
         {
             Main.PlaySound(SoundID.Zombie, Target.Center, 104);
             if (Main.netMode == NetmodeID.MultiplayerClient)

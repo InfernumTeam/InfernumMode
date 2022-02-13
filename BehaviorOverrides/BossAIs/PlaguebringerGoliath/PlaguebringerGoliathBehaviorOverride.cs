@@ -196,7 +196,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.rotation += MathHelper.Pi;
 
                 chargeTimer++;
-                
+
                 // Slow down before transitioning back to hovering.
                 if (chargeTimer > chargeTime - 15f)
                     npc.velocity *= 0.97f;

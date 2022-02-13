@@ -48,16 +48,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         }
 
         internal Color ColorFunction(float completionRatio)
-		{
+        {
             return Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime)) * 0.5f) * projectile.Opacity;
-		}
+        }
 
         internal float WidthFunction(float completionRatio) => WaveHeight;
 
         internal Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * (float)Math.Sin(completionRatio * MathHelper.Pi + Time / 11f) * 60f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
+        {
             for (int i = 0; i < projectile.oldPos.Length; i++)
             {
                 float _ = 0f;
@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             return false;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (TornadoDrawer is null)
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, OffsetFunction, false, GameShaders.Misc["Infernum:DukeTornado"]);
@@ -82,9 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

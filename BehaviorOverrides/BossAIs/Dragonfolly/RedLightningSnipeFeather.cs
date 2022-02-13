@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     projectile.velocity *= 1.6f;
 
                 projectile.netUpdate = true;
-			}
+            }
             projectile.rotation = projectile.velocity.ToRotation();
         }
 
@@ -69,19 +69,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             projectile.Damage();
         }
 
-		public override bool CanHitPlayer(Player target) => projectile.Opacity == 1f;
+        public override bool CanHitPlayer(Player target) => projectile.Opacity == 1f;
 
-		public override void OnHitPlayer(Player target, int damage, bool crit)
-		{
-			if (projectile.Opacity != 1f)
-				return;
-
-			target.AddBuff(BuffID.Electrified, 60);
-		}
-
-		public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            if (projectile.Opacity != 1f)
+                return;
+
+            target.AddBuff(BuffID.Electrified, 60);
+        }
+
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        {
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

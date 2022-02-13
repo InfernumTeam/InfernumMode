@@ -8,7 +8,7 @@ using static InfernumMode.BehaviorOverrides.BossAIs.BoC.BoCBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
-	public class BrainIllusion : ModNPC
+    public class BrainIllusion : ModNPC
     {
         public PrimitiveTrailCopy FireDrawer;
         public Player Target => Main.player[npc.target];
@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public override void SetDefaults()
         {
-			npc.npcSlots = 1f;
+            npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.width = 160;
             npc.height = 110;
@@ -39,15 +39,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             npc.Calamity().canBreakPlayerDefense = true;
         }
 
-		public override void AI()
+        public override void AI()
         {
             // Disappear if the main boss is not present.
             if (!Main.npc.IndexInRange(NPC.crimsonBoss) || !Owner.active || (BoCAttackState)(int)Owner.ai[0] != BoCAttackState.DashingIllusions)
-			{
-				npc.active = false;
-				npc.netUpdate = true;
-				return;
-			}
+            {
+                npc.active = false;
+                npc.netUpdate = true;
+                return;
+            }
 
             CopyOwnerAttributes();
 
@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         }
 
         public void CopyOwnerAttributes()
-		{
+        {
             npc.target = Owner.target;
             npc.frame = Owner.frame;
             npc.frame.Y += npc.frame.Height * 4;

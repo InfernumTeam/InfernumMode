@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
-	public class FungalClump : ModNPC
+    public class FungalClump : ModNPC
     {
         public PrimitiveTrailCopy FireDrawer;
         public Player Target => Main.player[npc.target];
@@ -17,13 +17,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fungal Clump");
-			NPCID.Sets.TrailingMode[npc.type] = 0;
+            NPCID.Sets.TrailingMode[npc.type] = 0;
             NPCID.Sets.TrailCacheLength[npc.type] = 7;
         }
 
         public override void SetDefaults()
         {
-			npc.npcSlots = 1f;
+            npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.width = npc.height = 50;
             npc.damage = 45;
@@ -35,15 +35,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             npc.netAlways = true;
         }
 
-		public override void AI()
+        public override void AI()
         {
             // Die if the main boss is not present.
             if (!Main.npc.IndexInRange((int)npc.ai[0]) || !Owner.active || !NPC.AnyNPCs(ModContent.NPCType<CrabulonIdle>()))
-			{
-				npc.active = false;
-				npc.netUpdate = true;
-				return;
-			}
+            {
+                npc.active = false;
+                npc.netUpdate = true;
+                return;
+            }
 
             npc.target = Owner.target;
             float hoverSpeed = MathHelper.Lerp(7f, 11f, 1f - MainBossLifeRatio);
@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         }
 
         public void HomeTowardsTarget(float hoverSpeed)
-		{
+        {
             // Home more quickly if close to the target.
             // However, if really close to the target, stop homing and simply go in the
             // current direction.
@@ -87,6 +87,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 Owner.life = Owner.lifeMax;
         }
 
-		public override bool CheckActive() => false;
+        public override bool CheckActive() => false;
     }
 }

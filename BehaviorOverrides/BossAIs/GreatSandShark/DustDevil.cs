@@ -32,10 +32,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         {
             // Play a wind sound.
             if (projectile.localAI[0] == 0f)
-			{
+            {
                 Main.PlaySound(SoundID.DD2_BookStaffCast, projectile.Center);
                 projectile.localAI[0] = 1f;
-			}
+            }
 
             // Fade in.
             projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.075f, 0f, 1f);
@@ -53,16 +53,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
             Time++;
-		}
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
-		{
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(5, Main.projFrames[projectile.type], (int)Variant, projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
             spriteBatch.Draw(texture, drawPosition, frame, Color.White * projectile.Opacity, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
-		}
-	}
+        }
+    }
 }

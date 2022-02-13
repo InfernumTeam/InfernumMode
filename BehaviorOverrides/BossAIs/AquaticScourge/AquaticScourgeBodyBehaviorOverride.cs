@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 {
-	public class AquaticScourgeBodyBehaviorOverride : NPCBehaviorOverride
+    public class AquaticScourgeBodyBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<AquaticScourgeBody>();
 

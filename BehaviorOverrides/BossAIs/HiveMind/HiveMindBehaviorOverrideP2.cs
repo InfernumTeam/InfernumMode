@@ -3,7 +3,6 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.HiveMind;
 using CalamityMod.Projectiles.Boss;
-using InfernumMode.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -234,7 +233,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     nextAttack == HiveMindP2AttackState.SpinLunge ||
                     nextAttack == HiveMindP2AttackState.CloudDash ||
                     nextAttack == HiveMindP2AttackState.UndergroundFlameDash ||
-                    nextAttack == HiveMindP2AttackState.EaterOfSoulsWall || 
+                    nextAttack == HiveMindP2AttackState.EaterOfSoulsWall ||
                     nextAttack == HiveMindP2AttackState.CursedRain ||
                     nextAttack == HiveMindP2AttackState.BlobBurst;
                 if (shouldBecomeInvisible)
@@ -263,7 +262,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
             attackTimer++;
         }
-        
+
         public static void DoBehavior_ResetAI(NPC npc, float lifeRatio)
         {
             npc.TargetClosest(false);

@@ -5,17 +5,15 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
 using Terraria.World.Generation;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -23,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     {
         public static Dictionary<ExoMechComboAttackType, int[]> AffectedAresArms => new Dictionary<ExoMechComboAttackType, int[]>()
         {
-            [ExoMechComboAttackType.ThanatosAres_ElectricCage] = new int[] { ModContent.NPCType<AresTeslaCannon>(), 
+            [ExoMechComboAttackType.ThanatosAres_ElectricCage] = new int[] { ModContent.NPCType<AresTeslaCannon>(),
                 ModContent.NPCType<AresPlasmaFlamethrower>(),
                 ModContent.NPCType<AresLaserCannon>(),
                 ModContent.NPCType<AresPulseCannon>() },

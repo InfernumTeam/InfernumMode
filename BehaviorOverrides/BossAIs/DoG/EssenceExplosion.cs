@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.Opacity = Utils.InverseLerp(5f, 36f, projectile.timeLeft, true);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Texture2D lightTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/PhotovisceratorLight");

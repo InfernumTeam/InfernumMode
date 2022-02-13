@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 projectile.rotation -= MathHelper.Pi;
 
             if (Time == 0f)
-			{
+            {
                 Time = Main.rand.NextFloat(1f, 45f);
                 projectile.netUpdate = true;
             }
@@ -64,16 +64,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             Time++;
         }
 
-		public override Color? GetAlpha(Color lightColor)
-		{
+        public override Color? GetAlpha(Color lightColor)
+        {
             Color endColor = Color.Lerp(lightColor * projectile.Opacity, Color.White, 0.55f);
             return Color.Lerp(new Color(128, 88, 160, 0) * 0.45f, endColor, projectile.Opacity);
-		}
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
-		{
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
             Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
             return false;
-		}
-	}
+        }
+    }
 }

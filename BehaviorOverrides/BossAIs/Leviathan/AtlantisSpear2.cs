@@ -5,10 +5,10 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
-	public class AtlantisSpear2 : ModProjectile
+    public class AtlantisSpear2 : ModProjectile
     {
         public ref float Time => ref projectile.ai[1];
-		public override string Texture => "CalamityMod/Projectiles/Magic/AtlantisSpear";
+        public override string Texture => "CalamityMod/Projectiles/Magic/AtlantisSpear";
 
         public override void SetStaticDefaults()
         {

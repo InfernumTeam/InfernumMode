@@ -10,7 +10,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Utilities;
 using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
@@ -183,7 +182,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             int chargeCount = 3;
             int blastCount = (int)MathHelper.Lerp(30f, 42f, 1f - lifeRatio);
             float blastSpeed = MathHelper.Lerp(9f, 12f, 1f - lifeRatio);
-            
+
             ref float chargingFlag = ref npc.Infernum().ExtraAI[0];
             ref float chargeCountdown = ref npc.Infernum().ExtraAI[1];
             ref float chargeInterpolantTimer = ref npc.Infernum().ExtraAI[2];

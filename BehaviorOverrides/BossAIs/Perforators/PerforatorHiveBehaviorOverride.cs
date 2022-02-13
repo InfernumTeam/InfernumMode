@@ -401,7 +401,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             if (enraged)
                 shootRate = 30;
             Vector2 blobSpawnPosition = new Vector2(npc.Center.X + Main.rand.NextFloat(-12f, 12f), npc.Center.Y + 30f);
-            
+
             // Release blood teeth balls upward occasionally.
             if (finalWormDead && Main.netMode != NetmodeID.MultiplayerClient && attackTimer % (shootRate * 3f) == shootRate * 3f - 1f)
             {

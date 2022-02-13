@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Release a burst of crystals.
             float wrappedAttackTimer = attackTimer % 360f;
-            
+
             if (Main.netMode != NetmodeID.Server && wrappedAttackTimer == 100f)
                 Main.PlaySound(SoundID.DD2_DarkMageCastHeal.WithVolume(1.6f), target.Center);
 

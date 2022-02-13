@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-	public class BrimstoneBurstTelegraph : ModProjectile
+    public class BrimstoneBurstTelegraph : ModProjectile
     {
         public override void SetStaticDefaults()
         {

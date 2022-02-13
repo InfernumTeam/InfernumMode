@@ -39,24 +39,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             projectile.frame = projectile.frameCounter / 7 % Main.projFrames[projectile.type];
 
             Time++;
-		}
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
-		{
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(5, Main.projFrames[projectile.type], (int)Variant, projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
 
             for (int i = 0; i < 6; i++)
-			{
+            {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
                 spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(1f, 1f, 1f, 0f) * projectile.Opacity, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             }
             spriteBatch.Draw(texture, drawPosition, frame, Color.White * projectile.Opacity, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
-		}
+        }
 
         public override bool CanDamage() => projectile.timeLeft < 505;
-	}
+    }
 }

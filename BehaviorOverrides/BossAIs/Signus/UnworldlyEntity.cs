@@ -130,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override bool PreNPCLoot() => false;
 
-		public override bool CheckDead()
+        public override bool CheckDead()
         {
             DeathCountdown = 60f;
 

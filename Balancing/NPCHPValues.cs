@@ -1,22 +1,22 @@
 ﻿using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.NPCs.SupremeCalamitas;
-using CalamityMod.NPCs.ExoMechs.Artemis;
-using CalamityMod.NPCs.ExoMechs.Apollo;
-using CalamityMod.NPCs.ExoMechs.Thanatos;
-using CalamityMod.NPCs.ExoMechs.Ares;
-using CalamityMod.NPCs.SlimeGod;
+using CalamityMod.NPCs.AstrumAureus;
+using CalamityMod.NPCs.BrimstoneElemental;
 using CalamityMod.NPCs.Bumblebirb;
+using CalamityMod.NPCs.Calamitas;
 using CalamityMod.NPCs.DesertScourge;
 using CalamityMod.NPCs.DevourerofGods;
-using CalamityMod.NPCs.Perforator;
-using CalamityMod.NPCs.AstrumAureus;
-using CalamityMod.NPCs.StormWeaver;
-using CalamityMod.NPCs.BrimstoneElemental;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
+using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.PlaguebringerGoliath;
-using CalamityMod.NPCs.Calamitas;
 using CalamityMod.NPCs.ProfanedGuardians;
+using CalamityMod.NPCs.SlimeGod;
+using CalamityMod.NPCs.StormWeaver;
+using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
@@ -25,13 +25,12 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using CrabulonBoss = CalamityMod.NPCs.Crabulon.CrabulonIdle;
-using HiveMindP1Boss = CalamityMod.NPCs.HiveMind.HiveMind;
 using CrimulanSGBig = CalamityMod.NPCs.SlimeGod.SlimeGodRun;
 using EbonianSGBig = CalamityMod.NPCs.SlimeGod.SlimeGod;
-using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
+using HiveMindP1Boss = CalamityMod.NPCs.HiveMind.HiveMind;
 using OldDukeBoss = CalamityMod.NPCs.OldDuke.OldDuke;
+using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.Balancing
 {

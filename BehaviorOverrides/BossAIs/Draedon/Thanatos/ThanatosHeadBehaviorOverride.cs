@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Terraria;
@@ -676,9 +675,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (attackTimer % rotorReleaseRate == rotorReleaseRate - 1f)
                 {
                     var segments = (from n in Main.npc.Take(Main.maxNPCs)
-                                   where n.active && n.type == ModContent.NPCType<ThanatosBody1>() && !n.WithinRange(target.Center, 400f)
-                                   orderby n.Distance(target.Center)
-                                   select n).ToList();
+                                    where n.active && n.type == ModContent.NPCType<ThanatosBody1>() && !n.WithinRange(target.Center, 400f)
+                                    orderby n.Distance(target.Center)
+                                    select n).ToList();
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && segments.Count > 1)
                     {
@@ -730,7 +729,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.netUpdate = true;
             }
 
-            int totalLightRays = (int)(lightRaySpreadDegrees * 0.257f); 
+            int totalLightRays = (int)(lightRaySpreadDegrees * 0.257f);
             float lightRaySpread = MathHelper.ToRadians(lightRaySpreadDegrees);
             Vector2 outerHoverOffset = hoverOffsetDirection.ToRotationVector2() * 1200f;
             Vector2 outerHoverDestination = target.Center + outerHoverOffset;

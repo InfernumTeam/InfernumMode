@@ -52,27 +52,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         }
 
         internal Color ColorFunction(float completionRatio)
-		{
+        {
             return Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime))) * projectile.Opacity * 1.6f;
-		}
+        }
 
         internal float WidthFunction(float completionRatio)
         {
             return MathHelper.Lerp(projectile.width * 0.6f, projectile.width + 16f, 1f - completionRatio);
         }
 
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), 
-                targetHitbox.Size(), 
-                projectile.Bottom, 
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(),
+                targetHitbox.Size(),
+                projectile.Bottom,
                 projectile.Bottom - Vector2.UnitY * TornadoHeight * 0.8f,
-                (int)(projectile.width * 0.525), 
+                (int)(projectile.width * 0.525),
                 ref _);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (TornadoDrawer is null)
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
@@ -91,9 +91,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

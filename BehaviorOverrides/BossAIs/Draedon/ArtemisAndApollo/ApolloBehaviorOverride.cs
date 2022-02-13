@@ -4,7 +4,6 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Skies;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -1006,7 +1005,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         {
             // Reset the frame counter, in case it was used in the previous attack.
             npc.frameCounter = 0f;
-            
+
             TwinsAttackType oldAttackType = (TwinsAttackType)(int)npc.ai[0];
             ref float previousSpecialAttack = ref npc.Infernum().ExtraAI[17];
 

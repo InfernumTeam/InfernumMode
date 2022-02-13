@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(lightColor, Color.White, 0.75f) * projectile.Opacity;
 
-		public override void Kill(int timeLeft)
+        public override void Kill(int timeLeft)
         {
             // Make a sound and release some ichor dust on death.
             Main.PlaySound(SoundID.Item10, projectile.position);

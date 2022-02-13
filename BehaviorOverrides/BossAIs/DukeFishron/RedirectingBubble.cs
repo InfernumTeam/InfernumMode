@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 {
-	public class RedirectingBubble : ModNPC
+    public class RedirectingBubble : ModNPC
     {
         public Player Target => Main.player[npc.target];
         public ref float Time => ref npc.ai[0];
@@ -22,10 +22,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public override void SetDefaults()
         {
-			npc.npcSlots = 1f;
+            npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.damage = 70;
-			npc.width = npc.height = 36;
+            npc.width = npc.height = 36;
             npc.lifeMax = 420;
             npc.knockBackResist = 0f;
             npc.noGravity = true;

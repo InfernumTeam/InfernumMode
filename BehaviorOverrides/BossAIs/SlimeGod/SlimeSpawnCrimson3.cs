@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             npc.aiStyle = -1;
             aiType = -1;
             npc.damage = 50;
-			npc.width = 40;
+            npc.width = 40;
             npc.height = 30;
             npc.defense = 12;
             npc.lifeMax = 130;
@@ -156,7 +156,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void OnHitPlayer(Player player, int damage, bool crit)
         {
-			player.AddBuff(BuffID.Darkness, 90, true);
-		}
+            player.AddBuff(BuffID.Darkness, 90, true);
+        }
     }
 }

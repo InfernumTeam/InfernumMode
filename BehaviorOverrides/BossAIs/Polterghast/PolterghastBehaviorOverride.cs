@@ -744,7 +744,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             IEnumerable<int> polterghasts = Main.npc.Take(Main.maxNPCs).
                 Where(n => (n.type == npc.type || n.type == cloneType) && n.active).
                 Select(n => n.whoAmI);
-            
+
             if (adjustedTimer < 40f && !npc.WithinRange(target.Center, 300f))
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 300f;

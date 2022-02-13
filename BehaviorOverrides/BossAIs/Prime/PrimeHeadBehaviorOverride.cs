@@ -245,7 +245,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
             }
         }
-        
+
         public static void DoAttack_MetalBurst(NPC npc, Player target, float attackTimer, ref float frameType)
         {
             int shootRate = AnyArms ? 125 : 45;
@@ -439,7 +439,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 npc.velocity = Vector2.Zero;
             }
             npc.rotation = npc.velocity.X * 0.04f;
-            
+
             // Play a telegraph sound prior to firing.
             if (attackTimer == 5f)
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);

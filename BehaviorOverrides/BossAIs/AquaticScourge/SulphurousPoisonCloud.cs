@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (projectile.timeLeft < 180)
             {
-				projectile.damage = 0;
+                projectile.damage = 0;
                 projectile.Opacity = MathHelper.Clamp(projectile.Opacity - 0.03f, 0f, 1f);
                 if (projectile.Opacity <= 0f)
                     projectile.Kill();

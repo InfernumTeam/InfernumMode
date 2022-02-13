@@ -1,6 +1,5 @@
 using CalamityMod.NPCs;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
-using InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;

@@ -1,42 +1,41 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Buffs.StatBuffs;
+using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Events;
+using CalamityMod.Items.Materials;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.Calamitas;
+using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Ravager;
+using CalamityMod.NPCs.SupremeCalamitas;
+using CalamityMod.UI;
 using CalamityMod.World;
-using InfernumMode.Buffs;
+using InfernumMode.Balancing;
+using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
+using InfernumMode.Buffs;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.NPCs.AstrumAureus;
-using CalamityMod.NPCs.GreatSandShark;
-using CalamityMod.NPCs.SupremeCalamitas;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
-using CalamityMod.Events;
-using CalamityMod.UI;
-using System.Linq;
-using CalamityMod.NPCs.Perforator;
-using CalamityMod.NPCs.Crabulon;
-using CalamityMod.Buffs.DamageOverTime;
-using InfernumMode.BehaviorOverrides.BossAIs.BoC;
-using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Buffs.StatBuffs;
-using CalamityMod.NPCs.ExoMechs;
-using InfernumMode.BehaviorOverrides.BossAIs.DoG;
-using InfernumMode.Balancing;
-
-using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
-using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
-using CalamityMod.Items.Materials;
+using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
+using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -243,7 +242,7 @@ namespace InfernumMode.GlobalInstances
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return;
-            
+
             if (npc.type == NPCID.WallofFlesh)
             {
                 for (int i = 0; i < Main.rand.Next(18, 29 + 1); i++)
@@ -349,7 +348,7 @@ namespace InfernumMode.GlobalInstances
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return base.CheckDead(npc);
-            
+
             if (npc.type == NPCID.WallofFleshEye)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)

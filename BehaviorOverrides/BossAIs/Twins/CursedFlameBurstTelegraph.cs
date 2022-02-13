@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-	public class CursedFlameBurstTelegraph : ModProjectile
+    public class CursedFlameBurstTelegraph : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -32,17 +32,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         }
 
         public float WidthFunction(float completionRatio)
-		{
+        {
             float squeezeInterpolant = (float)Math.Pow(Utils.InverseLerp(0f, 0.27f, completionRatio, true), 0.4f) * Utils.InverseLerp(1f, 0.86f, completionRatio, true);
             return MathHelper.SmoothStep(3f, projectile.width, squeezeInterpolant);
         }
 
         public Color ColorFunction(float completionRatio)
-		{
+        {
             Color color = Color.Lerp(Color.Green, Color.LimeGreen, (float)Math.Pow(completionRatio, 2D));
             color *= 1f - 0.5f * (float)Math.Pow(completionRatio, 3D);
             return color * projectile.Opacity;
-		}
+        }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {

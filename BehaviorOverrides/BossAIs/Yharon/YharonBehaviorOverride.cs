@@ -821,7 +821,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 // Begin the delay if the destination is reached.
                 if (npc.WithinRange(hoverDestination, 50f) && wrappedAttackTimer < flamethrowerHoverTime - 2f)
                     attackTimer += flamethrowerHoverTime - wrappedAttackTimer - 1f;
-                
+
                 // Release fire and smoke from the mouth as a telegraph.
                 for (int i = 0; i < 3; i++)
                 {

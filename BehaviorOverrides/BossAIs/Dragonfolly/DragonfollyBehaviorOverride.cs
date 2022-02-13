@@ -350,7 +350,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     horizontalOffset = 860f;
                     break;
             }
-            
+
             // Delete plasma orbs during thunder charges.
             if (chargeType == DragonfollyAttackType.ThunderCharge)
             {
@@ -541,7 +541,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             flapRate = (int)Utils.Clamp(8f - npc.velocity.Length() * 0.125f, 4f, 8f);
             npc.rotation = (npc.rotation * 7f + npc.velocity.X * 0.01f) / 8f;
         }
-        
+
         internal static void DoAttack_SummonSwarmers(NPC npc, Player target, bool phase2, ref float attackTimer, ref float frameType, ref float flapRate)
         {
             npc.rotation = npc.rotation.AngleLerp(0f, 0.125f);

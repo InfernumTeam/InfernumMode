@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             npc.aiStyle = aiType = -1;
             npc.damage = 0;
-			npc.width = 40;
+            npc.width = 40;
             npc.height = 30;
             npc.defense = 0;
             npc.lifeMax = 100;

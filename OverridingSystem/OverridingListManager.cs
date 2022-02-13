@@ -16,7 +16,7 @@ namespace InfernumMode.OverridingSystem
         internal static Dictionary<int, Delegate> InfernumSetDefaultsOverrideList = new Dictionary<int, Delegate>();
         internal static Dictionary<int, NPCPreDrawDelegate> InfernumPreDrawOverrideList = new Dictionary<int, NPCPreDrawDelegate>();
         internal static Dictionary<int, Delegate> InfernumFrameOverrideList = new Dictionary<int, Delegate>();
-        
+
         internal static Dictionary<int, Delegate> InfernumProjectilePreAIOverrideList = new Dictionary<int, Delegate>();
         internal static Dictionary<int, Delegate> InfernumProjectilePreDrawOverrideList = new Dictionary<int, Delegate>();
 

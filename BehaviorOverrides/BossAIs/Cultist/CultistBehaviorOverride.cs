@@ -438,7 +438,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             ref float aimRotation = ref npc.Infernum().ExtraAI[0];
 
             npc.velocity *= 0.96f;
-            
+
             if (attackTimer == 10f && !npc.WithinRange(target.Center, 720f))
             {
                 Vector2 teleportPosition = target.Center - Vector2.UnitY * 300f;
@@ -562,7 +562,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (attackTimer >= attackLength)
                 GotoNextAttackState(npc);
         }
-        
+
         public static void DoAttack_LightningHover(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
         {
             int lightningBurstCount = phase2 ? 2 : 3;
@@ -734,7 +734,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (phase2)
                 attackLength += 205;
 
-            bool inDelay = attackTimer >= shootDelay + lightBurstCount * lightBurstShootRate && 
+            bool inDelay = attackTimer >= shootDelay + lightBurstCount * lightBurstShootRate &&
                 attackTimer < shootDelay + lightBurstCount * lightBurstShootRate + lightBurstAttackDelay;
             bool performingPhase2Attack = attackTimer >= shootDelay + lightBurstCount * lightBurstShootRate + lightBurstAttackDelay;
 
@@ -777,7 +777,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 frameType = (int)CultistFrameState.RaiseArmsUp;
 
                 // Create a flash of light at the cultist's position and release a bunch of light.
-                if (adjustedTime == 75f && Main.netMode != NetmodeID.MultiplayerClient) 
+                if (adjustedTime == 75f && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     npc.Center = target.Center - Vector2.UnitY * 300f;
                     npc.netUpdate = true;
@@ -888,7 +888,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 npc.Opacity = Utils.InverseLerp(30f, 15f, attackTimer, true);
                 frameType = (int)CultistFrameState.Laugh;
             }
-            
+
             // Holds arms out during the ritual.
             if (attackTimer == 29f)
                 frameType = (int)CultistFrameState.HoldArmsOut;

@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             projectile.friendly = false;
             projectile.tileCollide = false;
             projectile.timeLeft = 300;
-		}
+        }
 
         public override void AI()
         {

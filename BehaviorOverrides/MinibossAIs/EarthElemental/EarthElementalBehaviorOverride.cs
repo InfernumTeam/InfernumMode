@@ -24,5 +24,5 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.EarthElemental
         {
 
         }
-	}
+    }
 }

@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
 
         public float WidthFunction(float completionRatio)
-		{
+        {
             float squeezeInterpolant = (float)Math.Pow(Utils.InverseLerp(1f, 0.4f, completionRatio, true), 0.4f);
             return MathHelper.SmoothStep(projectile.width * 0.5f, projectile.width, squeezeInterpolant) * Utils.InverseLerp(0.27f, 1f, completionRatio, true) * 1.6f * projectile.Opacity;
         }

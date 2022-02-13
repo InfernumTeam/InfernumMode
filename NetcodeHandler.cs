@@ -6,9 +6,9 @@ using Terraria.ModLoader;
 namespace InfernumMode
 {
     public enum InfernumPacketType : short
-	{
+    {
         SendExtraNPCData
-	}
+    }
 
     public class InfernumNPCSyncInformation
     {
@@ -41,10 +41,10 @@ namespace InfernumMode
     {
         public static List<InfernumNPCSyncInformation> PendingSyncs = new List<InfernumNPCSyncInformation>();
         public static void ReceivePacket(Mod mod, BinaryReader reader, int whoAmI)
-		{
+        {
             InfernumPacketType packetType = (InfernumPacketType)reader.ReadInt16();
             switch (packetType)
-			{
+            {
                 case InfernumPacketType.SendExtraNPCData:
                     int npcIndex = reader.ReadInt32();
                     int realLife = reader.ReadInt32();
@@ -53,10 +53,10 @@ namespace InfernumMode
                     float[] aiValues = new float[totalUniqueAIIndicesUsed];
 
                     for (int i = 0; i < totalUniqueAIIndicesUsed; i++)
-					{
+                    {
                         indicesUsed[i] = reader.ReadInt32();
                         aiValues[i] = reader.ReadSingle();
-					}
+                    }
                     InfernumNPCSyncInformation syncInformation = new InfernumNPCSyncInformation()
                     {
                         NPCIndex = npcIndex,
@@ -70,7 +70,7 @@ namespace InfernumMode
                         PendingSyncs.Add(syncInformation);
 
                     break;
-			}
+            }
         }
 
         public static void Update()

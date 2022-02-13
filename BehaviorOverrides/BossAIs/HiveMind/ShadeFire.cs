@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ModLoader;
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
-	public class ShadeFire : ModProjectile
+    public class ShadeFire : ModProjectile
     {
         public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()

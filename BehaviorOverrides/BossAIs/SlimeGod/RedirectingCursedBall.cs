@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         {
             projectile.width = projectile.height = 24;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
+            projectile.ignoreWater = true;
             projectile.timeLeft = 300;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             {
                 Main.PlaySound(SoundID.Item33, projectile.Center);
                 projectile.localAI[0] = 1f;
-			}
+            }
 
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 

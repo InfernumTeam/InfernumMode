@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 Lighting.AddLight(projectile.Center, Color.White.ToVector3());
             }
-            
+
             // Release a bunch of fiery dust from the cinder before it burns.
             else
             {
@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool CanDamage() => Time >= FadeinTime + 30f;
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.Calamity().lastProjectileHit = projectile;
         }

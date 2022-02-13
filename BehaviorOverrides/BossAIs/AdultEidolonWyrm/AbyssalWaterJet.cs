@@ -66,11 +66,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), 
-                targetHitbox.Size(), 
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(),
+                targetHitbox.Size(),
                 projectile.oldPos[5] + projectile.Size * 0.5f,
                 projectile.oldPos[projectile.oldPos.Length - 6] + projectile.Size * 0.5f,
-                (int)(projectile.width * 0.525), 
+                (int)(projectile.width * 0.525),
                 ref _) && projectile.timeLeft < 72f;
         }
 
@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.Calamity().lastProjectileHit = projectile;
         }

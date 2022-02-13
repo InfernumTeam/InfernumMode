@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             npc.Calamity().unbreakableDR = head.Calamity().unbreakableDR;
 
             if (npc.type == ModContent.NPCType<StormWeaverTail>())
-			{
+            {
                 npc.Calamity().DR = 0f;
                 npc.Calamity().unbreakableDR = false;
             }
@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             return false;
         }
     }
-    
+
     public class StormWeaverTailBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<StormWeaverTail>();

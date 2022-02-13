@@ -26,15 +26,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.timeLeft = 200;
-		}
+        }
 
         public override void AI()
         {
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.ghostBoss))
-			{
+            {
                 projectile.Kill();
                 return;
-			}
+            }
 
             NPC polterghast = Main.npc[CalamityGlobalNPC.ghostBoss];
             projectile.Opacity = Utils.InverseLerp(200f, 195f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
 
             if (projectile.timeLeft % 18 == 17)
-			{
+            {
                 // Release a circle of dust every so often.
                 for (int i = 0; i < 16; i++)
                 {
@@ -67,10 +67,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 projectile.Center = Vector2.Lerp(projectile.Center, polterghast.Center, 0.06f);
                 projectile.velocity = (projectile.velocity * 11f + projectile.SafeDirectionTo(polterghast.Center) * 36f) / 12f;
                 if (projectile.Hitbox.Intersects(polterghast.Hitbox))
-				{
+                {
                     polterghast.ai[2]--;
                     projectile.Kill();
-				}
+                }
                 projectile.timeLeft = 2;
             }
         }

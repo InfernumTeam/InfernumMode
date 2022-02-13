@@ -16,7 +16,7 @@ using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 {
-	public class AquaticScourgeHeadBehaviorOverride : NPCBehaviorOverride
+    public class AquaticScourgeHeadBehaviorOverride : NPCBehaviorOverride
     {
         public enum AquaticScourgeAttackType
         {
@@ -320,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             if (attackTimer >= 385f)
                 GotoNextAttack(npc);
         }
-        
+
         public static void DoAttack_CallForSeekers(NPC npc, Player target, float attackTimer, ref float speedFactor)
         {
             int summonRate = 90;

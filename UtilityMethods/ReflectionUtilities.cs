@@ -26,5 +26,5 @@ namespace InfernumMode
                 yield return type;
             }
         }
-	}
+    }
 }

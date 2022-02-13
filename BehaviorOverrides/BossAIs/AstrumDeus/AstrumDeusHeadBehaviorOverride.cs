@@ -611,7 +611,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             float rotateThreshold = MathHelper.Pi * 0.76f;
             if (rayHasBeenReleased && (attackTimer - fireDelay) % (AstralPlasmaBeam.Lifetime + 40f) > AstralPlasmaBeam.Lifetime)
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) - 0.2f, 0.027f, true) * idealGeneralMoveSpeed;
-            
+
             if (!npc.WithinRange(target.Center, 475f) && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < rotateThreshold)
             {
                 float newSpeed = MathHelper.Lerp(npc.velocity.Length(), idealGeneralMoveSpeed, 0.085f);

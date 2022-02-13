@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -48,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             NPCAimedTarget target = npc.GetTargetData();
 
             bool isBuffed = npc.type == NPCID.DD2OgreT3;
-            bool wasSpawnedInValidContext = npc.Infernum().ExtraAI[5] == 1f;
+            bool wasSpawnedInValidContext = npc.Infernum().ExtraAI[5] == 1f || !DD2Event.Ongoing;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float hasFadedIn = ref npc.ai[2];

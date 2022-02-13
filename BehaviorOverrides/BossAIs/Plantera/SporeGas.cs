@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override void SetDefaults()
         {
-			projectile.width = 32;
+            projectile.width = 32;
             projectile.height = 32;
             projectile.hostile = true;
             projectile.ignoreWater = true;
@@ -45,10 +45,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             projectile.Opacity = Utils.InverseLerp(0f, 120f, Time, true) * (1f - projectile.localAI[0] / 255f);
             if (Time > 1800f)
-			{
+            {
                 projectile.localAI[0] += 10f;
-				projectile.damage = 0;
-			}
+                projectile.damage = 0;
+            }
 
             if (projectile.localAI[0] > 255f)
             {
@@ -65,20 +65,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 projectile.velocity *= 0.98f;
         }
 
-		public override bool CanHitPlayer(Player target) => Time <= 1800f && Time > 120f;
+        public override bool CanHitPlayer(Player target) => Time <= 1800f && Time > 120f;
 
-		public override Color? GetAlpha(Color lightColor)
-		{
-			if (Time > 1800f)
-			{
-				byte b2 = (byte)((26f - (Time - 1800f)) * 10f);
-				byte a2 = (byte)(projectile.alpha * (b2 / 255f));
-				return new Color(b2, b2, b2, a2) * projectile.Opacity;
-			}
-			return new Color(255, 255, 255, projectile.alpha) * projectile.Opacity;
-		}
+        public override Color? GetAlpha(Color lightColor)
+        {
+            if (Time > 1800f)
+            {
+                byte b2 = (byte)((26f - (Time - 1800f)) * 10f);
+                byte a2 = (byte)(projectile.alpha * (b2 / 255f));
+                return new Color(b2, b2, b2, a2) * projectile.Opacity;
+            }
+            return new Color(255, 255, 255, projectile.alpha) * projectile.Opacity;
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             // Changes the texture of the projectile
             Texture2D texture = Main.projectileTexture[projectile.type];
@@ -101,8 +101,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-			if (Time <= 1800f && Time > 120f)
-				target.AddBuff(BuffID.Poisoned, 240);
+            if (Time <= 1800f && Time > 120f)
+                target.AddBuff(BuffID.Poisoned, 240);
         }
     }
 }

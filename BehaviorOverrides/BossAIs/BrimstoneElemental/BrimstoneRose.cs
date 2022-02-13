@@ -51,18 +51,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-			lightColor.R = (byte)(255 * projectile.Opacity);
-			Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
+            lightColor.R = (byte)(255 * projectile.Opacity);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
             return false;
         }
 
-		public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             if ((CalamityWorld.downedProvidence && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI) || BossRushEvent.BossRushActive)
                 target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 180);
-			else
-				target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
-		}
+            else
+                target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
+        }
 
         public override void Kill(int timeLeft)
         {
@@ -95,9 +95,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

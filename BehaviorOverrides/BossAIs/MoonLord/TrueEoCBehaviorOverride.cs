@@ -6,9 +6,8 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using static InfernumMode.Utilities;
 using static InfernumMode.GlobalInstances.GlobalNPCOverrides;
+using static InfernumMode.Utilities;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {

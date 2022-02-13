@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         {
             projectile.width = projectile.height = 24;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
+            projectile.ignoreWater = true;
             projectile.timeLeft = 480;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             {
                 Main.PlaySound(SoundID.Item33, projectile.Center);
                 projectile.localAI[0] = 1f;
-			}
+            }
 
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
             projectile.Opacity = Utils.InverseLerp(480f, 470f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * 0.75f;

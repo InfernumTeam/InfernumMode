@@ -39,11 +39,11 @@ using InfernumMode.BehaviorOverrides.BossAIs.Crabulon;
 using InfernumMode.BehaviorOverrides.BossAIs.Destroyer;
 using InfernumMode.BehaviorOverrides.BossAIs.DukeFishron;
 using InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu;
-using InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
 using InfernumMode.BehaviorOverrides.BossAIs.Polterghast;
+using InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians;
 using InfernumMode.BehaviorOverrides.BossAIs.Signus;
 using InfernumMode.BehaviorOverrides.BossAIs.SlimeGod;
 using InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas;
@@ -54,7 +54,6 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
 using static CalamityMod.Events.BossRushEvent;
 
 namespace InfernumMode.BossRush
@@ -83,7 +82,7 @@ namespace InfernumMode.BossRush
                     Player player = Main.player[ClosestPlayerToWorldCenter];
                     NPC.SpawnWOF(player.position);
                 }, permittedNPCs: new int[] { NPCID.WallofFleshEye, NPCID.LeechHead, NPCID.LeechBody, NPCID.LeechTail, NPCID.TheHungry, NPCID.TheHungryII }),
-                
+
                 new Boss(NPCID.EyeofCthulhu, TimeChangeContext.Night, permittedNPCs: new int[] { NPCID.ServantofCthulhu, ModContent.NPCType<ExplodingServant>() }),
 
                 new Boss(NPCID.DukeFishron, spawnContext: type =>
@@ -126,7 +125,7 @@ namespace InfernumMode.BossRush
                 new Boss(NPCID.Plantera, permittedNPCs: new int[] { NPCID.PlanterasTentacle, NPCID.PlanterasHook, NPCID.Spore }),
 
                 new Boss(ModContent.NPCType<BrimstoneElemental>(), permittedNPCs: ModContent.NPCType<Brimling>()),
-                
+
                 new Boss(ModContent.NPCType<RavagerBody>(), spawnContext: type =>
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
@@ -140,14 +139,14 @@ namespace InfernumMode.BossRush
 
                 new Boss(NPCID.TheDestroyer, TimeChangeContext.Night, specialSpawnCountdown: 300, permittedNPCs: new int[] { NPCID.TheDestroyerBody, NPCID.TheDestroyerTail, NPCID.Probe, ModContent.NPCType<SuperchargedProbe>() }),
 
-                new Boss(ModContent.NPCType<Polterghast>(), TimeChangeContext.Day, permittedNPCs: new int[] 
+                new Boss(ModContent.NPCType<Polterghast>(), TimeChangeContext.Day, permittedNPCs: new int[]
                     { ModContent.NPCType<PhantomFuckYou>(), ModContent.NPCType<PolterghastHook>(), ModContent.NPCType<PolterPhantom>(), ModContent.NPCType<EerieLimb>() }),
 
                 new Boss(ModContent.NPCType<AquaticScourgeHead>(), permittedNPCs: new int[] { ModContent.NPCType<AquaticScourgeBody>(), ModContent.NPCType<AquaticScourgeBodyAlt>(),
                     ModContent.NPCType<AquaticScourgeTail>(), ModContent.NPCType<AquaticParasite>(), ModContent.NPCType<AquaticParasite2>(), ModContent.NPCType<AquaticSeekerHead2>(),
                     ModContent.NPCType<AquaticSeekerBody2>(), ModContent.NPCType<AquaticSeekerTail2>() }),
 
-                new Boss(ModContent.NPCType<ProfanedGuardianBoss>(), TimeChangeContext.Day, 
+                new Boss(ModContent.NPCType<ProfanedGuardianBoss>(), TimeChangeContext.Day,
                     permittedNPCs: new int[] { ModContent.NPCType<ProfanedGuardianBoss2>(), ModContent.NPCType<ProfanedGuardianBoss3>(), ModContent.NPCType<EtherealHand>() }),
 
                 new Boss(ModContent.NPCType<CeaselessVoid>(), permittedNPCs: ModContent.NPCType<DarkEnergy>()),
@@ -259,9 +258,9 @@ namespace InfernumMode.BossRush
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SupremeCalamitasSpawn"), Main.player[ClosestPlayerToWorldCenter].Center);
                     CalamityUtils.SpawnBossBetter(Main.player[ClosestPlayerToWorldCenter].Top - new Vector2(42f, 84f), type);
-                }, dimnessFactor: 0.6f, permittedNPCs: new int[] { ModContent.NPCType<SCalWormArm>(), ModContent.NPCType<SCalWormHead>(), ModContent.NPCType<SCalWormBody>(), 
+                }, dimnessFactor: 0.6f, permittedNPCs: new int[] { ModContent.NPCType<SCalWormArm>(), ModContent.NPCType<SCalWormHead>(), ModContent.NPCType<SCalWormBody>(),
                     ModContent.NPCType<SCalWormBodyWeak>(), ModContent.NPCType<SCalWormTail>(),
-                    ModContent.NPCType<SoulSeekerSupreme>(), ModContent.NPCType<BrimstoneHeart>(), ModContent.NPCType<SupremeCataclysm>(), 
+                    ModContent.NPCType<SoulSeekerSupreme>(), ModContent.NPCType<BrimstoneHeart>(), ModContent.NPCType<SupremeCataclysm>(),
                     ModContent.NPCType<SupremeCatastrophe>(), ModContent.NPCType<ShadowDemon>() }),
             };
 

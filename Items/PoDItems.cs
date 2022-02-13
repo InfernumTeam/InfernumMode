@@ -1,10 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.Items.Ammo;
 using CalamityMod.Items.TreasureBags;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.Items.Weapons.Summon;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;

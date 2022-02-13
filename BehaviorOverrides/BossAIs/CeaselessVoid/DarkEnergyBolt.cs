@@ -87,12 +87,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 TrailDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
 
             if (Time < 30f)
-			{
+            {
                 Vector2 start = projectile.Center;
                 Vector2 end = projectile.Center + projectile.velocity.SafeNormalize(Vector2.Zero) * 5000f;
                 spriteBatch.DrawLineBetter(start, end, Color.Purple, projectile.Opacity * 7.5f);
                 return false;
-			}
+            }
 
             GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage("Images/Misc/Perlin");
             Vector2[] drawPositions = new Vector2[]
@@ -130,8 +130,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return false;
         }
 
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
             if (Time < 30f)
                 return false;
 
@@ -151,6 +151,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return false;
         }
 
-		public override bool ShouldUpdatePosition() => !HasCollidedWithSomething && Time > 30f;
+        public override bool ShouldUpdatePosition() => !HasCollidedWithSomething && Time > 30f;
     }
 }

@@ -69,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         }
 
         public void ShootRay()
-		{
+        {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 shootVelocity = PredictiveAimRotation.ToRotationVector2() * (UseUndergroundAI ? 11f : 13.25f);
@@ -97,18 +97,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
 
         public float WidthFunction(float completionRatio)
-		{
+        {
             float squeezeInterpolant = (float)Math.Pow(Utils.InverseLerp(0f, 0.27f, completionRatio, true), 0.9f) * Utils.InverseLerp(1f, 0.86f, completionRatio, true);
             return MathHelper.SmoothStep(projectile.width * 0.1f, projectile.width, squeezeInterpolant) * projectile.Opacity;
         }
 
         public Color ColorFunction(float completionRatio)
-		{
+        {
             Color color = Color.Lerp(Color.Cyan, Color.White, (float)Math.Sin(Math.Pow(completionRatio, 2D) * MathHelper.Pi));
             color *= 1f - 0.5f * (float)Math.Pow(completionRatio, 3D);
             color *= projectile.Opacity * 3f;
             return color;
-		}
+        }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {

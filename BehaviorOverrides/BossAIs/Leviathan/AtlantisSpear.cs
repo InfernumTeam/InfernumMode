@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
-	public class AtlantisSpear : ModProjectile
+    public class AtlantisSpear : ModProjectile
     {
         public ref float Time => ref projectile.ai[1];
         public override void SetStaticDefaults()

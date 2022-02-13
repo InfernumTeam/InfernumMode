@@ -97,6 +97,9 @@ namespace InfernumMode
 
         public static void TargetClosestMiniboss(NPC searcher, bool faceTarget = true, bool prioritizeCrystal = false)
         {
+            if (!DD2Event.Ongoing)
+                prioritizeCrystal = false;
+
             NPCUtils.TargetSearchFlag targetFlags = NPCUtils.TargetSearchFlag.All;
 
             // If a player exists and is nearby, only attack players.

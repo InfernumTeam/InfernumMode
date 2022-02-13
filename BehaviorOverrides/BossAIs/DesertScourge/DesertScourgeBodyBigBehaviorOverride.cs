@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 {
-	public class DesertScourgeBodyBigBehaviorOverride : NPCBehaviorOverride
+    public class DesertScourgeBodyBigBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<DesertScourgeBody>();
 

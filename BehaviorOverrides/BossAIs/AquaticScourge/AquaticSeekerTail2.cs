@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             npc.width = 16;
             npc.height = 22;
             npc.defense = 20;
-			npc.lifeMax = AquaticSeekerHead2.TotalLife;
+            npc.lifeMax = AquaticSeekerHead2.TotalLife;
             npc.aiStyle = aiType = -1;
             npc.knockBackResist = 0f;
             npc.alpha = 255;

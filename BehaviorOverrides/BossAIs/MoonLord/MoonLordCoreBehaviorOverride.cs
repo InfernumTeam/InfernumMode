@@ -1,14 +1,14 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
+using CalamityMod.NPCs;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.NPCs;
-using CalamityMod.Events;
-using Terraria.GameContent.Events;
-using System.Collections.Generic;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {

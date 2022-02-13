@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         {
             projectile.width = projectile.height = 24;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
+            projectile.ignoreWater = true;
             projectile.timeLeft = 480;
             projectile.penetrate = -1;
             projectile.tileCollide = false;

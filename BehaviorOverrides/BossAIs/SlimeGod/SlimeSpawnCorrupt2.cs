@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         {
             npc.aiStyle = aiType = -1;
             npc.damage = 67;
-			npc.width = 40;
+            npc.width = 40;
             npc.height = 30;
             npc.defense = 11;
             npc.lifeMax = 320;
@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         public override void ReceiveExtraAI(BinaryReader reader) => npc.lifeMax = reader.ReadInt32();
 
         public override void AI()
-		{
+        {
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodPurple))
             {
                 npc.active = false;

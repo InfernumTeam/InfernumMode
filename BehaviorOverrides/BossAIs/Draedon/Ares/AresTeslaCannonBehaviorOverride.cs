@@ -197,7 +197,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
             else
                 npc.frameCounter = 0D;
-            
+
             if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
                 currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] % 72f / 72f));
 

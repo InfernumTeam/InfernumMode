@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override bool CanDamage() => projectile.Opacity > 0.75f;
 
         public override void Kill(int timeLeft)
-		{
+        {
             if (Main.dedServ)
                 return;
 

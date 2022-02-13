@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             // Explode into rockets if the big builder is gone or the nuke has been launched.
             if (!NPC.AnyNPCs(ModContent.NPCType<BuilderDroneBig>()) || GeneralTimer >= PlagueNuke.BuildTime)
-			{
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 rocketVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(9f, 13f);
@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override bool PreNPCLoot() => false;
 
-		public override bool CheckDead()
+        public override bool CheckDead()
         {
             Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.position);
 

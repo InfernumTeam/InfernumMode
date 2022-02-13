@@ -1,10 +1,10 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod;
+using CalamityMod.Events;
+using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ID;
-using CalamityMod.Events;
-using CalamityMod;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {

@@ -120,7 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             if (npc.timeLeft > 60)
                 npc.timeLeft = 60;
         }
-        
+
         public static void DoAttack_IdlyFloat(NPC npc, Player target, bool phase2, bool phase3, bool enraged, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -202,7 +202,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     npc.netUpdate = true;
                 }
             }
- 
+
             if (attackTimer > teleportFadeTime + 25f)
             {
                 if (attackTimer <= teleportFadeTime + 80f)

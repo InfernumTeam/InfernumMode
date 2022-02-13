@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                         if ((int)headAttackType == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle)
                             generalShootSpeedFactor *= 0.5f;
-                        
+
                         switch ((int)headAttackType)
                         {
                             // Fire regular lasers.
@@ -164,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
             else
                 npc.frameCounter = 0f;
-            
+
             // Handle smoke venting and open/closed DR.
             npc.Calamity().DR = ClosedSegmentDR;
             npc.Calamity().unbreakableDR = true;
@@ -228,7 +228,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Become vulnerable on the map.
             npc.modNPC.GetType().GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, frameType == (int)ThanatosFrameType.Open);
         }
-        
+
         public override void FindFrame(NPC npc, int frameHeight)
         {
             npc.frame.Y = (int)npc.frameCounter * frameHeight;

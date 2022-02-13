@@ -47,12 +47,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             projectile.scale = MathHelper.Clamp(projectile.scale + 0.05f, 0f, 1f);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
-		{
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
             Vector2 start = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation) * 4350f;
             Vector2 end = projectile.Center + Vector2.UnitY.RotatedBy(projectile.rotation) * 4350f;
             Utilities.DrawLineBetter(spriteBatch, start, end, Color.Lime * projectile.scale, projectile.scale * 3f);
             return false;
-		}
-	}
+        }
+    }
 }

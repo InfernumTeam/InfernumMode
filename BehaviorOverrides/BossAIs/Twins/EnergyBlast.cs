@@ -3,7 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
-{   
+{
     public class EnergyBlast : ModProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";

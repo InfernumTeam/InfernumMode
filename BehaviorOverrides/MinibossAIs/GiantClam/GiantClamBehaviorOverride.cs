@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             ref float hidingInShell = ref npc.Infernum().ExtraAI[2];
             ref float hitCount = ref npc.ai[0];
             bool hardmode = Main.hardMode;
-           
+
 
             if (hitCount < HitsRequiredToAnger)
             {
@@ -93,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                                 if (Main.projectile.IndexInRange(proj))
                                     Main.projectile[proj].ai[0] = 1f;
                             }
-                            
+
                         }
                     }
 
@@ -190,7 +190,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                             {
                                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ClamImpact"), (int)npc.position.X, (int)npc.position.Y);
                                 slamCount++;
-                                
+
                                 if (slamCount < (hardmode ? 6f : 3f))
                                 {
                                     attackTimer = 0f;
@@ -227,7 +227,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 npc.defense = 9999;
 
             return false;
-            
+
         }
 
         public static void GoToNextAttack(NPC npc)
@@ -274,7 +274,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 
             if (attackState == (float)GiantClamAttackState.PearlSwirl)
             {
-               if (attackTimer > 180)
+                if (attackTimer > 180)
                     npc.frame.Y = ((int)MathHelper.Clamp(attackTimer - 180f, 0f, 6f) + 5) * frameHeight;
             }
 
@@ -291,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             }
         }
 
-		public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
@@ -301,6 +301,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             spriteBatch.Draw(npcTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
             spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.LightBlue, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             return false;
-		}
-	}
+        }
+    }
 }

@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             }
 
             // If there still was no valid target, dig away.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || 
+            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead ||
                 !Main.player[npc.target].active || !npc.WithinRange(Main.player[npc.target].Center, 5600f))
             {
                 DoBehavior_Despawn(npc);
@@ -319,7 +319,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         float idealHorizontalSpeed = npc.SafeDirectionTo(target.Center).X * 12.5f;
                         npc.velocity.X = (npc.velocity.X * 14f + idealHorizontalSpeed) / 15f;
                     }
-                    
+
                     // Roar as a telegraph.
                     if (attackTimer == 85f)
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
@@ -386,7 +386,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             // Calculate rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
-        
+
         public static void DoBehavior_SummonVultures(NPC npc, Player target, ref float attackTimer)
         {
             int vultureSummonDelay = 45;

@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.timeLeft = 500;
-		}
+        }
 
         public override void AI()
         {
@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
 
             if (projectile.timeLeft % 36 == 35)
-			{
+            {
                 // Release a circle of dust every so often.
                 for (int i = 0; i < 16; i++)
                 {

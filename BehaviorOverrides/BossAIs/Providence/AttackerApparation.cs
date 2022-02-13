@@ -1,5 +1,4 @@
 using CalamityMod;
-using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using System;
 using System.IO;
@@ -127,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         Main.projectile[otherGuardianUUID].ai[0] = AttackTimer;
                     Main.projectile[otherGuardianUUID].ai[1] = projectile.ai[1];
                     (Main.projectile[otherGuardianUUID].modProjectile as AttackerApparation).DecideValuesForNextAI();
-                    Main.projectile[otherGuardianUUID].netUpdate = true;                   
+                    Main.projectile[otherGuardianUUID].netUpdate = true;
                 }
             }
 
@@ -263,7 +262,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool CanDamage() => projectile.alpha <= 40 && State != AttackState.HorizontalRedirect && State != AttackState.TopLeftRedirect;
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.Calamity().lastProjectileHit = projectile;
         }

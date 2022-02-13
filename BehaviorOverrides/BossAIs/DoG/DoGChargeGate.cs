@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.NPCs.DevourerofGods;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.Graphics.Shaders;
-using CalamityMod.NPCs.DevourerofGods;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {

@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ModLoader;
-using Terraria.ID;
 using System;
+using Terraria;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Play idle sounds.
             if (Main.netMode != NetmodeID.Server)
-			{
+            {
                 if (Time == 10f || Time == 70f || Time == 130f)
                 {
                     var soundInstance = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), projectile.Center);

@@ -10,7 +10,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
     {
         public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()
-		{
+        {
             DisplayName.SetDefault("Bee");
             Main.projFrames[projectile.type] = 3;
         }
@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
         }
 
         public override void AI()
-		{
+        {
             projectile.alpha = Utils.Clamp(projectile.alpha - 50, 0, 255);
             projectile.rotation = MathHelper.Clamp(projectile.velocity.X * 0.15f, -0.7f, 0.7f);
             projectile.spriteDirection = (projectile.velocity.X < 0f).ToDirectionInt();
@@ -42,17 +42,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             Time++;
         }
 
-		public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Poisoned, 90);
+        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Poisoned, 90);
 
         public override void Kill(int timeLeft)
-		{
-			Main.PlaySound(SoundID.NPCDeath1, projectile.Center);
-			for (int i = 0; i < 12; i++)
-			{
-				Dust honey = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 147, 0f, 0f, 0, default, 0.8f);
-				if (Main.rand.NextBool(2))
+        {
+            Main.PlaySound(SoundID.NPCDeath1, projectile.Center);
+            for (int i = 0; i < 12; i++)
+            {
+                Dust honey = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 147, 0f, 0f, 0, default, 0.8f);
+                if (Main.rand.NextBool(2))
                     honey.scale *= 1.4f;
-			}
+            }
         }
     }
 }

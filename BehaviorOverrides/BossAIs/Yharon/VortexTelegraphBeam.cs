@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Time++;
         }
 
-		public float WidthFunction(float completionRatio)
+        public float WidthFunction(float completionRatio)
         {
             float squeezeInterpolant = Utils.InverseLerp(0f, 0.05f, completionRatio, true) * Utils.InverseLerp(1f, 0.95f, completionRatio, true);
             return MathHelper.SmoothStep(2f, projectile.width, squeezeInterpolant) * MathHelper.Clamp(projectile.scale, 0.01f, 1f);
@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override bool ShouldUpdatePosition() => false;
 
-		public Color ColorFunction(float completionRatio)
+        public Color ColorFunction(float completionRatio)
         {
             Color color = Color.Lerp(Color.Orange, Color.DarkRed, (float)Math.Pow(completionRatio, 2D));
             color = Color.Lerp(color, Color.Red, 0.65f);
@@ -77,11 +77,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             return false;
         }
 
-		public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
-		{
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        {
             drawCacheProjsBehindProjectiles.Add(index);
-		}
+        }
 
-		public override bool CanDamage() => false;
+        public override bool CanDamage() => false;
     }
 }

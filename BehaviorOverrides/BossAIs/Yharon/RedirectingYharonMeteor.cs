@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override void SetDefaults()
         {
-			projectile.width = 34;
+            projectile.width = 34;
             projectile.height = 34;
             projectile.hostile = true;
             projectile.alpha = 255;
@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             projectile.tileCollide = false;
             projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
-		}
+        }
 
         public override void AI()
         {
@@ -51,8 +51,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
             else
             {
-				projectile.velocity.Y += 0.3f;
-				if (projectile.velocity.Y > 16f)
+                projectile.velocity.Y += 0.3f;
+                if (projectile.velocity.Y > 16f)
                     projectile.velocity.Y = 16f;
             }
 
@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
         }
 
-		public override bool CanHitPlayer(Player target) => projectile.velocity.Y >= -16f;
+        public override bool CanHitPlayer(Player target) => projectile.velocity.Y >= -16f;
 
         public override Color? GetAlpha(Color lightColor) => new Color(200, 200, 200, projectile.alpha);
 
@@ -88,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public override void Kill(int timeLeft)
         {
             Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14, 0.5f, 0f);
-			CalamityGlobalProjectile.ExpandHitboxBy(projectile, 144);
+            CalamityGlobalProjectile.ExpandHitboxBy(projectile, 144);
             for (int d = 0; d < 2; d++)
             {
                 Dust.NewDust(projectile.position, projectile.width, projectile.height, 55, 0f, 0f, 100, default, 1.5f);
@@ -105,15 +105,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             projectile.Damage();
         }
 
-		public override void OnHitPlayer(Player target, int damage, bool crit)
-		{
-			if (projectile.velocity.Y >= -16f)
-				target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 180);
-		}
-
-		public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            if (projectile.velocity.Y >= -16f)
+                target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 180);
+        }
+
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
+        {
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

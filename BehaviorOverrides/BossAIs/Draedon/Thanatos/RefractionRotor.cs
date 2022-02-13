@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     int spark = Utilities.NewProjectileBetter(projectile.Center, laserVelocity, ModContent.ProjectileType<ExolaserSpark>(), 500, 0f);
                     if (Main.projectile.IndexInRange(spark))
                         Main.projectile[spark].MaxUpdates = 3;
-                } 
+                }
             }
         }
 

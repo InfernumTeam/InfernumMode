@@ -9,8 +9,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
     {
         public const int Lifetime = 720;
         public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Fire");
+        {
+            DisplayName.SetDefault("Fire");
             Main.projFrames[projectile.type] = 4;
         }
         public override void SetDefaults()
@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         public override bool CanDamage() => projectile.timeLeft < Lifetime - 30;
 
         public override void Kill(int timeLeft)
-		{
+        {
             if (!Main.dedServ)
             {
                 for (int i = 0; i < 30; i++)

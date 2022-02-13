@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             }
 
             if (npc.life < npc.lifeMax * 0.9f)
-			{
+            {
                 if (phase2 == 0f)
                 {
                     Main.PlaySound(SoundID.NPCDeath14, (int)npc.Center.X, (int)npc.Center.Y);
@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     phase2 = 1f;
                 }
                 return StormWeaverHeadBehaviorOverride.PreAI(npc);
-			}
+            }
 
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.2f, 0f, 1f);

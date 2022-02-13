@@ -3,19 +3,16 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using Microsoft.Xna.Framework;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ApolloBehaviorOverride;
-using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos.ThanatosHeadBehaviorOverride;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresBodyBehaviorOverride;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
-using System.Linq;
+using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo.ApolloBehaviorOverride;
+using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {

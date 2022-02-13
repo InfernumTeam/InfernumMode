@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             // Explode into rockets if the small builders are gone.
             if (!NPC.AnyNPCs(ModContent.NPCType<BuilderDroneSmall>()) || GeneralTimer >= PlagueNuke.BuildTime)
-			{
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 5; i++)
@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override bool PreNPCLoot() => false;
 
-		public override bool CheckDead()
+        public override bool CheckDead()
         {
             Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.position);
 

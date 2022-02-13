@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
-	public class LeviathanSpawnWave : ModProjectile
+    public class LeviathanSpawnWave : ModProjectile
     {
         internal PrimitiveTrailCopy TornadoDrawer;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
@@ -47,17 +47,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
         }
 
         internal Color ColorFunction(float completionRatio)
-		{
+        {
             float opacity = (float)Math.Sin(completionRatio * MathHelper.Pi) * projectile.Opacity;
             return Color.Lerp(Color.DeepSkyBlue, Color.Blue, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime)) * 0.5f) * opacity;
-		}
+        }
 
         internal float WidthFunction(float completionRatio) => WaveHeight * (float)Math.Sin(completionRatio * MathHelper.Pi);
 
         internal Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * (float)Math.Sin(completionRatio * MathHelper.Pi * 3f + Time / 13f) * 30f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
+        {
             for (int i = 0; i < projectile.oldPos.Length; i++)
             {
                 float _ = 0f;
@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             return false;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (TornadoDrawer is null)
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, OffsetFunction, false, GameShaders.Misc["Infernum:DukeTornado"]);
@@ -82,9 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

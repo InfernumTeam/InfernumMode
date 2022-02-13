@@ -1,9 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.Items.Placeables;
+using CalamityMod.NPCs.SunkenSea;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.NPCs.SunkenSea;
-using CalamityMod.Items.Placeables;
 
 namespace InfernumMode.Items
 {

@@ -309,7 +309,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 if (npc.WithinRange(drawPosition, 14f))
                     break;
 
-                drawPosition += (npc.Center - drawStart).SafeNormalize(Vector2.Zero) * 14f; 
+                drawPosition += (npc.Center - drawStart).SafeNormalize(Vector2.Zero) * 14f;
                 Color color = npc.GetAlpha(Lighting.GetColor((int)drawPosition.X / 16, (int)(drawPosition.Y / 16f)));
                 Vector2 screenDrawPosition = drawPosition - Main.screenPosition;
                 spriteBatch.Draw(chainTexture, screenDrawPosition, null, color, chainRotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);

@@ -1,11 +1,11 @@
 ﻿using InfernumMode.OverridingSystem;
+using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using InfernumMode.Tiles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                     return false;
                 }
-                
+
                 // Otherwise prepare the fight
                 npc.life = npc.lifeMax = 80000;
                 npc.noGravity = true;
@@ -314,7 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         #region Arm Bullets
 
                         #endregion
-                        
+
                         break;
                     case GolemAttackState.FistSpin:
                         if (FreeHead)
@@ -388,7 +388,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         #region Heat Ray
 
                         #endregion
-                        
+
                         break;
                     case GolemAttackState.SpinLaser:
                         if (!FreeHead)
@@ -518,7 +518,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 arenaCenter = new Vector2(altarX, arenaBottom - (ArenaHeight / 2) - 5);
             Vector2 arenaArea = new Vector2(ArenaWidth, ArenaHeight);
             npc.Infernum().arenaRectangle = Utils.CenteredRectangle(arenaCenter * 16f, arenaArea * 16f);
-            
+
             int left = (int)(npc.Infernum().arenaRectangle.Center().X / 16 - arenaArea.X * 0.5f);
             int right = (int)(npc.Infernum().arenaRectangle.Center().X / 16 + arenaArea.X * 0.5f);
             int top = (int)(npc.Infernum().arenaRectangle.Center().Y / 16 - arenaArea.Y * 0.5f);

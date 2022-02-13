@@ -8,14 +8,14 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-	public class VortexOfFlame : ModProjectile
+    public class VortexOfFlame : ModProjectile
     {
         public const int Lifetime = 600;
         public const int AuraCount = 4;
         public ref float Timer => ref projectile.ai[0];
         public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Vortex of Flame");
+        {
+            DisplayName.SetDefault("Vortex of Flame");
         }
         public override void SetDefaults()
         {
@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         }
 
         public override void Kill(int timeLeft)
-		{
+        {
             if (!Main.dedServ)
             {
                 for (int i = 0; i < 200; i++)

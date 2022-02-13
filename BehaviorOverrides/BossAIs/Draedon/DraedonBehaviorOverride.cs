@@ -6,10 +6,8 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static CalamityMod.NPCs.ExoMechs.Draedon;
-using InfernumMode.Buffs;
+using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {

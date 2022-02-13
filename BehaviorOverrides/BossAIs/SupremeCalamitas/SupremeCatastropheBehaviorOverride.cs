@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             return false;
         }
 
-		public override void FindFrame(NPC npc, int frameHeight)
+        public override void FindFrame(NPC npc, int frameHeight)
         {
             int currentFrame = 0;
             float frameUpdateSpeed = npc.ai[0] == (int)SupremeCatastropheAttackState.SliceTarget ? 260f : 130f;
@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.frame.Y = yFrame * npc.frame.Height;
         }
 
-		public static void DoBehavior_SliceTarget(NPC npc, Player target, bool alone, ref float attackTimer)
+        public static void DoBehavior_SliceTarget(NPC npc, Player target, bool alone, ref float attackTimer)
         {
             float predictivenessFactor = 0f;
             float chargeSpeed = 36f;

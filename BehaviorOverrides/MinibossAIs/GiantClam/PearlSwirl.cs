@@ -1,8 +1,8 @@
-﻿using System;
-using Terraria.ModLoader;
-using CalamityMod;
+﻿using CalamityMod;
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 {

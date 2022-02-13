@@ -233,7 +233,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             npc.rotation = npc.velocity.X * 0.02f;
             npc.spriteDirection = npc.direction;
 
-            DoDefaultMovement(npc,target.Center - Vector2.UnitY * 400f, Vector2.One * 7f, 0.14f);
+            DoDefaultMovement(npc, target.Center - Vector2.UnitY * 400f, Vector2.One * 7f, 0.14f);
 
             if (attackTimer >= (leviathanAlive ? (enraged ? 0f : 15f) : 5f))
                 SelectNextAttack(npc);

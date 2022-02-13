@@ -480,7 +480,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                     if (BossRushEvent.BossRushActive)
                         bubbleShootRate = 15;
-                    
+
                     frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
                     // Fly a bit above the target.

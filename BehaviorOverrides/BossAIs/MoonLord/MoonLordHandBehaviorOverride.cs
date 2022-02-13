@@ -1,14 +1,13 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
+using CalamityMod.NPCs;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
-
 using static InfernumMode.Utilities;
-using CalamityMod.NPCs;
-using CalamityMod.Events;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -17,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override int NPCOverrideType => NPCID.MoonLordHand;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-        
+
         // ai[0] = ai state. -2 = dead, don't do anything. 0 = move around. 1 = spawn phantasmal eyes. 2 = spawn phantasmal spheres. 3 = spawn phantasmal bolts. (5) = go to next ai state
         // ai[1] = see head
         // ai[2] = left/right hand. If 0, left hand. Otherwise, right hand

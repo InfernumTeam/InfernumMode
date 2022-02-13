@@ -655,7 +655,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             float oldAttackState = npc.ai[1];
             WeightedRandom<SignusAttackType> newStatePicker = new WeightedRandom<SignusAttackType>(Main.rand);
             newStatePicker.Add(SignusAttackType.KunaiDashes);
-			newStatePicker.Add(SignusAttackType.ScytheTeleportThrow);
+            newStatePicker.Add(SignusAttackType.ScytheTeleportThrow);
             if (!NPC.AnyNPCs(ModContent.NPCType<UnworldlyEntity>()))
                 newStatePicker.Add(SignusAttackType.ShadowDash, lifeRatio < Phase2LifeRatio ? 1.6 : 1D);
             newStatePicker.Add(SignusAttackType.FastHorizontalCharge);

@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 npc.velocity = Vector2.Zero;
 
             for (int i = 0; i < 4; i++)
-			{
+            {
                 Dust gel = Dust.NewDustDirect(npc.position, npc.width, npc.height, Main.rand.NextBool(2) ? 4 : 267);
                 gel.color = Color.Red;
                 gel.velocity = Main.rand.NextVector2Circular(3f, 3f);

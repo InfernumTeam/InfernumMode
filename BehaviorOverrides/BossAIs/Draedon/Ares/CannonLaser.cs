@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.IO;
 using Terraria;
 using Terraria.ID;
@@ -138,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 180);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.Calamity().lastProjectileHit = projectile;
         }

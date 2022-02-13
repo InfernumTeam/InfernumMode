@@ -1,13 +1,11 @@
 ﻿using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Utilities;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 {
@@ -34,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             NPCAimedTarget target = npc.GetTargetData();
 
             bool isBuffed = npc.type == NPCID.DD2DarkMageT3;
-            bool wasSpawnedInValidContext = npc.Infernum().ExtraAI[5] == 1f;
+            bool wasSpawnedInValidContext = npc.Infernum().ExtraAI[5] == 1f || !DD2Event.Ongoing;
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float currentFrame = ref npc.localAI[0];

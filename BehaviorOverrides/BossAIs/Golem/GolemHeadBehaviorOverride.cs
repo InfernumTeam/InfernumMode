@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
-    
+
     public class GolemHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.GolemHead;

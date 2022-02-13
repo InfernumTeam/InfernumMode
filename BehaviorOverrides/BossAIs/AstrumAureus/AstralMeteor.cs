@@ -87,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 360);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.Calamity().lastProjectileHit = projectile;
         }

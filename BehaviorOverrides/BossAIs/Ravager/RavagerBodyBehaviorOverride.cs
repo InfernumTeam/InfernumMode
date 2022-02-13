@@ -223,7 +223,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     npc.netUpdate = true;
                 }
             }
-            
+
             // Jump towards the target if they're far enough away and enough time passes.
             if (!shouldNotAttack && !npc.WithinRange(target.Center, 200f) && jumpState == 0f && npc.velocity.Y == 0f)
             {
@@ -276,7 +276,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         Gore stompGore = Gore.NewGoreDirect(new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
                         stompGore.velocity *= 0.4f;
                     }
-                    
+
                     int shockwaveDamage = shouldBeBuffed ? 380 : 250;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -289,7 +289,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     jumpState = 0f;
                     npc.netUpdate = true;
                 }
-                
+
                 // Fall through tiles in the way.
                 if (!target.dead)
                 {

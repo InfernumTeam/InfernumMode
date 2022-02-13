@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             projectile.scale = 1.3f;
             projectile.width = projectile.height = 16;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
+            projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 210;

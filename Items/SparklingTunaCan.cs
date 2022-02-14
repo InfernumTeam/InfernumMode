@@ -1,4 +1,5 @@
-﻿using CalamityMod.Items.Placeables;
+﻿using CalamityMod;
+using CalamityMod.Items.Placeables;
 using CalamityMod.NPCs.SunkenSea;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -11,9 +12,10 @@ namespace InfernumMode.Items
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Sparkling Tuna Can");
+            DisplayName.SetDefault("Sparkling Mollusk Can");
             Tooltip.SetDefault("Summons the Giant Clam\n" +
-                "Can only be used in the sunken sea");
+                "Can only be used in the sunken sea\n" +
+                "Not consumable");
         }
 
         public override void SetDefaults()
@@ -24,11 +26,11 @@ namespace InfernumMode.Items
             item.useAnimation = 45;
             item.useTime = 45;
             item.useStyle = ItemUseStyleID.EatingUsing;
-            item.consumable = true;
+            item.consumable = false;
             item.maxStack = 999;
         }
 
-        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<GiantClam>())/* && player.Calamity().ZoneSunkenSea*/;
+        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<GiantClam>()) && player.Calamity().ZoneSunkenSea;
 
         public override void AddRecipes()
         {

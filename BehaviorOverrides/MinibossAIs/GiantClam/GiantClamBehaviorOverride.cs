@@ -1,4 +1,5 @@
-﻿using CalamityMod.Projectiles.Enemy;
+﻿using CalamityMod;
+using CalamityMod.Projectiles.Enemy;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             TeleportSlam = 2,
         }
 
-        public const int HitsRequiredToAnger = 5;
+        public const int HitsRequiredToAnger = 1;
 
         public override int NPCOverrideType => ModContent.NPCType<GiantClamNPC>();
 
@@ -42,24 +43,18 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 npc.chaseable = false;
                 npc.defense = 9999;
 
-                if (Main.hardMode)
-                {
-                    npc.lifeMax = 5000;
-                    npc.life = 5000;
-                }
-
                 return false;
             }
             else if (hitCount == HitsRequiredToAnger)
             {
                 hitCount++;
                 npc.defense = 15;
-                npc.damage = 50;
+                npc.damage = 80;
 
                 if (Main.hardMode)
                 {
                     npc.defense = 35;
-                    npc.damage = 90;
+                    npc.damage = 140;
                 }
 
                 npc.defDamage = npc.damage;
@@ -147,7 +142,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 case GiantClamAttackState.TeleportSlam:
                     ref float attackSubstate = ref npc.Infernum().ExtraAI[3];
                     ref float slamCount = ref npc.Infernum().ExtraAI[4];
-                    npc.damage = hardmode ? 200 : 300;
+                    npc.damage = hardmode ? 320 : 200;
                     if (attackTimer == 1f)
                         attackSubstate = 1f;
 
@@ -242,7 +237,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             npc.Infernum().ExtraAI[1] = 0f;
 
             if (NextAttack == GiantClamAttackState.TeleportSlam)
-                npc.damage = Main.hardMode ? 120 : 80;
+                npc.damage = Main.hardMode ? 135 : 90;
             else
                 npc.damage = npc.defDamage;
 
@@ -298,6 +293,17 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             Vector2 origin = npc.frame.Size() * 0.5f;
             Texture2D npcTexture = ModContent.GetTexture("CalamityMod/NPCs/SunkenSea/GiantClam");
             Texture2D glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/SunkenSea/GiantClamGlow");
+
+            if ((GiantClamAttackState)(int)npc.Infernum().ExtraAI[0] == GiantClamAttackState.TeleportSlam && npc.velocity.Length() > 1f && CalamityConfig.Instance.Afterimages)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.Transparent, (i + 1f) / 4f));
+                    Vector2 drawOffset = -npc.velocity * i * 0.6f;
+                    spriteBatch.Draw(npcTexture, drawPosition + drawOffset, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+
             spriteBatch.Draw(npcTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
             spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.LightBlue, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             return false;

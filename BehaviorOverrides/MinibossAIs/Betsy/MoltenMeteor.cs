@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             projectile.hostile = true;
             projectile.penetrate = -1;
             projectile.ignoreWater = true;
-            projectile.timeLeft = 360;
+            projectile.timeLeft = 210;
         }
 
         public override void AI()
@@ -104,6 +104,19 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             if (glowmask != null)
                 spriteBatch.Draw(glowmask, projectile.Center - Main.screenPosition, null, Color.White, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            Main.PlaySound(SoundID.DD2_BetsyFireballImpact, projectile.Center);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 cinderVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(10.5f, 14f);
+                Utilities.NewProjectileBetter(projectile.Center, cinderVelocity, ModContent.ProjectileType<MeteorCinder>(), 170, 0f);
+            }
         }
     }
 }

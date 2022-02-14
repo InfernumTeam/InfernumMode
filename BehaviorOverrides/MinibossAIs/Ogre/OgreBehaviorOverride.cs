@@ -159,6 +159,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
 
         public static void DoBehavior_SlowWalk(NPC npc, NPCAimedTarget target, bool isBuffed, ref float attackTimer, ref float currentFrame)
         {
+            npc.Infernum().ExtraAI[7] = 0f;
+
             int walkTime = 270;
             int walkSlowdownTime = 45;
             int jumpPreparationDelay = 24;
@@ -267,6 +269,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
                 {
                     case 0:
                         npc.ai[0] = (int)OgreAttackType.LostKinSlams;
+                        npc.Infernum().ExtraAI[7] = 0f;
                         break;
                     case 1:
                         npc.ai[0] = (int)OgreAttackType.BouncingSpitballs;
@@ -275,6 +278,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
                         npc.ai[0] = (int)OgreAttackType.ChargeRam;
                         if (!isBuffed)
                             npc.ai[0] = (int)OgreAttackType.LostKinSlams;
+                        npc.Infernum().ExtraAI[7] = 0f;
                         break;
                     case 3:
                         npc.ai[0] = (int)OgreAttackType.BouncingSpitballs2;

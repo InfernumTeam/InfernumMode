@@ -199,7 +199,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
         public static void DoBehavior_SkeletonSummoning(NPC npc, NPCAimedTarget target, bool isBuffed, ref float attackTimer, ref float currentFrame)
         {
             int castTime = 32;
-            int summonTime = 85;
+            int summonTime = 65;
             if (isBuffed)
                 summonTime -= 20;
 

@@ -16,6 +16,7 @@ using CalamityMod.NPCs.PlaguebringerGoliath;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.StormWeaver;
+using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
 using CalamityMod.World;
@@ -39,6 +40,7 @@ namespace InfernumMode.Balancing
         public static Dictionary<int, int> HPValues => new Dictionary<int, int>()
         {
             [ModContent.NPCType<DesertScourgeHead>()] = BossRushEvent.BossRushActive ? 1185000 : 7200,
+            [ModContent.NPCType<GiantClam>()] = Main.hardMode ? 16200 : 4100,
             [NPCID.KingSlime] = BossRushEvent.BossRushActive ? 420000 : 4200,
             [NPCID.EyeofCthulhu] = BossRushEvent.BossRushActive ? 770000 : 6100,
             [NPCID.BrainofCthulhu] = BossRushEvent.BossRushActive ? 289000 : 11089,
@@ -46,6 +48,7 @@ namespace InfernumMode.Balancing
             [NPCID.EaterofWorldsHead] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsBody] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
             [NPCID.EaterofWorldsTail] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
+            [NPCID.DD2DarkMageT1] = 5000,
             [ModContent.NPCType<HiveMindP1Boss>()] = BossRushEvent.BossRushActive ? 606007 : 9600,
             [ModContent.NPCType<PerforatorHive>()] = BossRushEvent.BossRushActive ? 420419 : 7265,
             [ModContent.NPCType<PerforatorHeadSmall>()] = BossRushEvent.BossRushActive ? 119000 : 3000,
@@ -58,6 +61,7 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<EbonianSGBig>()] = BossRushEvent.BossRushActive ? 213720 : 7464,
             [NPCID.WallofFleshEye] = BossRushEvent.BossRushActive ? 246800 : 3232,
             [NPCID.WallofFlesh] = BossRushEvent.BossRushActive ? 1068000 : 10476,
+            [NPCID.DD2DarkMageT3] = 19000,
             [NPCID.Spazmatism] = BossRushEvent.BossRushActive ? 833760 : CalculateMechHP(29950),
             [NPCID.Retinazer] = BossRushEvent.BossRushActive ? 840885 : CalculateMechHP(29950),
             [NPCID.SkeletronPrime] = BossRushEvent.BossRushActive ? 289515 : CalculateMechHP(44444),

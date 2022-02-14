@@ -124,6 +124,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             }
             int shootTime = totalShots * shootRate;
             ref float shootCounter = ref npc.Infernum().ExtraAI[0];
+            ref float aimDirection = ref npc.Infernum().ExtraAI[1];
 
             if (shootCounter > 0f)
                 moveTime /= 2;
@@ -152,6 +153,12 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
             // Release energy bolts.
             else
             {
+                if (aimDirection == 0f)
+                {
+                    aimDirection = npc.AngleTo(target.Center + target.Velocity * 10f);
+                    npc.netUpdate = true;
+                }
+
                 npc.velocity *= 0.5f;
                 currentFrame = MathHelper.Lerp(8f, 12f, Utils.InverseLerp(moveTime + chargeShootTime, moveTime + chargeShootTime + shootTime, attackTimer, true));
                 if (Main.netMode != NetmodeID.MultiplayerClient && (attackTimer - moveTime - chargeShootTime) % shootRate == shootRate - 1f)
@@ -159,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                     int darkMagicDamage = isBuffed ? 185 : 90;
                     float offsetAngle = MathHelper.Lerp(-0.48f, 0.48f, Utils.InverseLerp(0f, shootTime, attackTimer - moveTime - chargeShootTime, true));
                     Vector2 spawnPosition = npc.Center + new Vector2(npc.direction * 10f, -16f);
-                    Vector2 shootVelocity = (target.Center - spawnPosition + target.Velocity * 10f).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * 16f;
+                    Vector2 shootVelocity = (aimDirection + offsetAngle).ToRotationVector2() * 16f;
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ProjectileID.DD2DarkMageBolt, darkMagicDamage, 0f, Main.myPlayer, 0f, 0f);
 
                     // Decide the direction.
@@ -190,7 +197,9 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 }
                 else
                     shootCounter++;
+                aimDirection = 0f;
                 attackTimer = 0f;
+                npc.netUpdate = true;
             }
 
             npc.rotation = npc.velocity.X * 0.04f;

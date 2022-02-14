@@ -37,7 +37,7 @@ namespace InfernumMode
             bool atEndOfWave = waveCompletion >= 0.9f;
             if (currentWave == 5 && currentTier == 1 && atEndOfWave)
                 minibossID = NPCID.DD2DarkMageT1;
-            if (currentWave == 6 && currentTier == 2 && atEndOfWave)
+            if (currentWave == 7 && currentTier == 2 && atEndOfWave)
                 minibossID = NPCID.DD2OgreT2;
             if (currentWave == 5 && currentTier == 3 && atEndOfWave)
                 minibossID = NPCID.DD2DarkMageT3;

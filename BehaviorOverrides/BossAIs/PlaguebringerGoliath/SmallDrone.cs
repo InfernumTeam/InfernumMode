@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             npc.npcSlots = 0f;
             npc.width = npc.height = 42;
             npc.defense = 15;
-            npc.lifeMax = 1620;
+            npc.lifeMax = 1420;
             npc.aiStyle = aiType = -1;
             npc.knockBackResist = 0f;
             npc.noGravity = true;

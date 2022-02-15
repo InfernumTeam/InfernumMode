@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
@@ -63,6 +64,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override void Kill(int timeLeft)
         {
+            Main.PlaySound(SoundID.Item92, projectile.Center);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
             // Release ice shards based on the telegraphs.
             for (int i = 0; i < ShardBurstCount; i++)
             {

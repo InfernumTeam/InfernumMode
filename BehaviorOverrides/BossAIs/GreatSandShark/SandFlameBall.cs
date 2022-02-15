@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             for (int i = 0; i < 3; i++)
             {
                 Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.65f, 0.65f, i / 2f)) * 8f;
-                int fuck = Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ProjectileID.DesertDjinnCurse, 160, 0f);
+                int fuck = Projectile.NewProjectile(projectile.Center, shootVelocity, ProjectileID.DesertDjinnCurse, projectile.damage, 0f);
                 Main.projectile[fuck].ai[0] = target.whoAmI;
             }
         }

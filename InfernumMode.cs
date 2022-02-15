@@ -152,6 +152,12 @@ namespace InfernumMode
                 priority = MusicPriority.BossLow;
             }
 
+            if (NPC.AnyNPCs(NPCID.CultistBoss))
+            {
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/LunaticCultist");
+                priority = MusicPriority.BossMedium;
+            }
+
             bool areExoMechsAround = NPC.AnyNPCs(ModContent.NPCType<AresBody>()) ||
                 NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()) ||
                 NPC.AnyNPCs(ModContent.NPCType<Apollo>());

@@ -39,9 +39,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             AncientDoom
         }
 
-        #region AI
+        public const float BorderWidth = 5472f;
 
-        #region Main Boss
+        #region AI
 
         public override bool PreAI(NPC npc)
         {
@@ -286,10 +286,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             // Create explosions with pillar colors.
-            if (Main.netMode != NetmodeID.MultiplayerClient && canMakeExplosion)
+            if (canMakeExplosion)
             {
-                int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DeathExplosion>(), 0, 0f);
-                Main.projectile[explosion].localAI[1] = variant;
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DeathExplosion>(), 0, 0f);
+                    Main.projectile[explosion].localAI[1] = variant;
+                }
             }
 
             deathTimer++;
@@ -904,7 +908,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (attackTimer == 30f && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 List<int> cultists = new List<int>();
+
+                // Ensure that the ritual is not started outside of the arena border.
+                float leftEdgeOfBorder = npc.Infernum().ExtraAI[8] - BorderWidth * 0.5f + 300f;
+                float rightEdgeOfBorder = npc.Infernum().ExtraAI[8] + BorderWidth * 0.5f - 300f;
                 Vector2 ritualCenter = target.Center + Main.rand.NextVector2CircularEdge(360f, 360f);
+                ritualCenter.X = MathHelper.Clamp(ritualCenter.X, leftEdgeOfBorder, rightEdgeOfBorder);
+
                 for (int i = 0; i < cloneCount; i++)
                 {
                     int clone = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.CultistBossClone, npc.whoAmI);
@@ -1046,6 +1056,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public static void DoAttack_AncientDoom(NPC npc, Player target, ref float frameType, ref float attackTimer)
         {
             float attackPower = Utils.InverseLerp(0.2f, 0.035f, npc.life / (float)npc.lifeMax, true);
+
             int burstCount = 3;
             int burstShootRate = (int)MathHelper.Lerp(270f, 215f, attackPower);
             ref float burstShootCounter = ref npc.Infernum().ExtraAI[0];
@@ -1068,7 +1079,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     npc.netUpdate = true;
                 }
 
+                burstShootCounter = 145f;
                 frameType = (int)CultistFrameState.RaiseArmsUp;
+                npc.netUpdate = true;
             }
 
             // Summon ancient doom NPCs and release a circle of projectiles to weave through.
@@ -1184,8 +1197,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             npc.netUpdate = true;
         }
 
-        #endregion Main Boss
-
         #endregion AI
 
         #region Drawing and Frames
@@ -1276,12 +1287,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
+
             // Draw borders.
             bool dying = npc.Infernum().ExtraAI[6] == 1f;
             Texture2D borderTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cultist/Border");
             float initialXPosition = npc.Infernum().ExtraAI[8];
-            float left = initialXPosition - 2736f;
-            float right = initialXPosition + 2736f;
+            float left = initialXPosition - BorderWidth * 0.5f;
+            float right = initialXPosition + BorderWidth * 0.5f;
             float leftBorderOpacity = Utils.InverseLerp(left + 850f, left + 300f, Main.LocalPlayer.Center.X, true);
             float rightBorderOpacity = Utils.InverseLerp(right - 850f, right - 300f, Main.LocalPlayer.Center.X, true);
 

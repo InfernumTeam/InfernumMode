@@ -6,13 +6,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
     public class LargePlagueExplosion : ModProjectile
     {
-        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Explosion");
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Explosion");
+            Main.projFrames[projectile.type] = 6;
+        }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 120;
+            projectile.width = projectile.height = 36;
             projectile.hostile = true;
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
@@ -28,6 +30,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 dust.scale = Main.rand.NextFloat(1.1f, 1.35f);
                 dust.noGravity = true;
             }
+            projectile.frameCounter++;
+            projectile.frame = projectile.frameCounter / 7;
+            if (projectile.frame >= Main.projFrames[projectile.type])
+                projectile.Kill();
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)

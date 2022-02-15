@@ -188,11 +188,11 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
         public static void DoBehavior_ExplodingWyvernSummoning(NPC npc, NPCAimedTarget target, ref float attackTimer, ref float currentFrame, ref float wingArmFrameCounter)
         {
-            int summonTime = 95;
+            int summonTime = 145;
 
             npc.velocity *= 0.95f;
             if (attackTimer < summonTime)
-                currentFrame = MathHelper.Lerp(0f, 4f, attackTimer / summonTime);
+                currentFrame = MathHelper.Lerp(0f, 4f, MathHelper.Clamp(attackTimer / summonTime * 3f, 0f, 1f));
             wingArmFrameCounter += 0.85f;
 
             if (attackTimer == summonTime / 2)

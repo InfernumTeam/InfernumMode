@@ -100,6 +100,9 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
 
+            if (npc.type == NPCID.CultistBoss || npc.type == NPCID.CultistBossClone)
+                scale = 1f;
+
             bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
             if (isDoG && npc.alpha >= 252)
                 return false;

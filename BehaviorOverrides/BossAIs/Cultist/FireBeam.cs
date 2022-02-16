@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
-            projectile.timeLeft = 120;
+            projectile.timeLeft = 210;
             projectile.alpha = 255;
             projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Fade in.
             projectile.alpha = Utils.Clamp(projectile.alpha - 25, 0, 255);
 
-            projectile.scale = (float)Math.Sin(Time / 120f * MathHelper.Pi) * 3f;
+            projectile.scale = (float)Math.Sin(Time / 210f * MathHelper.Pi) * 3f;
             if (projectile.scale > 1f)
                 projectile.scale = 1f;
 

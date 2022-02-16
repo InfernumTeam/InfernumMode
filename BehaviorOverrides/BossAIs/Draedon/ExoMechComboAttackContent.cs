@@ -12,12 +12,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     {
         public enum ExoMechComboAttackType
         {
-            AresTwins_ThermoplasmaDance = 100,
-            AresTwins_DualLaserCharges,
+            AresTwins_DualLaserCharges = 100,
             AresTwins_CircleAttack,
-            AresTwins_LaserFlameHell,
             ThanatosAres_LaserCircle,
-            ThanatosAres_ElectricCage
+            ThanatosAres_ElectricCage,
         }
 
         public static bool ShouldSelectComboAttack(NPC npc, out ExoMechComboAttackType newAttack)
@@ -45,14 +43,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
 
-                attackSelector.Add(ExoMechComboAttackType.AresTwins_ThermoplasmaDance);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_DualLaserCharges);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_CircleAttack);
-
-                /*
-                if (CurrentTwinsPhase != 4)
-                    attackSelector.Add(ExoMechComboAttackType.AresTwins_LaserFlameHell, 1.35);
-                */
 
                 do
                     newAttack = attackSelector.Get();

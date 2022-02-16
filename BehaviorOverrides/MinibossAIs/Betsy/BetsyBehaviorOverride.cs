@@ -14,10 +14,10 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
         public enum BetsyAttackType
         {
             Charges,
-            MeteorVomit,
+            FlameBreath,
             ExplodingWyvernSummoning,
             SpinCharge,
-            FlameBreath
+            MeteorVomit,
         }
 
         public override int NPCOverrideType => NPCID.DD2Betsy;
@@ -34,19 +34,28 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
+            ref float attackDelay = ref npc.ai[2];
             ref float currentFrame = ref npc.localAI[0];
             ref float wingArmFrameCounter = ref npc.localAI[1];
 
             // Clear pickoff enemies.
             OldOnesArmyMinibossChanges.ClearPickoffOOAEnemies();
 
+            if (attackDelay < 90f)
+			{
+                attackDelay++;
+                wingArmFrameCounter++;
+                npc.velocity = -Vector2.UnitY * 6.5f;
+                return false;
+            }
+
             switch ((BetsyAttackType)(int)attackState)
             {
                 case BetsyAttackType.Charges:
                     DoBehavior_Charges(npc, target, ref attackTimer, ref wingArmFrameCounter);
                     break;
-                case BetsyAttackType.MeteorVomit:
-                    DoBehavior_MeteorVomit(npc, target, ref attackTimer, ref currentFrame, ref wingArmFrameCounter);
+                case BetsyAttackType.FlameBreath:
+                    DoBehavior_FlameBreath(npc, target, ref attackTimer, ref currentFrame, ref wingArmFrameCounter);
                     break;
                 case BetsyAttackType.ExplodingWyvernSummoning:
                     DoBehavior_ExplodingWyvernSummoning(npc, target, ref attackTimer, ref currentFrame, ref wingArmFrameCounter);
@@ -54,8 +63,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
                 case BetsyAttackType.SpinCharge:
                     DoBehavior_SpinCharge(npc, target, ref attackTimer, ref wingArmFrameCounter);
                     break;
-                case BetsyAttackType.FlameBreath:
-                    DoBehavior_FlameBreath(npc, target, ref attackTimer, ref currentFrame, ref wingArmFrameCounter);
+                case BetsyAttackType.MeteorVomit:
+                    DoBehavior_MeteorVomit(npc, target, ref attackTimer, ref currentFrame, ref wingArmFrameCounter);
                     break;
             }
 
@@ -109,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
                 if (chargeCounter >= chargeCount)
                 {
                     chargeCounter = 0f;
-                    npc.ai[0] = (int)BetsyAttackType.MeteorVomit;
+                    npc.ai[0] = (int)BetsyAttackType.FlameBreath;
                 }
                 npc.netUpdate = true;
             }
@@ -181,7 +190,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             {
                 currentFrame = 0f;
                 attackTimer = 0f;
-                npc.ai[0] = (int)BetsyAttackType.ExplodingWyvernSummoning;
+                npc.ai[0] = (int)BetsyAttackType.Charges;
                 npc.netUpdate = true;
             }
         }
@@ -200,7 +209,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
                 Main.PlaySound(SoundID.DD2_BetsySummon, target.Center);
                 Main.PlaySound(SoundID.DD2_BetsyScream, target.Center);
             }
-            if (attackTimer >= summonTime / 2 && attackTimer % 3f == 2f && Main.netMode != NetmodeID.MultiplayerClient)
+            if (attackTimer >= summonTime / 2 && attackTimer % 4f == 3f && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 summonPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(240f, 600f);
                 Vector2 wyvernVelocity = -Vector2.UnitY * Main.rand.NextFloat(1f, 6.5f);
@@ -355,7 +364,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             {
                 currentFrame = 0f;
                 attackTimer = 0f;
-                npc.ai[0] = (int)BetsyAttackType.Charges;
+                npc.ai[0] = (int)BetsyAttackType.ExplodingWyvernSummoning;
                 npc.netUpdate = true;
             }
         }

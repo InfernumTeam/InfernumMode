@@ -152,6 +152,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 case TwinsAttackType.BasicShots:
                     DoBehavior_BasicShots(npc, target, sideSwitchAttackDelay > 0f, false, hoverSide, ref frame, ref attackTimer);
                     break;
+                case TwinsAttackType.SynchronizedCharges:
+                    DoBehavior_SynchronizedCharges(npc, target, hoverSide, ref frame, ref attackTimer);
+                    break;
                 case TwinsAttackType.FireCharge:
                     DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
                     break;

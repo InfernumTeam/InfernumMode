@@ -5,6 +5,7 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
 using Microsoft.Xna.Framework;
 using System.Linq;
 using Terraria;
@@ -197,6 +198,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<AresRocket>(),
                 ModContent.ProjectileType<AresSpinningDeathBeam>(),
                 ModContent.ProjectileType<AresSpinningRedDeathray>(),
+                ModContent.ProjectileType<ExolaserBomb>(),
+                ModContent.ProjectileType<RefractionRotor>(),
             };
             for (int i = 0; i < Main.maxProjectiles; i++)
             {

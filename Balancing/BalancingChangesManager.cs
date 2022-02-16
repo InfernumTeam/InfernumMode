@@ -116,8 +116,6 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCType<DevourerofGodsBody>(), Do(new ProjectileResistBalancingRule(0.45f, ProjectileID.MoonlordBullet, ProjectileID.MoonlordArrow, ProjectileID.MoonlordArrowTrail))),
 
                 // Exo Mechs.
-                new NPCBalancingChange(NPCType<Artemis>(), Do(new ProjectileResistBalancingRule(1.25f, ProjectileType<Galaxia2>()))),
-                new NPCBalancingChange(NPCType<Apollo>(), Do(new ProjectileResistBalancingRule(1.25f, ProjectileType<Galaxia2>()))),
                 new NPCBalancingChange(NPCType<AresBody>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
                 new NPCBalancingChange(NPCType<AresLaserCannon>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),
                 new NPCBalancingChange(NPCType<AresPlasmaFlamethrower>(), Do(new PierceResistBalancingRule(aresPierceResistFactor))),

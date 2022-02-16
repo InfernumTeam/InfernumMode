@@ -52,14 +52,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             Player target = Main.player[initialMech.target];
             switch ((ExoMechComboAttackType)initialMech.ai[0])
             {
-                case ExoMechComboAttackType.AresTwins_ThermoplasmaDance:
-                    return DoBehavior_AresTwins_ThermoplasmaDance(npc, target, ref attackTimer, ref frameType);
                 case ExoMechComboAttackType.AresTwins_DualLaserCharges:
                     return DoBehavior_AresTwins_DualLaserCharges(npc, target, twinsHoverSide, ref attackTimer, ref frameType);
                 case ExoMechComboAttackType.AresTwins_CircleAttack:
                     return DoBehavior_AresTwins_CircleAttack(npc, target, ref attackTimer, ref frameType);
-                case ExoMechComboAttackType.AresTwins_LaserFlameHell:
-                    return DoBehavior_AresTwins_LaserFlameHell(npc, target, twinsHoverSide, ref attackTimer, ref frameType);
             }
             return false;
         }
@@ -719,66 +715,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
             }
             return attackTimer > attackDelay + normalTwinsAttackTime;
-        }
-
-        public static bool DoBehavior_AresTwins_LaserFlameHell(NPC npc, Player target, float twinsHoverSide, ref float attackTimer, ref float frame)
-        {
-            int flamethrowerHoverTime = 95;
-            float flamethrowerFlySpeed = 40f;
-
-            // Apollo performs multiple flamethrower dashes in succession.
-            if (npc.type == ModContent.NPCType<Apollo>())
-            {
-                npc.frameCounter++;
-                frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
-
-                float wrappedAttackTimer = attackTimer % (flamethrowerHoverTime + ApolloFlamethrower.Lifetime + 15f);
-
-                // Look at the target and hover towards the top left/right of the target.
-                if (wrappedAttackTimer < flamethrowerHoverTime + 15f)
-                {
-                    Vector2 mouthpiecePosition = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 85f;
-                    Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * twinsHoverSide * 1020f, -375f);
-
-                    npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination - npc.velocity) * 45f, 1.5f);
-
-                    // Begin the delay if the destination is reached.
-                    if (npc.WithinRange(hoverDestination, 50f) && wrappedAttackTimer < flamethrowerHoverTime - 2f)
-                        attackTimer += flamethrowerHoverTime - wrappedAttackTimer - 1f;
-
-                    // Release fire and smoke from the mouth as a telegraph.
-                    for (int i = 0; i < 3; i++)
-                    {
-                        Vector2 dustSpawnPosition = mouthpiecePosition + Main.rand.NextVector2Circular(8f, 8f);
-                        Vector2 dustVelocity = npc.SafeDirectionTo(dustSpawnPosition).RotatedByRandom(0.45f) * Main.rand.NextFloat(2f, 5f);
-                        Dust hotStuff = Dust.NewDustPerfect(dustSpawnPosition, Main.rand.NextBool() ? 31 : 107);
-                        hotStuff.velocity = dustVelocity + npc.velocity;
-                        hotStuff.fadeIn = 0.8f;
-                        hotStuff.scale = Main.rand.NextFloat(1f, 1.45f);
-                        hotStuff.alpha = 200;
-                    }
-                }
-
-                // Begin the charge and emit a flamethrower after a tiny delay.
-                else if (wrappedAttackTimer == flamethrowerHoverTime + 15f)
-                {
-                    npc.velocity = npc.SafeDirectionTo(target.Center) * flamethrowerFlySpeed;
-
-                    Main.PlaySound(SoundID.DD2_BetsyFlameBreath, npc.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int flamethrower = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ApolloFlamethrower>(), 560, 0f);
-                        if (Main.projectile.IndexInRange(flamethrower))
-                            Main.projectile[flamethrower].ai[1] = npc.whoAmI;
-                    }
-
-                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                    frame += 10f;
-                }
-            }
-
-            return false;
         }
     }
 }

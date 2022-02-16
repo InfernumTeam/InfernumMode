@@ -1,4 +1,5 @@
-﻿using CalamityMod.Dusts;
+﻿using CalamityMod;
+using CalamityMod.Dusts;
 using CalamityMod.Events;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
@@ -435,7 +436,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             int fireballCount = phase2 ? 38 : 32;
             int attackLength = 105 + fireballShootRate * fireballCount;
             if (phase2)
-                attackLength += 270;
+                attackLength += 390;
 
             bool canShootFireballs = attackTimer >= 105f && attackTimer < 105f + fireballShootRate * fireballCount;
 
@@ -492,7 +493,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                         Dust fire = Dust.NewDustPerfect(target.Center + Main.rand.NextVector2Square(-1200f, 1200f), 6);
                         fire.velocity = -Vector2.UnitY.RotatedByRandom(0.35f) * Main.rand.NextFloat(2.5f, 4f);
-                        fire.scale *= Main.rand.NextFloat(1f, 1.4f);
+                        fire.scale *= Main.rand.NextFloat(1.5f, 2f);
                         fire.fadeIn = Main.rand.NextFloat(0.4f, 0.75f);
                         fire.noGravity = true;
                     }
@@ -1245,21 +1246,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             float frameState = npc.ai[2];
             float transitionTimer = npc.ai[3];
             Texture2D cultistTexture = Main.npcTexture[npc.type];
+
             if (frameState == 1f)
             {
-                Color drawColor = Color.White * npc.Opacity * 0.55f;
-                drawColor *= Utils.InverseLerp(0f, 12f, transitionTimer, true) * Utils.InverseLerp(TransitionAnimationTime - 4f, TransitionAnimationTime - 32f, transitionTimer, true);
-
                 // Create a circle of illusions that fade in and collapse on the cultist.
                 for (int i = 0; i < 8; i++)
                 {
+                    float colorInterpolant = (Main.GlobalTime * 0.53f + i / 8f) % 1f;
+                    Color solarColor = new Color(255, 93, 30);
+                    Color nebulaColor = new Color(232, 76, 183);
+                    Color vortexColor = new Color(6, 229, 156);
+                    Color stardustColor = new Color(0, 170, 221);
+                    Color illusionColor = CalamityUtils.MulticolorLerp(colorInterpolant, solarColor, nebulaColor, vortexColor, stardustColor);
+                    float illusionOpacity = Utils.InverseLerp(0f, 32f, transitionTimer, true) * 
+                        Utils.InverseLerp(TransitionAnimationTime - 4f, TransitionAnimationTime - 32f, transitionTimer, true) * npc.Opacity * 0.6f;
+                    illusionColor.A = (byte)MathHelper.Lerp(125f, 0f, 1f - illusionOpacity);
+
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + MathHelper.TwoPi * 2f / TransitionAnimationTime).ToRotationVector2();
                     drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * transitionTimer / TransitionAnimationTime);
                     drawOffset *= MathHelper.Lerp(0f, 200f, Utils.InverseLerp(TransitionAnimationTime - 10f, 0f, transitionTimer, true));
                     Vector2 drawPosition = npc.Center + drawOffset - Main.screenPosition;
                     SpriteEffects direction = (drawOffset.X < 0f) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-                    spriteBatch.Draw(cultistTexture, drawPosition, npc.frame, drawColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+                    spriteBatch.Draw(cultistTexture, drawPosition, npc.frame, illusionColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
                 }
             }
 
@@ -1342,9 +1351,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 GameShaders.Misc["Infernum:CultistDeath"].Apply();
             }
 
+            bool performingRitual = npc.ai[0] == (int)CultistAIState.Ritual && npc.ai[1] >= 30f && !npc.dontTakeDamage;
             Texture2D baseTexture = Main.npcTexture[npc.type];
+            Rectangle frame = npc.frame;
+            if (performingRitual)
+            {
+                baseTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cultist/CultistLaughFrames");
+                frame = baseTexture.Frame(1, 3, 0, (int)(npc.frameCounter / 14f % 1f * 3f));
+            }
+
             SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            spriteBatch.Draw(baseTexture, npc.Center - Main.screenPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            spriteBatch.Draw(baseTexture, npc.Center - Main.screenPosition, frame, npc.GetAlpha(lightColor), npc.rotation, frame.Size() * 0.5f, npc.scale, direction, 0f);
 
             if (deathTimer > 120f)
                 spriteBatch.ExitShaderRegion();

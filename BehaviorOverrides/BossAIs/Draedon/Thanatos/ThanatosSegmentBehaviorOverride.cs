@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -119,7 +120,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         {
                             // Fire regular lasers.
                             case (int)ThanatosHeadAttackType.LaserBarrage:
-                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle:
                                 int type = ModContent.ProjectileType<ThanatosLaser>();
                                 float predictionFactor = 21f;
                                 float shootSpeed = generalShootSpeedFactor * 10f;
@@ -141,6 +141,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                                 {
                                     Main.projectile[laser].owner = npc.target;
                                     Main.projectile[laser].ModProjectile<ThanatosLaser>().InitialDestination = projectileDestination;
+                                    Main.projectile[laser].ai[1] = npc.whoAmI;
+                                    Main.projectile[laser].netUpdate = true;
+                                }
+                                break;
+                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle:
+                                type = ModContent.ProjectileType<ThanatosComboLaser>();
+                                shootSpeed = generalShootSpeedFactor * 10f;
+                                projectileDestination = Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Center + Vector2.UnitY * 34f;
+                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                if (Main.projectile.IndexInRange(laser))
+                                {
+                                    Main.projectile[laser].owner = npc.target;
+                                    Main.projectile[laser].ModProjectile<ThanatosComboLaser>().InitialDestination = projectileDestination;
                                     Main.projectile[laser].ai[1] = npc.whoAmI;
                                     Main.projectile[laser].netUpdate = true;
                                 }

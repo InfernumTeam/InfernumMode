@@ -83,8 +83,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public static bool DoBehavior_ThanatosAres_LaserCircle(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
-            int attackDelay = 180;
-            int telegraphTime = 60;
+            int attackDelay = 240;
+            int telegraphTime = 90;
             int attackTime = 780;
             int spinTime = attackTime - attackDelay;
             int totalLasers = 5;
@@ -117,6 +117,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     segmentFireCountdown = segmentFireTime;
                     npc.netUpdate = true;
                 }
+
+                // Disable contact damage before the attack happens, to prevent cheap hits.
+                if (attackTimer < attackDelay)
+                    npc.damage = 0;
 
                 if (segmentFireCountdown > 0f)
                     segmentFireCountdown--;

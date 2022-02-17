@@ -36,7 +36,7 @@ namespace InfernumMode.GlobalInstances
             {
                 bool dealsNoContactDamage = npc.damage == 0;
                 npc.Infernum().ExtraAI[20] = MathHelper.Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
-                return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 1.2f, npc.Infernum().ExtraAI[20]);
+                return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
             }
 
             return base.GetAlpha(npc, drawColor);

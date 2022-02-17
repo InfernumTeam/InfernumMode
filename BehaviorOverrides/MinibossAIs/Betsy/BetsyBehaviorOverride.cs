@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             OldOnesArmyMinibossChanges.ClearPickoffOOAEnemies();
 
             if (attackDelay < 90f)
-			{
+            {
                 attackDelay++;
                 wingArmFrameCounter++;
                 npc.velocity = -Vector2.UnitY * 6.5f;
@@ -116,10 +116,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
                 attackTimer = 0f;
                 chargeCounter++;
                 if (chargeCounter >= chargeCount)
-                {
-                    chargeCounter = 0f;
-                    npc.ai[0] = (int)BetsyAttackType.FlameBreath;
-                }
+                    SelectNextAttack(npc);
+
                 npc.netUpdate = true;
             }
         }
@@ -187,12 +185,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             }
 
             if (attackTimer >= hoverRedirectTime + chargeTime)
-            {
-                currentFrame = 0f;
-                attackTimer = 0f;
-                npc.ai[0] = (int)BetsyAttackType.Charges;
-                npc.netUpdate = true;
-            }
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_ExplodingWyvernSummoning(NPC npc, NPCAimedTarget target, ref float attackTimer, ref float currentFrame, ref float wingArmFrameCounter)
@@ -217,12 +210,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             }
 
             if (attackTimer >= summonTime)
-            {
-                currentFrame = 0f;
-                attackTimer = 0f;
-                npc.ai[0] = (int)BetsyAttackType.SpinCharge;
-                npc.netUpdate = true;
-            }
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_SpinCharge(NPC npc, NPCAimedTarget target, ref float attackTimer, ref float wingArmFrameCounter)
@@ -290,11 +278,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
             wingArmFrameCounter += 1.05f;
             if (attackTimer >= upwardFlyTime + horizontalMovementDelay + totalSpins * 55f)
-            {
-                attackTimer = 0f;
-                npc.ai[0] = (int)BetsyAttackType.FlameBreath;
-                npc.netUpdate = true;
-            }
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_FlameBreath(NPC npc, NPCAimedTarget target, ref float attackTimer, ref float currentFrame, ref float wingArmFrameCounter)
@@ -361,12 +345,33 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             }
 
             if (attackTimer >= hoverRedirectTime + chargeTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void SelectNextAttack(NPC npc)
+        {
+            npc.localAI[0] = 0f;
+            switch ((BetsyAttackType)(int)npc.ai[0])
             {
-                currentFrame = 0f;
-                attackTimer = 0f;
-                npc.ai[0] = (int)BetsyAttackType.ExplodingWyvernSummoning;
-                npc.netUpdate = true;
+                case BetsyAttackType.Charges:
+                    npc.ai[0] = (int)BetsyAttackType.FlameBreath;
+                    break;
+                case BetsyAttackType.FlameBreath:
+                    npc.ai[0] = (int)BetsyAttackType.ExplodingWyvernSummoning;
+                    break;
+                case BetsyAttackType.ExplodingWyvernSummoning:
+                    npc.ai[0] = (int)BetsyAttackType.SpinCharge;
+                    break;
+                case BetsyAttackType.SpinCharge:
+                    npc.ai[0] = (int)BetsyAttackType.MeteorVomit;
+                    break;
+                case BetsyAttackType.MeteorVomit:
+                    npc.ai[0] = (int)BetsyAttackType.Charges;
+                    break;
             }
+
+            npc.ai[1] = 0f;
+            npc.netUpdate = true;
         }
 
         public override void FindFrame(NPC npc, int frameHeight)

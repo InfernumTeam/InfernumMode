@@ -399,17 +399,18 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
                 {
                     int groundPoundDamage = isBuffed ? 200 : 130;
                     int fireballDamage = groundPoundDamage - 15;
+                    int fireballCount = isBuffed ? 10 : 6;
                     Main.PlaySound(SoundID.DD2_OgreGroundPound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Utilities.NewProjectileBetter(npc.Bottom, Vector2.UnitX * npc.spriteDirection * 6f, ProjectileID.DD2OgreSmash, groundPoundDamage, 0f);
-                        for (int i = -10; i < 10; i++)
+                        for (int i = -fireballCount; i < fireballCount; i++)
                         {
                             if (Math.Abs(i) <= 1)
                                 continue;
 
                             Vector2 fireballSpawnPosition = npc.Bottom + Vector2.UnitX * i * 5f;
-                            Vector2 fireballShootVelocity = new Vector2(i * 2.5f + Main.rand.NextFloatDirection() * 0.8f, Math.Abs(i / 10f) * -3f + 13f);
+                            Vector2 fireballShootVelocity = new Vector2(i * 2.5f + Main.rand.NextFloatDirection() * 0.8f, Math.Abs(i / (float)fireballCount) * -3f + 13f);
                             Utilities.NewProjectileBetter(fireballSpawnPosition, fireballShootVelocity, ModContent.ProjectileType<RisingFireball>(), fireballDamage, 0f);
                         }
                     }
@@ -436,8 +437,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
 
         public static void DoBehavior_ChargeRams(NPC npc, NPCAimedTarget target, bool isBuffed, ref float attackTimer, ref float shouldUseAfterimages, ref float currentFrame)
         {
-            int chargePreparationTime = 24;
-            int jumpTime = 16;
+            int chargePreparationTime = 42;
+            int jumpTime = 25;
             int chargeTime = 32;
             int chargeCount = 4;
             float chargeSpeed = 31f;

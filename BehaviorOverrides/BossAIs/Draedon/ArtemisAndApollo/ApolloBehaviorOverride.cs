@@ -320,8 +320,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public static void DoBehavior_SynchronizedCharges(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
         {
             int chargeDelay = 135;
-            int chargeTime = 40;
-            float chargeSpeed = 49f;
+            int chargeTime = 38;
+            int chargeCount = 8;
+            float chargeSpeed = 46.5f;
             float chargeFlash = npc.type == ModContent.NPCType<Artemis>() ? npc.ModNPC<Artemis>().ChargeFlash : npc.ModNPC<Apollo>().ChargeComboFlash;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
             ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
@@ -336,8 +337,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
             {
-                chargeTime -= 4;
-                chargeSpeed += 3f;
+                chargeTime -= 6;
+                chargeSpeed += 5f;
             }
 
             int chargeRate = (int)(chargeTime * 0.72f);
@@ -369,7 +370,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 chargeTimer = 0f;
 
                 float horizontalDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-                float verticalDirection = (target.Center.Y < npc.Center.Y).ToDirectionInt();
+                float verticalDirection = (chargeCounter % 2f == 0f).ToDirectionInt() * hoverSide;
                 Vector2 hoverDestination = target.Center + new Vector2(horizontalDirection * 600f, verticalDirection * 360f);
                 ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 50f, 90f);
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
@@ -383,6 +384,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 chargeTimer++;
                 if (chargeTimer >= chargeTime)
                 {
+                    chargeCounter++;
                     chargeTimer = 0f;
                     npc.netUpdate = true;
                 }
@@ -396,12 +398,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.ModNPC<Artemis>().ChargeFlash = chargeFlash;
             if (npc.type == ModContent.NPCType<Apollo>())
                 npc.ModNPC<Apollo>().ChargeComboFlash = chargeFlash;
+
+            if (chargeCounter >= chargeCount)
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool dontFireYet, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
         {
             int totalShots = 15;
-            int shootRate = 46;
+            int shootRate = 44;
             int shotsPerBurst = 3;
             float shootSpread = 0.41f;
             float predictivenessFactor = 22f;

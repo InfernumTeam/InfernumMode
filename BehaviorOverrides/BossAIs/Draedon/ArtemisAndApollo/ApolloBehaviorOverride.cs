@@ -317,92 +317,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
         }
 
-        public static void DoBehavior_SynchronizedCharges(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
-        {
-            int chargeDelay = 135;
-            int chargeTime = 38;
-            int chargeCount = 8;
-            float chargeSpeed = 46.5f;
-            float chargeFlash = npc.type == ModContent.NPCType<Artemis>() ? npc.ModNPC<Artemis>().ChargeFlash : npc.ModNPC<Apollo>().ChargeComboFlash;
-            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
-            ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
-
-            if (ExoMechManagement.CurrentTwinsPhase >= 2)
-                chargeSpeed += 2f;
-
-            if (ExoMechManagement.CurrentTwinsPhase >= 5)
-            {
-                chargeTime -= 4;
-                chargeSpeed += 3f;
-            }
-            if (ExoMechManagement.CurrentTwinsPhase >= 6)
-            {
-                chargeTime -= 6;
-                chargeSpeed += 5f;
-            }
-
-            int chargeRate = (int)(chargeTime * 0.72f);
-            float wrappedAttackTimer = (attackTimer - chargeDelay) % (chargeTime * 2f);
-            bool artemisShouldCharge = (int)(wrappedAttackTimer / chargeRate) % 2 == 0;
-            bool notReadyToChargeYet = attackTimer < chargeDelay;
-
-            // Calculate frames.
-            frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, attackTimer / 45f % 1f));
-            if (ExoMechManagement.CurrentTwinsPhase >= 2)
-                frame += 60f;
-
-            // Charge at the target when ready.
-            if (wrappedAttackTimer % chargeRate == chargeRate - 1f && !notReadyToChargeYet)
-            {
-                if ((artemisShouldCharge && npc.type == ModContent.NPCType<Artemis>()) ||
-                    (!artemisShouldCharge && npc.type == ModContent.NPCType<Apollo>()))
-                {
-                    chargeTimer = 1f;
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
-                    npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-                    npc.netUpdate = true;
-                }
-            }
-
-            if (notReadyToChargeYet || chargeTimer <= 0f)
-            {
-                chargeFlash = 0f;
-                chargeTimer = 0f;
-
-                float horizontalDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-                float verticalDirection = (chargeCounter % 2f == 0f).ToDirectionInt() * hoverSide;
-                Vector2 hoverDestination = target.Center + new Vector2(horizontalDirection * 600f, verticalDirection * 360f);
-                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 50f, 90f);
-                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
-            }
-
-            // Handle post-charge behavior.
-            else if (chargeTimer > 0f && chargeTimer < chargeTime)
-            {
-                npc.damage = npc.defDamage;
-
-                chargeTimer++;
-                if (chargeTimer >= chargeTime)
-                {
-                    chargeCounter++;
-                    chargeTimer = 0f;
-                    npc.netUpdate = true;
-                }
-
-                chargeFlash = MathHelper.Lerp(chargeFlash, 1f, 0.15f);
-                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-                frame += 10f;
-            }
-
-            if (npc.type == ModContent.NPCType<Artemis>())
-                npc.ModNPC<Artemis>().ChargeFlash = chargeFlash;
-            if (npc.type == ModContent.NPCType<Apollo>())
-                npc.ModNPC<Apollo>().ChargeComboFlash = chargeFlash;
-
-            if (chargeCounter >= chargeCount)
-                SelectNextAttack(npc);
-        }
-
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool dontFireYet, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
         {
             int totalShots = 15;
@@ -425,7 +339,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
             {
-                shootRate -= 8;
+                shootRate -= 3;
                 totalShots += 3;
             }
 
@@ -712,6 +626,92 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
         }
 
+        public static void DoBehavior_SynchronizedCharges(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
+        {
+            int chargeDelay = 135;
+            int chargeTime = 38;
+            int chargeCount = 11;
+            float chargeSpeed = npc.Distance(target.Center) * 0.008f + 40f;
+            float chargeFlash = npc.type == ModContent.NPCType<Artemis>() ? npc.ModNPC<Artemis>().ChargeFlash : npc.ModNPC<Apollo>().ChargeComboFlash;
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
+            ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
+
+            if (ExoMechManagement.CurrentTwinsPhase >= 2)
+                chargeSpeed += 2.5f;
+
+            if (ExoMechManagement.CurrentTwinsPhase >= 5)
+            {
+                chargeTime -= 4;
+                chargeSpeed += 2f;
+            }
+            if (ExoMechManagement.CurrentTwinsPhase >= 6)
+            {
+                chargeTime -= 3;
+                chargeSpeed += 2f;
+            }
+
+            int chargeRate = (int)(chargeTime * 0.72f);
+            float wrappedAttackTimer = (attackTimer - chargeDelay) % (chargeTime * 2f);
+            bool artemisShouldCharge = (int)(wrappedAttackTimer / chargeRate) % 2 == 0;
+            bool notReadyToChargeYet = attackTimer < chargeDelay;
+
+            // Calculate frames.
+            frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, attackTimer / 45f % 1f));
+            if (ExoMechManagement.CurrentTwinsPhase >= 2)
+                frame += 60f;
+
+            // Charge at the target when ready.
+            if (wrappedAttackTimer % chargeRate == chargeRate - 1f && !notReadyToChargeYet)
+            {
+                if ((artemisShouldCharge && npc.type == ModContent.NPCType<Artemis>()) ||
+                    (!artemisShouldCharge && npc.type == ModContent.NPCType<Apollo>()))
+                {
+                    chargeTimer = 1f;
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
+                    npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 8f) * chargeSpeed;
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (notReadyToChargeYet || chargeTimer <= 0f)
+            {
+                chargeFlash = 0f;
+                chargeTimer = 0f;
+
+                float horizontalDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                float verticalDirection = (chargeCounter % 2f == 0f).ToDirectionInt() * hoverSide;
+                Vector2 hoverDestination = target.Center + new Vector2(horizontalDirection * 680f, verticalDirection * 380f);
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 50f, 90f);
+                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+            }
+
+            // Handle post-charge behavior.
+            else if (chargeTimer > 0f && chargeTimer < chargeTime)
+            {
+                npc.damage = npc.defDamage;
+
+                chargeTimer++;
+                if (chargeTimer >= chargeTime)
+                {
+                    chargeCounter++;
+                    chargeTimer = 0f;
+                    npc.netUpdate = true;
+                }
+
+                chargeFlash = MathHelper.Lerp(chargeFlash, 1f, 0.15f);
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                frame += 10f;
+            }
+
+            if (npc.type == ModContent.NPCType<Artemis>())
+                npc.ModNPC<Artemis>().ChargeFlash = chargeFlash;
+            if (npc.type == ModContent.NPCType<Apollo>())
+                npc.ModNPC<Apollo>().ChargeComboFlash = chargeFlash;
+
+            if (chargeCounter >= chargeCount)
+                SelectNextAttack(npc);
+        }
+
         public static void DoBehavior_PlasmaCharges(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
         {
             // Make Artemis go away so Apollo can do its attack without interference.
@@ -954,7 +954,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.frameCounter++;
                     frame = (int)Math.Round(MathHelper.Lerp(80f, 89f, (float)npc.frameCounter / 32f % 1f));
 
-                    float spinAngle = (float)Math.Pow(attackTimer / ArtemisSpinLaser.LaserLifetime, 1.2f) * spinArc * -spinDirection * verticalOffsetDirection;
+                    float spinAngle = (float)Math.Pow(attackTimer / ArtemisSpinLaser.LaserLifetime, 1.45f) * spinArc * -spinDirection * verticalOffsetDirection;
                     npc.velocity = spinAngle.ToRotationVector2() * MathHelper.TwoPi * spinRadius / ArtemisSpinLaser.LaserLifetime * -spinDirection;
                     npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + MathHelper.PiOver2;
 

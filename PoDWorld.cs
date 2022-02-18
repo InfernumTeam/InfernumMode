@@ -1,5 +1,7 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +11,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.World.Generation;
+
+using ModInstance = InfernumMode.InfernumMode;
 
 namespace InfernumMode
 {
@@ -84,6 +88,10 @@ namespace InfernumMode
         #region Updating
         public override void PostUpdate()
         {
+            // Disable natural GSS spawns.
+            if (ModInstance.CanUseCustomAIs)
+                CalamityMod.CalamityMod.sharkKillCount = 0;
+
             if (!NPC.AnyNPCs(ModContent.NPCType<Draedon>()))
                 CalamityGlobalNPC.draedon = -1;
         }

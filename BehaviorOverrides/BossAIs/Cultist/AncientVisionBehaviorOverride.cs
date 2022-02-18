@@ -91,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     {
                         if (!npc.WithinRange(target.Center, 160f))
                             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.035f);
-                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (BossRushEvent.BossRushActive ? 20f : 13f);
+                        npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * (BossRushEvent.BossRushActive ? 26f : 18.5f);
 
                         npc.rotation = npc.velocity.ToRotation();
                         npc.spriteDirection = (Math.Cos(npc.rotation) > 0f).ToDirectionInt();

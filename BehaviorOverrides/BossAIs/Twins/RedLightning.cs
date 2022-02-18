@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         {
             DisplayName.SetDefault("Lightning");
             ProjectileID.Sets.MinionShot[projectile.type] = true;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 150;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 70;
             ProjectileID.Sets.TrailingMode[projectile.type] = 1;
         }
 
@@ -142,7 +142,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, false);
 
-            LightningDrawer.Draw(projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero), projectile.Size * 0.5f - Main.screenPosition, 150);
+            LightningDrawer.Draw(projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero), projectile.Size * 0.5f - Main.screenPosition, 100);
             return false;
         }
         #endregion

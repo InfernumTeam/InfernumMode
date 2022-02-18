@@ -19,11 +19,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 18;
+            projectile.width = projectile.height = 22;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.hostile = true;
-            projectile.timeLeft = 600;
+            projectile.timeLeft = 330;
             projectile.Opacity = 0f;
             projectile.extraUpdates = 1;
             projectile.penetrate = -1;
@@ -43,6 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             lightColor = Color.Lerp(lightColor, Color.Cyan, 0.5f);
+            lightColor.A /= 3;
             Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
             return false;
         }

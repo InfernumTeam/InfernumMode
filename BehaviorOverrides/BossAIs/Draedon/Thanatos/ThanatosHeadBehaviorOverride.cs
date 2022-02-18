@@ -675,7 +675,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (attackTimer % rotorReleaseRate == rotorReleaseRate - 1f)
                 {
                     var segments = (from n in Main.npc.Take(Main.maxNPCs)
-                                    where n.active && n.type == ModContent.NPCType<ThanatosBody1>() && !n.WithinRange(target.Center, 400f)
+                                    where n.active && n.type == ModContent.NPCType<ThanatosBody1>() && !n.WithinRange(target.Center, 400f) && n.WithinRange(target.Center, 1200f)
                                     orderby n.Distance(target.Center)
                                     select n).ToList();
 

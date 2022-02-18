@@ -1,21 +1,15 @@
 using InfernumMode.BaseEntities;
 using Microsoft.Xna.Framework;
-using System;
 using System.IO;
-using Terraria;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
     public class DeathExplosion : BaseWaveExplosionProjectile
     {
-        public override int Lifetime => 270;
+        public override int Lifetime => 150;
         public override float MaxRadius => 2100f;
         public override float RadiusExpandRateInterpolant => 0.15f;
-        public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
-        {
-            float baseShakePower = MathHelper.Lerp(3f, 16f, (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio));
-            return baseShakePower * Utils.InverseLerp(2200f, 1050f, distanceFromPlayer, true);
-        }
+        public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer) => 0f;
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {

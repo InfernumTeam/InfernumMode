@@ -99,9 +99,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // And explode into a bunch of powerful projectiles.
             Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
-            for (int i = 0; i < 45; i++)
+            for (int i = 0; i < 35; i++)
             {
-                Vector2 doomVelocity = (MathHelper.TwoPi * i / 45f).ToRotationVector2() * 3.15f;
+                Vector2 doomVelocity = (MathHelper.TwoPi * i / 35f).ToRotationVector2() * 3.15f;
                 if (BossRushEvent.BossRushActive)
                     doomVelocity *= 1.5f;
 

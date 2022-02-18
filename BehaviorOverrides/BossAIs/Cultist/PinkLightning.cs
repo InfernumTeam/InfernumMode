@@ -18,8 +18,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             ProjectileID.Sets.TrailCacheLength[projectile.type] = TrailPointCount;
         }
 
-        public override int Lifetime => 125;
-        public override int TrailPointCount => 60;
+        public override int Lifetime => 105;
+        public override int TrailPointCount => 40;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
@@ -48,8 +48,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override Color PrimitiveColorFunction(float completionRatio)
         {
-            Color baseColor = Color.Lerp(Color.HotPink, Color.Magenta, (float)Math.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTime * 4f) * 0.5f + 0.5f);
-            return Color.Lerp(baseColor, Color.DarkMagenta, ((float)Math.Sin(MathHelper.Pi * completionRatio + Main.GlobalTime * 4f) * 0.5f + 0.5f) * 0.8f);
+            Color baseColor = Color.Lerp(Color.HotPink, Color.Magenta, (float)Math.Sin(MathHelper.TwoPi * completionRatio * 10f + Main.GlobalTime * 4f) * 0.5f + 0.5f);
+            return Color.Lerp(baseColor, Color.DarkMagenta, ((float)Math.Sin(MathHelper.Pi * completionRatio * 20f + Main.GlobalTime * 4f) * 0.5f + 0.5f) * 0.8f);
         }
     }
 }

@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 projectile.frame = 0;
             TelegraphDelay++;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && TelegraphDelay >= TelegraphTotalTime)
+            if (Main.netMode != NetmodeID.MultiplayerClient && TelegraphDelay >= 38f)
             {
                 Vector2 fireballShootVelocity = projectile.SafeDirectionTo(Destination, Vector2.UnitY) * 7f;
 
@@ -74,20 +74,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D laserTelegraph = ModContent.GetTexture("CalamityMod/ExtraTextures/LaserWallTelegraphBeam");
+            Texture2D laserTelegraph = ModContent.GetTexture("InfernumMode/ExtraTextures/Line");
 
-            float yScale = 2f;
+            float yScale = 5f;
             if (TelegraphDelay < TelegraphFadeTime)
                 yScale = MathHelper.Lerp(0f, yScale, TelegraphDelay / 15f);
-            if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
-                yScale = MathHelper.Lerp(yScale, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
+            if (TelegraphDelay > 38f - TelegraphFadeTime)
+                yScale = MathHelper.Lerp(yScale, 0f, (TelegraphDelay - (38f - TelegraphFadeTime)) / 15f);
 
             Vector2 scaleInner = new Vector2(TelegraphWidth / laserTelegraph.Width, yScale);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
             Vector2 scaleOuter = scaleInner * new Vector2(1f, 1.5f);
 
-            Color colorOuter = Color.Lerp(Color.Orange, Color.Yellow, TelegraphDelay / TelegraphTotalTime * 0.4f);
-            spriteBatch.Draw(laserTelegraph, projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0f);
+            Color colorOuter = Color.Lerp(Color.Orange, Color.Yellow, TelegraphDelay / 38f * 0.4f);
+            Vector2 direction = projectile.SafeDirectionTo(Destination);
+            spriteBatch.Draw(laserTelegraph, projectile.Center - Main.screenPosition, null, colorOuter, direction.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0f);
             return false;
         }
     }

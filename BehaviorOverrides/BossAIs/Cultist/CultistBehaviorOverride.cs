@@ -714,13 +714,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     lightningSpawnPosition += Main.rand.NextVector2Circular(18f, 18f);
                     Vector2 lightningVelocity = (target.Center - lightningSpawnPosition + target.velocity * 13f).SafeNormalize(Vector2.UnitY) * 1.35f;
                     lightningVelocity += Main.rand.NextVector2Circular(0.125f, 0.125f);
+                    lightningVelocity *= 0.85f;
 
                     npc.spriteDirection = (lightningVelocity.X > 0f).ToDirectionInt();
                     Main.PlaySound(SoundID.Item72, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int lightning = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<RedLightning>(), 225, 0f);
+                        int lightning = Utilities.NewProjectileBetter(lightningSpawnPosition, lightningVelocity, ModContent.ProjectileType<PinkLightning>(), 225, 0f);
                         if (Main.projectile.IndexInRange(lightning))
                         {
                             Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();

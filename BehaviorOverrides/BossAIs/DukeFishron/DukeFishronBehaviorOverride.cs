@@ -668,7 +668,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     float initialChargeSpeed = enraged ? 34f : 30f;
                     int chargeRedirectTime = 23;
                     int chargeCount = 6;
-                    int typhoonBurstRate = enraged ? 24 : 45;
+                    int typhoonBurstRate = enraged ? 24 : 37;
                     int typhoonCount = enraged ? 11 : 5;
                     float typhoonBurstSpeed = enraged ? 11f : 6f;
 
@@ -687,7 +687,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                     if (attackTimer < hoverTime)
                     {
-                        Vector2 destination = target.Center + new Vector2(0f, -960f);
+                        Vector2 destination = target.Center + new Vector2(200f, -960f);
                         npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 33f, 1.3f);
                         npc.rotation = getAdjustedAngle(npc.AngleTo(target.Center), true);
                     }

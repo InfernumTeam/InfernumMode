@@ -189,6 +189,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             ref float chargeCounter = ref npc.Infernum().ExtraAI[3];
             ref float chargeDirectionRotation = ref npc.Infernum().ExtraAI[4];
 
+            if (attackTimer >= 180f)
+                canCharge = true;
+
             if (!canCharge && chargeCountdown <= 0f)
             {
                 npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
@@ -215,9 +218,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 Vector2 chargeDirection = chargeDirectionRotation.ToRotationVector2();
 
                 // Charge at the target and release a bunch of sand on the first frame the shark leaves solid tiles.
+                attackTimer = 30f;
                 if (chargingFlag == 0f && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < MathHelper.Pi * 0.45f)
                 {
                     chargeCountdown = 35f;
+                    chargingFlag = 1f;
                     chargeInterpolantTimer = 1f;
                     chargeDirectionRotation = npc.AngleTo(target.Center);
                     chargeCounter++;
@@ -246,7 +251,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GreatSandSharkRoar"), npc.Center);
 
                     npc.netUpdate = true;
-                    chargingFlag = 1f;
                 }
                 else if (npc.velocity.Y < 15f)
                     npc.velocity.Y += 0.3f;

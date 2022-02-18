@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             Time++;
             projectile.rotation += 0.4f * (projectile.velocity.X > 0).ToDirectionInt();
-            projectile.Opacity = Utils.InverseLerp(0f, 30f, Time, true);
+            projectile.Opacity = Utils.InverseLerp(0f, 30f, Time, true) * Utils.InverseLerp(0f, 16f, projectile.timeLeft, true);
 
             if (Time > 40f)
             {

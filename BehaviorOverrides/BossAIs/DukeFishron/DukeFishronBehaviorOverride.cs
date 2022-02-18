@@ -96,15 +96,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             DukeAttackType.TeleportCharge,
             DukeAttackType.TeleportCharge,
             DukeAttackType.TeleportCharge,
+            DukeAttackType.SharkTornadoSummon,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
             DukeAttackType.TidalWave,
+            DukeAttackType.SharkTornadoSummon,
         };
 
         public static readonly DukeAttackType[] Subphase4Pattern = new DukeAttackType[]
         {
             DukeAttackType.TeleportCharge,
             DukeAttackType.TeleportCharge,
+            DukeAttackType.TidalWave,
             DukeAttackType.TeleportCharge,
             DukeAttackType.TeleportCharge,
             DukeAttackType.RazorbladeRazorstorm,
@@ -564,7 +567,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                                 WorldUtils.Find(new Point(x, y), Searches.Chain(new Searches.Down(Main.maxTilesY - 10), new CustomTileConditions.IsWaterOrSolid()), out Point result);
                                 Vector2 spawnPosition = result.ToWorldCoordinates();
                                 Vector2 tornadoVelocity = Vector2.UnitX * (target.Center.X > spawnPosition.X).ToDirectionInt() * 4f;
-                                int tornado = Utilities.NewProjectileBetter(spawnPosition, tornadoVelocity, ModContent.ProjectileType<Tornado>(), 150, 0f);
+                                int tornado = Utilities.NewProjectileBetter(spawnPosition, tornadoVelocity, ModContent.ProjectileType<Tornado>(), 200, 0f);
                                 Main.projectile[tornado].Bottom = spawnPosition;
                             }
                         }
@@ -641,7 +644,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                             {
                                 for (int i = -1; i <= 1; i += 2)
                                 {
-                                    int wave = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * waveSpeed * i, ModContent.ProjectileType<TidalWave>(), 150, 0f);
+                                    int wave = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * waveSpeed * i, ModContent.ProjectileType<TidalWave>(), 230, 0f);
                                     Main.projectile[wave].Bottom = npc.Center + Vector2.UnitY * 700f;
                                 }
                             }
@@ -661,12 +664,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     }
                     break;
                 case DukeAttackType.RazorbladeRazorstorm:
-                    int hoverTime = 60;
+                    int hoverTime = 105;
                     float initialChargeSpeed = enraged ? 34f : 30f;
-                    int chargeCount = 5;
-                    int typhoonBurstRate = enraged ? 20 : 30;
-                    int typhoonCount = enraged ? 14 : 8;
-                    float typhoonBurstSpeed = enraged ? 14f : 9f;
+                    int chargeRedirectTime = 23;
+                    int chargeCount = 6;
+                    int typhoonBurstRate = enraged ? 24 : 45;
+                    int typhoonCount = enraged ? 11 : 5;
+                    float typhoonBurstSpeed = enraged ? 11f : 6f;
 
                     if (inPhase4)
                     {
@@ -674,6 +678,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         typhoonBurstRate -= 5;
                         typhoonCount += 5;
                     }
+                    initialChargeSpeed *= 1.6f;
 
                     if (BossRushEvent.BossRushActive)
                         initialChargeSpeed *= 1.2f;
@@ -682,38 +687,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                     if (attackTimer < hoverTime)
                     {
-                        Vector2 destination = target.Center + new Vector2(500f, -1000f);
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 23f, 0.7f);
+                        Vector2 destination = target.Center + new Vector2(0f, -960f);
+                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 33f, 1.3f);
                         npc.rotation = getAdjustedAngle(npc.AngleTo(target.Center), true);
+                    }
+
+                    // Summon tornadoes.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == hoverTime - 45f)
+                    {
+                        List<int> xSpawnPositions = new List<int>()
+                        {
+                            (int)(target.Center.X - (enraged ? 600f : 750f)) / 16,
+                            (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
+                        };
+
+                        int y = Utils.Clamp((int)target.Center.Y / 16 + 75, 20, Main.maxTilesY - 20);
+                        foreach (int x in xSpawnPositions)
+                        {
+                            Vector2 spawnPosition = new Point(x, y).ToWorldCoordinates();
+                            int tornado = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<Tornado>(), 300, 0f);
+                            Main.projectile[tornado].ai[1] = 1f;
+                            Main.projectile[tornado].Bottom = spawnPosition;
+                        }
                     }
 
                     // Roar, make the initial charge, and summon tornado borders.
                     if (attackTimer == hoverTime)
                     {
                         npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
-                        npc.velocity = -Vector2.UnitX.RotatedBy(MathHelper.Pi * -0.11f) * initialChargeSpeed;
+                        npc.velocity = -Vector2.UnitX.RotatedBy(MathHelper.Pi * -0.087f) * initialChargeSpeed;
 
                         // Roar.
                         Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
-
-                        // Summon tornadoes on the ground/water.
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            List<int> xSpawnPositions = new List<int>()
-                            {
-                                (int)(target.Center.X - (enraged ? 600f : 750f)) / 16,
-                                (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
-                            };
-
-                            int y = Utils.Clamp((int)target.Center.Y / 16 - 50, 20, Main.maxTilesY - 20);
-                            foreach (int x in xSpawnPositions)
-                            {
-                                WorldUtils.Find(new Point(x, y), Searches.Chain(new Searches.Down(Main.maxTilesY - 10), new CustomTileConditions.IsWaterOrSolid()), out Point result);
-                                Vector2 spawnPosition = result.ToWorldCoordinates();
-                                int tornado = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<Tornado>(), 200, 0f);
-                                Main.projectile[tornado].Bottom = spawnPosition;
-                            }
-                        }
 
                         npc.rotation = getAdjustedAngle(npc.velocity.ToRotation());
                         npc.netUpdate = true;
@@ -721,7 +726,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (attackTimer > hoverTime)
                     {
                         // Reflected charge.
-                        if (attackTimer % 30f == 29f)
+                        if (attackTimer % chargeRedirectTime == chargeRedirectTime - 1f)
                         {
                             npc.spriteDirection *= -1;
                             npc.velocity = Vector2.Reflect(npc.velocity, Vector2.UnitX);
@@ -729,7 +734,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                             npc.netUpdate = true;
                         }
 
-                        if (attackTimer % typhoonBurstRate == typhoonBurstRate - 1f)
+                        if (attackTimer % typhoonBurstRate == typhoonBurstRate - 1f && !npc.WithinRange(target.Center, 300f))
                         {
                             Main.PlaySound(SoundID.Item84, npc.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -738,13 +743,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                                 {
                                     float offsetAngle = MathHelper.TwoPi * i / typhoonCount;
                                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * typhoonBurstSpeed;
-                                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), 105, 0f);
+                                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), 175, 0f);
                                 }
                             }
                         }
                     }
 
-                    if (attackTimer >= hoverTime + chargeCount * 30f + 45f)
+                    if (attackTimer >= hoverTime + chargeCount * chargeRedirectTime + 45f)
                         goToNextAIState();
                     break;
                 case DukeAttackType.TeleportCharge:
@@ -774,9 +779,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (attackTimer == 45f)
                     {
                         hoverDirection = ref npc.Infernum().ExtraAI[0];
-
-                        // Roar.
-                        Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
 
                         npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
                         if (enraged)

@@ -55,7 +55,7 @@ namespace InfernumMode.Balancing
             int inkCloud2 = ProjectileType<InkCloud2>();
             int inkCloud3 = ProjectileType<InkCloud3>();
 
-            float aresPierceResistFactor = 0.8f;
+            float aresPierceResistFactor = 0.925f;
 
             NPCSpecificBalancingChanges = new List<NPCBalancingChange>()
             {

@@ -628,7 +628,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public static void DoBehavior_SynchronizedCharges(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
         {
-            int chargeDelay = 135;
+            int chargeDelay = 55;
             int chargeTime = 38;
             int chargeCount = 11;
             float chargeSpeed = npc.Distance(target.Center) * 0.008f + 40f;

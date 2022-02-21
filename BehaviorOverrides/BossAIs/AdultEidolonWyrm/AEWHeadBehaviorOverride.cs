@@ -1,6 +1,18 @@
-﻿namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
+﻿using CalamityMod;
+using CalamityMod.NPCs;
+using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.World;
+using InfernumMode.OverridingSystem;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-    /*
     public class AEWHeadBehaviorOverride : NPCBehaviorOverride
     {
         public enum AEWAttackType
@@ -8,7 +20,8 @@
             AbyssalCrash,
             HadalSpirits,
             PsychicBlasts,
-            UndynesTail
+            UndynesTail,
+            StormCharge
         }
 
         public static List<AEWAttackType[]> Phase1AttackCycles = new List<AEWAttackType[]>()
@@ -18,16 +31,26 @@
             new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.AbyssalCrash },
         };
 
+        public static List<AEWAttackType[]> Phase2AttackCycles = new List<AEWAttackType[]>()
+        {
+            new AEWAttackType[] { AEWAttackType.HadalSpirits, AEWAttackType.PsychicBlasts, AEWAttackType.UndynesTail },
+            new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.StormCharge },
+            new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.StormCharge },
+        };
+
         public static List<AEWAttackType[]> CurrentAttackCycles => Phase1AttackCycles;
 
-        public override int NPCOverrideType => ModContent.NPCType<EidolonWyrmHeadHuge>();
+        public const float Phase2LifeRatio = 0.8f;
+
+        public override int NPCOverrideType => InfernumMode.CalamityMod.NPCType("EidolonWyrmHeadHuge");
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public static Color CalculateEyeColor(NPC npc)
         {
             float hue = npc.Infernum().ExtraAI[5] / CurrentAttackCycles.Count % 1f;
-            return Main.hslToRgb(hue, 1f, 0.55f);
+            Color c = Main.hslToRgb(hue, 1f, 0.55f);
+            return c;
         }
 
         public override bool PreAI(NPC npc)
@@ -77,12 +100,12 @@
                     if (i >= 0 && i < 40)
                     {
                         if (i % 2 == 0)
-                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmBodyHuge>(), npc.whoAmI + 1);
+                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("EidolonWyrmBodyHuge"), npc.whoAmI + 1);
                         else
-                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmBodyAltHuge>(), npc.whoAmI + 1);
+                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("EidolonWyrmBodyAltHuge"), npc.whoAmI + 1);
                     }
                     else
-                        lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmTailHuge>(), npc.whoAmI + 1);
+                        lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"), npc.whoAmI + 1);
 
                     Main.npc[lol].realLife = npc.whoAmI;
                     Main.npc[lol].ai[2] = npc.whoAmI;
@@ -102,6 +125,7 @@
 
             // Reset damage and other things.
             npc.damage = (int)(npc.defDamage * generalDamageFactor);
+            npc.dontTakeDamage = false;
 
             switch ((AEWAttackType)(int)attackType)
             {
@@ -116,6 +140,9 @@
                     break;
                 case AEWAttackType.UndynesTail:
                     DoBehavior_UndynesTail(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
+                    break;
+                case AEWAttackType.StormCharge:
+                    DoBehavior_StormCharge(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -195,11 +222,17 @@
             // Periodically release blasts of psychic energy.
             if (attackTimer % psychicBlastCircleShootRate == psychicBlastCircleShootRate - 1f)
             {
-                int blastDamage = (int)(generalDamageFactor * 640f);
-                for (int i = 0; i < 10; i++)
+                // Play a bolt sound.
+                Main.PlaySound(SoundID.Item75, npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 blastShootVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 15f;
-                    Projectile.NewProjectile(npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
+                    int blastDamage = (int)(generalDamageFactor * 640f);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Vector2 blastShootVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 15f;
+                        Projectile.NewProjectile(npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
+                    }
                 }
             }
 
@@ -224,7 +257,7 @@
         public static void DoBehavior_PsychicBlasts(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
         {
             int attackShootDelay = 60;
-            int orbCreationRate = (int)MathHelper.Lerp(8f, 4f, 1f - lifeRatio);
+            int orbCreationRate = (int)MathHelper.Lerp(12f, 7f, 1f - lifeRatio);
             int attackChangeDelay = 90;
             int attackTime = 900;
 
@@ -278,13 +311,16 @@
                 case 0:
                     Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -350f);
                     Vector2 idealHoverVelocity = npc.SafeDirectionTo(hoverDestination) * 45f;
-                    npc.velocity = npc.velocity.RotateTowards(idealHoverVelocity.ToRotation(), 0.045f).MoveTowards(idealHoverVelocity, 10f);
+                    npc.velocity = npc.velocity.RotateTowards(idealHoverVelocity.ToRotation(), 0.045f).MoveTowards(idealHoverVelocity, 4f);
 
                     // Fade out.
                     npc.Opacity = Utils.InverseLerp(redirectTime * 0.5f, redirectTime * 0.5f - 12f, attackTimer, true);
 
                     // Disable conct damage.
                     npc.damage = 0;
+
+                    // Determine whether to be invulnerable.
+                    npc.dontTakeDamage = npc.Opacity < 0.65f;
 
                     // Begin the charge.
                     if (attackTimer > redirectTime * 0.5f && (npc.WithinRange(hoverDestination, 60f) || attackTimer > redirectTime))
@@ -307,7 +343,7 @@
 
                     // Release water spears from the tail of the wyrm.
                     int tail = NPC.FindFirstNPC(ModContent.NPCType<EidolonWyrmTailHuge>());
-                    if (tail != -1 && !Main.npc[tail].WithinRange(target.Center, 200f) && attackTimer % 4f == 3f)
+                    if (tail != -1 && !Main.npc[tail].WithinRange(target.Center, 200f) && attackTimer % 6f == 5f)
                     {
                         Main.PlaySound(SoundID.Item66, Main.npc[tail].Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -331,6 +367,66 @@
                             SelectNextAttack(npc);
                     }
                     break;
+            }
+        }
+
+        public static void DoBehavior_StormCharge(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
+        {
+            int teleportFadeTime = 32;
+            int telegraphTime = 50;
+            int chargeTime = 64;
+            float chargeSpeed = 50f;
+            float chargeOffset = 1600f;
+            ref float aimDirection = ref npc.Infernum().ExtraAI[0];
+
+            // Fade out prior to teleporting.
+            if (attackTimer <= teleportFadeTime)
+            {
+                npc.Opacity = MathHelper.Lerp(1f, 0f, attackTimer / teleportFadeTime);
+                npc.dontTakeDamage = npc.Opacity < 0.65f;
+                npc.damage = 0;
+                DoDefaultSwimMovement(npc, target, MathHelper.Lerp(0.45f, 1f, npc.Opacity));
+            }
+
+            // Decide a position to teleport to and create a telegraph.
+            if (attackTimer == teleportFadeTime)
+            {
+                Main.PlaySound(SoundID.Item105, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 teleportPosition = target.Center + Main.rand.NextVector2CircularEdge(chargeOffset, chargeOffset);
+                    Vector2 telegraphDirection = (target.Center - teleportPosition).SafeNormalize(Vector2.UnitY);
+                    npc.Center = teleportPosition;
+                    npc.velocity = Vector2.Zero;
+                    npc.netUpdate = true;
+
+                    int telegraph = Utilities.NewProjectileBetter(teleportPosition, telegraphDirection, ModContent.ProjectileType<StormChargeTelegraph>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(telegraph))
+                        Main.projectile[telegraph].ai[1] = telegraphTime;
+                }
+            }
+
+            // Remain invisible while the telegraph is being made.
+            if (attackTimer >= teleportFadeTime && attackTimer < teleportFadeTime + telegraphTime)
+            {
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
+                npc.Opacity = 0f;
+            }
+
+            // Charge.
+            if (attackTimer == teleportFadeTime + telegraphTime)
+            {
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), target.Center);
+                npc.velocity = aimDirection.ToRotationVector2() * chargeSpeed;
+                npc.Opacity = 1f;
+                npc.netUpdate = true;
+            }
+
+            // Apply post-charge effects.
+            if (attackTimer > teleportFadeTime + telegraphTime)
+            {
+
             }
         }
 
@@ -454,10 +550,15 @@
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * 1.5f;
             Vector2 origin = eyeTexture.Size() * 0.5f;
             Color eyeColor = npc.GetAlpha(CalculateEyeColor(npc));
+            eyeColor.A = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                Vector2 eyeOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 4f;
+                spriteBatch.Draw(eyeTexture, drawPosition + eyeOffset, npc.frame, eyeColor * 0.5f, npc.rotation, origin, npc.scale, 0, 0f);
+            }
 
             spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, 0, 0f);
             return false;
         }
     }
-    */
 }

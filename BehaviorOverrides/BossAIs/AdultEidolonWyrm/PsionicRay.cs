@@ -23,12 +23,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             DisplayName.SetDefault("Psionic Ray");
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 34;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 24;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 16;
+            projectile.width = projectile.height = 26;
             projectile.hostile = true;
             projectile.ignoreWater = true;
             projectile.tileCollide = true;

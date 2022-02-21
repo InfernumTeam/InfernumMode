@@ -17,10 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             projectile.melee = true;
             projectile.hostile = true;
             projectile.MaxUpdates = 3;
-
             projectile.penetrate = -1;
-            projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 4;
         }
 
         public override void AI()

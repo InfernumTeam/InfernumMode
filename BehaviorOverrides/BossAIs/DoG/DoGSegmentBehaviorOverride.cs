@@ -34,12 +34,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
             npc.defense = 0;
-            if (!head.active)
+            if (!head.active || CalamityGlobalNPC.DoGHead < 0)
             {
                 npc.life = 0;
                 npc.HitEffect();
                 npc.active = false;
                 npc.netUpdate = true;
+                return;
             }
 
             // Inherit various attributes from the head segment.

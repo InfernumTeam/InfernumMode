@@ -341,6 +341,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         npc.position.Y += 8f;
                 }
 
+                if (aresShouldAttack)
+                {
+                    Dust electricity = Dust.NewDustPerfect(npc.Center + Vector2.UnitY * 34f, 226);
+                    electricity.velocity = Main.rand.NextVector2Circular(7f, 7f);
+                    electricity.scale *= 1.3f;
+                    electricity.position += electricity.velocity.SafeNormalize(Vector2.Zero) * 20f;
+                    electricity.noGravity = true;
+                }
+
                 if (aresShouldAttack && attackTimer % aresShootRate == aresShootRate - 1f)
                 {
                     Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AresTeslaShot"), npc.Center);

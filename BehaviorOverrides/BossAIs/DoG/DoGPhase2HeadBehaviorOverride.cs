@@ -46,7 +46,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 return Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] == 1f;
             }
-            set => Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] = value.ToInt();
+            set
+            {
+                if (CalamityGlobalNPC.DoGHead < 0)
+                    return;
+
+                Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] = value.ToInt();
+            }
         }
 
         public static float GetAggressiveFade

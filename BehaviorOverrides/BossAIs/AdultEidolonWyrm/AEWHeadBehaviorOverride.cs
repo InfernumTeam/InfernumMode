@@ -21,7 +21,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             HadalSpirits,
             PsychicBlasts,
             UndynesTail,
-            StormCharge
+            StormCharge,
+            ImpactTail
         }
 
         public static List<AEWAttackType[]> Phase1AttackCycles = new List<AEWAttackType[]>()
@@ -33,9 +34,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public static List<AEWAttackType[]> Phase2AttackCycles = new List<AEWAttackType[]>()
         {
-            new AEWAttackType[] { AEWAttackType.HadalSpirits, AEWAttackType.PsychicBlasts, AEWAttackType.UndynesTail },
-            new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.StormCharge },
-            new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.StormCharge },
+            new AEWAttackType[] { AEWAttackType.HadalSpirits, AEWAttackType.PsychicBlasts, AEWAttackType.ImpactTail },
+            new AEWAttackType[] { AEWAttackType.ImpactTail, AEWAttackType.StormCharge },
+            new AEWAttackType[] { AEWAttackType.ImpactTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.StormCharge },
         };
 
         public static List<AEWAttackType[]> CurrentAttackCycles => Phase2AttackCycles;
@@ -143,6 +144,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     break;
                 case AEWAttackType.StormCharge:
                     DoBehavior_StormCharge(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
+                    break;
+                case AEWAttackType.ImpactTail:
+                    DoBehavior_ImpactTail(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -442,7 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (attackTimer > teleportFadeTime + telegraphTime)
             {
                 // Create electric sparks.
-                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 3f == 2f)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 2f == 1f)
                 {
                     Vector2 sparkOffsetDirection = Main.rand.NextVector2Unit();
                     Vector2 sparkSpawnPosition = npc.Center + sparkOffsetDirection * 64f;
@@ -470,6 +474,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 if (chargeCounter >= chargeCount)
                     SelectNextAttack(npc);
                 npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_ImpactTail(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
+        {
+            // Circle around the target.
+            Vector2 hoverDestination = target.Center + (MathHelper.TwoPi * attackTimer / 105f).ToRotationVector2() * 1050f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 33f;
+            npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.03f);
+            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.03f).MoveTowards(idealVelocity, 3f);
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            int shieldHP = 145000;
+            NPC tail = Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"))];
+
+            npc.Infernum().ExtraAI[1] = shieldHP;
+            ref float totalShieldDamage = ref npc.Infernum().ExtraAI[0];
+
+            if (totalShieldDamage >= shieldHP)
+            {
+                totalShieldDamage = 0f;
+                Main.NewText("Break");
+            }
+
+            // Release psychic fields around the tail.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 24f == 23f && attackTimer > 90f)
+            {
+                int fieldBoltDamage = (int)(generalDamageFactor * 640f);
+                Vector2 fieldSpawnPosition = tail.Center + Main.rand.NextVector2Circular(50f, 50f);
+                Utilities.NewProjectileBetter(fieldSpawnPosition, Vector2.Zero, ModContent.ProjectileType<PsychicEnergyField>(), fieldBoltDamage, 0f);
             }
         }
 
@@ -584,6 +618,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
             for (int i = 0; i < (int)Math.Round(1f + etherealnessFactor); i++)
                 spriteBatch.Draw(texture, drawPosition, npc.frame, color * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+
+            // Create the shield for the tail in the Impact Tail attack.
+            if (npc.type == InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"))
+            {
+                NPC head = Main.npc[npc.realLife];
+                if (head.ai[0] == (int)AEWAttackType.ImpactTail)
+                {
+                    spriteBatch.SetBlendState(BlendState.Additive);
+                    Vector2 shieldDrawPosition = npc.Center - Main.screenPosition;
+
+                    for (int i = 0; i < 50; i++)
+                    {
+                        float fadeToWhite = 0f;
+                        Texture2D shieldTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/AEWTailShield");
+                        if (i < 8)
+                        {
+                            shieldTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNuclearExplosion");
+                            fadeToWhite = 1f - i / 7f;
+                        }
+
+                        float rotation = (float)Math.Cos(Main.GlobalTime * 3f + i) * MathHelper.Pi * (1f - i / 50f);
+                        float hpBasedShieldOpacity = 1f - (float)Math.Pow(Utils.InverseLerp(0f, head.Infernum().ExtraAI[1], head.Infernum().ExtraAI[0], true), 2D);
+                        float shieldScaleFactor = Utils.InverseLerp(0f, 45f, head.ai[1], true);
+                        shieldScaleFactor += (float)Math.Cos(Main.GlobalTime * -1.9f + i * 2f) * 0.8f;
+
+                        Vector2 shieldScale = Vector2.One / shieldTexture.Size() * MathHelper.Max(npc.frame.Width, npc.frame.Height) * shieldScaleFactor * 0.8f;
+                        shieldScale.Y *= 1.2f;
+
+                        Color shieldColor = Color.Lerp(Color.Cyan, Color.White * 0.5f, fadeToWhite) * shieldScaleFactor * (1f - (i + 1f) / 33f) * hpBasedShieldOpacity;
+                        spriteBatch.Draw(shieldTexture, shieldDrawPosition, null, shieldColor, rotation, shieldTexture.Size() * 0.5f, shieldScale, 0, 0f);
+                    }
+                    spriteBatch.ExitShaderRegion();
+                }
+            }
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

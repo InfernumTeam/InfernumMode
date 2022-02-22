@@ -56,6 +56,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             if (Main.npc.IndexInRange(npc.realLife) && Main.npc[npc.realLife].active)
                 npc.Opacity = Main.npc[npc.realLife].Opacity;
+            npc.dontTakeDamage = Main.npc[npc.realLife].ai[0] != (int)AEWHeadBehaviorOverride.AEWAttackType.ImpactTail;
+            npc.chaseable = !npc.dontTakeDamage;
+
             return true;
         }
 

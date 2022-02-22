@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     for (int i = 0; i < 2; i++)
                     {
                         float shootOffsetAngle = MathHelper.Lerp(-0.5f, 0.5f, i);
-                        Vector2 blastShootVelocity = projectile.SafeDirectionTo(closestTarget.Center).RotatedBy(shootOffsetAngle) * 21f;
+                        Vector2 blastShootVelocity = projectile.SafeDirectionTo(closestTarget.Center).RotatedBy(shootOffsetAngle) * 13f;
                         Projectile.NewProjectile(projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), projectile.damage, 0f);
                     }
                 }

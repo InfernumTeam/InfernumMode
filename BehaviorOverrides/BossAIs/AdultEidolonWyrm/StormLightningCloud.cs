@@ -21,12 +21,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             projectile.hostile = false;
             projectile.friendly = false;
             projectile.tileCollide = true;
-            projectile.timeLeft = 30;
+            projectile.timeLeft = 20;
         }
 
         public override void AI()
         {
-            projectile.scale = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 30f);
+            projectile.scale = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 20f);
             for (int i = 0; i < 4; i++)
             {
                 Dust redLightning = Dust.NewDustPerfect(projectile.Center, 267, Main.rand.NextVector2Circular(3f, 3f));

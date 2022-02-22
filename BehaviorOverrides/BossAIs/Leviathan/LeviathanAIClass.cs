@@ -19,6 +19,7 @@ using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
+    // TODO - Refactor this AI.
     public class LeviathanAIClass : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<LeviathanNPC>();
@@ -59,7 +60,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override bool PreAI(NPC npc)
         {
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
+
             npc.damage = npc.defDamage;
 
             CalamityGlobalNPC.leviathan = npc.whoAmI;
@@ -139,11 +143,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             void goToNextAIState()
             {
-                // You cannot use ref locals inside of a delegate context.
-                // You should be able to find most important, universal locals above, anyway.
-                // Any others that don't have an explicit reference above are exclusively for
-                // AI state manipulation.
-
                 npc.ai[3]++;
 
                 LeviathanAttackType[] patternToUse = (anahitaFightingToo || outOfOcean) ? Phase2AttackPattern : Phase1AttackPattern;
@@ -160,6 +159,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 {
                     npc.Infernum().ExtraAI[i] = 0f;
                 }
+
+                // Select a new target.
+                npc.TargetClosest();
             }
 
             if (outOfOcean && (LeviathanAttackType)(int)npc.ai[1] != LeviathanAttackType.Charge)
@@ -173,7 +175,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             switch ((LeviathanAttackType)(int)npc.ai[1])
             {
                 case LeviathanAttackType.LazilyHover:
-                    npc.TargetClosest();
                     npc.spriteDirection = npc.direction;
 
                     Vector2 destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * 900f;
@@ -183,7 +184,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         goToNextAIState();
                     break;
                 case LeviathanAttackType.BubbleBelch:
-                    npc.TargetClosest();
                     npc.spriteDirection = npc.direction;
 
                     int shootDelay = sirenAlive ? 60 : 20;
@@ -288,7 +288,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         goToNextAIState();
                     break;
                 case LeviathanAttackType.MeteorVomiting:
-                    npc.TargetClosest();
                     npc.spriteDirection = npc.direction;
 
                     destination = target.Center - Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * (anahitaFightingToo ? 1360f : 1110f);
@@ -332,8 +331,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         goToNextAIState();
                     break;
                 case LeviathanAttackType.Charge:
-                    npc.TargetClosest();
-
                     slowdownTime = 25;
                     int redirectTime = sirenAlive ? 60 : 45;
                     int chargeTime = sirenAlive ? 41 : 28;

@@ -39,8 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
 
             // If none was found or it was too far away, despawn.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead ||

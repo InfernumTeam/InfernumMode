@@ -648,6 +648,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public static void SelectNewAttack(NPC npc)
         {
+            npc.TargetClosest();
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < Phase2LifeRatio;
             bool phase3 = lifeRatio < Phase3LifeRatio;

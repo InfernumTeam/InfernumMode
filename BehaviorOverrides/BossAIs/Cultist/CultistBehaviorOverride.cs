@@ -41,6 +41,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         }
 
         public const float BorderWidth = 5472f;
+        public const float Phase2LifeRatio = 0.65f;
+        public const float Phase3LifeRatio = 0.25f;
 
         #region AI
 
@@ -58,8 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
             }
 
-            npc.TargetClosest();
-
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Universally disable contact damage.
@@ -73,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             ref float initialXPosition = ref npc.Infernum().ExtraAI[8];
             ref float borderDustCounter = ref npc.Infernum().ExtraAI[9];
 
-            bool shouldBeInPhase2 = npc.life < npc.lifeMax * 0.65f;
+            bool shouldBeInPhase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
             bool inPhase2 = phaseState == 2f;
             bool dying = npc.Infernum().ExtraAI[6] == 1f;
 
@@ -417,7 +418,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                         Vector2 teleportPosition = target.Center - Vector2.UnitY * 350f;
                         CreateTeleportTelegraph(npc.Center, teleportPosition, 250);
                         npc.Center = teleportPosition;
-                        GotoNextAttackState(npc);
+                        SelectNextAttack(npc);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -566,7 +567,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             if (attackTimer >= attackLength)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_LightningHover(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
@@ -732,7 +733,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             if (attackTimer >= attackLength)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_ConjureLightBlasts(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
@@ -865,7 +866,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             if (attackTimer >= attackLength)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_PerformRitual(NPC npc, Player target, ref float frameType, ref float attackTimer, bool phase2)
@@ -948,7 +949,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 // If for some reason only the real cultist is present at the ritual, go to a different attack immediately.
                 if (cultists.Count <= 1)
                 {
-                    GotoNextAttackState(npc);
+                    SelectNextAttack(npc);
                     return;
                 }
 
@@ -1021,7 +1022,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             {
                 frameType = (int)CultistFrameState.Hover;
                 if (!NPC.AnyNPCs(NPCID.CultistDragonHead) && !NPC.AnyNPCs(NPCID.CultistDragonBody1) && !NPC.AnyNPCs(NPCID.CultistDragonTail))
-                    GotoNextAttackState(npc);
+                    SelectNextAttack(npc);
                 else
                     npc.dontTakeDamage = true;
             }
@@ -1067,7 +1068,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             if (attackTimer >= 510f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_AncientDoom(NPC npc, Player target, ref float frameType, ref float attackTimer)
@@ -1117,7 +1118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             if (attackTimer >= burstShootRate * (burstCount + 0.95f))
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void CreateTeleportTelegraph(Vector2 start, Vector2 end, int dustCount, bool canCreateDust = true, int extraUpdates = 0)
@@ -1173,11 +1174,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
         }
 
-        public static void GotoNextAttackState(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             npc.alpha = 0;
-            bool phase2 = npc.life < npc.lifeMax * 0.65f;
-            bool phase3 = npc.life < npc.lifeMax * 0.25f;
+            npc.TargetClosest();
+            bool phase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
+            bool phase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
             CultistAIState oldAttackState = (CultistAIState)(int)npc.ai[0];
             CultistAIState newAttackState = CultistAIState.FireballBarrage;
 

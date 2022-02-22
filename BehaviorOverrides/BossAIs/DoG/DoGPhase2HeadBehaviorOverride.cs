@@ -117,9 +117,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ref float fireballShootTimer = ref npc.Infernum().ExtraAI[31];
             ref float deathTimer = ref npc.Infernum().ExtraAI[32];
 
-            if (!Main.player.IndexInRange(npc.target) || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest(false);
-
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             target.Calamity().normalityRelocator = false;

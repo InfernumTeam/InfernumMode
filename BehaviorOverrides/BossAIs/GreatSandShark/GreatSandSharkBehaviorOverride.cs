@@ -95,8 +95,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             ref float enrageTimer = ref npc.ai[2];
             ref float startDelay = ref npc.ai[3];
 
-            npc.TargetClosest();
-
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             if (target.Center.Y > (Main.worldSurface - 100f) * 16D)

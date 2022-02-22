@@ -5,7 +5,6 @@ using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -42,8 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Lighting.AddLight(npc.Center, 0.3f, 0.3f, 0.3f);
 
             // Select a new target if an old one was lost.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
 
             // Reset damage. Do none by default if somewhat transparent.
             npc.damage = npc.alpha > 40 ? 0 : npc.defDamage;
@@ -193,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             if (attackTimer > shootTime + attackSwitchDelay)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_StellarCrash(NPC npc, Player target, float beaconAngerFactor, float lifeRatio, ref float attackTimer)
@@ -249,7 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             if (attackTimer > totalCrashes * (crashRiseTime + crashChargeTime) + 40)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_CelestialLights(NPC npc, Player target, float beaconAngerFactor, float lifeRatio, float attackTimer)
@@ -306,7 +304,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
 
             if (attackTimer >= 60f + shootRate * 30f + 380f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
 
             // Adjust rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
@@ -395,7 +393,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             releasingParticlesFlag = (npc.Opacity < 0.5f && npc.Opacity > 0f).ToInt();
 
             if (attackTimer >= chargeCount * (fadeInTime + chargeTime + fadeOutTime) + 3)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
 
             // Adjust rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
@@ -494,7 +492,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * (15f + beaconAngerFactor * 5f), 0.7f);
 
             if (attackTimer > 270f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_InfectedPlasmaVomit(NPC npc, Player target, float beaconAngerFactor, ref float attackTimer)
@@ -533,7 +531,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             if (attackTimer >= 270f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
 
             shootTimer++;
         }
@@ -590,7 +588,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
 
             if (attackTimer > 320f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
 
             // Adjust rotation.
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
@@ -688,13 +686,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             if (attackTimer >= fireDelay + (AstralPlasmaBeam.Lifetime + 40f) * totalBursts + 125f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
         #endregion Custom Behaviors
 
         #region Misc AI Operations
-        public static void GotoNextAttackState(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
+            // Select a new target.
+            npc.TargetClosest();
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
             DeusAttackType oldAttackState = (DeusAttackType)(int)npc.ai[0];
             DeusAttackType secondLastAttackState = (DeusAttackType)(int)npc.ai[3];
@@ -767,10 +768,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         }
 
         #endregion Misc AI Operations
-
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
-        {
-            return true;
-        }
     }
 }

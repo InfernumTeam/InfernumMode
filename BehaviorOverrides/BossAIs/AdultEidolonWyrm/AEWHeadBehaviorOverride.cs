@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.StormCharge },
         };
 
-        public static List<AEWAttackType[]> CurrentAttackCycles => Phase1AttackCycles;
+        public static List<AEWAttackType[]> CurrentAttackCycles => Phase2AttackCycles;
 
         public const float Phase2LifeRatio = 0.8f;
 
@@ -290,7 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public static void DoBehavior_UndynesTail(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
         {
-            int totalCharges = 8;
+            int totalCharges = 5;
             int redirectTime = 45;
             int chargeTime = 48;
             float chargeSpeed = MathHelper.Lerp(48f, 65f, 1f - lifeRatio);
@@ -374,10 +374,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             int teleportFadeTime = 32;
             int telegraphTime = 50;
-            int chargeTime = 64;
-            float chargeSpeed = 50f;
-            float chargeOffset = 1600f;
+            int chargeTime = 54;
+            int chargeCount = 4;
+            int lighningCloudCreationRate = 4;
+            float chargeSpeed = 72f;
+            float chargeOffset = MathHelper.Lerp(1750f, 1400f, 1f - lifeRatio);
             ref float aimDirection = ref npc.Infernum().ExtraAI[0];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
 
             // Fade out prior to teleporting.
             if (attackTimer <= teleportFadeTime)
@@ -394,9 +397,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 Main.PlaySound(SoundID.Item105, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 teleportPosition = target.Center + Main.rand.NextVector2CircularEdge(chargeOffset, chargeOffset);
+                    Vector2 offsetDirection = Main.rand.NextVector2Unit();
+                    offsetDirection = (offsetDirection * new Vector2(1f, 0.13f)).SafeNormalize(Vector2.UnitY);
+
+                    Vector2 teleportPosition = target.Center + offsetDirection * chargeOffset;
                     Vector2 telegraphDirection = (target.Center - teleportPosition).SafeNormalize(Vector2.UnitY);
                     npc.Center = teleportPosition;
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].realLife == npc.whoAmI)
+                        {
+                            Main.npc[i].Center = npc.Center - npc.SafeDirectionTo(target.Center) * i * 0.1f;
+                            Main.npc[i].netUpdate = true;
+                        }
+                    }
+
                     npc.velocity = Vector2.Zero;
                     npc.netUpdate = true;
 
@@ -426,7 +441,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Apply post-charge effects.
             if (attackTimer > teleportFadeTime + telegraphTime)
             {
+                // Create electric sparks.
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 3f == 2f)
+                {
+                    Vector2 sparkOffsetDirection = Main.rand.NextVector2Unit();
+                    Vector2 sparkSpawnPosition = npc.Center + sparkOffsetDirection * 64f;
+                    Vector2 sparkVelocity = sparkOffsetDirection * 7f;
+                    Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<ElectricSparkParticle>(), 0, 0f);
+                }
 
+                // Create lightning clouds that release lightning from the sky.
+                bool readyToCreateCloud = npc.WithinRange(target.Center, 1100f) && attackTimer % lighningCloudCreationRate == lighningCloudCreationRate - 1f;
+                if (Main.netMode != NetmodeID.MultiplayerClient && readyToCreateCloud)
+                    Utilities.NewProjectileBetter(npc.Center + Main.rand.NextVector2Circular(10f, 10f), Vector2.Zero, ModContent.ProjectileType<StormLightningCloud>(), 0, 0f);
+
+                // Become ethereal-looking.
+                etherealnessFactor = 1f;
+            }
+
+            // Define rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Go to the next attack.
+            if (attackTimer >= teleportFadeTime + telegraphTime + chargeTime)
+            {
+                attackTimer = 0f;
+                chargeCounter++;
+                if (chargeCounter >= chargeCount)
+                    SelectNextAttack(npc);
+                npc.netUpdate = true;
             }
         }
 
@@ -454,7 +497,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         {
             ref float attackCycleType = ref npc.Infernum().ExtraAI[5];
             ref float attackCycleIndex = ref npc.Infernum().ExtraAI[6];
-            List<AEWAttackType[]> attackCycles = Phase1AttackCycles;
+            List<AEWAttackType[]> attackCycles = CurrentAttackCycles;
             int oldAttackCycle = (int)attackCycleType;
 
             attackCycleIndex++;

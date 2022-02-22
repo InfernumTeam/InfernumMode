@@ -39,8 +39,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override bool PreAI(NPC npc)
         {
-            // Do targeting.
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Immediately vanish if the target is gone.
@@ -653,6 +653,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
             ref float attackState = ref npc.ai[1];
             float oldAttackState = npc.ai[1];
+
             WeightedRandom<SignusAttackType> newStatePicker = new WeightedRandom<SignusAttackType>(Main.rand);
             newStatePicker.Add(SignusAttackType.KunaiDashes);
             newStatePicker.Add(SignusAttackType.ScytheTeleportThrow);
@@ -670,6 +671,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 attackState = (int)newStatePicker.Get();
             while (attackState == oldAttackState);
 
+            npc.TargetClosest();
             npc.ai[2] = 0f;
             npc.netUpdate = true;
         }

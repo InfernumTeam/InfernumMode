@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
         public static bool PreAI(NPC npc)
         {
             // Do targeting.
-            npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Reset the hit sound.
@@ -411,6 +411,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 attackState = newStatePicker.Get();
             while (attackState == oldAttackState);
 
+            npc.TargetClosest();
             npc.ai[1] = (int)attackState;
             npc.ai[2] = 0f;
             npc.netUpdate = true;

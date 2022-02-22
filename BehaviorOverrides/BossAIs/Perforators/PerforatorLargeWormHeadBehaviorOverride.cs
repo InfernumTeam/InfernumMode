@@ -22,8 +22,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float enrageTimer = ref npc.ai[1];
             ref float hasSummonedSegments = ref npc.localAI[0];
 
-            npc.TargetClosest();
-
             npc.alpha = Utils.Clamp(npc.alpha - 30, 0, 255);
             npc.Calamity().DR = 0.05f;
 
@@ -42,6 +40,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 return false;
             }
 
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             bool outOfBiome = !target.ZoneCorrupt && !target.ZoneCrimson;

@@ -35,10 +35,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             ref float initialized01Flag = ref npc.localAI[0];
             ref float attackTimer = ref npc.ai[3];
 
-            // Determine a target.
-            if (!Main.player.IndexInRange(npc.target) || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
-
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
             float lifeRatio = MathHelper.Clamp(npc.life / (float)npc.lifeMax, 0f, 1f);
 

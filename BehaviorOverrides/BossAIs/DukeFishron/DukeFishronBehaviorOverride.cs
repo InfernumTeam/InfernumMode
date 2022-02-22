@@ -125,8 +125,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         #region AI
         public override bool PreAI(NPC npc)
         {
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
-            aquireNewTarget();
 
             // Aquire a new target if the current one is dead or inactive.
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)

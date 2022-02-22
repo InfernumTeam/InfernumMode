@@ -47,7 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             // Emit white light.
             Lighting.AddLight(npc.Center, Color.White.ToVector3());
 
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Fly away if the target is gone.
@@ -416,6 +417,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             {
                 attackTimer = 0f;
                 attackState++;
+                npc.TargetClosest();
                 npc.netUpdate = true;
             }
         }
@@ -475,6 +477,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             {
                 attackTimer = 0f;
                 attackState++;
+                npc.TargetClosest();
                 npc.netUpdate = true;
             }
         }
@@ -539,6 +542,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             {
                 attackTimer = 0f;
                 attackState++;
+                npc.TargetClosest();
                 npc.netUpdate = true;
             }
         }
@@ -616,6 +620,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 icePillarCreationTimer = 0f;
                 attackTimer = 0f;
                 attackState++;
+                npc.TargetClosest();
                 npc.netUpdate = true;
             }
         }
@@ -681,6 +686,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                     attackTimer = 0f;
                     attackState++;
 
+                    npc.TargetClosest();
+                    target = Main.player[npc.target];
                     npc.Center = target.Center - Vector2.UnitY * 550f;
                     npc.velocity *= 0.15f;
 
@@ -772,6 +779,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
                     if (chargeCounter > chargeCount)
                     {
+                        npc.TargetClosest();
                         chargeCounter = 0f;
                         attackState++;
                     }
@@ -823,6 +831,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 attackTimer = 0f;
                 attackState++;
                 shouldStopSound = true;
+                npc.TargetClosest();
                 npc.netUpdate = true;
             }
 
@@ -860,6 +869,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 {
                     chargeCounter = 0f;
                     attackState++;
+                    npc.TargetClosest();
                     npc.velocity *= 0.2f;
                     npc.netUpdate = true;
                 }

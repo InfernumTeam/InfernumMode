@@ -49,24 +49,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.localAI[1] = 1f;
             }
 
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
 
             // Despawn if no valid target exists.
             npc.timeLeft = 3600;
             Player target = Main.player[npc.target];
             if (!target.active || target.dead)
             {
-                npc.TargetClosest();
-                target = Main.player[npc.target];
-                if (!target.active || target.dead)
-                {
-                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.4f, -20f, 6f);
-                    if (npc.timeLeft < 180)
-                        npc.timeLeft = 180;
-                    if (!npc.WithinRange(target.Center, 2000f))
-                        npc.active = false;
-                    return false;
-                }
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.4f, -20f, 6f);
+                if (npc.timeLeft < 180)
+                    npc.timeLeft = 180;
+                if (!npc.WithinRange(target.Center, 2000f))
+                    npc.active = false;
+                return false;
             }
 
             // Don't take damage if below the second phase threshold and other guardianas are around.
@@ -118,6 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Enter the next phase once alone.
             if (TotalRemaininGuardians <= 1f)
             {
+                npc.TargetClosest();
                 npc.ai[0] = (int)AttackGuardianAttackState.Phase2Transition;
                 npc.velocity = npc.velocity.ClampMagnitude(0f, 23f);
                 attackTimer = 0f;
@@ -204,6 +201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 return;
             }
 
+            npc.TargetClosest();
             npc.ai[0] = (int)AttackGuardianAttackState.SpinCharge;
             attackTimer = 0f;
             npc.netUpdate = true;
@@ -319,6 +317,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 npc.ai[0] = (int)AttackGuardianAttackState.SpearBarrage;
                 arcDirection = 0f;
 
+                npc.TargetClosest();
                 npc.alpha = 0;
                 npc.rotation = 0f;
                 npc.velocity = Vector2.Zero;
@@ -465,6 +464,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
                 else
                 {
+                    npc.TargetClosest();
                     npc.ai[0] = (int)AttackGuardianAttackState.MagicFingerBolts;
                     attackTimer = 0f;
                     chargeCounter = 0f;
@@ -517,6 +517,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 if (lifeRatio < Subphase4LifeRatio)
                     npc.ai[0] = (int)AttackGuardianAttackState.ThrowingHands;
 
+                npc.TargetClosest();
                 npc.alpha = 0;
                 npc.rotation = 0f;
                 npc.velocity = Vector2.Zero;
@@ -552,6 +553,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
             if (attackTimer > 420f)
             {
+                npc.TargetClosest();
                 npc.ai[0] = (int)AttackGuardianAttackState.SpinCharge;
                 attackTimer = 0f;
                 npc.netUpdate = true;

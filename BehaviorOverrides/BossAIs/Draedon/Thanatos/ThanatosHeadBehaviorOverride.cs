@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             frameType = (int)ThanatosFrameType.Closed;
 
             // Reset damage.
-            npc.defDamage = 775;
+            npc.defDamage = 800;
             npc.damage = npc.defDamage;
 
             // Define attack variables.
@@ -131,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Get a target.
-            npc.TargetClosest(false);
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Become invincible if the complement mech is at high enough health.

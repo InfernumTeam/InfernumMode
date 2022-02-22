@@ -50,8 +50,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             npc.defense = npc.defDefense;
             npc.dontTakeDamage = false;
 
-            npc.TargetClosest();
-
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Fly away if the target is gone.
@@ -210,7 +210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.netUpdate = true;
 
                     if (chargeCount > maxChargeCount)
-                        GotoNextAttackState(npc);
+                        SelectNextAttack(npc);
                 }
             }
         }
@@ -277,7 +277,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     {
                         attackCycleCounter++;
                         if (attackCycleCounter >= attackCycleCount)
-                            GotoNextAttackState(npc);
+                            SelectNextAttack(npc);
                         else
                         {
                             attackTimer = 0f;
@@ -356,7 +356,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     {
                         attackCycleCounter++;
                         if (attackCycleCounter >= attackCycleCount)
-                            GotoNextAttackState(npc);
+                            SelectNextAttack(npc);
                         else
                         {
                             attackTimer = 0f;
@@ -460,7 +460,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.netUpdate = true;
 
                     if (chargeCount > maxChargeCount)
-                        GotoNextAttackState(npc);
+                        SelectNextAttack(npc);
                 }
             }
         }
@@ -545,7 +545,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.netUpdate = true;
 
                     if (chargeCount > attackCycleCount)
-                        GotoNextAttackState(npc);
+                        SelectNextAttack(npc);
                 }
             }
 
@@ -614,7 +614,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
 
             if (attackTimer >= SmallDrone.TimeOffsetPerIncrement * 2f + 375f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_CarpetBombing2(NPC npc, Player target, float enrageFactor, ref float frameType)
@@ -697,7 +697,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     npc.netUpdate = true;
 
                     if (chargeCount > attackCycleCount)
-                        GotoNextAttackState(npc);
+                        SelectNextAttack(npc);
                 }
             }
 
@@ -822,7 +822,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 }
 
                 if (chargeCounter > chargeCount)
-                    GotoNextAttackState(npc);
+                    SelectNextAttack(npc);
             }
 
             bool canReleaseBombs = attackTimer % 16f == 15f;
@@ -878,10 +878,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
 
             if (attackTimer > PlagueNuke.BuildTime + PlagueNuke.ExplodeDelay + 120f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
-        public static void GotoNextAttackState(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             PBGAttackType currentAttackState = (PBGAttackType)(int)npc.ai[0];
@@ -921,6 +921,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     break;
             }
 
+            npc.TargetClosest();
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;
             for (int i = 0; i < 8; i++)

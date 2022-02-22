@@ -52,8 +52,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override bool PreAI(NPC npc)
         {
-            // Do targeting.
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
+
             Player target = Main.player[npc.target];
 
             CalamityGlobalNPC.brimstoneElemental = npc.whoAmI;
@@ -738,6 +739,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public static void SelectNewAttack(NPC npc)
         {
+            // Select a new target.
+            npc.TargetClosest();
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
             List<BrimmyAttackType> possibleAttacks = new List<BrimmyAttackType>
             {

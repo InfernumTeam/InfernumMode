@@ -176,7 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.dontTakeDamage = true;
 
             // Get a target.
-            npc.TargetClosest(false);
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Become invincible and disappear if the final mech is present.

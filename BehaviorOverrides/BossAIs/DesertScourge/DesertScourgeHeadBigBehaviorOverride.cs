@@ -36,8 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             npc.damage = 100;
 
             // Select a new target if an old one was lost.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
 
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
@@ -461,6 +460,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                 npc.ai[0] = (int)Main.rand.Next(potentialAttacks);
             while ((int)oldAttack == (int)npc.ai[0] && potentialAttacks.Count >= 2);
 
+            npc.TargetClosest();
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }

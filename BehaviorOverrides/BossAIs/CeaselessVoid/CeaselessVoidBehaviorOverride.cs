@@ -76,8 +76,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Reset DR.
             npc.Calamity().DR = 0.2f;
 
-            // Do targeting.
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             CalamityGlobalNPC.voidBoss = npc.whoAmI;
@@ -447,6 +447,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public static void SelectNewAttack(NPC npc)
         {
+            // Select a new target.
+            npc.TargetClosest();
+
             int phase = (int)npc.ai[3];
             List<CeaselessVoidAttackType> possibleAttacks = new List<CeaselessVoidAttackType>
             {

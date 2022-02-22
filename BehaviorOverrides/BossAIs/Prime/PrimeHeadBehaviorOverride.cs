@@ -79,8 +79,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             ref float frameType = ref npc.localAI[0];
             ref float hasCreatedShield = ref npc.Infernum().ExtraAI[5];
 
-            // Continuously search for the closest target.
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             Player target = Main.player[npc.target];
@@ -241,7 +241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         Main.npc[arm].netUpdate = true;
                     }
 
-                    GotoNextAttackState(npc);
+                    SelectNextAttack(npc);
                 }
             }
         }
@@ -295,7 +295,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= shootRate * shootCount + 90f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_RocketRelease(NPC npc, Player target, float lifeRatio, float attackTimer, ref float frameType)
@@ -348,7 +348,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= cycleTime * (shootCycleCount + 0.4f))
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_HoverCharge(NPC npc, Player target, float lifeRatio, float attackTimer, ref float frameType)
@@ -421,7 +421,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             if (attackTimer >= (hoverTime + chargeTime) * chargeCount + 20)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_LaserRay(NPC npc, Player target, float lifeRatio, float attackTimer, ref float frameType)
@@ -501,7 +501,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             if (attackTimer >= 225f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_LightningSupercharge(NPC npc, Player target, ref float attackTimer, ref float frameType)
@@ -639,7 +639,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 superchargeTimer = Utils.InverseLerp(465f, 435f, attackTimer, true) * 30f;
 
             if (attackTimer > 465f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_ReleaseTeslaMines(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float frameType)
@@ -677,7 +677,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             if (attackTimer == slowdownTime + 75f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_CarpetBombLaserCharge(NPC npc, Player target, float lifeRatio, ref float attackTimer, ref float frameType)
@@ -742,12 +742,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             if (attackTimer >= (hoverTime + chargeTime) * chargeCount + 20)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
         #endregion Specific Attacks
 
         #region General Helper Functions
-        public static void GotoNextAttackState(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             PrimeAttackType currentAttack = (PrimeAttackType)(int)npc.ai[0];
@@ -779,6 +779,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 npc.ai[0] = (int)attackSelector.Get();
             while (npc.ai[0] == (int)currentAttack);
 
+            npc.TargetClosest();
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

@@ -29,13 +29,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool PreAI(NPC npc)
         {
+            if (CalamityGlobalNPC.calamitas == -1 || !Main.npc[CalamityGlobalNPC.calamitas].active)
+            {
+                npc.active = false;
+                return false;
+            }
+
             // Do targeting.
-            npc.TargetClosest();
+            npc.target = Main.npc[CalamityGlobalNPC.calamitas].target;
             Player target = Main.player[npc.target];
 
             CalamityGlobalNPC.catastrophe = npc.whoAmI;
 
-            if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f) || CalamityGlobalNPC.calamitas == -1 || !Main.npc[CalamityGlobalNPC.calamitas].active)
+            if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
             {
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -28f, 0.08f);
                 if (!npc.WithinRange(target.Center, 1450f) || CalamityGlobalNPC.calamitas == -1 || !Main.npc[CalamityGlobalNPC.calamitas].active)

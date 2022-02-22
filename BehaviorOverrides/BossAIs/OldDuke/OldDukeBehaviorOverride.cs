@@ -168,8 +168,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
         #region AI
         public override bool PreAI(NPC npc)
         {
-            npc.TargetClosest();
-
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool outOfOcean = !BossRushEvent.BossRushActive && target.position.X > 8400f && target.position.X < Main.maxTilesX * 16f - 8400f;
@@ -426,7 +426,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
 
             if (attackTimer >= 75f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_AttackSelectionWait(NPC npc, Player target, bool inPhase4, float attackTimer, ref float frameType)
@@ -467,7 +467,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.frameCounter++;
 
             if (attackTimer >= waitDelay)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_Charge(NPC npc, Player target, bool inPhase2, bool inPhase3, bool inPhase4, float attackTimer, ref float frameType)
@@ -495,7 +495,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             if (attackTimer >= chargeTime)
             {
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
                 return;
             }
 
@@ -546,7 +546,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             if (attackTimer >= chargeTime)
             {
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
                 return;
             }
 
@@ -628,7 +628,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
 
             if (attackTimer >= shootDelay + belchRate * (belchCount + 0.7f))
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_AcidBubbleFountain(NPC npc, Player target, bool inPhase2, float attackTimer, ref float frameType)
@@ -669,7 +669,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
 
             if (attackTimer >= shootDelay + bubbleSummonRate * (bubbleCount + 0.5f))
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_SharkronSpinSummon(NPC npc, Player target, float attackTimer, ref float frameType)
@@ -725,7 +725,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
 
             if (attackTimer >= spinTime + 60f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_ToothBallVomit(NPC npc, Player target, bool inPhase3, Vector2 mouthPosition, float attackTimer, ref float frameType)
@@ -773,7 +773,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
 
             if (attackTimer >= shootDelay + belchRate * (belchCount + 0.7f))
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_GoreAndAcidSpit(NPC npc, Player target, bool inPhase3, Vector2 mouthPosition, float attackTimer, ref float frameType)
@@ -819,7 +819,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
 
             if (attackTimer >= 180f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_TeleportPause(NPC npc, Player target, float attackTimer, ref float frameType)
@@ -862,12 +862,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.rotation += MathHelper.Pi;
 
             if (attackTimer >= fadeTime * 2f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
         #endregion Specific Behaviors
 
         #region Utilities
-        public static void GotoNextAttackState(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             bool inPhase2 = npc.Infernum().ExtraAI[6] == 1f;
             bool inPhase3 = npc.Infernum().ExtraAI[6] == 2f;
@@ -894,6 +894,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             }
             else
             {
+                npc.TargetClosest();
                 npc.ai[0] = (int)OldDukeAttackState.AttackSelectionWait;
                 npc.ai[2] = (int)newAttackState;
                 npc.ai[3]++;

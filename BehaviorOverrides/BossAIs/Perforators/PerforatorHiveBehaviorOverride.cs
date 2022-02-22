@@ -63,14 +63,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 6400f))
             {
-                npc.TargetClosest(false);
-                if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead || !npc.WithinRange(Main.player[npc.target].Center, 6400f))
-                {
-                    DoDespawnEffects(npc);
-                    return false;
-                }
+                DoDespawnEffects(npc);
+                return false;
             }
 
             Player target = Main.player[npc.target];
@@ -209,6 +207,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                         attackState = npc.WithinRange(target.Center, 880f) ? 1f : 2f;
                         if (lifeRatio < 0.15f)
                             attackState = 3f;
+                        npc.TargetClosest();
                         npc.netUpdate = true;
                     }
                 }
@@ -219,6 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     {
                         attackTimer = 0f;
                         attackState = 2f;
+                        npc.TargetClosest();
                         npc.netUpdate = true;
                     }
                 }
@@ -229,6 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     {
                         attackTimer = 0f;
                         attackState = 0f;
+                        npc.TargetClosest();
                         npc.netUpdate = true;
                     }
                 }
@@ -239,6 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     {
                         attackTimer = 0f;
                         attackState = 0f;
+                        npc.TargetClosest();
                         npc.netUpdate = true;
                     }
                 }

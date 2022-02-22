@@ -39,8 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             Lighting.AddLight(npc.Center, Color.Crimson.ToVector3());
 
             // Select a new target if an old one was lost.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
 
             // Reset things.
             npc.damage = npc.alpha > 4 ? 0 : npc.defDamage;
@@ -489,6 +488,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         internal const float Subphase3LifeRatio = 0.45f;
         public static void GotoNextAttackState(NPC npc)
         {
+            // Select a new target.
+            npc.TargetClosest();
+
             npc.Opacity = 0f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 

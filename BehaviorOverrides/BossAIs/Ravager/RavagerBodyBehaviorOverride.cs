@@ -41,11 +41,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override bool PreAI(NPC npc)
         {
             // Ensure that the NPC always draws things, even when far away.
-            // Not doing this will result in the arena not being drawn if sufficiently far from the player.
+            // Not doing this will result in the arena not being drawn if far from the target.
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
-            // Do targeting.
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Create limbs.

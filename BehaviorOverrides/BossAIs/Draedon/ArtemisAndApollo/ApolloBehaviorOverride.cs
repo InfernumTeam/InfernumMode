@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.dontTakeDamage = true;
 
             // Get a target.
-            npc.TargetClosest(false);
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Become more resistant to damage as necessary.

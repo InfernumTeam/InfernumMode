@@ -22,7 +22,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public override bool PreAI(NPC npc)
         {
-            npc.TargetClosest(true);
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
             float lifeRatio = npc.life / (float)npc.lifeMax;
 

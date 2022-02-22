@@ -10,13 +10,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
+namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-    public class TerateslaLightningBlast : ModProjectile
+    public class StormLightning : ModProjectile
     {
         internal PrimitiveTrailCopy LightningDrawer;
 
-        public const int Lifetime = 45;
+        public static int Lifetime => 65;
         public ref float InitialVelocityAngle => ref projectile.ai[0];
 
         // Technically not a ratio, and more of a seed, but it is used in a 0-2pi squash
@@ -43,8 +43,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.hostile = true;
-            projectile.extraUpdates = 12;
-            projectile.timeLeft = projectile.extraUpdates * Lifetime;
+            projectile.extraUpdates = 32;
+            projectile.timeLeft = projectile.MaxUpdates * Lifetime;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -112,16 +112,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 }
                 while (turnTries < 100);
 
-                // Make any plasma bombs that are hit explode.
-                foreach (Projectile plasmaBomb in Utilities.AllProjectilesByID(ModContent.ProjectileType<PlasmaBomb>()))
-                {
-                    if (projectile.WithinRange(plasmaBomb.Center, 80f))
-                    {
-                        Main.PlaySound(SoundID.DD2_KoboldExplosion, plasmaBomb.Center);
-                        plasmaBomb.Kill();
-                    }
-                }
-
                 if (projectile.velocity != Vector2.Zero)
                 {
                     AccumulatedXMovementSpeeds += newBaseDirection.X * (projectile.extraUpdates + 1) * 2f * originalSpeed;
@@ -131,11 +121,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
         }
 
-        public float PrimitiveWidthFunction(float completionRatio) => Utils.InverseLerp(0f, 0.13f, completionRatio, true) * Utils.InverseLerp(0.93f, 0.87f, completionRatio, true) * projectile.scale * 12f;
+        public float PrimitiveWidthFunction(float completionRatio) => Utils.InverseLerp(0f, 0.3f, completionRatio, true) * Utils.InverseLerp(0.93f, 0.7f, completionRatio, true) * projectile.scale * 12f;
 
         public Color PrimitiveColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Cyan, Color.Blue, projectile.identity % 5f / 10f);
+            Color color = Color.Lerp(Color.Cyan, Color.Blue, projectile.identity % 5f / 7f);
             return color;
         }
 

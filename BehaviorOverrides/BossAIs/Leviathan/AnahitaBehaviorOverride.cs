@@ -71,7 +71,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             NPCID.Sets.TrailingMode[npc.type] = 1;
             NPCID.Sets.TrailCacheLength[npc.type] = 5;
 
-            // Set the target and reset damage and invulnerability.
+            // Select a target and reset damage and invulnerability.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = false;
@@ -229,7 +230,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public static void DoBehavior_FloatTowardsTarget(NPC npc, Player target, bool leviathanAlive, bool enraged, ref float attackTimer)
         {
-            npc.TargetClosest();
             npc.rotation = npc.velocity.X * 0.02f;
             npc.spriteDirection = npc.direction;
 
@@ -241,7 +241,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public static void DoBehavior_BubbleBurst(NPC npc, Player target, Vector2 headPosition, bool leviathanAlive, bool enraged, ref float attackTimer)
         {
-            npc.TargetClosest();
             npc.rotation = npc.velocity.X * 0.02f;
             npc.spriteDirection = npc.direction;
 
@@ -276,7 +275,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public static void DoBehavior_Singing(NPC npc, Player target, Vector2 headPosition, bool leviathanAlive, bool enraged, ref float attackTimer)
         {
-            npc.TargetClosest();
             npc.rotation = npc.velocity.X * 0.02f;
             npc.spriteDirection = npc.direction;
 
@@ -319,7 +317,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public static void DoBehavior_MistBubble(NPC npc, Player target, Vector2 headPosition, bool enraged, ref float attackTimer)
         {
-            npc.TargetClosest();
             npc.rotation = npc.velocity.X * 0.02f;
             npc.spriteDirection = npc.direction;
 

@@ -44,10 +44,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
         public override bool PreAI(NPC npc)
         {
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = false;
-            npc.TargetClosest();
 
             ref float attackTimer = ref npc.ai[2];
             ref float hasSummonedNinjaFlag = ref npc.localAI[0];
@@ -173,7 +174,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
                 if (attackTimer == 25f && npc.collideY)
                 {
-                    npc.TargetClosest();
                     target = Main.player[npc.target];
                     float jumpSpeed = MathHelper.Lerp(8.25f, 11.6f, Utils.InverseLerp(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                     jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
@@ -202,7 +202,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
                 if (attackTimer == 35f)
                 {
-                    npc.TargetClosest();
                     target = Main.player[npc.target];
                     float jumpSpeed = MathHelper.Lerp(10f, 23f, Utils.InverseLerp(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                     jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);

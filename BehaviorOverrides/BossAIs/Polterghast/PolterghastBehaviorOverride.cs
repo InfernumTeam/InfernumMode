@@ -53,15 +53,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.localAI[3] = 1f;
             }
 
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead)
             {
-                npc.TargetClosest();
-                if (!Main.player.IndexInRange(npc.target) || !Main.player[npc.target].active || Main.player[npc.target].dead)
-                {
-                    DoDespawnEffects(npc);
-                    return false;
-                }
+                DoDespawnEffects(npc);
+                return false;
             }
 
             Player target = Main.player[npc.target];
@@ -261,7 +258,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 npc.timeLeft = 200;
         }
 
-        public static void GotoNextAttackState(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool phase2 = lifeRatio < Phase2LifeRatio;
@@ -297,6 +294,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     break;
             }
 
+            npc.TargetClosest();
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
@@ -328,7 +326,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             if (attackTimer >= 135f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_ReleaseBurstsOfSouls(NPC npc, Player target, ref float attackTimer, ref float totalReleasedSouls, bool enraged)
@@ -389,18 +387,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
             if (attackTimer >= 160f * 3f + 70f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_Impale(NPC npc, Player target, ref float attackTimer)
         {
-            GotoNextAttackState(npc);
+            SelectNextAttack(npc);
 
             int impaleCount = 3;
             float impaleTime = 150f;
 
             if (attackTimer >= impaleTime * impaleCount + 15f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
 
             // Hover to the top left/right of the target before attacking.
             if (attackTimer % impaleTime < 45f)
@@ -501,7 +499,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 Main.PlaySound(SoundID.NPCHit36, target.Center);
 
             if (attackTimer >= 440f && totalReleasedSouls <= 15f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_DoRockCharge(NPC npc, Player target, ref float attackTimer, bool enraged)
@@ -570,7 +568,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             if (attackTimer >= 205f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_EtherealRoar(NPC npc, Player target, ref float attackTimer, ref float totalReleasedSouls, bool enraged)
@@ -641,7 +639,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             if (totalShotsDoneSoFar >= shootCount)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_BeastialExplosion(NPC npc, Player target, ref float attackTimer, ref float totalReleasedSouls)
@@ -712,7 +710,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 npc.Opacity = Utils.InverseLerp(0.78f, 0.95f, npc.scale, true);
                 if (totalReleasedSouls <= 0f || attackTimer > 540f)
-                    GotoNextAttackState(npc);
+                    SelectNextAttack(npc);
             }
 
             npc.hide = npc.Opacity < 0.45f;
@@ -819,7 +817,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             if (attackTimer >= totalCharges * 180f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         #endregion AI

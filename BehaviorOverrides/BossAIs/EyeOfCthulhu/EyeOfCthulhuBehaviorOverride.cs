@@ -88,12 +88,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         {
             Player target = Main.player[npc.target];
 
-            if (target.dead)
+            if (target.dead || !target.active)
             {
                 npc.TargetClosest();
                 target = Main.player[npc.target];
 
-                if (target.dead)
+                if (target.dead || !target.active)
                 {
                     npc.velocity.Y -= 0.18f;
                     npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
@@ -106,7 +106,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 }
             }
 
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
 
             ref float attackTimer = ref npc.ai[2];
             ref float phase2ResetTimer = ref npc.Infernum().ExtraAI[6];
@@ -690,6 +691,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // And reset the misc ai slots.
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+
+            npc.TargetClosest();
             npc.netUpdate = true;
         }
         #endregion

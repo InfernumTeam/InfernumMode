@@ -98,9 +98,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (npc.ai[3] > 0f)
                 npc.realLife = (int)npc.ai[3];
 
-            // Target
-            if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead)
-                npc.TargetClosest(true);
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
 
             npc.damage = npc.dontTakeDamage ? 0 : 2500;
 

@@ -83,7 +83,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             npc.defense = 50;
             drawState = (int)ProvidenceFrameDrawingType.WingFlapping;
 
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // End rain.

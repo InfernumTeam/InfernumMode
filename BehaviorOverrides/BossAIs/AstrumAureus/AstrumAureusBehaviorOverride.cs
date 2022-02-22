@@ -63,8 +63,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override bool PreAI(NPC npc)
         {
-            // Do targeting.
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Manually offset the boss graphically.
@@ -958,6 +958,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 npc.Infernum().ExtraAI[7] = npc.ai[0];
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+
+            // Select a new target.
+            npc.TargetClosest();
+
             npc.netUpdate = true;
         }
 

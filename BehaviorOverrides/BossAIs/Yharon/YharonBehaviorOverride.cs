@@ -291,22 +291,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             CalamityMod.CalamityMod.StopRain();
 
             // Aquire a new target if the current one is dead or inactive.
+            npc.TargetClosestIfTargetIsInvalid();
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
             {
-                npc.TargetClosest(false);
-
-                // If no possible target was found, fly away.
-                if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                {
-                    npc.velocity.Y -= 0.5f;
-                    npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
-                    if (npc.timeLeft > 120)
-                        npc.timeLeft = 120;
-                    if (!npc.WithinRange(Main.player[npc.target].Center, 4200f))
-                        npc.active = false;
-                    return false;
-                }
-                npc.netUpdate = true;
+                npc.velocity.Y -= 0.8f;
+                npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
+                if (npc.timeLeft > 120)
+                    npc.timeLeft = 120;
+                if (!npc.WithinRange(Main.player[npc.target].Center, 4200f))
+                    npc.active = false;
+                return false;
             }
             else
                 npc.timeLeft = 7200;

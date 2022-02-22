@@ -23,13 +23,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             projectile.ignoreWater = true;
             projectile.tileCollide = true;
             projectile.penetrate = -1;
-            projectile.timeLeft = Lifetime;
+            projectile.timeLeft = 900;
         }
 
         public override void AI()
         {
             // Disappear if the wyrm is not present.
-            if (!Main.projectile.IndexInRange(CalamityGlobalNPC.adultEidolonWyrmHead))
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.adultEidolonWyrmHead))
             {
                 projectile.Kill();
                 return;
@@ -41,10 +41,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             projectile.Opacity = CalamityUtils.Convert01To010(Time / Lifetime) * 4f;
             if (projectile.Opacity > 1f)
                 projectile.Opacity = 1f;
-            projectile.scale = projectile.Opacity * 5f;
+            projectile.scale = (projectile.Opacity + (float)Math.Cos(Time / 4f) * 0.4f) * 12f;
+            if (projectile.scale < 0f)
+                projectile.scale = 0f;
 
             // Attempt to aim at the target.
-            float aimInterpolant = 1f - (float)Math.Pow(Utils.InverseLerp(0f, Lifetime * 0.6f, Time, true), 3D);
+            float aimInterpolant = 1f - (float)Math.Pow(Utils.InverseLerp(0f, Lifetime * 0.84f, Time, true), 3D);
             projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(target.Center), aimInterpolant).SafeNormalize(Vector2.UnitY);
             wyrm.Infernum().ExtraAI[0] = projectile.velocity.ToRotation();
 
@@ -69,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             outerColor.A = (byte)MathHelper.Lerp(255f, 192f, projectile.Opacity);
 
             Vector2 start = projectile.Center;
-            Vector2 end = start + projectile.Center + projectile.velocity * 4500f;
+            Vector2 end = start + projectile.velocity * 4500f;
 
             spriteBatch.DrawLineBetter(start, end, outerColor, projectile.scale);
             spriteBatch.DrawLineBetter(start, end, innerColor, projectile.scale * 0.5f);

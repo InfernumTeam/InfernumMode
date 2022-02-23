@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             projectile.rotation = projectile.velocity.ToRotation();
 
             // Accelerate quickly until reaching a specific speed.
-            if (projectile.velocity.Length() < 30f)
+            if (projectile.velocity.Length() < 16f)
                 projectile.velocity *= 1.064f;
 
             Lighting.AddLight(projectile.Center, Color.Cyan.ToVector3() * 1.6f);

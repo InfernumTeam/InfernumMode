@@ -57,6 +57,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (Main.npc.IndexInRange(npc.realLife) && Main.npc[npc.realLife].active)
                 npc.Opacity = Main.npc[npc.realLife].Opacity;
             npc.dontTakeDamage = Main.npc[npc.realLife].ai[0] != (int)AEWHeadBehaviorOverride.AEWAttackType.ImpactTail;
+
+            // Become invincible again if the shield was not destroyed in time.
+            if (!npc.dontTakeDamage && Main.npc[npc.realLife].ai[1] >= Main.npc[npc.realLife].Infernum().ExtraAI[2])
+                npc.dontTakeDamage = true;
+
             npc.chaseable = !npc.dontTakeDamage;
 
             return true;

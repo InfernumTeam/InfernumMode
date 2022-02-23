@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             MetalBurst,
             RocketRelease,
             HoverCharge,
-            LaserRay,
+            EyeLaserRays,
             LightningSupercharge,
             ReleaseTeslaMines,
             CarpetBombLaserCharge
@@ -148,8 +148,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 case PrimeAttackType.HoverCharge:
                     DoAttack_HoverCharge(npc, target, lifeRatio, attackTimer, ref frameType);
                     break;
-                case PrimeAttackType.LaserRay:
-                    DoAttack_LaserRay(npc, target, lifeRatio, attackTimer, ref frameType);
+                case PrimeAttackType.EyeLaserRays:
+                    DoAttack_EyeLaserRays(npc, target, lifeRatio, attackTimer, ref frameType);
                     break;
                 case PrimeAttackType.LightningSupercharge:
                     DoAttack_LightningSupercharge(npc, target, ref attackTimer, ref frameType);
@@ -424,15 +424,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_LaserRay(NPC npc, Player target, float lifeRatio, float attackTimer, ref float frameType)
+        public static void DoAttack_EyeLaserRays(NPC npc, Player target, float lifeRatio, float attackTimer, ref float frameType)
         {
+            int shootDelay = 95;
             ref float laserRayRotation = ref npc.Infernum().ExtraAI[0];
+            ref float lineTelegraphInterpolant = ref npc.Infernum().ExtraAI[1];
+            ref float angularOffset = ref npc.Infernum().ExtraAI[2];
 
-            float angularOffset = MathHelper.ToRadians(39f);
+            // Calculate the line telegraph interpolant.
+            lineTelegraphInterpolant = 0f;
+            if (attackTimer < shootDelay)
+                lineTelegraphInterpolant = Utils.InverseLerp(0f, 0.8f, attackTimer / shootDelay, true);
+
+            // Hover into position.
+            angularOffset = MathHelper.ToRadians(39f);
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
-            float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.InverseLerp(45f, 90f, attackTimer, true));
+            float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.InverseLerp(shootDelay / 2, shootDelay - 5f, attackTimer, true));
             npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), movementSpeed)) / 8f;
 
+            // Stay away from the target, to prevent cheap contact damage.
             if (npc.WithinRange(target.Center, 150f))
             {
                 npc.Center = target.Center - npc.SafeDirectionTo(target.Center, Vector2.UnitY) * 150f;
@@ -444,10 +454,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (attackTimer == 5f)
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
 
-            if (attackTimer == 65f)
+            if (attackTimer == shootDelay - 35f)
                 Main.PlaySound(SoundID.Roar, target.Center, 0);
 
-            if (attackTimer == 95f)
+            // Release the lasers from eyes.
+            if (attackTimer == shootDelay)
             {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -470,25 +481,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
             }
 
-            frameType = attackTimer < 80f ? (int)PrimeFrameType.ClosedMouth : (int)PrimeFrameType.OpenMouth;
+            // Calculate frames.
+            frameType = attackTimer < shootDelay - 15f ? (int)PrimeFrameType.ClosedMouth : (int)PrimeFrameType.OpenMouth;
 
             // Release a few rockets after creating the laser to create pressure.
             int rocketReleaseRate = lifeRatio < Phase2LifeRatio ? 11 : 18;
-            if (attackTimer > 95f && attackTimer % rocketReleaseRate == rocketReleaseRate - 1f)
+            if (attackTimer > shootDelay && attackTimer % rocketReleaseRate == rocketReleaseRate - 1f)
             {
                 Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float rocketAngularOffset = Utils.InverseLerp(95f, 195f, attackTimer, true) * MathHelper.TwoPi;
+                    float rocketAngularOffset = Utils.InverseLerp(shootDelay, 195f, attackTimer, true) * MathHelper.TwoPi;
                     Vector2 rocketVelocity = rocketAngularOffset.ToRotationVector2() * (Main.rand.NextFloat(5.5f, 6.2f) + npc.Distance(target.Center) * 0.00267f);
                     Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f + rocketVelocity * 2.5f, rocketVelocity, ProjectileID.SaucerMissile, 155, 0f);
                 }
             }
 
             // Create a bullet hell outside of the laser area to prevent RoD cheese.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 95f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay)
             {
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     Vector2 shootDirection;
                     do
@@ -757,7 +769,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 attackSelector.Add(PrimeAttackType.MetalBurst);
                 attackSelector.Add(PrimeAttackType.RocketRelease);
                 attackSelector.Add(PrimeAttackType.HoverCharge);
-                attackSelector.Add(PrimeAttackType.LaserRay);
+                attackSelector.Add(PrimeAttackType.EyeLaserRays);
 
                 if (lifeRatio < Phase2LifeRatio)
                 {
@@ -792,6 +804,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         #region Frames and Drawcode
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            NPCID.Sets.MustAlwaysDraw[npc.type] = true;
+
             Texture2D texture = Main.npcTexture[npc.type];
             Texture2D eyeGlowTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/PrimeEyes");
             Rectangle frame = texture.Frame(1, Main.npcFrameCount[npc.type], 0, (int)npc.localAI[0]);
@@ -808,6 +822,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             float superchargePower = Utils.InverseLerp(0f, 30f, npc.Infernum().ExtraAI[1], true);
+            if (npc.ai[0] != (int)PrimeAttackType.LightningSupercharge)
+                superchargePower = 0f;
+
             if (superchargePower > 0f)
             {
                 float outwardness = superchargePower * 6f + (float)Math.Cos(Main.GlobalTime * 2f) * 0.5f;
@@ -822,6 +839,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             spriteBatch.Draw(texture, baseDrawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+
+            // Draw line telegraphs for the eye attack.
+            float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];
+            if (npc.ai[0] == (int)PrimeAttackType.EyeLaserRays && lineTelegraphInterpolant > 0f)
+            {
+                spriteBatch.SetBlendState(BlendState.Additive);
+
+                float angularOffset = npc.Infernum().ExtraAI[2];
+                Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                Player target = Main.player[npc.target];
+                Color outlineColor = Color.Lerp(Color.Red, Color.White, lineTelegraphInterpolant);
+                Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 0.5f, 2.4f);
+                for (int i = -1; i <= 1; i += 2)
+                {
+                    Vector2 drawPosition = npc.Center + new Vector2(i * 16f, -8f).RotatedBy(npc.rotation) - Main.screenPosition;
+                    Vector2 beamDirection = -(target.Center - (drawPosition + Main.screenPosition)).SafeNormalize(-Vector2.UnitY).RotatedBy(angularOffset * -i);
+                    float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                    spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                }
+                spriteBatch.ResetBlendState();
+            }
+
             spriteBatch.Draw(eyeGlowTexture, baseDrawPosition, frame, new Color(200, 200, 200, 255), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;
         }

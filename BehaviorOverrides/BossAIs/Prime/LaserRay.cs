@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 return;
             }
 
-            projectile.Center = Main.npc[OwnerIndex].Center + new Vector2((AngularVelocity > 0f).ToDirectionInt() * 16f, -7f) + projectile.velocity * 2f;
+            projectile.Center = Main.npc[OwnerIndex].Center + new Vector2((AngularVelocity > 0f).ToDirectionInt() * 16f, -7f).RotatedBy(Main.npc[OwnerIndex].rotation) + projectile.velocity * 2f;
             projectile.velocity = projectile.velocity.RotatedBy(AngularVelocity).SafeNormalize(Vector2.UnitY);
         }
 

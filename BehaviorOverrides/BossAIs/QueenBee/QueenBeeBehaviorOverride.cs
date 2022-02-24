@@ -127,21 +127,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
         #region Specific Attacks
         public static void DoSpawnAnimationStuff(NPC npc, Player target, float animationTimer)
         {
-            // Focus on the boss as it spawns.
-            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2000f))
-            {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(0f, 15f, animationTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(140f, 132f, animationTimer, true);
-            }
-
             npc.Opacity = Utils.InverseLerp(0f, 45f, animationTimer, true);
             npc.damage = 0;
             npc.dontTakeDamage = true;
 
             if (animationTimer < 75f)
             {
-                Vector2 hoverDestination = target.Center - Vector2.UnitY * 500f;
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
 
                 npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 32f);
                 if (npc.WithinRange(target.Center, 90f))

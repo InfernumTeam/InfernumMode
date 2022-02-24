@@ -5,6 +5,7 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
+using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Items;
@@ -21,6 +22,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace InfernumMode
 {
@@ -64,6 +66,7 @@ namespace InfernumMode
                     method.GetCustomAttributes(false);
             }
 
+            IntroScreenManager.Load();
             NPCBehaviorOverride.LoadAll();
             ProjectileBehaviorOverride.LoadAll();
 
@@ -198,8 +201,22 @@ namespace InfernumMode
 
         public override void AddRecipes() => RecipeUpdates.Update();
 
+        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+        {
+            int mouseIndex = layers.FindIndex(layer => layer.Name == "Vanilla: Mouse Text");
+            if (mouseIndex != -1)
+            {
+                layers.Insert(mouseIndex, new LegacyGameInterfaceLayer("Boss Introduction Screens", () =>
+                {
+                    IntroScreenManager.Draw();
+                    return true;
+                }, InterfaceScaleType.Game));
+            }
+        }
+
         public override void Unload()
         {
+            IntroScreenManager.Unload();
             OverridingListManager.Unload();
             BalancingChangesManager.Unload();
             HookManager.Unload();

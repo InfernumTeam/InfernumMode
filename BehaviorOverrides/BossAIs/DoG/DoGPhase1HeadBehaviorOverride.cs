@@ -4,6 +4,7 @@ using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -100,10 +101,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
+            Player target = Main.player[npc.target];
+
+            // Stay away from the target if the screen is being obstructed by the intro animation.
+            if (IntroScreenManager.ScreenIsObstructed)
+            {
+                npc.dontTakeDamage = true;
+                npc.Center = target.Center - Vector2.UnitY * 3000f;
+            }
 
             npc.damage = npc.dontTakeDamage ? 0 : 2500;
-
-            Player target = Main.player[npc.target];
 
             // Spawn segments
             if (Main.netMode != NetmodeID.MultiplayerClient)

@@ -59,6 +59,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             get
             {
+                if (CalamityGlobalNPC.DoGHead < 0)
+                    return 0f;
+
                 NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
 
                 int passiveMoveTime = !InPhase2 ? DoGPhase1HeadBehaviorOverride.PassiveMovementTimeP1 : PassiveMovementTimeP2;
@@ -79,6 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             get
             {
+                if (CalamityGlobalNPC.DoGHead < 0)
+                    return 0f;
+
                 NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
 
                 int passiveMoveTime = !InPhase2 ? DoGPhase1HeadBehaviorOverride.PassiveMovementTimeP1 : PassiveMovementTimeP2;

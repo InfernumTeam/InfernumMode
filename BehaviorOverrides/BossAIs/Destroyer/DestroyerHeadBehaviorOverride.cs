@@ -94,6 +94,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             npc.damage = npc.defDamage - 95;
             npc.dontTakeDamage = false;
 
+            if (npc.scale != 1.5f)
+            {
+                npc.Size /= npc.scale / 1.5f;
+                npc.scale = 1.5f;
+            }
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -185,6 +190,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
                 // And the segment number.
                 Main.npc[newSegment].localAI[0] = i;
+                if (Main.npc[newSegment].scale != 1.5f)
+                {
+                    Main.npc[newSegment].Size /= Main.npc[newSegment].scale / 1.5f;
+                    Main.npc[newSegment].scale = 1.5f;
+                }
 
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, newSegment, 0f, 0f, 0f, 0);
 

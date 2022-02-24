@@ -1003,11 +1003,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         // Visceral rage. Debugging doesn't work for unexplained reasons due to local functions unless this external method is used.
         public static void DrawProvidenceWings(NPC npc, SpriteBatch spriteBatch, Texture2D wingTexture, float wingVibrance, Vector2 baseDrawPosition, Rectangle frame, Vector2 drawOrigin, SpriteEffects spriteEffects)
         {
+            Color deathEffectColor = new Color(6, 6, 6, 0);
+            float deathEffectInterpolant = Utils.InverseLerp(0f, 35f, npc.Infernum().ExtraAI[6], true);
+
             if (Main.dayTime)
-                spriteBatch.Draw(wingTexture, baseDrawPosition, frame, new Color(255, 120, 0, 128) * npc.Opacity, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+            {
+                Color c = Color.Lerp(new Color(255, 120, 0, 128), deathEffectColor, deathEffectInterpolant);
+                spriteBatch.Draw(wingTexture, baseDrawPosition, frame, c * npc.Opacity, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+            }
             else
             {
-                Color nightWingColor = new Color(0, 255, 191, 0) * npc.Opacity;
+                Color nightWingColor = Color.Lerp(new Color(0, 255, 191, 0), deathEffectColor, deathEffectInterpolant) * npc.Opacity;
                 spriteBatch.Draw(wingTexture, baseDrawPosition, frame, nightWingColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
                 for (int i = 0; i < 6; i++)
                 {

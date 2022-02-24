@@ -22,21 +22,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             PsychicBlasts,
             UndynesTail,
             StormCharge,
-            ImpactTail
+            ImpactTail,
+            LightningCage
         }
 
         public static List<AEWAttackType[]> Phase1AttackCycles = new List<AEWAttackType[]>()
         {
-            new AEWAttackType[] { AEWAttackType.HadalSpirits, AEWAttackType.PsychicBlasts, AEWAttackType.UndynesTail },
-            new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash },
-            new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.AbyssalCrash },
+            new [] { AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash, AEWAttackType.UndynesTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits },
+            new [] { AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.UndynesTail },
+            new [] { AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.PsychicBlasts, AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash },
+            new [] { AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash, AEWAttackType.PsychicBlasts },
         };
 
         public static List<AEWAttackType[]> Phase2AttackCycles = new List<AEWAttackType[]>()
         {
-            new AEWAttackType[] { AEWAttackType.HadalSpirits, AEWAttackType.PsychicBlasts, AEWAttackType.ImpactTail },
-            new AEWAttackType[] { AEWAttackType.ImpactTail, AEWAttackType.StormCharge },
-            new AEWAttackType[] { AEWAttackType.ImpactTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.StormCharge },
+            new [] { AEWAttackType.StormCharge, AEWAttackType.ImpactTail },
         };
 
         public static List<AEWAttackType[]> CurrentAttackCycles => Phase2AttackCycles;
@@ -148,6 +148,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     break;
                 case AEWAttackType.ImpactTail:
                     DoBehavior_ImpactTail(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
+                    break;
+                case AEWAttackType.LightningCage:
+                    DoBehavior_LightningCage(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -487,7 +490,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             int pissedOffChargeTime = 50;
             NPC tail = Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"))];
 
-            float pissedOffChargeSpeed = 54f;
+            float pissedOffChargeSpeed = MathHelper.Lerp(54f, 66f, 1f - lifeRatio);
             ref float totalShieldDamage = ref npc.Infernum().ExtraAI[0];
             ref float shieldHasExploded = ref npc.Infernum().ExtraAI[1];
             ref float shieldLifetime = ref npc.Infernum().ExtraAI[2];
@@ -591,6 +594,89 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
+        public static void DoBehavior_LightningCage(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
+        {
+            int fieldCreationDelay = 15;
+            int spinTime = 90;
+            int chargePreparationTime = 20;
+            int droneSummonCount = 6;
+            float chargeSpeed = MathHelper.Lerp(54f, 66f, 1f - lifeRatio);
+            float chargeSparkSpeed = MathHelper.Lerp(22.5f, 28f, 1f - lifeRatio);
+            ref float hasChargedYet = ref npc.Infernum().ExtraAI[0];
+            ref float fieldCenterX = ref npc.Infernum().ExtraAI[1];
+            ref float fieldCenterY = ref npc.Infernum().ExtraAI[2];
+
+            // Circle around the target.
+            if (hasChargedYet == 0f)
+            {
+                npc.damage = 0;
+                Vector2 hoverDestination = target.Center + (MathHelper.TwoPi * attackTimer / 210f).ToRotationVector2() * 1900f;
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 50f;
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.08f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f).MoveTowards(idealVelocity, 8f);
+            }
+
+            // Create energy fields.
+            if (attackTimer == fieldCreationDelay)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EidolonWyrmRoarClose"), target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int spinDirection = Main.rand.NextBool().ToDirectionInt();
+                    float angularOffsetPerIncrement = Main.rand.NextFloat();
+                    List<int> drones = new List<int>();
+                    for (int i = 0; i < droneSummonCount; i++)
+                    {
+                        int drone = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyFieldLaserProjector>());
+                        Main.npc[drone].target = npc.target;
+                        drones.Add(drone);
+                    }
+
+                    for (int i = 0; i < drones.Count; i++)
+                    {
+                        Main.npc[drones[i]].ai[0] = -2f;
+                        Main.npc[drones[i]].ai[1] = drones[(i + 1) % drones.Count];
+                        Main.npc[drones[i]].ai[2] = MathHelper.TwoPi * (i + angularOffsetPerIncrement) / drones.Count;
+                        Main.npc[drones[i]].ModNPC<EnergyFieldLaserProjector>().SpinDirection = spinDirection;
+                    }
+                    fieldCenterX = target.Center.X;
+                    fieldCenterY = target.Center.Y;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Prepare to charge towards the field center.
+            if (attackTimer >= spinTime && attackTimer < spinTime + chargePreparationTime)
+            {
+                hasChargedYet = 1f;
+                Vector2 chargeVelocity = npc.SafeDirectionTo(new Vector2(fieldCenterX, fieldCenterY)) * chargeSpeed;
+                npc.velocity = Vector2.Lerp(npc.velocity, chargeVelocity, 0.05f).MoveTowards(chargeVelocity, 2f);
+                if (attackTimer == spinTime + chargePreparationTime - 1f)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmScream"), target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        // Release sparks at the target.
+                        for (int i = 0; i < 12; i++)
+                        {
+                            int sparkDamage = (int)(generalDamageFactor * 640f);
+                            Vector2 sparkVelocity = npc.SafeDirectionTo(target.Center) * chargeSparkSpeed + Main.rand.NextVector2Circular(5f, 5f);
+                            Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<EidolicSpark>(), sparkDamage, 0f);
+                        }
+                    }
+
+                    npc.velocity = chargeVelocity;
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (attackTimer >= 200f)
+                SelectNextAttack(npc);
+
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
         public static void DoDefaultSwimMovement(NPC npc, Player target, float generalSpeedFactor = 1f)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -626,10 +712,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 attackCycleIndex = 0f;
                 do
                     attackCycleType = Main.rand.Next(attackCycles.Count);
-                while (attackCycleType == oldAttackCycle);
+                while (attackCycleType == oldAttackCycle && attackCycles.Count > 1);
             }
 
             npc.ai[0] = (int)attackCycles[(int)attackCycleType][(int)attackCycleIndex];
+            npc.ai[0] = (int)AEWAttackType.LightningCage;
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

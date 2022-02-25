@@ -602,10 +602,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static void DoBehavior_SpawnEffects(NPC npc, ref float attackType, ref float attackTimer)
         {
-            int spawnEffectsTime = 48;
+            int spawnEffectsTime = 288;
 
             // Idly spawn pretty sparkles.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool())
             {
                 Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(210f, 210f);
                 Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(18f, 18f), ModContent.ProjectileType<YharonMajesticSparkle>(), 0, 0f);
@@ -1696,13 +1696,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             if ((YharonAttackType)(int)npc.ai[0] == YharonAttackType.SpawnEffects)
             {
-                // Open mouth for a little bit and roar.
+                // Open mouth for a little bit.
                 if (npc.frameCounter >= 30 &&
                     npc.frameCounter <= 40)
                 {
                     npc.frame.Y = 0;
-                    if (npc.frameCounter == 35)
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
                 }
                 // Otherwise flap wings.
                 else if (npc.frameCounter % 5 == 4)

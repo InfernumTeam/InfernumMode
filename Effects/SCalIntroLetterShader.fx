@@ -13,7 +13,11 @@ float uLetterCompletionRatio;
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
     float4 noiseColor = tex2D(uImage1, float2(coords.x, coords.y));
-    float4 color = tex2D(uImage0, coords);
+    float4 color = tex2D(uImage0, coords) * sampleColor;
+    
+    if ((color.r + color.g + color.b) / 3 < 0.03 || color.a < 0.05)
+        return color;
+    
     float3 blendColor = lerp(uColor, uSecondaryColor, cos(uTime * 4 + uLetterCompletionRatio * 4) * 0.5 + 0.5);
     float blendFactor = (cos(uTime * 9 + coords.x * 18) * 0.5 + 0.5) * 0.5;
     

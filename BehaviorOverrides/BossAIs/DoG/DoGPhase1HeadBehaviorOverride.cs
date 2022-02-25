@@ -108,6 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 npc.dontTakeDamage = true;
                 npc.Center = target.Center - Vector2.UnitY * 3000f;
+                npc.netUpdate = true;
             }
 
             npc.damage = npc.dontTakeDamage ? 0 : 2500;

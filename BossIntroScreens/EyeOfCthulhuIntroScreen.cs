@@ -24,6 +24,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.EyeofCthulhu);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => new LegacySoundStyle(SoundID.ForceRoar, -1, SoundType.Sound);
+        public override LegacySoundStyle SoundToPlayWithTextCreation => new LegacySoundStyle(SoundID.ForceRoar, -1);
     }
 }

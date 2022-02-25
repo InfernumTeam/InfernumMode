@@ -276,6 +276,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 if (!IntroScreenManager.ScreenIsObstructed)
                     attackTextDelay--;
+                else
+                    npc.netUpdate = true;
                 return false;
             }
 

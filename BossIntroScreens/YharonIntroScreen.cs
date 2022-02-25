@@ -1,4 +1,4 @@
-using CalamityMod.NPCs.SupremeCalamitas;
+using CalamityMod.NPCs.Yharon;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -11,19 +11,19 @@ using TMLSoundType = Terraria.ModLoader.SoundType;
 
 namespace InfernumMode.BossIntroScreens
 {
-    public class SCalIntroScreen : BaseIntroScreen
+    public class YharonIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => Color.White;
+        public override TextColorData TextColor => Color.Orange;
 
-        public override Color ScreenCoverColor => Color.Black;
+        public override Color ScreenCoverColor => Color.White;
 
-        public override int AnimationTime => 300;
+        public override int AnimationTime => 240;
 
         public override bool TextShouldBeCentered => true;
 
         public override bool ShouldCoverScreen => true;
 
-        public override string TextToDisplay => "The Brimstone Witch\nCalamitas";
+        public override string TextToDisplay => "Unwavering Guardian\nYharon";
 
         public override float TextScale => MajorBossTextScale;
 
@@ -31,16 +31,16 @@ namespace InfernumMode.BossIntroScreens
 
         public override void PrepareShader(Effect shader)
         {
-            shader.Parameters["uColor"].SetValue(Color.Red.ToVector3());
-            shader.Parameters["uSecondaryColor"].SetValue(Color.Orange.ToVector3());
-            shader.GraphicsDevice.Textures[1] = ModContent.GetTexture("Terraria/Misc/Perlin");
+            shader.Parameters["uColor"].SetValue(Color.Orange.ToVector3());
+            shader.Parameters["uSecondaryColor"].SetValue(Color.Yellow.ToVector3());
+            shader.GraphicsDevice.Textures[1] = ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap");
         }
 
-        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<SupremeCalamitas>());
+        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Yharon>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/SupremeCalamitasSpawn");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/YharonRoar");
 
-        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.Item100;
+        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.DD2_BetsyFireballShot;
 
         public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
 

@@ -31,6 +31,15 @@ namespace InfernumMode.BossIntroScreens
             }
         }
 
+        public static float MinorBossTextScale = 1.1f;
+
+        public static float MajorBossTextScale = 1.45f;
+
+        // Haha bottom text lmao
+        public static float BottomTextScale = 2.1f;
+
+        public static float AspectRatioFactor => Main.screenHeight / 1440f;
+
         public DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
 
         public Vector2 DrawPosition => BaseDrawPosition;
@@ -60,15 +69,6 @@ namespace InfernumMode.BossIntroScreens
         public abstract bool ShouldBeActive();
 
         public abstract LegacySoundStyle SoundToPlayWithTextCreation { get; }
-
-        public static float MinorBossTextScale = 1.1f;
-
-        public static float MajorBossTextScale = 1.45f;
-
-        // Haha bottom text lmao
-        public static float BottomTextScale = 2.4f;
-
-        public static float AspectRatioFactor => Main.screenHeight / 1440f;
 
         public virtual void PrepareShader(Effect shader) { }
 
@@ -111,8 +111,8 @@ namespace InfernumMode.BossIntroScreens
 
         internal Vector2 CalculateOffsetOfCharacter(string character)
         {
-            float extraOffset = character.ToLower() == "i" ? TextScale * 9f : 0f;
-            return Vector2.UnitX * (FontToUse.MeasureString(character).X + extraOffset + TextScale * 10f) * AspectRatioFactor;
+            float extraOffset = character.ToLower() == "i" ? 9f : 0f;
+            return Vector2.UnitX * (FontToUse.MeasureString(character).X + extraOffset + 10f) * AspectRatioFactor * TextScale;
         }
 
         public virtual void DrawText(SpriteBatch sb)
@@ -138,7 +138,6 @@ namespace InfernumMode.BossIntroScreens
                 Vector2 textScale = Vector2.One * TextScale * AspectRatioFactor;
                 if (i > 0)
                 {
-                    offset.X -= BottomTextScale * TextScale * 4f;
                     offset.Y += BottomTextScale * TextScale * AspectRatioFactor * i * 24f;
                     textScale *= BottomTextScale;
                 }
@@ -174,7 +173,7 @@ namespace InfernumMode.BossIntroScreens
                     offset += CalculateOffsetOfCharacter(character) * (i > 0f ? BottomTextScale : 1f);
 
                     Color textColor = TextColor.Calculate(individualLineLetterCompletionRatio) * opacity;
-                    Vector2 origin = Vector2.UnitX * FontToUse.MeasureString(character) * 0.5f;
+                    Vector2 origin = Vector2.UnitX * FontToUse.MeasureString(character);
 
                     // Draw afterimage instances of the the text.
                     for (int k = 0; k < 4; k++)
@@ -183,12 +182,12 @@ namespace InfernumMode.BossIntroScreens
                         float afterimageOpacity = (float)Math.Pow(afterimageOpacityInterpolant, 2D) * 0.3f;
                         Color afterimageColor = textColor * afterimageOpacity;
                         Vector2 drawOffset = (MathHelper.TwoPi * k / 4f).ToRotationVector2() * (1f - afterimageOpacityInterpolant) * 30f;
-                        ChatManager.DrawColorCodedStringShadow(sb, FontToUse, character, DrawPosition + drawOffset + offset, Color.Black * afterimageOpacity * opacity, 0f, origin, textScale);
+                        ChatManager.DrawColorCodedStringShadow(sb, FontToUse, character, DrawPosition + drawOffset + offset, Color.Black * afterimageOpacity * opacity, 0f, origin, textScale, -1, 1.5f);
                         ChatManager.DrawColorCodedString(sb, FontToUse, character, DrawPosition + drawOffset + offset, afterimageColor, 0f, origin, textScale);
                     }
 
                     // Draw the base text.
-                    ChatManager.DrawColorCodedStringShadow(sb, FontToUse, character, DrawPosition + offset, Color.Black * opacity, 0f, origin, textScale);
+                    ChatManager.DrawColorCodedStringShadow(sb, FontToUse, character, DrawPosition + offset, Color.Black * opacity, 0f, origin, textScale, -1, 1.5f);
                     ChatManager.DrawColorCodedString(sb, FontToUse, character, DrawPosition + offset, textColor, 0f, origin, textScale);
 
                     // Increment the absolute letter counter.

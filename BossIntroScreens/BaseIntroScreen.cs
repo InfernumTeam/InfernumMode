@@ -138,6 +138,7 @@ namespace InfernumMode.BossIntroScreens
                 Vector2 textScale = Vector2.One * TextScale * AspectRatioFactor;
                 if (i > 0)
                 {
+                    offset.X -= BottomTextScale * TextScale * 4f;
                     offset.Y += BottomTextScale * TextScale * AspectRatioFactor * i * 24f;
                     textScale *= BottomTextScale;
                 }

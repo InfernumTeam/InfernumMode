@@ -40,9 +40,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         }
 
         public static float PrimitiveWidthFunction(float completionRatio)
-		{
+        {
             return MathHelper.SmoothStep(0f, 1f, Utils.InverseLerp(0f, 0.1f, completionRatio, true)) * 2f;
-		}
+        }
 
         public Color PrimitiveColorFunction(float completionRatio)
         {

@@ -47,6 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
+            npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = false;
 

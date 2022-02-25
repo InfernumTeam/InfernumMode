@@ -89,7 +89,7 @@ namespace InfernumMode.BossIntroScreens
         internal Vector2 CalculateOffsetOfCharacter(string character)
         {
             float extraOffset = character.ToLower() == "i" ? TextScale * AspectRatioFactor * 9f : 0f;
-            return Vector2.UnitX * (FontToUse.MeasureString(character).X + extraOffset + TextScale * AspectRatioFactor * 10f);
+            return Vector2.UnitX * (FontToUse.MeasureString(character).X + extraOffset * TextScale * AspectRatioFactor * 10f);
         }
 
         public virtual void DrawText(SpriteBatch sb)

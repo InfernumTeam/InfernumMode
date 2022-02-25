@@ -14,6 +14,13 @@ namespace InfernumMode.BossIntroScreens
 {
     public abstract class BaseIntroScreen
     {
+
+        public int AnimationTimer;
+
+        public float AnimationCompletion => MathHelper.Clamp(AnimationTimer / (float)AnimationTime, 0f, 1f);
+
+        public bool HasPlayedMainSound = false;
+
         protected virtual Vector2 BaseDrawPosition
         {
             get
@@ -23,10 +30,6 @@ namespace InfernumMode.BossIntroScreens
                 return new Vector2(Main.screenWidth - 400f, Main.screenHeight - 300f);
             }
         }
-
-        public int AnimationTimer;
-
-        public float AnimationCompletion => MathHelper.Clamp(AnimationTimer / (float)AnimationTime, 0f, 1f);
 
         public DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
 
@@ -40,17 +43,23 @@ namespace InfernumMode.BossIntroScreens
 
         public virtual int AnimationTime => ShouldCoverScreen ? 115 : 150;
 
+        public virtual float TextDelayInterpolant => ShouldCoverScreen ? 0.4f : 0.05f;
+
         public virtual bool TextShouldBeCentered => false;
 
         public virtual bool ShouldCoverScreen => false;
 
         public virtual Effect ShaderToApplyToLetters => null;
 
+        public virtual LegacySoundStyle SoundToPlayWithLetterAddition { get; } = null;
+
+        public virtual bool CanPlaySound => AnimationTimer >= (int)(AnimationTime * (TextDelayInterpolant + 0.05f));
+
         public abstract string TextToDisplay { get; }
 
         public abstract bool ShouldBeActive();
 
-        public abstract LegacySoundStyle SoundToPlayWithText { get; }
+        public abstract LegacySoundStyle SoundToPlayWithTextCreation { get; }
 
         public static float MinorBossTextScale = 1.1f;
 
@@ -62,6 +71,8 @@ namespace InfernumMode.BossIntroScreens
         public static float AspectRatioFactor => Main.screenHeight / 1440f;
 
         public virtual void PrepareShader(Effect shader) { }
+
+        public virtual float LetterDisplayCompletionRatio(int animationTimer) => 1f;
 
         public virtual void Draw(SpriteBatch sb)
         {
@@ -106,12 +117,19 @@ namespace InfernumMode.BossIntroScreens
 
         public virtual void DrawText(SpriteBatch sb)
         {
-            float textDelay = ShouldCoverScreen ? 0.4f : 0.05f;
-            float opacity = Utils.InverseLerp(textDelay, textDelay + 0.05f, AnimationCompletion, true) * Utils.InverseLerp(1f, 0.77f, AnimationCompletion, true);
+            float opacity = Utils.InverseLerp(TextDelayInterpolant, TextDelayInterpolant + 0.05f, AnimationCompletion, true) * Utils.InverseLerp(1f, 0.77f, AnimationCompletion, true);
 
-            if (AnimationTimer == (int)(AnimationTime * (textDelay + 0.05f)) && SoundToPlayWithText != null)
-                Main.PlaySound(SoundToPlayWithText, Main.LocalPlayer.Center);
+            if (CanPlaySound && SoundToPlayWithTextCreation != null)
+            {
+                if (!HasPlayedMainSound)
+                {
+                    Main.PlaySound(SoundToPlayWithTextCreation, Main.LocalPlayer.Center);
+                    HasPlayedMainSound = true;
+                }
+            }
 
+            int absoluteLetterCounter = 0;
+            bool playedNewLetterSound = false;
             string[] splitTextInstances = TextToDisplay.Split('\n');
             for (int i = 0; i < splitTextInstances.Length; i++)
             {
@@ -126,12 +144,26 @@ namespace InfernumMode.BossIntroScreens
 
                 for (int j = 0; j < splitText.Length; j++)
                 {
-                    float letterCompletionRatio = j / (float)(splitText.Length - 1f);
+                    float individualLineLetterCompletionRatio = j / (float)(splitText.Length - 1f);
+                    float absoluteLineLetterCompletionRatio = absoluteLetterCounter / (float)(TextToDisplay.Length - 1f);
+                    int previousTotalLettersToDisplay = (int)(TextToDisplay.Length * LetterDisplayCompletionRatio(AnimationTimer - 1));
+                    int totalLettersToDisplay = (int)(TextToDisplay.Length * LetterDisplayCompletionRatio(AnimationTimer));
+
+                    // Play a sound if a new letter was added and a sound of this effect is initialized.
+                    if (totalLettersToDisplay > previousTotalLettersToDisplay && SoundToPlayWithLetterAddition != null && !playedNewLetterSound)
+                    {
+                        Main.PlaySound(SoundToPlayWithLetterAddition, Main.LocalPlayer.Center);
+                        playedNewLetterSound = true;
+                    }
+
+                    // If the completion ratio of the absolute letter count has passed the termination point, stop. 
+                    if (absoluteLineLetterCompletionRatio >= LetterDisplayCompletionRatio(AnimationTimer))
+                        break;
 
                     if (ShaderToApplyToLetters != null)
                     {
                         ShaderToApplyToLetters.Parameters["uTime"].SetValue(Main.GlobalTime);
-                        ShaderToApplyToLetters.Parameters["uLetterCompletionRatio"].SetValue(letterCompletionRatio);
+                        ShaderToApplyToLetters.Parameters["uLetterCompletionRatio"].SetValue(individualLineLetterCompletionRatio);
                         PrepareShader(ShaderToApplyToLetters);
                         ShaderToApplyToLetters.CurrentTechnique.Passes[0].Apply();
                     }
@@ -140,13 +172,13 @@ namespace InfernumMode.BossIntroScreens
                     string character = splitText[j].ToString();
                     offset += CalculateOffsetOfCharacter(character) * (i > 0f ? BottomTextScale : 1f);
 
-                    Color textColor = TextColor.Calculate(letterCompletionRatio) * opacity;
+                    Color textColor = TextColor.Calculate(individualLineLetterCompletionRatio) * opacity;
                     Vector2 origin = Vector2.UnitX * FontToUse.MeasureString(character) * 0.5f;
 
                     // Draw afterimage instances of the the text.
                     for (int k = 0; k < 4; k++)
                     {
-                        float afterimageOpacityInterpolant = Utils.InverseLerp(1f, textDelay + 0.05f, AnimationCompletion, true);
+                        float afterimageOpacityInterpolant = Utils.InverseLerp(1f, TextDelayInterpolant + 0.05f, AnimationCompletion, true);
                         float afterimageOpacity = (float)Math.Pow(afterimageOpacityInterpolant, 2D) * 0.3f;
                         Color afterimageColor = textColor * afterimageOpacity;
                         Vector2 drawOffset = (MathHelper.TwoPi * k / 4f).ToRotationVector2() * (1f - afterimageOpacityInterpolant) * 30f;
@@ -157,6 +189,9 @@ namespace InfernumMode.BossIntroScreens
                     // Draw the base text.
                     ChatManager.DrawColorCodedStringShadow(sb, FontToUse, character, DrawPosition + offset, Color.Black * opacity, 0f, origin, textScale);
                     ChatManager.DrawColorCodedString(sb, FontToUse, character, DrawPosition + offset, textColor, 0f, origin, textScale);
+
+                    // Increment the absolute letter counter.
+                    absoluteLetterCounter++;
                 }
             }
         }
@@ -169,6 +204,7 @@ namespace InfernumMode.BossIntroScreens
             if (!ShouldBeActive())
             {
                 AnimationTimer = 0;
+                HasPlayedMainSound = false;
                 return;
             }
 

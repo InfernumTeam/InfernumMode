@@ -22,6 +22,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.BrainofCthulhu);
 
-        public override LegacySoundStyle SoundToPlayWithText => null;
+        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
     }
 }

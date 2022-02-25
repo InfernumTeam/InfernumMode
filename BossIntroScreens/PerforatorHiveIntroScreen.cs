@@ -23,6 +23,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<PerforatorHive>());
 
-        public override LegacySoundStyle SoundToPlayWithText => null;
+        public override LegacySoundStyle SoundToPlayWithTextCreation => null;
     }
 }

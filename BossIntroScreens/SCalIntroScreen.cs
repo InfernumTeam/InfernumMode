@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 using TMLSoundType = Terraria.ModLoader.SoundType;
@@ -16,7 +17,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override Color ScreenCoverColor => Color.Black;
 
-        public override int AnimationTime => 210;
+        public override int AnimationTime => 300;
 
         public override bool TextShouldBeCentered => true;
 
@@ -37,6 +38,23 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<SupremeCalamitas>());
 
-        public override LegacySoundStyle SoundToPlayWithText => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/SupremeCalamitasSpawn");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/SupremeCalamitasSpawn");
+
+        public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.Item100;
+
+        public override bool CanPlaySound => LetterDisplayCompletionRatio(AnimationTimer) >= 1f;
+
+        public override float LetterDisplayCompletionRatio(int animationTimer)
+        {
+            float completionRatio = Utils.InverseLerp(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
+
+            // If the completion ratio exceeds the point where Calamitas' name is displayed, display all letters.
+            int startOfLargeTextIndex = TextToDisplay.IndexOf('\n');
+            int currentIndex = (int)(completionRatio * TextToDisplay.Length);
+            if (currentIndex >= startOfLargeTextIndex)
+                completionRatio = 1f;
+
+            return completionRatio;
+        }
     }
 }

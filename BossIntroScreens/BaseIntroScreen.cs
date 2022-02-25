@@ -57,6 +57,8 @@ namespace InfernumMode.BossIntroScreens
         // Haha bottom text lmao
         public static float BottomTextScale = 2.4f;
 
+        public static float AspectRatioFactor => Main.screenHeight / 1440f;
+
         public virtual void Draw(SpriteBatch sb)
         {
             if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime)
@@ -86,8 +88,8 @@ namespace InfernumMode.BossIntroScreens
 
         internal Vector2 CalculateOffsetOfCharacter(string character)
         {
-            float extraOffset = character.ToLower() == "i" ? TextScale * 9f : 0f;
-            return Vector2.UnitX * (FontToUse.MeasureString(character).X + extraOffset + TextScale * 10f);
+            float extraOffset = character.ToLower() == "i" ? TextScale * AspectRatioFactor * 9f : 0f;
+            return Vector2.UnitX * (FontToUse.MeasureString(character).X + extraOffset + TextScale * AspectRatioFactor * 10f);
         }
 
         public virtual void DrawText(SpriteBatch sb)
@@ -103,10 +105,10 @@ namespace InfernumMode.BossIntroScreens
             {
                 string splitText = splitTextInstances[i];
                 Vector2 offset = -Vector2.UnitX * splitText.Sum(c => CalculateOffsetOfCharacter(c.ToString()).X * (i > 0f ? BottomTextScale : 1f)) * 0.5f;
-                Vector2 textScale = Vector2.One * TextScale;
+                Vector2 textScale = Vector2.One * TextScale * AspectRatioFactor;
                 if (i > 0)
                 {
-                    offset.Y += BottomTextScale * TextScale * i * 24f;
+                    offset.Y += BottomTextScale * TextScale * AspectRatioFactor * i * 24f;
                     textScale *= BottomTextScale;
                 }
 

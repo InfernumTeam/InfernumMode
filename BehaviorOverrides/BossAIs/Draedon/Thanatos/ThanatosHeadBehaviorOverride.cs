@@ -797,7 +797,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 {
                     int light = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightOverloadRay>(), 1200, 0f);
                     if (Main.projectile.IndexInRange(light))
-                        Main.projectile[light].ModProjectile<LightOverloadRay>().LaserSpread = lightRaySpread * 0.64f;
+                        Main.projectile[light].ModProjectile<LightOverloadRay>().LaserSpread = lightRaySpread * 0.53f;
                 }
             }
 

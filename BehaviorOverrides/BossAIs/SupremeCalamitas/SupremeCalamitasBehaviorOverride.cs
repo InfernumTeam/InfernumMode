@@ -7,6 +7,7 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Tiles;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
+using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -273,7 +274,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (textState == 0f && attackTextDelay == 2f)
                     initialChargeupTime = 240f;
 
-                attackTextDelay--;
+                if (!IntroScreenManager.ScreenIsObstructed)
+                    attackTextDelay--;
                 return false;
             }
 

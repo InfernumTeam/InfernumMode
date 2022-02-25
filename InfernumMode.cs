@@ -120,6 +120,9 @@ namespace InfernumMode
                 ghostlyShader = new Ref<Effect>(GetEffect("Effects/NecroplasmicRoarShader"));
                 GameShaders.Misc["Infernum:NecroplasmicRoar"] = new MiscShaderData(ghostlyShader, "BurstPass");
 
+                Ref<Effect> introShader = new Ref<Effect>(GetEffect("Effects/SCalIntroLetterShader"));
+                GameShaders.Misc["Infernum:SCalIntro"] = new MiscShaderData(introShader, "LetterPass");
+
                 OverrideMusicBox(ItemID.MusicBoxBoss3, GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
             }
 

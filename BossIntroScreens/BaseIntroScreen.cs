@@ -38,11 +38,13 @@ namespace InfernumMode.BossIntroScreens
 
         public virtual Color ScreenCoverColor => Color.Black;
 
+        public virtual int AnimationTime => ShouldCoverScreen ? 115 : 150;
+
         public virtual bool TextShouldBeCentered => false;
 
         public virtual bool ShouldCoverScreen => false;
 
-        public virtual int AnimationTime => ShouldCoverScreen ? 115 : 150;
+        public virtual Effect ShaderToApplyToLetters => null;
 
         public abstract string TextToDisplay { get; }
 
@@ -59,6 +61,8 @@ namespace InfernumMode.BossIntroScreens
 
         public static float AspectRatioFactor => Main.screenHeight / 1440f;
 
+        public virtual void PrepareShader(Effect shader) { }
+
         public virtual void Draw(SpriteBatch sb)
         {
             if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime)
@@ -68,9 +72,9 @@ namespace InfernumMode.BossIntroScreens
             if (ShouldCoverScreen)
             {
                 bool isBright = ScreenCoverColor.ToVector3().Length() / 1.414f > 0.8f;
-
                 if (isBright)
-                   sb.SetBlendState(BlendState.Additive);
+                    sb.SetBlendState(BlendState.Additive);
+
                 Texture2D greyscaleTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/THanosAura");
                 float coverScaleFactor = Utils.InverseLerp(0f, 0.5f, AnimationCompletion, true) * 12.5f;
                 coverScaleFactor *= Utils.InverseLerp(1f, 0.84f, AnimationCompletion, true);
@@ -83,7 +87,15 @@ namespace InfernumMode.BossIntroScreens
                 if (isBright)
                     sb.ResetBlendState();
             }
+
+            // Prepare the sprite batch for the shader, if one is applied.
+            if (ShaderToApplyToLetters != null)
+                sb.EnterShaderRegion();
+
             DrawText(sb);
+
+            if (ShaderToApplyToLetters != null)
+                sb.ExitShaderRegion();
         }
 
         internal Vector2 CalculateOffsetOfCharacter(string character)
@@ -114,11 +126,21 @@ namespace InfernumMode.BossIntroScreens
 
                 for (int j = 0; j < splitText.Length; j++)
                 {
+                    float letterCompletionRatio = j / (float)(splitText.Length - 1f);
+
+                    if (ShaderToApplyToLetters != null)
+                    {
+                        ShaderToApplyToLetters.Parameters["uTime"].SetValue(Main.GlobalTime);
+                        ShaderToApplyToLetters.Parameters["uLetterCompletionRatio"].SetValue(letterCompletionRatio);
+                        PrepareShader(ShaderToApplyToLetters);
+                        ShaderToApplyToLetters.CurrentTechnique.Passes[0].Apply();
+                    }
+
                     // Push the offset.
                     string character = splitText[j].ToString();
                     offset += CalculateOffsetOfCharacter(character) * (i > 0f ? BottomTextScale : 1f);
 
-                    Color textColor = TextColor.Calculate(j / (float)(splitText.Length - 1f)) * opacity;
+                    Color textColor = TextColor.Calculate(letterCompletionRatio) * opacity;
                     Vector2 origin = Vector2.UnitX * FontToUse.MeasureString(character) * 0.5f;
 
                     // Draw afterimage instances of the the text.

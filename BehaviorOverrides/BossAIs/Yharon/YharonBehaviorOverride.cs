@@ -625,6 +625,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 }
                 SelectNextAttack(npc, ref attackType);
             }
+
+            // Disable contact damage.
+            npc.damage = 0;
         }
 
         public static void DoBehavior_ChargesAndTeleportCharges(NPC npc, Player target, float chargeDelay, float chargeTime, float chargeSpeed, float teleportChargeCounter, ref float attackTimer, ref float attackType, ref float specialFrameType)

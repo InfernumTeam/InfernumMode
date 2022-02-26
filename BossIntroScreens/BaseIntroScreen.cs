@@ -1,3 +1,4 @@
+using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -76,7 +77,8 @@ namespace InfernumMode.BossIntroScreens
 
         public virtual void Draw(SpriteBatch sb)
         {
-            if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime)
+            bool notInvolvedWithBoss = !Main.LocalPlayer.HasBuff(ModContent.BuffType<BossZen>());
+            if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime || notInvolvedWithBoss)
                 return;
 
             // Draw the screen cover if it's enabled.
@@ -201,7 +203,7 @@ namespace InfernumMode.BossIntroScreens
             if (Main.netMode == NetmodeID.Server)
                 return;
 
-            if (!ShouldBeActive())
+            if (!ShouldBeActive() || !InfernumMode.CanUseCustomAIs || !InfernumConfig.Instance.BossIntroductionAnimationsAreAllowed)
             {
                 AnimationTimer = 0;
                 HasPlayedMainSound = false;

@@ -74,6 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             // Select a target and reset damage and invulnerability.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
+            npc.direction = (target.Center.X > npc.Center.X).ToDirectionInt();
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = false;
 

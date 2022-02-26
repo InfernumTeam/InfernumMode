@@ -122,6 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
             // Reset things.
             npc.Calamity().CurrentlyEnraged = pissedOff;
+            npc.Calamity().KillTime = 5;
             npc.defense = pissedOff ? 250 : npc.defDefense;
             npc.damage = npc.defDamage;
             npc.timeLeft = 3600;

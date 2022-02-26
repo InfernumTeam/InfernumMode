@@ -38,7 +38,7 @@ namespace InfernumMode.BossIntroScreens
             UpdateScreens();
             foreach (BaseIntroScreen introScreen in IntroScreens)
             {
-                if (introScreen.ShouldBeActive())
+                if (introScreen.ShouldBeActive() && introScreen.AnimationTimer < introScreen.AnimationTime)
                 {
                     introScreen.Draw(Main.spriteBatch);
                     break;

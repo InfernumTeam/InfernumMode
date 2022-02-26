@@ -79,7 +79,11 @@ namespace InfernumMode.BossIntroScreens
         {
             bool notInvolvedWithBoss = !Main.LocalPlayer.HasBuff(ModContent.BuffType<BossZen>());
             if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime || notInvolvedWithBoss)
+            {
+                if (AnimationTimer < AnimationTime)
+                    AnimationTimer = 0;
                 return;
+            }
 
             // Draw the screen cover if it's enabled.
             if (ShouldCoverScreen)

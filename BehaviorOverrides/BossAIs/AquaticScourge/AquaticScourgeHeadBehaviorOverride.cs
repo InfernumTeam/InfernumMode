@@ -61,6 +61,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 if (npc.damage == 0)
                     npc.timeLeft *= 20;
 
+                CalamityMod.CalamityMod.bossKillTimes.TryGetValue(npc.type, out int revKillTime);
+                npc.Calamity().KillTime = revKillTime;
+
                 angeredYet = 1f;
                 npc.damage = npc.defDamage;
                 npc.boss = true;

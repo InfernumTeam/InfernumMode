@@ -137,14 +137,44 @@ namespace InfernumMode.GlobalInstances
             if (InfernumMode.CanUseCustomAIs)
             {
                 // Correct an enemy's life depending on its cached true life value.
-                if (NPCHPValues.HPValues.ContainsKey(npc.type) && NPCHPValues.HPValues[npc.type] >= 0 && NPCHPValues.HPValues[npc.type] != npc.lifeMax)
+                if (NPCHPValues.HPValues.ContainsKey(npc.type) && NPCHPValues.HPValues[npc.type] >= 0)
                 {
-                    npc.life = npc.lifeMax = NPCHPValues.HPValues[npc.type];
+                    int maxHP = NPCHPValues.HPValues[npc.type];
+                    float hpMultiplier = 1f;
+                    float accumulatedFactor = 0.35f;
+                    if (Main.netMode != 0)
+                    {
+                        int activePlayerCount = 0;
+                        for (int i = 0; i < Main.maxPlayers; i++)
+                        {
+                            if (Main.player[i].active)
+                                activePlayerCount++;
+                        }
 
-                    if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
-                        BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
+                        for (int i = 1; i < activePlayerCount; i++)
+                        {
+                            hpMultiplier += accumulatedFactor;
+                            accumulatedFactor += (1f - accumulatedFactor) / 3f;
+                        }
+                    }
+                    if (hpMultiplier > 8f)
+                        hpMultiplier = (hpMultiplier * 2f + 8f) / 3f;
 
-                    npc.netUpdate = true;
+                    if (hpMultiplier > 1000f)
+                        hpMultiplier = 1000f;
+
+                    maxHP = (int)(maxHP * hpMultiplier);
+                    maxHP += (int)(maxHP * CalamityConfig.Instance.BossHealthBoost * 0.01);
+
+                    if (maxHP != npc.lifeMax)
+                    {
+                        npc.life = npc.lifeMax = maxHP;
+
+                        if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
+                            BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
+
+                        npc.netUpdate = true;
+                    }
                 }
 
                 // Make perf worms immune to debuffs.

@@ -21,9 +21,11 @@ namespace InfernumMode.ILEditingStuff
             if (InfernumMode.CanUseCustomAIs && Type == 573)
                 Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore1");
             if (InfernumMode.CanUseCustomAIs && Type == 574)
-                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore2");
-            if (InfernumMode.CanUseCustomAIs && Type == 575)
                 Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore3");
+            if (InfernumMode.CanUseCustomAIs && Type == 575)
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore2");
+            if (InfernumMode.CanUseCustomAIs && Type == 576)
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore4");
 
             return orig(Position, Velocity, Type, Scale);
         }

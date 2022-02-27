@@ -955,21 +955,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 }
             }
 
-            int idealAfterimageCount = npc.Infernum().ExtraAI[5] == (int)DukeAttackType.BubbleSpin ? 10 : 0;
+            int idealAfterimageCount = 0;
+            if (npc.Infernum().ExtraAI[5] == (int)DukeAttackType.TeleportCharge)
+                idealAfterimageCount = 3;
+            if (npc.Infernum().ExtraAI[5] == (int)DukeAttackType.Charge)
+                idealAfterimageCount = 6;
+            if (npc.Infernum().ExtraAI[5] == (int)DukeAttackType.BubbleSpin)
+                idealAfterimageCount = 10;
+
             if (afterimageCount != idealAfterimageCount)
                 afterimageCount += Math.Sign(idealAfterimageCount - afterimageCount);
 
+            // Draw afterimages.
             if (afterimageCount > 0)
             {
-                for (int i = (int)afterimageCount; i >= 1; i -= 2)
+                for (int i = (int)afterimageCount; i >= 1; i--)
                 {
                     Color afterimageColor = lightColor.MultiplyRGB(Color.White) * (float)Math.Pow(1f - i / (float)afterimageCount, 3D);
                     DrawOldDukeInstance(afterimageColor, npc.oldPos[i] + npc.Size * 0.5f, npc.spriteDirection);
                 }
             }
             DrawOldDukeInstance(lightColor, npc.Center, npc.spriteDirection);
-            for (int i = 0; i < 2; i++)
-                npc.Infernum().OptionalPrimitiveDrawer.Draw(npc.oldPos.Take((int)afterimageCount * 2), npc.Size * 0.5f - Main.screenPosition, 43);
+            if (npc.Infernum().ExtraAI[5] == (int)DukeAttackType.BubbleSpin)
+            {
+                for (int i = 0; i < 2; i++)
+                    npc.Infernum().OptionalPrimitiveDrawer.Draw(npc.oldPos.Take((int)afterimageCount * 2), npc.Size * 0.5f - Main.screenPosition, 43);
+            }
 
             return false;
         }

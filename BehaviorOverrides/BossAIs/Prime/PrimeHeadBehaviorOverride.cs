@@ -1,4 +1,5 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -77,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             ref float armCycleTimer = ref npc.ai[2];
             ref float hasRedoneSpawnAnimation = ref npc.ai[3];
             ref float frameType = ref npc.localAI[0];
-            ref float hasCreatedShield = ref npc.Infernum().ExtraAI[5];
+            ref float hasCreatedShield = ref npc.Infernum().ExtraAI[6];
 
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
@@ -518,19 +519,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public static void DoAttack_LightningSupercharge(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
+            int lightningCreationDelay = 35;
             ref float struckByLightningFlag = ref npc.Infernum().ExtraAI[0];
-            ref float superchargeTimer = ref npc.Infernum().ExtraAI[1];
-            ref float laserSignDirection = ref npc.Infernum().ExtraAI[2];
-            ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[3];
+            ref float lineTelegraphInterpolant = ref npc.Infernum().ExtraAI[1];
+            ref float superchargeTimer = ref npc.Infernum().ExtraAI[2];
+            ref float laserSignDirection = ref npc.Infernum().ExtraAI[3];
+            ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[4];
+            ref float laserDirection = ref npc.Infernum().ExtraAI[5];
 
-            if (attackTimer < 35f)
+            // Reset the line telegraph interpolant.
+            lineTelegraphInterpolant = 0f;
+
+            if (attackTimer < lightningCreationDelay)
             {
                 npc.velocity *= 0.84f;
                 npc.rotation = npc.velocity.X * 0.04f;
             }
 
             // Create a bunch of scenic lightning and decide the laser direction.
-            if (attackTimer == 35f)
+            if (attackTimer == lightningCreationDelay)
             {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -558,8 +565,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             frameType = (int)PrimeFrameType.ClosedMouth;
 
-            if (attackTimer > 36f && struckByLightningFlag == 0f)
-                attackTimer = 36f;
+            // Stop the attack timer if lightning has not supercharged yet. Also declare the laser direction for laser.
+            if (attackTimer > lightningCreationDelay + 1f && struckByLightningFlag == 0f)
+            {
+                attackTimer = lightningCreationDelay + 1f;
+                laserDirection = npc.AngleTo(target.Center);
+            }
+
             else if (struckByLightningFlag == 1f)
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
@@ -578,6 +590,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
                 superchargeTimer++;
 
+                // Prepare line telegraphs.
+                if (attackTimer < 165f)
+                {
+                    lineTelegraphInterpolant = Utils.InverseLerp(lightningCreationDelay, 165, attackTimer, true);
+                    laserDirection += Utils.InverseLerp(0f, 0.6f, lineTelegraphInterpolant, true) * Utils.InverseLerp(1f, 0.7f, lineTelegraphInterpolant, true) * MathHelper.Pi / 300f;
+                }
+
                 // Roar as a telegraph.
                 if (attackTimer == 130f)
                 {
@@ -595,15 +614,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // Their purpose is to act as a "border".
                 if (attackTimer == 165f)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 12; i++)
                         {
                             Vector2 laserFirePosition = npc.Center - Vector2.UnitY * 16f;
-                            Vector2 laserDirection = (target.Center - laserFirePosition).SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 12f);
+                            Vector2 individualLaserDirection = (MathHelper.TwoPi * i / 12f + laserDirection).ToRotationVector2();
 
-                            int beam = Utilities.NewProjectileBetter(laserFirePosition, laserDirection, ModContent.ProjectileType<LaserRayIdle>(), 230, 0f);
+                            int beam = Utilities.NewProjectileBetter(laserFirePosition, individualLaserDirection, ModContent.ProjectileType<LaserRayIdle>(), 230, 0f);
                             if (Main.projectile.IndexInRange(beam))
                             {
                                 Main.projectile[beam].ai[0] = 0f;
@@ -793,7 +812,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             npc.TargetClosest();
             npc.ai[1] = 0f;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 6; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
             npc.netUpdate = true;
         }
@@ -856,6 +875,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 {
                     Vector2 drawPosition = npc.Center + new Vector2(i * 16f, -8f).RotatedBy(npc.rotation) - Main.screenPosition;
                     Vector2 beamDirection = -(target.Center - (drawPosition + Main.screenPosition)).SafeNormalize(-Vector2.UnitY).RotatedBy(angularOffset * -i);
+                    float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                    spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                }
+                spriteBatch.ResetBlendState();
+            }
+
+            // Draw line telegraphs for the lightning attack.
+            if (npc.ai[0] == (int)PrimeAttackType.LightningSupercharge && lineTelegraphInterpolant > 0f)
+            {
+                spriteBatch.SetBlendState(BlendState.Additive);
+
+                float angularOffset = npc.Infernum().ExtraAI[5];
+
+                // I don't know where this angular offset comes from, but it exists.
+                // It was fixed by comparing the lines in an image editing program and performing calculations with arctangents to determine what the precise
+                // discrepency is. The calculations of such are shown below:
+                // p0 = (1252, 395)
+                // p1 = (1543, 432)
+                // p2 = (1519, 445)
+                // slope of telegraph = (p1.y - p0.y) / (p1.x - p0.x) = 0.127147
+                // slope of laser = (p2.y - p0.y) / (p2.x - p0.x) = 0.187266
+                // d = arctan(slope of laser) - arctan(slope of telegraph) = -0.0586534
+                float angularDiscrepancy = -0.0586534f;
+                Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                Color outlineColor = Color.Lerp(Color.Red, Color.White, lineTelegraphInterpolant);
+                Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 0.5f, 2.4f);
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 beamDirection = (MathHelper.TwoPi * i / 12f + angularOffset - angularDiscrepancy).ToRotationVector2();
+                    Vector2 drawPosition = npc.Center - Vector2.UnitY * 16f + beamDirection * 2f - Main.screenPosition;
                     float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
                     spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
                 }

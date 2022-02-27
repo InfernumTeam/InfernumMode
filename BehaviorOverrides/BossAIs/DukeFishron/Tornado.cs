@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 top
             };
             for (int i = 0; i < 20; i++)
-                drawPoints.Add(Vector2.Lerp(top, projectile.Bottom, i / 19f));
+                drawPoints.Add(Vector2.Lerp(top, projectile.Bottom, i / 19f) + Vector2.UnitY * 30f);
 
             TornadoDrawer.Draw(drawPoints, -Main.screenPosition, 85);
             return false;

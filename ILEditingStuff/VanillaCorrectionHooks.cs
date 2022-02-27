@@ -11,19 +11,26 @@ using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.ILEditingStuff
 {
-    public class RemoveCultistGoreHook : IHookEdit
+    public class ReplaceGoresHook : IHookEdit
     {
-        internal static int RemoveCultistGore(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
+        internal static int AlterGores(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
             if (InfernumMode.CanUseCustomAIs && Type >= GoreID.Cultist1 && Type <= GoreID.CultistBoss2)
                 return Main.maxDust;
 
+            if (InfernumMode.CanUseCustomAIs && Type == 573)
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore1");
+            if (InfernumMode.CanUseCustomAIs && Type == 574)
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore2");
+            if (InfernumMode.CanUseCustomAIs && Type == 575)
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore3");
+
             return orig(Position, Velocity, Type, Scale);
         }
 
-        public void Load() => On.Terraria.Gore.NewGore += RemoveCultistGore;
+        public void Load() => On.Terraria.Gore.NewGore += AlterGores;
 
-        public void Unload() => On.Terraria.Gore.NewGore -= RemoveCultistGore;
+        public void Unload() => On.Terraria.Gore.NewGore -= AlterGores;
     }
 
     public class AureusPlatformWalkingHook : IHookEdit

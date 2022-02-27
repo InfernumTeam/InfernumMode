@@ -50,16 +50,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         {
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.BubbleSpit,
             DukeAttackType.SharkTornadoSummon,
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.StationaryBubbleCharge,
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.BubbleSpit,
             DukeAttackType.SharkTornadoSummon,
@@ -70,22 +74,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         {
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.BubbleSpin,
             DukeAttackType.BubbleSpit,
             DukeAttackType.SharkTornadoSummon,
             DukeAttackType.StationaryBubbleCharge,
             DukeAttackType.TidalWave,
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.BubbleSpin,
             DukeAttackType.TidalWave,
             DukeAttackType.SharkTornadoSummon,
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
             DukeAttackType.StationaryBubbleCharge,
+            DukeAttackType.BubbleSpin,
         };
 
         public static readonly DukeAttackType[] Subphase3Pattern = new DukeAttackType[]
@@ -146,6 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             else
                 npc.timeLeft = 7200;
 
+            npc.dontTakeDamage = false;
             npc.damage = npc.defDamage;
             npc.Calamity().DR = MathHelper.Lerp(0.1f, 0.37f, Utils.InverseLerp(5f, 1.6f, npc.velocity.Length(), true));
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -234,6 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             // Phase transitions.
             if ((phaseTransitionPhase == 0f && inPhase2) || (phaseTransitionPhase == 1f && inPhase3))
             {
+                npc.dontTakeDamage = true;
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
                 npc.velocity *= 0.98f;
                 npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, 0f, 0.02f);
@@ -273,19 +287,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             {
                 case DukeAttackType.Charge:
                     int angularAimTime = 4;
-                    int chargeTime = 40;
+                    int chargeTime = 43;
                     float chargeSpeed = 28f;
-                    int decelerationTime = 14;
-                    float chargeDeceleration = 0.8f;
+                    int decelerationTime = 6;
+                    float chargeDeceleration = 0.6f;
+                    if (inPhase2)
+                    {
+                        chargeTime -= 5;
+                        decelerationTime -= 2;
+                    }
                     if (enraged || inPhase3)
                     {
                         angularAimTime = 2;
-                        chargeTime -= 10;
+                        chargeTime -= 5;
                         chargeSpeed *= 1.3f;
                     }
                     if (inPhase4)
                     {
-                        chargeTime -= 5;
+                        chargeTime -= 4;
                         chargeSpeed *= 1.2f;
                     }
 
@@ -341,13 +360,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 case DukeAttackType.ChargeWait:
                     npc.damage = 0;
                     int waitDelay = 30;
-                    ref float horizontalHoverOffset = ref npc.Infernum().ExtraAI[0];
-
-                    // Hover near the target.
-                    if (horizontalHoverOffset == 0f)
-                        horizontalHoverOffset = Math.Sign(target.Center.X - npc.Center.X) * 500f;
-                    Vector2 hoverDestination = target.Center + new Vector2(horizontalHoverOffset, -350f) - npc.velocity;
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 22f, 1.05f);
+                    Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(target.Center.X - npc.Center.X) * -500f, -350f) - npc.velocity;
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 2f);
 
                     // Look at the target.
                     npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
@@ -358,8 +372,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                     // Handle frames.
                     frameDrawType = (int)DukeFrameDrawingType.FinFlapping;
-                    npc.frameCounter++;
-
                     if (attackTimer >= waitDelay)
                         goToNextAIState();
                     break;
@@ -415,15 +427,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     break;
                 case DukeAttackType.BubbleSpin:
                     int spinTime = 120;
-                    float spinSpeed = 16f;
-                    float moveToTargetSpeed = 6f;
+                    float spinSpeed = 12f;
+                    float moveToTargetSpeed = 14f;
                     float totalSpins = 3f;
                     bubbleShootRate = 10;
 
                     if (enraged)
                     {
                         spinSpeed = 23f;
-                        moveToTargetSpeed = 9f;
+                        moveToTargetSpeed *= 1.8f;
                         bubbleShootRate = 5;
                     }
 
@@ -431,7 +443,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         spinSpeed *= 1.45f;
 
                     spinSpeed *= totalSpins * 0.5f;
-
                     frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
                     if (attackTimer == 1f)
@@ -615,7 +626,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         waveSpeed *= 1.35f;
                     }
 
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
                     int lungeMaxTime = 180;
                     if (attackTimer < redirectTime)
@@ -683,12 +694,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (BossRushEvent.BossRushActive)
                         initialChargeSpeed *= 1.2f;
 
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
                     if (attackTimer < hoverTime)
                     {
                         Vector2 destination = target.Center + new Vector2(200f, -960f);
                         npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 33f, 1.3f);
+                        npc.Center = npc.Center.MoveTowards(destination, 15f);
                         npc.rotation = getAdjustedAngle(npc.AngleTo(target.Center), true);
                     }
 
@@ -760,7 +772,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (BossRushEvent.BossRushActive)
                         chargeSpeed *= 1.15f;
 
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
                     // Fadeout effects, flying, and damage disabling.
                     if (attackTimer < 45f)
@@ -848,7 +860,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             switch (frameDrawType)
             {
                 case DukeFrameDrawingType.FinFlapping:
-                    int frame = (int)(npc.frameCounter / 7) % 6;
+                    int frame = (int)(npc.frameCounter / 6) % 6;
                     npc.frame.X = 0;
                     npc.frame.Y = frame * frameHeight;
                     break;
@@ -861,7 +873,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     npc.frame.Y = 7 * frameHeight;
                     break;
                 case DukeFrameDrawingType.OpenMouthFinFlapping:
-                    frame = (int)(npc.frameCounter / 7) % 4 + 7;
+                    frame = (int)(npc.frameCounter / 6) % 4 + 7;
                     npc.frame.X = 202;
                     npc.frame.Y = (frame - 7) * frameHeight;
                     break;

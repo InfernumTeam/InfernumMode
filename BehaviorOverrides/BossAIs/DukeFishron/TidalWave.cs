@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public ref float WaveHeight => ref projectile.ai[1];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wave");
+            DisplayName.SetDefault("Tidal Wave");
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 150;
         }
@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 float completionRatio = i / (float)projectile.oldPos.Length;
                 Vector2 top = projectile.oldPos[i] + OffsetFunction(completionRatio);
                 Vector2 bottom = projectile.oldPos[i] + Vector2.UnitY * WaveHeight + OffsetFunction(completionRatio);
-                if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), top, bottom, (int)projectile.velocity.X, ref _))
+                if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), top, bottom, (int)Math.Abs(projectile.velocity.X) * 2f, ref _))
                     return true;
             }
             return false;

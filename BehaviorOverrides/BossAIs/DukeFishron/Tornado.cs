@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             float height = BossRushEvent.BossRushActive ? 3200f : 1600f;
             if (projectile.ai[1] == 1f)
-                height *= 1.75f;
+                height *= 4f;
 
             TornadoHeight = MathHelper.Lerp(TornadoHeight, height, 0.05f);
             if (!CalamityPlayer.areThereAnyDamnBosses)
@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 top
             };
             for (int i = 0; i < 20; i++)
-                drawPoints.Add(Vector2.Lerp(top, projectile.Bottom, i / 19f) + Vector2.UnitY * 30f);
+                drawPoints.Add(Vector2.Lerp(top, projectile.Bottom, i / 19f) + Vector2.UnitY * 75f);
 
             TornadoDrawer.Draw(drawPoints, -Main.screenPosition, 85);
             return false;

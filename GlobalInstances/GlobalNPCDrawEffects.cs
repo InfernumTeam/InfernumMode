@@ -1,4 +1,5 @@
-﻿using CalamityMod.NPCs;
+﻿using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
@@ -9,6 +10,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -88,7 +90,43 @@ namespace InfernumMode.GlobalInstances
                     return false;
 
                 if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type))
+                {
+                    if (Main.LocalPlayer.Calamity().trippy)
+                    {
+                        SpriteEffects direction = SpriteEffects.None;
+                        if (npc.spriteDirection == 1)
+                            direction = SpriteEffects.FlipHorizontally;
+
+                        Vector2 origin = npc.frame.Size() * 0.5f;
+                        Color shroomColor = npc.GetAlpha(new Color(Main.DiscoR, Main.DiscoG, Main.DiscoB, 0));
+                        float colorFadeFactor = 0.99f;
+                        shroomColor.R = (byte)(shroomColor.R * colorFadeFactor);
+                        shroomColor.G = (byte)(shroomColor.G * colorFadeFactor);
+                        shroomColor.B = (byte)(shroomColor.B * colorFadeFactor);
+                        shroomColor.A = (byte)(shroomColor.A * colorFadeFactor);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            Vector2 drawPosition = npc.Center;
+                            float horizontalOffset = Math.Abs(npc.Center.X - Main.LocalPlayer.Center.X);
+                            float verticalOffset = Math.Abs(npc.Center.Y - Main.LocalPlayer.Center.Y);
+
+                            if (i == 0 || i == 2)
+                                drawPosition.X = Main.LocalPlayer.Center.X + horizontalOffset;
+                            else
+                                drawPosition.X = Main.LocalPlayer.Center.X - horizontalOffset;
+
+                            if (i == 0 || i == 1)
+                                drawPosition.Y = Main.LocalPlayer.Center.Y + verticalOffset;
+                            else
+                                drawPosition.Y = Main.LocalPlayer.Center.Y - verticalOffset;
+                            drawPosition.Y += npc.gfxOffY;
+                            drawPosition -= Main.screenPosition;
+
+                            spriteBatch.Draw(Main.npcTexture[npc.type], drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
+                        }
+                    }
                     return OverridingListManager.InfernumPreDrawOverrideList[npc.type].Invoke(npc, spriteBatch, drawColor);
+                }
             }
             return base.PreDraw(npc, spriteBatch, drawColor);
         }

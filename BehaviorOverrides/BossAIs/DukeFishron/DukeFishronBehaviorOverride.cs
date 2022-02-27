@@ -286,7 +286,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (inPhase4)
                     {
                         chargeTime -= 5;
-                        chargeSpeed *= 1.15f;
+                        chargeSpeed *= 1.2f;
                     }
 
                     if (inWater)

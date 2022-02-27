@@ -46,6 +46,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             }
         }
 
+        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
+
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 3);

@@ -860,7 +860,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             int shootDelay = 48;
             int burstReleaseRate = 30;
-            float spinRadius = 540f;
+            float spinRadius = 640f;
             float spinArc = MathHelper.Pi * 1.225f;
 
             npc.dontTakeDamage = false;
@@ -881,24 +881,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
             ref float spinningPointX = ref npc.Infernum().ExtraAI[2];
             ref float spinningPointY = ref npc.Infernum().ExtraAI[3];
-            ref float verticalOffsetDirection = ref npc.Infernum().ExtraAI[4];
+            ref float hoverOffsetDirection = ref npc.Infernum().ExtraAI[4];
 
-            if (verticalOffsetDirection == 0f)
-            {
-                verticalOffsetDirection = Main.rand.NextBool().ToDirectionInt();
-                npc.netUpdate = true;
-            }
-
-            Vector2 hoverDestination = target.Center - Vector2.UnitY * verticalOffsetDirection * spinRadius;
+            Vector2 hoverDestination = target.Center + hoverOffsetDirection.ToRotationVector2() * spinRadius;
 
             switch ((int)attackSubstate)
             {
                 // Hover into position.
                 case 0:
-                    // Play a telegraph sound on the first frame of the laserbeam.
+                    // Play a telegraph sound on the first frame of the redirect.
                     // This is do so that the player can be perfectly aware that a sweep is coming.
+                    // Also determine which direction Artemis will spin in.
                     if (attackTimer == 1f)
+                    {
                         Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
+                        hoverOffsetDirection = Main.rand.Next(8) * MathHelper.TwoPi / 8f;
+                        npc.netUpdate = true;
+                    }
 
                     npc.frameCounter++;
                     frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
@@ -954,12 +953,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.frameCounter++;
                     frame = (int)Math.Round(MathHelper.Lerp(80f, 89f, (float)npc.frameCounter / 32f % 1f));
 
-                    float spinAngle = (float)Math.Pow(attackTimer / ArtemisSpinLaser.LaserLifetime, 1.45f) * spinArc * -spinDirection * verticalOffsetDirection;
+                    float spinAngle = attackTimer / ArtemisSpinLaser.LaserLifetime * spinArc * -spinDirection + hoverOffsetDirection + MathHelper.PiOver2;
                     npc.velocity = spinAngle.ToRotationVector2() * MathHelper.TwoPi * spinRadius / ArtemisSpinLaser.LaserLifetime * -spinDirection;
                     npc.rotation = npc.AngleTo(new Vector2(spinningPointX, spinningPointY)) + MathHelper.PiOver2;
 
                     if (attackTimer >= ArtemisSpinLaser.LaserLifetime - 16f)
+                    {
+                        foreach (Projectile laser in Utilities.AllProjectilesByID(ModContent.ProjectileType<ArtemisSpinLaser>()))
+                            laser.Kill();
+
                         SelectNextAttack(npc);
+                    }
                     break;
             }
 
@@ -1120,6 +1124,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 }
                 while (previousSpecialAttack == npc.ai[0]);
                 previousSpecialAttack = npc.ai[0];
+                npc.ai[0] = (int)TwinsAttackType.SpecialAttack_LaserRayScarletBursts;
             }
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))

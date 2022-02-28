@@ -20,7 +20,7 @@ using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
     // TODO - Refactor this AI.
-    public class LeviathanAIClass : NPCBehaviorOverride
+    public class LeviathanBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<LeviathanNPC>();
 

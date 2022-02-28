@@ -1124,7 +1124,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 }
                 while (previousSpecialAttack == npc.ai[0]);
                 previousSpecialAttack = npc.ai[0];
-                npc.ai[0] = (int)TwinsAttackType.SpecialAttack_LaserRayScarletBursts;
             }
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))

@@ -249,7 +249,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] > 0f)
                 enraged = 1f;
-
+            
             // Perform specific behaviors.
             switch ((AresBodyAttackType)(int)attackState)
             {

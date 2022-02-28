@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.hide = true;
             music = (InfernumMode.CalamityMod as CalamityModClass).GetMusicFromMusicMod("ExoMechs") ?? MusicID.Boss3;
         }
-
+        
         public override void AI()
         {
             if (CalamityGlobalNPC.draedonExoMechPrime < 0)
@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Don't do anything if this arm should be disabled.
             if (currentlyDisabled)
                 AttackTimer = 1f;
-
+            
             // Become more resistant to damage as necessary.
             npc.takenDamageMultiplier = 1f;
             if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))

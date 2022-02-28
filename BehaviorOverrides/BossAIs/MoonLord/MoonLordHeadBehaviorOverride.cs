@@ -1,7 +1,9 @@
 ﻿using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -9,7 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     {
         public override int NPCOverrideType => NPCID.MoonLordHead;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc)
         {
@@ -31,6 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             ref float pupilRotation = ref npc.localAI[0];
             ref float pupilOutwardness = ref npc.localAI[1];
             ref float pupilScale = ref npc.localAI[2];
+            ref float eyeAnimationFrameCounter = ref npc.localAI[3];
 
             int idealFrame = 0;
 
@@ -43,15 +46,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBoltEyeBursts:
                     DoBehavior_PhantasmalBoltEyeBursts(npc, core, target, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
                     break;
+                default:
+                    pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0f, 0.125f);
+                    pupilRotation = pupilRotation.AngleLerp(0f, 0.2f);
+                    idealFrame = 3;
+                    npc.dontTakeDamage = true;
+                    break;
             }
 
             // Handle frames.
-            int idealFrameCounter = idealFrame * 7;
-            if (idealFrameCounter > npc.frameCounter)
-                npc.frameCounter += 1D;
-            if (idealFrameCounter < npc.frameCounter)
-                npc.frameCounter -= 1D;
-            npc.frameCounter = MathHelper.Clamp((float)npc.frameCounter, 0f, 21f);
+            int idealFrameCounter = idealFrame * 5;
+            if (idealFrameCounter > eyeAnimationFrameCounter)
+                eyeAnimationFrameCounter += 1f;
+            if (idealFrameCounter < eyeAnimationFrameCounter)
+                eyeAnimationFrameCounter -= 1f;
+            eyeAnimationFrameCounter = MathHelper.Clamp((float)eyeAnimationFrameCounter, 0f, 15f);
 
             return false;
         }
@@ -83,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 int dustCount = (int)MathHelper.Lerp(1f, 4f, attackTimer / boltShootDelay / 0.7f);
                 for (int i = 0; i < dustCount; i++)
                 {
-                    if (!Main.rand.NextBool(6))
+                    if (!Main.rand.NextBool(24))
                         continue;
 
                     Vector2 dustMoveDirection = Main.rand.NextVector2Unit();
@@ -129,6 +138,47 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             if (attackTimer >= boltShootDelay * boltBurstCount)
                 core.Infernum().ExtraAI[0] = 1f;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D headTexture = Main.npcTexture[npc.type];
+            Texture2D headGlowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/MoonLordHeadGlowmask");
+            Vector2 headOrigin = new Vector2(191f, 130f);
+            Texture2D eyeScleraTexture = Main.extraTexture[18];
+            Texture2D pupilTexture = Main.extraTexture[19];
+            Vector2 mouthOrigin = new Vector2(19f, 34f);
+            Texture2D mouthTexture = Main.extraTexture[25];
+            Vector2 mouthOffset = new Vector2(0f, 214f).RotatedBy(npc.rotation);
+            Rectangle mouthFrame = mouthTexture.Frame(1, 1, 0, 0);
+            mouthFrame.Height /= 3;
+            mouthFrame.Y += mouthFrame.Height * (int)(npc.localAI[2] / 7f);
+            Texture2D eyeTexture = Main.extraTexture[29];
+            Vector2 eyeOffset = new Vector2(0f, 4f).RotatedBy(npc.rotation);
+            Rectangle eyeFrame = eyeTexture.Frame(1, 1, 0, 0);
+            eyeFrame.Height /= 4;
+            eyeFrame.Y += eyeFrame.Height * (int)(npc.localAI[3] / 5f);
+            Texture2D mouthOutlineTexture = Main.extraTexture[26];
+            Rectangle mouthOuterFrame = mouthOutlineTexture.Frame(1, 1, 0, 0);
+            mouthOuterFrame.Height /= 4;
+            Point centerTileCoords = npc.Center.ToTileCoordinates();
+            Color color = npc.GetAlpha(Color.Lerp(Lighting.GetColor(centerTileCoords.X, centerTileCoords.Y), Color.White, 0.3f));
+            if (npc.ai[0] < 0f)
+            {
+                mouthOuterFrame.Y += mouthOuterFrame.Height * (int)(npc.ai[1] / 8f);
+                spriteBatch.Draw(mouthOutlineTexture, npc.Center - Main.screenPosition, mouthOuterFrame, color, npc.rotation, mouthOrigin + new Vector2(4f, 4f), 1f, 0, 0f);
+            }
+            else
+            {
+                spriteBatch.Draw(eyeScleraTexture, npc.Center - Main.screenPosition, null, color, npc.rotation, mouthOrigin, 1f, 0, 0f);
+                Vector2 pupilOffset = Utils.Vector2FromElipse(npc.localAI[0].ToRotationVector2(), new Vector2(27f, 59f) * npc.localAI[1]);
+                spriteBatch.Draw(pupilTexture, npc.Center - Main.screenPosition + pupilOffset, null, color, npc.rotation, pupilTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            }
+            spriteBatch.Draw(headTexture, npc.Center - Main.screenPosition, npc.frame, color, npc.rotation, headOrigin, 1f, 0, 0f);
+            spriteBatch.Draw(headGlowmask, npc.Center - Main.screenPosition, npc.frame, Color.White * npc.Opacity * 0.6f, npc.rotation, headOrigin, 1f, 0, 0f);
+            spriteBatch.Draw(eyeTexture, (npc.Center - Main.screenPosition + eyeOffset).Floor(), eyeFrame, color, npc.rotation, eyeFrame.Size() / 2f, 1f, 0, 0f);
+            spriteBatch.Draw(mouthTexture, (npc.Center - Main.screenPosition + mouthOffset).Floor(), mouthFrame, color, npc.rotation, mouthFrame.Size() / 2f, 1f, 0, 0f);
+            return false;
         }
     }
 }

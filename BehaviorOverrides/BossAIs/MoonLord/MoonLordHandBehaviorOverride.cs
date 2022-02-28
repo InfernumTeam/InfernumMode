@@ -40,6 +40,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalSphereHandWaves:
                     DoBehavior_PhantasmalSphereHandWaves(npc, core, target, handSide, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
                     break;
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBoltEyeBursts:
+                    DoBehavior_DefaultHandHover(npc, core, handSide, attackTimer, ref idealFrame);
+                    break;
             }
 
             // Handle frames.
@@ -53,22 +56,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             return false;
         }
 
+        public static void DoBehavior_DefaultHandHover(NPC npc, NPC core, int handSide, float attackTimer, ref int idealFrame)
+        {
+            idealFrame = 3;
+            npc.dontTakeDamage = true;
+
+            Vector2 idealPosition = core.Center + new Vector2(handSide * 860f, -20f);
+            idealPosition += (attackTimer / 16f).ToRotationVector2() * new Vector2(10f, 30f);
+
+            Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 15f);
+            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.125f).MoveTowards(idealVelocity, 2f);
+        }
+
         public static void DoBehavior_PhantasmalSphereHandWaves(NPC npc, NPC core, Player target, int handSide, float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale, ref int idealFrame)
         {
             int waveTime = 150;
             int sphereShootDelay = 36;
             int sphereShootRate = 12;
             int attackTransitionDelay = 40;
-            float sphereShootSpeed = 8f;
+            float sphereShootSpeed = 13f;
             float sphereSlamSpeed = 6f;
+            float handCloseInterpolant = Utils.InverseLerp(0f, 16f, attackTimer - waveTime, true);
 
             Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -125f);
             Vector2 endingIdealPosition = core.Center + new Vector2(handSide * 750f, -70f);
-            Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, MathHelper.Clamp(attackTimer / waveTime, 0f, 1f));
+            Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, MathHelper.Clamp(attackTimer / waveTime - handCloseInterpolant, 0f, 1f));
             idealPosition += (attackTimer / 16f).ToRotationVector2() * new Vector2(10f, 30f);
 
-            Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 12f);
-            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f).MoveTowards(idealPosition, 0.4f);
+            Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 15f);
+            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f).MoveTowards(idealVelocity, 1.6f);
 
             // Open the hand right before firing.
             if (attackTimer < sphereShootDelay - 12f || attackTimer >= waveTime)
@@ -76,6 +92,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 pupilScale = MathHelper.Lerp(pupilScale, 0.3f, 0.1f);
                 pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0f, 0.1f);
                 idealFrame = 3;
+
+                // Shut hands faster after the spheres have been released.
+                if (attackTimer >= waveTime && attackTimer < waveTime + 16f)
+                    npc.frameCounter = MathHelper.Clamp((float)npc.frameCounter + 1f, 0f, 21f);
             }
             else
             {
@@ -97,12 +117,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             if (canShootPhantasmalSpheres)
             {
-                // TODO - Play some sort of sound to accompany the firing of the phantasmal spheres.
+                Main.PlaySound(SoundID.Item122, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float attackCompletion = Utils.InverseLerp(0f, waveTime, attackTimer, true);
-                    float maximumAngularDisparity = startingIdealPosition.AngleBetween(endingIdealPosition);
+                    float maximumAngularDisparity = MathHelper.TwoPi / 3f;
                     float angularShootOffset = MathHelper.SmoothStep(0f, maximumAngularDisparity, attackCompletion) * handSide;
                     Vector2 sphereShootVelocity = -Vector2.UnitY.RotatedBy(angularShootOffset) * sphereShootSpeed;
                     int sphere = Utilities.NewProjectileBetter(npc.Center, sphereShootVelocity, ProjectileID.PhantasmalSphere, 215, 0f, npc.target);
@@ -118,13 +138,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Slam all phantasmal spheres at the target after they have been fired.
-            if (attackTimer == waveTime + 8f)
+            if (attackTimer == waveTime + 16f && handSide == 1)
             {
+                if (Main.netMode != NetmodeID.Server)
+				{
+                    var sound = Main.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
+                    if (sound != null)
+					{
+                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.85f, 0f, 1f);
+                        sound.Pitch = -0.5f;
+					}
+				}
+                    
                 foreach (Projectile sphere in Utilities.AllProjectilesByID(ProjectileID.PhantasmalSphere))
                 {
                     sphere.ai[0] = -1f;
                     sphere.velocity = sphere.SafeDirectionTo(target.Center) * sphereSlamSpeed;
-                    sphere.tileCollide = true;
+                    sphere.tileCollide = Collision.CanHit(sphere.Center, 0, 0, target.Center, 0, 0);
                     sphere.timeLeft = sphere.MaxUpdates * 270;
                     sphere.netUpdate = true;
                 }

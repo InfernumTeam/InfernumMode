@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public const int ArenaWidth = 200;
         public const int ArenaHeight = 150;
-        public const float BaseFlySpeedFactor = 3.5f;
+        public const float BaseFlySpeedFactor = 6f;
         public static readonly Color OverallTint = new Color(7, 81, 81);
         public override int NPCOverrideType => NPCID.MoonLordCore;
 
@@ -165,7 +165,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
-            float verticalOffset = MathHelper.Lerp(120f, 175f, (float)Math.Cos(attackTimer / 32f) * 0.5f + 0.5f);
+            float verticalOffset = MathHelper.Lerp(0f, 45f, (float)Math.Cos(attackTimer / 32f) * 0.5f + 0.5f);
             Vector2 hoverDestination = target.Center - Vector2.UnitY * verticalOffset;
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * BaseFlySpeedFactor;
             npc.SimpleFlyMovement(idealVelocity, BaseFlySpeedFactor / 20f);

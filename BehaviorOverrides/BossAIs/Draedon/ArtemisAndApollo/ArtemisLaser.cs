@@ -189,8 +189,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (TelegraphDelay >= TelegraphTotalTime)
             {
                 lightColor.R = (byte)(255 * projectile.Opacity);
-                lightColor.G = (byte)(255 * projectile.Opacity);
-                lightColor.B = (byte)(255 * projectile.Opacity);
+                lightColor.G = (byte)(175 * projectile.Opacity);
+                lightColor.B = 0;
+                lightColor.A = (byte)(255 * (1f - projectile.Opacity));
                 Vector2 drawOffset = projectile.velocity.SafeNormalize(Vector2.Zero) * -30f;
                 projectile.Center += drawOffset;
                 CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], lightColor, 1);

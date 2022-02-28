@@ -829,6 +829,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Color armGlowmaskColor = afterimageBaseColor;
             armGlowmaskColor.A = 184;
 
+            if (npc.ai[0] == (int)AresBodyAttackType.HoverCharge)
+            {
+                if (afterimageBaseColor != Color.Red)
+                    armGlowmaskColor = Color.White;
+                afterimageBaseColor = new Color(255, 55, 0, 0);
+            }
+
             (int, bool)[] armProperties = new (int, bool)[]
             {
                 // Laser arm.
@@ -864,7 +871,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
-            int numAfterimages = 5;
+            int numAfterimages = 9;
 
             float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex], true);
             if (finalPhaseGlowInterpolant > 0f)
@@ -881,11 +888,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (CalamityConfig.Instance.Afterimages)
             {
-                for (int i = 1; i < numAfterimages; i += 2)
+                for (int i = numAfterimages - 1; i >= 1; i--)
                 {
                     Color afterimageColor = lightColor;
-                    afterimageColor = Color.Lerp(afterimageColor, afterimageBaseColor, 0.5f);
-                    afterimageColor = npc.GetAlpha(afterimageColor);
+                    afterimageColor = npc.GetAlpha(Color.Lerp(afterimageColor, afterimageBaseColor, 0.8f));
                     afterimageColor *= (numAfterimages - i) / 15f;
                     Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
                     spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, SpriteEffects.None, 0f);
@@ -895,16 +901,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresBodyGlow");
-
-            if (CalamityConfig.Instance.Afterimages)
-            {
-                for (int i = 1; i < numAfterimages; i += 2)
-                {
-                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
-                    Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, SpriteEffects.None, 0f);
-                }
-            }
+            if (npc.ai[0] == (int)AresBodyAttackType.HoverCharge)
+                afterimageBaseColor = Color.White;
 
             spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 

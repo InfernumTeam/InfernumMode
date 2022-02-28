@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     }
                 }
                 npc.localAI[3] = 1f;
-                attackState = (int)MoonLordCoreAttackState.Initializations;
+                // attackState = (int)MoonLordCoreAttackState.Initializations;
                 npc.netUpdate = true;
             }
             return false;

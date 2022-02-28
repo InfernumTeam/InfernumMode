@@ -434,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                                     if (Main.netMode != NetmodeID.MultiplayerClient)
                                     {
-                                        int type = ModContent.ProjectileType<ApolloRocket>();
+                                        int type = ModContent.ProjectileType<ApolloRocketInfernum>();
                                         Vector2 rocketVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 12.5f;
                                         Vector2 rocketSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * 70f;
                                         int rocket = Utilities.NewProjectileBetter(rocketSpawnPosition, rocketVelocity, type, 500, 0f, Main.myPlayer, 0f, target.Center.Y);

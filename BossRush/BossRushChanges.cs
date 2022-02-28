@@ -156,7 +156,7 @@ namespace InfernumMode.BossRush
                 new Boss(NPCID.MoonLordCore, spawnContext: type =>
                 {
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
-                }, permittedNPCs: new int[] { NPCID.MoonLordLeechBlob, NPCID.MoonLordHand, NPCID.MoonLordHead, NPCID.MoonLordFreeEye, ModContent.NPCType<EldritchSeal>() }),
+                }, permittedNPCs: new int[] { NPCID.MoonLordLeechBlob, NPCID.MoonLordHand, NPCID.MoonLordHead, NPCID.MoonLordFreeEye }),
 
                 new Boss(NPCID.SkeletronPrime, TimeChangeContext.Night, permittedNPCs: new int[] { NPCID.PrimeCannon, NPCID.PrimeSaw, NPCID.PrimeVice, NPCID.PrimeLaser, NPCID.Probe }),
 

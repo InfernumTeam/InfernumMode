@@ -14,7 +14,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             SpawnEffects,
             PhantasmalSphereHandWaves,
-            PhantasmalBoltEyeBursts
+            PhantasmalBoltEyeBursts,
+            PhantasmalSphereSlam
         }
 
         public const int ArenaWidth = 200;
@@ -81,6 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     break;
                 case MoonLordAttackState.PhantasmalSphereHandWaves:
                 case MoonLordAttackState.PhantasmalBoltEyeBursts:
+                case MoonLordAttackState.PhantasmalSphereSlam:
                     DoBehavior_IdleHover(npc, target, ref attackTimer);
                     break;
             }
@@ -155,7 +157,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     for (int i = 0; i < Main.maxNPCs; i++)
                     {
                         if (Main.npc[i].type == NPCID.MoonLordHand && Main.npc[i].active)
+                        {
                             Main.npc[i].ai[0] = 0f;
+                            Main.npc[i].netUpdate = true;
+                        }
                     }
                 }
             }
@@ -184,6 +189,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     npc.ai[0] = (int)MoonLordAttackState.PhantasmalSphereHandWaves;
                     break;
                 case MoonLordAttackState.PhantasmalSphereHandWaves:
+                    npc.ai[0] = (int)MoonLordAttackState.PhantasmalSphereSlam;
+                    break;
+                case MoonLordAttackState.PhantasmalSphereSlam:
                     npc.ai[0] = (int)MoonLordAttackState.PhantasmalBoltEyeBursts;
                     break;
             }

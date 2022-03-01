@@ -79,6 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (attackTimer < initialShootDelay)
             {
                 idealFrame = 3;
+                npc.dontTakeDamage = true;
                 return;
             }
 
@@ -116,8 +117,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Create a burst of phantasmal bolts after the telegraph completes.
             if (wrappedAttackTimer == boltShootDelay - 1f)
             {
-                // TODO - Play a sound to accompany the bolt shots.
-
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float circularSpreadOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -170,9 +169,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
             else
             {
-                spriteBatch.Draw(eyeScleraTexture, npc.Center - Main.screenPosition, null, color, npc.rotation, mouthOrigin, 1f, 0, 0f);
+                spriteBatch.Draw(eyeScleraTexture, npc.Center - Main.screenPosition, null, Color.White * npc.Opacity * 0.6f, npc.rotation, mouthOrigin, 1f, 0, 0f);
                 Vector2 pupilOffset = Utils.Vector2FromElipse(npc.localAI[0].ToRotationVector2(), new Vector2(27f, 59f) * npc.localAI[1]);
-                spriteBatch.Draw(pupilTexture, npc.Center - Main.screenPosition + pupilOffset, null, color, npc.rotation, pupilTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(pupilTexture, npc.Center - Main.screenPosition + pupilOffset, null, Color.White * npc.Opacity * 0.6f, npc.rotation, pupilTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
             spriteBatch.Draw(headTexture, npc.Center - Main.screenPosition, npc.frame, color, npc.rotation, headOrigin, 1f, 0, 0f);
             spriteBatch.Draw(headGlowmask, npc.Center - Main.screenPosition, npc.frame, Color.White * npc.Opacity * 0.6f, npc.rotation, headOrigin, 1f, 0, 0f);

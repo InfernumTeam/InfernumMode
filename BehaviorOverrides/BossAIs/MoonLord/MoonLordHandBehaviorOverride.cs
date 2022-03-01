@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             idealFrame = 3;
             npc.dontTakeDamage = true;
 
-            Vector2 idealPosition = core.Center + new Vector2(handSide * 860f, -20f);
+            Vector2 idealPosition = core.Center + new Vector2(handSide * 650f, -70f);
             idealPosition += (attackTimer / 16f).ToRotationVector2() * new Vector2(10f, 30f);
 
             Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 15f);
@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public static void DoBehavior_PhantasmalSphereHandWaves(NPC npc, NPC core, Player target, int handSide, float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale, ref int idealFrame)
         {
-            int waveTime = 150;
+            int waveTime = 270;
             int sphereShootDelay = 36;
             int sphereShootRate = 12;
             int attackTransitionDelay = 40;
@@ -141,14 +141,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (attackTimer == waveTime + 16f && handSide == 1)
             {
                 if (Main.netMode != NetmodeID.Server)
-				{
+                {
                     var sound = Main.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
                     if (sound != null)
-					{
+                    {
                         sound.Volume = MathHelper.Clamp(sound.Volume * 1.85f, 0f, 1f);
                         sound.Pitch = -0.5f;
-					}
-				}
+                    }
+                }
                     
                 foreach (Projectile sphere in Utilities.AllProjectilesByID(ProjectileID.PhantasmalSphere))
                 {
@@ -162,6 +162,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             if (attackTimer >= waveTime + attackTransitionDelay)
                 core.Infernum().ExtraAI[0] = 1f;
+        }
+
+        public static void DoBehavior_PhantasmalSphereSlams(NPC npc, NPC core, Player target, int handSide, float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale, ref int idealFrame)
+        {
+
         }
     }
 }

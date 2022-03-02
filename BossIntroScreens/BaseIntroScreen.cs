@@ -140,13 +140,13 @@ namespace InfernumMode.BossIntroScreens
             for (int i = 0; i < splitTextInstances.Length; i++)
             {
                 string splitText = splitTextInstances[i];
-                Vector2 offset = -Vector2.UnitX * splitText.Sum(c => CalculateOffsetOfCharacter(c.ToString()).X * (i > 0f ? BottomTextScale : 1f)) * 0.5f;
+                bool useBigText = i > 0 || splitTextInstances.Length == 1;
+                Vector2 offset = -Vector2.UnitX * splitText.Sum(c => CalculateOffsetOfCharacter(c.ToString()).X * (useBigText ? BottomTextScale : 1f)) * 0.5f;
                 Vector2 textScale = Vector2.One * TextScale * AspectRatioFactor;
                 if (i > 0)
-                {
                     offset.Y += BottomTextScale * TextScale * AspectRatioFactor * i * 24f;
+                if (useBigText)
                     textScale *= BottomTextScale;
-                }
 
                 for (int j = 0; j < splitText.Length; j++)
                 {
@@ -176,7 +176,7 @@ namespace InfernumMode.BossIntroScreens
 
                     // Push the offset.
                     string character = splitText[j].ToString();
-                    offset += CalculateOffsetOfCharacter(character) * (i > 0f ? BottomTextScale : 1f);
+                    offset += CalculateOffsetOfCharacter(character) * (useBigText ? BottomTextScale : 1f);
 
                     Color textColor = TextColor.Calculate(individualLineLetterCompletionRatio) * opacity;
                     Vector2 origin = Vector2.UnitX * FontToUse.MeasureString(character);

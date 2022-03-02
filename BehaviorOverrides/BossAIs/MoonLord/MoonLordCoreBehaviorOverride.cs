@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -13,12 +14,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     {
         public enum MoonLordAttackState
         {
-            SpawnEffects = 10,
-            PhantasmalSphereHandWaves,
+            SpawnEffects = 0,
+            DeathEffects = 2,
+            PhantasmalSphereHandWaves = 10,
             PhantasmalBoltEyeBursts,
             PhantasmalFlareBursts,
             PhantasmalDeathrays,
-            PhantasmalRush
+            PhantasmalRush,
+            PhantasmalDance
         }
 
         public const int ArenaWidth = 200;
@@ -55,6 +58,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
         }
 
+        public static bool EyeIsActive
+        {
+            get
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC n = Main.npc[i];
+                    if (n.type == NPCID.MoonLordHead && n.active && n.ai[0] != -2f)
+                        return true;
+                }
+                return false;
+            }
+        }
+
         public override int NPCOverrideType => NPCID.MoonLordCore;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
@@ -69,33 +86,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             ref float wasNotEnraged = ref npc.ai[2];
             ref float forcefullySwitchAttack = ref npc.Infernum().ExtraAI[5];
 
-            // Hacky workaround to problems with popping.
-            if (npc.life < 1000)
-                npc.life = 1000;
-
             // Player variable.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Reset things.
-            npc.dontTakeDamage = false;
-
-            // Define enragement status.
-            npc.Calamity().CurrentlyEnraged = IsEnraged;
-            if (wasNotEnraged != npc.Calamity().CurrentlyEnraged.ToInt() && IsEnraged)
-            {
-                for (int i = 92; i < 98; i++)
-                {
-                    var fuckYou = new Terraria.Audio.LegacySoundStyle(SoundID.Zombie, i);
-                    var roar = Main.PlaySound(fuckYou, target.Center);
-                    if (roar != null)
-                    {
-                        roar.Volume = MathHelper.Clamp(roar.Volume * 1.85f, 0f, 1f);
-                        roar.Pitch = 0.35f;
-                    }
-                }
-            }
-            wasNotEnraged = npc.Calamity().CurrentlyEnraged.ToInt();
+            npc.dontTakeDamage = NPC.CountNPCS(NPCID.MoonLordFreeEye) < 3;
 
             // Life ratio.
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -129,6 +125,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 attackState = (int)MoonLordAttackState.SpawnEffects;
                 npc.netUpdate = true;
             }
+
+            // Define enragement status.
+            npc.Calamity().CurrentlyEnraged = IsEnraged;
+            if (wasNotEnraged != npc.Calamity().CurrentlyEnraged.ToInt() && IsEnraged)
+            {
+                for (int i = 92; i < 98; i++)
+                {
+                    var fuckYou = new Terraria.Audio.LegacySoundStyle(SoundID.Zombie, i);
+                    var roar = Main.PlaySound(fuckYou, target.Center);
+                    if (roar != null)
+                    {
+                        roar.Volume = MathHelper.Clamp(roar.Volume * 1.85f, 0f, 1f);
+                        roar.Pitch = 0.35f;
+                    }
+                }
+            }
+            wasNotEnraged = npc.Calamity().CurrentlyEnraged.ToInt();
 
             MoonLordAttackState currentAttack = (MoonLordAttackState)(int)attackState;
             switch (currentAttack)
@@ -183,12 +196,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (attackTimer == 30f)
                 Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 92, 1f, 0f);
 
-            // Create light.
-            if (attackTimer < 60f)
-                MoonlordDeathDrama.RequestLight(attackTimer / 30f, npc.Center);
+            if (Main.netMode != NetmodeID.Server && !IntroScreenManager.ScreenIsObstructed)
+            {
+                attackTimer = 30000f;
+                npc.netUpdate = true;
+            }
 
             // Create arms/head and go to the next attack state.
-            if (attackTimer >= 60f)
+            if (attackTimer >= 30000f)
             {
                 SelectNextAttack(npc);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -251,7 +266,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 attackCycle = new MoonLordAttackState[]
                 {
-                    MoonLordAttackState.PhantasmalRush,
+                    MoonLordAttackState.PhantasmalDance,
+                    MoonLordAttackState.PhantasmalBoltEyeBursts,
                     MoonLordAttackState.PhantasmalDeathrays,
                     MoonLordAttackState.PhantasmalRush,
                 };

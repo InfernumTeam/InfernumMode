@@ -28,6 +28,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             NPC core = Main.npc[(int)npc.ai[3]];
 
             npc.target = core.target;
+            npc.damage = 0;
+            npc.defDamage = 220;
 
             Player target = Main.player[npc.target];
             float attackTimer = core.ai[1];
@@ -47,6 +49,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalRush:
                     DoBehavior_PhantasmalRush(npc, target, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
+                    break;
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalDance:
+                    DoBehavior_PhantasmalDance(npc, target, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
                     break;
                 default:
                     DoBehavior_IdleObserve(npc, target, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
@@ -114,7 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     }
                 }
             }
-            else
+            else if (groupIndex == 2f)
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 600f, chargeVerticalOffset);
                 if (attackTimer < fireDelay)
@@ -157,9 +162,108 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     }
                 }
             }
+            else
+                DoBehavior_IdleObserve(npc, target, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
 
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
             if (attackTimer >= fireDelay + laserLifetime)
+                Main.npc[(int)npc.ai[3]].Infernum().ExtraAI[5] = 1f;
+        }
+
+        public static void DoBehavior_PhantasmalDance(NPC npc, Player target, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
+        {
+            int spinTime = 60;
+            int chargeTelegraphTime = 28;
+            int chargeTime = 36;
+            int chargeCounter = (int)(attackTimer / (spinTime + chargeTelegraphTime + chargeTime));
+            int chargeCount = 4;
+            float wrappedAttackTimer = attackTimer % (spinTime + chargeTelegraphTime + chargeTime);
+            float spinOffset = 400f;
+            float chargeSpeed = 37f;
+            float chargePredictiveness = 20f;
+            float spinDirection = (chargeCounter % 2f == 0f).ToDirectionInt();
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[0];
+            ref float telegraphDirection = ref npc.Infernum().ExtraAI[1];
+
+            // Snap into place for the spin.
+            if (wrappedAttackTimer < spinTime)
+            {
+                float angularOffest = MathHelper.TwoPi * (groupIndex - 1f) / NPC.CountNPCS(npc.type);
+                float spinArc = MathHelper.Pi * spinDirection;
+                float hoverSlowdown = Utils.InverseLerp(1f, 0.8f, wrappedAttackTimer / spinTime, true);
+                Vector2 idealPosition = target.Center + (spinArc * wrappedAttackTimer / spinTime + angularOffest).ToRotationVector2() * spinOffset;
+                Vector2 aheadPosition = target.Center + (spinArc * (wrappedAttackTimer + 1f) / spinTime + angularOffest).ToRotationVector2() * spinOffset;
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                npc.rotation = (aheadPosition - idealPosition).ToRotation() + MathHelper.PiOver2;
+                npc.velocity = npc.SafeDirectionTo(idealPosition) * MathHelper.Min(npc.Distance(idealPosition), hoverSlowdown * 37f);
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+
+                telegraphInterpolant = 0f;
+                pupilRotation = npc.rotation - MathHelper.PiOver2;
+                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.7f, 0.15f);
+                pupilScale = MathHelper.Lerp(pupilScale, 0.4f, 0.15f);
+            }
+
+            // Stop in place and look at the target before charging.
+            else if (wrappedAttackTimer < spinTime + chargeTelegraphTime)
+            {
+                float telegraphCompletion = Utils.InverseLerp(0f, chargeTelegraphTime, wrappedAttackTimer - spinTime, true);
+                float pupilDilation = Utils.InverseLerp(0f, 0.6f, telegraphCompletion, true);
+                telegraphInterpolant = Utils.InverseLerp(0f, 0.65f, telegraphCompletion, true) * Utils.InverseLerp(1f, 0.75f, telegraphCompletion, true);
+
+                // Define the telegraph direction.
+                if (telegraphCompletion < 0.9f)
+                    telegraphDirection = npc.AngleTo(target.Center + target.velocity * chargePredictiveness);
+
+                // Slow down.
+                npc.velocity = (npc.velocity * 0.825f).MoveTowards(Vector2.Zero, 1.5f);
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+
+                float idealRotation = telegraphDirection + MathHelper.PiOver2;
+                if (npc.spriteDirection == 1)
+                    idealRotation += MathHelper.Pi;
+                npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.15f);
+
+                pupilRotation = telegraphDirection;
+                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.3f, 0.15f);
+                pupilScale = MathHelper.SmoothStep(0.4f, 0.95f, pupilDilation);
+            }
+
+            // Do the charge.
+            else if (wrappedAttackTimer == spinTime + chargeTelegraphTime)
+            {
+                if (groupIndex == 1f)
+                    Main.PlaySound(SoundID.DD2_WyvernDiveDown, target.Center);
+
+                telegraphInterpolant = 0f;
+                npc.velocity = telegraphDirection.ToRotationVector2() * chargeSpeed;
+                if (chargeCounter == 0)
+                    npc.velocity *= 1.325f;
+
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+
+                npc.netUpdate = true;
+            }
+
+            // Do contact damage and release phantasmal orbs when charging.
+            else
+            {
+                npc.damage = npc.defDamage;
+                if (chargeCounter % 2f == 1f && wrappedAttackTimer % 5f == 4f)
+                {
+                    Main.PlaySound(SoundID.Item72, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 orbVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 6f;
+                        Utilities.NewProjectileBetter(npc.Center, orbVelocity, ModContent.ProjectileType<PhantasmalOrb>(), 215, 0f);
+                    }
+                }
+            }
+
+            if (chargeCounter >= chargeCount)
                 Main.npc[(int)npc.ai[3]].Infernum().ExtraAI[5] = 1f;
         }
 
@@ -181,6 +285,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             npc.rotation = npc.velocity.X * 0.03f;
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            if (npc.spriteDirection == 1)
+                npc.rotation += MathHelper.Pi;
+
             npc.Center = npc.Center.MoveTowards(target.Center + hoverOffset, 2f);
             npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center + hoverOffset) * 19f, 0.75f);
         }
@@ -189,12 +296,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             Texture2D texture = Main.npcTexture[npc.type];
             Texture2D pupilTexture = Main.extraTexture[19];
+            Vector2 baseDrawPosition = npc.Center - Main.screenPosition - (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * npc.spriteDirection * 32f;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipVertically : SpriteEffects.FlipHorizontally;
             Color color = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.3f));
-            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, 1f, direction, 0f);
+            spriteBatch.Draw(texture, baseDrawPosition, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, 1f, direction, 0f);
             Vector2 pupilOffset = npc.localAI[0].ToRotationVector2() * npc.localAI[1] * 25f - Vector2.UnitY.RotatedBy(npc.rotation) * -npc.spriteDirection * 20f;
 
-            spriteBatch.Draw(pupilTexture, npc.Center - Main.screenPosition + pupilOffset, null, color, npc.rotation, pupilTexture.Size() / 2f, npc.localAI[2], SpriteEffects.None, 0f);
+            spriteBatch.Draw(pupilTexture, baseDrawPosition + pupilOffset, null, color, npc.rotation, pupilTexture.Size() / 2f, npc.localAI[2], SpriteEffects.None, 0f);
 
             // Draw line telegraphs as necessary.
             NPC core = Main.npc[(int)npc.ai[3]];
@@ -211,7 +319,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     Color outlineColor = Color.Lerp(Color.Turquoise, Color.White, lineTelegraphInterpolant);
                     Vector2 origin = new Vector2(line.Width / 2f, line.Height);
                     Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 0.5f, 2.4f);
-                    Vector2 drawPosition = npc.Center + pupilOffset - Main.screenPosition;
+                    Vector2 drawPosition = baseDrawPosition + pupilOffset;
 
                     // Create bloom on the pupil.
                     Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * (float)Math.Pow(lineTelegraphInterpolant, 2D);
@@ -226,6 +334,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                             spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
                         }
                     }
+
+                    spriteBatch.ResetBlendState();
+                }
+            }
+            if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalDance)
+            {
+                float lineTelegraphInterpolant = npc.Infernum().ExtraAI[0];
+                if (lineTelegraphInterpolant > 0f)
+                {
+                    spriteBatch.SetBlendState(BlendState.Additive);
+
+                    Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLineSmall");
+                    Texture2D bloomCircle = ModContent.GetTexture("CalamityMod/ExtraTextures/THanosAura");
+
+                    Color outlineColor = Color.Lerp(Color.Turquoise, Color.White, lineTelegraphInterpolant);
+                    Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                    Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 1.3f, 2.4f);
+                    Vector2 drawPosition = baseDrawPosition + pupilOffset;
+
+                    // Create bloom on the pupil.
+                    Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * (float)Math.Pow(lineTelegraphInterpolant, 2D);
+                    spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
+
+                    Vector2 beamDirection = -npc.Infernum().ExtraAI[1].ToRotationVector2();
+                    float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                    spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
 
                     spriteBatch.ResetBlendState();
                 }

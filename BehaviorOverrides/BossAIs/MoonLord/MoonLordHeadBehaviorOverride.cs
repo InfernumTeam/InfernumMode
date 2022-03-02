@@ -26,10 +26,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Define the core NPC and inherit properties from it.
             NPC core = Main.npc[(int)npc.ai[3]];
 
+            // Hacky workaround to problems with popping.
+            if (npc.life < 1000)
+                npc.life = 1000;
+
             npc.target = core.target;
             npc.dontTakeDamage = false;
 
             float attackTimer = core.ai[1];
+            bool hasPopped = npc.ai[0] == -2f;
             Player target = Main.player[npc.target];
             ref float pupilRotation = ref npc.localAI[0];
             ref float pupilOutwardness = ref npc.localAI[1];
@@ -57,6 +62,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     idealFrame = 3;
                     npc.dontTakeDamage = true;
                     break;
+            }
+
+            if (hasPopped)
+            {
+                idealFrame = 0;
+                npc.dontTakeDamage = true;
             }
 
             // Handle frames.
@@ -261,7 +272,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             if (npc.ai[0] < 0f)
             {
-                mouthOuterFrame.Y += mouthOuterFrame.Height * (int)(npc.ai[1] / 8f);
+                mouthOuterFrame.Y += mouthOuterFrame.Height * (int)(Main.GlobalTime * 9.3f % 4);
                 spriteBatch.Draw(mouthOutlineTexture, npc.Center - Main.screenPosition, mouthOuterFrame, color, npc.rotation, mouthOrigin + new Vector2(4f, 4f), 1f, 0, 0f);
             }
             else

@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
@@ -17,6 +18,7 @@ namespace InfernumMode
         public int TotalUniqueIndicesUsed;
         public int[] ExtraAIIndicesUsed;
         public float[] ExtraAIValues;
+        public Rectangle ArenaRectangle;
 
         public bool TryToApplyToNPC()
         {
@@ -32,6 +34,8 @@ namespace InfernumMode
                 Main.npc[NPCIndex].realLife = CachedRealLife;
             for (int i = 0; i < TotalUniqueIndicesUsed; i++)
                 Main.npc[NPCIndex].Infernum().ExtraAI[ExtraAIIndicesUsed[i]] = ExtraAIValues[i];
+            if (ArenaRectangle != default)
+                Main.npc[NPCIndex].Infernum().arenaRectangle = ArenaRectangle;
 
             return true;
         }
@@ -51,6 +55,7 @@ namespace InfernumMode
                     int totalUniqueAIIndicesUsed = reader.ReadInt32();
                     int[] indicesUsed = new int[totalUniqueAIIndicesUsed];
                     float[] aiValues = new float[totalUniqueAIIndicesUsed];
+                    Rectangle arenaRectangle = new Rectangle(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 
                     for (int i = 0; i < totalUniqueAIIndicesUsed; i++)
                     {
@@ -63,7 +68,8 @@ namespace InfernumMode
                         CachedRealLife = realLife,
                         TotalUniqueIndicesUsed = totalUniqueAIIndicesUsed,
                         ExtraAIIndicesUsed = indicesUsed,
-                        ExtraAIValues = aiValues
+                        ExtraAIValues = aiValues,
+                        ArenaRectangle = arenaRectangle
                     };
 
                     if (!syncInformation.TryToApplyToNPC())

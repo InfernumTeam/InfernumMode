@@ -196,6 +196,10 @@ namespace InfernumMode
                 packet.Write(npc.whoAmI);
                 packet.Write(npc.realLife);
                 packet.Write(npc.Infernum().TotalAISlotsInUse);
+                packet.Write(npc.Infernum().arenaRectangle.X);
+                packet.Write(npc.Infernum().arenaRectangle.Y);
+                packet.Write(npc.Infernum().arenaRectangle.Width);
+                packet.Write(npc.Infernum().arenaRectangle.Height);
                 for (int i = 0; i < npc.Infernum().ExtraAI.Length; i++)
                 {
                     if (!npc.Infernum().HasAssociatedAIBeenUsed[i])
@@ -221,6 +225,11 @@ namespace InfernumMode
                     return true;
                 }, InterfaceScaleType.Game));
             }
+        }
+
+        public override object Call(params object[] args)
+        {
+            return InfernumModCalls.Call(args);
         }
 
         public override void Unload()

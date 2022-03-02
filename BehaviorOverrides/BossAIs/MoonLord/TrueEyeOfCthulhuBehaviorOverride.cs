@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             float pressureLaserEndingAngularOffset = 0.14f;
             float chargeVerticalOffset = 330f;
             float chargeSpeed = chargeVerticalOffset / chargeRate * 2f;
-            float boltShootSpeed = 4f;
+            float boltShootSpeed = 2f;
             ref float telegraphAngularOffset = ref npc.Infernum().ExtraAI[0];
             ref float lineTelegraphInterpolant = ref npc.Infernum().ExtraAI[1];
 

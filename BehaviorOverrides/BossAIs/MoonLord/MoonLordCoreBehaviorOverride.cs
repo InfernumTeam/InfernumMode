@@ -252,6 +252,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 attackCycle = new MoonLordAttackState[]
                 {
                     MoonLordAttackState.PhantasmalRush,
+                    MoonLordAttackState.PhantasmalDeathrays,
+                    MoonLordAttackState.PhantasmalRush,
                 };
             }
 

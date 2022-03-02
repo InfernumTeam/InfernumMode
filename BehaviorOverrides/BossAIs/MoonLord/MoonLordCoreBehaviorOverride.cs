@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -12,16 +13,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     {
         public enum MoonLordAttackState
         {
-            SpawnEffects,
+            SpawnEffects = 10,
             PhantasmalSphereHandWaves,
             PhantasmalBoltEyeBursts,
-            PhantasmalSphereSlam
+            PhantasmalFlareBursts,
+            PhantasmalDeathrays,
+            PhantasmalRush
         }
 
         public const int ArenaWidth = 200;
         public const int ArenaHeight = 150;
         public const float BaseFlySpeedFactor = 6f;
         public static readonly Color OverallTint = new Color(7, 81, 81);
+
+        public static bool IsEnraged
+        {
+            get
+            {
+                int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
+                if (moonLordIndex < 0)
+                    return false;
+
+                NPC moonLord = Main.npc[moonLordIndex];
+                Player target = Main.player[moonLord.target];
+                return !target.Hitbox.Intersects(moonLord.Infernum().arenaRectangle);
+            }
+        }
+
+        public static int CurrentActiveArms
+        {
+            get
+            {
+                int activeArms = 0;
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC n = Main.npc[i];
+                    if (n.type == NPCID.MoonLordHand && n.active && n.ai[0] != -2f)
+                        activeArms++;
+                }
+                return activeArms;
+            }
+        }
+
         public override int NPCOverrideType => NPCID.MoonLordCore;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
@@ -33,7 +66,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
-            ref float forcefullySwitchAttack = ref npc.Infernum().ExtraAI[0];
+            ref float wasNotEnraged = ref npc.ai[2];
+            ref float forcefullySwitchAttack = ref npc.Infernum().ExtraAI[5];
+
+            // Hacky workaround to problems with popping.
+            if (npc.life < 1000)
+                npc.life = 1000;
 
             // Player variable.
             npc.TargetClosestIfTargetIsInvalid();
@@ -41,6 +79,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             // Reset things.
             npc.dontTakeDamage = false;
+
+            // Define enragement status.
+            npc.Calamity().CurrentlyEnraged = IsEnraged;
+            if (wasNotEnraged != npc.Calamity().CurrentlyEnraged.ToInt() && IsEnraged)
+            {
+                for (int i = 92; i < 98; i++)
+                {
+                    var fuckYou = new Terraria.Audio.LegacySoundStyle(SoundID.Zombie, i);
+                    var roar = Main.PlaySound(fuckYou, target.Center);
+                    if (roar != null)
+                    {
+                        roar.Volume = MathHelper.Clamp(roar.Volume * 1.85f, 0f, 1f);
+                        roar.Pitch = 0.35f;
+                    }
+                }
+            }
+            wasNotEnraged = npc.Calamity().CurrentlyEnraged.ToInt();
 
             // Life ratio.
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -75,14 +130,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 npc.netUpdate = true;
             }
 
-            switch ((MoonLordAttackState)(int)attackState)
+            MoonLordAttackState currentAttack = (MoonLordAttackState)(int)attackState;
+            switch (currentAttack)
             {
                 case MoonLordAttackState.SpawnEffects:
                     DoBehavior_SpawnEffects(npc, ref attackTimer);
                     break;
-                case MoonLordAttackState.PhantasmalSphereHandWaves:
-                case MoonLordAttackState.PhantasmalBoltEyeBursts:
-                case MoonLordAttackState.PhantasmalSphereSlam:
+                default:
+                    if ((currentAttack == MoonLordAttackState.PhantasmalFlareBursts ||
+                        currentAttack == MoonLordAttackState.PhantasmalSphereHandWaves) && CurrentActiveArms <= 0)
+                    {
+                        SelectNextAttack(npc);
+                    }
+
                     DoBehavior_IdleHover(npc, target, ref attackTimer);
                     break;
             }
@@ -102,7 +162,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC n = Main.npc[i];
-                    bool isBodyPart = n.type == NPCID.MoonLordHand || n.type == NPCID.MoonLordHead;
+                    bool isBodyPart = n.type == NPCID.MoonLordHand || n.type == NPCID.MoonLordHead || n.type == NPCID.MoonLordFreeEye;
                     if (n.active && n.ai[3] == npc.whoAmI && isBodyPart)
                     {
                         n.netSpam = npc.netSpam;
@@ -180,20 +240,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public static void SelectNextAttack(NPC npc)
         {
             npc.ai[1] = 0f;
+            MoonLordAttackState[] attackCycle = new MoonLordAttackState[]
+            {
+                MoonLordAttackState.PhantasmalBoltEyeBursts,
+                MoonLordAttackState.PhantasmalSphereHandWaves,
+                MoonLordAttackState.PhantasmalFlareBursts,
+                MoonLordAttackState.PhantasmalDeathrays,
+            };
+            if (CurrentActiveArms <= 0)
+            {
+                attackCycle = new MoonLordAttackState[]
+                {
+                    MoonLordAttackState.PhantasmalRush,
+                };
+            }
+
             switch ((MoonLordAttackState)(int)npc.ai[0])
             {
                 case MoonLordAttackState.SpawnEffects:
-                    npc.ai[0] = (int)MoonLordAttackState.PhantasmalSphereHandWaves;
-                    break;
-                case MoonLordAttackState.PhantasmalBoltEyeBursts:
-                    npc.ai[0] = (int)MoonLordAttackState.PhantasmalSphereHandWaves;
-                    break;
-                case MoonLordAttackState.PhantasmalSphereHandWaves:
-                    npc.ai[0] = (int)MoonLordAttackState.PhantasmalSphereSlam;
-                    break;
-                case MoonLordAttackState.PhantasmalSphereSlam:
                     npc.ai[0] = (int)MoonLordAttackState.PhantasmalBoltEyeBursts;
                     break;
+                default:
+                    npc.ai[0] = (int)attackCycle[(int)npc.Infernum().ExtraAI[6] % attackCycle.Length];
+                    npc.Infernum().ExtraAI[6]++;
+                    break;
+            }
+
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC n = Main.npc[i];
+                bool isBodyPart = n.type == NPCID.MoonLordHand || n.type == NPCID.MoonLordHead || n.type == NPCID.MoonLordFreeEye;
+                if (n.active && n.ai[3] == npc.whoAmI && isBodyPart)
+                {
+                    for (int j = 0; j < 5; j++)
+                        n.Infernum().ExtraAI[i] = 0f;
+                }
             }
 
             npc.netUpdate = true;

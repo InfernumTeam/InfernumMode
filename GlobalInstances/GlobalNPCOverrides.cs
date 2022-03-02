@@ -324,13 +324,6 @@ namespace InfernumMode.GlobalInstances
                 }
             }
 
-            if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead)
-            {
-                if (damage > 1500)
-                    damage = 1500;
-                return false;
-            }
-
             double realDamage = crit ? damage * 2 : damage;
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
             if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
@@ -361,6 +354,16 @@ namespace InfernumMode.GlobalInstances
                 Main.npc[npc.realLife].Infernum().ExtraAI[0] += (float)(damage * (crit ? 2D : 1f));
                 Main.npc[npc.realLife].netUpdate = true;
             }
+
+            if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead)
+			{
+                if (npc.life - realDamage <= 1000)
+				{
+                    npc.life = 0;
+                    npc.StrikeNPCNoInteraction(9999, 0f, 0);
+                    npc.checkDead();
+				}
+			}
 
             return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
         }

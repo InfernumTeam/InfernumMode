@@ -58,6 +58,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalDance:
                     DoBehavior_PhantasmalDance(npc, target, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
                     break;
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage:
+                    DoBehavior_PhantasmalBarrage(npc, target, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
+                    break;
                 default:
                     DoBehavior_IdleObserve(npc, target, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
                     break;
@@ -65,6 +68,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             return false;
         }
+
+
+        public static void DoBehavior_IdleObserve(NPC npc, Player target, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
+        {
+            int eyeCount = NPC.CountNPCS(NPCID.MoonLordFreeEye);
+            Vector2 hoverOffset = -Vector2.UnitY * 475f;
+
+            // Define pupil variables.
+            pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.15f);
+            pupilOutwardness = MathHelper.Lerp(0.2f, 0.8f, Utils.InverseLerp(150f, 400f, npc.Distance(target.Center), true));
+            pupilScale = MathHelper.Lerp(pupilScale, 0.5f, 0.1f);
+
+            if (eyeCount > 1)
+            {
+                float hoverOffsetAngle = MathHelper.Lerp(-0.75f, 0.75f, (groupIndex - 1f) / (float)(eyeCount - 1f));
+                hoverOffset = hoverOffset.RotatedBy(hoverOffsetAngle);
+            }
+
+            npc.rotation = npc.velocity.X * 0.03f;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            if (npc.spriteDirection == 1)
+                npc.rotation += MathHelper.Pi;
+
+            npc.Center = npc.Center.MoveTowards(target.Center + hoverOffset, 2f);
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center + hoverOffset) * 19f, 0.75f);
+        }
+
         public static void DoBehavior_PhantasmalRush(NPC npc, Player target, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
         {
             int fireDelay = 120;
@@ -275,29 +305,165 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 Main.npc[(int)npc.ai[3]].Infernum().ExtraAI[5] = 1f;
         }
 
-        public static void DoBehavior_IdleObserve(NPC npc, Player target, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
+        public static void DoBehavior_PhantasmalBarrage(NPC npc, Player target, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
         {
-            int eyeCount = NPC.CountNPCS(NPCID.MoonLordFreeEye);
-            Vector2 hoverOffset = -Vector2.UnitY * 475f;
+            int repositionTime = 85;
+            int sphereCastCount = 6;
+            int sphereCastRate = 3;
+            int sphereCastTime = sphereCastCount * sphereCastRate;
+            int boltCount = 3;
+            int chargeTime = 32;
+            int chargeCount = 3;
+            int chargeCounter = (int)(attackTimer / (repositionTime + sphereCastTime + chargeTime));
+            float repositionOffset = 460f;
+            float chargeSpeed = 38f;
+            float sphereBounceSpeed = 4f;
+            float boltShootSpeed = 6.1f;
+            float boltSpread = 0.21f;
+            float wrappedAttackTimer = attackTimer % (repositionTime + sphereCastTime + chargeTime);
+            Vector2 pupilOffset = npc.localAI[0].ToRotationVector2() * npc.localAI[1] * 25f - Vector2.UnitY.RotatedBy(npc.rotation) * -npc.spriteDirection * 20f;
+            ref float groupIndexToAttack = ref Main.npc[(int)npc.ai[3]].Infernum().ExtraAI[0];
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[1];
 
-            // Define pupil variables.
-            pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.15f);
-            pupilOutwardness = MathHelper.Lerp(0.2f, 0.8f, Utils.InverseLerp(150f, 400f, npc.Distance(target.Center), true));
-            pupilScale = MathHelper.Lerp(pupilScale, 0.5f, 0.1f);
+            telegraphInterpolant = 0f;
 
-            if (eyeCount > 1)
+            // Define the group index that should attack on the first frame. Only the first eye will make the core do this.
+            if (wrappedAttackTimer == 1f && groupIndex == 1f)
             {
-                float hoverOffsetAngle = MathHelper.Lerp(-0.75f, 0.75f, (groupIndex - 1f) / (float)(eyeCount - 1f));
-                hoverOffset = hoverOffset.RotatedBy(hoverOffsetAngle);
+                groupIndexToAttack = Main.rand.Next(3) + 1;
+                npc.netUpdate = true;
             }
 
-            npc.rotation = npc.velocity.X * 0.03f;
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-            if (npc.spriteDirection == 1)
-                npc.rotation += MathHelper.Pi;
+            if (wrappedAttackTimer < repositionTime)
+            {
+                float idealRotation = npc.velocity.X * 0.03f;
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                if (npc.spriteDirection == 1)
+                    idealRotation += MathHelper.Pi;
+                npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.3f).AngleTowards(idealRotation, 0.1f);
 
-            npc.Center = npc.Center.MoveTowards(target.Center + hoverOffset, 2f);
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center + hoverOffset) * 19f, 0.75f);
+                pupilRotation = npc.AngleTo(target.Center);
+                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.45f, 0.15f);
+                pupilScale = MathHelper.Lerp(pupilScale, 0.35f, 0.15f);
+
+                // Hover into position before attacking.
+                float slowdownFactor = Utils.InverseLerp(0.9f, 0.65f, wrappedAttackTimer / repositionTime, true);
+                Vector2 hoverDestination = target.Center + (MathHelper.TwoPi * (groupIndex - 1f + chargeCounter * 0.5f) / 3f).ToRotationVector2() * repositionOffset;
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * slowdownFactor * 31f;
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
+                npc.SimpleFlyMovement(idealVelocity, slowdownFactor * 0.75f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.09f);
+                if (npc.WithinRange(hoverDestination, 16f))
+                {
+                    npc.velocity = Vector2.Zero;
+                    npc.Center = hoverDestination;
+                }
+            }
+
+            // Create phantasmal spheres.
+            else if (wrappedAttackTimer < repositionTime + sphereCastTime)
+            {
+                float sphereCastCompletion = Utils.InverseLerp(0f, sphereCastTime, wrappedAttackTimer - repositionTime, true);
+                float continuousSphereOffsetAngle = MathHelper.TwoPi * sphereCastCompletion;
+                float idealPupilRotation = npc.AngleTo(target.Center).AngleLerp(continuousSphereOffsetAngle, CalamityUtils.Convert01To010(sphereCastCompletion));
+                pupilRotation = pupilRotation.AngleLerp(idealPupilRotation, 0.2f);
+                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.5f, 0.15f);
+                pupilScale = MathHelper.Lerp(pupilScale, 0.5f, 0.15f);
+
+                if (groupIndex == groupIndexToAttack)
+                    telegraphInterpolant = sphereCastCompletion;
+
+                if ((wrappedAttackTimer - repositionTime) % sphereCastRate == 0f)
+                {
+                    int sphereCreationCounter = (int)((wrappedAttackTimer - repositionTime) / sphereCastRate);
+
+                    // Creates a pattern wherein every second sphere is created opposite to the previous one.
+                    // The consequence of this is that the full "circle" is only calculated halfway. The secondary
+                    // calculation will allow for the full circle to be completed.
+                    float sphereOffsetAngle = MathHelper.Pi * sphereCreationCounter / sphereCastCount;
+                    if (sphereCreationCounter % 2 == 1)
+                        sphereOffsetAngle = MathHelper.Pi * (sphereCreationCounter - 1f) / sphereCastCount + MathHelper.Pi;
+                    Vector2 sphereOffset = -Vector2.UnitY.RotatedBy(sphereOffsetAngle) * 36f;
+
+                    Main.PlaySound(SoundID.Item122, npc.Center + sphereOffset);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 sphereVelocity = sphereOffset.SafeNormalize(Vector2.Zero) * 6f;
+                        int sphere = Utilities.NewProjectileBetter(npc.Center + sphereOffset, sphereVelocity, ProjectileID.PhantasmalSphere, 215, 0f);
+                        if (Main.projectile.IndexInRange(sphere))
+                        {
+                            Main.projectile[sphere].Opacity = sphereCastCompletion;
+                            Main.projectile[sphere].ai[0] = -1f;
+                            Main.projectile[sphere].ai[1] = npc.whoAmI;
+                        }
+                    }
+                }
+            }
+
+            // Create an explosion as an indicator prior to attacking.
+            // Also make the eye that should charge do so.
+            if (wrappedAttackTimer == repositionTime + sphereCastTime)
+            {
+                if (groupIndex == groupIndexToAttack)
+                {
+                    var explosionSound = Main.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
+                    if (explosionSound != null)
+                    {
+                        explosionSound.Volume = MathHelper.Clamp(explosionSound.Volume * 1.9f, 0f, 1f);
+                        explosionSound.Pitch = -0.4f;
+                    }
+
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                    npc.netUpdate = true;
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<MoonLordWave>(), 0, 0f);
+
+                    // Make all phantasmal spheres move away from the eye that created them.
+                    foreach (Projectile sphere in Utilities.AllProjectilesByID(ProjectileID.PhantasmalSphere))
+                    {
+                        if (sphere.ai[0] == -1f)
+                        {
+                            sphere.velocity = -sphere.SafeDirectionTo(Main.npc[(int)sphere.ai[1]].Center) * sphereBounceSpeed;
+                            sphere.ai[0] = 0f;
+                            sphere.netUpdate = true;
+                        }
+                    }
+                }
+
+                // Release phantasmal bolts at the target.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 boltSpawnPosition = npc.Center + pupilOffset;
+                    for (int i = 0; i < boltCount; i++)
+                    {
+                        Vector2 boltVelocity = (target.Center - boltSpawnPosition).SafeNormalize(Vector2.UnitY) * boltShootSpeed;
+                        if (boltCount > 1)
+                            boltVelocity = boltVelocity.RotatedBy(MathHelper.Lerp(-boltSpread, boltSpread, i / (float)(boltCount - 1f)));
+                        Utilities.NewProjectileBetter(boltSpawnPosition, boltVelocity, ProjectileID.PhantasmalBolt, 210, 0f);
+                    }
+                }
+            }
+
+            // Handle charge effects.
+            if (wrappedAttackTimer >= repositionTime + sphereCastTime && groupIndex == groupIndexToAttack)
+            {
+                pupilRotation = npc.velocity.ToRotation();
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+                npc.damage = npc.defDamage;
+            }
+
+            if (chargeCounter >= chargeCount)
+            {
+                Main.npc[(int)npc.ai[3]].Infernum().ExtraAI[5] = 1f;
+
+                // Delete all spheres when the attack ends, to prevent unfair projectile overlap.
+                foreach (Projectile sphere in Utilities.AllProjectilesByID(ProjectileID.PhantasmalSphere))
+                    sphere.Kill();
+            }
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -366,6 +532,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
 
                     Vector2 beamDirection = -npc.Infernum().ExtraAI[1].ToRotationVector2();
+                    float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                    spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+
+                    spriteBatch.ResetBlendState();
+                }
+            }
+            if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage)
+            {
+                float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];
+                if (lineTelegraphInterpolant > 0f)
+                {
+                    spriteBatch.SetBlendState(BlendState.Additive);
+
+                    Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLineSmall");
+                    Color outlineColor = Color.Lerp(Color.Turquoise, Color.White, lineTelegraphInterpolant);
+                    Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                    Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 1.3f, 2.4f);
+                    Vector2 drawPosition = baseDrawPosition + pupilOffset;
+
+                    Vector2 beamDirection = -npc.SafeDirectionTo(Main.player[npc.target].Center);
                     float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
                     spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
 

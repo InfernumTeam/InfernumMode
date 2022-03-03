@@ -23,6 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
             if (projectile.ai[0] == -1f)
             {
+                projectile.velocity *= 0.9f;
                 projectile.frame = 1;
                 projectile.extraUpdates = 1;
             }

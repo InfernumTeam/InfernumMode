@@ -4,8 +4,6 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.ID;
@@ -24,7 +22,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             PhantasmalFlareBursts,
             PhantasmalDeathrays,
             PhantasmalRush,
-            PhantasmalDance
+            PhantasmalDance,
+            PhantasmalBarrage
         }
 
         public const int ArenaWidth = 200;
@@ -322,14 +321,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public static void SelectNextAttack(NPC npc)
         {
             npc.ai[1] = 0f;
+
+            int eyeCount = NPC.CountNPCS(NPCID.MoonLordFreeEye);
             MoonLordAttackState[] attackCycle = new MoonLordAttackState[]
             {
-                !EyeIsActive && NPC.CountNPCS(NPCID.MoonLordFreeEye) >= 2 ? MoonLordAttackState.PhantasmalDance :MoonLordAttackState.PhantasmalBoltEyeBursts,
+                !EyeIsActive && eyeCount >= 2 ? MoonLordAttackState.PhantasmalDance :MoonLordAttackState.PhantasmalBoltEyeBursts,
                 MoonLordAttackState.PhantasmalSphereHandWaves,
                 MoonLordAttackState.PhantasmalFlareBursts,
-                !EyeIsActive && NPC.CountNPCS(NPCID.MoonLordFreeEye) >= 2 ? MoonLordAttackState.PhantasmalRush : MoonLordAttackState.PhantasmalDeathrays,
+                !EyeIsActive && eyeCount >= 2 ? MoonLordAttackState.PhantasmalRush : MoonLordAttackState.PhantasmalDeathrays,
             };
-            if (CurrentActiveArms <= 0)
+            if (CurrentActiveArms <= 0 && npc.ai[0] != (int)MoonLordAttackState.SpawnEffects)
             {
                 attackCycle = new MoonLordAttackState[]
                 {
@@ -339,17 +340,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     MoonLordAttackState.PhantasmalRush,
                 };
             }
-
-            switch ((MoonLordAttackState)(int)npc.ai[0])
+            if (eyeCount >= 3)
             {
-                case MoonLordAttackState.SpawnEffects:
-                    npc.ai[0] = (int)MoonLordAttackState.PhantasmalBoltEyeBursts;
-                    break;
-                default:
-                    npc.ai[0] = (int)attackCycle[(int)npc.Infernum().ExtraAI[7] % attackCycle.Length];
-                    npc.Infernum().ExtraAI[7]++;
-                    break;
+                attackCycle = new MoonLordAttackState[]
+                {
+                    MoonLordAttackState.PhantasmalDance,
+                    MoonLordAttackState.PhantasmalBoltEyeBursts,
+                    MoonLordAttackState.PhantasmalRush,
+                    MoonLordAttackState.PhantasmalBarrage,
+                };
             }
+
+            npc.ai[0] = (int)attackCycle[(int)npc.Infernum().ExtraAI[7] % attackCycle.Length];
+            npc.Infernum().ExtraAI[7]++;
 
             for (int i = 0; i < Main.maxNPCs; i++)
             {

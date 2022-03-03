@@ -49,6 +49,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             switch ((MoonLordCoreBehaviorOverride.MoonLordAttackState)(int)core.ai[0])
             {
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.DeathEffects:
+                    idealFrame = 3;
+                    npc.dontTakeDamage = true;
+                    npc.rotation = npc.rotation.AngleLerp(MathHelper.Pi / 12f, 0.1f);
+                    break;
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBoltEyeBursts:
                     DoBehavior_PhantasmalBoltEyeBursts(npc, core, target, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
                     break;
@@ -67,6 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (hasPopped)
             {
                 idealFrame = 0;
+                npc.life = 1;
                 npc.dontTakeDamage = true;
             }
 
@@ -160,18 +166,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 }
             }
 
-            if (attackTimer >= boltShootDelay * boltBurstCount)
+            if (attackTimer >= boltShootDelay * boltBurstCount || !MoonLordCoreBehaviorOverride.EyeIsActive)
                 core.Infernum().ExtraAI[5] = 1f;
         }
 
         public static void DoBehavior_PhantasmalDeathrays(NPC npc, NPC core, Player target, float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale, ref int idealFrame)
         {
-            int deathrayTelegraphTime = 110;
-            int deathrayLifetime = 90;
+            int idealDeathrayTelegraphTime = 110;
+            int idealDeathrayLifetime = 90;
             int deathrayShootCount = 3;
-            float wrappedAttackTimer = attackTimer % (deathrayTelegraphTime + deathrayLifetime);
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float angularOffset = ref npc.Infernum().ExtraAI[1];
+            ref float deathrayTelegraphTime = ref npc.Infernum().ExtraAI[2];
+            ref float deathrayLifetime = ref npc.Infernum().ExtraAI[3];
+
+            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            {
+                idealDeathrayTelegraphTime -= 45;
+                idealDeathrayLifetime -= 25;
+            }
+            if (deathrayTelegraphTime == 0f || deathrayLifetime == 0f)
+            {
+                deathrayTelegraphTime = idealDeathrayTelegraphTime;
+                deathrayLifetime = idealDeathrayLifetime;
+            }
+
+            float wrappedAttackTimer = attackTimer % (deathrayTelegraphTime + deathrayLifetime);
 
             idealFrame = 0;
 
@@ -239,7 +259,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 }
             }
 
-            if (attackTimer >= (deathrayTelegraphTime + deathrayLifetime) * deathrayShootCount)
+            if (attackTimer >= (deathrayTelegraphTime + deathrayLifetime) * deathrayShootCount || !MoonLordCoreBehaviorOverride.EyeIsActive)
                 core.Infernum().ExtraAI[5] = 1f;
         }
 

@@ -47,6 +47,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             switch ((MoonLordCoreBehaviorOverride.MoonLordAttackState)(int)core.ai[0])
             {
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.DeathEffects:
+                    npc.life = 0;
+                    npc.StrikeNPCNoInteraction(9999, 0f, 0);
+                    npc.checkDead();
+                    break;
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalRush:
                     DoBehavior_PhantasmalRush(npc, target, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
                     break;
@@ -215,6 +220,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 // Define the telegraph direction.
                 if (telegraphCompletion < 0.9f)
                     telegraphDirection = npc.AngleTo(target.Center + target.velocity * chargePredictiveness);
+
+                if (wrappedAttackTimer == spinTime + 8f)
+                    Main.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
 
                 // Slow down.
                 npc.velocity = (npc.velocity * 0.825f).MoveTowards(Vector2.Zero, 1.5f);

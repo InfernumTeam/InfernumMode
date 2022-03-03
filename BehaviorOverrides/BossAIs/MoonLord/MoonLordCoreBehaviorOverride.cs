@@ -2,7 +2,10 @@
 using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.ID;
@@ -39,7 +42,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 NPC moonLord = Main.npc[moonLordIndex];
                 Player target = Main.player[moonLord.target];
-                return !target.Hitbox.Intersects(moonLord.Infernum().arenaRectangle);
+                Rectangle arena = moonLord.Infernum().arenaRectangle;
+                arena.Inflate(-8, -8);
+                return !target.Hitbox.Intersects(arena);
             }
         }
 
@@ -74,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override int NPCOverrideType => NPCID.MoonLordCore;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc)
         {
@@ -85,6 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             ref float attackTimer = ref npc.ai[1];
             ref float wasNotEnraged = ref npc.ai[2];
             ref float forcefullySwitchAttack = ref npc.Infernum().ExtraAI[5];
+            ref float deathAttackTimer = ref npc.Infernum().ExtraAI[6];
 
             // Player variable.
             npc.TargetClosestIfTargetIsInvalid();
@@ -148,6 +154,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 case MoonLordAttackState.SpawnEffects:
                     DoBehavior_SpawnEffects(npc, ref attackTimer);
+                    break;
+                case MoonLordAttackState.DeathEffects:
+                    DoBehavior_DeathEffects(npc, ref deathAttackTimer);
                     break;
                 default:
                     if ((currentAttack == MoonLordAttackState.PhantasmalFlareBursts ||
@@ -243,6 +252,64 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             npc.netUpdate = true;
         }
 
+        public static void DoBehavior_DeathEffects(NPC npc, ref float attackTimer)
+        {
+            npc.Calamity().ShouldCloseHPBar = true;
+            npc.life = 1;
+            npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 0.4f, 0.35f);
+            npc.dontTakeDamage = true;
+
+            // Create a flash before anything else.
+            if (attackTimer < 60f)
+            {
+                if (attackTimer == 4f)
+                    Main.PlaySound(SoundID.NPCDeath61, npc.Center);
+                MoonlordDeathDrama.RequestLight(attackTimer / 60f, npc.Center);
+            }
+            else
+            {
+                if (attackTimer == 61f)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int deathAnimation = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<MoonLordDeathAnimationHandler>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(deathAnimation))
+                            Main.projectile[deathAnimation].ai[0] = npc.whoAmI;
+                    }
+                }
+
+                // Create explosions periodically.
+                float explosionCreationRate = MathHelper.Lerp(0.075f, 0.24f, Utils.InverseLerp(75f, 300f, attackTimer, true));
+                if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextFloat() < explosionCreationRate)
+                {
+                    Vector2 explosionSpawnPosition = npc.Center + Main.rand.NextVector2Circular(200f, 450f);
+                    Utilities.NewProjectileBetter(explosionSpawnPosition, Vector2.Zero, ModContent.ProjectileType<MoonLordDeathExplosion>(), 0, 0f);
+                }
+                MoonlordDeathDrama.RequestLight(Utils.InverseLerp(480f, 530f, attackTimer, true) * 8f, npc.Center);
+            }
+
+            if (attackTimer >= 550f)
+            {
+                // Release a bunch of blood particles everywhere.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < 100; i++)
+                    {
+                        Vector2 bloodSpawnPosition = npc.Center + Main.rand.NextVector2Circular(120f, 250f);
+                        Vector2 bloodShootVelocity = -Vector2.UnitY.RotatedByRandom(1.4f) * Main.rand.NextFloat(6f, 23f);
+                        Utilities.NewProjectileBetter(bloodSpawnPosition, bloodShootVelocity, ModContent.ProjectileType<MoonLordDeathBloodBlob>(), 0, 0f);
+                    }
+                }
+
+                MoonlordDeathDrama.ThrowPieces(npc.Center, npc.whoAmI);
+                npc.life = 0;
+                npc.NPCLoot();
+                npc.active = false;
+            }                
+
+            attackTimer++;
+        }
+
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
             float verticalOffset = MathHelper.Lerp(0f, 45f, (float)Math.Cos(attackTimer / 32f) * 0.5f + 0.5f);
@@ -257,10 +324,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             npc.ai[1] = 0f;
             MoonLordAttackState[] attackCycle = new MoonLordAttackState[]
             {
-                MoonLordAttackState.PhantasmalBoltEyeBursts,
+                !EyeIsActive && NPC.CountNPCS(NPCID.MoonLordFreeEye) >= 2 ? MoonLordAttackState.PhantasmalDance :MoonLordAttackState.PhantasmalBoltEyeBursts,
                 MoonLordAttackState.PhantasmalSphereHandWaves,
                 MoonLordAttackState.PhantasmalFlareBursts,
-                MoonLordAttackState.PhantasmalDeathrays,
+                !EyeIsActive && NPC.CountNPCS(NPCID.MoonLordFreeEye) >= 2 ? MoonLordAttackState.PhantasmalRush : MoonLordAttackState.PhantasmalDeathrays,
             };
             if (CurrentActiveArms <= 0)
             {
@@ -279,8 +346,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     npc.ai[0] = (int)MoonLordAttackState.PhantasmalBoltEyeBursts;
                     break;
                 default:
-                    npc.ai[0] = (int)attackCycle[(int)npc.Infernum().ExtraAI[6] % attackCycle.Length];
-                    npc.Infernum().ExtraAI[6]++;
+                    npc.ai[0] = (int)attackCycle[(int)npc.Infernum().ExtraAI[7] % attackCycle.Length];
+                    npc.Infernum().ExtraAI[7]++;
                     break;
             }
 
@@ -296,6 +363,51 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             npc.netUpdate = true;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D coreTexture = Main.npcTexture[npc.type];
+            Texture2D coreOutlineTexture = Main.extraTexture[16];
+            Texture2D forearmTexture = Main.extraTexture[14];
+            Texture2D bodyTexture = Main.extraTexture[13];
+            Vector2 leftHalfOrigin = new Vector2(bodyTexture.Width, 278f);
+            Vector2 rightHalfOrigin = new Vector2(0f, 278f);
+            Vector2 center = npc.Center;
+            Point coreTileCoords = (npc.Center + new Vector2(0f, -150f)).ToTileCoordinates();
+            Color color = npc.GetAlpha(Color.Lerp(Lighting.GetColor(coreTileCoords.X, coreTileCoords.Y), Color.White, 0.3f));
+            for (int a = 0; a < 2; a++)
+            {
+                int armIndex = -1;
+                bool leftArm = a == 0;
+                Vector2 directionThing = new Vector2((!leftArm).ToDirectionInt(), 1f);
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Main.npc[i].type == NPCID.MoonLordHand && Main.npc[i].ai[2] == a && Main.npc[i].ai[3] == npc.whoAmI)
+                    {
+                        armIndex = i;
+                        break;
+                    }
+                }
+                if (armIndex != -1)
+                {
+                    Vector2 shoulderPosition = center + new Vector2(220f, -60f) * directionThing;
+                    Vector2 shoulderOffset = (Main.npc[armIndex].Center + new Vector2(0f, 76f) - shoulderPosition) * 0.5f;
+                    float rotationalOffset = (float)Math.Acos(MathHelper.Clamp(shoulderOffset.Length() / 340f, 0f, 1f)) * -directionThing.X;
+                    float forearmRotation = shoulderOffset.ToRotation() - rotationalOffset - MathHelper.PiOver2;
+                    SpriteEffects direction = (!leftArm) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                    Vector2 forearmOrigin = new Vector2(76f, 66f);
+                    if (!leftArm)
+                        forearmOrigin.X = forearmTexture.Width - forearmOrigin.X;
+
+                    spriteBatch.Draw(forearmTexture, shoulderPosition - Main.screenPosition, null, color, forearmRotation, forearmOrigin, 1f, direction, 0f);
+                }
+            }
+            spriteBatch.Draw(bodyTexture, center - Main.screenPosition, null, color, 0f, leftHalfOrigin, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(bodyTexture, center - Main.screenPosition, null, color, 0f, rightHalfOrigin, 1f, SpriteEffects.FlipHorizontally, 0f);
+            spriteBatch.Draw(coreOutlineTexture, center - Main.screenPosition, null, color, 0f, new Vector2(112f, 101f), 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(coreTexture, center - Main.screenPosition, npc.frame, color, 0f, npc.frame.Size() / 2f, 1f, SpriteEffects.None, 0f);
+            return false;
         }
     }
 }

@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override void AI()
         {
-            if (OwnerIndex <= 0)
+            if (OwnerIndex <= 0 || Main.npc[OwnerIndex - 1].ai[0] == -2f)
             {
                 projectile.Kill();
                 return;

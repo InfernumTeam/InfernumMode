@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             NPC eye = Main.npc[OwnerIndex];
-            Vector2 pupilOffset = eye.localAI[0].ToRotationVector2() * eye.localAI[1] * 25f - Vector2.UnitY.RotatedBy(eye.rotation) * -eye.spriteDirection * 20f;
+            Vector2 pupilOffset = eye.localAI[0].ToRotationVector2() * eye.localAI[1] * 25f - Vector2.UnitY.RotatedBy(eye.rotation) * eye.spriteDirection * 20f;
             projectile.Center = Main.npc[OwnerIndex].Center + pupilOffset + projectile.velocity * 2f;
             projectile.velocity = projectile.velocity.RotatedBy(AngularVelocity).SafeNormalize(Vector2.UnitY);
         }

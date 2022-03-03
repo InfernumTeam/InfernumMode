@@ -62,6 +62,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             if (hasPopped)
             {
+                npc.life = 1;
+
                 DoBehavior_DefaultHandHover(npc, core, handSide, attackTimer, ref idealFrame);
                 idealFrame = 0;
             }
@@ -83,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             npc.dontTakeDamage = true;
 
             Vector2 idealPosition = core.Center + new Vector2(handSide * 450f, -70f);
-            idealPosition += (attackTimer / 16f + npc.whoAmI * 2.3f).ToRotationVector2() * 24f;
+            idealPosition += (attackTimer / 32f + npc.whoAmI * 2.3f).ToRotationVector2() * 24f;
 
             Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 15f);
             npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.125f).MoveTowards(idealVelocity, 2f);
@@ -97,6 +99,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             int attackTransitionDelay = 40;
             float sphereShootSpeed = 12f;
             float sphereSlamSpeed = 6f;
+            if (MoonLordCoreBehaviorOverride.CurrentActiveArms <= 1)
+			{
+                sphereShootRate -= 4;
+                sphereSlamSpeed += 3f;
+            }
             if (MoonLordCoreBehaviorOverride.IsEnraged)
             {
                 sphereShootRate /= 2;

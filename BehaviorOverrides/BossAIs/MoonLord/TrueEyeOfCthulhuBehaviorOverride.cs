@@ -62,7 +62,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     DoBehavior_PhantasmalBarrage(npc, target, core, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
                     break;
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.UnstableNebulae:
-                    DoBehavior_UnstableNebulae(npc, target, core, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
+                    DoBehavior_UnstableNebulae(npc, target, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
+                    break;
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalWrath:
+                    DoBehavior_PhantasmalWrath(npc, target, core, attackTimer, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
                     break;
                 default:
                     DoBehavior_IdleObserve(npc, target, groupIndex, ref pupilRotation, ref pupilOutwardness, ref pupilScale);
@@ -188,6 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float circularSpreadOffsetAngle = Main.rand.NextBool() ? MathHelper.Pi / 6f : 0f;
+                            circularSpreadOffsetAngle += npc.AngleTo(target.Center);
                             for (int i = 0; i < 6; i++)
                             {
                                 Vector2 boltShootVelocity = (MathHelper.TwoPi * i / 6f + circularSpreadOffsetAngle).ToRotationVector2() * boltShootSpeed;
@@ -253,6 +257,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 if (telegraphCompletion < 0.9f)
                     telegraphDirection = npc.AngleTo(target.Center + target.velocity * chargePredictiveness);
 
+                // Scream before charging.
                 if (wrappedAttackTimer == spinTime + 8f)
                     Main.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
 
@@ -472,7 +477,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
         }
 
-        public static void DoBehavior_UnstableNebulae(NPC npc, Player target, NPC core, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
+        public static void DoBehavior_UnstableNebulae(NPC npc, Player target, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
         {
             int enrageBoltCount = 7;
             float enrageBoltSpread = 0.71f;
@@ -524,6 +529,106 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             npc.SimpleFlyMovement(npc.SafeDirectionTo(target.Center + hoverOffset) * 19f, 0.75f);
 
             enrageTimer++;
+        }
+
+        public static void DoBehavior_PhantasmalWrath(NPC npc, Player target, NPC core, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
+        {
+            int attckDelay = 60;
+            int slowdownTime = 16;
+            int boltCount = 12;
+            int chargeTime = 36;
+            int chargeCount = 4;
+            int chargeCounter = (int)(attackTimer / (attckDelay + slowdownTime + chargeTime));
+            float spinOffset = 400f;
+            float boltShootSpeed = 6.25f;
+            float chargeSpeed = 38.5f;
+            float wrappedAttackTimer = attackTimer % (attckDelay + slowdownTime + chargeTime);
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[1];
+
+            telegraphInterpolant = 0f;
+
+            // Circle around the player before attacking.
+            if (wrappedAttackTimer < attckDelay)
+            {
+                float angularOffest = MathHelper.TwoPi * (groupIndex - 1f) / NPC.CountNPCS(npc.type);
+                float spinArc = MathHelper.Pi * 0.666f;
+                float hoverSlowdown = Utils.InverseLerp(1f, 0.8f, wrappedAttackTimer / attckDelay, true);
+                Vector2 idealPosition = target.Center + (spinArc * wrappedAttackTimer / attckDelay + angularOffest).ToRotationVector2() * spinOffset;
+                Vector2 aheadPosition = target.Center + (spinArc * (wrappedAttackTimer + 1f) / attckDelay + angularOffest).ToRotationVector2() * spinOffset;
+
+                pupilRotation = (aheadPosition - idealPosition).ToRotation();
+                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.5f, 0.15f);
+                pupilScale = MathHelper.Lerp(pupilScale, 0.4f, 0.15f);
+
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                npc.rotation = pupilRotation + MathHelper.PiOver2;
+                npc.velocity = npc.SafeDirectionTo(idealPosition) * MathHelper.Min(npc.Distance(idealPosition), hoverSlowdown * 37f);
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+            }
+
+            // Slow down.
+            else if (wrappedAttackTimer < attckDelay + slowdownTime)
+            {
+                float idealRotation = npc.spriteDirection == 1 ? MathHelper.Pi : 0f;
+                if (groupIndex != 1f)
+                {
+                    idealRotation += npc.AngleTo(target.Center) + MathHelper.PiOver2;
+                    telegraphInterpolant = Utils.InverseLerp(attckDelay, attckDelay + slowdownTime, attackTimer, true);
+                }
+
+                // Scream before charging.
+                if (wrappedAttackTimer == attckDelay + (int)(slowdownTime * 0.5f) && groupIndex != 1f)
+                    Main.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
+
+                pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.15f);
+                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.4f, 0.15f);
+                pupilScale = MathHelper.Lerp(pupilScale, 0.75f, 0.15f);
+
+                npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.12f).AngleTowards(idealRotation, 0.05f);
+                npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 2f) * 0.92f;
+            }
+
+            // Have the first eye release a burst of bolts in all directions.
+            else if (groupIndex == 1f)
+            {
+                pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.15f);
+                if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == attckDelay + slowdownTime + 1f)
+                {
+                    Vector2 boltSpawnPosition = npc.Center + CalculatePupilOffset(npc);
+                    for (int i = 0; i < boltCount; i++)
+                    {
+                        Vector2 boltShootVelocity = (MathHelper.TwoPi * i / boltCount).ToRotationVector2() * boltShootSpeed;
+                        Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ProjectileID.PhantasmalBolt, 215, 0f);
+                    }
+                }
+            }
+
+            else
+            {
+                if (wrappedAttackTimer == attckDelay + slowdownTime + 1f)
+                {
+                    Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
+                    npc.netUpdate = true;
+                }
+
+                npc.damage = npc.defDamage;
+                npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                if (npc.spriteDirection == 1)
+                    npc.rotation += MathHelper.Pi;
+
+                // Release phantasmal eyes.
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 8f == 7f && !npc.WithinRange(target.Center, 300f))
+                {
+                    Vector2 eyeVelocity = -Vector2.UnitY * Main.rand.NextFloat(8f, 11f);
+                    Utilities.NewProjectileBetter(npc.Center, eyeVelocity, ProjectileID.PhantasmalEye, 215, 0f);
+                }
+            }
+
+            if (chargeCounter >= chargeCount)
+                core.Infernum().ExtraAI[5] = 1f;
         }
 
         public static Vector2 CalculatePupilOffset(NPC npc, int? directionOverride = null)
@@ -604,7 +709,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     spriteBatch.ResetBlendState();
                 }
             }
-            if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage)
+            if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage ||
+                core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalWrath)
             {
                 float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];
                 if (lineTelegraphInterpolant > 0f)

@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         DoBehavior_PhantasmalFlareBursts(npc, core, target, handSide, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
                     break;
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.ExplodingConstellations:
-                    DoBehavior_ExplodingConstellations(npc, core, target, handSide, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
+                    DoBehavior_ExplodingConstellations(npc, core, target, handSide, attackTimer, ref idealFrame);
                     break;
                 default:
                     DoBehavior_DefaultHandHover(npc, core, handSide, attackTimer, ref idealFrame);
@@ -256,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 core.Infernum().ExtraAI[5] = 1f;
         }
 
-        public static void DoBehavior_ExplodingConstellations(NPC npc, NPC core, Player target, int handSide, float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale, ref int idealFrame)
+        public static void DoBehavior_ExplodingConstellations(NPC npc, NPC core, Player target, int handSide, float attackTimer, ref int idealFrame)
         {
             idealFrame = 0;
             int initialAnimationTime = 54;

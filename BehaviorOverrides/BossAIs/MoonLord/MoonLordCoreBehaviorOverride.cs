@@ -25,7 +25,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             PhantasmalDance,
             PhantasmalBarrage,
             ExplodingConstellations,
-            UnstableNebulae
+            UnstableNebulae,
+            PhantasmalWrath
         }
 
         public const int ArenaWidth = 200;
@@ -416,11 +417,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         MoonLordAttackState.PhantasmalDance,
                         MoonLordAttackState.UnstableNebulae,
                         MoonLordAttackState.PhantasmalRush,
+                        MoonLordAttackState.PhantasmalBarrage,
                         MoonLordAttackState.ExplodingConstellations,
                         MoonLordAttackState.PhantasmalDance,
+                        MoonLordAttackState.PhantasmalWrath,
                         MoonLordAttackState.PhantasmalBarrage,
                         MoonLordAttackState.UnstableNebulae,
                         MoonLordAttackState.ExplodingConstellations,
+                        MoonLordAttackState.PhantasmalWrath,
                     };
                 }
             }

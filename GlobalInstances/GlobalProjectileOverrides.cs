@@ -176,9 +176,9 @@ namespace InfernumMode.GlobalInstances
             if (InfernumMode.CanUseCustomAIs)
             {
                 if (projectile.type == ProjectileID.PhantasmalSphere)
-                    return projectile.Infernum().ExtraAI[0] > 70f;
+                    return projectile.Infernum().ExtraAI[0] > 40f;
                 if (projectile.type == ProjectileID.PhantasmalBolt)
-                    return projectile.Infernum().ExtraAI[0] > 70f;
+                    return projectile.Infernum().ExtraAI[0] > 40f;
             }
             return base.CanHitPlayer(projectile, target);
         }

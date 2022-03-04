@@ -170,9 +170,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (!target.active || target.dead)
             {
                 npc.velocity *= 0.9f;
-                MoonlordDeathDrama.RequestLight(deathAttackTimer / 15f, target.Center);
+                MoonlordDeathDrama.RequestLight(despawnTimer / 45f, npc.Center);
                 despawnTimer++;
 
+                attackState = -1f;
+                attackTimer = 0f;
                 if (despawnTimer >= 45f)
                     npc.active = false;
                 return false;

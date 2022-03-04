@@ -157,7 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (canShootPhantasmalSpheres)
             {
                 float attackCompletion = Utils.InverseLerp(0f, waveTime, attackTimer, true);
-                float maximumAngularDisparity = MathHelper.TwoPi / 3f;
+                float maximumAngularDisparity = MathHelper.TwoPi;
                 float angularShootOffset = MathHelper.SmoothStep(0f, maximumAngularDisparity, attackCompletion) * -handSide;
                 Vector2 sphereShootVelocity = -Vector2.UnitY.RotatedBy(angularShootOffset) * sphereShootSpeed;
                 pupilRotation = sphereShootVelocity.ToRotation();
@@ -263,8 +263,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             int starCreationRate = 4;
             int totalStarsToCreate = 15;
             int explosionTime = 130;
-            int starCreationTime = totalStarsToCreate * starCreationRate;
             int constellationCount = 3;
+
+            if (MoonLordCoreBehaviorOverride.InFinalPhase)
+            {
+                starCreationRate--;
+                totalStarsToCreate += 3;
+            }
+
+            int starCreationTime = totalStarsToCreate * starCreationRate;
             float animationCompletionRatio = MathHelper.Clamp(attackTimer / initialAnimationTime, 0f, 1f);
             float wrappedAttackTimer = (attackTimer + (handSide == 0f ? 0f : 36f)) % (initialAnimationTime + starCreationTime + explosionTime);
             Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -125f);

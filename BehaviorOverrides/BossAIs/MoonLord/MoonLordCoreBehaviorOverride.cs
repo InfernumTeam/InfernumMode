@@ -26,13 +26,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             PhantasmalBarrage,
             ExplodingConstellations,
             UnstableNebulae,
-            PhantasmalWrath
+            PhantasmalWrath,
+            VoidAccretionDisk
         }
 
         public const int ArenaWidth = 200;
         public const int ArenaHeight = 150;
         public const float BaseFlySpeedFactor = 6f;
         public const float Phase2LifeRatio = 0.65f;
+        public const float Phase3LifeRatio = 0.33333f;
         public static readonly Color OverallTint = new Color(7, 81, 81);
 
         public static bool IsEnraged
@@ -80,6 +82,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
         }
 
+        public static bool InFinalPhase
+        {
+            get
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC n = Main.npc[i];
+                    if (n.type == NPCID.MoonLordCore && n.active && n.life < n.lifeMax * Phase3LifeRatio)
+                        return true;
+                }
+                return false;
+            }
+        }
+
         public override int NPCOverrideType => NPCID.MoonLordCore;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
@@ -94,6 +110,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             ref float wasNotEnraged = ref npc.ai[2];
             ref float forcefullySwitchAttack = ref npc.Infernum().ExtraAI[5];
             ref float deathAttackTimer = ref npc.Infernum().ExtraAI[6];
+            ref float despawnTimer = ref npc.Infernum().ExtraAI[9];
 
             // Player variable.
             npc.TargetClosestIfTargetIsInvalid();
@@ -149,6 +166,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
             wasNotEnraged = npc.Calamity().CurrentlyEnraged.ToInt();
 
+            // Despawn if the target is not present.
+            if (!target.active || target.dead)
+            {
+                npc.velocity *= 0.9f;
+                MoonlordDeathDrama.RequestLight(deathAttackTimer / 15f, target.Center);
+                despawnTimer++;
+
+                if (despawnTimer >= 45f)
+                    npc.active = false;
+                return false;
+            }
+            despawnTimer = 0f;
+
             MoonLordAttackState currentAttack = (MoonLordAttackState)(int)attackState;
             switch (currentAttack)
             {
@@ -160,6 +190,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     break;
                 case MoonLordAttackState.UnstableNebulae:
                     DoBehavior_UnstableNebulae(npc, target, ref attackTimer);
+                    break;
+                case MoonLordAttackState.VoidAccretionDisk:
+                    DoBehavior_VoidAccretionDisk(npc, target, ref attackTimer);
                     break;
                 default:
                     if ((currentAttack == MoonLordAttackState.PhantasmalFlareBursts ||
@@ -317,11 +350,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             DoBehavior_IdleHover(npc, target, ref attackTimer);
 
+            int vortexSummonRate = 20;
             int nebulaSummonCount = 3;
-            ref float nebulaSummonCounter = ref npc.Infernum().ExtraAI[0];
+            int nebulaSummonRate = 240;
+            if (InFinalPhase)
+                vortexSummonRate -= 4;
 
             // Create a bunch of nebulae across the arena.
-            if (attackTimer % 240f == 1f)
+            if (attackTimer % nebulaSummonRate == 1f)
             {
                 Main.PlaySound(SoundID.DD2_EtherianPortalOpen, target.Center);
                 Main.PlaySound(SoundID.DD2_BetsyFlameBreath, target.Center);
@@ -356,7 +392,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Create portals around the target.
-            if (attackTimer >= 60f && attackTimer % 20f == 19f)
+            if (attackTimer % nebulaSummonRate >= 60f && attackTimer % vortexSummonRate == vortexSummonRate - 1f)
             {
                 Vector2 portalSpawnOffset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(500f, 700f);
                 int vortex = Utilities.NewProjectileBetter(target.Center + portalSpawnOffset, Vector2.Zero, ModContent.ProjectileType<NebulaVortex>(), 0, 0f);
@@ -364,7 +400,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     Main.projectile[vortex].ai[1] = portalSpawnOffset.ToRotation() + MathHelper.Pi;
             }
 
-            if (attackTimer >= 840f)
+            if (attackTimer >= nebulaSummonRate * nebulaSummonCount)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_VoidAccretionDisk(NPC npc, Player target, ref float attackTimer)
+        {
+            DoBehavior_IdleHover(npc, target, ref attackTimer);
+
+            // Create the black hole.
+            if (attackTimer == 1f)
+            {
+                int blackHole = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<VoidBlackHole>(), 300, 0f);
+                if (Main.projectile.IndexInRange(blackHole))
+                    Main.projectile[blackHole].ai[1] = npc.whoAmI;
+            }
+
+            if (attackTimer >= 540f)
                 SelectNextAttack(npc);
         }
 
@@ -430,6 +482,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             npc.ai[0] = (int)attackCycle[(int)npc.Infernum().ExtraAI[7] % attackCycle.Length];
+
+            // If the third phase was just reached, use the void accretion disk attack next.
+            if (npc.Infernum().ExtraAI[8] == 0f && lifeRatio < Phase3LifeRatio)
+            {
+                npc.ai[0] = (int)MoonLordAttackState.VoidAccretionDisk;
+                npc.Infernum().ExtraAI[8] = 1f;
+            }
+
+            // Use the void accretion disk for every fourth attack when in the third phase.
+            if (npc.Infernum().ExtraAI[7] % 4f == 3f && lifeRatio < Phase3LifeRatio)
+                npc.ai[0] = (int)MoonLordAttackState.VoidAccretionDisk;
+
             npc.Infernum().ExtraAI[7]++;
 
             for (int i = 0; i < Main.maxNPCs; i++)

@@ -105,11 +105,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             int fireDelay = 120;
             int chargeRate = 15;
             int laserLifetime = PressurePhantasmalDeathray.LifetimeConstant;
+            int boltCount = 6;
             float pressureLaserStartingAngularOffset = 0.63f;
             float pressureLaserEndingAngularOffset = 0.14f;
             float chargeVerticalOffset = 330f;
-            float chargeSpeed = chargeVerticalOffset / chargeRate * 2f;
             float boltShootSpeed = 2f;
+            
+            if (MoonLordCoreBehaviorOverride.InFinalPhase)
+            {
+                boltCount += 2;
+                chargeVerticalOffset += 15f;
+            }
+
+            float chargeSpeed = chargeVerticalOffset / chargeRate * 2f;
             ref float telegraphAngularOffset = ref npc.Infernum().ExtraAI[0];
             ref float lineTelegraphInterpolant = ref npc.Infernum().ExtraAI[1];
 
@@ -190,11 +198,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            float circularSpreadOffsetAngle = Main.rand.NextBool() ? MathHelper.Pi / 6f : 0f;
+                            float circularSpreadOffsetAngle = Main.rand.NextBool() ? MathHelper.Pi / boltCount : 0f;
                             circularSpreadOffsetAngle += npc.AngleTo(target.Center);
-                            for (int i = 0; i < 6; i++)
+                            for (int i = 0; i < boltCount; i++)
                             {
-                                Vector2 boltShootVelocity = (MathHelper.TwoPi * i / 6f + circularSpreadOffsetAngle).ToRotationVector2() * boltShootSpeed;
+                                Vector2 boltShootVelocity = (MathHelper.TwoPi * i / boltCount + circularSpreadOffsetAngle).ToRotationVector2() * boltShootSpeed;
                                 Utilities.NewProjectileBetter(npc.Center, boltShootVelocity, ProjectileID.PhantasmalBolt, 200, 0f);
                             }
                         }
@@ -216,13 +224,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             int spinTime = 60;
             int chargeTelegraphTime = 28;
             int chargeTime = 36;
-            int chargeCounter = (int)(attackTimer / (spinTime + chargeTelegraphTime + chargeTime));
             int chargeCount = 4;
-            float wrappedAttackTimer = attackTimer % (spinTime + chargeTelegraphTime + chargeTime);
+            int orbReleaseRate = 5;
             float spinOffset = 400f;
             float chargeSpeed = 37f;
             float chargePredictiveness = 20f;
+
+            if (MoonLordCoreBehaviorOverride.InFinalPhase)
+            {
+                orbReleaseRate--;
+                spinOffset -= 20f;
+                chargeSpeed += 3f;
+            }
+
+            int chargeCounter = (int)(attackTimer / (spinTime + chargeTelegraphTime + chargeTime));
             float spinDirection = (chargeCounter % 2f == 0f).ToDirectionInt();
+            float wrappedAttackTimer = attackTimer % (spinTime + chargeTelegraphTime + chargeTime);
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float telegraphDirection = ref npc.Infernum().ExtraAI[1];
 
@@ -297,7 +314,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             else
             {
                 npc.damage = npc.defDamage;
-                if (chargeCounter % 2f == 1f && wrappedAttackTimer % 5f == 4f)
+                if (chargeCounter % 2f == 1f && wrappedAttackTimer % orbReleaseRate == orbReleaseRate - 1f)
                 {
                     Main.PlaySound(SoundID.Item72, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -317,16 +334,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             int repositionTime = 85;
             int sphereCastCount = 6;
             int sphereCastRate = 5;
-            int sphereCastTime = sphereCastCount * sphereCastRate;
             int boltCount = 3;
             int chargeTime = 32;
             int chargeCount = 4;
-            int chargeCounter = (int)(attackTimer / (repositionTime + sphereCastTime + chargeTime));
             float repositionOffset = 610f;
             float chargeSpeed = 38f;
             float sphereBounceSpeed = 4f;
             float boltShootSpeed = 6.1f;
             float boltSpread = 0.21f;
+
+            if (MoonLordCoreBehaviorOverride.InFinalPhase)
+            {
+                sphereCastCount++;
+                boltCount += 2;
+                repositionOffset -= 35f;
+                boltSpread += 0.12f;
+            }
+
+            int sphereCastTime = sphereCastCount * sphereCastRate;
+            int chargeCounter = (int)(attackTimer / (repositionTime + sphereCastTime + chargeTime));
             float wrappedAttackTimer = attackTimer % (repositionTime + sphereCastTime + chargeTime);
             Vector2 pupilOffset = CalculatePupilOffset(npc);
             ref float groupIndexToAttack = ref core.Infernum().ExtraAI[0];
@@ -538,10 +564,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             int boltCount = 12;
             int chargeTime = 36;
             int chargeCount = 4;
-            int chargeCounter = (int)(attackTimer / (attckDelay + slowdownTime + chargeTime));
             float spinOffset = 400f;
             float boltShootSpeed = 6.25f;
             float chargeSpeed = 38.5f;
+
+            if (MoonLordCoreBehaviorOverride.InFinalPhase)
+            {
+                chargeTime -= 3;
+                boltCount += 6;
+                boltShootSpeed -= 0.5f;
+                chargeSpeed += 3f;
+            }
+
+            int chargeCounter = (int)(attackTimer / (attckDelay + slowdownTime + chargeTime));
             float wrappedAttackTimer = attackTimer % (attckDelay + slowdownTime + chargeTime);
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[1];
 

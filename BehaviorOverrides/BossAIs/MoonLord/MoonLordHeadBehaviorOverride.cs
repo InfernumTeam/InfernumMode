@@ -189,6 +189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 deathrayTelegraphTime = idealDeathrayTelegraphTime;
                 deathrayLifetime = idealDeathrayLifetime;
+                angularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
             }
 
             float wrappedAttackTimer = attackTimer % (deathrayTelegraphTime + deathrayLifetime);

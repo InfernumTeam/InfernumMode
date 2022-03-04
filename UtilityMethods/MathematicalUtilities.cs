@@ -77,6 +77,16 @@ namespace InfernumMode
         public static Vector2 SafeDirectionTo(this Entity entity, Vector2 destination, Vector2 fallback = default) => (destination - entity.Center).SafeNormalize(fallback);
 
         /// <summary>
+        /// Calculates a smoothstep of a variant with degree 11. Considerably more expensive than a traditional smoothstep, but also far smoother.
+        /// </summary>
+        /// <param name="x">The input to the smoothstep. Clamped between 0 and 1.</param>
+        public static float UltrasmoothStep(float x)
+		{
+            x = MathHelper.Clamp(x, 0f, 1f);
+            return MathHelper.SmoothStep(0f, 1f, MathHelper.SmoothStep(0f, 1f, x));
+		}
+
+        /// <summary>
         /// Rotates a vector's direction towards an ideal angle at a specific incremental rate. Can be returned as a unit vector.
         /// </summary>
         /// <param name="originalVector">The origina vector to turn.</param>

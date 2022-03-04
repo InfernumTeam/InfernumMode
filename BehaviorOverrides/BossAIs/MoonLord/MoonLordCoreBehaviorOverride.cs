@@ -23,12 +23,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             PhantasmalDeathrays,
             PhantasmalRush,
             PhantasmalDance,
-            PhantasmalBarrage
+            PhantasmalBarrage,
+            ExplodingConstellations,
+            UnstableNebulae
         }
 
         public const int ArenaWidth = 200;
         public const int ArenaHeight = 150;
         public const float BaseFlySpeedFactor = 6f;
+        public const float Phase2LifeRatio = 0.65f;
         public static readonly Color OverallTint = new Color(7, 81, 81);
 
         public static bool IsEnraged
@@ -98,9 +101,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Reset things.
             npc.dontTakeDamage = NPC.CountNPCS(NPCID.MoonLordFreeEye) < 3;
 
-            // Life ratio.
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-
             // Start the AI and create the arena.
             if (npc.localAI[3] == 0f)
             {
@@ -156,6 +156,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     break;
                 case MoonLordAttackState.DeathEffects:
                     DoBehavior_DeathEffects(npc, ref deathAttackTimer);
+                    break;
+                case MoonLordAttackState.UnstableNebulae:
+                    DoBehavior_UnstableNebulae(npc, target, ref attackTimer);
                     break;
                 default:
                     if ((currentAttack == MoonLordAttackState.PhantasmalFlareBursts ||
@@ -282,7 +285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextFloat() < explosionCreationRate)
                 {
                     Vector2 explosionSpawnPosition = npc.Center + Main.rand.NextVector2Circular(200f, 450f);
-                    Utilities.NewProjectileBetter(explosionSpawnPosition, Vector2.Zero, ModContent.ProjectileType<MoonLordDeathExplosion>(), 0, 0f);
+                    Utilities.NewProjectileBetter(explosionSpawnPosition, Vector2.Zero, ModContent.ProjectileType<MoonLordExplosion>(), 0, 0f);
                 }
                 MoonlordDeathDrama.RequestLight(Utils.InverseLerp(480f, 530f, attackTimer, true) * 8f, npc.Center);
             }
@@ -309,6 +312,61 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             attackTimer++;
         }
 
+        public static void DoBehavior_UnstableNebulae(NPC npc, Player target, ref float attackTimer)
+        {
+            DoBehavior_IdleHover(npc, target, ref attackTimer);
+
+            int nebulaSummonCount = 3;
+            ref float nebulaSummonCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Create a bunch of nebulae across the arena.
+            if (attackTimer % 240f == 1f)
+            {
+                Main.PlaySound(SoundID.DD2_EtherianPortalOpen, target.Center);
+                Main.PlaySound(SoundID.DD2_BetsyFlameBreath, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int nebulaSeed = Main.rand.Next(1000);
+                    Rectangle arena = npc.Infernum().arenaRectangle;
+                    for (float x = arena.Left; x < arena.Right; x += Main.rand.NextFloat(80f, 115f))
+                    {
+                        for (float y = arena.Top; y < arena.Bottom; y += Main.rand.NextFloat(80f, 115f))
+                        {
+                            float noise = CalamityUtils.PerlinNoise2D(x / 800f, y / 800f, 2, nebulaSeed) * 0.5f + 0.5f;
+                            float xInterpolant = Utils.InverseLerp(arena.Left, arena.Right, x, true);
+                            float yInterpolant = Utils.InverseLerp(arena.Top, arena.Bottom, y, true);
+                            Vector2 playerCenter = new Vector2(Utils.InverseLerp(arena.Left, arena.Right, target.Center.X, true),
+                                Utils.InverseLerp(arena.Top, arena.Bottom, target.Center.Y, true));
+                            float edgeInterpolant = Vector2.Distance(playerCenter, new Vector2(xInterpolant, yInterpolant)) * 1.414f;
+
+                            // Bias noise towards 0 if close to the center.
+                            noise = MathHelper.Lerp(noise, 0f, Utils.InverseLerp(0.33f, 0.2f, edgeInterpolant, true));
+
+                            // Create nebulae.
+                            Vector2 nebulaSpawnPosition = new Vector2(x, y);
+                            if (!target.WithinRange(nebulaSpawnPosition, Main.rand.NextFloat(325f, 400f)) && noise > 0.53f)
+                            {
+                                Vector2 nebulaVelocity = Main.rand.NextVector2Circular(2f, 2f);
+                                Utilities.NewProjectileBetter(nebulaSpawnPosition, nebulaVelocity, ModContent.ProjectileType<NebulaCloud>(), 215, 0f);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Create portals around the target.
+            if (attackTimer >= 60f && attackTimer % 20f == 19f)
+            {
+                Vector2 portalSpawnOffset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(500f, 700f);
+                int vortex = Utilities.NewProjectileBetter(target.Center + portalSpawnOffset, Vector2.Zero, ModContent.ProjectileType<NebulaVortex>(), 0, 0f);
+                if (Main.projectile.IndexInRange(vortex))
+                    Main.projectile[vortex].ai[1] = portalSpawnOffset.ToRotation() + MathHelper.Pi;
+            }
+
+            if (attackTimer >= 840f)
+                SelectNextAttack(npc);
+        }
+
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
             float verticalOffset = MathHelper.Lerp(0f, 45f, (float)Math.Cos(attackTimer / 32f) * 0.5f + 0.5f);
@@ -323,6 +381,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             npc.ai[1] = 0f;
 
             int eyeCount = NPC.CountNPCS(NPCID.MoonLordFreeEye);
+            float lifeRatio = npc.life / (float)npc.lifeMax;
+
             MoonLordAttackState[] attackCycle = new MoonLordAttackState[]
             {
                 !EyeIsActive && eyeCount >= 2 ? MoonLordAttackState.PhantasmalDance :MoonLordAttackState.PhantasmalBoltEyeBursts,
@@ -345,10 +405,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 attackCycle = new MoonLordAttackState[]
                 {
                     MoonLordAttackState.PhantasmalDance,
-                    MoonLordAttackState.PhantasmalBoltEyeBursts,
                     MoonLordAttackState.PhantasmalRush,
                     MoonLordAttackState.PhantasmalBarrage,
                 };
+
+                if (lifeRatio < Phase2LifeRatio)
+                {
+                    attackCycle = new MoonLordAttackState[]
+                    {
+                        MoonLordAttackState.PhantasmalDance,
+                        MoonLordAttackState.UnstableNebulae,
+                        MoonLordAttackState.PhantasmalRush,
+                        MoonLordAttackState.ExplodingConstellations,
+                        MoonLordAttackState.PhantasmalDance,
+                        MoonLordAttackState.PhantasmalBarrage,
+                        MoonLordAttackState.UnstableNebulae,
+                        MoonLordAttackState.ExplodingConstellations,
+                    };
+                }
             }
 
             npc.ai[0] = (int)attackCycle[(int)npc.Infernum().ExtraAI[7] % attackCycle.Length];

@@ -1,6 +1,6 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.BaseProjectiles;
-using InfernumMode;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -8,7 +8,7 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
-namespace CalamityMod.Projectiles.Ranged
+namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
     public class PrismRay : BaseLaserbeamProjectile
     {
@@ -36,6 +36,8 @@ namespace CalamityMod.Projectiles.Ranged
         {
             projectile.width = projectile.height = 25;
             projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
             projectile.penetrate = -1;
             projectile.alpha = 255;
             projectile.Calamity().canBreakPlayerDefense = true;

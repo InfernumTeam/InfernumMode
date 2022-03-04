@@ -260,7 +260,6 @@ namespace InfernumMode
         }
         public override void PostUpdateMiscEffects()
         {
-            NPC.MoonLordCountdown = 0;
             if (player.mount.Active && player.mount.Type == Mount.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DesertScourgeHead")))
             {
                 player.mount.Dismount(player);

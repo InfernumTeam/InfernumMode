@@ -1,7 +1,9 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -55,6 +57,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     if (!hasPopped)
                         DoBehavior_PhantasmalFlareBursts(npc, core, target, handSide, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
                     break;
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.ExplodingConstellations:
+                    DoBehavior_ExplodingConstellations(npc, core, target, handSide, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
+                    break;
                 default:
                     DoBehavior_DefaultHandHover(npc, core, handSide, attackTimer, ref idealFrame);
                     break;
@@ -100,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             float sphereShootSpeed = 12f;
             float sphereSlamSpeed = 6f;
             if (MoonLordCoreBehaviorOverride.CurrentActiveArms <= 1)
-			{
+            {
                 sphereShootRate -= 4;
                 sphereSlamSpeed += 3f;
             }
@@ -248,6 +253,114 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             if (attackTimer >= flareTelegraphTime + flareReleaseDelay + flareShootTime)
+                core.Infernum().ExtraAI[5] = 1f;
+        }
+
+        public static void DoBehavior_ExplodingConstellations(NPC npc, NPC core, Player target, int handSide, float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale, ref int idealFrame)
+        {
+            idealFrame = 0;
+            int initialAnimationTime = 54;
+            int starCreationRate = 4;
+            int totalStarsToCreate = 15;
+            int explosionTime = 130;
+            int starCreationTime = totalStarsToCreate * starCreationRate;
+            int constellationCount = 3;
+            float animationCompletionRatio = MathHelper.Clamp(attackTimer / initialAnimationTime, 0f, 1f);
+            float wrappedAttackTimer = (attackTimer + (handSide == 0f ? 0f : 36f)) % (initialAnimationTime + starCreationTime + explosionTime);
+            Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -125f);
+            Vector2 endingIdealPosition = core.Center + new Vector2(handSide * 450f, -350f);
+
+            ref float constellationPatternType = ref npc.Infernum().ExtraAI[0];
+            ref float constellationSeed = ref npc.Infernum().ExtraAI[1];
+
+            // Create charge dust and close hands before the attack begins.
+            if (wrappedAttackTimer < initialAnimationTime - 12f)
+            {
+                float chargePowerup = Utils.InverseLerp(0f, 0.5f, animationCompletionRatio, true);
+                int chargeDustCount = (int)Math.Round(MathHelper.Lerp(1f, 3f, chargePowerup));
+                float chargeDustOffset = MathHelper.Lerp(30f, 75f, chargePowerup);
+
+                for (int i = 0; i < chargeDustCount; i++)
+                {
+                    Vector2 chargeDustSpawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(chargeDustOffset, chargeDustOffset) * Main.rand.NextFloat(0.8f, 1f);
+                    Vector2 chargeDustVelocity = (npc.Center - chargeDustSpawnPosition) * 0.05f;
+                    Dust electricity = Dust.NewDustPerfect(chargeDustSpawnPosition, 229);
+                    electricity.velocity = chargeDustVelocity * Main.rand.NextFloat(0.9f, 1.1f);
+                    electricity.scale = MathHelper.Lerp(1f, 1.45f, chargePowerup);
+                    electricity.alpha = 84;
+                    electricity.noGravity = true;
+                }
+
+                idealFrame = 3;
+            }
+
+            float hoverInterpolant = CalamityUtils.Convert01To010(animationCompletionRatio);
+            Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, hoverInterpolant);
+            idealPosition += (attackTimer / 16f).ToRotationVector2() * new Vector2(10f, 30f);
+
+            Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 18f);
+            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.18f).MoveTowards(idealVelocity, 1.8f);
+
+            // Determine what constellation pattern this arm will use. Each arm has their own pattern that they create.
+            if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == initialAnimationTime - 30f)
+            {
+                constellationSeed = Main.rand.NextFloat();
+                constellationPatternType = Main.rand.Next(3);
+                npc.netUpdate = true;
+            }
+
+            // Create stars.
+            if (wrappedAttackTimer >= initialAnimationTime &&
+                wrappedAttackTimer < initialAnimationTime + starCreationTime && 
+                (wrappedAttackTimer - initialAnimationTime) % starCreationRate == 0f)
+            {
+                float patternCompletion = Utils.InverseLerp(initialAnimationTime, initialAnimationTime + starCreationTime, wrappedAttackTimer, true);
+                Vector2 currentPoint;
+                switch ((int)constellationPatternType)
+                {
+                    // Diagonal stars from top left to bottom right.
+                    case 0:
+                        Vector2 startingPoint = target.Center + new Vector2(-800f, -600f);
+                        Vector2 endingPoint = target.Center + new Vector2(800f, 600f);
+                        currentPoint = Vector2.Lerp(startingPoint, endingPoint, patternCompletion);
+                        break;
+
+                    // Diagonal stars from top right to bottom left.
+                    case 1:
+                        startingPoint = target.Center + new Vector2(800f, -600f);
+                        endingPoint = target.Center + new Vector2(-800f, 600f);
+                        currentPoint = Vector2.Lerp(startingPoint, endingPoint, patternCompletion);
+                        break;
+
+                    // Horizontal sinusoid.
+                    case 2:
+                    default:
+                        float horizontalOffset = MathHelper.Lerp(-775f, 775f, patternCompletion);
+                        float verticalOffset = (float)Math.Cos(patternCompletion * MathHelper.Pi + constellationSeed * MathHelper.TwoPi) * 420f;
+                        currentPoint = target.Center + new Vector2(horizontalOffset, verticalOffset);
+                        break;
+                }
+
+                Main.PlaySound(SoundID.Item72, currentPoint);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int star = Utilities.NewProjectileBetter(currentPoint, Vector2.Zero, ModContent.ProjectileType<StardustConstellation>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(star))
+                    {
+                        Main.projectile[star].ai[0] = (int)(patternCompletion * totalStarsToCreate);
+                        Main.projectile[star].ai[1] = npc.whoAmI;
+                    }
+                }
+            }
+
+            // Make all constellations spawned by this hand prepare to explode.
+            if (wrappedAttackTimer == initialAnimationTime + starCreationTime)
+            {
+                foreach (Projectile star in Utilities.AllProjectilesByID(ModContent.ProjectileType<StardustConstellation>()).Where(p => p.ai[1] == npc.whoAmI))
+                    star.timeLeft = 50;
+            }
+
+            if (attackTimer >= (initialAnimationTime + starCreationTime + explosionTime) * constellationCount - 1f)
                 core.Infernum().ExtraAI[5] = 1f;
         }
 

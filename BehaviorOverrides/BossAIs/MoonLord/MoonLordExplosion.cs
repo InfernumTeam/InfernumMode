@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
-    public class MoonLordDeathExplosion : ModProjectile
+    public class MoonLordExplosion : ModProjectile
     {
         public ref float Countdown => ref projectile.ai[0];
         public Player Target => Main.player[projectile.owner];

@@ -4,7 +4,6 @@ using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Boss;
-using CalamityMod.Projectiles.Ranged;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;

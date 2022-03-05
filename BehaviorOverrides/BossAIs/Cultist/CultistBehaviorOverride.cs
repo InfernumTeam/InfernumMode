@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Dusts;
 using CalamityMod.Events;
-using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

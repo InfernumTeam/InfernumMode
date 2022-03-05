@@ -161,7 +161,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     DoAttack_SandFlames(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case GreatSandSharkAttackState.SharkWaves:
-                    DoAttack_SharkWaves(npc, target, desertTextureVariant, lifeRatio, ref attackTimer);
+                    DoAttack_SharkWaves(npc, target, desertTextureVariant, ref attackTimer);
                     break;
             }
 
@@ -471,7 +471,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 SelectNextAttack(npc);
         }
 
-        public static void DoAttack_SharkWaves(NPC npc, Player target, int desertTextureVariant, float lifeRatio, ref float attackTimer)
+        public static void DoAttack_SharkWaves(NPC npc, Player target, int desertTextureVariant, ref float attackTimer)
         {
             int sharkSummonRate = 62;
             float swimAcceleration = 0.45f;

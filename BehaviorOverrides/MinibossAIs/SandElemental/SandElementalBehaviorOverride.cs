@@ -1,5 +1,4 @@
-﻿using CalamityMod.NPCs.NormalNPCs;
-using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
+﻿using InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;

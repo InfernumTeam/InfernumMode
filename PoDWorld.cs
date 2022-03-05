@@ -1,7 +1,5 @@
-using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.IO;

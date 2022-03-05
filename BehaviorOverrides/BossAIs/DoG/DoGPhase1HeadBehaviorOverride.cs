@@ -178,14 +178,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     Main.PlaySound(SoundID.Item12, target.position);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 12; i++)
+                        for (int i = 0; i < 16; i++)
                         {
-                            Vector2 spawnOffset = Vector2.UnitX.RotatedBy(MathHelper.Lerp(-0.74f, 0.74f, i / 11f) + Main.rand.NextFloatDirection() * 0.1f) * 1350f + Main.rand.NextVector2Circular(30f, 30f);
+                            Vector2 spawnOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * 1200f + Main.rand.NextVector2Circular(100f, 100f);
                             Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(3f, 3f);
-                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
-
-                            spawnOffset = -Vector2.UnitX.RotatedBy(MathHelper.Lerp(-0.74f, 0.74f, i / 11f) + Main.rand.NextFloatDirection() * 0.1f) * 1350f + Main.rand.NextVector2Circular(30f, 30f);
-                            laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(3f, 3f);
                             Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
                         }
                     }

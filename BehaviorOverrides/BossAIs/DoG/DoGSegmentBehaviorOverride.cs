@@ -234,7 +234,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (passiveFade > 0f)
                     afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
                 afterimageColor.A = 50;
-                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
+                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 44f;
 
                 for (int i = 0; i < 12; i++)
                 {
@@ -311,7 +311,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (passiveFade > 0f)
                     afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
                 afterimageColor.A = 50;
-                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
+                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 44f;
 
                 for (int i = 0; i < 12; i++)
                 {

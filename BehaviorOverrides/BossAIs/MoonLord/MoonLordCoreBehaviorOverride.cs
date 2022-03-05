@@ -4,6 +4,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.ID;
@@ -207,6 +208,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     break;
             }
             attackTimer++;
+
+            // Clear projectiles, go to the desperation attack, and do some visual effects when ready to enter the final phase.
+            if (npc.Infernum().ExtraAI[8] == 0f && InFinalPhase)
+            {
+                var fuckYou = new Terraria.Audio.LegacySoundStyle(SoundID.Zombie, 92);
+                var roarSound = Main.PlaySound(fuckYou, npc.Center);
+                if (roarSound != null)
+                {
+                    roarSound.Volume = MathHelper.Clamp(roarSound.Volume * 2f, 0f, 1f);
+                    roarSound.Pitch = -0.48f;
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<MoonLordWave>(), 0, 0f);
+
+                ClearAllProjectiles();
+                SelectNextAttack(npc);
+            }
 
             // Forcefully switch attacks if the mechanism variable for it is activated.
             // This is intended to be used by the arms/head directly and not inside in-class behavior states.
@@ -490,6 +509,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 npc.ai[0] = (int)MoonLordAttackState.VoidAccretionDisk;
                 npc.Infernum().ExtraAI[8] = 1f;
+                npc.Infernum().ExtraAI[7] = 0f;
             }
 
             // Use the void accretion disk for every fourth attack when in the third phase.
@@ -510,6 +530,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             npc.netUpdate = true;
+        }
+
+        public static void ClearAllProjectiles()
+        {
+            int[] projectilesToDelete = new int[]
+            {
+                ProjectileID.PhantasmalBolt,
+                ProjectileID.PhantasmalSphere,
+                ProjectileID.PhantasmalEye,
+                ModContent.ProjectileType<LunarAsteroid>(),
+                ModContent.ProjectileType<LunarFireball>(),
+                ModContent.ProjectileType<LunarFlare>(),
+                ModContent.ProjectileType<LunarFlareTelegraph>(),
+                ModContent.ProjectileType<NebulaCloud>(),
+                ModContent.ProjectileType<NebulaVortex>(),
+                ModContent.ProjectileType<PhantasmalDeathray>(),
+                ModContent.ProjectileType<PhantasmalOrb>(),
+                ModContent.ProjectileType<StardustConstellation>(),
+                ModContent.ProjectileType<VoidBlackHole>(),
+            };
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (projectilesToDelete.Contains(Main.projectile[i].type))
+                    Main.projectile[i].active = false;
+            }
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)

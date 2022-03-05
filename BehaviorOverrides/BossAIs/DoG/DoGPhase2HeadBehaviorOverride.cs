@@ -193,6 +193,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 DoDeathEffects(npc, deathTimer);
                 jawRotation = jawRotation.AngleTowards(0f, 0.07f);
+                segmentFadeType = (int)BodySegmentFadeType.ApproachAheadSegmentOpacity;
+                npc.Opacity = 1f;
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 deathTimer++;
                 return false;
@@ -306,7 +308,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Do sentinel attacks.
             if (totalSentinelAttacks >= 1 && npc.alpha <= 0)
                 sentinelAttackTimer += 1f;
-            if (sentinelAttackTimer >= totalSentinelAttacks * 900f)
+            if (sentinelAttackTimer >= totalSentinelAttacks * 450f)
                 sentinelAttackTimer = 0f;
 
             // Light
@@ -373,14 +375,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     Main.PlaySound(SoundID.Item12, target.position);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 20; i++)
+                        for (int i = 0; i < 24; i++)
                         {
-                            Vector2 spawnOffset = Vector2.UnitX.RotatedBy(MathHelper.Lerp(-0.54f, 0.54f, i / 19f) + Main.rand.NextFloatDirection() * 0.1f) * 1350f + Main.rand.NextVector2Circular(30f, 30f);
-                            Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(5f, 5f);
-                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
-
-                            spawnOffset = -Vector2.UnitX.RotatedBy(MathHelper.Lerp(-0.54f, 0.54f, i / 19f) + Main.rand.NextFloatDirection() * 0.1f) * 1350f + Main.rand.NextVector2Circular(30f, 30f);
-                            laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(5f, 5f);
+                            Vector2 spawnOffset = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 1150f + Main.rand.NextVector2Circular(70f, 70f);
+                            Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(3f, 3f);
                             Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
                         }
                     }
@@ -393,7 +391,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (npc.velocity.Length() > 14.5f)
                     npc.velocity *= 0.75f;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && sentinelAttackTimer % 70f == 69f && !npc.WithinRange(target.Center, 300f))
+                bool shouldFire = sentinelAttackTimer % 70f == 69f && sentinelAttackTimer < attackTime * 2f - 75f;
+                if (Main.netMode != NetmodeID.MultiplayerClient && shouldFire && !npc.WithinRange(target.Center, 300f))
                 {
                     for (int i = 0; i < 12; i++)
                     {
@@ -738,11 +737,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public static void DoSpecialAttack_ChargeGates(NPC npc, Player target, bool nearDeath, ref float attackTimer, ref float portalIndex, ref float segmentFadeType)
         {
-            int portalTelegraphTime = 52;
+            int fireballCount = 8;
+            int idealPortalTelegraphTime = 52;
             float wrappedAttackTimer = attackTimer % 135f;
-            float chargeSpeed = nearDeath ? 85f : 60f;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
 
+            if (lifeRatio < 0.15f)
+            {
+                fireballCount -= 2;
+                idealPortalTelegraphTime -= 9;
+            }
+            if (lifeRatio < 0.1f)
+            {
+                fireballCount -= 2;
+                idealPortalTelegraphTime -= 9;
+            }
+            if (lifeRatio < 0.05f)
+            {
+                fireballCount -= 2;
+                idealPortalTelegraphTime -= 9;
+            }
+
+            float chargeSpeed = nearDeath ? 85f : 60f;
             ref float initialTeleportPortal = ref npc.Infernum().ExtraAI[36];
+            ref float portalTelegraphTime = ref npc.Infernum().ExtraAI[37];
+
+            // Define the portal telegraph time if it is uninitialized.
+            if (portalTelegraphTime == 0f)
+            {
+                portalTelegraphTime = idealPortalTelegraphTime;
+                npc.netUpdate = true;
+            }
 
             // Disappear if the target is dead and DoG is invisible.
             if (target.dead && npc.Opacity <= 0f)
@@ -800,9 +825,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                     // Create a burst of homing flames.
                     float flameBurstOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < fireballCount; i++)
                     {
-                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 8f + flameBurstOffsetAngle).ToRotationVector2() * 15f;
+                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / fireballCount + flameBurstOffsetAngle).ToRotationVector2() * 15f;
                         Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
                     }
 
@@ -895,6 +920,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 else
                 {
                     segmentFadeType = (int)BodySegmentFadeType.InhertHeadOpacity;
+                    npc.Infernum().ExtraAI[37] = 0f;
                     npc.Opacity = 0f;
                 }
             }

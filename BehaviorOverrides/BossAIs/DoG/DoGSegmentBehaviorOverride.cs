@@ -234,12 +234,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (passiveFade > 0f)
                     afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
                 afterimageColor.A = 50;
-                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 44f;
+                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
 
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
-                    spriteBatch.Draw(bodyTexture, drawPosition + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(bodyTexture, drawPosition + afterimageOffset, null, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
                 }
             }
             spriteBatch.Draw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
@@ -311,12 +311,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (passiveFade > 0f)
                     afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
                 afterimageColor.A = 50;
-                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 44f;
+                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
 
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
-                    spriteBatch.Draw(tailTexture, drawPosition + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(tailTexture, drawPosition + afterimageOffset, null, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
                 }
             }
             spriteBatch.Draw(tailTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);

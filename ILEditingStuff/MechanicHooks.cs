@@ -154,7 +154,7 @@ namespace InfernumMode.ILEditingStuff
         public static void PrepareShaderForBG(On.Terraria.Main.orig_DrawSurfaceBG orig, Main self)
         {
             int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
-            bool useShader = InfernumMode.CanUseCustomAIs && moonLordIndex >= 0 && moonLordIndex < Main.maxNPCs;
+            bool useShader = InfernumMode.CanUseCustomAIs && moonLordIndex >= 0 && moonLordIndex < Main.maxNPCs && !Main.gameMenu;
             orig(self);
 
             if (useShader)

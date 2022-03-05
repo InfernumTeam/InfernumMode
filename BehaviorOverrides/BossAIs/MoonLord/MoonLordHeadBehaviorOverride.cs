@@ -94,11 +94,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             int boltShootDelay = 32;
             int circularSpreadBoltCount = 12;
             int randomBurstBoltCount = 6;
-            float boltShootSpeed = 5f;
+            float boltShootSpeed = 4.25f;
             if (MoonLordCoreBehaviorOverride.IsEnraged)
             {
                 boltShootDelay -= 14;
-                boltShootSpeed += 6f;
+                boltShootSpeed += 5f;
                 circularSpreadBoltCount += 8;
                 randomBurstBoltCount += 7;
             }

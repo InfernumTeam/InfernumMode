@@ -223,7 +223,7 @@ namespace InfernumMode
                 {
                     IntroScreenManager.Draw();
                     return true;
-                }, InterfaceScaleType.Game));
+                }, InterfaceScaleType.None));
             }
         }
 

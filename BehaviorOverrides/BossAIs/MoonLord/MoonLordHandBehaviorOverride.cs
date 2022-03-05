@@ -408,7 +408,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Vector2 handBottom = npc.Center + new Vector2(0f, 76f);
             Vector2 v = (shoulderCenter - handBottom) * 0.5f;
             Vector2 armOrigin = new Vector2(60f, 30f);
-            SpriteEffects direction = npc.ai[2] == 1f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            SpriteEffects direction = npc.ai[2] != 1f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             if (!isLeftHand)
                 armOrigin.X = armTexture.Width - armOrigin.X;
 

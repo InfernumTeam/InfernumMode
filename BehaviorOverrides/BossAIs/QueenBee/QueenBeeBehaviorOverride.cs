@@ -160,7 +160,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
         public static void DoAttack_HorizontalCharge(NPC npc, Player target, float generalAttackTimer, ref float frameType)
         {
-            int chargesToDo = 4;
+            int chargeCount = 4;
             float baseChargeSpeed = 19.5f;
             float chargeSpeedup = 0.0067f;
             float hoverOffset = 320f;
@@ -169,7 +169,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 baseChargeSpeed += 4.5f;
 
             if (npc.life < npc.lifeMax * 0.33)
-                chargesToDo += 2;
+                chargeCount += 2;
 
             if (npc.life < npc.lifeMax * FinalPhaseLifeRatio)
             {
@@ -183,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
             if (BossRushEvent.BossRushActive)
             {
-                chargesToDo += 8;
+                chargeCount += 8;
                 chargeSpeedup = 0.1f;
                 hoverOffset -= 110f;
             }
@@ -232,7 +232,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 }
             }
 
-            if (totalChargesDone >= chargesToDo)
+            if (totalChargesDone >= chargeCount)
                 GotoNextAttackState(npc);
         }
 

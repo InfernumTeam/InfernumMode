@@ -616,22 +616,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             int attackDelay = 120;
             int normalTwinsAttackTime = 360;
-            int totalNormalShotsToDo = 8;
+            int totalNormalShotCount = 8;
             float normalShotShootSpeed = 10f;
 
             if (CurrentTwinsPhase != 4)
             {
                 normalShotShootSpeed += 3f;
-                totalNormalShotsToDo++;
+                totalNormalShotCount++;
             }
 
             if (EnrageTimer > 0f)
             {
                 normalShotShootSpeed += 6f;
-                totalNormalShotsToDo += 3;
+                totalNormalShotCount += 3;
             }
 
-            int normalShotShootRate = normalTwinsAttackTime / totalNormalShotsToDo;
+            int normalShotShootRate = normalTwinsAttackTime / totalNormalShotCount;
 
             // Inherit the attack timer from the initial mech.
             attackTimer = FindInitialMech()?.ai[1] ?? attackTimer;
@@ -660,7 +660,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (attackTimer < attackDelay + normalTwinsAttackTime)
                 {
                     // Hover near the target and look at them.
-                    float hoverOffsetAngle = MathHelper.TwoPi * normalShotCounter / totalNormalShotsToDo - MathHelper.PiOver2;
+                    float hoverOffsetAngle = MathHelper.TwoPi * normalShotCounter / totalNormalShotCount - MathHelper.PiOver2;
                     if (npc.type == ModContent.NPCType<Artemis>())
                     {
                         normalShotCounter = Main.npc[CalamityGlobalNPC.draedonExoMechTwinGreen].Infernum().ExtraAI[0];

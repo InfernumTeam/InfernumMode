@@ -17,6 +17,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 {
     public class PerforatorHiveBehaviorOverride : NPCBehaviorOverride
     {
+        public enum PerforatorHiveAttackState
+        {
+            HoverNearTarget,
+            SwoopTowardsPlayer,
+            ReleaseRegularBursts,
+            IchorBlastsFromBelow
+        }
+
+        public const float Phase2LifeRatio = 0.75f;
+        public const float Phase3LifeRatio = 0.4f;
+        public const float Phase4LifeRatio = 0.15f;
+
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHive>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
@@ -82,21 +94,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int spawnAnimationTime = BossRushEvent.BossRushActive ? 75 : 200;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (lifeRatio < 0.75f && animationState == 0f)
+                if (lifeRatio < Phase2LifeRatio && animationState == 0f)
                 {
                     animationState = 1f;
                     summonAnimationCountdown = spawnAnimationTime;
                     npc.netUpdate = true;
                 }
 
-                if (lifeRatio < 0.4f && animationState == 1f)
+                if (lifeRatio < Phase3LifeRatio && animationState == 1f)
                 {
                     animationState = 2f;
                     summonAnimationCountdown = spawnAnimationTime;
                     npc.netUpdate = true;
                 }
 
-                if (lifeRatio < 0.15f && animationState == 2f)
+                if (lifeRatio < Phase4LifeRatio && animationState == 2f)
                 {
                     animationState = 3f;
                     summonAnimationCountdown = spawnAnimationTime;
@@ -198,51 +210,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             if (npc.Opacity >= 1f)
             {
-                if (attackState == 0f)
+                switch ((PerforatorHiveAttackState)(int)attackState)
                 {
-                    DoAttack_HoverNearTarget(npc, target, lifeRatio < 0.15f, ref attackTimer, enraged, anyWorms, out bool gotoNextAttack);
-                    if (gotoNextAttack)
-                    {
-                        attackTimer = 0f;
-                        attackState = npc.WithinRange(target.Center, 880f) ? 1f : 2f;
-                        if (lifeRatio < 0.15f)
-                            attackState = 3f;
-                        npc.TargetClosest();
-                        npc.netUpdate = true;
-                    }
-                }
-                else if (attackState == 1f)
-                {
-                    DoAttack_SwoopTowardsPlayer(npc, target, ref attackTimer, enraged, anyWorms, out bool gotoNextAttack);
-                    if (gotoNextAttack)
-                    {
-                        attackTimer = 0f;
-                        attackState = 2f;
-                        npc.TargetClosest();
-                        npc.netUpdate = true;
-                    }
-                }
-                else if (attackState == 2f)
-                {
-                    DoAttack_ReleaseRegularBursts(npc, target, lifeRatio < 0.15f, ref attackTimer, enraged, anyWorms, out bool gotoNextAttack);
-                    if (gotoNextAttack)
-                    {
-                        attackTimer = 0f;
-                        attackState = 0f;
-                        npc.TargetClosest();
-                        npc.netUpdate = true;
-                    }
-                }
-                else if (attackState == 3f)
-                {
-                    DoAttack_IchorBlastsFromBelow(npc, target, ref attackTimer, enraged, out bool gotoNextAttack);
-                    if (gotoNextAttack)
-                    {
-                        attackTimer = 0f;
-                        attackState = 0f;
-                        npc.TargetClosest();
-                        npc.netUpdate = true;
-                    }
+                    case PerforatorHiveAttackState.HoverNearTarget:
+                        DoAttack_HoverNearTarget(npc, target, lifeRatio < Phase4LifeRatio, ref attackTimer, enraged, anyWorms);
+                        break;
+                    case PerforatorHiveAttackState.SwoopTowardsPlayer:
+                        DoAttack_SwoopTowardsPlayer(npc, target, ref attackTimer, enraged, anyWorms);
+                        break;
+                    case PerforatorHiveAttackState.ReleaseRegularBursts:
+                        DoAttack_ReleaseRegularBursts(npc, target, lifeRatio < Phase4LifeRatio, ref attackTimer, enraged, anyWorms);
+                        break;
+                    case PerforatorHiveAttackState.IchorBlastsFromBelow:
+                        DoAttack_IchorBlastsFromBelow(npc, target, ref attackTimer, enraged);
+                        break;
                 }
             }
             else
@@ -263,7 +244,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 npc.timeLeft = 225;
         }
 
-        public static void DoAttack_SwoopTowardsPlayer(NPC npc, Player target, ref float attackTimer, bool enraged, bool anyWorms, out bool gotoNextAttack)
+        public static void SelectNextAttack(NPC npc)
+        {
+            Player target = Main.player[npc.target];
+
+            PerforatorHiveAttackState nextAttack = (PerforatorHiveAttackState)(int)npc.ai[0];
+            switch ((PerforatorHiveAttackState)(int)npc.ai[0])
+            {
+                case PerforatorHiveAttackState.HoverNearTarget:
+                    nextAttack = npc.WithinRange(target.Center, 880f) ? PerforatorHiveAttackState.SwoopTowardsPlayer : PerforatorHiveAttackState.ReleaseRegularBursts;
+                    if (npc.life / (float)npc.lifeMax < Phase4LifeRatio)
+                        nextAttack = PerforatorHiveAttackState.IchorBlastsFromBelow;
+                    break;
+                case PerforatorHiveAttackState.SwoopTowardsPlayer:
+                    nextAttack = PerforatorHiveAttackState.ReleaseRegularBursts;
+                    break;
+                case PerforatorHiveAttackState.ReleaseRegularBursts:
+                    nextAttack = PerforatorHiveAttackState.SwoopTowardsPlayer;
+                    break;
+                case PerforatorHiveAttackState.IchorBlastsFromBelow:
+                    nextAttack = PerforatorHiveAttackState.ReleaseRegularBursts;
+                    break;
+            }
+
+            npc.ai[0] = (int)nextAttack;
+            npc.ai[1] = 0f;
+            npc.TargetClosest();
+            npc.netUpdate = true;
+        }
+
+        public static void DoAttack_SwoopTowardsPlayer(NPC npc, Player target, ref float attackTimer, bool enraged, bool anyWorms)
         {
             // Hover above the target before swooping.
             if (attackTimer < 90f)
@@ -305,10 +315,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             if (attackTimer > 160f)
                 npc.velocity *= 0.97f;
 
-            gotoNextAttack = attackTimer >= 195f;
+            if (attackTimer >= 195f)
+                SelectNextAttack(npc);
         }
 
-        public static void DoAttack_HoverNearTarget(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool enraged, bool anyWorms, out bool gotoNextAttack)
+        public static void DoAttack_HoverNearTarget(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool enraged, bool anyWorms)
         {
             if (attackTimer % 120f > 85f && attackTimer > 120f)
             {
@@ -342,10 +353,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 npc.velocity -= npc.SafeDirectionTo(target.Center) * Utils.InverseLerp(235f, 115f, npc.Distance(target.Center), true) * 12f;
             }
 
-            gotoNextAttack = attackTimer >= 360f;
+            if (attackTimer >= 360f)
+                SelectNextAttack(npc);
         }
 
-        public static void DoAttack_ReleaseRegularBursts(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool enraged, bool anyWorms, out bool gotoNextAttack)
+        public static void DoAttack_ReleaseRegularBursts(NPC npc, Player target, bool finalWormDead, ref float attackTimer, bool enraged, bool anyWorms)
         {
             Vector2 destination = target.Center - Vector2.UnitY * 270f;
 
@@ -433,10 +445,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 Main.PlaySound(SoundID.NPCHit20, npc.position);
             }
 
-            gotoNextAttack = attackTimer >= shootRate * (totalBursts + 0.9f);
+            if (attackTimer >= shootRate * (totalBursts + 0.9f))
+                SelectNextAttack(npc);
         }
 
-        public static void DoAttack_IchorBlastsFromBelow(NPC npc, Player target, ref float attackTimer, bool enraged, out bool gotoNextAttack)
+        public static void DoAttack_IchorBlastsFromBelow(NPC npc, Player target, ref float attackTimer, bool enraged)
         {
             Vector2 destination = target.Center - Vector2.UnitY * 270f;
 
@@ -520,7 +533,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 }
             }
 
-            gotoNextAttack = attackTimer > 360f;
+            if (attackTimer > 360f)
+                SelectNextAttack(npc);
         }
 
         #endregion Specific Attacks

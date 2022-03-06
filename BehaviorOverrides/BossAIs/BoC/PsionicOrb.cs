@@ -24,6 +24,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public int Lifetime => UseUndergroundAI ? 225 : 300;
         public int AttackCycleTime => UseUndergroundAI ? 95 : 120;
         public const int Radius = 30;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Psychic Energy");

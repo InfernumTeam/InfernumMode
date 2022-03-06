@@ -15,6 +15,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public ref float Time => ref projectile.ai[0];
         public ref float Lifetime => ref projectile.ai[1];
         public ref float CrackLength => ref projectile.localAI[0];
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Reality Crack");
 
         public override void SetDefaults()

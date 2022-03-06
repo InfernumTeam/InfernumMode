@@ -20,6 +20,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         public ref float Time => ref projectile.ai[0];
         public ref float Radius => ref projectile.ai[1];
         public ref float AngerOnCreation => ref projectile.localAI[0];
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults() => DisplayName.SetDefault("Consumed Astral Star");
 
         public override void SetDefaults()

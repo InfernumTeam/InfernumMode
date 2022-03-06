@@ -19,6 +19,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             set => projectile.ai[0] = value.ToInt();
         }
         public const int Lifetime = 240;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Psionic Ray");

@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             StationaryBubbleCharge,
             SharkTornadoSummon,
             TidalWave,
-            TeleportCharge,
+            ChargeTeleport,
             RazorbladeRazorstorm
         }
 
@@ -103,12 +103,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public static readonly DukeAttackType[] Subphase3Pattern = new DukeAttackType[]
         {
-            DukeAttackType.TeleportCharge,
-            DukeAttackType.TeleportCharge,
+            DukeAttackType.ChargeTeleport,
+            DukeAttackType.Charge,
             DukeAttackType.RazorbladeRazorstorm,
-            DukeAttackType.TeleportCharge,
-            DukeAttackType.TeleportCharge,
-            DukeAttackType.TeleportCharge,
+            DukeAttackType.ChargeTeleport,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
             DukeAttackType.SharkTornadoSummon,
             DukeAttackType.Charge,
             DukeAttackType.Charge,
@@ -118,11 +122,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public static readonly DukeAttackType[] Subphase4Pattern = new DukeAttackType[]
         {
-            DukeAttackType.TeleportCharge,
-            DukeAttackType.TeleportCharge,
+            DukeAttackType.ChargeTeleport,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
             DukeAttackType.TidalWave,
-            DukeAttackType.TeleportCharge,
-            DukeAttackType.TeleportCharge,
+            DukeAttackType.ChargeTeleport,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
             DukeAttackType.RazorbladeRazorstorm,
         };
 
@@ -148,7 +162,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             // Aquire a new target if the current one is dead or inactive.
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
             {
-                aquireNewTarget();
+                target = AcquireNewTarget(npc);
+
                 // If no possible target was found, fly away.
                 if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 {
@@ -170,8 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             bool inPhase2 = lifeRatio < Phase2LifeRatio;
             bool inPhase3 = lifeRatio < Phase3LifeRatio;
             bool inPhase4 = lifeRatio < Phase4LifeRatio;
-            bool inWater = npc.wet;
-            ref float aiState = ref npc.Infernum().ExtraAI[5];
+            ref float attackState = ref npc.Infernum().ExtraAI[5];
             ref float aiStateIndex = ref npc.ai[1];
             ref float attackTimer = ref npc.Infernum().ExtraAI[6];
             ref float frameDrawType = ref npc.ai[3];
@@ -179,8 +193,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             ref float phaseTransitionTime = ref npc.Infernum().ExtraAI[8];
             ref float hasEyes01Flag = ref npc.Infernum().ExtraAI[9];
             ref float attackDelay = ref npc.Infernum().ExtraAI[10];
-            ref float teleportChargeCount = ref npc.Infernum().ExtraAI[11];
-            ref float eyeGlowmaskOpacity = ref npc.Infernum().ExtraAI[12];
+            ref float eyeGlowmaskOpacity = ref npc.Infernum().ExtraAI[11];
 
             bool enraged = target.position.Y < 300f || target.position.Y > Main.worldSurface * 16.0 ||
                            target.position.X > 6000f && target.position.X < (Main.maxTilesX * 16 - 6000);
@@ -191,7 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             npc.Calamity().CurrentlyEnraged = enraged;
 
             Vector2 mouthPosition = (npc.rotation + (npc.spriteDirection == 1).ToInt() * MathHelper.Pi).ToRotationVector2() * (npc.Size + Vector2.UnitY * 55f) * 0.6f + npc.Center;
-            mouthPosition.Y += 12f;
+            mouthPosition.Y += 24f;
 
             if (attackDelay < 60f)
             {
@@ -209,50 +222,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
 
                 attackDelay++;
-                aiState = (int)DukeAttackType.ChargeWait;
+                attackState = (int)DukeAttackType.ChargeWait;
                 return false;
-            }
-
-            void SelectNextAttack()
-            {
-                // You cannot use ref locals inside of a delegate context.
-                // You should be able to find most important, universal locals above, anyway.
-                // Any others that don't have an explicit reference above are exclusively for
-                // AI state manipulation.
-
-                npc.ai[1]++;
-
-                DukeAttackType[] patternToUse = SubphaseTable.First(table => table.Value(npc)).Key;
-                DukeAttackType nextAttackType = patternToUse[(int)(npc.ai[1] % patternToUse.Length)];
-
-                // Going to the next AI state.
-                npc.Infernum().ExtraAI[5] = (int)nextAttackType;
-
-                // Resetting the attack timer.
-                npc.Infernum().ExtraAI[6] = 0f;
-
-                // And the misc ai slots.
-                for (int i = 0; i < 5; i++)
-                {
-                    npc.Infernum().ExtraAI[i] = 0f;
-                }
-            }
-
-            void aquireNewTarget(bool changeDirection = true)
-            {
-                npc.TargetClosest(changeDirection);
-                target = Main.player[npc.target];
-            }
-
-            float getAdjustedAngle(float baseAngle, bool adjustDirection = false)
-            {
-                float idealAngle = baseAngle;
-                if (adjustDirection)
-                    npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
-
-                if (npc.spriteDirection == 1)
-                    idealAngle += MathHelper.Pi;
-                return idealAngle;
             }
 
             frameDrawType = (int)DukeFrameDrawingType.FinFlapping;
@@ -289,6 +260,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 return false;
             }
 
+            // Reset the eye glowmask opacity to be fullbright after it has initially appeared.
+            if (phaseTransitionPhase >= 1f)
+                eyeGlowmaskOpacity = 1f;
+
             // Start the water background.
             if (inPhase3)
             {
@@ -297,562 +272,608 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 npc.alpha = Utils.Clamp(npc.alpha, 120, 255);
             }
 
-            switch ((DukeAttackType)(int)aiState)
+            switch ((DukeAttackType)(int)attackState)
             {
                 case DukeAttackType.Charge:
-                    int angularAimTime = 4;
-                    int chargeTime = 43;
-                    float chargeSpeed = 28f;
-                    int decelerationTime = 6;
-                    float chargeDeceleration = 0.6f;
-                    if (inPhase2)
-                    {
-                        chargeTime -= 5;
-                        decelerationTime -= 2;
-                    }
-                    if (enraged || inPhase3)
-                    {
-                        angularAimTime = 2;
-                        chargeTime -= 5;
-                        chargeSpeed *= 1.3f;
-                    }
-                    if (inPhase4)
-                    {
-                        chargeTime -= 4;
-                        chargeSpeed *= 1.2f;
-                    }
-
-                    if (inWater)
-                        chargeSpeed += 4f;
-                    if (BossRushEvent.BossRushActive)
-                    {
-                        chargeTime -= 8;
-                        chargeSpeed *= 1.5f;
-                    }
-
-                    if (attackTimer < angularAimTime)
-                    {
-                        if (attackTimer == 1f)
-                            aquireNewTarget();
-
-                        float rotationalSpeed = MathHelper.Lerp(0.06f, 0.5f, Utils.InverseLerp(0.05f, MathHelper.Pi, Math.Abs(MathHelper.WrapAngle(npc.rotation - npc.AngleTo(target.Center))), true));
-                        npc.rotation = npc.rotation.AngleLerp(getAdjustedAngle(npc.AngleTo(target.Center)), 0.15f);
-                    }
-
-                    // Lunge at the player.
-                    if (attackTimer == angularAimTime)
-                    {
-                        npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
-                        if (enraged)
-                        {
-                            float aimAheadFactor = 20f * Utils.InverseLerp(80f, 360f, npc.Distance(target.Center), true);
-                            npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor) * chargeSpeed;
-                        }
-                        else
-                            npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-
-                        npc.rotation = getAdjustedAngle(npc.velocity.ToRotation());
-                        npc.netUpdate = true;
-                    }
-
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
-                    if (attackTimer >= angularAimTime && attackTimer < angularAimTime + chargeTime)
-                        GenerateParticles(npc);
-
-                    // And decelerate over time.
-                    if (attackTimer >= angularAimTime + chargeTime &&
-                        attackTimer <= angularAimTime + chargeTime + decelerationTime)
-                    {
-                        npc.rotation = npc.rotation.AngleLerp(getAdjustedAngle(npc.AngleTo(target.Center), true), 0.32f);
-                        npc.velocity *= chargeDeceleration;
-                    }
-
-                    if (attackTimer >= angularAimTime + chargeTime + decelerationTime)
-                        SelectNextAttack();
+                    DoBehavior_Charge(npc, target, ref attackTimer, ref frameDrawType, inPhase2, inPhase3, inPhase4, enraged);
                     break;
-
                 case DukeAttackType.ChargeWait:
-                    npc.damage = 0;
-                    int waitDelay = 30;
-                    Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(target.Center.X - npc.Center.X) * -500f, -350f) - npc.velocity;
-                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 2f);
-
-                    // Look at the target.
-                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-                    npc.rotation = npc.AngleTo(target.Center);
-
-                    if (npc.spriteDirection == 1)
-                        npc.rotation += MathHelper.Pi;
-
-                    // Handle frames.
-                    frameDrawType = (int)DukeFrameDrawingType.FinFlapping;
-                    if (attackTimer >= waitDelay)
-                        SelectNextAttack();
+                    DoBehavior_ChargeWait(npc, target, ref attackTimer, ref frameDrawType);
                     break;
-
                 case DukeAttackType.BubbleSpit:
-                    int bubbleCount = 24;
-                    int bubbleShootRate = 3;
-                    float minBubbleSpeed = 8f;
-                    float maxBubbleSpeed = 11f;
-
-                    if (enraged)
-                    {
-                        bubbleShootRate = 2;
-                        minBubbleSpeed = 11f;
-                        maxBubbleSpeed = 15f;
-                    }
-
-                    if (BossRushEvent.BossRushActive)
-                    {
-                        minBubbleSpeed *= 1.5f;
-                        maxBubbleSpeed *= 1.5f;
-                    }
-
-                    ref float hoverDirection = ref npc.Infernum().ExtraAI[0];
-
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
-
-                    // Play sound and assign hover direction.
-                    if (hoverDirection == 0f)
-                    {
-                        hoverDirection = Math.Sign((npc.Center - target.Center).X);
-                        Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
-                    }
-
-                    Vector2 hoverVelocity = npc.SafeDirectionTo(target.Center + new Vector2(hoverDirection * 400f, -320f) - npc.velocity) * 8f;
-                    npc.SimpleFlyMovement(hoverVelocity, 0.42f);
-                    npc.rotation = npc.rotation.AngleLerp(getAdjustedAngle(npc.AngleTo(target.Center), true), 0.32f);
-
-                    // Belch bubbles.
-                    if (attackTimer % bubbleShootRate == 0)
-                    {
-                        Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
-                            Main.npc[bubble].velocity = Main.npc[bubble].SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * Main.rand.NextFloat(minBubbleSpeed, maxBubbleSpeed);
-                        }
-                    }
-
-                    if (attackTimer >= bubbleShootRate * bubbleCount)
-                        SelectNextAttack();
+                    DoBehavior_BubbleSpit(npc, target, mouthPosition, ref attackTimer, ref frameDrawType, enraged);
                     break;
                 case DukeAttackType.BubbleSpin:
-                    int spinTime = 120;
-                    float spinSpeed = 9f;
-                    float moveToTargetSpeed = 14f;
-                    float totalSpins = 4f;
-                    bubbleShootRate = 10;
-
-                    if (enraged)
-                    {
-                        spinSpeed = 13f;
-                        moveToTargetSpeed *= 1.8f;
-                        bubbleShootRate = 5;
-                    }
-
-                    if (BossRushEvent.BossRushActive)
-                        spinSpeed *= 1.45f;
-
-                    spinSpeed *= totalSpins * 0.5f;
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
-
-                    if (attackTimer == 1f)
-                    {
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * spinSpeed;
-                        npc.rotation = getAdjustedAngle(npc.velocity.ToRotation());
-                        npc.netUpdate = true;
-
-                        // Roar.
-                        Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
-                    }
-                    else if (attackTimer > 1f)
-                    {
-                        npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
-                        float rotationalSpeed = MathHelper.TwoPi * totalSpins / spinTime * npc.spriteDirection;
-                        npc.rotation += rotationalSpeed;
-                        npc.velocity = npc.velocity.RotatedBy(rotationalSpeed);
-
-                        if (!npc.WithinRange(target.Center, 60f))
-                            npc.Center += npc.SafeDirectionTo(target.Center) * moveToTargetSpeed;
-
-                        if (attackTimer % bubbleShootRate == bubbleShootRate - 1)
-                        {
-                            Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
-
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
-                                Main.npc[bubble].velocity = npc.velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection).RotatedByRandom(0.18f) * Main.rand.NextFloat(11f, 15f);
-                                Main.npc[bubble].Center -= Main.npc[bubble].velocity * 3f;
-                            }
-                        }
-                    }
-
-                    if (attackTimer >= spinTime)
-                        SelectNextAttack();
+                    DoBehavior_BubbleSpin(npc, target, mouthPosition, ref attackTimer, ref frameDrawType, enraged);
                     break;
                 case DukeAttackType.StationaryBubbleCharge:
-                    bubbleCount = 10;
-                    bubbleShootRate = 6;
-                    hoverDirection = ref npc.Infernum().ExtraAI[0];
-                    ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
-
-                    if (enraged)
-                    {
-                        bubbleCount = 15;
-                        bubbleShootRate = 4;
-                    }
-
-                    if (BossRushEvent.BossRushActive)
-                        bubbleShootRate = 15;
-
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
-
-                    // Fly a bit above the target.
-                    if (attackSubstate == 0f)
-                    {
-                        attackTimer = 0f;
-                        hoverDirection = ((npc.Center - target.Center).X > 0).ToDirectionInt();
-
-                        Vector2 destination = target.Center + new Vector2(hoverDirection * 555f, -150f);
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * (16f + target.velocity.Length() * 1.2f), 0.5f + target.velocity.Length() * 0.06f);
-                        npc.rotation = npc.rotation.AngleLerp(getAdjustedAngle(npc.AngleTo(target.Center), true), 0.32f);
-
-                        if (npc.WithinRange(destination, 21f))
-                        {
-                            attackSubstate = 1f;
-                            npc.Center = destination;
-                            npc.velocity = Vector2.UnitX * (17f + target.velocity.Length()) * -hoverDirection;
-                            npc.spriteDirection = (int)hoverDirection;
-                            npc.rotation = 0f;
-                            npc.netUpdate = true;
-
-                            // Roar.
-                            Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
-                        }
-                    }
-
-                    // And dash while releasing bubbles.
-                    else if (attackSubstate == 1f)
-                    {
-                        Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
-
-                        if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bubbleShootRate == bubbleShootRate - 1)
-                        {
-                            int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedirectingBubble>());
-                            Main.npc[bubble].Center += npc.velocity * 1.5f;
-                            Main.npc[bubble].velocity = Vector2.UnitY * ((int)(attackTimer / bubbleShootRate) % 2 == 0).ToDirectionInt() * RedirectingBubble.InitialSpeed;
-                            Main.npc[bubble].velocity += npc.velocity * 0.4f;
-                            Main.npc[bubble].target = npc.target;
-                        }
-                    }
-
-                    if (attackTimer >= bubbleCount * bubbleShootRate - 20f)
-                        npc.velocity *= 0.965f;
-
-                    if (attackTimer >= bubbleCount * bubbleShootRate)
-                        SelectNextAttack();
+                    DoBehavior_StationaryBubbleCharge(npc, target, mouthPosition, ref attackTimer, ref frameDrawType, enraged);
                     break;
-
                 case DukeAttackType.SharkTornadoSummon:
-                    int slowdownTime = 60;
-                    int sharkWaves = 6;
-                    int sharkSummonRate = 10;
-                    ref float summonOutwardness = ref npc.Infernum().ExtraAI[0];
-
-                    if (BossRushEvent.BossRushActive)
-                        sharkSummonRate = 8;
-
-                    if (attackTimer < slowdownTime)
-                        npc.velocity *= 0.95f;
-
-                    npc.rotation = npc.rotation.AngleLerp(getAdjustedAngle(npc.AngleTo(target.Center), true), 0.4f);
-
-                    if (attackTimer >= slowdownTime - 8f && attackTimer <= slowdownTime + 10f)
-                        frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
-
-                    if (attackTimer == slowdownTime)
-                    {
-                        // Roar.
-                        Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
-                        List<int> xSpawnPositions = new List<int>()
-                        {
-                            (int)(target.Center.X - (enraged ? 500f : 600f)) / 16,
-                            (int)(target.Center.X + (enraged ? 500f : 600f)) / 16
-                        };
-
-                        // Summon tornadoes on the ground/water.
-                        if (Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            int y = Utils.Clamp((int)target.Center.Y / 16 - 50, 20, Main.maxTilesY - 20);
-                            foreach (int x in xSpawnPositions)
-                            {
-                                WorldUtils.Find(new Point(x, y), Searches.Chain(new Searches.Down(Main.maxTilesY - 10), new CustomTileConditions.IsWaterOrSolid()), out Point result);
-                                Vector2 spawnPosition = result.ToWorldCoordinates();
-                                Vector2 tornadoVelocity = Vector2.UnitX * (target.Center.X > spawnPosition.X).ToDirectionInt() * 4f;
-                                int tornado = Utilities.NewProjectileBetter(spawnPosition, tornadoVelocity, ModContent.ProjectileType<Tornado>(), 200, 0f);
-                                Main.projectile[tornado].Bottom = spawnPosition;
-                            }
-                        }
-                    }
-
-                    // Summon sharks in the ocean.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > slowdownTime && attackTimer % sharkSummonRate == 0)
-                    {
-                        for (int i = -1; i <= 1; i += 2)
-                        {
-                            int x = (int)(npc.Center.X + (summonOutwardness + 150f) * i) / 16;
-                            int y = Utils.Clamp((int)target.Center.Y / 16 - 10, 10, Main.maxTilesY - 10);
-                            WorldUtils.Find(new Point(x, y), Searches.Chain(new Searches.Down(150), new CustomTileConditions.IsWater()), out Point result);
-                            Vector2 spawnPosition = result.ToWorldCoordinates();
-                            int summoner = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<SharkSummoner>(), 0, 0f);
-                            float flySpeed = Math.Abs(npc.Center.Y - spawnPosition.Y) * 0.0125f + 5f;
-                            flySpeed = MathHelper.Min(flySpeed, 27f);
-                            if (Main.projectile.IndexInRange(summoner))
-                            {
-                                Main.projectile[summoner].direction = i;
-                                Main.projectile[summoner].ai[1] = flySpeed;
-                            }
-                        }
-
-                        summonOutwardness += 200f;
-                    }
-
-                    if (attackTimer >= slowdownTime + sharkWaves * sharkSummonRate)
-                        SelectNextAttack();
+                    DoBehavior_SharkTornadoSummon(npc, target, ref attackTimer, ref frameDrawType, enraged);
                     break;
-
                 case DukeAttackType.TidalWave:
-                    int redirectTime = inPhase3 ? 32 : 45;
-                    float lungeSpeed = enraged ? 30f : 22f;
-                    float waveSpeed = enraged ? 20f : 13.5f;
-                    if (inPhase3)
-                    {
-                        lungeSpeed *= 1.4f;
-                        waveSpeed *= 1.6f;
-                    }
-
-                    if (BossRushEvent.BossRushActive)
-                    {
-                        lungeSpeed *= 2f;
-                        waveSpeed *= 1.35f;
-                    }
-
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
-
-                    int lungeMaxTime = 180;
-                    if (attackTimer < redirectTime)
-                    {
-                        Vector2 destination = target.Center - Vector2.UnitY.RotatedBy(target.velocity.X / 20f * MathHelper.ToRadians(26f)) * 430f;
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 15f, 0.5f);
-                        npc.rotation = getAdjustedAngle(npc.AngleTo(target.Center), true);
-                    }
-                    if (attackTimer == redirectTime)
-                    {
-                        // Roar.
-                        Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
-
-                        npc.velocity = npc.SafeDirectionTo(target.Center) * lungeSpeed;
-                        npc.netUpdate = true;
-                    }
-
-                    if (attackTimer > redirectTime)
-                    {
-                        GenerateParticles(npc);
-                        if (Collision.SolidCollision(npc.position, npc.width, npc.width) ||
-                            Collision.WetCollision(npc.position, npc.width, npc.width) ||
-                            attackTimer >= redirectTime + lungeMaxTime)
-                        {
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                for (int i = -1; i <= 1; i += 2)
-                                {
-                                    int wave = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * waveSpeed * i, ModContent.ProjectileType<TidalWave>(), 230, 0f);
-                                    Main.projectile[wave].Bottom = npc.Center + Vector2.UnitY * 700f;
-                                }
-                            }
-
-                            // Very heavily disturb water.
-                            if (Main.netMode != NetmodeID.Server)
-                            {
-                                WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
-                                float waveSine = 0.1f * (float)Math.Sin(Main.GlobalTime * 20f);
-                                Vector2 ripplePos = npc.Center + npc.velocity * 7f;
-                                Color waveData = new Color(0.5f, 0.1f * Math.Sign(waveSine) + 0.5f, 0f, 1f) * Math.Abs(waveSine);
-                                ripple.QueueRipple(ripplePos, waveData, Vector2.One * 860f, RippleShape.Circle, npc.rotation);
-                            }
-                            npc.velocity *= -0.5f;
-                            SelectNextAttack();
-                        }
-                    }
+                    DoBehavior_TidalWave(npc, target, ref attackTimer, ref frameDrawType, inPhase3, enraged);
                     break;
                 case DukeAttackType.RazorbladeRazorstorm:
-                    int hoverTime = 105;
-                    float initialChargeSpeed = enraged ? 34f : 30f;
-                    int chargeRedirectTime = 23;
-                    int chargeCount = 6;
-                    int typhoonBurstRate = enraged ? 24 : 37;
-                    int typhoonCount = enraged ? 11 : 5;
-                    float typhoonBurstSpeed = enraged ? 11f : 6f;
-                    ref float offsetDirection = ref npc.Infernum().ExtraAI[0];
-
-                    if (inPhase4)
-                    {
-                        initialChargeSpeed += 2.5f;
-                        typhoonBurstRate -= 5;
-                        typhoonCount += 5;
-                    }
-                    initialChargeSpeed *= 1.6f;
-
-                    if (BossRushEvent.BossRushActive)
-                        initialChargeSpeed *= 1.2f;
-
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
-
-                    if (attackTimer < hoverTime)
-                    {
-                        if (offsetDirection == 0f)
-                        {
-                            offsetDirection = Main.rand.NextBool().ToDirectionInt();
-                            npc.netUpdate = true;
-                        }
-
-                        Vector2 destination = target.Center + new Vector2(offsetDirection * 200f, -960f);
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 33f, 1.3f);
-                        npc.Center = Vector2.Lerp(npc.Center, destination, 0.014f).MoveTowards(destination, 15f);
-                        npc.rotation = getAdjustedAngle(npc.AngleTo(target.Center), true);
-                    }
-
-                    // Summon tornadoes.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == hoverTime - 45f)
-                    {
-                        List<int> xSpawnPositions = new List<int>()
-                        {
-                            (int)(target.Center.X - (enraged ? 600f : 750f)) / 16,
-                            (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
-                        };
-
-                        int y = Utils.Clamp((int)target.Center.Y / 16 + 75, 20, Main.maxTilesY - 20);
-                        foreach (int x in xSpawnPositions)
-                        {
-                            Vector2 spawnPosition = new Point(x, y).ToWorldCoordinates();
-                            int tornado = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<Tornado>(), 300, 0f);
-                            Main.projectile[tornado].ai[1] = 1f;
-                            Main.projectile[tornado].Bottom = spawnPosition;
-                        }
-                    }
-
-                    // Roar, make the initial charge, and summon tornado borders.
-                    if (attackTimer == hoverTime)
-                    {
-                        npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
-                        npc.velocity = Vector2.UnitX.RotatedBy(MathHelper.Pi * -0.087f) * initialChargeSpeed * -offsetDirection;
-
-                        // Roar.
-                        Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
-
-                        npc.rotation = getAdjustedAngle(npc.velocity.ToRotation());
-                        npc.netUpdate = true;
-                    }
-                    if (attackTimer > hoverTime)
-                    {
-                        // Reflected charge.
-                        if (attackTimer % chargeRedirectTime == chargeRedirectTime - 1f)
-                        {
-                            npc.spriteDirection *= -1;
-                            npc.velocity = Vector2.Reflect(npc.velocity, Vector2.UnitX);
-                            npc.rotation = getAdjustedAngle(npc.velocity.ToRotation());
-                            npc.netUpdate = true;
-                        }
-
-                        if (attackTimer % typhoonBurstRate == typhoonBurstRate - 1f && !npc.WithinRange(target.Center, 300f))
-                        {
-                            Main.PlaySound(SoundID.Item84, npc.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                for (int i = 0; i < typhoonCount; i++)
-                                {
-                                    float offsetAngle = MathHelper.TwoPi * i / typhoonCount;
-                                    Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * typhoonBurstSpeed;
-                                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), 175, 0f);
-                                }
-                            }
-                        }
-                    }
-
-                    if (attackTimer >= hoverTime + chargeCount * chargeRedirectTime + 45f)
-                        SelectNextAttack();
+                    DoBehavior_RazorbladeRazorstorm(npc, target, ref attackTimer, ref frameDrawType, inPhase4, enraged);
                     break;
-                case DukeAttackType.TeleportCharge:
-                    chargeSpeed = enraged ? 35f : 31f;
-                    if (inPhase4)
-                        chargeSpeed += 3f;
-
-                    if (BossRushEvent.BossRushActive)
-                        chargeSpeed *= 1.15f;
-
-                    frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
-
-                    // Fadeout effects, flying, and damage disabling.
-                    if (attackTimer < 45f)
-                    {
-                        npc.damage = 0;
-
-                        hoverDirection = ref npc.Infernum().ExtraAI[0];
-                        if (hoverDirection == 0f)
-                            hoverDirection = Math.Sign((npc.Center - target.Center).X);
-                        hoverDestination = target.Center + new Vector2(hoverDirection * 400f, -200f);
-                        npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 24f, 1.2f);
-                        npc.alpha += 25;
-                    }
-
-                    // Charge.
-                    if (attackTimer == 45f)
-                    {
-                        hoverDirection = ref npc.Infernum().ExtraAI[0];
-
-                        npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
-                        if (enraged)
-                        {
-                            float aimAheadFactor = 20f * Utils.InverseLerp(80f, 360f, npc.Distance(target.Center), true);
-                            npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * aimAheadFactor) * chargeSpeed;
-                        }
-                        else
-                            npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
-
-                        npc.rotation = getAdjustedAngle(npc.velocity.ToRotation());
-                        npc.netUpdate = true;
-                    }
-
-                    if (attackTimer > 45f)
-                        npc.alpha = Utils.Clamp(npc.alpha - 45, 0, 255);
-
-                    // Deceleration.
-                    if (npc.alpha > 0 && attackTimer > 85f)
-                    {
-                        npc.rotation = npc.rotation.AngleTowards(getAdjustedAngle(npc.AngleTo(target.Center), true), 0.15f);
-                        npc.velocity *= 0.95f;
-                    }
-
-                    npc.alpha = Utils.Clamp(npc.alpha, 0, 255);
-
-                    if (attackTimer >= 100f)
-                    {
-                        teleportChargeCount++;
-
-                        if (teleportChargeCount > 3f)
-                            SelectNextAttack();
-                        else
-                            attackTimer = 44f;
-                    }
+                case DukeAttackType.ChargeTeleport:
+                    DoBehavior_ChargeTeleport(npc, target, ref attackTimer, ref frameDrawType, ref eyeGlowmaskOpacity, inPhase4, enraged);
                     break;
             }
 
             attackTimer++;
             return false;
+        }
+
+        public static void SelectNextAttack(NPC npc)
+        {
+            npc.ai[1]++;
+
+            DukeAttackType[] patternToUse = SubphaseTable.First(table => table.Value(npc)).Key;
+            DukeAttackType nextAttackType = patternToUse[(int)(npc.ai[1] % patternToUse.Length)];
+
+            // Go to the next attack state.
+            npc.Infernum().ExtraAI[5] = (int)nextAttackType;
+
+            // Reset the attack timer.
+            npc.Infernum().ExtraAI[6] = 0f;
+
+            // Reset misc ai slots.
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+        }
+
+        public static Player AcquireNewTarget(NPC npc, bool changeDirection = true)
+        {
+            npc.TargetClosest(changeDirection);
+            return Main.player[npc.target];
+        }
+
+        public static float GetAdjustedRotation(NPC npc, Player target, float baseAngle, bool adjustDirection = false)
+        {
+            float idealAngle = baseAngle;
+            if (adjustDirection)
+                npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
+
+            if (npc.spriteDirection == 1)
+                idealAngle += MathHelper.Pi;
+            return idealAngle;
+        }
+
+        public static void DoBehavior_Charge(NPC npc, Player target, ref float attackTimer, ref float frameDrawType, bool inPhase2, bool inPhase3, bool inPhase4, bool enraged)
+        {
+            int angularAimTime = 4;
+            int chargeTime = 43;
+            int decelerationTime = 6;
+            float chargeSpeed = 28f;
+            float chargeDeceleration = 0.6f;
+            if (inPhase2)
+            {
+                chargeTime -= 5;
+                decelerationTime -= 2;
+            }
+            if (enraged || inPhase3)
+            {
+                angularAimTime = 2;
+                chargeTime -= 5;
+                chargeSpeed *= 1.3f;
+            }
+            if (inPhase4)
+            {
+                chargeTime -= 4;
+                chargeSpeed *= 1.2f;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeTime -= 8;
+                chargeSpeed *= 1.5f;
+            }
+
+            if (attackTimer < angularAimTime)
+            {
+                if (attackTimer == 1f)
+                    AcquireNewTarget(npc);
+
+                npc.rotation = npc.rotation.AngleLerp(GetAdjustedRotation(npc, target, npc.AngleTo(target.Center)), 0.15f);
+            }
+
+            // Charge at the target.
+            if (attackTimer == angularAimTime)
+            {
+                float predictivenessFactor = 0f;
+
+                if (enraged)
+                    predictivenessFactor = Utils.InverseLerp(80f, 360f, npc.Distance(target.Center), true) * 20f;
+
+                npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
+                npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor) * chargeSpeed;
+                npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
+                npc.netUpdate = true;
+            }
+
+            frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
+
+            // Emit particles while charging.
+            if (attackTimer >= angularAimTime && attackTimer < angularAimTime + chargeTime)
+                GenerateParticles(npc);
+
+            // Decelerate over time.
+            if (attackTimer >= angularAimTime + chargeTime &&
+                attackTimer <= angularAimTime + chargeTime + decelerationTime)
+            {
+                npc.rotation = npc.rotation.AngleLerp(GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true), 0.32f);
+                npc.velocity *= chargeDeceleration;
+            }
+
+            if (attackTimer >= angularAimTime + chargeTime + decelerationTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_ChargeWait(NPC npc, Player target, ref float attackTimer, ref float frameDrawType)
+        {
+            // Disable contact damage while redirecting.
+            npc.damage = 0;
+
+            int waitDelay = 30;
+            Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(target.Center.X - npc.Center.X) * -500f, -350f) - npc.velocity;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 2f);
+
+            // Look at the target.
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            npc.rotation = npc.AngleTo(target.Center);
+
+            if (npc.spriteDirection == 1)
+                npc.rotation += MathHelper.Pi;
+
+            // Handle frames.
+            frameDrawType = (int)DukeFrameDrawingType.FinFlapping;
+            if (attackTimer >= waitDelay)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_BubbleSpit(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float frameDrawType, bool enraged)
+        {
+            int bubbleCount = 24;
+            int bubbleShootRate = 3;
+            float minBubbleSpeed = 8f;
+            float maxBubbleSpeed = 11f;
+
+            if (enraged)
+            {
+                bubbleShootRate = 2;
+                minBubbleSpeed = 11f;
+                maxBubbleSpeed = 15f;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                minBubbleSpeed *= 1.5f;
+                maxBubbleSpeed *= 1.5f;
+            }
+
+            ref float hoverDirection = ref npc.Infernum().ExtraAI[0];
+
+            frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
+
+            // Play sound and define an initial hover direction.
+            if (hoverDirection == 0f)
+            {
+                hoverDirection = Math.Sign((npc.Center - target.Center).X);
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+            }
+
+            Vector2 hoverVelocity = npc.SafeDirectionTo(target.Center + new Vector2(hoverDirection * 400f, -320f) - npc.velocity) * 8f;
+            npc.SimpleFlyMovement(hoverVelocity, 0.42f);
+            npc.rotation = npc.rotation.AngleLerp(GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true), 0.32f);
+
+            // Belch bubbles.
+            if (attackTimer % bubbleShootRate == 0)
+            {
+                Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
+                    Main.npc[bubble].velocity = Main.npc[bubble].SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * Main.rand.NextFloat(minBubbleSpeed, maxBubbleSpeed);
+                }
+            }
+
+            if (attackTimer >= bubbleShootRate * bubbleCount)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_BubbleSpin(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float frameDrawType, bool enraged)
+        {
+            int spinTime = 120;
+            float spinSpeed = 9f;
+            float moveToTargetSpeed = 14f;
+            float totalSpins = 4f;
+            int bubbleShootRate = 10;
+
+            if (enraged)
+            {
+                spinSpeed = 13f;
+                moveToTargetSpeed *= 1.8f;
+                bubbleShootRate = 5;
+            }
+
+            if (BossRushEvent.BossRushActive)
+                spinSpeed *= 1.45f;
+
+            spinSpeed *= totalSpins * 0.5f;
+            frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
+
+            if (attackTimer == 1f)
+            {
+                npc.velocity = npc.SafeDirectionTo(target.Center) * spinSpeed;
+                npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
+                npc.netUpdate = true;
+
+                // Roar.
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+            }
+            else if (attackTimer > 1f)
+            {
+                npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
+                float rotationalSpeed = MathHelper.TwoPi * totalSpins / spinTime * npc.spriteDirection;
+                npc.rotation += rotationalSpeed;
+                npc.velocity = npc.velocity.RotatedBy(rotationalSpeed);
+
+                if (!npc.WithinRange(target.Center, 60f))
+                    npc.Center += npc.SafeDirectionTo(target.Center) * moveToTargetSpeed;
+
+                if (attackTimer % bubbleShootRate == bubbleShootRate - 1)
+                {
+                    Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
+                        Main.npc[bubble].velocity = npc.velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection).RotatedByRandom(0.18f) * Main.rand.NextFloat(11f, 15f);
+                        Main.npc[bubble].Center -= Main.npc[bubble].velocity * 3f;
+                    }
+                }
+            }
+
+            if (attackTimer >= spinTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_StationaryBubbleCharge(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float frameDrawType, bool enraged)
+        {
+            int bubbleCount = 10;
+            int bubbleShootRate = 6;
+            ref float hoverDirection = ref npc.Infernum().ExtraAI[0];
+            ref float attackSubstate = ref npc.Infernum().ExtraAI[1];
+
+            if (enraged)
+            {
+                bubbleCount = 15;
+                bubbleShootRate = 4;
+            }
+
+            if (BossRushEvent.BossRushActive)
+                bubbleShootRate = 15;
+
+            frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
+
+            // Fly a bit above the target.
+            if (attackSubstate == 0f)
+            {
+                attackTimer = 0f;
+                hoverDirection = ((npc.Center - target.Center).X > 0).ToDirectionInt();
+
+                Vector2 destination = target.Center + new Vector2(hoverDirection * 555f, -150f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * (16f + target.velocity.Length() * 1.2f), 0.5f + target.velocity.Length() * 0.06f);
+                npc.rotation = npc.rotation.AngleLerp(GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true), 0.32f);
+
+                if (npc.WithinRange(destination, 21f))
+                {
+                    attackSubstate = 1f;
+                    npc.Center = destination;
+                    npc.velocity = Vector2.UnitX * (17f + target.velocity.Length()) * -hoverDirection;
+                    npc.spriteDirection = (int)hoverDirection;
+                    npc.rotation = 0f;
+                    npc.netUpdate = true;
+
+                    // Roar.
+                    Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                }
+            }
+
+            // And dash while releasing bubbles.
+            else if (attackSubstate == 1f)
+            {
+                Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bubbleShootRate == bubbleShootRate - 1)
+                {
+                    int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedirectingBubble>());
+                    Main.npc[bubble].Center += npc.velocity * 1.5f;
+                    Main.npc[bubble].velocity = Vector2.UnitY * ((int)(attackTimer / bubbleShootRate) % 2 == 0).ToDirectionInt() * RedirectingBubble.InitialSpeed;
+                    Main.npc[bubble].velocity += npc.velocity * 0.4f;
+                    Main.npc[bubble].target = npc.target;
+                }
+            }
+
+            if (attackTimer >= bubbleCount * bubbleShootRate - 20f)
+                npc.velocity *= 0.965f;
+
+            if (attackTimer >= bubbleCount * bubbleShootRate)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_SharkTornadoSummon(NPC npc, Player target, ref float attackTimer, ref float frameDrawType, bool enraged)
+        {
+            int slowdownTime = 60;
+            int sharkWaves = 6;
+            int sharkSummonRate = 10;
+            ref float summonOutwardness = ref npc.Infernum().ExtraAI[0];
+
+            if (BossRushEvent.BossRushActive)
+                sharkSummonRate = 8;
+
+            if (attackTimer < slowdownTime)
+                npc.velocity *= 0.95f;
+
+            npc.rotation = npc.rotation.AngleLerp(GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true), 0.4f);
+
+            if (attackTimer >= slowdownTime - 8f && attackTimer <= slowdownTime + 10f)
+                frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
+
+            if (attackTimer == slowdownTime)
+            {
+                // Roar.
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                List<int> xSpawnPositions = new List<int>()
+                {
+                    (int)(target.Center.X - (enraged ? 500f : 600f)) / 16,
+                    (int)(target.Center.X + (enraged ? 500f : 600f)) / 16
+                };
+
+                // Summon tornadoes on the ground/water.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int y = Utils.Clamp((int)target.Center.Y / 16 - 50, 20, Main.maxTilesY - 20);
+                    foreach (int x in xSpawnPositions)
+                    {
+                        WorldUtils.Find(new Point(x, y), Searches.Chain(new Searches.Down(Main.maxTilesY - 10), new CustomTileConditions.IsWaterOrSolid()), out Point result);
+                        Vector2 spawnPosition = result.ToWorldCoordinates();
+                        Vector2 tornadoVelocity = Vector2.UnitX * (target.Center.X > spawnPosition.X).ToDirectionInt() * 4f;
+                        int tornado = Utilities.NewProjectileBetter(spawnPosition, tornadoVelocity, ModContent.ProjectileType<Tornado>(), 200, 0f);
+                        Main.projectile[tornado].Bottom = spawnPosition;
+                    }
+                }
+            }
+
+            // Summon sharks in the ocean.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > slowdownTime && attackTimer % sharkSummonRate == 0)
+            {
+                for (int i = -1; i <= 1; i += 2)
+                {
+                    int x = (int)(npc.Center.X + (summonOutwardness + 150f) * i) / 16;
+                    int y = Utils.Clamp((int)target.Center.Y / 16 - 10, 10, Main.maxTilesY - 10);
+                    WorldUtils.Find(new Point(x, y), Searches.Chain(new Searches.Down(150), new CustomTileConditions.IsWater()), out Point result);
+                    Vector2 spawnPosition = result.ToWorldCoordinates();
+                    int summoner = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<SharkSummoner>(), 0, 0f);
+                    float flySpeed = Math.Abs(npc.Center.Y - spawnPosition.Y) * 0.0125f + 5f;
+                    flySpeed = MathHelper.Min(flySpeed, 27f);
+                    if (Main.projectile.IndexInRange(summoner))
+                    {
+                        Main.projectile[summoner].direction = i;
+                        Main.projectile[summoner].ai[1] = flySpeed;
+                    }
+                }
+
+                summonOutwardness += 200f;
+            }
+
+            if (attackTimer >= slowdownTime + sharkWaves * sharkSummonRate)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_TidalWave(NPC npc, Player target, ref float attackTimer, ref float frameDrawType, bool inPhase3, bool enraged)
+        {
+            int redirectTime = inPhase3 ? 32 : 45;
+            float lungeSpeed = enraged ? 30f : 22f;
+            float waveSpeed = enraged ? 20f : 13.5f;
+            if (inPhase3)
+            {
+                lungeSpeed *= 1.4f;
+                waveSpeed *= 1.6f;
+            }
+
+            if (BossRushEvent.BossRushActive)
+            {
+                lungeSpeed *= 2f;
+                waveSpeed *= 1.35f;
+            }
+
+            frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
+
+            int lungeMaxTime = 180;
+            if (attackTimer < redirectTime)
+            {
+                Vector2 destination = target.Center - Vector2.UnitY.RotatedBy(target.velocity.X / 20f * MathHelper.ToRadians(26f)) * 430f;
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 15f, 0.5f);
+                npc.rotation = GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true);
+            }
+            if (attackTimer == redirectTime)
+            {
+                // Roar.
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+
+                npc.velocity = npc.SafeDirectionTo(target.Center) * lungeSpeed;
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer > redirectTime)
+            {
+                GenerateParticles(npc);
+                if (Collision.SolidCollision(npc.position, npc.width, npc.width) ||
+                    Collision.WetCollision(npc.position, npc.width, npc.width) ||
+                    attackTimer >= redirectTime + lungeMaxTime)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = -1; i <= 1; i += 2)
+                        {
+                            int wave = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * waveSpeed * i, ModContent.ProjectileType<TidalWave>(), 230, 0f);
+                            Main.projectile[wave].Bottom = npc.Center + Vector2.UnitY * 700f;
+                        }
+                    }
+
+                    // Very heavily disturb water.
+                    if (Main.netMode != NetmodeID.Server)
+                    {
+                        WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
+                        float waveSine = 0.1f * (float)Math.Sin(Main.GlobalTime * 20f);
+                        Vector2 ripplePos = npc.Center + npc.velocity * 7f;
+                        Color waveData = new Color(0.5f, 0.1f * Math.Sign(waveSine) + 0.5f, 0f, 1f) * Math.Abs(waveSine);
+                        ripple.QueueRipple(ripplePos, waveData, Vector2.One * 860f, RippleShape.Circle, npc.rotation);
+                    }
+                    npc.velocity *= -0.5f;
+                    SelectNextAttack(npc);
+                }
+            }
+        }
+
+        public static void DoBehavior_RazorbladeRazorstorm(NPC npc, Player target, ref float attackTimer, ref float frameDrawType, bool inPhase4, bool enraged)
+        {
+            int hoverTime = 105;
+            float initialChargeSpeed = enraged ? 34f : 30f;
+            int chargeRedirectTime = 23;
+            int chargeCount = 6;
+            int typhoonBurstRate = enraged ? 24 : 37;
+            int typhoonCount = enraged ? 11 : 5;
+            float typhoonBurstSpeed = enraged ? 11f : 6f;
+            ref float offsetDirection = ref npc.Infernum().ExtraAI[0];
+
+            if (inPhase4)
+            {
+                initialChargeSpeed += 2.5f;
+                typhoonBurstRate -= 5;
+                typhoonCount += 5;
+            }
+            initialChargeSpeed *= 1.6f;
+
+            if (BossRushEvent.BossRushActive)
+                initialChargeSpeed *= 1.2f;
+
+            frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
+
+            if (attackTimer < hoverTime)
+            {
+                if (offsetDirection == 0f)
+                {
+                    offsetDirection = Main.rand.NextBool().ToDirectionInt();
+                    npc.netUpdate = true;
+                }
+
+                Vector2 destination = target.Center + new Vector2(offsetDirection * 200f, -960f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 33f, 1.3f);
+                npc.Center = Vector2.Lerp(npc.Center, destination, 0.014f).MoveTowards(destination, 15f);
+                npc.rotation = GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true);
+            }
+
+            // Summon tornadoes.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == hoverTime - 45f)
+            {
+                List<int> xSpawnPositions = new List<int>()
+                        {
+                            (int)(target.Center.X - (enraged ? 600f : 750f)) / 16,
+                            (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
+                        };
+
+                int y = Utils.Clamp((int)target.Center.Y / 16 + 75, 20, Main.maxTilesY - 20);
+                foreach (int x in xSpawnPositions)
+                {
+                    Vector2 spawnPosition = new Point(x, y).ToWorldCoordinates();
+                    int tornado = Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<Tornado>(), 300, 0f);
+                    Main.projectile[tornado].ai[1] = 1f;
+                    Main.projectile[tornado].Bottom = spawnPosition;
+                }
+            }
+
+            // Roar, make the initial charge, and summon tornado borders.
+            if (attackTimer == hoverTime)
+            {
+                npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
+                npc.velocity = Vector2.UnitX.RotatedBy(MathHelper.Pi * -0.087f) * initialChargeSpeed * -offsetDirection;
+
+                // Roar.
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+
+                npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
+                npc.netUpdate = true;
+            }
+            if (attackTimer > hoverTime)
+            {
+                // Reflected charge.
+                if (attackTimer % chargeRedirectTime == chargeRedirectTime - 1f)
+                {
+                    npc.spriteDirection *= -1;
+                    npc.velocity = Vector2.Reflect(npc.velocity, Vector2.UnitX);
+                    npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
+                    npc.netUpdate = true;
+                }
+
+                if (attackTimer % typhoonBurstRate == typhoonBurstRate - 1f && !npc.WithinRange(target.Center, 300f))
+                {
+                    Main.PlaySound(SoundID.Item84, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < typhoonCount; i++)
+                        {
+                            float offsetAngle = MathHelper.TwoPi * i / typhoonCount;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * typhoonBurstSpeed;
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), 175, 0f);
+                        }
+                    }
+                }
+            }
+
+            if (attackTimer >= hoverTime + chargeCount * chargeRedirectTime + 45f)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_ChargeTeleport(NPC npc, Player target, ref float attackTimer, ref float frameDrawType, ref float eyeGlowmaskOpacity, bool inPhase4, bool enraged)
+        {
+            int teleportDelay = 12;
+            int chargeDelay = 30;
+            if (inPhase4 || enraged)
+                chargeDelay -= 8;
+
+            // Disable contact damage while teleporting.
+            npc.damage = 0;
+
+            // Teleport on the first frame and roar.
+            if (attackTimer == teleportDelay)
+            {
+                npc.Center = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 560f, -270f);
+                npc.velocity = Vector2.Zero;
+                npc.netUpdate = true;
+
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+            }
+
+            // Otherwise hover in place.
+            else
+            {
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -300f) - npc.velocity;
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 26f, 0.9f);
+            }
+
+            npc.rotation = GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true);
+            npc.Opacity = Utils.InverseLerp(teleportDelay, 0f, attackTimer, true) + Utils.InverseLerp(0f, chargeDelay, attackTimer - teleportDelay, true);
+            eyeGlowmaskOpacity = Utils.InverseLerp(teleportDelay, 0f, attackTimer, true) + Utils.InverseLerp(0f, 12f, attackTimer - teleportDelay - chargeDelay, true);
+            frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
+
+            if (attackTimer >= chargeDelay)
+                SelectNextAttack(npc);
         }
 
         public static void GenerateParticles(NPC npc)
@@ -903,8 +924,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             npc.frameCounter++;
         }
 
-
-        public static Color ColorFunction(float completionRatio, NPC npc)
+        public static Color ColorFunction(float completionRatio)
         {
             return Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime))) * (1f - completionRatio) * 1.6f;
         }
@@ -918,11 +938,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             // Declare the trail drawer.
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
-                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(WidthFunction, c => ColorFunction(c, npc), null, true, GameShaders.Misc["Infernum:DukeTornado"]);
+                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
 
             GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/VoronoiShapes"));
 
-            bool hasEyes = npc.Infernum().ExtraAI[9] == 1f || npc.Infernum().ExtraAI[12] > 0f;
+            bool hasEyes = npc.Infernum().ExtraAI[9] == 1f || npc.Infernum().ExtraAI[11] > 0f;
             Texture2D eyeTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronGlowmask");
             Texture2D dukeTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronResprite");
             Vector2 origin = npc.frame.Size() * 0.5f;
@@ -950,13 +970,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                 if (hasEyes)
                 {
-                    Color eyeColor = Color.Lerp(Color.White, Color.Yellow, 0.5f) * npc.Infernum().ExtraAI[12];
+                    Color eyeColor = Color.Lerp(Color.White, Color.Yellow, 0.5f) * npc.Infernum().ExtraAI[11];
+                    eyeColor *= (float)Math.Pow(color.ToVector3().Length() / 1.414f, 0.6);
                     spriteBatch.Draw(eyeTexture, drawPosition - Main.screenPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
             int idealAfterimageCount = 0;
-            if (npc.Infernum().ExtraAI[5] == (int)DukeAttackType.TeleportCharge)
+            if (npc.Infernum().ExtraAI[5] == (int)DukeAttackType.ChargeTeleport)
                 idealAfterimageCount = 3;
             if (npc.Infernum().ExtraAI[5] == (int)DukeAttackType.Charge)
                 idealAfterimageCount = 6;
@@ -969,6 +990,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             // Draw afterimages.
             if (afterimageCount > 0)
             {
+                if (npc.oldPos.Length < afterimageCount)
+                {
+                    npc.oldPos = new Vector2[(int)afterimageCount];
+                    npc.oldRot = new float[(int)afterimageCount];
+                }
+
                 for (int i = (int)afterimageCount; i >= 1; i--)
                 {
                     Color afterimageColor = lightColor.MultiplyRGB(Color.White) * (float)Math.Pow(1f - i / (float)afterimageCount, 3D);

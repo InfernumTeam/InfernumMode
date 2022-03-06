@@ -14,6 +14,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
     {
         public PrimitiveTrailCopy FireDrawer;
         public const int Lifetime = 240;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Flame");

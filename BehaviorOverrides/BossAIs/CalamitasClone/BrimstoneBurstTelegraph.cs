@@ -11,6 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
     public class BrimstoneBurstTelegraph : ModProjectile
     {
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Telegraph");

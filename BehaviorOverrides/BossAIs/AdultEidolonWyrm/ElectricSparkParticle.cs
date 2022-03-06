@@ -10,6 +10,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     public class ElectricSparkParticle : ModProjectile
     {
         public PrimitiveTrailCopy SparkDrawer = null;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spark");

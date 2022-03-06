@@ -12,6 +12,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
     {
         public ref float Time => ref projectile.ai[0];
         public int Lifetime => (int)projectile.ai[1];
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Telegraph");

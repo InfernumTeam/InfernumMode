@@ -14,6 +14,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         public const int HomeTime = 90;
         public const int Lifetime = 360;
         public const int TimeBeforeSwirl = 170;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Flame");

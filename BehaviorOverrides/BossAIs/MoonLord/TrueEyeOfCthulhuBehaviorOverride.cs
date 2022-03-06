@@ -117,6 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 chargeVerticalOffset += 15f;
             }
 
+            int chargeCount = laserLifetime / chargeRate;
             float chargeSpeed = chargeVerticalOffset / chargeRate * 2f;
             ref float telegraphAngularOffset = ref npc.Infernum().ExtraAI[0];
             ref float lineTelegraphInterpolant = ref npc.Infernum().ExtraAI[1];
@@ -191,8 +192,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     // Prepare the charges.
                     if ((attackTimer - fireDelay) % chargeRate == 0f)
                     {
+                        // Cast charge telegraph lines and prepare the initial charge.
                         if (attackTimer == fireDelay)
+                        {
+                            Main.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
                             npc.velocity = new Vector2(Math.Sign(target.Center.X - npc.Center.X), -3.4f).SafeNormalize(Vector2.UnitY) * chargeSpeed;
+
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Vector2 currentVelocity = npc.velocity;
+                                Vector2[] chargePositions = new Vector2[chargeCount + 1];
+                                chargePositions[0] = npc.Center;
+                                for (int i = 0; i < chargeCount; i++)
+                                {
+                                    chargePositions[i + 1] = chargePositions[i] + currentVelocity * chargeRate;
+                                    currentVelocity = Vector2.Reflect(currentVelocity, Vector2.UnitY) * new Vector2(1f, 0.85f);
+                                }
+                                int telegraph = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TrueEyeChargeTelegraph>(), 0, 0f);
+                                if (Main.projectile.IndexInRange(telegraph))
+                                {
+                                    Main.projectile[telegraph].ModProjectile<TrueEyeChargeTelegraph>().ChargePositions = chargePositions;
+                                    Main.projectile[telegraph].netUpdate = true;
+                                }
+                            }
+                            npc.netUpdate = true;
+                        }
                         else
                             npc.velocity = Vector2.Reflect(npc.velocity, Vector2.UnitY) * new Vector2(1f, 0.85f);
 

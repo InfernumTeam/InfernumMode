@@ -178,8 +178,9 @@ namespace InfernumMode
                 NPC moonLord = Main.npc[moonLordIndex];
 
                 music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord");
-                if (moonLord.Infernum().ExtraAI[10] < MoonLordCoreBehaviorOverride.IntroSoundLength - 72f)
+                if (moonLord.Infernum().ExtraAI[10] < MoonLordCoreBehaviorOverride.IntroSoundLength - 24)
                     music = 0;
+                Main.musicFade[Main.curMusic] = 1f;
                 priority = MusicPriority.BossHigh;
             }
 

@@ -45,8 +45,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     if (flareSpawnPosition.Y < 100f)
                         flareSpawnPosition.Y = 100f;
 
-                    Vector2 flareVelocity = Vector2.UnitY.RotatedBy(projectile.rotation) * Main.rand.NextFloat(8f, 9f);
-                    int flare = Utilities.NewProjectileBetter(flareSpawnPosition, flareVelocity, ModContent.ProjectileType<LunarFlare>(), 205, 0f);
+                    Vector2 flareVelocity = Vector2.UnitY.RotatedBy(projectile.rotation) * Main.rand.NextFloat(11f, 13f);
+                    int flare = Utilities.NewProjectileBetter(flareSpawnPosition, flareVelocity, ProjectileID.PhantasmalBolt, 205, 0f);
                     if (Main.projectile.IndexInRange(flare))
                         Main.projectile[flare].ai[1] = Target.Center.Y + 400f;
                 }

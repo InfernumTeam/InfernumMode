@@ -1,5 +1,7 @@
-﻿﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod;
+using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 
@@ -8,7 +10,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     public class PhantasmalSphereBehaviorOverride : ProjectileBehaviorOverride
     {
         public override int ProjectileOverrideType => ProjectileID.PhantasmalSphere;
-        public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectileAI;
+        public override ProjectileOverrideContext ContentToOverride => ProjectileOverrideContext.ProjectileAI | ProjectileOverrideContext.ProjectilePreDraw;
 
         public override bool PreAI(Projectile projectile)
         {
@@ -45,6 +47,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     electricity.noGravity = true;
                 }
             }
+            return false;
+        }
+
+        public override bool PreDraw(Projectile projectile, SpriteBatch spriteBatch, Color lightColor)
+        {
+            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
+            CalamityUtils.DrawAfterimagesCentered(projectile, 2, lightColor * 0.6f);
             return false;
         }
     }

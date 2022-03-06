@@ -15,8 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lunar Flame");
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 2;
             ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
         }
 
         public override void SetDefaults()

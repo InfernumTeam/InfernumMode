@@ -97,6 +97,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
         }
 
+        public const int IntroSoundLength = 131;
+
         public override int NPCOverrideType => NPCID.MoonLordCore;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
@@ -112,10 +114,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             ref float forcefullySwitchAttack = ref npc.Infernum().ExtraAI[5];
             ref float deathAttackTimer = ref npc.Infernum().ExtraAI[6];
             ref float despawnTimer = ref npc.Infernum().ExtraAI[9];
+            ref float introSoundTimer = ref npc.Infernum().ExtraAI[10];
 
             // Player variable.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
+
+            // Play an introductio
+            if (introSoundTimer < IntroSoundLength)
+            {
+                if (introSoundTimer == 0f)
+                    Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/MoonLordIntro"), target.Center);
+                introSoundTimer++;
+            }
 
             // Reset things.
             npc.dontTakeDamage = NPC.CountNPCS(NPCID.MoonLordFreeEye) < 3;

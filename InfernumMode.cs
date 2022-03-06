@@ -4,6 +4,7 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
+using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
@@ -130,6 +131,7 @@ namespace InfernumMode
                 GameShaders.Misc["Infernum:SCalIntro"] = new MiscShaderData(introShader, "LetterPass");
 
                 OverrideMusicBox(ItemID.MusicBoxBoss3, GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
+                OverrideMusicBox(ItemID.MusicBoxLunarBoss, GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
             }
 
             if (BossRushApplies)
@@ -168,6 +170,17 @@ namespace InfernumMode
             {
                 music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/LunaticCultist");
                 priority = MusicPriority.BossMedium;
+            }
+
+            int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
+            if (moonLordIndex != -1)
+            {
+                NPC moonLord = Main.npc[moonLordIndex];
+
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord");
+                if (moonLord.Infernum().ExtraAI[10] < MoonLordCoreBehaviorOverride.IntroSoundLength - 72f)
+                    music = 0;
+                priority = MusicPriority.BossHigh;
             }
 
             bool areExoMechsAround = NPC.AnyNPCs(ModContent.NPCType<AresBody>()) ||

@@ -48,7 +48,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     Vector2 flareVelocity = Vector2.UnitY.RotatedBy(projectile.rotation) * Main.rand.NextFloat(11f, 13f);
                     int flare = Utilities.NewProjectileBetter(flareSpawnPosition, flareVelocity, ProjectileID.PhantasmalBolt, 205, 0f);
                     if (Main.projectile.IndexInRange(flare))
+                    {
                         Main.projectile[flare].ai[1] = Target.Center.Y + 400f;
+                        Main.projectile[flare].tileCollide = false;
+                    }
                 }
 
                 projectile.Kill();

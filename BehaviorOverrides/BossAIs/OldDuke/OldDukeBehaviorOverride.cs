@@ -171,6 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool outOfOcean = !BossRushEvent.BossRushActive && target.position.X > 8400f && target.position.X < Main.maxTilesX * 16f - 8400f;
             ref float attackState = ref npc.ai[0];
@@ -422,7 +423,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     acid.velocity = npc.SafeDirectionTo(dustSpawnPosition) * 3f;
                 }
 
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeRoar"), npc.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OldDukeVomit"), npc.Center);
             }
 
             if (attackTimer >= 75f)

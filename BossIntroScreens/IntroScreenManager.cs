@@ -15,6 +15,15 @@ namespace InfernumMode.BossIntroScreens
             get => IntroScreens.Any(s => s.ShouldCoverScreen && s.ShouldBeActive() && s.AnimationCompletion < 1f);
         }
 
+        public static bool ShouldDisplayJokeIntroText
+        {
+            get
+            {
+                int introTextDisplayChance = Utilities.IsAprilFirst() ? 5 : 500;
+                return Main.rand.NextBool(introTextDisplayChance);
+            }
+        }
+
         internal static void Load()
         {
             IntroScreens = new List<BaseIntroScreen>();

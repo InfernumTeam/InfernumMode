@@ -22,6 +22,8 @@ namespace InfernumMode.BossIntroScreens
 
         public bool HasPlayedMainSound = false;
 
+        public string CachedText = string.Empty;
+
         protected virtual Vector2 BaseDrawPosition
         {
             get
@@ -136,7 +138,7 @@ namespace InfernumMode.BossIntroScreens
 
             int absoluteLetterCounter = 0;
             bool playedNewLetterSound = false;
-            string[] splitTextInstances = TextToDisplay.Split('\n');
+            string[] splitTextInstances = CachedText.Split('\n');
             for (int i = 0; i < splitTextInstances.Length; i++)
             {
                 string splitText = splitTextInstances[i];
@@ -151,9 +153,9 @@ namespace InfernumMode.BossIntroScreens
                 for (int j = 0; j < splitText.Length; j++)
                 {
                     float individualLineLetterCompletionRatio = j / (float)(splitText.Length - 1f);
-                    float absoluteLineLetterCompletionRatio = absoluteLetterCounter / (float)(TextToDisplay.Length - 1f);
-                    int previousTotalLettersToDisplay = (int)(TextToDisplay.Length * LetterDisplayCompletionRatio(AnimationTimer - 1));
-                    int totalLettersToDisplay = (int)(TextToDisplay.Length * LetterDisplayCompletionRatio(AnimationTimer));
+                    float absoluteLineLetterCompletionRatio = absoluteLetterCounter / (float)(CachedText.Length - 1f);
+                    int previousTotalLettersToDisplay = (int)(CachedText.Length * LetterDisplayCompletionRatio(AnimationTimer - 1));
+                    int totalLettersToDisplay = (int)(CachedText.Length * LetterDisplayCompletionRatio(AnimationTimer));
 
                     // Play a sound if a new letter was added and a sound of this effect is initialized.
                     if (totalLettersToDisplay > previousTotalLettersToDisplay && SoundToPlayWithLetterAddition != null && !playedNewLetterSound)
@@ -211,8 +213,12 @@ namespace InfernumMode.BossIntroScreens
             {
                 AnimationTimer = 0;
                 HasPlayedMainSound = false;
+                CachedText = string.Empty;
                 return;
             }
+
+            if (string.IsNullOrEmpty(CachedText))
+                CachedText = TextToDisplay;
 
             if (AnimationTimer < AnimationTime)
                 AnimationTimer++;

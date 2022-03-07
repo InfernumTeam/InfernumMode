@@ -767,6 +767,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             if (attackTimer < hoverTime)
             {
+                // Disable contact damage while hovering.
+                npc.damage = 0;
+
                 if (offsetDirection == 0f)
                 {
                     offsetDirection = Main.rand.NextBool().ToDirectionInt();
@@ -783,10 +786,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == hoverTime - 45f)
             {
                 List<int> xSpawnPositions = new List<int>()
-                        {
-                            (int)(target.Center.X - (enraged ? 600f : 750f)) / 16,
-                            (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
-                        };
+                {
+                    (int)(target.Center.X - (enraged ? 600f : 750f)) / 16,
+                    (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
+                };
 
                 int y = Utils.Clamp((int)target.Center.Y / 16 + 75, 20, Main.maxTilesY - 20);
                 foreach (int x in xSpawnPositions)
@@ -990,10 +993,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             // Draw afterimages.
             if (afterimageCount > 0)
             {
-                if (npc.oldPos.Length < afterimageCount)
+                if (npc.oldPos.Length < afterimageCount + 1)
                 {
-                    npc.oldPos = new Vector2[(int)afterimageCount];
-                    npc.oldRot = new float[(int)afterimageCount];
+                    npc.oldPos = new Vector2[(int)afterimageCount + 1];
+                    npc.oldRot = new float[(int)afterimageCount + 1];
                 }
 
                 for (int i = (int)afterimageCount; i >= 1; i--)

@@ -97,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
         }
 
-        public const int IntroSoundLength = 131;
+        public const int IntroSoundLength = 107;
 
         public override int NPCOverrideType => NPCID.MoonLordCore;
 

@@ -307,7 +307,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.Opacity = 1f;
 
             // Define a general-purpose mouth position vector.
-            Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 45f);
+            Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, -15f);
 
             switch ((OldDukeAttackState)(int)attackState)
             {
@@ -599,7 +599,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
             if (!npc.WithinRange(hoverDestination, 45f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20.5f, 0.75f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 14.5f, 0.8f);
 
             // Handle frames.
             if (attackTimer <= shootDelay)
@@ -645,7 +645,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
             if (!npc.WithinRange(hoverDestination, 45f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20.5f, 0.75f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 14.5f, 0.75f);
 
             // Look at the target.
             npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
@@ -742,7 +742,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             // Hover near the target.
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(npc.Center.X - target.Center.X) * 500f, -300f) - npc.velocity;
             if (!npc.WithinRange(hoverDestination, 45f))
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20.5f, 0.75f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 14.5f, 0.75f);
 
             // Handle frames.
             if (attackTimer <= shootDelay)

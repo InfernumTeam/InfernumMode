@@ -240,9 +240,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     {
                         for (int i = 0; i < 42; i++)
                         {
-                            Vector2 boltVelocity = (MathHelper.TwoPi * i / 42f).ToRotationVector2() * 5.5f;
+                            Vector2 boltVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 42f) * 5.5f;
                             Utilities.NewProjectileBetter(pupilPosition, boltVelocity, ProjectileID.PhantasmalBolt, 200, 0f);
-                            Utilities.NewProjectileBetter(pupilPosition, boltVelocity * 0.75f, ProjectileID.PhantasmalBolt, 200, 0f);
+                            Utilities.NewProjectileBetter(pupilPosition, boltVelocity * 0.67f, ProjectileID.PhantasmalBolt, 200, 0f);
                             Utilities.NewProjectileBetter(pupilPosition, boltVelocity * 0.4f, ProjectileID.PhantasmalBolt, 200, 0f);
                         }
                     }

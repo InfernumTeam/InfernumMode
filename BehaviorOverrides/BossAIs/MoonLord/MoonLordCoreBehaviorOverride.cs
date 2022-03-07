@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -147,7 +148,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         // Create arena tiles.
                         if ((Math.Abs(closestTileCoords.X - i) == ArenaWidth / 2 || Math.Abs(closestTileCoords.Y - j) == ArenaHeight / 2) && !Main.tile[i, j].active())
                         {
-                            Main.tile[i, j].type = (ushort)ModContent.TileType<Tiles.MoonlordArena>();
+                            Main.tile[i, j].type = (ushort)ModContent.TileType<MoonlordArena>();
                             Main.tile[i, j].active(true);
                             if (Main.netMode == NetmodeID.Server)
                                 NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
@@ -188,7 +189,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 attackState = -1f;
                 attackTimer = 0f;
                 if (despawnTimer >= 45f)
+                {
+                    DeleteArena();
                     npc.active = false;
+                }
                 return false;
             }
             despawnTimer = 0f;
@@ -369,6 +373,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     }
                 }
 
+                DeleteArena();
                 MoonlordDeathDrama.ThrowPieces(npc.Center, npc.whoAmI);
                 npc.life = 0;
                 npc.NPCLoot();
@@ -565,6 +570,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 if (projectilesToDelete.Contains(Main.projectile[i].type))
                     Main.projectile[i].active = false;
+            }
+        }
+
+        public static void DeleteArena()
+        {
+            int arenaTileID = ModContent.TileType<MoonlordArena>();
+            for (int i = 0; i < Main.maxTilesX; i++)
+            {
+                for (int j = 0; j < Main.maxTilesY; j++)
+                {
+                    if (Main.tile[i, j].type != arenaTileID || !Main.tile[i, j].active())
+                        continue;
+
+                    Main.tile[i, j].type = TileID.Dirt;
+                    Main.tile[i, j].active(false);
+                    if (Main.netMode == NetmodeID.Server)
+                        NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
+                    else
+                        WorldGen.SquareTileFrame(i, j, true);
+                }
             }
         }
 

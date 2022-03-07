@@ -264,10 +264,18 @@ namespace InfernumMode
             {
                 player.mount.Dismount(player);
             }
+
+            // Ensure that Revengeance Mode is always active while Infernum is active.
             if (PoDWorld.InfernumMode && !CalamityWorld.revenge)
-            {
                 CalamityWorld.revenge = true;
+
+            // Ensure that Malice Mode is never active while Infernum is active.
+            if (PoDWorld.InfernumMode && CalamityWorld.malice)
+            {
+                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.MaliceText2", Color.Crimson);
+                CalamityWorld.malice = false;
             }
+
             if (PoDWorld.InfernumMode && CalamityWorld.DoGSecondStageCountdown > 600)
             {
                 for (int i = 0; i < Main.maxNPCs; i++)

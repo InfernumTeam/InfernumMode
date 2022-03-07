@@ -27,9 +27,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         {
             if (projectile.localAI[0] == 0f)
             {
-                projectile.rotation = Main.rand.NextFloatDirection() * 0.444f;
                 projectile.localAI[0] = 1f;
                 projectile.netUpdate = true;
+            }
+
+            if (MoonLordCoreBehaviorOverride.CurrentActiveArms <= 0)
+            {
+                projectile.active = false;
+                return;
             }
 
             if (Countdown > 0f)
@@ -41,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 flareSpawnPosition = new Vector2(projectile.Center.X, Target.Center.Y) - Vector2.UnitY.RotatedBy(projectile.rotation) * 1000f;
+                    Vector2 flareSpawnPosition = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation) * 1000f;
                     if (flareSpawnPosition.Y < 100f)
                         flareSpawnPosition.Y = 100f;
 

@@ -154,7 +154,13 @@ namespace InfernumMode
 
         public override void UpdateMusic(ref int music, ref MusicPriority priority)
         {
-            if (NPC.AnyNPCs(NPCID.SkeletronHead) || NPC.AnyNPCs(NPCID.EyeofCthulhu))
+            if (NPC.AnyNPCs(NPCID.EyeofCthulhu))
+            {
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/EyeOfCthulhu");
+                priority = MusicPriority.BossLow;
+            }
+
+            if (NPC.AnyNPCs(NPCID.SkeletronHead))
             {
                 music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3");
                 priority = MusicPriority.BossLow;

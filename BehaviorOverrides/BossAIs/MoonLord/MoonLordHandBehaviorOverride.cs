@@ -56,16 +56,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalFlareBursts:
                     if (!hasPopped)
                         DoBehavior_PhantasmalFlareBursts(npc, core, target, handSide, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
-                    else if (MoonLordCoreBehaviorOverride.CurrentActiveArms <= 0)
-                    {
-                        int lunarFlareID = ModContent.ProjectileType<LunarFlare>();
-                        int lunarFlareTelegraphID = ModContent.ProjectileType<LunarFlareTelegraph>();
-                        for (int i = 0; i < Main.maxProjectiles; i++)
-                        {
-                            if (Main.projectile[i].type == lunarFlareID || Main.projectile[i].type == lunarFlareTelegraphID)
-                                Main.projectile[i].active = false;
-                        }
-                    }
                     break;
                 case MoonLordCoreBehaviorOverride.MoonLordAttackState.ExplodingConstellations:
                     DoBehavior_ExplodingConstellations(npc, core, target, handSide, attackTimer, ref idealFrame);

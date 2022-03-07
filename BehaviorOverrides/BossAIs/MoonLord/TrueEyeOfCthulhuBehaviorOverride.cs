@@ -246,7 +246,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public static void DoBehavior_PhantasmalDance(NPC npc, Player target, NPC core, float attackTimer, float groupIndex, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale)
         {
             int spinTime = 60;
-            int chargeTelegraphTime = 28;
+            int chargeTelegraphTime = 39;
             int chargeTime = 36;
             int chargeCount = 4;
             int orbReleaseRate = 5;

@@ -133,6 +133,9 @@ namespace InfernumMode
                 Ref<Effect> queenSlimeShader = new Ref<Effect>(GetEffect("Effects/QueenSlimeShader"));
                 GameShaders.Misc["Infernum:QueenSlime"] = new MiscShaderData(queenSlimeShader, "SlimePass");
 
+                Ref<Effect> wingsShader = new Ref<Effect>(GetEffect("Effects/EmpressOfLightWingsShader"));
+                GameShaders.Misc["Infernum:EmpressOfLightWings"] = new MiscShaderData(wingsShader, "SlimePass");
+
                 OverrideMusicBox(ItemID.MusicBoxBoss3, GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
                 OverrideMusicBox(ItemID.MusicBoxLunarBoss, GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
             }

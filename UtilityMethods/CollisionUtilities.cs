@@ -51,5 +51,46 @@ namespace InfernumMode
             distance = distance1 + distance2;
             return distance <= distanceConstant;
         }
+
+        public static bool SolidCollision(Vector2 Position, int Width, int Height, bool acceptTopSurfaces)
+        {
+            int right = (int)((Position.X + Width) / 16f) + 2;
+            int top = (int)(Position.Y / 16f) - 1;
+            int bottom = (int)((Position.Y + Height) / 16f) + 2;
+            int left = Utils.Clamp((int)(Position.X / 16f) - 1, 0, Main.maxTilesX - 1);
+            right = Utils.Clamp(right, 0, Main.maxTilesX - 1);
+            top = Utils.Clamp(top, 0, Main.maxTilesY - 1);
+            bottom = Utils.Clamp(bottom, 0, Main.maxTilesY - 1);
+            for (int i = left; i < right; i++)
+            {
+                for (int j = top; j < bottom; j++)
+                {
+                    Tile tile = Main.tile[i, j];
+                    if (tile != null && tile.active() && !tile.inActive())
+                    {
+                        bool solidTile = Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type];
+                        if (acceptTopSurfaces)
+                        {
+                            solidTile |= Main.tileSolidTop[tile.type] && tile.frameY == 0;
+                        }
+                        if (solidTile)
+                        {
+                            Vector2 v = new Vector2(i, j) * 16f;
+                            int verticalLeniance = 16;
+                            if (tile.halfBrick())
+                            {
+                                v.Y += 8f;
+                                verticalLeniance -= 8;
+                            }
+                            if (Position.X + Width > v.X && Position.X < v.X + 16f && Position.Y + Height > v.Y && Position.Y < v.Y + verticalLeniance)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
     }
 }

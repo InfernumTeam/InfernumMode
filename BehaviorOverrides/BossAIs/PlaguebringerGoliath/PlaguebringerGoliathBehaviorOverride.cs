@@ -859,7 +859,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Release a swarm of drones and a nuke.
             if (attackTimer == 1f)
             {
-                Main.NewText("NUCLEAR CORE GENERATED. INITIATING BUILD PROCEDURE!", Color.Lime);
+                Utilities.DisplayText("NUCLEAR CORE GENERATED. INITIATING BUILD PROCEDURE!", Color.Lime);
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

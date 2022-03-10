@@ -329,7 +329,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 string text = "The air is scorching your skin...";
 
                 if (Main.netMode == NetmodeID.SinglePlayer)
-                    Main.NewText(text, Color.Orange);
+                    Utilities.DisplayText(text, Color.Orange);
                 else if (Main.netMode == NetmodeID.Server)
                     NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Orange);
 
@@ -1376,7 +1376,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 {
                     npc.life = (int)(npc.lifeMax * 0.025);
                     if (Main.netMode == NetmodeID.SinglePlayer)
-                        Main.NewText("The heat is surging...", Color.Orange);
+                        Utilities.DisplayText("The heat is surging...", Color.Orange);
                     else if (Main.netMode == NetmodeID.Server)
                         NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The heat is surging..."), Color.Orange);
                     finalAttackCompletionState = 1f;

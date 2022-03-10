@@ -299,7 +299,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 if (nearDeathFlag == 0f)
                 {
-                    Main.NewText("A GOD DOES NOT FEAR DEATH!", Color.Cyan);
+                    Utilities.DisplayText("A GOD DOES NOT FEAR DEATH!", Color.Cyan);
                     nearDeathFlag = 1f;
                 }
             }
@@ -485,11 +485,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealSpeed, 0.08f);
 
             if (deathTimer == 120f)
-                Main.NewText("I WILL NOT BE DESTROYED!!!", Color.Cyan);
+                Utilities.DisplayText("I WILL NOT BE DESTROYED!!!", Color.Cyan);
             if (deathTimer == 170f)
-                Main.NewText("I WILL NOT BE DESTROYED!!!", Color.Cyan);
+                Utilities.DisplayText("I WILL NOT BE DESTROYED!!!", Color.Cyan);
             if (deathTimer == 220f)
-                Main.NewText("I WILL NOT BE DESTROYED!!!!", Color.Cyan);
+                Utilities.DisplayText("I WILL NOT BE DESTROYED!!!!", Color.Cyan);
 
             if (deathTimer >= 120f && deathTimer < 380f && deathTimer % 4f == 0f)
             {
@@ -498,10 +498,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             if (deathTimer == 330f)
-                Main.NewText("I WILL NOT...", Color.Cyan);
+                Utilities.DisplayText("I WILL NOT...", Color.Cyan);
 
             if (deathTimer == 420f)
-                Main.NewText("I...", Color.Cyan);
+                Utilities.DisplayText("I...", Color.Cyan);
 
             if (deathTimer == 442f)
             {

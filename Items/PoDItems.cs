@@ -55,7 +55,7 @@ namespace InfernumMode
                         "YOU CANNOT HOPE TO OUTSMART A MASTER OF DIMENSIONS!",
                         "NOT SO FAST!"
                 };
-                Main.NewText(Main.rand.Next(possibleEdgyShitToSay), Color.Cyan);
+                Utilities.DisplayText(Main.rand.Next(possibleEdgyShitToSay), Color.Cyan);
             }
         }
 

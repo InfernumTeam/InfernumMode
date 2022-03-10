@@ -6,6 +6,7 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
@@ -97,6 +98,12 @@ namespace InfernumMode
                 NPC oldDukeNPC = oldDuke >= 0 ? Main.npc[oldDuke] : null;
                 bool useOD = oldDukeNPC != null && oldDukeNPC.Infernum().ExtraAI[6] >= 2f;
                 player.ManageSpecialBiomeVisuals("InfernumMode:OldDuke", useOD);
+
+                int eolID = ModContent.NPCType<EmpressOfLightNPC>();
+                int eol = NPC.FindFirstNPC(eolID);
+                NPC eolNPC = eol >= 0 ? Main.npc[eol] : null;
+                bool useEoL = eolNPC != null && eolNPC.ModNPC<EmpressOfLightNPC>().ReadyToUseScreenShader;
+                player.ManageSpecialBiomeVisuals("InfernumMode:EmpressOfLight", useEoL);
             }
         }
         #endregion

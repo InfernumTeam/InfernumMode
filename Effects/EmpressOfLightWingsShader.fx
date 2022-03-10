@@ -27,7 +27,7 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     float4 rainbow = tex2D(uImage1, rainbowCoords);
     if (color.r == 0)
         return color;
-    return rainbow;
+    return rainbow * color.a * sampleColor.a;
 }
 
 technique Technique1

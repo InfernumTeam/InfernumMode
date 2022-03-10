@@ -136,6 +136,10 @@ namespace InfernumMode
                 Ref<Effect> wingsShader = new Ref<Effect>(GetEffect("Effects/EmpressOfLightWingsShader"));
                 GameShaders.Misc["Infernum:EmpressOfLightWings"] = new MiscShaderData(wingsShader, "SlimePass");
 
+                Effect screenShader = GetEffect("Effects/EmpressOfLightScreenShader");
+                Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
+                SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();
+
                 OverrideMusicBox(ItemID.MusicBoxBoss3, GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
                 OverrideMusicBox(ItemID.MusicBoxLunarBoss, GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
             }

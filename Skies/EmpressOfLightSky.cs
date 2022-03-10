@@ -1,3 +1,4 @@
+using CalamityMod;
 using InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -40,9 +41,28 @@ namespace InfernumMode.Skies
             }
         }
 
+        public class Light
+        {
+            public int Timer;
+            public int Lifetime;
+            public float Hue;
+            public float Opacity;
+            public float Depth;
+            public Vector2 DrawPosition;
+
+            public float LifetimeCompletion => Timer / (float)Lifetime;
+
+            public void Update()
+            {
+                Opacity = Utils.InverseLerp(0f, 0.1f, LifetimeCompletion, true) * Utils.InverseLerp(1f, 0.9f, LifetimeCompletion, true);
+                Timer++;
+            }
+        }
+
         public bool isActive = false;
         public float Intensity = 0f;
         public List<Fairy> Fairies = new List<Fairy>();
+        public List<Light> Lights = new List<Light>();
 
         public override void Update(GameTime gameTime)
         {
@@ -61,18 +81,20 @@ namespace InfernumMode.Skies
         public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
         {
             int eol = NPC.FindFirstNPC(ModContent.NPCType<EmpressOfLightNPC>());
-            if (eol == -1)
+            if (eol == -1 || !Main.npc[eol].ModNPC<EmpressOfLightNPC>().ReadyToUseScreenShader)
             {
                 Fairies.Clear();
                 return;
             }
 
             int maxFairies = (int)MathHelper.Lerp(120f, 300f, Main.npc[eol].life / (float)Main.npc[eol].lifeMax);
+            int maxLights = maxFairies / 3 + 25;
             Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.5f);
             Rectangle rectangle = new Rectangle(-1000, -1000, 4000, 4000);
 
-            // Remove all fairies that should die.
+            // Remove all things that should die.
             Fairies.RemoveAll(f => f.Timer >= f.Lifetime);
+            Lights.RemoveAll(l => l.Timer >= l.Lifetime);
 
             // Randomly spawn fairies.
             if (Main.rand.NextBool(8) && Fairies.Count < maxFairies)
@@ -84,6 +106,18 @@ namespace InfernumMode.Skies
                     Lifetime = Main.rand.Next(1450, 2100),
                     Hue = Main.rand.NextFloat(),
                     Depth = Main.rand.NextFloat(1.2f, 13f)
+                });
+            }
+
+            // Randomly spawn lights.
+            if (Main.rand.NextBool(16) && Lights.Count < maxLights)
+            {
+                Lights.Add(new Light()
+                {
+                    DrawPosition = Main.LocalPlayer.Center + new Vector2(Main.rand.NextFloatDirection() * 7500f, Main.rand.NextFloat(-2300f, 400f)),
+                    Lifetime = Main.rand.Next(1450, 2100),
+                    Hue = Main.rand.NextFloat(),
+                    Depth = Main.rand.NextFloat(0.85f, 6f)
                 });
             }
 
@@ -108,6 +142,27 @@ namespace InfernumMode.Skies
 
                         spriteBatch.Draw(texture, position, frame, Color.White * Fairies[i].Opacity, 0f, origin, fairyScale.X * 5f, direction, 0f);
                         spriteBatch.Draw(glowmaskTexture, position, frame, glowmaskColor, 0f, origin, fairyScale.X * 5f, direction, 0f);
+                    }
+                }
+            }
+
+            // Draw all lights.
+            texture = ModContent.GetTexture("InfernumMode/ExtraTextures/Gleam");
+
+            for (int i = 0; i < Lights.Count; i++)
+            {
+                Lights[i].Update();
+                if (Lights[i].Depth > minDepth && Lights[i].Depth < maxDepth * 2f)
+                {
+                    Vector2 lightScale = new Vector2(1f / Lights[i].Depth, 0.9f / Lights[i].Depth) * 0.25f;
+                    Vector2 position = (Lights[i].DrawPosition - screenCenter) * lightScale + screenCenter - Main.screenPosition;
+                    if (rectangle.Contains((int)position.X, (int)position.Y))
+                    {
+                        Color lightColor = Main.hslToRgb(Lights[i].Hue, 1f, 0.6f) * Lights[i].Opacity;
+                        Vector2 origin = texture.Size() * 0.5f;
+
+                        spriteBatch.Draw(texture, position, null, lightColor, 0f, origin, lightScale.X * new Vector2(2f, 6f) * Lights[i].Opacity, 0, 0f);
+                        spriteBatch.Draw(texture, position, null, lightColor, MathHelper.PiOver2, origin, lightScale.X * new Vector2(1f, 4f) * Lights[i].Opacity, 0, 0f);
                     }
                 }
             }

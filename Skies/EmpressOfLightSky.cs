@@ -84,11 +84,12 @@ namespace InfernumMode.Skies
             if (eol == -1 || !Main.npc[eol].ModNPC<EmpressOfLightNPC>().ReadyToUseScreenShader)
             {
                 Fairies.Clear();
+                Lights.Clear();
                 return;
             }
 
-            int maxFairies = (int)MathHelper.Lerp(120f, 300f, Main.npc[eol].life / (float)Main.npc[eol].lifeMax);
-            int maxLights = maxFairies / 3 + 25;
+            int maxFairies = (int)MathHelper.Lerp(90f, 175f, Main.npc[eol].life / (float)Main.npc[eol].lifeMax);
+            int maxLights = maxFairies + 65;
             Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.5f);
             Rectangle rectangle = new Rectangle(-1000, -1000, 4000, 4000);
 
@@ -103,9 +104,9 @@ namespace InfernumMode.Skies
                 {
                     DrawPosition = Main.LocalPlayer.Center + new Vector2(Main.rand.NextFloatDirection() * 7500f, Main.rand.NextFloat(400f, 600f)),
                     Velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 5f),
-                    Lifetime = Main.rand.Next(1450, 2100),
+                    Lifetime = Main.rand.Next(2000, 2900),
                     Hue = Main.rand.NextFloat(),
-                    Depth = Main.rand.NextFloat(1.2f, 13f)
+                    Depth = Main.rand.NextFloat(1.8f, 13f)
                 });
             }
 
@@ -114,10 +115,10 @@ namespace InfernumMode.Skies
             {
                 Lights.Add(new Light()
                 {
-                    DrawPosition = Main.LocalPlayer.Center + new Vector2(Main.rand.NextFloatDirection() * 7500f, Main.rand.NextFloat(-2300f, 400f)),
+                    DrawPosition = Main.LocalPlayer.Center + new Vector2(Main.rand.NextFloatDirection() * 7500f, Main.rand.NextFloat(-3300f, -1000f)),
                     Lifetime = Main.rand.Next(1450, 2100),
                     Hue = Main.rand.NextFloat(),
-                    Depth = Main.rand.NextFloat(0.85f, 6f)
+                    Depth = Main.rand.NextFloat(0.85f, 3f)
                 });
             }
 
@@ -147,7 +148,7 @@ namespace InfernumMode.Skies
             }
 
             // Draw all lights.
-            texture = ModContent.GetTexture("InfernumMode/ExtraTextures/Gleam");
+            texture = ModContent.GetTexture("InfernumMode/ExtraTextures/EmpressStar");
 
             for (int i = 0; i < Lights.Count; i++)
             {
@@ -159,10 +160,10 @@ namespace InfernumMode.Skies
                     if (rectangle.Contains((int)position.X, (int)position.Y))
                     {
                         Color lightColor = Main.hslToRgb(Lights[i].Hue, 1f, 0.6f) * Lights[i].Opacity;
+                        lightColor.A = 0;
                         Vector2 origin = texture.Size() * 0.5f;
 
-                        spriteBatch.Draw(texture, position, null, lightColor, 0f, origin, lightScale.X * new Vector2(2f, 6f) * Lights[i].Opacity, 0, 0f);
-                        spriteBatch.Draw(texture, position, null, lightColor, MathHelper.PiOver2, origin, lightScale.X * new Vector2(1f, 4f) * Lights[i].Opacity, 0, 0f);
+                        spriteBatch.Draw(texture, position, null, lightColor, 0f, origin, lightScale.X * new Vector2(2f, 3f) * Lights[i].Opacity, 0, 0f);
                     }
                 }
             }

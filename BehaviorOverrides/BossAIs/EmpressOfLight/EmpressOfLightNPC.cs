@@ -543,9 +543,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             int wispFormEnterTime = 60;
             int spinTime = 210;
-            int prismCreationRate = 42;
-            float spinSpeed = 36f;
-            float spinOffset = 460f;
+            int prismCreationRate = 15;
+            int laserReleaseDelay = 30;
+            int boltReleaseRate = 35;
+            int attackTransitionDelay = 240;
+            float spinSpeed = 30f;
+            float spinOffset = 540f;
             ref float wispColorInterpolant = ref npc.Infernum().ExtraAI[0];
 
             // Hover above the target and enter the wisp form.
@@ -558,15 +561,42 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             else
             {
+                float spinSlowdownFactor = Utils.InverseLerp(spinTime, spinTime - prismCreationRate, AttackTimer - wispFormEnterTime, true);
                 Vector2 hoverDestination = Target.Center - Vector2.UnitY.RotatedBy(MathHelper.TwoPi / spinTime * 2f * AttackTimer) * spinOffset;
-                npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, spinSpeed);
+                npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, spinSlowdownFactor * spinSpeed);
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer % prismCreationRate == prismCreationRate - 1f)
+                // Release prisms periodically.
+                if (AttackTimer % prismCreationRate == prismCreationRate - 1f && spinSlowdownFactor > 0f)
                 {
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
-                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressPrism>(), 0, 0f);
+                    Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
+                        int prism = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressPrism>(), 0, 0f);
+                        if (Main.projectile.IndexInRange(prism))
+                        {
+                            Main.projectile[prism].ai[0] = AttackTimer - (wispFormEnterTime + spinTime) - laserReleaseDelay;
+                            Main.projectile[prism].ai[1] = npc.target;
+                        }
+                    }
+                }
+
+                // Raise the right hand upward.
+                RightArmFrame = 3f;
+
+                // Release prismatic bolts at the target occasionally.
+                if (AttackTimer % boltReleaseRate == boltReleaseRate - 1f)
+                {
+                    Vector2 handOffset = new Vector2(55f, -30f);
+                    Vector2 handPosition = npc.Center + handOffset;
+                    int bolt = Utilities.NewProjectileBetter(handPosition, -Vector2.UnitY.RotatedByRandom(0.6f) * 16f, ModContent.ProjectileType<PrismaticBolt>(), 175, 0f);
+                    if (Main.projectile.IndexInRange(bolt))
+                        Main.projectile[bolt].ai[1] = Main.rand.NextFloat();
                 }
             }
+
+            if (AttackTimer >= wispFormEnterTime + spinTime + attackTransitionDelay)
+                SelectNextAttack();
         }
 
         public void SelectNextAttack()
@@ -594,7 +624,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     AttackType = EmpressOfLightAttackType.PrismaticBoltCircle;
                     break;
             }
-            AttackType = EmpressOfLightAttackType.RainbowWispForm;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

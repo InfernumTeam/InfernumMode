@@ -130,6 +130,9 @@ namespace InfernumMode
                 introShader = new Ref<Effect>(GetEffect("Effects/SCalIntroLetterShader"));
                 GameShaders.Misc["Infernum:SCalIntro"] = new MiscShaderData(introShader, "LetterPass");
 
+                Ref<Effect> rayShader = new Ref<Effect>(GetEffect("Effects/PrismaticRayShader"));
+                GameShaders.Misc["Infernum:PrismaticRay"] = new MiscShaderData(rayShader, "TrailPass");
+
                 Ref<Effect> queenSlimeShader = new Ref<Effect>(GetEffect("Effects/QueenSlimeShader"));
                 GameShaders.Misc["Infernum:QueenSlime"] = new MiscShaderData(queenSlimeShader, "SlimePass");
 

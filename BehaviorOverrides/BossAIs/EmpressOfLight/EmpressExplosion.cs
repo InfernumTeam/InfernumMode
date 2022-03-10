@@ -23,13 +23,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             projectile.ignoreWater = true;
             projectile.tileCollide = true;
             projectile.penetrate = -1;
-            projectile.timeLeft = 30;
+            projectile.timeLeft = 60;
             projectile.scale = 1f;
         }
 
         public override void AI()
         {
-            projectile.scale = CalamityUtils.Convert01To010(projectile.timeLeft / 30f);
+            projectile.scale = CalamityUtils.Convert01To010(projectile.timeLeft / 60f);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -41,13 +41,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 scale = projectile.Size / texture.Size();
 
             Color color = Main.hslToRgb(Main.GlobalTime * 0.64f % 1f, 1f, 0.65f);
-            color = Color.Lerp(color, Color.White, (float)Math.Pow(projectile.scale, 2D)) * projectile.scale;
+            color = Color.Lerp(color, Color.White, (float)Math.Pow(projectile.scale, 5D)) * projectile.scale;
 
             spriteBatch.Draw(texture, drawPosition, null, color, 0f, texture.Size() * 0.5f, scale * (float)Math.Pow(projectile.scale, 1.5), 0, 0f);
-            for (int i = 0; i < 2; i++)
+            for (int j = 0; j < 3; j++)
             {
-                float rotation = MathHelper.Lerp(-MathHelper.PiOver4, MathHelper.PiOver4, i);
-                spriteBatch.Draw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, scale * new Vector2(0.1f, 1f) * 1.45f, 0, 0f);
+                float rotation = MathHelper.Lerp(-MathHelper.PiOver4, MathHelper.PiOver4, j / 2f);
+                spriteBatch.Draw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, scale * new Vector2(0.15f, 1f) * 1.45f, 0, 0f);
             }
             spriteBatch.ResetBlendState();
 

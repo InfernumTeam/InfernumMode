@@ -71,14 +71,14 @@ namespace InfernumMode
                         Main.npc[doom].netUpdate = true;
                     }
                 }
+
+                Utilities.DisplayText(infernumWasAlreadyActive ? "Very well, then." : "Good luck.", Color.Crimson);
                 PoDWorld.InfernumMode = !infernumWasAlreadyActive;
                 CalamityNetcode.SyncWorld();
             }
 
             if (Main.netMode != NetmodeID.Server)
             {
-                Main.NewText(infernumWasAlreadyActive ? "Very well, then." : "Good luck.", Color.Crimson);
-
                 // Create a lot of fire dust.
                 for (int i = 0; i < 80; i++)
                 {

@@ -451,16 +451,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Start of battle.
                 case 0:
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 120f)
-                        Main.NewText("...So it's you.", Color.Orange);
+                        Utilities.DisplayText("...So it's you.", Color.Orange);
 
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 20f)
-                        Main.NewText("After all you've done, I will make you suffer.", Color.Orange);
+                        Utilities.DisplayText("After all you've done, I will make you suffer.", Color.Orange);
                     break;
 
                 // After Sepulcher.
                 case 2:
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 100f)
-                        Main.NewText("...You're still alive?", Color.Orange);
+                        Utilities.DisplayText("...You're still alive?", Color.Orange);
                     break;
 
                 // Phase 2.
@@ -468,10 +468,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     frameType = (int)SCalFrameType.Casting;
                     frameChangeSpeed = 0.15f;
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 240f)
-                        Main.NewText("The powers you wield. The strength you've amassed.", Color.Orange);
+                        Utilities.DisplayText("The powers you wield. The strength you've amassed.", Color.Orange);
 
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 150f)
-                        Main.NewText("They will not stop me.", Color.Orange);
+                        Utilities.DisplayText("They will not stop me.", Color.Orange);
 
                     // Summon the shadow demon.
                     if (attackTextDelay == 75f)
@@ -490,10 +490,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     frameType = (int)SCalFrameType.Casting;
                     frameChangeSpeed = 0.15f;
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 240f)
-                        Main.NewText("You are an anomaly. An unforeseen deviation.", Color.Orange);
+                        Utilities.DisplayText("You are an anomaly. An unforeseen deviation.", Color.Orange);
 
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 150f)
-                        Main.NewText("...And in the end, the bloodshed continues.", Color.Orange);
+                        Utilities.DisplayText("...And in the end, the bloodshed continues.", Color.Orange);
 
                     // Do a cast animation.
                     Vector2[] brotherSpawnPositions = new Vector2[]
@@ -548,7 +548,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (attackTextDelay == 90f)
                     {
                         if (!BossRushEvent.BossRushActive)
-                            Main.NewText("When the ashes fall, what will all of this have been for?", Color.Orange);
+                            Utilities.DisplayText("When the ashes fall, what will all of this have been for?", Color.Orange);
 
                         // Transition to the Epiphany section of the track.
                         Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
@@ -596,7 +596,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (attackTextDelay == 150f)
                     {
                         if (!BossRushEvent.BossRushActive)
-                            Main.NewText("I have no future if I lose here!", Color.Orange);
+                            Utilities.DisplayText("I have no future if I lose here!", Color.Orange);
 
                         // Create a lot of fire dust.
                         for (int i = 0; i < 80; i++)
@@ -634,7 +634,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Final phase.
                 case 8:
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 150f)
-                        Main.NewText("Just stop!", Color.Orange);
+                        Utilities.DisplayText("Just stop!", Color.Orange);
 
                     // Release a bunch of energy explosions.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTextDelay == 150f || attackTextDelay == 120f || attackTextDelay == 90f || attackTextDelay == 60f)
@@ -1480,19 +1480,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (!BossRushEvent.BossRushActive)
                     {
                         if (attackTimer == 60f)
-                            Main.NewText("So...This is how it ends.", Color.Orange);
+                            Utilities.DisplayText("So...This is how it ends.", Color.Orange);
 
                         if (attackTimer == 210f)
-                            Main.NewText("...I have no energy left to resent you.", Color.Orange);
+                            Utilities.DisplayText("...I have no energy left to resent you.", Color.Orange);
 
                         if (attackTimer == 360f)
-                            Main.NewText("Yet perhaps... from this, a new age will begin.", Color.Orange);
+                            Utilities.DisplayText("Yet perhaps... from this, a new age will begin.", Color.Orange);
 
                         if (attackTimer == 510f)
-                            Main.NewText("Whatever awaits you, I am certain the consequences will be felt.", Color.Orange);
+                            Utilities.DisplayText("Whatever awaits you, I am certain the consequences will be felt.", Color.Orange);
 
                         if (attackTimer == 640f)
-                            Main.NewText("It will all be in your hands now.", Color.Orange);
+                            Utilities.DisplayText("It will all be in your hands now.", Color.Orange);
 
                         if (attackTimer == 760f)
                         {

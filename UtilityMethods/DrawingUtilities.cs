@@ -6,6 +6,7 @@ using System.Reflection;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace InfernumMode
@@ -202,6 +203,14 @@ namespace InfernumMode
                 Vector2 startPos = drawCentered ? proj.Center : proj.position;
                 Main.spriteBatch.Draw(texture, startPos - Main.screenPosition + new Vector2(0f, proj.gfxOffY), rectangle, proj.GetAlpha(lightColor), rotation, origin, scale, spriteEffects, 0f);
             }
+        }
+
+        public static void DisplayText(string text, Color? color = null)
+        {
+            if (Main.netMode == NetmodeID.SinglePlayer)
+                Main.NewText(text, color ?? Color.White);
+            else if (Main.netMode == NetmodeID.Server)
+                NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), color ?? Color.White);
         }
     }
 }

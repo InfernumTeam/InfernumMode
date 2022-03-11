@@ -58,8 +58,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         internal Color ColorFunction(float completionRatio)
         {
-            return Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime))) * projectile.Opacity * 1.6f;
+            Color c = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime)) * 0.5f);
+            if (Main.dayTime)
+                c = Color.Lerp(c, Color.Navy, 0.4f);
+
+            return c * projectile.Opacity * 1.6f;
         }
+
+        public override bool CanDamage() => projectile.Opacity >= 0.8f;
 
         internal float WidthFunction(float completionRatio)
         {
@@ -92,7 +98,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             for (int i = 0; i < 20; i++)
                 drawPoints.Add(Vector2.Lerp(top, projectile.Bottom, i / 19f) + Vector2.UnitY * 75f);
 
-            TornadoDrawer.Draw(drawPoints, -Main.screenPosition, 85);
+            for (int i = 0; i < 2; i++)
+                TornadoDrawer.Draw(drawPoints, -Main.screenPosition, 85);
             return false;
         }
 

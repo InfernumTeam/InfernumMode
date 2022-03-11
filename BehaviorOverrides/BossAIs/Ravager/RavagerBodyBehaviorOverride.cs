@@ -21,6 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
+        public const int AttackDelay = 135;
         public const float BaseDR = 0.25f;
         public const float SittingStillDR = 0.66f;
 
@@ -78,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             {
                 npc.noTileCollide = true;
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -30f, 0.2f);
-                if (!npc.WithinRange(target.Center, 3000f))
+                if (!npc.WithinRange(target.Center, 1000f) || Main.rand.NextBool(45))
                 {
                     npc.life = 0;
                     npc.active = false;
@@ -175,8 +176,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             // Make the attack delay pass.
             attackDelay++;
-            if (attackDelay < 135f)
+            if (attackDelay < AttackDelay)
+            {
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
                 shouldNotAttack = true;
+            }
 
             // Handle special attacks. Only applicable once limbs are gone.
             if (specialAttackStartDelay < 720f)
@@ -317,6 +322,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             int soulTorrentReleaseTime = shouldBeBuffed ? 295 : 240;
             int soulShootRate = (int)MathHelper.Lerp(33f, 24f, 1f - lifeRatio);
             ref float attackState = ref npc.Infernum().ExtraAI[3];
+
+            // Disable contact damage to prevent telefrags.
+            npc.damage = 0;
 
             switch ((int)attackState)
             {

@@ -272,6 +272,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 npc.alpha = Utils.Clamp(npc.alpha, 120, 255);
             }
 
+            // Stay near the target.
+            if (!npc.WithinRange(target.Center, 4000f))
+                npc.Center = npc.Center.MoveTowards(target.Center, 12.5f);
+
             switch ((DukeAttackType)(int)attackState)
             {
                 case DukeAttackType.Charge:
@@ -440,6 +444,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             int bubbleShootRate = 3;
             float minBubbleSpeed = 8f;
             float maxBubbleSpeed = 11f;
+            ref float hoverDirection = ref npc.Infernum().ExtraAI[0];
 
             if (enraged)
             {
@@ -453,8 +458,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 minBubbleSpeed *= 1.5f;
                 maxBubbleSpeed *= 1.5f;
             }
-
-            ref float hoverDirection = ref npc.Infernum().ExtraAI[0];
 
             frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
@@ -487,59 +490,87 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public static void DoBehavior_BubbleSpin(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float frameDrawType, bool enraged)
         {
-            int spinTime = 120;
-            float spinSpeed = 9f;
-            float moveToTargetSpeed = 14f;
-            float totalSpins = 4f;
-            int bubbleShootRate = 10;
+            int bubbleReleaseRate = 5;
+            int hoverRedirectTime = 120;
+            int spinTime = 250;
+            float chargeSpeed = 29f;
+            ref float hoverDirection = ref npc.Infernum().ExtraAI[0];
 
             if (enraged)
             {
-                spinSpeed = 13f;
-                moveToTargetSpeed *= 1.8f;
-                bubbleShootRate = 5;
+                bubbleReleaseRate -= 2;
+                chargeSpeed *= 1.35f;
             }
 
             if (BossRushEvent.BossRushActive)
-                spinSpeed *= 1.45f;
+            {
+                bubbleReleaseRate -= 1;
+                spinTime -= 25;
+                chargeSpeed *= 1.45f;
+            }
 
-            spinSpeed *= totalSpins * 0.5f;
             frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
-            if (attackTimer == 1f)
+            // Play sound and define an initial hover direction.
+            if (hoverDirection == 0f)
             {
-                npc.velocity = npc.SafeDirectionTo(target.Center) * spinSpeed;
-                npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
-                npc.netUpdate = true;
-
-                // Roar.
+                hoverDirection = Math.Sign((npc.Center - target.Center).X);
                 Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
             }
-            else if (attackTimer > 1f)
+
+            // Hover into position.
+            if (attackTimer < hoverRedirectTime)
             {
-                npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
-                float rotationalSpeed = MathHelper.TwoPi * totalSpins / spinTime * npc.spriteDirection;
-                npc.rotation += rotationalSpeed;
-                npc.velocity = npc.velocity.RotatedBy(rotationalSpeed);
+                // Disable contact damage while redirecting, to prevent cheap hits.
+                npc.damage = 0;
 
-                if (!npc.WithinRange(target.Center, 60f))
-                    npc.Center += npc.SafeDirectionTo(target.Center) * moveToTargetSpeed;
+                // Define rotation.
+                float slowdownFactor = Utils.InverseLerp(hoverRedirectTime - 45f, hoverRedirectTime, attackTimer, true);
+                float idealRotation = npc.AngleTo(target.Center).AngleLerp(GetAdjustedRotation(npc, target, 0f), slowdownFactor);
+                npc.rotation = npc.rotation.AngleLerp(GetAdjustedRotation(npc, target, idealRotation, true), 0.25f);
 
-                if (attackTimer % bubbleShootRate == bubbleShootRate - 1)
+                Vector2 hoverDestination = target.Center + new Vector2(hoverDirection * 720f, -400f);
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 4f);
+                npc.velocity = (npc.velocity * 24f + npc.SafeDirectionTo(hoverDestination) * (1f - slowdownFactor) * 30f) / 25f;
+            }
+
+            // Charge.
+            if (attackTimer == hoverRedirectTime)
+            {
+                npc.velocity = Vector2.UnitX * -npc.spriteDirection * chargeSpeed;
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+            }
+
+            // Spin and release bubbles.
+            if (attackTimer > hoverRedirectTime)
+            {
+                // Slow down before the attack ends.
+                if (attackTimer < hoverRedirectTime + spinTime - 30f)
+                {
+                    if (attackTimer % 60f > 30f)
+                        npc.velocity = npc.velocity.RotatedBy(-MathHelper.TwoPi / 30f);
+                }
+                else
+                {
+                    npc.velocity *= 0.95f;
+                    npc.rotation = npc.rotation.AngleLerp(GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true), 0.25f);
+                }
+                npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
+
+                if (attackTimer % bubbleReleaseRate == bubbleReleaseRate - 1f)
                 {
                     Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
-                        Main.npc[bubble].velocity = npc.velocity.SafeNormalize(Vector2.UnitX * npc.spriteDirection).RotatedByRandom(0.18f) * Main.rand.NextFloat(11f, 15f);
-                        Main.npc[bubble].Center -= Main.npc[bubble].velocity * 3f;
+                        Main.npc[bubble].velocity = Main.npc[bubble].SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * Main.rand.NextFloat(10f, 16f);
                     }
                 }
             }
 
             if (attackTimer >= spinTime)
-                SelectNextAttack(npc);
+                attackTimer = 0f;
         }
 
         public static void DoBehavior_StationaryBubbleCharge(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float frameDrawType, bool enraged)
@@ -833,7 +864,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                         {
                             float offsetAngle = MathHelper.TwoPi * i / typhoonCount;
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * typhoonBurstSpeed;
-                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), 175, 0f);
+                            Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<TyphoonBlade>(), 185, 0f);
                         }
                     }
                 }
@@ -846,7 +877,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public static void DoBehavior_ChargeTeleport(NPC npc, Player target, ref float attackTimer, ref float frameDrawType, ref float eyeGlowmaskOpacity, bool inPhase4, bool enraged)
         {
             int teleportDelay = 12;
-            int chargeDelay = 30;
+            int chargeDelay = 42;
             if (inPhase4 || enraged)
                 chargeDelay -= 8;
 

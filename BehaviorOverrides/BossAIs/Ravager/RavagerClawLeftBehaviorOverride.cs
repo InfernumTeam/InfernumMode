@@ -82,6 +82,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             if (attackState < 2 && free)
                 attackState = (int)RavagerClawAttackState.Hover;
 
+            // Don't attack if the Ravager isn't ready to do so yet.
+            if (ravagerBody.Infernum().ExtraAI[5] < RavagerBodyBehaviorOverride.AttackDelay)
+            {
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
+                attackState = (int)RavagerClawAttackState.StickToBody;
+                punchTimer = 0f;
+            }
+
             switch ((RavagerClawAttackState)(int)attackState)
             {
                 case RavagerClawAttackState.StickToBody:
@@ -261,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
                     if (!npc.WithinRange(hoverDestination, 100f))
                         npc.velocity = npc.SafeDirectionTo(hoverDestination) * 10f;
-                    if (!npc.WithinRange(hoverDestination, 150f) && punchTimer % 24f == 23f)
+                    if (!npc.WithinRange(hoverDestination, 150f) && punchTimer % 30f == 29f)
                     {
                         for (int i = 0; i < 18; i++)
                         {
@@ -282,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             for (int i = 0; i < 3; i++)
                             {
                                 float offsetAngle = MathHelper.Lerp(-0.47f, 0.47f, i / 2f);
-                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 12f).RotatedBy(offsetAngle) * 11f;
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 12f).RotatedBy(offsetAngle) * 10f;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), cinderDamage, 0f);
                             }
                         }

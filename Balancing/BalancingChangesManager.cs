@@ -100,9 +100,9 @@ namespace InfernumMode.Balancing
                 new NPCBalancingChange(NPCType<SmallDrone>(), Do(new ClassResistBalancingRule(1.55f, ClassType.Summon))),
 
                 // Ravager.
-                new NPCBalancingChange(NPCType<RavagerLegLeft>(), Do(new PierceResistBalancingRule(0.75f))),
-                new NPCBalancingChange(NPCType<RavagerLegRight>(), Do(new PierceResistBalancingRule(0.75f))),
-                new NPCBalancingChange(NPCType<RavagerHead>(), Do(new PierceResistBalancingRule(0.75f))),
+                new NPCBalancingChange(NPCType<RavagerLegLeft>(), Do(new PierceResistBalancingRule(0.4f))),
+                new NPCBalancingChange(NPCType<RavagerLegRight>(), Do(new PierceResistBalancingRule(0.4f))),
+                new NPCBalancingChange(NPCType<RavagerHead>(), Do(new PierceResistBalancingRule(0.4f))),
 
                 // Cultist.
                 new NPCBalancingChange(NPCID.CultistDragonBody1, Do(new PierceResistBalancingRule(0.1f))),

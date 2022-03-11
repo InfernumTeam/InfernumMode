@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             if (WaveHeight < 60f)
                 WaveHeight = 60f;
-            WaveHeight = MathHelper.Lerp(WaveHeight, 720f, 0.04f);
+            WaveHeight = MathHelper.Lerp(WaveHeight, 640f, 0.04f);
             projectile.Opacity = (float)Math.Sin(projectile.timeLeft / 360f * MathHelper.Pi) * 3f;
             if (projectile.Opacity > 1f)
                 projectile.Opacity = 1f;
@@ -49,7 +49,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         internal Color ColorFunction(float completionRatio)
         {
-            return Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime)) * 0.5f) * projectile.Opacity;
+            Color c = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime)) * 0.5f);
+            if (Main.dayTime)
+                c = Color.Lerp(c, Color.Navy, 0.4f);
+
+            return c * projectile.Opacity;
         }
 
         internal float WidthFunction(float completionRatio) => WaveHeight;

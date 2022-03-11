@@ -57,9 +57,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             // Fly away if the target is gone.
             if (!target.active || target.dead)
             {
-                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 24f, 0.025f);
+                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 29f, 0.08f);
                 npc.rotation = npc.velocity.X * 0.02f;
-                if (!npc.WithinRange(target.Center, 4200f))
+                if (!npc.WithinRange(target.Center, 3000f))
                     npc.active = false;
 
                 return false;

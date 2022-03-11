@@ -76,7 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
 
             // Release bursts of dark flames.
-            if (attackTimer > 25f && attackTimer % 55f == 54f)
+            if (attackTimer > 25f && attackTimer % 70f == 69f)
             {
                 Main.PlaySound(SoundID.Item100, npc.Center);
 
@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 {
                     int fireballsPerBurst = shouldBeBuffed ? 10 : 8;
                     int darkMagicFireballDamage = shouldBeBuffed ? 335 : 215;
-                    float darkMagicFireballSpeed = shouldBeBuffed ? 20.25f : 15.5f;
+                    float darkMagicFireballSpeed = shouldBeBuffed ? 19f : 14f;
                     for (int i = 0; i < fireballsPerBurst; i++)
                     {
                         Vector2 darkMagicFireballVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / fireballsPerBurst) * darkMagicFireballSpeed;

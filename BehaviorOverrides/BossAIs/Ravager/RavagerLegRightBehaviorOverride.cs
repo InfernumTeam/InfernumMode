@@ -23,13 +23,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 return false;
             }
 
-            NPC ravager = Main.npc[CalamityGlobalNPC.scavenger];
+            NPC ravagerBody = Main.npc[CalamityGlobalNPC.scavenger];
+
+            // Don't attack if the Ravager isn't ready to do so yet.
+            npc.dontTakeDamage = false;
+            npc.damage = npc.defDamage;
+            if (ravagerBody.Infernum().ExtraAI[5] < RavagerBodyBehaviorOverride.AttackDelay)
+            {
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
+            }
 
             if (npc.timeLeft < 1800)
                 npc.timeLeft = 1800;
 
-            npc.Center = ravager.Center + new Vector2(70f, 88f);
-            npc.Opacity = ravager.Opacity;
+            npc.Center = ravagerBody.Center + new Vector2(70f, 88f);
+            npc.Opacity = ravagerBody.Opacity;
 
             return false;
         }

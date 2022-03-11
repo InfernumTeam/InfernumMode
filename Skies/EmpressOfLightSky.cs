@@ -83,10 +83,14 @@ namespace InfernumMode.Skies
             int eol = NPC.FindFirstNPC(ModContent.NPCType<EmpressOfLightNPC>());
             if (eol == -1 || !Main.npc[eol].ModNPC<EmpressOfLightNPC>().ReadyToUseScreenShader)
             {
-                Fairies.Clear();
                 Lights.Clear();
+                Fairies.Clear();
                 return;
             }
+
+            NPC eolNPC = Main.npc[eol];
+            if (!eolNPC.ModNPC<EmpressOfLightNPC>().InPhase3)
+                Lights.Clear();
 
             int maxFairies = (int)MathHelper.Lerp(90f, 175f, Main.npc[eol].life / (float)Main.npc[eol].lifeMax);
             int maxLights = maxFairies + 65;
@@ -110,8 +114,8 @@ namespace InfernumMode.Skies
                 });
             }
 
-            // Randomly spawn lights.
-            if (Main.rand.NextBool(16) && Lights.Count < maxLights)
+            // Randomly spawn lights in the third phase.
+            if (Main.rand.NextBool(16) && Lights.Count < maxLights && eolNPC.ModNPC<EmpressOfLightNPC>().InPhase3)
             {
                 Lights.Add(new Light()
                 {

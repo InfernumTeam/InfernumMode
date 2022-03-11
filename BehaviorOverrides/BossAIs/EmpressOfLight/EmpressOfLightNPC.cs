@@ -23,7 +23,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             HorizontalCharge,
             EnterSecondPhase,
             LanceOctagon,
-            RainbowWispForm
+            RainbowWispForm,
+            DanceOfSwords,
+            LightOverload
         }
 
         public EmpressOfLightAttackType AttackType
@@ -33,6 +35,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         }
 
         public bool InPhase2 => CurrentPhase >= 1f && (AttackType != EmpressOfLightAttackType.EnterSecondPhase || AttackTimer >= SecondPhaseFadeoutTime);
+
+        public bool InPhase3 => CurrentPhase >= 2f;
 
         public bool ReadyToUseScreenShader => InPhase2;
 
@@ -59,6 +63,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public const int SecondPhaseFadeBackInTime = 90;
 
         public const float Phase2LifeRatio = 0.7f;
+
+        public const float Phase3LifeRatio = 0.4f;
 
         #endregion Fields, Properties, and Enumerations
 
@@ -119,6 +125,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 SelectNextAttack();
                 AttackType = EmpressOfLightAttackType.EnterSecondPhase;
                 CurrentPhase = 1f;
+                npc.netUpdate = true;
+            }
+
+            if (CurrentPhase == 1f && lifeRatio < Phase3LifeRatio)
+            {
+                CurrentPhase = 2f;
+                SelectNextAttack();
+                AttackType = EmpressOfLightAttackType.LightOverload;
+                npc.netUpdate = true;
             }
 
             switch (AttackType)
@@ -143,6 +158,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     break;
                 case EmpressOfLightAttackType.RainbowWispForm:
                     DoBehavior_RainbowWispForm();
+                    break;
+                case EmpressOfLightAttackType.DanceOfSwords:
+                    DoBehavior_DanceOfSwords();
+                    break;
+                case EmpressOfLightAttackType.LightOverload:
+                    DoBehavior_LightOverload();
                     break;
             }
 
@@ -230,7 +251,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             int boltReleaseTime = 74;
             int boltReleaseRate = 2;
             int attackSwitchDelay = 180;
+            float boltSpeed = 10.5f;
             Vector2 handOffset = new Vector2(-55f, -30f);
+
+            if (InPhase2)
+            {
+                boltReleaseRate--;
+                boltSpeed += 2f;
+            }
 
             // Hover to the top left/right of the target.
             Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * 400f, -250f);
@@ -252,6 +280,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
 
                     float horizontalDistanceFromTarget = Target.Center.X - npc.Center.X;
+                    if (Math.Abs(horizontalDistanceFromTarget) < 400f)
+                        horizontalDistanceFromTarget = Math.Sign(horizontalDistanceFromTarget) * 400f;
+
                     npc.Opacity = 1f;
                     npc.position.X += horizontalDistanceFromTarget * 2f;
 
@@ -404,6 +435,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
 
+            if (chargeCounter == 0f)
+                redirectTime += 36;
+
             // Initialize the charge direction.
             if (AttackTimer == 1f)
             {
@@ -470,7 +504,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 if (AttackTimer == SecondPhaseFadeoutTime + 1f)
                 {
-                    npc.Center = Target.Center - Vector2.UnitY * 100f;
+                    npc.Center = Target.Center - Vector2.UnitY * 300f;
                     npc.netUpdate = true;
                 }
 
@@ -595,7 +629,243 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
+            // Fade in and out.
+            if (AttackTimer >= wispFormEnterTime + spinTime)
+            {
+                Vector2 hoverDestination = Target.Center - Vector2.UnitY * 425f;
+                npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, 30f);
+                npc.Opacity = MathHelper.Lerp(0.3f, 1f, Utils.InverseLerp(150f, 240f, npc.Distance(Target.Center), true));
+
+                wispColorInterpolant = Utils.InverseLerp(wispFormEnterTime + spinTime + 60f, wispFormEnterTime + spinTime, AttackTimer, true);
+            }
+
             if (AttackTimer >= wispFormEnterTime + spinTime + attackTransitionDelay)
+            {
+                npc.Opacity = 1f;
+                SelectNextAttack();
+            }
+        }
+
+        public void DoBehavior_DanceOfSwords()
+        {
+            int swordCount = 9;
+            int totalSwordsThatShouldAttack = 3;
+            int swordAttackCount = swordCount / totalSwordsThatShouldAttack;
+            int swordSummonDelay = 50;
+            int attackTimePerSword = 115;
+            int lanceReleaseRate = 125;
+            int lanceCount = 15;
+            float lanceSpawnOffset = 1000f;
+            float lanceWallSize = 900f;
+
+            // Define the adjusted attack timer.
+            npc.Infernum().ExtraAI[0] = AttackTimer - swordSummonDelay;
+
+            // Hover to the top left/right of the target.
+            Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * 150f, -300f);
+            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 13.5f;
+            if (!npc.WithinRange(hoverDestination, 40f))
+                npc.SimpleFlyMovement(idealVelocity, 0.75f);
+            else
+                npc.velocity *= 0.95f;
+
+            // Perform a cast animation and release swords.
+            if (AttackTimer < swordSummonDelay)
+            {
+                // Press hands together at first.
+                if (AttackTimer < swordSummonDelay)
+                    LeftArmFrame = RightArmFrame = 1f;
+
+                // And then raise hands upwards.
+                // Raise magic from the hands as well.
+                else
+                {
+                    LeftArmFrame = RightArmFrame = 3f;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        int handDirection = (i == 0).ToDirectionInt();
+                        Vector2 handOffset = new Vector2(55f, -30f);
+                        Vector2 handPosition = npc.Center + handOffset * new Vector2(handDirection, 1f);
+
+                        // Create magic dust.
+                        for (int j = 0; j < 4; j++)
+                        {
+                            Dust magic = Dust.NewDustPerfect(handPosition, 267);
+                            magic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
+                            magic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
+                            magic.scale *= 0.9f;
+                            magic.noGravity = true;
+                        }
+                    }
+                }
+            }
+
+            // Summon swords.
+            if (AttackTimer == swordSummonDelay)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (int i = 0; i < swordCount; i++)
+                    {
+                        int sword = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<EmpressSword>(), 205, 0f);
+                        if (Main.projectile.IndexInRange(sword))
+                        {
+                            Main.projectile[sword].ai[0] = npc.whoAmI;
+                            Main.projectile[sword].ai[1] = i / (float)swordCount;
+                            Main.projectile[sword].ModProjectile<EmpressSword>().SwordIndex = i;
+                            Main.projectile[sword].ModProjectile<EmpressSword>().SwordCount = swordCount;
+                            Main.projectile[sword].ModProjectile<EmpressSword>().TotalSwordsThatShouldAttack = totalSwordsThatShouldAttack;
+                            Main.projectile[sword].ModProjectile<EmpressSword>().AttackTimePerSword = attackTimePerSword;
+                        }
+                    }
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Summon lance walls.
+            if (AttackTimer >= swordSummonDelay)
+            {
+                float adjustedAttackTimer = AttackTimer % lanceReleaseRate;
+
+                // Raise hands and cast magic before summoning lances.
+                if (adjustedAttackTimer >= lanceReleaseRate - 50f)
+                {
+                    LeftArmFrame = RightArmFrame = 3f;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        int handDirection = (i == 0).ToDirectionInt();
+                        Vector2 handOffset = new Vector2(55f, -30f);
+                        Vector2 handPosition = npc.Center + handOffset * new Vector2(handDirection, 1f);
+
+                        // Create magic dust.
+                        for (int j = 0; j < 4; j++)
+                        {
+                            Dust magic = Dust.NewDustPerfect(handPosition, 267);
+                            magic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
+                            magic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
+                            magic.scale *= 0.9f;
+                            magic.noGravity = true;
+                        }
+                    }
+                }
+
+                // Summon lances.
+                if (adjustedAttackTimer == lanceReleaseRate - 1f)
+                {
+                    Main.PlayTrackedSound(Utilities.GetTrackableSound("Sounds/Custom/EmpressOfLightLances"), npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float offsetAngle = MathHelper.TwoPi * Main.rand.Next(4) / 4f;
+                        Vector2 baseSpawnPosition = Target.Center + offsetAngle.ToRotationVector2() * lanceSpawnOffset;
+                        Vector2 lanceDestination = Target.Center + Target.velocity * 20f;
+                        for (int i = 0; i < lanceCount; i++)
+                        {
+                            Vector2 lanceSpawnPosition = baseSpawnPosition + (offsetAngle + MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(-1f, 1f, i / (float)lanceCount) * lanceWallSize;
+                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), 185, 0f);
+                            if (Main.projectile.IndexInRange(lance))
+                            {
+                                Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
+                                Main.projectile[lance].ai[1] = i / (float)lanceCount;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Make swords fade away.
+            if (AttackTimer >= swordSummonDelay + attackTimePerSword * swordAttackCount + EmpressSword.AttackDelay)
+            {
+                foreach (Projectile sword in Utilities.AllProjectilesByID(ModContent.ProjectileType<EmpressSword>()))
+                    sword.timeLeft = 30;
+
+                SelectNextAttack();
+            }
+        }
+
+        public void DoBehavior_LightOverload()
+        {
+            int hoverTime = 120;
+            int orbCastDelay = 45;
+            int orbGrowDelay = 25;
+            int orbGrowTime = 45;
+            int orbAttackTime = 240;
+            float smallOrbSize = 12f;
+            float bigOrbSize = 400f;
+            Vector2 orbSummonSpawnPosition = npc.Center + Vector2.UnitY * 8f;
+            ref float orbSize = ref npc.Infernum().ExtraAI[0];
+            ref float lightOrb = ref npc.Infernum().ExtraAI[1];
+            ref float fadeAwayInterpolant = ref npc.Infernum().ExtraAI[2];
+
+            // Hover in place at first before slowing down.
+            if (AttackTimer < hoverTime && !npc.WithinRange(Target.Center, 200f))
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(Target.Center) * 15f, 0.1f);
+            else
+                npc.velocity *= 0.92f;
+
+            // Cast magic prior to creating the orb.
+            if (AttackTimer >= hoverTime && AttackTimer <= hoverTime + orbCastDelay)
+            {
+                // Hold hands together.
+                LeftArmFrame = RightArmFrame = 1f;
+                orbSize = smallOrbSize;
+
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 dustOffsetDirection = Main.rand.NextVector2Unit();
+                    Dust rainbowMagic = Dust.NewDustPerfect(orbSummonSpawnPosition + dustOffsetDirection * Main.rand.NextFloat(smallOrbSize), 267);
+                    rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.7f);
+                    rainbowMagic.velocity = dustOffsetDirection.RotatedBy(Main.rand.NextBool().ToDirectionInt() * MathHelper.PiOver2) * Main.rand.NextFloat(0.8f, 4f);
+                    rainbowMagic.noGravity = true;
+                    rainbowMagic.scale = 1.2f;
+                }
+            }
+
+            // Create the orb.
+            if (AttackTimer == hoverTime + orbCastDelay)
+            {
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightMagicCast"), npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    lightOrb = Utilities.NewProjectileBetter(orbSummonSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightOrb>(), 0, 0f);
+                    if (Main.projectile.IndexInRange((int)lightOrb))
+                        Main.projectile[(int)lightOrb].ai[1] = npc.whoAmI;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Rise upward.
+            if (AttackTimer == hoverTime + orbCastDelay + orbGrowDelay + 10f)
+                npc.velocity = -Vector2.UnitY * 27f;
+
+            // Make the orb grow and cast magic towards it.
+            if (AttackTimer >= hoverTime + orbCastDelay + orbGrowDelay)
+            {
+                orbSize = MathHelper.SmoothStep(smallOrbSize, bigOrbSize, Utils.InverseLerp(0f, orbGrowTime, AttackTimer - (hoverTime + orbCastDelay + orbGrowDelay), true));
+
+                LeftArmFrame = RightArmFrame = 2f;
+
+                Projectile lightOrbProj = Main.projectile[(int)lightOrb];
+                for (int i = 0; i < 2; i++)
+                {
+                    int handDirection = (i == 0).ToDirectionInt();
+                    Vector2 handOffset = new Vector2(handDirection * 60f, 4f);
+                    Vector2 handPosition = npc.Center + handOffset;
+
+                    for (int j = 0; j < 4; j++)
+                    {
+                        Dust rainbowMagic = Dust.NewDustPerfect(handPosition, 267);
+                        rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.65f);
+                        rainbowMagic.velocity = (lightOrbProj.Center + Main.rand.NextVector2Circular(85f, 85f) - handPosition).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(5f, 15f);
+                        rainbowMagic.scale = 1.1f;
+                        rainbowMagic.noGravity = true;
+                    }
+                }
+            }
+
+            // Eventually make the light orb fade away.
+            fadeAwayInterpolant = Utils.InverseLerp(0f, 60f, AttackTimer - (hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime), true);
+
+            if (AttackTimer >= hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime + 180f)
                 SelectNextAttack();
         }
 
@@ -621,7 +891,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     AttackType = EmpressOfLightAttackType.RainbowWispForm;
                     break;
                 case EmpressOfLightAttackType.RainbowWispForm:
-                    AttackType = EmpressOfLightAttackType.PrismaticBoltCircle;
+                    AttackType = EmpressOfLightAttackType.DanceOfSwords;
+                    break;
+                case EmpressOfLightAttackType.DanceOfSwords:
+                    AttackType = InPhase3 ? EmpressOfLightAttackType.LightOverload : EmpressOfLightAttackType.PrismaticBoltCircle;
+                    break;
+                case EmpressOfLightAttackType.LightOverload:
+                    AttackType = EmpressOfLightAttackType.HorizontalCharge;
                     break;
             }
 
@@ -706,7 +982,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             if (AttackType == EmpressOfLightAttackType.RainbowWispForm)
             {
-                baseColorOpacity = afterimageOffsetFactor = opacity = npc.Infernum().ExtraAI[0];
+                afterimageOffsetFactor = opacity = npc.Infernum().ExtraAI[0];
+                if (opacity > 0f)
+                    baseColorOpacity = opacity;
+
                 baseColor = Color.Lerp(baseColor, Color.White, baseColorOpacity);
                 baseDuplicateCount = 2;
                 laggingAfterimageCount = 4;
@@ -880,7 +1159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
-            if (AttackType == EmpressOfLightAttackType.RainbowWispForm)
+            if (AttackType == EmpressOfLightAttackType.RainbowWispForm && npc.Infernum().ExtraAI[0] > 0f)
             {
                 float wispInterpolant = npc.Infernum().ExtraAI[0];
                 for (int i = 0; i < 10; i++)

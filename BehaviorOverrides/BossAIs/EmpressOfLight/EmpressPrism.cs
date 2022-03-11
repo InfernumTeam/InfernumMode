@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             projectile.penetrate = -1;
             projectile.friendly = false;
             projectile.hostile = true;
-            projectile.timeLeft = 540;
+            projectile.timeLeft = 510;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
         }
@@ -87,6 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.5f) % 1f, 1f, 0.5f) * (float)Math.Sqrt(fadeInInterpolant);
                 if (EmpressOfLightNPC.ShouldBeEnraged)
                     color = Main.OurFavoriteColor;
+                color *= Utils.InverseLerp(0f, 30f, projectile.timeLeft, true);
                 color.A = 0;
 
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + fadeInInterpolant * MathHelper.TwoPi + Main.GlobalTime * 1.5f).ToRotationVector2() * fadeOffset;

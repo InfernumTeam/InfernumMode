@@ -1,16 +1,11 @@
 using CalamityMod;
-using CalamityMod.Buffs;
-using CalamityMod.Particles;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
@@ -33,14 +28,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.hide = true;
+            projectile.netImportant = true;
             projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
+            if (projectile.localAI[0] == 0f)
+            {
+                projectile.scale = 0.05f;
+                projectile.localAI[0] = 1f;
+            }
+
             // Grow bigger up to a point.
             float maxScale = MathHelper.Lerp(2f, 0.051f, Owner.Infernum().ExtraAI[2]);
-            projectile.scale = MathHelper.Clamp(projectile.scale + 0.016f, 0.05f, maxScale);
+            projectile.scale = MathHelper.Clamp(projectile.scale + 0.04f, 0.05f, maxScale);
 
             // Die after sufficiently shrunk.
             if (Owner.Infernum().ExtraAI[2] >= 1f)

@@ -18,9 +18,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public ref float TelegraphDirection => ref projectile.localAI[0];
 
-        public const int LaserTelegraphTime = 60;
+        public const int LaserTelegraphTime = 135;
 
-        public const int CloudLifetime = 300;
+        public const int CloudLifetime = 420;
 
         public const int LaserLifetime = CloudLifetime - LaserTelegraphTime - 12;
 

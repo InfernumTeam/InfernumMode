@@ -95,7 +95,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     Main.projectile[bolt].ai[0] = target.whoAmI;
                     Main.projectile[bolt].ai[1] = Main.rand.NextFloat();
-                    Main.projectile[bolt].localAI[0] = 0.6f + speedAdditive / 75f;
+                    Main.projectile[bolt].localAI[0] = 0.5f + speedAdditive / 90f;
                 }
             }
 

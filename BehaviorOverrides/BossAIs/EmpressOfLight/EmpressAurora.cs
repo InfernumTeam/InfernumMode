@@ -24,6 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             projectile.timeLeft = Lifetime;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
+            projectile.netImportant = true;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

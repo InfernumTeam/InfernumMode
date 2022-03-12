@@ -34,6 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             projectile.ignoreWater = true;
             projectile.timeLeft = LightCloud.LaserLifetime;
             projectile.hide = true;
+            projectile.netImportant = true;
             projectile.Calamity().canBreakPlayerDefense = true;
         }
 

@@ -25,7 +25,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             LanceOctagon,
             RainbowWispForm,
             DanceOfSwords,
-            LightOverload
+            LightOverload,
+            ShimmeringDiamondLanceBarrage,
+            LaserStorm
         }
 
         public EmpressOfLightAttackType AttackType
@@ -131,6 +133,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (CurrentPhase == 1f && lifeRatio < Phase3LifeRatio)
             {
                 CurrentPhase = 2f;
+                npc.Opacity = 1f;
                 SelectNextAttack();
                 AttackType = EmpressOfLightAttackType.LightOverload;
                 npc.netUpdate = true;
@@ -164,6 +167,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     break;
                 case EmpressOfLightAttackType.LightOverload:
                     DoBehavior_LightOverload();
+                    break;
+                case EmpressOfLightAttackType.ShimmeringDiamondLanceBarrage:
+                    DoBehavior_ShimmeringDiamondLanceBarrage();
+                    break;
+                case EmpressOfLightAttackType.LaserStorm:
+                    DoBehavior_LaserStorm();
                     break;
             }
 
@@ -209,7 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             npc.velocity *= 0.95f;
 
-            // Scream short after being summoned.
+            // Scream shortly after being summoned.
             if (AttackTimer == 10f)
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightSummon"), npc.Center);
 
@@ -378,11 +387,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 for (int j = 0; j < magicDustCount; j++)
                 {
                     float magicHue = (AttackTimer / 45f + Main.rand.NextFloat(0.2f)) % 1f;
-                    Dust magic = Dust.NewDustPerfect(handPosition, 267);
-                    magic.color = Main.hslToRgb(magicHue, 1f, 0.5f);
-                    magic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
-                    magic.scale *= 0.9f;
-                    magic.noGravity = true;
+                    Dust rainbowMagic = Dust.NewDustPerfect(handPosition, 267);
+                    rainbowMagic.color = Main.hslToRgb(magicHue, 1f, 0.5f);
+                    rainbowMagic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
+                    rainbowMagic.scale *= 0.9f;
+                    rainbowMagic.noGravity = true;
                 }
 
                 // Raise hands.
@@ -450,7 +459,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 // Scream prior to charging.
                 if (AttackTimer == redirectTime / 2)
-                    Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightDash"), npc.Center);
+                    Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightScream"), npc.Center);
 
                 Vector2 hoverDestination = Target.Center + Vector2.UnitX * chargeDirection * -500f;
                 npc.Center = npc.Center.MoveTowards(hoverDestination, 6f);
@@ -690,11 +699,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         // Create magic dust.
                         for (int j = 0; j < 4; j++)
                         {
-                            Dust magic = Dust.NewDustPerfect(handPosition, 267);
-                            magic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
-                            magic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
-                            magic.scale *= 0.9f;
-                            magic.noGravity = true;
+                            Dust rainbowMagic = Dust.NewDustPerfect(handPosition, 267);
+                            rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
+                            rainbowMagic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
+                            rainbowMagic.scale *= 0.9f;
+                            rainbowMagic.noGravity = true;
                         }
                     }
                 }
@@ -740,11 +749,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         // Create magic dust.
                         for (int j = 0; j < 4; j++)
                         {
-                            Dust magic = Dust.NewDustPerfect(handPosition, 267);
-                            magic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
-                            magic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
-                            magic.scale *= 0.9f;
-                            magic.noGravity = true;
+                            Dust rainbowMagic = Dust.NewDustPerfect(handPosition, 267);
+                            rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
+                            rainbowMagic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(1f, 4f);
+                            rainbowMagic.scale *= 0.9f;
+                            rainbowMagic.noGravity = true;
                         }
                     }
                 }
@@ -869,6 +878,203 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 SelectNextAttack();
         }
 
+        public void DoBehavior_ShimmeringDiamondLanceBarrage()
+        {
+            int dissapearTime = 45;
+            int handClapDelay = 60;
+            int lanceCount = 6;
+            int lanceBurstReleaseRate = 64;
+            int lanceBurstCount = 6;
+            float lanceSpawnOffset = 700f;
+            Vector2 hoverDestination = Target.Center - Vector2.UnitY * 360f;
+
+            // Disappear before doing anything else.
+            if (AttackTimer <= dissapearTime)
+            {
+                npc.Opacity = 1f - AttackTimer / dissapearTime;
+                npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 5f, 0.15f);
+
+                // Hold hands together while disappearing.
+                LeftArmFrame = RightArmFrame = 1f;
+
+                int dustCount = (int)MathHelper.Lerp(2f, 8f, 1f - npc.Opacity);
+                for (int i = 0; i < dustCount; i++)
+                {
+                    Dust rainbowShimmer = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(150f, 150f), 261);
+                    rainbowShimmer.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.65f);
+                    rainbowShimmer.scale = 1.05f;
+                    rainbowShimmer.velocity = -Vector2.UnitY * Main.rand.NextFloat(1f, 6f);
+                    rainbowShimmer.noGravity = true;
+                }
+            }
+
+            // Teleport above the target.
+            if (AttackTimer == dissapearTime)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    npc.Center = hoverDestination;
+                    Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
+
+                    npc.netUpdate = true;
+                }
+
+                // Create a ring of rainbow dust.
+                for (int i = 0; i < 24; i++)
+                {
+                    Dust rainbowDust = Dust.NewDustPerfect(npc.Center, 267);
+                    rainbowDust.color = Main.hslToRgb(i / 24f, 1f, 0.6f);
+                    rainbowDust.velocity = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 4f;
+                    rainbowDust.scale = 1.25f;
+                    rainbowDust.fadeIn = 1.2f;
+                    rainbowDust.noLight = true;
+                    rainbowDust.noGravity = true;
+                }
+
+                // Scream after teleporting.
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightScream"), npc.Center);
+            }
+
+            // Hover above the target after teleporting.
+            if (AttackTimer > dissapearTime)
+            {
+                // Fade back in.
+                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
+
+                if (!npc.WithinRange(hoverDestination, 35f))
+                    npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 16f, 0.85f);
+
+                // Raise hands and create magic before clapping.
+                LeftArmFrame = RightArmFrame = 3f;
+                for (int i = 0; i < 2; i++)
+                {
+                    if (AttackTimer >= dissapearTime + handClapDelay)
+                        break;
+
+                    int handDirection = (i == 0).ToDirectionInt();
+                    Vector2 handOffset = new Vector2(55f, -30f);
+                    Vector2 handPosition = npc.Center + handOffset * new Vector2(handDirection, 1f);
+
+                    // Create magic dust.
+                    for (int j = 0; j < 4; j++)
+                    {
+                        Dust rainbowMagic = Dust.NewDustPerfect(handPosition, 267);
+                        rainbowMagic.color = Main.hslToRgb(Main.rand.NextFloat(), 1f, 0.5f);
+                        rainbowMagic.velocity = -Vector2.UnitY.RotatedByRandom(0.6f) * Main.rand.NextFloat(0.4f, 4.2f);
+                        rainbowMagic.scale *= 0.9f;
+                        rainbowMagic.noGravity = true;
+                    }
+                }
+
+                // Clap hands.
+                if (AttackTimer >= dissapearTime + handClapDelay)
+                {
+                    if (AttackTimer == dissapearTime + handClapDelay)
+                    {
+                        Main.PlaySound(SoundID.Item122, npc.Center);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 8f, Vector2.Zero, ModContent.ProjectileType<ShimmeringLightWave>(), 0, 0f);
+                            npc.netUpdate = true;
+                        }
+                    }
+                    LeftArmFrame = RightArmFrame = 1f;
+                }
+            }
+
+            // Summon lances.
+            if (AttackTimer > dissapearTime + handClapDelay && AttackTimer % lanceBurstReleaseRate == lanceBurstReleaseRate - 1f)
+            {
+                Main.PlayTrackedSound(Utilities.GetTrackableSound("Sounds/Custom/EmpressOfLightLances"), npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float universalOffsetAngle = Main.rand.NextBool() ? MathHelper.PiOver4 : 0f;
+                    Vector2 lanceDestination = Target.Center + Target.velocity * 20f;
+
+                    // Diamond lances.
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float offsetAngle = MathHelper.TwoPi * i / 4f + universalOffsetAngle;
+                        Vector2 baseSpawnPosition = Target.Center + offsetAngle.ToRotationVector2() * lanceSpawnOffset;
+                        for (int j = 0; j < lanceCount; j++)
+                        {
+                            Vector2 lanceSpawnPosition = baseSpawnPosition + (offsetAngle + MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(-1f, 1f, j / (float)lanceCount) * lanceSpawnOffset;
+                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), 185, 0f);
+                            if (Main.projectile.IndexInRange(lance))
+                            {
+                                Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
+                                Main.projectile[lance].ai[1] = j / (float)lanceCount;
+                                Main.projectile[lance].localAI[1] = lanceSpawnOffset * 4f;
+                            }
+                        }
+                    }
+
+                    // Circular lances.
+                    lanceCount *= 3;
+                    for (int i = 0; i < lanceCount; i++)
+                    {
+                        float offsetAngle = MathHelper.TwoPi * i / lanceCount;
+                        Vector2 lanceSpawnPosition = Target.Center + offsetAngle.ToRotationVector2() * lanceSpawnOffset * 1.414f;
+                        int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), 185, 0f);
+                        if (Main.projectile.IndexInRange(lance))
+                        {
+                            Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
+                            Main.projectile[lance].ai[1] = i / (float)lanceCount;
+                            Main.projectile[lance].localAI[1] = lanceSpawnOffset * 4f;
+                        }
+                    }
+                }
+            }
+
+            if (AttackTimer >= dissapearTime + handClapDelay + lanceBurstReleaseRate * lanceBurstCount)
+                SelectNextAttack();
+        }
+
+        public void DoBehavior_LaserStorm()
+        {
+            int shootDelay = 35;
+
+            // Fade in and slow down.
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.05f, 0f, 1f);
+            npc.velocity *= 0.95f;
+
+            // Teleport above the target and descend.
+            if (AttackTimer == 1f)
+            {
+                npc.Center = Target.Center - Vector2.UnitY * 420f;
+                if (npc.position.Y < 2000f)
+                    npc.position.Y = 2000f;
+
+                npc.velocity = Vector2.UnitY * 5f;
+                npc.Opacity = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Raise the right arm pointer finger in the air, towards the sky.
+            if (AttackTimer < shootDelay + 15f)
+                RightArmFrame = 4f;
+
+            // Summon the cloud.
+            if (AttackTimer == shootDelay - 1f)
+            {
+                Vector2 fingerPosition = npc.Center + new Vector2(35f, -45f);
+                Vector2 cloudSpawnPosition = fingerPosition - Vector2.UnitY * 450f;
+                while (Target.WithinRange(cloudSpawnPosition, 270f))
+                    cloudSpawnPosition.X++;
+
+                Main.PlaySound(SoundID.DD2_KoboldExplosion, fingerPosition);
+                Dust.QuickDustLine(fingerPosition, cloudSpawnPosition, 250f, Color.LightSkyBlue);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightCloud>(), 200, 0f);
+                    Utilities.NewProjectileBetter(fingerPosition, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
+                }
+            }
+
+            if (AttackTimer >= shootDelay + LightCloud.CloudLifetime)
+                SelectNextAttack();
+        }
+
         public void SelectNextAttack()
         {
             switch (AttackType)
@@ -897,9 +1103,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     AttackType = InPhase3 ? EmpressOfLightAttackType.LightOverload : EmpressOfLightAttackType.PrismaticBoltCircle;
                     break;
                 case EmpressOfLightAttackType.LightOverload:
+                    AttackType = EmpressOfLightAttackType.ShimmeringDiamondLanceBarrage;
+                    break;
+                case EmpressOfLightAttackType.ShimmeringDiamondLanceBarrage:
                     AttackType = EmpressOfLightAttackType.HorizontalCharge;
                     break;
             }
+            AttackType = EmpressOfLightAttackType.LaserStorm;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

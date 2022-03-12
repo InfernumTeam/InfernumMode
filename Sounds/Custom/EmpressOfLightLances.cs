@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework.Audio;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace CalamityMod.Sounds.Custom
+namespace InfernumMode.Sounds.Custom
 {
     public class EmpressOfLightLances : ModSound
     {

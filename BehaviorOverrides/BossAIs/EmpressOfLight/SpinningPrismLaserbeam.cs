@@ -1,29 +1,29 @@
 using CalamityMod;
-using CalamityMod.Buffs;
-using CalamityMod.Particles;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class LightOverloadBeam : ModProjectile
+    public class SpinningPrismLaserbeam : ModProjectile
     {
         public PrimitiveTrail RayDrawer = null;
-        public NPC Owner => Main.npc[(int)projectile.ai[0]];
+
+        public ref float AngularVelocity => ref projectile.ai[0];
+
         public ref float LaserLength => ref projectile.ai[1];
+
+        public ref float Time => ref projectile.localAI[0];
+
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public const float MaxLaserLength = 3330f;
+        public const float MaxLaserLength = 4800f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Prismatic Overload Ray");
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Prismatic Ray");
 
         public override void SetDefaults()
         {
@@ -32,6 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             projectile.penetrate = -1;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
+            projectile.timeLeft = LightCloud.LaserLifetime;
             projectile.hide = true;
             projectile.Calamity().canBreakPlayerDefense = true;
         }
@@ -39,12 +40,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public override void AI()
         {
             // Grow bigger up to a point.
-            float maxScale = MathHelper.Lerp(2f, 0.051f, Owner.Infernum().ExtraAI[2]);
-            projectile.scale = MathHelper.Clamp(projectile.scale + 0.016f, 0.05f, maxScale);
+            float maxScale = MathHelper.Lerp(0.051f, 1.5f, Utils.InverseLerp(0f, 30f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 16f, Time, true));
+            projectile.scale = MathHelper.Clamp(projectile.scale + 0.02f, 0.05f, maxScale);
 
-            // Die after sufficiently shrunk.
-            if (Owner.Infernum().ExtraAI[2] >= 1f)
-                projectile.Kill();
+            // Spin the laserbeam.
+            projectile.velocity = projectile.velocity.RotatedBy(AngularVelocity * Utils.InverseLerp(0f, 32f, Time, true));
 
             // Update the laser length.
             LaserLength = MaxLaserLength;
@@ -52,16 +52,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Make the beam cast light along its length. The brightness of the light is reliant on the scale of the beam.
             DelegateMethods.v3_1 = Color.White.ToVector3() * projectile.scale * 0.6f;
             Utils.PlotTileLine(projectile.Center, projectile.Center + projectile.velocity * LaserLength, projectile.width * projectile.scale, DelegateMethods.CastLight);
+            Time++;
         }
 
-        internal float PrimitiveWidthFunction(float completionRatio) => projectile.scale * 60f;
+        internal float PrimitiveWidthFunction(float completionRatio) => projectile.scale * 27f;
 
         internal Color PrimitiveColorFunction(float completionRatio)
         {
             float opacity = projectile.Opacity * Utils.InverseLerp(0.97f, 0.9f, completionRatio, true) * 
                 Utils.InverseLerp(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
                 (float)Math.Pow(Utils.InverseLerp(60f, 270f, LaserLength, true), 3D);
-            Color c = Main.hslToRgb((completionRatio * 3f + Main.GlobalTime * 0.5f + projectile.identity * 0.3156f) % 1f, 1f, 0.7f) * opacity;
+            Color c = Main.hslToRgb((completionRatio * 5f + Main.GlobalTime * 0.5f + projectile.identity * 0.3156f) % 1f, 1f, 0.7f) * opacity;
             c.A = 0;
 
             return c;
@@ -72,30 +73,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (RayDrawer is null)
                 RayDrawer = new PrimitiveTrail(PrimitiveWidthFunction, PrimitiveColorFunction, specialShader: GameShaders.Misc["Infernum:PrismaticRay"]);
 
-            Vector2 overallOffset = -Main.screenPosition;
+            GameShaders.Misc["Infernum:PrismaticRay"].UseImage("Images/Misc/Perlin");
+            Main.instance.GraphicsDevice.Textures[2] = ModContent.GetTexture("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak");
+
             Vector2[] basePoints = new Vector2[24];
             for (int i = 0; i < basePoints.Length; i++)
                 basePoints[i] = projectile.Center + projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
 
-            projectile.scale *= 0.8f;
-            GameShaders.Misc["Infernum:PrismaticRay"].UseImage("Images/Misc/Perlin");
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.GetTexture("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak");
-            projectile.scale /= 0.8f;
-
+            Vector2 overallOffset = -Main.screenPosition;
             RayDrawer.Draw(basePoints, overallOffset, 92);
-
-            projectile.scale *= 1.5f;
-            GameShaders.Misc["Infernum:PrismaticRay"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"));
-            Main.instance.GraphicsDevice.Textures[2] = ModContent.GetTexture("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2");
-            RayDrawer.Draw(basePoints, overallOffset, 92);
-            projectile.scale /= 1.5f;
             return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), projectile.Center, projectile.Center + projectile.velocity * (LaserLength - 50f), projectile.scale * 55f, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), projectile.Center, projectile.Center + projectile.velocity * LaserLength, projectile.scale * 25f, ref _);
         }
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)

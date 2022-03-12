@@ -82,6 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Texture2D tex = Main.projectileTexture[projectile.type];
 
             int telegraphSize = 3600;
+            if (projectile.localAI[1] > 0f)
+                telegraphSize = (int)projectile.localAI[1];
+
             Vector2 drawPos = projectile.Center - Main.screenPosition;            
             Vector2 telegraphOrigin = telegraphTex.Size() * new Vector2(0f, 0.5f);
             Vector2 outerTelegraphScale = new Vector2(telegraphSize / (float)telegraphTex.Width, 2f);

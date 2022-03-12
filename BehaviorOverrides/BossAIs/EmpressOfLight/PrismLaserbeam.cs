@@ -47,6 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.hide = true;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
@@ -106,7 +107,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), projectile.Center, projectile.Center + projectile.velocity * LaserLength);
+            float _ = 0f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), projectile.Center, projectile.Center + projectile.velocity * LaserLength, projectile.scale * 25f, ref _);
         }
 
         public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)

@@ -44,7 +44,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int laserbeam = Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<PrismLaserbeam>(), 300, 0f);
+                    int laserDamage = EmpressOfLightNPC.ShouldBeEnraged ? 10000 : 300;
+                    int laserbeam = Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<PrismLaserbeam>(), laserDamage, 0f);
                     if (Main.projectile.IndexInRange(laserbeam))
                         Main.projectile[laserbeam].ai[0] = projectile.identity;
                 }
@@ -59,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 origin = texture.Size() * 0.5f;
 
             // Draw telegraphs.
-            float telegraphInterpolant = Utils.InverseLerp(-72f, -15f, Time, true);
+            float telegraphInterpolant = Utils.InverseLerp(-72f, -30f, Time, true);
             if (telegraphInterpolant > 0f && Time < 0f)
             {
                 float maxOffsetAngle = MathHelper.Lerp(0.24f, 0.0012f, telegraphInterpolant);

@@ -62,6 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightMagicCast"), projectile.Center);
 
+                int laserDamage = EmpressOfLightNPC.ShouldBeEnraged ? 10000 : 300;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
@@ -69,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 laserVelocity = (MathHelper.TwoPi * i / 4f + TelegraphDirection).ToRotationVector2();
-                        int laser = Utilities.NewProjectileBetter(projectile.Center, laserVelocity, ModContent.ProjectileType<SpinningPrismLaserbeam>(), 300, 0f);
+                        int laser = Utilities.NewProjectileBetter(projectile.Center, laserVelocity, ModContent.ProjectileType<SpinningPrismLaserbeam>(), laserDamage, 0f);
                         if (Main.projectile.IndexInRange(laser))
                             Main.projectile[laser].ai[0] = aimDirection * 0.025f;
                     }
@@ -81,10 +82,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 Main.PlaySound(SoundID.Item28, projectile.Center);
 
+                int boltDamage = EmpressOfLightNPC.ShouldBeEnraged ? 10000 : 175;
                 for (int i = 0; i < 16; i++)
                 {
                     Vector2 boltVelocity = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * Main.rand.NextFloat(12f, 18f);
-                    int bolt = Utilities.NewProjectileBetter(projectile.Center, boltVelocity, ModContent.ProjectileType<LightBolt>(), 180, 0f);
+                    int bolt = Utilities.NewProjectileBetter(projectile.Center, boltVelocity, ModContent.ProjectileType<LightBolt>(), boltDamage, 0f);
                     if (Main.projectile.IndexInRange(bolt))
                         Main.projectile[bolt].ai[1] = Main.rand.NextFloat();
                 }

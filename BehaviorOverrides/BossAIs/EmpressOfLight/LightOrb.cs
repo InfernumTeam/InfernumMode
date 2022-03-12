@@ -64,10 +64,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), projectile.Center);
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightMagicCast"), projectile.Center);
 
+                int laserDamage = EmpressOfLightNPC.ShouldBeEnraged ? 10000 : 350;
                 for (int i = 0; i < LaserCount; i++)
                 {
                     Vector2 laserDirection = (MathHelper.TwoPi * i / LaserCount + 0.8f).ToRotationVector2();
-                    int laser = Utilities.NewProjectileBetter(projectile.Center, laserDirection, ModContent.ProjectileType<LightOverloadBeam>(), 400, 0f);
+                    int laser = Utilities.NewProjectileBetter(projectile.Center, laserDirection, ModContent.ProjectileType<LightOverloadBeam>(), laserDamage, 0f);
                     if (Main.projectile.IndexInRange(laser))
                         Main.projectile[laser].ai[0] = Owner.whoAmI;
                 }
@@ -85,12 +86,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Main.PlayTrackedSound(Utilities.GetTrackableSound("Sounds/Custom/EmpressOfLightBoltCast"), projectile.Center);
 
             // Release prismatic bolts in a spiral.
+            int boltDamage = EmpressOfLightNPC.ShouldBeEnraged ? 10000 : 175;
             if (Main.netMode != NetmodeID.MultiplayerClient && Time >= LaserReleaseDelay && Time % spiralReleaseRate == spiralReleaseRate - 1f)
             {
                 Vector2 spiralVelocity = (MathHelper.TwoPi * (Time - LaserReleaseDelay) / 200f).ToRotationVector2() * (speedAdditive + 12f);
                 spiralVelocity = Vector2.Lerp(spiralVelocity, projectile.SafeDirectionTo(target.Center) * spiralVelocity.Length(), aimAtTargetInterpolant * 0.95f);
 
-                int bolt = Utilities.NewProjectileBetter(projectile.Center + spiralVelocity * 2f, spiralVelocity, ModContent.ProjectileType<PrismaticBolt>(), 180, 0f);
+                int bolt = Utilities.NewProjectileBetter(projectile.Center + spiralVelocity * 2f, spiralVelocity, ModContent.ProjectileType<PrismaticBolt>(), boltDamage, 0f);
                 if (Main.projectile.IndexInRange(bolt))
                 {
                     Main.projectile[bolt].ai[0] = target.whoAmI;

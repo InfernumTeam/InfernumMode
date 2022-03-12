@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -17,13 +16,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public NPC Owner => Main.npc.IndexInRange((int)projectile.ai[1]) && Main.npc[(int)projectile.ai[1]].active ? Main.npc[(int)projectile.ai[1]] : null;
 
+        public int LaserCount => EmpressOfLightNPC.ShouldBeEnraged ? 12 : 9;
+
         public float TelegraphInterpolant => Utils.InverseLerp(20f, LaserReleaseDelay, Time, true);
 
         public float Radius => Owner.Infernum().ExtraAI[0] * (1f - Owner.Infernum().ExtraAI[2]);
 
         public ref float Time => ref projectile.ai[0];
-
-        public const int LaserCount = 9;
 
         public const int OverloadBeamLifetime = 300;
 
@@ -64,11 +63,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), projectile.Center);
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightMagicCast"), projectile.Center);
 
-                int laserDamage = EmpressOfLightNPC.ShouldBeEnraged ? 10000 : 350;
                 for (int i = 0; i < LaserCount; i++)
                 {
                     Vector2 laserDirection = (MathHelper.TwoPi * i / LaserCount + 0.8f).ToRotationVector2();
-                    int laser = Utilities.NewProjectileBetter(projectile.Center, laserDirection, ModContent.ProjectileType<LightOverloadBeam>(), laserDamage, 0f);
+                    int laser = Utilities.NewProjectileBetter(projectile.Center, laserDirection, ModContent.ProjectileType<LightOverloadBeam>(), EmpressOfLightNPC.LaserbeamDamage, 0f);
                     if (Main.projectile.IndexInRange(laser))
                         Main.projectile[laser].ai[0] = Owner.whoAmI;
                 }
@@ -86,13 +84,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Main.PlayTrackedSound(Utilities.GetTrackableSound("Sounds/Custom/EmpressOfLightBoltCast"), projectile.Center);
 
             // Release prismatic bolts in a spiral.
-            int boltDamage = EmpressOfLightNPC.ShouldBeEnraged ? 10000 : 175;
             if (Main.netMode != NetmodeID.MultiplayerClient && Time >= LaserReleaseDelay && Time % spiralReleaseRate == spiralReleaseRate - 1f)
             {
                 Vector2 spiralVelocity = (MathHelper.TwoPi * (Time - LaserReleaseDelay) / 200f).ToRotationVector2() * (speedAdditive + 12f);
                 spiralVelocity = Vector2.Lerp(spiralVelocity, projectile.SafeDirectionTo(target.Center) * spiralVelocity.Length(), aimAtTargetInterpolant * 0.95f);
 
-                int bolt = Utilities.NewProjectileBetter(projectile.Center + spiralVelocity * 2f, spiralVelocity, ModContent.ProjectileType<PrismaticBolt>(), boltDamage, 0f);
+                int bolt = Utilities.NewProjectileBetter(projectile.Center + spiralVelocity * 2f, spiralVelocity, ModContent.ProjectileType<PrismaticBolt>(), EmpressOfLightNPC.PrismaticBoltDamage, 0f);
                 if (Main.projectile.IndexInRange(bolt))
                 {
                     Main.projectile[bolt].ai[0] = target.whoAmI;
@@ -159,11 +156,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             }
             spriteBatch.ExitShaderRegion();
             return false;
-        }
-
-        public override void Kill(int timeLeft)
-        {
-
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => Utilities.CircularCollision(projectile.Center, targetHitbox, Radius * 0.85f);

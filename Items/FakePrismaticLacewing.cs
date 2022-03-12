@@ -25,10 +25,10 @@ namespace InfernumMode.Items
             item.useTime = 45;
             item.useStyle = ItemUseStyleID.EatingUsing;
             item.consumable = false;
-            item.maxStack = 999;
+            item.maxStack = 1;
         }
 
-        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<EmpressOfLightNPC>()) && !Main.dayTime;
+        public override bool CanUseItem(Player player) => !NPC.AnyNPCs(ModContent.NPCType<EmpressOfLightNPC>());
 
         public override bool UseItem(Player player)
         {

@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void AI()
         {
-            if (Time < -12f)
+            if (Time < -20f)
                 AimDirection = projectile.AngleTo(Main.player[(int)projectile.ai[1]].Center);
 
             if (Time == 0f)
@@ -44,8 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int laserDamage = EmpressOfLightNPC.ShouldBeEnraged ? 10000 : 300;
-                    int laserbeam = Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<PrismLaserbeam>(), laserDamage, 0f);
+                    int laserbeam = Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<PrismLaserbeam>(), EmpressOfLightNPC.LaserbeamDamage, 0f);
                     if (Main.projectile.IndexInRange(laserbeam))
                         Main.projectile[laserbeam].ai[0] = projectile.identity;
                 }

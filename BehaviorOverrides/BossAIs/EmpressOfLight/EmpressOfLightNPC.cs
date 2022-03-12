@@ -138,6 +138,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         #endregion Fields, Properties, and Enumerations
 
+        #region Projectile Damage Values
+
+        public static int PrismaticBoltDamage => ShouldBeEnraged ? 350 : 175;
+
+        public static int LanceDamage => ShouldBeEnraged ? 375 : 185;
+
+        public static int SwordDamage => ShouldBeEnraged ? 400 : 200;
+
+        public static int CloudDamage => ShouldBeEnraged ? 400 : 200;
+
+        public static int LaserbeamDamage => ShouldBeEnraged ? 700 : 300;
+
+        #endregion Projectile Damage Values
+
         #region Set Defaults
 
         public override void SetStaticDefaults()
@@ -409,8 +423,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
 
                     float horizontalDistanceFromTarget = Target.Center.X - npc.Center.X;
-                    if (Math.Abs(horizontalDistanceFromTarget) < 400f)
-                        horizontalDistanceFromTarget = Math.Sign(horizontalDistanceFromTarget) * 400f;
+                    if (Math.Abs(horizontalDistanceFromTarget) < 600f)
+                        horizontalDistanceFromTarget = Math.Sign(horizontalDistanceFromTarget) * 600f;
+                    if (Math.Abs(horizontalDistanceFromTarget) > 1200f)
+                        horizontalDistanceFromTarget = Math.Sign(horizontalDistanceFromTarget) * 1200f;
 
                     npc.Opacity = 1f;
                     npc.position.X += horizontalDistanceFromTarget * 2f;
@@ -430,9 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     float castCompletionInterpolant = Utils.InverseLerp(boltReleaseDelay, boltReleaseDelay + boltReleaseTime, AttackTimer, true);
                     Vector2 boltVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * castCompletionInterpolant) * boltSpeed;
-
-                    int boltDamage = Enraged ? 10000 : 175;
-                    int bolt = Utilities.NewProjectileBetter(npc.Center + handOffset, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), boltDamage, 0f);
+                    int bolt = Utilities.NewProjectileBetter(npc.Center + handOffset, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f);
                     if (Main.projectile.IndexInRange(bolt))
                     {
                         Main.projectile[bolt].ai[0] = npc.target;
@@ -466,6 +480,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (InPhase2)
                 {
                     boltCount = 18f;
+                    totalHandsToShootFrom = 2f;
+                }
+
+                if (Enraged)
+                {
+                    boltCount = 21f;
                     totalHandsToShootFrom = 2f;
                 }
 
@@ -535,9 +555,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     {
                         for (int j = 0; j < boltCount; j++)
                         {
-                            int boltDamage = Enraged ? 10000 : 175;
                             Vector2 boltShootVelocity = (MathHelper.TwoPi * j / boltCount + telegraphRotation).ToRotationVector2() * boltShootSpeed;
-                            int bolt = Utilities.NewProjectileBetter(handPosition, boltShootVelocity, ModContent.ProjectileType<AcceleratingPrismaticBolt>(), boltDamage, 0f);
+                            int bolt = Utilities.NewProjectileBetter(handPosition, boltShootVelocity, ModContent.ProjectileType<AcceleratingPrismaticBolt>(), PrismaticBoltDamage, 0f);
                             if (Main.projectile.IndexInRange(bolt))
                                 Main.projectile[bolt].ai[1] = j / boltCount;
                         }
@@ -570,10 +589,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 redirectTime += 16;
 
             if (InPhase2)
-                chargeSpeed += 2.5f;
+                chargeSpeed += 4f;
             
             if (InPhase3)
-                chargeSpeed += 3f;
+                chargeSpeed += 5f;
+
+            if (Enraged)
+                chargeSpeed += 8f;
 
             // Initialize the charge direction.
             if (AttackTimer == 1f)
@@ -667,6 +689,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (InPhase3)
                 lanceCreationRate -= 12;
 
+            if (Enraged)
+                lanceCreationRate = Utils.Clamp(lanceCreationRate - 8, 28, 150);
+
             // Hover above the target.
             Vector2 hoverDestination = Target.Center - Vector2.UnitY * 310f;
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 7f;
@@ -691,8 +716,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         Vector2 lanceDestination = Target.Center + orthogonalOffset.RotatedBy(MathHelper.PiOver2) * targetCircleOffset;
                         Vector2 lanceSpawnPosition = Target.Center + lanceOffset + orthogonalOffset * lanceSpawnOffset * 0.8f;
 
-                        int lanceDamage = Enraged ? 10000 : 175;
-                        int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), lanceDamage, 0f);
+                        int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
                         if (Main.projectile.IndexInRange(lance))
                         {
                             Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
@@ -701,7 +725,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
                         lanceSpawnPosition = Target.Center + lanceOffset - orthogonalOffset * lanceSpawnOffset * 0.8f;
 
-                        lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), lanceDamage, 0f);
+                        lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
                         if (Main.projectile.IndexInRange(lance))
                         {
                             Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
@@ -734,6 +758,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 prismCreationRate -= 5;
                 boltReleaseRate -= 5;
             }
+
+            if (Enraged)
+                boltReleaseRate -= 7;
 
             // Hover above the target and enter the wisp form.
             if (AttackTimer <= wispFormEnterTime)
@@ -771,10 +798,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 // Release prismatic bolts at the target occasionally.
                 if (AttackTimer % boltReleaseRate == boltReleaseRate - 1f)
                 {
-                    int boltDamage = Enraged ? 10000 : 175;
                     Vector2 handOffset = new Vector2(55f, -30f);
                     Vector2 handPosition = npc.Center + handOffset;
-                    int bolt = Utilities.NewProjectileBetter(handPosition, -Vector2.UnitY.RotatedByRandom(0.6f) * 16f, ModContent.ProjectileType<PrismaticBolt>(), boltDamage, 0f);
+                    int bolt = Utilities.NewProjectileBetter(handPosition, -Vector2.UnitY.RotatedByRandom(0.6f) * 16f, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f);
                     if (Main.projectile.IndexInRange(bolt))
                         Main.projectile[bolt].ai[1] = Main.rand.NextFloat();
                 }
@@ -808,7 +834,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float lanceSpawnOffset = 1000f;
             float lanceWallSize = 900f;
 
-            if (InPhase3)
+            if (InPhase3 || Enraged)
             {
                 swordCount += 3;
                 totalSwordsThatShouldAttack++;
@@ -816,7 +842,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 lanceWallSize += 120f;
             }
 
-            if (InPhase4)
+            if (InPhase4 || (Enraged && InPhase3))
             {
                 totalSwordsThatShouldAttack += 2;
                 lanceReleaseRate -= 35;
@@ -874,8 +900,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     for (int i = 0; i < swordCount; i++)
                     {
-                        int swordDamage = Enraged ? 10000 : 200;
-                        int sword = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<EmpressSword>(), swordDamage, 0f);
+                        int sword = Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 4f, ModContent.ProjectileType<EmpressSword>(), SwordDamage, 0f);
                         if (Main.projectile.IndexInRange(sword))
                         {
                             Main.projectile[sword].ai[0] = npc.whoAmI;
@@ -928,9 +953,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         Vector2 lanceDestination = Target.Center + Target.velocity * 20f;
                         for (int i = 0; i < lanceCount; i++)
                         {
-                            int lanceDamage = Enraged ? 10000 : 175;
                             Vector2 lanceSpawnPosition = baseSpawnPosition + (offsetAngle + MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(-1f, 1f, i / (float)lanceCount) * lanceWallSize;
-                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), lanceDamage, 0f);
+                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
                             if (Main.projectile.IndexInRange(lance))
                             {
                                 Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
@@ -1048,6 +1072,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float lanceSpawnOffset = 850f;
             Vector2 hoverDestination = Target.Center - Vector2.UnitY * 360f;
 
+            if (Enraged)
+                lanceBurstReleaseRate -= 8;
+
             // Disappear before doing anything else.
             if (AttackTimer <= dissapearTime)
             {
@@ -1152,7 +1179,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     Vector2 lanceDestination = Target.Center + Target.velocity * 20f;
 
                     // Diamond lances.
-                    int lanceDamage = Enraged ? 10000 : 175;
                     for (int i = 0; i < 4; i++)
                     {
                         float offsetAngle = MathHelper.TwoPi * i / 4f + universalOffsetAngle;
@@ -1160,7 +1186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         for (int j = 0; j < lanceCount; j++)
                         {
                             Vector2 lanceSpawnPosition = baseSpawnPosition + (offsetAngle + MathHelper.PiOver2).ToRotationVector2() * MathHelper.Lerp(-1f, 1f, j / (float)lanceCount) * lanceSpawnOffset;
-                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), lanceDamage, 0f);
+                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
                             if (Main.projectile.IndexInRange(lance))
                             {
                                 Main.projectile[lance].ai[0] = (lanceDestination - lanceSpawnPosition).ToRotation();
@@ -1227,8 +1253,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Dust.QuickDustLine(fingerPosition, cloudSpawnPosition, 250f, Color.LightSkyBlue);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int cloudDamage = Enraged ? 10000 : 200;
-                    Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightCloud>(), cloudDamage, 0f);
+                    Utilities.NewProjectileBetter(cloudSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LightCloud>(), CloudDamage, 0f);
                     Utilities.NewProjectileBetter(fingerPosition, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
                 }
             }
@@ -1247,6 +1272,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float maxTelegraphTilt = 0.253f;
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float telegraphRotation = ref npc.Infernum().ExtraAI[1];
+
+            if (Enraged)
+            {
+                lanceReleaseRate -= 10;
+                boltReleaseRate -= 8;
+            }
 
             // Reset the telegraph interpolant.
             telegraphInterpolant = 0f;
@@ -1269,7 +1300,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 Main.PlayTrackedSound(Utilities.GetTrackableSound("Sounds/Custom/EmpressOfLightScream"), Target.Center);
 
-                int laserDamage = Enraged ? 10000 : 200;
+                int laserDamage = (int)(LaserbeamDamage * 0.7f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < laserbeamCount; i++)
@@ -1300,7 +1331,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     Main.PlayTrackedSound(Utilities.GetTrackableSound("Sounds/Custom/EmpressOfLightLances"), Target.Center);
 
-                    int lanceDamage = Enraged ? 10000 : 175;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float hueOffset = Main.rand.NextFloat();
@@ -1309,7 +1339,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                             Vector2 lanceDirection = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.12f, 0.12f, i / (float)(lanceCount - 1f)));
                             Vector2 lanceSpawnPosition = npc.Center + lanceDirection * 50f;
 
-                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), lanceDamage, 0f);
+                            int lance = Utilities.NewProjectileBetter(lanceSpawnPosition, Vector2.Zero, ModContent.ProjectileType<EtherealLance>(), LanceDamage, 0f);
                             if (Main.projectile.IndexInRange(lance))
                             {
                                 Main.projectile[lance].ai[0] = lanceDirection.ToRotation();
@@ -1324,12 +1354,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     Main.PlaySound(SoundID.Item28, Target.Center);
 
-                    int boltDamage = Enraged ? 10000 : 175;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 boltSpawnPosition = Target.Center - Vector2.UnitY.RotatedBy(0.6f) * 960f;
                         Vector2 boltVelocity = (Target.Center - boltSpawnPosition).SafeNormalize(Vector2.UnitY) * 9f;
-                        int bolt = Utilities.NewProjectileBetter(boltSpawnPosition, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), boltDamage, 0f);
+                        int bolt = Utilities.NewProjectileBetter(boltSpawnPosition, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f);
                         if (Main.projectile.IndexInRange(bolt))
                         {
                             Main.projectile[bolt].ai[0] = npc.target;

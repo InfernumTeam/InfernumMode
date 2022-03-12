@@ -34,6 +34,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void AI()
         {
+            // Die if the owner is no longer present.
+            if (!Owner.active)
+            {
+                projectile.Kill();
+                return;
+            }
+
             if (projectile.localAI[0] == 0f)
             {
                 projectile.scale = 0.05f;

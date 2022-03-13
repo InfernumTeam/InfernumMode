@@ -28,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (initialMech is null || initialMech.Opacity == 0f)
                 return false;
 
+            newAttack = (ExoMechComboAttackType)(int)initialMech.ai[0];
             int complementMechIndex = (int)initialMech.Infernum().ExtraAI[ComplementMechIndexIndex];
             NPC complementMech = complementMechIndex >= 0 && Main.npc[complementMechIndex].active ? Main.npc[complementMechIndex] : null;
 

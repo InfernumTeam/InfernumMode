@@ -218,6 +218,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float rotorSpeed = 23f;
             bool aresShouldAttack = attackTimer % 360f > 210f && attackTimer > attackDelay;
             bool thanatosShouldAttack = attackTimer % 360f <= 150f && attackTimer > attackDelay;
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[LineTelegraphInterpolantIndex];
+            ref float telegraphRotation = ref npc.Infernum().ExtraAI[LineTelegraphRotationIndex];
 
             if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
             {
@@ -329,6 +331,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Decide frames.
                 frame = (int)AresBodyFrameType.Normal;
 
+                Vector2 coreCenter = npc.Center + Vector2.UnitY * 34f;
+
                 if (attackTimer < attackDelay)
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, target.Center - Vector2.UnitY * 450f, 24f, 75f);
                 else
@@ -348,6 +352,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     electricity.scale *= 1.3f;
                     electricity.position += electricity.velocity.SafeNormalize(Vector2.Zero) * 20f;
                     electricity.noGravity = true;
+
+                    if (attackTimer % aresShootRate >= aresShootRate - 35f)
+                    {
+                        telegraphInterpolant = Utils.InverseLerp(aresShootRate - 35f, aresShootRate - 10f, attackTimer % aresShootRate, true);
+                        if (attackTimer % aresShootRate < aresShootRate - 10f)
+                            telegraphRotation = (target.Center - coreCenter).ToRotation();
+                    }
                 }
 
                 if (aresShouldAttack && attackTimer % aresShootRate == aresShootRate - 1f)
@@ -355,8 +366,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AresTeslaShot"), npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 coreCenter = npc.Center + Vector2.UnitY * 34f;
-
                         // Fire a burst of circular sparks along with sparks that are loosely fired towards the target.
                         float circularSpreadAngularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
                         for (int i = 0; i < aresCircularBoltCount; i++)
@@ -368,7 +377,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                         for (int i = 0; i < aresShotBoltCount; i++)
                         {
-                            Vector2 boltShootVelocity = npc.SafeDirectionTo(target.Center) * 31f + Main.rand.NextVector2Circular(5f, 5f);
+                            Vector2 boltShootVelocity = telegraphRotation.ToRotationVector2() * 31f + Main.rand.NextVector2Circular(5f, 5f);
                             Vector2 boltSpawnPosition = coreCenter + boltShootVelocity.SafeNormalize(Vector2.UnitY) * 20f;
                             Utilities.NewProjectileBetter(boltSpawnPosition, boltShootVelocity, ModContent.ProjectileType<TeslaSpark>(), 500, 0f);
                         }
@@ -401,8 +410,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 // Do slow movement.
                 DoProjectileShootInterceptionMovement(npc, target, 1.1f);
-                if (!npc.WithinRange(target.Center, 700f))
-                    npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * 24f, 2f);
+                if (npc.WithinRange(target.Center, 270f))
+                    npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * -22f, 2f);
 
                 // Shoot refraction rotors.
                 if (thanatosShouldAttack && attackTimer % thanatosShootRate == thanatosShootRate - 1f)

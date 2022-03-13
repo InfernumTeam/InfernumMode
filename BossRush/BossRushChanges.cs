@@ -39,7 +39,6 @@ using InfernumMode.BehaviorOverrides.BossAIs.Crabulon;
 using InfernumMode.BehaviorOverrides.BossAIs.Destroyer;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.DukeFishron;
-using InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu;
 using InfernumMode.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
@@ -246,12 +245,6 @@ namespace InfernumMode.BossRush
                 }, usesSpecialSound: true, permittedNPCs: new int[] { ModContent.NPCType<DevourerofGodsBody>(), ModContent.NPCType<DevourerofGodsTail>() }),
 
                 new Boss(ModContent.NPCType<Yharon>(), TimeChangeContext.Day),
-
-                new Boss(ModContent.NPCType<EmpressOfLightNPC>(), TimeChangeContext.Night, type =>
-                {
-                    Player player = Main.player[ClosestPlayerToWorldCenter];
-                    CalamityUtils.SpawnBossBetter(player.Center - Vector2.UnitY * 400f, type);
-                }),
 
                 new Boss(ModContent.NPCType<Apollo>(), spawnContext: type =>
                 {

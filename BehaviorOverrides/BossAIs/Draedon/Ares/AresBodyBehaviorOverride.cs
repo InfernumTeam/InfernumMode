@@ -9,6 +9,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -43,6 +44,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public const float Phase1ArmChargeupTime = 240f;
         public const int ProjectileDamageBoostIndex = 8;
+        public const int LineTelegraphInterpolantIndex = 17;
+        public const int LineTelegraphRotationIndex = 18;
+
         public static int ProjectileDamageBoost
         {
             get
@@ -95,6 +99,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
+
+            // Continuously reset the telegraph line things.
+            npc.Infernum().ExtraAI[LineTelegraphInterpolantIndex] = 0f;
 
             // Make the laser and pulse arms swap sometimes.
             if (backarmSwapTimer > 960f)
@@ -905,6 +912,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 afterimageBaseColor = Color.White;
 
             spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+
+            // Draw line telegraphs.
+            float telegraphInterpolant = npc.Infernum().ExtraAI[LineTelegraphInterpolantIndex];
+            if (telegraphInterpolant > 0f)
+            {
+                spriteBatch.SetBlendState(BlendState.Additive);
+
+                Texture2D telegraphTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                float telegraphRotation = npc.Infernum().ExtraAI[LineTelegraphRotationIndex];
+                float telegraphScaleFactor = telegraphInterpolant * 1.2f;
+                Vector2 telegraphStart = npc.Center + Vector2.UnitY * 34f + telegraphRotation.ToRotationVector2() * 20f - Main.screenPosition;
+                Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
+                Vector2 telegraphScale = new Vector2(telegraphScaleFactor, 3f);
+                Color telegraphColor = new Color(255, 55, 0) * (float)Math.Pow(telegraphInterpolant, 0.79);
+                spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
+
+                spriteBatch.ResetBlendState();
+            }
 
             return false;
         }

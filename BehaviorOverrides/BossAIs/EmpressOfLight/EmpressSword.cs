@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public void AttackTarget()
         {
             int lungeDelay = 35;
-            float lungeSpeed = 30f;
+            float lungeSpeed = 24.25f;
             float lungeAcceleration = 1.01f;
             float wrappedAttackTimer = Timer % AttackTimePerSword;
 

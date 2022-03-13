@@ -622,9 +622,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (AttackTimer == redirectTime / 2)
                     Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightScream"), npc.Center);
 
-                Vector2 hoverDestination = Target.Center + Vector2.UnitX * chargeDirection * -500f;
-                npc.Center = npc.Center.MoveTowards(hoverDestination, 10f);
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed * 0.11f);
+                Vector2 hoverDestination = Target.Center + Vector2.UnitX * chargeDirection * -420f;
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 12.5f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed * 0.16f);
                 if (AttackTimer == redirectTime)
                     npc.velocity *= 0.3f;
             }
@@ -636,6 +636,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 // Do damage and become temporarily invulnerable. This is done to prevent dash-cheese.
                 npc.damage = npc.defDamage;
+                if (Enraged)
+                    npc.damage *= 2;
+
                 npc.dontTakeDamage = true;
             }
             else

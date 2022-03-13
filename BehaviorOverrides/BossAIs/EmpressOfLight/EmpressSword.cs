@@ -205,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Arc towards the target after lunging for a sufficient amount of time.
             if (wrappedAttackTimer > AttackTimePerSword * 0.5f)
             {
-                float angularTurnSpeed = 0.12f;
+                float angularTurnSpeed = 0.092f;
 
                 // Rotate back towards the target if sufficiently far away from them.
                 if (!projectile.WithinRange(Target.Center, 270f))

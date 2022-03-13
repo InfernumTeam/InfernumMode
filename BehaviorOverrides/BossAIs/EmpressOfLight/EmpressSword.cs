@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         {
             get
             {
-                if (!Main.npc.IndexInRange((int)projectile.ai[0]) || Main.npc[(int)projectile.ai[0]].type != ModContent.NPCType<EmpressOfLightNPC>())
+                if (!Main.npc.IndexInRange((int)projectile.ai[0]) || Main.npc[(int)projectile.ai[0]].type != ModContent.NPCType<EmpressOfLightNPC>() || !Main.npc[(int)projectile.ai[0]].active)
                     return null;
 
                 return Main.npc[(int)projectile.ai[0]];

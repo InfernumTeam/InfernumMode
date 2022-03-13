@@ -393,7 +393,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             int boltReleaseDelay = 90;
             int boltReleaseTime = 74;
             int boltReleaseRate = 2;
-            int attackSwitchDelay = 180;
+            int attackSwitchDelay = 300;
             float boltSpeed = 10.5f;
             Vector2 handOffset = new Vector2(-55f, -30f);
 
@@ -497,9 +497,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Hover to the top left/right of the target.
             Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * 120f, -300f);
-            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 13.5f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 10f;
             if (!npc.WithinRange(hoverDestination, 40f))
-                npc.SimpleFlyMovement(idealVelocity * slowdownFactor, slowdownFactor * 0.75f);
+                npc.SimpleFlyMovement(idealVelocity * slowdownFactor, slowdownFactor * 0.7f);
             else
                 npc.velocity *= 0.93f;
 

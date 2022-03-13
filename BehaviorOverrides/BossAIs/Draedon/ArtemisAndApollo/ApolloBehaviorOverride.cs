@@ -320,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool dontFireYet, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
         {
             int totalShots = 15;
-            int shootRate = 44;
+            int shootRate = 50;
             int shotsPerBurst = 3;
             float shootSpread = 0.41f;
             float predictivenessFactor = 22f;

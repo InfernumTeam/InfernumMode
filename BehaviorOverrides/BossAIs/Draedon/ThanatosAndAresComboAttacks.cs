@@ -414,7 +414,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * -22f, 2f);
 
                 // Shoot refraction rotors.
-                if (thanatosShouldAttack && attackTimer % thanatosShootRate == thanatosShootRate - 1f)
+                if (thanatosShouldAttack && attackTimer % thanatosShootRate == thanatosShootRate - 1f && npc.WithinRange(target.Center, 800f))
                 {
                     Vector2 rotorShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.4f) * rotorSpeed;
                     for (int i = 0; i < 5; i++)

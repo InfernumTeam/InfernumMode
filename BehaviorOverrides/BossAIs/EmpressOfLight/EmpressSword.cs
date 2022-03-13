@@ -26,6 +26,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 if (!Main.npc.IndexInRange((int)projectile.ai[0]) || Main.npc[(int)projectile.ai[0]].type != ModContent.NPCType<EmpressOfLightNPC>() || !Main.npc[(int)projectile.ai[0]].active)
                     return null;
 
+                if (Main.npc[(int)projectile.ai[0]].ai[0] != (int)EmpressOfLightNPC.EmpressOfLightAttackType.DanceOfSwords)
+                    return null;
+
                 return Main.npc[(int)projectile.ai[0]];
             }
         }

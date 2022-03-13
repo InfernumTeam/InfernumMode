@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
@@ -170,7 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             npc.height = 100;
             npc.damage = 80;
             npc.defense = 50;
-            npc.lifeMax = 70000;
+            npc.lifeMax = 93750;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.knockBackResist = 0f;
@@ -215,6 +216,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (CurrentPhase == 0f && lifeRatio < Phase2LifeRatio)
             {
                 SelectNextAttack();
+                ClearAwayEntities();
                 npc.Infernum().ExtraAI[5] = 0f;
                 AttackType = EmpressOfLightAttackType.EnterSecondPhase;
                 CurrentPhase = 1f;
@@ -226,6 +228,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 CurrentPhase = 2f;
                 npc.Opacity = 1f;
                 SelectNextAttack();
+                ClearAwayEntities();
                 npc.Infernum().ExtraAI[5] = 0f;
                 AttackType = EmpressOfLightAttackType.LightOverload;
                 npc.netUpdate = true;
@@ -237,6 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.Opacity = 1f;
                 npc.Infernum().ExtraAI[5] = 0f;
                 SelectNextAttack();
+                ClearAwayEntities();
                 npc.netUpdate = true;
             }
 
@@ -1393,6 +1397,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             if (AttackTimer >= telegraphTime + SpinningPrismLaserbeam2.Lifetime)
                 SelectNextAttack();
+        }
+
+        public static void ClearAwayEntities()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            // Clear any clones or other things that might remain from other attacks.
+            int[] projectilesToClearAway = new int[]
+            {
+                ModContent.ProjectileType<AcceleratingPrismaticBolt>(),
+                ModContent.ProjectileType<EmpressPrism>(),
+                ModContent.ProjectileType<EmpressSparkle>(),
+                ModContent.ProjectileType<EmpressSword>(),
+                ModContent.ProjectileType<EtherealLance>(),
+                ModContent.ProjectileType<LightBolt>(),
+                ModContent.ProjectileType<LightCloud>(),
+                ModContent.ProjectileType<LightOrb>(),
+                ModContent.ProjectileType<LightOverloadBeam>(),
+                ModContent.ProjectileType<PrismaticBolt>(),
+                ModContent.ProjectileType<PrismLaserbeam>(),
+                ModContent.ProjectileType<SpinningPrismLaserbeam>(),
+                ModContent.ProjectileType<SpinningPrismLaserbeam2>(),
+            };
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (projectilesToClearAway.Contains(Main.projectile[i].type) && Main.projectile[i].active)
+                    Main.projectile[i].active = false;
+            }
         }
 
         public void SelectNextAttack()

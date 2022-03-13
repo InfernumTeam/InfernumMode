@@ -86,7 +86,7 @@ namespace InfernumMode.Balancing
             [NPCID.DD2DarkMageT3] = 24500,
             [NPCID.DD2Betsy] = 66500,
             [ModContent.NPCType<PlaguebringerGoliath>()] = BossRushEvent.BossRushActive ? 666666 : 111776,
-            [ModContent.NPCType<EmpressOfLightNPC>()] = BossRushEvent.BossRushActive ? 1000000 : 150000,
+            [ModContent.NPCType<EmpressOfLightNPC>()] = BossRushEvent.BossRushActive ? 1500000 : 150000,
             [NPCID.CultistBoss] = BossRushEvent.BossRushActive ? 727272 : 113170,
             [NPCID.AncientCultistSquidhead] = BossRushEvent.BossRushActive ? -1 : 4800,
             [NPCID.CultistDragonHead] = BossRushEvent.BossRushActive ? -1 : 47500,

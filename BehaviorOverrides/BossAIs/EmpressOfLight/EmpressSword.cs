@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -150,6 +151,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float lungeSpeed = 30f;
             float lungeAcceleration = 1.01f;
             float wrappedAttackTimer = Timer % AttackTimePerSword;
+
+            if (BossRushEvent.BossRushActive)
+            {
+                lungeSpeed += 8f;
+                lungeAcceleration *= 1.25f;
+            }
 
             // Aim at the target in anticipation of a lunge.
             if (wrappedAttackTimer < lungeDelay)

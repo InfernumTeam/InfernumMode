@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -78,7 +79,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 distanceFromTarget = 0f;
 
             float speedAdditive = distanceFromTarget * 0.017f;
+            float speedFactor = speedAdditive / 90f + 0.5f;
             float aimAtTargetInterpolant = Utils.InverseLerp(1260f, 1800f, distanceFromTarget, true);
+
+            if (BossRushEvent.BossRushActive)
+                speedFactor *= 1.35f;
 
             if (Time >= LaserReleaseDelay && (Time - LaserReleaseDelay) % 140f == 5f)
                 Main.PlayTrackedSound(Utilities.GetTrackableSound("Sounds/Custom/EmpressOfLightBoltCast"), projectile.Center);
@@ -94,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 {
                     Main.projectile[bolt].ai[0] = target.whoAmI;
                     Main.projectile[bolt].ai[1] = Main.rand.NextFloat();
-                    Main.projectile[bolt].localAI[0] = 0.5f + speedAdditive / 90f;
+                    Main.projectile[bolt].localAI[0] = speedFactor;
                 }
             }
 

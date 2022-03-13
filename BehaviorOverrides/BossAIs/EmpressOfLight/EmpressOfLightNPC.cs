@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -403,6 +404,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 boltSpeed += 2f;
             }
 
+            if (BossRushEvent.BossRushActive)
+                boltSpeed *= 1.5f;
+
             // Hover to the top left/right of the target.
             Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * 400f, -250f);
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 13.5f;
@@ -582,6 +586,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             int chargeTime = 45;
             int attackTransitionDelay = 8;
             float chargeSpeed = 56f;
+            float hoverSpeed = 25f;
             ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -596,6 +601,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             if (Enraged)
                 chargeSpeed += 8f;
+
+            if (BossRushEvent.BossRushActive)
+            {
+                chargeSpeed *= 1.3f;
+                hoverSpeed *= 1.5f;
+            }
 
             // Initialize the charge direction.
             if (AttackTimer == 1f)
@@ -613,7 +624,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
                 Vector2 hoverDestination = Target.Center + Vector2.UnitX * chargeDirection * -500f;
                 npc.Center = npc.Center.MoveTowards(hoverDestination, 10f);
-                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 25f, 2.7f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed * 0.11f);
                 if (AttackTimer == redirectTime)
                     npc.velocity *= 0.3f;
             }
@@ -849,6 +860,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 lanceCount += 3;
             }
 
+            if (BossRushEvent.BossRushActive)
+                lanceWallSize += 250f;
+
             int swordAttackCount = swordCount / totalSwordsThatShouldAttack;
 
             // Define the adjusted attack timer.
@@ -1074,6 +1088,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             if (Enraged)
                 lanceBurstReleaseRate -= 8;
+
+            if (BossRushEvent.BossRushActive)
+            {
+                lanceBurstReleaseRate -= 8;
+                lanceSpawnOffset += 300f;
+            }
 
             // Disappear before doing anything else.
             if (AttackTimer <= dissapearTime)

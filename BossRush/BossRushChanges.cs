@@ -37,7 +37,9 @@ using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.BehaviorOverrides.BossAIs.Crabulon;
 using InfernumMode.BehaviorOverrides.BossAIs.Destroyer;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.DukeFishron;
+using InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight;
 using InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu;
 using InfernumMode.BehaviorOverrides.BossAIs.KingSlime;
 using InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath;
@@ -245,12 +247,18 @@ namespace InfernumMode.BossRush
 
                 new Boss(ModContent.NPCType<Yharon>(), TimeChangeContext.Day),
 
+                new Boss(ModContent.NPCType<EmpressOfLightNPC>(), TimeChangeContext.Night, type =>
+                {
+                    Player player = Main.player[ClosestPlayerToWorldCenter];
+                    CalamityUtils.SpawnBossBetter(player.Center - Vector2.UnitY * 400f, type);
+                }),
+
                 new Boss(ModContent.NPCType<Apollo>(), spawnContext: type =>
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
                     NPC.NewNPC((int)player.Center.X, (int)player.Center.Y - 2400, type, 1);
                 }, permittedNPCs: new int[] { ModContent.NPCType<Artemis>(), ModContent.NPCType<Apollo>(), ModContent.NPCType<AresBody>(),
-                    ModContent.NPCType<AresLaserCannon>(), ModContent.NPCType<AresTeslaCannon>(), ModContent.NPCType<AresPlasmaFlamethrower>(), ModContent.NPCType<AresGaussNuke>(),
+                    ModContent.NPCType<AresLaserCannon>(), ModContent.NPCType<AresTeslaCannon>(), ModContent.NPCType<AresPlasmaFlamethrower>(), ModContent.NPCType<AresGaussNuke>(), ModContent.NPCType<AresPulseCannon>(),
                     ModContent.NPCType<ThanatosHead>(), ModContent.NPCType<ThanatosBody1>(), ModContent.NPCType<ThanatosBody2>(), ModContent.NPCType<ThanatosTail>() }),
 
                 new Boss(ModContent.NPCType<SupremeCalamitas>(), spawnContext: type =>

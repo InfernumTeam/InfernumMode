@@ -34,9 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public static bool DoClawAI(NPC npc, bool leftClaw)
         {
-            if (npc.dontTakeDamage)
-                npc.life = 1;
-
             // Do targeting.
             npc.TargetClosest();
             Player target = Main.player[npc.target];
@@ -83,6 +80,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 attackState = (int)RavagerClawAttackState.Hover;
 
             // Don't attack if the Ravager isn't ready to do so yet.
+            if (!free)
+                npc.dontTakeDamage = false;
+
             if (ravagerBody.Infernum().ExtraAI[5] < RavagerBodyBehaviorOverride.AttackDelay)
             {
                 npc.damage = 0;
@@ -90,6 +90,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 attackState = (int)RavagerClawAttackState.StickToBody;
                 punchTimer = 0f;
             }
+            else if (npc.dontTakeDamage)
+                npc.life = 1;
 
             switch ((RavagerClawAttackState)(int)attackState)
             {

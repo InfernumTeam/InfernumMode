@@ -1,3 +1,4 @@
+using CalamityMod.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace InfernumMode.BossIntroScreens
             UpdateScreens();
             foreach (BaseIntroScreen introScreen in IntroScreens)
             {
-                if (introScreen.ShouldBeActive() && introScreen.AnimationTimer < introScreen.AnimationTime)
+                if (introScreen.ShouldBeActive() && introScreen.AnimationTimer < introScreen.AnimationTime && !BossRushEvent.BossRushActive)
                 {
                     introScreen.Draw(Main.spriteBatch);
                     break;

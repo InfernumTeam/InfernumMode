@@ -228,6 +228,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             GameShaders.Misc["Infernum:PolterghastEctoplasm"].SetShaderTexture(ModContent.GetTexture("Terraria/Misc/Perlin"));
 
+            if (Limbs is null)
+                return false;
+
             for (int i = 0; i < Limbs.Limbs.Length; i++)
             {
                 if (Limbs.Limbs[i] is null)

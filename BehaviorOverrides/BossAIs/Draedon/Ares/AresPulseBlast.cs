@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(projectile.Center, projectile.Size.Length() / 2.3f, targetHitbox);
+            return CalamityUtils.CircularHitboxCollision(projectile.Center, projectile.Size.Length() / 2.6f, targetHitbox);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)

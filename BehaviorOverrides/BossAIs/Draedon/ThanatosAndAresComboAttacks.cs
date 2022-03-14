@@ -413,6 +413,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (npc.WithinRange(target.Center, 270f))
                     npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * -22f, 2f);
 
+                ref float totalSegmentsToFire = ref npc.Infernum().ExtraAI[0];
+                ref float segmentFireTime = ref npc.Infernum().ExtraAI[1];
+                ref float segmentFireCountdown = ref npc.Infernum().ExtraAI[2];
+
+                // Select segment shoot attributes.
+                int segmentShootDelay = 115;
+                if (attackTimer > attackDelay && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
+                {
+                    totalSegmentsToFire = 20f;
+                    segmentFireTime = 92f;
+
+                    segmentFireCountdown = segmentFireTime;
+                    npc.netUpdate = true;
+                }
+
+                if (segmentFireCountdown > 0f)
+                    segmentFireCountdown--;
+
                 // Shoot refraction rotors.
                 if (thanatosShouldAttack && attackTimer % thanatosShootRate == thanatosShootRate - 1f && npc.WithinRange(target.Center, 800f))
                 {

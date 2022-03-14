@@ -391,7 +391,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     for (int i = 0; i < shotsPerBurst; i++)
                     {
                         float offsetAngle = MathHelper.Lerp(-shootSpread, shootSpread, i / (float)(shotsPerBurst - 1f));
-                        offsetAngle += MathHelper.Lerp(-0.1f, 0.1f, seed / 1000f % 1f);
+                        offsetAngle += MathHelper.Lerp(-0.05f, 0.05f, seed / 1000f % 1f);
                         Vector2 projectileShootVelocity = aimDirection.RotatedBy(offsetAngle) * projectileShootSpeed;
 
                         // Select the next seed.

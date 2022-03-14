@@ -432,7 +432,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     segmentFireCountdown--;
 
                 // Shoot refraction rotors.
-                if (thanatosShouldAttack && attackTimer % thanatosShootRate == thanatosShootRate - 1f && npc.WithinRange(target.Center, 800f))
+                if (thanatosShouldAttack && attackTimer % thanatosShootRate == thanatosShootRate - 1f && npc.WithinRange(target.Center, 1040f))
                 {
                     Vector2 rotorShootVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.4f) * rotorSpeed;
                     for (int i = 0; i < 5; i++)

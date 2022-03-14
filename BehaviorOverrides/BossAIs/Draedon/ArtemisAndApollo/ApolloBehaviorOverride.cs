@@ -350,10 +350,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float shootCounter = ref npc.Infernum().ExtraAI[1];
             ref float generalAttackTimer = ref npc.Infernum().ExtraAI[2];
             ref float angleOffsetSeed = ref npc.Infernum().ExtraAI[3];
+            ref float shootDelayTimer = ref npc.Infernum().ExtraAI[4];
 
-            generalAttackTimer++;
-            if (shootCounter < 0f)
-                shootCounter = 0f;
+            if (shootDelayTimer >= 120f)
+            {
+                generalAttackTimer++;
+                if (shootCounter < 0f)
+                    shootCounter = 0f;
+            }
+            else
+                shootDelayTimer++;
 
             // Initialize a seed.
             if (angleOffsetSeed == 0f)
@@ -368,7 +374,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             hoverDestination += Vector2.UnitY * hoverSide * 540f;
 
             if (ExoMechManagement.CurrentTwinsPhase <= 2)
-                projectileShootSpeed *= 1.3f;
+                projectileShootSpeed *= 1.15f;
 
             // Determine rotation.
             npc.rotation = aimDirection.ToRotation() + MathHelper.PiOver2;
@@ -385,7 +391,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     for (int i = 0; i < shotsPerBurst; i++)
                     {
                         float offsetAngle = MathHelper.Lerp(-shootSpread, shootSpread, i / (float)(shotsPerBurst - 1f));
-                        offsetAngle += MathHelper.Lerp(-0.1f, 0.1f, seed / 1000f % 1f);
+                        offsetAngle += MathHelper.Lerp(-0.05f, 0.05f, seed / 1000f % 1f);
                         Vector2 projectileShootVelocity = aimDirection.RotatedBy(offsetAngle) * projectileShootSpeed;
 
                         // Select the next seed.
@@ -572,7 +578,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             npc.velocity.Y = CalamityUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
                             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
-                            if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 100f))
+                            if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 300f))
                             {
                                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
@@ -631,7 +637,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int chargeDelay = 55;
             int chargeTime = 45;
             int chargeCount = 11;
-            float chargeSpeed = npc.Distance(target.Center) * 0.007f + 34.5f;
+            float chargeSpeed = npc.Distance(target.Center) * 0.007f + 32f;
             float chargeFlash = npc.type == ModContent.NPCType<Artemis>() ? npc.ModNPC<Artemis>().ChargeFlash : npc.ModNPC<Apollo>().ChargeComboFlash;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];
             ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
@@ -680,7 +686,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                 float horizontalDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                 float verticalDirection = (chargeCounter % 2f == 0f).ToDirectionInt() * hoverSide;
-                Vector2 hoverDestination = target.Center + new Vector2(horizontalDirection * 680f, verticalDirection * 380f);
+                Vector2 hoverDestination = target.Center + new Vector2(horizontalDirection * 720f, verticalDirection * 420f);
                 ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 50f, 90f);
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
             }
@@ -727,7 +733,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int chargeTime = 45;
             int totalCharges = 5;
             int sparkCount = 18;
-            int homingSparkCount = 3;
             float chargeSpeed = 54f;
             float chargePredictiveness = 10f;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
@@ -739,7 +744,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             {
                 chargeTime -= 5;
                 totalCharges--;
-                homingSparkCount++;
                 chargeSpeed -= 4f;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
@@ -806,12 +810,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                                 Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / sparkCount + offsetAngle).ToRotationVector2() * 16f;
                                 Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<AcceleratingPlasmaSpark>(), 530, 0f);
                             }
-
-                            for (int i = 0; i < homingSparkCount; i++)
-                            {
-                                Vector2 sparkShootVelocity = (MathHelper.TwoPi * i / homingSparkCount + offsetAngle).ToRotationVector2() * 10f;
-                                Utilities.NewProjectileBetter(npc.Center + sparkShootVelocity * 10f, sparkShootVelocity, ModContent.ProjectileType<PlasmaSpark>(), 530, 0f);
-                            }
                         }
 
                         attackSubstate = 2f;
@@ -859,23 +857,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
 
             int shootDelay = 48;
-            int burstReleaseRate = 30;
             float spinRadius = 640f;
-            float spinArc = MathHelper.Pi * 1.225f;
+            float spinArc = MathHelper.Pi * 0.84f;
 
             npc.dontTakeDamage = false;
 
             if (ExoMechManagement.CurrentTwinsPhase >= 3)
                 spinArc *= 1.1f;
-            if (ExoMechManagement.CurrentTwinsPhase == 4)
-                burstReleaseRate += 10;
             if (ExoMechManagement.CurrentTwinsPhase >= 5)
-            {
                 spinArc *= 1.2f;
-                burstReleaseRate -= 8;
-            }
-            if (ExoMechManagement.CurrentTwinsPhase >= 6)
-                burstReleaseRate -= 4;
 
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float spinDirection = ref npc.Infernum().ExtraAI[1];
@@ -938,7 +928,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int type = ModContent.ProjectileType<ArtemisSpinLaser>();
-                            int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, type, 950, 0f, Main.myPlayer, npc.whoAmI);
+                            int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, type, 900, 0f, Main.myPlayer, npc.whoAmI);
                             if (Main.projectile.IndexInRange(laser))
                             {
                                 Main.projectile[laser].ai[0] = npc.whoAmI;
@@ -965,14 +955,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         SelectNextAttack(npc);
                     }
                     break;
-            }
-
-            // Release orange explosions everywhere periodically.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % burstReleaseRate == burstReleaseRate - 1f)
-            {
-                Vector2 targetDirection = target.velocity.SafeNormalize(Main.rand.NextVector2Unit());
-                Vector2 spawnPosition = target.Center - targetDirection.RotatedByRandom(1.1f) * Main.rand.NextFloat(325f, 725f) * new Vector2(1f, 0.6f);
-                Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<ArtemisChargeFlameExplosion>(), 530, 0f);
             }
             attackTimer++;
         }

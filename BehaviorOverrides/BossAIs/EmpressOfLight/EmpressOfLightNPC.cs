@@ -571,16 +571,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         Utilities.NewProjectileBetter(handPosition, Vector2.Zero, ModContent.ProjectileType<EmpressExplosion>(), 0, 0f);
 
                         if (i == 0)
-                        {
                             shootCounter++;
-                            if (shootCounter >= shootCount)
-                                SelectNextAttack();
-                        }
 
                         npc.netUpdate = true;
                     }
                 }
             }
+
+            if (shootCounter >= shootCount)
+                SelectNextAttack();
         }
 
         public void DoBehavior_HorizontalCharge()

@@ -1,6 +1,7 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.Particles;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -30,6 +31,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 return false;
             }
 
+            // Update the energy drawer.
+            npc.ModNPC<AresLaserCannon>().EnergyDrawer.Update();
+
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
@@ -46,6 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float chargeDelay = ref npc.ai[1];
             ref float laserCounter = ref npc.ai[2];
             ref float currentDirection = ref npc.ai[3];
+            ref float shouldPrepareToFire = ref npc.Infernum().ExtraAI[1];
             int laserCount = laserCounter % 3f == 2f ? 3 : 1;
 
             if (ExoMechManagement.CurrentAresPhase >= 2)
@@ -90,6 +95,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int shootRate = shootTime / totalLasersPerBurst;
 
             // Initialize delays and other timers.
+            shouldPrepareToFire = 0f;
             if (chargeDelay == 0f)
                 chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
 
@@ -139,6 +145,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 laser.velocity = (endOfCannon - laser.position) * 0.04f;
                 laser.scale = 1.25f;
                 laser.noGravity = true;
+            }
+
+            // Decide the state of the particle drawer.
+            npc.ModNPC<AresLaserCannon>().EnergyDrawer.ParticleSpawnRate = 99999999;
+            if (attackTimer > chargeDelay * 0.45f)
+            {
+                shouldPrepareToFire = 1f;
+                float chargeCompletion = MathHelper.Clamp(attackTimer / chargeDelay, 0f, 1f);
+                npc.ModNPC<AresLaserCannon>().EnergyDrawer.ParticleSpawnRate = 3;
+                npc.ModNPC<AresLaserCannon>().EnergyDrawer.SpawnAreaCompactness = 100f;
+                npc.ModNPC<AresLaserCannon>().EnergyDrawer.chargeProgress = chargeCompletion;
+
+                if (attackTimer % 15f == 14f && chargeCompletion < 1f)
+                    npc.ModNPC<AresLaserCannon>().EnergyDrawer.AddPulse(chargeCompletion * 6f);
             }
 
             // Fire lasers.
@@ -254,6 +274,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            spriteBatch.SetBlendState(BlendState.Additive);
+
+            if (npc.Infernum().ExtraAI[1] == 1f)
+                npc.ModNPC<AresLaserCannon>().EnergyDrawer.DrawBloom(npc.ModNPC<AresLaserCannon>().CoreSpritePosition);
+            npc.ModNPC<AresLaserCannon>().EnergyDrawer.DrawPulses(npc.ModNPC<AresLaserCannon>().CoreSpritePosition);
+            npc.ModNPC<AresLaserCannon>().EnergyDrawer.DrawSet(npc.ModNPC<AresLaserCannon>().CoreSpritePosition);
+
+            spriteBatch.ResetBlendState();
             return false;
         }
         #endregion Frames and Drawcode

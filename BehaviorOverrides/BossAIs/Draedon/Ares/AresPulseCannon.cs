@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -14,8 +15,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresPulseCannon : ModNPC
     {
+        public AresCannonChargeParticleSet EnergyDrawer = new AresCannonChargeParticleSet(-1, 15, 40f, Color.Fuchsia);
+
         public ref float AttackTimer => ref npc.ai[0];
         public ref float ChargeDelay => ref npc.ai[1];
+        public Vector2 CoreSpritePosition => npc.Center + npc.spriteDirection * npc.rotation.ToRotationVector2() * 35f + (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * 5f;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("XF-09 Ares Pulse Cannon");
@@ -60,6 +65,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 return;
             }
 
+            // Update the energy drawer.
+            EnergyDrawer.Update();
+
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
@@ -75,6 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int totalPulseBlastsPerBurst = 3;
             float blastShootSpeed = 7.5f;
             float aimPredictiveness = 27f;
+            ref float shouldPrepareToFire = ref npc.Infernum().ExtraAI[1];
 
             // Nerf things while Ares' complement mech is present.
             if (ExoMechManagement.CurrentAresPhase == 4)
@@ -99,6 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int shootRate = shootTime / totalPulseBlastsPerBurst;
 
             // Initialize delays and other timers.
+            shouldPrepareToFire = 0f;
             if (ChargeDelay == 0f)
                 ChargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
 
@@ -145,6 +155,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     Dust.NewDustPerfect(endOfCannon + offset, 234, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.35f).noGravity = true;
                     Dust.NewDustPerfect(endOfCannon - offset, 234, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.35f).noGravity = true;
                 }
+            }
+
+            // Decide the state of the particle drawer.
+            EnergyDrawer.ParticleSpawnRate = 99999999;
+            if (AttackTimer > ChargeDelay * 0.45f)
+            {
+                shouldPrepareToFire = 1f;
+                float chargeCompletion = MathHelper.Clamp(AttackTimer / ChargeDelay, 0f, 1f);
+                EnergyDrawer.ParticleSpawnRate = 3;
+                EnergyDrawer.SpawnAreaCompactness = 100f;
+                EnergyDrawer.chargeProgress = chargeCompletion;
+
+                if (AttackTimer % 15f == 14f && chargeCompletion < 1f)
+                    EnergyDrawer.AddPulse(chargeCompletion * 6f);
             }
 
             // Fire a pulse blast.
@@ -280,6 +304,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            spriteBatch.SetBlendState(BlendState.Additive);
+
+            if (npc.Infernum().ExtraAI[1] == 1f)
+                EnergyDrawer.DrawBloom(CoreSpritePosition);
+            EnergyDrawer.DrawPulses(CoreSpritePosition);
+            EnergyDrawer.DrawSet(CoreSpritePosition);
+
+            spriteBatch.ResetBlendState();
             return false;
         }
 

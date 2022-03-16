@@ -30,6 +30,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 return false;
             }
 
+            // Update the energy drawer.
+            npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.Update();
+
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
@@ -67,8 +70,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int shootRate = shootTime / totalFlamesPerBurst;
             ref float attackTimer = ref npc.ai[0];
             ref float chargeDelay = ref npc.ai[1];
+            ref float shouldPrepareToFire = ref npc.Infernum().ExtraAI[1];
 
             // Initialize delays and other timers.
+            shouldPrepareToFire = 0f;
             if (chargeDelay == 0f)
                 chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
 
@@ -114,6 +119,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 plasma.velocity = (endOfCannon - plasma.position) * 0.04f;
                 plasma.scale = 1.25f;
                 plasma.noGravity = true;
+            }
+
+            // Decide the state of the particle drawer.
+            npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.ParticleSpawnRate = 99999999;
+            if (attackTimer > chargeDelay * 0.45f)
+            {
+                shouldPrepareToFire = 1f;
+                float chargeCompletion = MathHelper.Clamp(attackTimer / chargeDelay, 0f, 1f);
+                npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.ParticleSpawnRate = 3;
+                npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.SpawnAreaCompactness = 100f;
+                npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.chargeProgress = chargeCompletion;
+
+                if (attackTimer % 15f == 14f && chargeCompletion < 1f)
+                    npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.AddPulse(chargeCompletion * 6f);
             }
 
             // Fire plasma.
@@ -234,6 +253,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            spriteBatch.SetBlendState(BlendState.Additive);
+
+            if (npc.Infernum().ExtraAI[1] == 1f)
+                npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.DrawBloom(npc.ModNPC<AresPlasmaFlamethrower>().CoreSpritePosition);
+            npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.DrawPulses(npc.ModNPC<AresPlasmaFlamethrower>().CoreSpritePosition);
+            npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.DrawSet(npc.ModNPC<AresPlasmaFlamethrower>().CoreSpritePosition);
+
+            spriteBatch.ResetBlendState();
             return false;
         }
         #endregion Frames and Drawcode

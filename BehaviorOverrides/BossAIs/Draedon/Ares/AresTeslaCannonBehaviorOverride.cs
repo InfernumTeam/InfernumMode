@@ -1,7 +1,9 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.Particles;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -29,6 +31,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.active = false;
                 return false;
             }
+
+            // Update the energy drawer.
+            npc.ModNPC<AresTeslaCannon>().EnergyDrawer.Update();
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
@@ -77,8 +82,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float attackTimer = ref npc.ai[0];
             ref float chargeDelay = ref npc.ai[1];
             ref float orbCounter = ref npc.ai[2];
+            ref float shouldPrepareToFire = ref npc.ai[3];
 
             // Initialize delays and other timers.
+            shouldPrepareToFire = 0f;
             if (chargeDelay == 0f)
                 chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
 
@@ -116,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 rotationToEndOfCannon += MathHelper.Pi;
             Vector2 endOfCannon = npc.Center + rotationToEndOfCannon.ToRotationVector2() * 84f + Vector2.UnitY * 8f;
 
-            // Create a dust telegraph before firing.
+            // Create a dust telegraph and electricity arcs before firing.
             if (attackTimer > chargeDelay * 0.7f && attackTimer < chargeDelay)
             {
                 Vector2 dustSpawnPosition = endOfCannon + Main.rand.NextVector2Circular(45f, 45f);
@@ -124,6 +131,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 electricity.velocity = (endOfCannon - electricity.position) * 0.04f;
                 electricity.scale = 1.25f;
                 electricity.noGravity = true;
+            }
+
+            // Decide the state of the particle drawer.
+            npc.ModNPC<AresTeslaCannon>().EnergyDrawer.ParticleSpawnRate = 99999999;
+            if (attackTimer > chargeDelay * 0.45f)
+            {
+                shouldPrepareToFire = 1f;
+                float chargeCompletion = MathHelper.Clamp(attackTimer / chargeDelay, 0f, 1f);
+                npc.ModNPC<AresTeslaCannon>().EnergyDrawer.ParticleSpawnRate = 3;
+                npc.ModNPC<AresTeslaCannon>().EnergyDrawer.SpawnAreaCompactness = 100f;
+                npc.ModNPC<AresTeslaCannon>().EnergyDrawer.chargeProgress = chargeCompletion;
+                if (Main.rand.NextBool(3) && chargeCompletion < 1f)
+                {
+                    Vector2 arcVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(8f, 13f);
+                    Vector2 arcPosition = npc.Center - rotationToEndOfCannon.ToRotationVector2() * 38f + Vector2.UnitY * 8f;
+                    GeneralParticleHandler.SpawnParticle(new ElectricArc(arcPosition, arcVelocity, Color.Cyan, Main.rand.NextFloat(0.8f, 1.15f), 32));
+                }
+
+                if (attackTimer % 15f == 14f && chargeCompletion < 1f)
+                    npc.ModNPC<AresTeslaCannon>().EnergyDrawer.AddPulse(chargeCompletion * 6f);
             }
 
             // Fire orbs.
@@ -177,6 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.netUpdate = true;
             }
             attackTimer++;
+
             return false;
         }
 
@@ -258,6 +286,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            spriteBatch.SetBlendState(BlendState.Additive);
+
+            if (npc.ai[3] == 1f)
+                npc.ModNPC<AresTeslaCannon>().EnergyDrawer.DrawBloom(npc.ModNPC<AresTeslaCannon>().CoreSpritePosition);
+            npc.ModNPC<AresTeslaCannon>().EnergyDrawer.DrawPulses(npc.ModNPC<AresTeslaCannon>().CoreSpritePosition);
+            npc.ModNPC<AresTeslaCannon>().EnergyDrawer.DrawSet(npc.ModNPC<AresTeslaCannon>().CoreSpritePosition);
+
+            spriteBatch.ResetBlendState();
+
             return false;
         }
         #endregion Frames and Drawcode

@@ -427,7 +427,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 2f, -42f, 42f);
 
                                 // Release rockets.
-                                if (adjustedTimer % 8f == 7f && !npc.WithinRange(target.Center, 150f))
+                                if (adjustedTimer % 15f == 14f && !npc.WithinRange(target.Center, 250f))
                                 {
                                     Main.PlaySound(SoundID.Item36, target.Center);
 

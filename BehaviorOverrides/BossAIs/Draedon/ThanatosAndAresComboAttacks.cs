@@ -421,8 +421,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 int segmentShootDelay = 115;
                 if (attackTimer > attackDelay && attackTimer % segmentShootDelay == segmentShootDelay - 1f)
                 {
-                    totalSegmentsToFire = 20f;
-                    segmentFireTime = 92f;
+                    totalSegmentsToFire = 16f;
+                    segmentFireTime = 75f;
 
                     segmentFireCountdown = segmentFireTime;
                     npc.netUpdate = true;
@@ -439,10 +439,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         int rotor = Utilities.NewProjectileBetter(npc.Center, rotorShootVelocity, ModContent.ProjectileType<RefractionRotor>(), 0, 0f);
                         if (Main.projectile.IndexInRange(rotor))
-                        {
                             Main.projectile[rotor].ai[0] = lasersPerRotor;
-                            Main.projectile[rotor].MaxUpdates++;
-                        }
+
                         rotorShootVelocity = rotorShootVelocity.RotatedBy(MathHelper.TwoPi / 5f);
                     }
                 }

@@ -636,7 +636,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         {
             int chargeDelay = 55;
             int chargeTime = 45;
-            int chargeCount = 11;
+            int chargeCount = 8;
             float chargeSpeed = npc.Distance(target.Center) * 0.007f + 32f;
             float chargeFlash = npc.type == ModContent.NPCType<Artemis>() ? npc.ModNPC<Artemis>().ChargeFlash : npc.ModNPC<Apollo>().ChargeComboFlash;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];

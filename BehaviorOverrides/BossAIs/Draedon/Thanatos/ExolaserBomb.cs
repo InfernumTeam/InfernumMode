@@ -35,8 +35,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         {
             Radius = projectile.scale * 100f;
 
-            if (!NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()) && projectile.timeLeft > 30)
-                projectile.timeLeft = 60;
+            if (!NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()))
+                projectile.active = false;
 
             if (projectile.timeLeft < 60f)
             {

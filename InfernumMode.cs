@@ -2,6 +2,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.Particles;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
@@ -149,6 +150,9 @@ namespace InfernumMode
 
             if (BossRushApplies)
                 BossRushChanges.Load();
+
+            if (Main.netMode != NetmodeID.Server)
+                GeneralParticleHandler.LoadModParticleInstances(this);
         }
 
         internal static IDictionary<int, int> SoundLoaderMusicToItem => (IDictionary<int, int>)typeof(SoundLoader).GetField("musicToItem", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);

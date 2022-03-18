@@ -138,7 +138,8 @@ namespace InfernumMode
             if (BossRushApplies)
                 BossRushChanges.Load();
 
-            GeneralParticleHandler.LoadModParticleInstances(this);
+            if (Main.netMode != NetmodeID.Server)
+                GeneralParticleHandler.LoadModParticleInstances(this);
         }
 
         internal static IDictionary<int, int> SoundLoaderMusicToItem => (IDictionary<int, int>)typeof(SoundLoader).GetField("musicToItem", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);

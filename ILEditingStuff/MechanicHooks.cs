@@ -1,4 +1,9 @@
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -36,6 +41,36 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => CalamityGenNewTemple += MakeGolemRoomInvariable;
 
         public void Unload() => CalamityGenNewTemple -= MakeGolemRoomInvariable;
+    }
+
+    public class FixExoMechActiveDefinitionRigidityHook : IHookEdit
+    {
+        public static void ChangeExoMechIsActiveDefinition(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+
+            cursor.EmitDelegate<Func<bool>>(() =>
+            {
+                if (NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()))
+                    return true;
+
+                if (NPC.AnyNPCs(ModContent.NPCType<AresBody>()))
+                    return true;
+
+                if (NPC.AnyNPCs(ModContent.NPCType<AthenaNPC>()))
+                    return true;
+
+                if (NPC.AnyNPCs(ModContent.NPCType<Artemis>()) || NPC.AnyNPCs(ModContent.NPCType<Apollo>()))
+                    return true;
+
+                return false;
+            });
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        public void Load() => ExoMechIsPresent += ChangeExoMechIsActiveDefinition;
+
+        public void Unload() => ExoMechIsPresent -= ChangeExoMechIsActiveDefinition;
     }
 
     public class DrawBlackEffectHook : IHookEdit

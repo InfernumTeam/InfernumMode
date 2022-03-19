@@ -22,6 +22,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
 using InfernumMode.Buffs;
@@ -56,6 +57,7 @@ namespace InfernumMode.GlobalInstances
 
         public static int Cryogen = -1;
         public static int AstrumAureus = -1;
+        public static int Athena = -1;
 
         #endregion
 
@@ -85,6 +87,7 @@ namespace InfernumMode.GlobalInstances
 
             ResetSavedIndex(ref Cryogen, ModContent.NPCType<CryogenNPC>());
             ResetSavedIndex(ref AstrumAureus, ModContent.NPCType<AstrumAureus>());
+            ResetSavedIndex(ref Athena, ModContent.NPCType<AthenaNPC>());
         }
         #endregion Reset Effects
 
@@ -356,14 +359,14 @@ namespace InfernumMode.GlobalInstances
             }
 
             if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead)
-			{
+            {
                 if (npc.life - realDamage <= 1000)
-				{
+                {
                     npc.life = 0;
                     npc.StrikeNPCNoInteraction(9999, 0f, 0);
                     npc.checkDead();
-				}
-			}
+                }
+            }
 
             return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
         }

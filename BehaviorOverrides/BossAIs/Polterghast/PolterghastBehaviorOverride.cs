@@ -419,7 +419,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Roar right before impaling.
             if (attackTimer % impaleTime == 90f)
             {
-                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OmegaBlueAbility"), target.Center);
+                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
                 if (roar != null)
                 {
                     roar.Pitch = -0.425f;
@@ -531,7 +531,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
-                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OmegaBlueAbility"), target.Center);
+                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
                 if (roar != null)
                 {
                     roar.Pitch = -0.525f;
@@ -611,7 +611,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Roar, shoot spirits, and release a cluster of souls in the form of a roar thing idk lol.
             if (shootCounter >= shootRate)
             {
-                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OmegaBlueAbility"), target.Center);
+                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
                 if (roar != null)
                 {
                     roar.Pitch = -0.525f;
@@ -660,7 +660,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Roar.
             if (attackTimer == 145f)
             {
-                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OmegaBlueAbility"), target.Center);
+                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
                 if (roar != null)
                 {
                     roar.Pitch = -0.525f;
@@ -785,7 +785,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
                     }
                 }
-                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/OmegaBlueAbility"), target.Center);
+                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
                 if (roar != null)
                 {
                     roar.Pitch = -0.525f;

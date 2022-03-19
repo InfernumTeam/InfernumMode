@@ -33,6 +33,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public ref float AttackTimer => ref Athena.ai[1];
 
+        public ref float MinionRedCrystalGlow => ref Athena.localAI[1];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("XM-04 Exowl");
@@ -188,16 +190,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     drawEnd
                 };
 
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < 3; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 2f;
-                    FlameTrail.Draw(drawPositions, drawOffset - Main.screenPosition, 40);
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 2f;
+                    FlameTrail.Draw(drawPositions, drawOffset - Main.screenPosition, 33);
                 }
             }
             spriteBatch.ExitShaderRegion();
 
+            Color glowmaskColor = Color.Lerp(Color.White, new Color(1f, 0f, 0f, 0.3f), MinionRedCrystalGlow);
             spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor), npc.rotation, origin, npc.scale, 0, 0f);
-            spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, 0, 0f);
+
+            for (int i = 0; i < 2; i++)
+                spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(glowmaskColor), npc.rotation, origin, npc.scale, 0, 0f);
+            if (MinionRedCrystalGlow > 0f)
+            {
+                float backimageOpacity = MathHelper.Lerp(0f, 0.1f, MinionRedCrystalGlow);
+                spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White) * backimageOpacity, npc.rotation, origin, npc.scale, 0, 0f);
+            }
 
             return false;
         }

@@ -66,6 +66,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public ref float AttackTimer => ref npc.ai[1];
 
+        public ref float MinionRedCrystalGlow => ref npc.localAI[1];
+
+        public ref float TelegraphInterpolant => ref npc.localAI[2];
+
+        public ref float TelegraphRotation => ref npc.localAI[3];
+
         public static Vector2 UniversalVerticalTurretOffset => Vector2.UnitY * -22f;
 
         public static Vector2[] TurretOffsets => new Vector2[]
@@ -76,6 +82,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             UniversalVerticalTurretOffset + new Vector2(36f, -2f),
             UniversalVerticalTurretOffset + new Vector2(66f, -6f),
         };
+
+        public Vector2 MainTurretCenter => npc.Center + TurretOffsets[2];
 
         public override void SetStaticDefaults()
         {
@@ -114,6 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write(TelegraphRotation);
             writer.Write(Turrets.Length);
             BitsByte[] turretSizes = new BitsByte[Turrets.Length / 8 + 1];
             for (int i = 0; i < Turrets.Length; i++)
@@ -125,6 +134,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            TelegraphRotation = reader.ReadSingle();
             int turretCount = reader.ReadInt32();
             int turretSizeCount = turretCount / 8 + 1;
             Turrets = new AthenaTurret[turretCount];
@@ -174,6 +184,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             GlobalNPCOverrides.Athena = npc.whoAmI;
 
             // Reset things.
+            MinionRedCrystalGlow = 0f;
+            TelegraphInterpolant = 0f;
             TurretFrameState = AthenaTurretFrameType.CloseAllTurrets;
 
             // Handle attacks.
@@ -191,8 +203,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             int teleportFadeTime = 8;
             int teleportTime = teleportFadeTime * 2;
             int circleSummonDelay = 36;
+            int telegraphTime = 42;
+            int shootDelay = 38;
+            int lightningShootRate = 4;
+            int lightningShootTime = 170;
 
             TurretFrameState = AthenaTurretFrameType.CloseAllTurrets;
+            if (AttackTimer >= teleportTime + circleSummonDelay)
+                TurretFrameState = AthenaTurretFrameType.Blinking;
+            if (AttackTimer >= teleportTime + circleSummonDelay + telegraphTime)
+                TurretFrameState = AthenaTurretFrameType.OpenMainTurret;
 
             // Fade out.
             if (AttackTimer < teleportFadeTime)
@@ -244,6 +264,45 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 }
                 npc.netUpdate = true;
             }
+
+            // Determine telegraph variables.
+            if (AttackTimer >= teleportTime + circleSummonDelay && AttackTimer < teleportTime + circleSummonDelay + telegraphTime)
+                TelegraphRotation = TelegraphRotation.AngleLerp(npc.AngleTo(Target.Center + Target.velocity * 15f), 0.3f);
+
+            if (AttackTimer < teleportTime + circleSummonDelay + teleportTime + shootDelay)
+                TelegraphInterpolant = Utils.InverseLerp(0f, telegraphTime + shootDelay, AttackTimer - (teleportTime + circleSummonDelay), true);
+
+            // Release the lightning.
+            else if (AttackTimer % lightningShootRate == 0f)
+            {
+                if (AttackTimer % (lightningShootRate * 2f) == 0f)
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), MainTurretCenter);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 lightningShootVelocity = TelegraphRotation.ToRotationVector2() * 8.4f;
+                    int lightning = Utilities.NewProjectileBetter(MainTurretCenter - lightningShootVelocity * 7.6f, lightningShootVelocity, ModContent.ProjectileType<TerateslaLightningBlast>(), 530, 0f);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Main.projectile[lightning].ai[0] = TelegraphRotation;
+                        Main.projectile[lightning].ai[1] = Main.rand.Next(100);
+                    }
+
+                    TelegraphRotation += MathHelper.TwoPi / lightningShootTime * lightningShootRate * 1.75f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            MinionRedCrystalGlow = Utils.InverseLerp(0f, 60f, AttackTimer - (teleportTime + circleSummonDelay), true);
+
+            if (AttackTimer >= teleportTime + circleSummonDelay + teleportTime + shootDelay + lightningShootTime)
+            {
+                AttackTimer = 0f;
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].type == ModContent.NPCType<Exowl>())
+                        Main.npc[i].active = false;
+                }
+            }
         }
 
         #endregion AI and Behaviors
@@ -294,7 +353,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public Color FlameTrailColorFunction(float completionRatio)
         {
             float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true);
-            trailOpacity *= MathHelper.Lerp(1f, 0.27f, 1f - FlameTrailPulse);
+            trailOpacity *= MathHelper.Lerp(1f, 0.27f, 1f - FlameTrailPulse) * npc.Opacity;
             Color startingColor = Color.Lerp(Color.White, Color.Cyan, 0.27f);
             Color middleColor = Color.Lerp(Color.Orange, Color.Blue, 0.74f);
             Color endColor = Color.DarkCyan;
@@ -348,6 +407,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
             for (int i = 0; i < Turrets.Length; i++)
             {
+                if (Turrets[i] is null)
+                    break;
+
                 int totalFrames = 4;
                 Texture2D turretTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/AthenaTurretLarge");
                 if (Turrets[i].IsSmall)
@@ -363,6 +425,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 Vector2 turretOrigin = turretFrame.Size() * 0.5f;
                 Vector2 turretDrawPosition = drawPosition + TurretOffsets[i].RotatedBy(npc.rotation);
                 spriteBatch.Draw(turretTexture, turretDrawPosition, turretFrame, npc.GetAlpha(turretColor), 0f, turretOrigin, npc.scale, 0, 0f);
+            }
+
+            // Draw a line telegraph as necessary
+            if (TelegraphInterpolant > 0f)
+            {
+                spriteBatch.SetBlendState(BlendState.Additive);
+
+                Texture2D telegraphTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                float telegraphScaleFactor = TelegraphInterpolant * 1.2f;
+
+                for (float offsetAngle = 0f; offsetAngle < 0.2f; offsetAngle += 0.03f)
+                {
+                    Vector2 telegraphStart = MainTurretCenter + (TelegraphRotation + offsetAngle).ToRotationVector2() * 20f - Main.screenPosition;
+                    Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
+                    Vector2 telegraphScale = new Vector2(telegraphScaleFactor, 3f);
+                    Color telegraphColor = new Color(74, 255, 204) * (float)Math.Pow(TelegraphInterpolant, 0.79) * ((0.2f - offsetAngle) / 0.2f) * 1.6f;
+                    spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, TelegraphRotation + offsetAngle - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
+                }
+
+                spriteBatch.ResetBlendState();
             }
 
             return false;

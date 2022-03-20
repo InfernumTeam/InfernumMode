@@ -48,6 +48,13 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 
             if (hitCount >= HitsRequiredToAnger)
             {
+                if (npc.Infernum().ExtraAI[5] == 0f)
+                {
+                    typeof(GiantClamNPC).GetField("hasBeenHit", Utilities.UniversalBindingFlags).SetValue(npc.modNPC, true);
+                    npc.Infernum().ExtraAI[5] = 1f;
+                    npc.netUpdate = true;
+                }
+
                 hitCount++;
                 npc.defense = 15;
                 npc.damage = 80;

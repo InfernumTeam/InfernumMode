@@ -11,7 +11,8 @@ namespace InfernumMode.Items
         {
             DisplayName.SetDefault("Suspicious Skull");
             Tooltip.SetDefault("Summons Skeletron\n" +
-                "Can only be used at night");
+                "Can only be used at night\n" +
+                "Not consumable");
         }
 
         public override void SetDefaults()

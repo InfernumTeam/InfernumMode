@@ -173,8 +173,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
             if (npc.life < npc.lifeMax * FinalPhaseLifeRatio)
             {
-                baseChargeSpeed *= 1.15f;
-                hoverOffset += 55f;
+                baseChargeSpeed *= 1.1f;
+                hoverOffset += 70f;
             }
 
             ref float attackState = ref npc.Infernum().ExtraAI[0];

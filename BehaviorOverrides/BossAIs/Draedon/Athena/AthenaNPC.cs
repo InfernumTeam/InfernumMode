@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -303,6 +304,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                         Main.npc[i].active = false;
                 }
             }
+        }
+
+        public void SelectNextAttack()
+        {
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+            AttackTimer = 0f;
+            npc.netUpdate = true;
         }
 
         #endregion AI and Behaviors

@@ -25,6 +25,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<PlaguebringerGoliath>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/PlagueReaperAbility");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/AbilitySounds/PlagueReaperAbility");
     }
 }

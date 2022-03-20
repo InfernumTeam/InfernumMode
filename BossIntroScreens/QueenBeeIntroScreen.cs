@@ -24,6 +24,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.QueenBee);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/PlagueReaperAbility");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/AbilitySounds/PlagueReaperAbility");
     }
 }

@@ -45,7 +45,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 
                 return false;
             }
-            else if (hitCount == HitsRequiredToAnger)
+
+            if (hitCount >= HitsRequiredToAnger)
             {
                 hitCount++;
                 npc.defense = 15;
@@ -54,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 if (Main.hardMode)
                 {
                     npc.defense = 35;
-                    npc.damage = 140;
+                    npc.damage = 130;
                 }
 
                 npc.defDamage = npc.damage;
@@ -142,7 +143,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 case GiantClamAttackState.TeleportSlam:
                     ref float attackSubstate = ref npc.Infernum().ExtraAI[3];
                     ref float slamCount = ref npc.Infernum().ExtraAI[4];
-                    npc.damage = hardmode ? 320 : 200;
+                    npc.damage = hardmode ? 200 : 125;
                     if (attackTimer == 1f)
                         attackSubstate = 1f;
 

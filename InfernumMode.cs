@@ -5,6 +5,7 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.BossIntroScreens;
@@ -209,7 +210,8 @@ namespace InfernumMode
 
             bool areExoMechsAround = NPC.AnyNPCs(ModContent.NPCType<AresBody>()) ||
                 NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()) ||
-                NPC.AnyNPCs(ModContent.NPCType<Apollo>());
+                NPC.AnyNPCs(ModContent.NPCType<Apollo>()) ||
+                NPC.AnyNPCs(ModContent.NPCType<AthenaNPC>());
 
             if (areExoMechsAround)
             {

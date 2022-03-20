@@ -40,6 +40,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             Player target = Main.player[npc.target];
             float lifeRatio = MathHelper.Clamp(npc.life / (float)npc.lifeMax, 0f, 1f);
 
+            // If the target isn't in the underworld check to see if anyone else is. If not, despawn.
+            if (target.Center.Y <= (Main.maxTilesY - 300f) * 16f)
+            {
+                int newTarget = -1;
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (!Main.player[i].active || Main.player[i].dead)
+                        continue;
+
+                    if (Main.player[i].Center.Y > (Main.maxTilesY - 300f) * 16f)
+                    {
+                        newTarget = i;
+                        break;
+                    }
+                }
+
+                if (newTarget >= 0f)
+                {
+                    npc.target = newTarget;
+                    npc.netUpdate = true;
+                }
+                else
+                    npc.active = false;
+            }
+
             Main.wof = npc.whoAmI;
 
             if (npc.Center.X <= 160f || npc.Center.X >= Main.maxTilesX * 16f - 160f)

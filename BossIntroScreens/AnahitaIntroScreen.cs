@@ -26,6 +26,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Siren>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/AngelicAllianceActivation");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/AbilitySounds/AngelicAllianceActivation");
     }
 }

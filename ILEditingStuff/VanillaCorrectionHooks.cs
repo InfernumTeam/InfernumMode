@@ -53,6 +53,21 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => On.Terraria.NPC.Collision_DecideFallThroughPlatforms -= LetAureusWalkOnPlatforms;
     }
 
+    public class FishronSkyDistanceLeniancyHook : IHookEdit
+    {
+        internal static void AdjustFishronScreenDistanceRequirement(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            cursor.GotoNext(i => i.MatchLdcR4(3000f));
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldc_R4, 6000f);
+        }
+
+        public void Load() => IL.Terraria.GameContent.Events.ScreenDarkness.Update += AdjustFishronScreenDistanceRequirement;
+
+        public void Unload() => IL.Terraria.GameContent.Events.ScreenDarkness.Update -= AdjustFishronScreenDistanceRequirement;
+    }
+
     public class LessenDesertTileRequirementsHook : IHookEdit
     {
         internal static void MakeDesertRequirementsMoreLenient(On.Terraria.Player.orig_UpdateBiomes orig, Player self)

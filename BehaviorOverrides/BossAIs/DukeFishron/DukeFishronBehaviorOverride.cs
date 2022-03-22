@@ -570,7 +570,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             }
 
             if (attackTimer >= spinTime)
-                attackTimer = 0f;
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_StationaryBubbleCharge(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float frameDrawType, bool enraged)

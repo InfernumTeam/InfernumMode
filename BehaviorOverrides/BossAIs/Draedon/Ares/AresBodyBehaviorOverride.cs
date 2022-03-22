@@ -297,6 +297,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 3f)
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
+
+            // Clear away all lasers and laser telegraphs.
+            if (phaseTransitionAnimationTime == 3f)
+            {
+                // Destroy all lasers and telegraphs.
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if ((Main.projectile[i].type == ModContent.ProjectileType<AresDeathBeamTelegraph>() || Main.projectile[i].type == ModContent.ProjectileType<AresSpinningDeathBeam>()) && Main.projectile[i].active)
+                        Main.projectile[i].Kill();
+                }
+            }
         }
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)

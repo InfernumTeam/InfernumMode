@@ -261,7 +261,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     npc.ModNPC<ThanatosHead>().SmokeDrawer.BaseMoveRotation = npc.rotation - MathHelper.PiOver2;
                     npc.ModNPC<ThanatosHead>().SmokeDrawer.ParticleSpawnRate = 5;
                 }
-                npc.Calamity().DR = OpenSegmentDR;
+                npc.Calamity().DR = OpenSegmentDR - 0.125f;
                 npc.Calamity().unbreakableDR = false;
                 npc.chaseable = true;
             }
@@ -360,7 +360,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Lerp(npc.velocity.Length(), idealHoverSpeed, 0.135f);
                 npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.024f, true) * idealVelocity.Length();
-                npc.velocity = npc.velocity.MoveTowards(idealVelocity, redirectSpeedMultiplier * 6f);
+                npc.velocity = npc.velocity.MoveTowards(idealVelocity, redirectSpeedMultiplier * 10f);
 
                 // Play a telegraph sound.
                 if (npc.WithinRange(hoverDestination, 1400f) && attackTimer > 35f && attackTimer < hoverRedirectTime - 90f)
@@ -371,7 +371,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 }
 
                 // Stop hovering if close to the hover destination and prepare the charge.
-                if (npc.WithinRange(hoverDestination, 90f) && attackTimer > 75f)
+                if (npc.WithinRange(hoverDestination, 130f) && attackTimer > 75f && npc.velocity.AngleBetween(idealVelocity) < 0.44f)
                 {
                     attackTimer = hoverRedirectTime;
                     idealVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 12f) * initialChargeSpeed;
@@ -594,7 +594,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             int chargeTime = 75;
             int attackShiftDelay = 120;
             int lasersPerRotor = 5;
-            int rotorReleaseRate = 5;
+            int rotorReleaseRate = 7;
             int chargeCount = 2;
             float initialChargeSpeed = 13f;
             float finalChargeSpeed = 26f;

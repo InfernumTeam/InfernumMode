@@ -132,6 +132,9 @@ namespace InfernumMode
                 introShader = new Ref<Effect>(GetEffect("Effects/SCalIntroLetterShader"));
                 GameShaders.Misc["Infernum:SCalIntro"] = new MiscShaderData(introShader, "LetterPass");
 
+                Ref<Effect> hologramShader = new Ref<Effect>(GetEffect("Effects/HologramShader"));
+                GameShaders.Misc["Infernum:Hologram"] = new MiscShaderData(hologramShader, "HologramPass");
+
                 OverrideMusicBox(ItemID.MusicBoxBoss3, GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
                 OverrideMusicBox(ItemID.MusicBoxLunarBoss, GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
             }
@@ -175,6 +178,12 @@ namespace InfernumMode
             {
                 music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/MechBosses");
                 priority = MusicPriority.BossLow;
+            }
+
+            if (NPC.AnyNPCs(NPCID.DukeFishron))
+            {
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/DukeFishron");
+                priority = MusicPriority.BossMedium;
             }
 
             if (NPC.AnyNPCs(NPCID.CultistBoss))

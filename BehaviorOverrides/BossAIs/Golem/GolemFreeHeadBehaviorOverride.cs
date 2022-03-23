@@ -15,6 +15,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreAI(NPC npc)
         {
+            if (!Main.npc[(int)npc.ai[0]].active || Main.npc[(int)npc.ai[0]].type != NPCID.Golem)
+            {
+                GolemBodyBehaviorOverride.DespawnNPC(npc.whoAmI);
+                return false;
+            }
             npc.chaseable = !npc.dontTakeDamage;
             npc.Opacity = npc.dontTakeDamage ? 0f : 1f;
             return false;
@@ -26,8 +31,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 return false;
 
             Texture2D texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/FreeHead");
+            Texture2D glowMask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/FreeHeadGlow");
             Rectangle rect = new Rectangle(0, 0, texture.Width, texture.Height);
-            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor, npc.rotation, npc.Center, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowMask, npc.Center - Main.screenPosition, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             GolemHeadBehaviorOverride.DoEyeDrawing(npc);
             return false;
         }

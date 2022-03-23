@@ -28,13 +28,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
         {
             DisplayName.SetDefault("Ninja");
             Main.npcFrameCount[npc.type] = 9;
-			NPCID.Sets.TrailingMode[npc.type] = 3;
+            NPCID.Sets.TrailingMode[npc.type] = 3;
             NPCID.Sets.TrailCacheLength[npc.type] = 9;
         }
 
         public override void SetDefaults()
         {
-			npc.npcSlots = 1f;
+            npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.width = npc.height = 26;
             npc.damage = 5;
@@ -55,12 +55,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
         {
             // Disappear if the main boss is not present.
             if (!NPC.AnyNPCs(NPCID.KingSlime))
-			{
+            {
                 Utils.PoofOfSmoke(npc.Center);
-				npc.active = false;
-				npc.netUpdate = true;
-				return;
-			}
+                npc.active = false;
+                npc.netUpdate = true;
+                return;
+            }
 
             npc.damage = KatanaUseTimer > 0 ? 115 : 0;
             npc.noTileCollide = npc.Bottom.Y < Target.Top.Y;
@@ -267,7 +267,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 npc.velocity.X = MathHelper.SmoothStep(0f, npc.spriteDirection * 6f, Utils.InverseLerp(35f, 70f, TeleportCountdown, true));
                 npc.Opacity = Utils.InverseLerp(35f, 45f, TeleportCountdown, true);
             }
-            
+
             // Decide where to teleport to.
             else if (TeleportCountdown == 35f)
             {

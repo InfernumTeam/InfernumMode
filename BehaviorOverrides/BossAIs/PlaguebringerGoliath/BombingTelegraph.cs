@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 missileSpawnPosition = new Vector2(projectile.Center.X, Target.Center.Y) - Vector2.UnitY.RotatedBy(projectile.rotation) * 1000f;
-                    Vector2 missileVelocity = Vector2.UnitY.RotatedBy(projectile.rotation) * 23f;
+                    Vector2 missileVelocity = Vector2.UnitY.RotatedBy(projectile.rotation) * 29f;
                     int missile = Utilities.NewProjectileBetter(missileSpawnPosition, missileVelocity, ModContent.ProjectileType<PlagueMissile2>(), 170, 0f);
                     if (Main.projectile.IndexInRange(missile))
                         Main.projectile[missile].ai[0] = Target.whoAmI;
@@ -47,12 +47,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             projectile.scale = MathHelper.Clamp(projectile.scale + 0.05f, 0f, 1f);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
-		{
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
             Vector2 start = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation) * 4350f;
             Vector2 end = projectile.Center + Vector2.UnitY.RotatedBy(projectile.rotation) * 4350f;
             Utilities.DrawLineBetter(spriteBatch, start, end, Color.Lime * projectile.scale, projectile.scale * 3f);
             return false;
-		}
-	}
+        }
+    }
 }

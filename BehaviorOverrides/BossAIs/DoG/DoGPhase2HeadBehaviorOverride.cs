@@ -3,7 +3,6 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
-using InfernumMode.Buffs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -47,13 +46,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 return Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] == 1f;
             }
-            set => Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] = value.ToInt();
+            set
+            {
+                if (CalamityGlobalNPC.DoGHead < 0)
+                    return;
+
+                Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[33] = value.ToInt();
+            }
         }
 
         public static float GetAggressiveFade
         {
             get
             {
+                if (CalamityGlobalNPC.DoGHead < 0)
+                    return 0f;
+
                 NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
 
                 int passiveMoveTime = !InPhase2 ? DoGPhase1HeadBehaviorOverride.PassiveMovementTimeP1 : PassiveMovementTimeP2;
@@ -74,6 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             get
             {
+                if (CalamityGlobalNPC.DoGHead < 0)
+                    return 0f;
+
                 NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
 
                 int passiveMoveTime = !InPhase2 ? DoGPhase1HeadBehaviorOverride.PassiveMovementTimeP1 : PassiveMovementTimeP2;
@@ -93,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public static readonly Color AggressiveFadeColor = Color.Red;
 
         #region AI
-        public static bool Phase2AI(NPC npc, float phaseCycleTimer, ref float passiveAttackDelay, ref float portalIndex, ref float segmentFadeType)
+        public static bool Phase2AI(NPC npc, ref float phaseCycleTimer, ref float passiveAttackDelay, ref float portalIndex, ref float segmentFadeType)
         {
             ref float specialAttackState = ref npc.Infernum().ExtraAI[14];
             ref float specialAttackTimer = ref npc.Infernum().ExtraAI[15];
@@ -112,9 +123,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             ref float fireballShootTimer = ref npc.Infernum().ExtraAI[31];
             ref float deathTimer = ref npc.Infernum().ExtraAI[32];
 
-            if (!Main.player.IndexInRange(npc.target) || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest(false);
-
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             target.Calamity().normalityRelocator = false;
@@ -183,6 +193,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 DoDeathEffects(npc, deathTimer);
                 jawRotation = jawRotation.AngleTowards(0f, 0.07f);
+                segmentFadeType = (int)BodySegmentFadeType.ApproachAheadSegmentOpacity;
+                npc.Opacity = 1f;
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 deathTimer++;
                 return false;
@@ -254,11 +266,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     }
                 }
 
-                if (specialAttackState == 1f && !DoSpecialAttacks(npc, target, nearDeath, ref specialAttackState, ref specialAttackTimer, ref portalIndex, ref segmentFadeType))
+                if (specialAttackState == 1f)
                 {
-                    if (horizontalRunAnticheeseCounter > 900f)
-                        horizontalRunAnticheeseCounter = 900f;
-                    return false;
+                    bool doingSpecialAttacks = DoSpecialAttacks(npc, target, nearDeath, ref specialAttackState, ref specialAttackTimer, ref portalIndex, ref segmentFadeType);
+                    if (doingSpecialAttacks)
+                        phaseCycleTimer = 0f;
+
+                    if (!doingSpecialAttacks)
+                    {
+                        if (horizontalRunAnticheeseCounter > 900f)
+                            horizontalRunAnticheeseCounter = 900f;
+                        return false;
+                    }
                 }
             }
             else
@@ -280,7 +299,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 if (nearDeathFlag == 0f)
                 {
-                    Main.NewText("A GOD DOES NOT FEAR DEATH!", Color.Cyan);
+                    Utilities.DisplayText("A GOD DOES NOT FEAR DEATH!", Color.Cyan);
                     nearDeathFlag = 1f;
                 }
             }
@@ -296,7 +315,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Do sentinel attacks.
             if (totalSentinelAttacks >= 1 && npc.alpha <= 0)
                 sentinelAttackTimer += 1f;
-            if (sentinelAttackTimer >= totalSentinelAttacks * 900f)
+            if (sentinelAttackTimer >= totalSentinelAttacks * 450f)
                 sentinelAttackTimer = 0f;
 
             // Light
@@ -323,7 +342,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
             }
             else
-                DoAggressiveFlyMovement(npc, target, chomping, ref jawRotation, ref chompTime, ref time, ref flyAcceleration);
+            {
+                bool dontChompYet = (phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2)) - PassiveMovementTimeP2 < 90f;
+                DoAggressiveFlyMovement(npc, target, dontChompYet, chomping, ref jawRotation, ref chompTime, ref time, ref flyAcceleration);
+            }
 
             npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 
@@ -356,21 +378,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             // Storm Weaver Effect (Lightning Storm).
             int attackTime = 450;
+            bool nearEndOfAttack = sentinelAttackTimer < attackTime * 2f - 125f;
             if (sentinelAttackTimer > 0f && sentinelAttackTimer <= attackTime && npc.alpha <= 128)
             {
-                if (sentinelAttackTimer % 120f == 0f)
+                if (sentinelAttackTimer % 120f == 0f && nearEndOfAttack)
                 {
                     Main.PlaySound(SoundID.Item12, target.position);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 20; i++)
+                        for (int i = 0; i < 24; i++)
                         {
-                            Vector2 spawnOffset = Vector2.UnitX.RotatedBy(MathHelper.Lerp(-0.54f, 0.54f, i / 19f) + Main.rand.NextFloatDirection() * 0.1f) * 1350f + Main.rand.NextVector2Circular(30f, 30f);
-                            Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(5f, 5f);
-                            Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
-
-                            spawnOffset = -Vector2.UnitX.RotatedBy(MathHelper.Lerp(-0.54f, 0.54f, i / 19f) + Main.rand.NextFloatDirection() * 0.1f) * 1350f + Main.rand.NextVector2Circular(30f, 30f);
-                            laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(25f, 30f) + Main.rand.NextVector2Circular(5f, 5f);
+                            Vector2 spawnOffset = (MathHelper.TwoPi * i / 24f).ToRotationVector2() * 1580f + Main.rand.NextVector2Circular(105f, 105f);
+                            Vector2 laserShootVelocity = spawnOffset.SafeNormalize(Vector2.UnitY) * -Main.rand.NextFloat(30f, 36f) + Main.rand.NextVector2Circular(3f, 3f);
                             Utilities.NewProjectileBetter(target.Center + spawnOffset, laserShootVelocity, ModContent.ProjectileType<DoGDeath>(), 415, 0f);
                         }
                     }
@@ -383,7 +402,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (npc.velocity.Length() > 14.5f)
                     npc.velocity *= 0.75f;
 
-                if (Main.netMode != NetmodeID.MultiplayerClient && sentinelAttackTimer % 70f == 69f && !npc.WithinRange(target.Center, 300f))
+                bool shouldFire = sentinelAttackTimer % 70f == 69f && !nearEndOfAttack;
+                if (Main.netMode != NetmodeID.MultiplayerClient && shouldFire && !npc.WithinRange(target.Center, 300f))
                 {
                     for (int i = 0; i < 12; i++)
                     {
@@ -426,7 +446,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
             npc.dontTakeDamage = true;
             npc.damage = 0;
-                
+
             void destroySegment(int index, ref float destroyedSegments)
             {
                 if (Main.rand.NextBool(5))
@@ -465,11 +485,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealSpeed, 0.08f);
 
             if (deathTimer == 120f)
-                Main.NewText("I WILL NOT BE DESTROYED!!!", Color.Cyan);
+                Utilities.DisplayText("I WILL NOT BE DESTROYED!!!", Color.Cyan);
             if (deathTimer == 170f)
-                Main.NewText("I WILL NOT BE DESTROYED!!!", Color.Cyan);
+                Utilities.DisplayText("I WILL NOT BE DESTROYED!!!", Color.Cyan);
             if (deathTimer == 220f)
-                Main.NewText("I WILL NOT BE DESTROYED!!!!", Color.Cyan);
+                Utilities.DisplayText("I WILL NOT BE DESTROYED!!!!", Color.Cyan);
 
             if (deathTimer >= 120f && deathTimer < 380f && deathTimer % 4f == 0f)
             {
@@ -478,10 +498,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             if (deathTimer == 330f)
-                Main.NewText("I WILL NOT...", Color.Cyan);
+                Utilities.DisplayText("I WILL NOT...", Color.Cyan);
 
             if (deathTimer == 420f)
-                Main.NewText("I...", Color.Cyan);
+                Utilities.DisplayText("I...", Color.Cyan);
 
             if (deathTimer == 442f)
             {
@@ -569,8 +589,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        public static void DoAggressiveFlyMovement(NPC npc, Player target, bool chomping, ref float jawRotation, ref float chompTime, ref float time, ref float flyAcceleration)
+        public static void DoAggressiveFlyMovement(NPC npc, Player target, bool dontChompYet, bool chomping, ref float jawRotation, ref float chompTime, ref float time, ref float flyAcceleration)
         {
+            npc.Center = npc.Center.MoveTowards(target.Center, 2.4f);
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealFlyAcceleration = MathHelper.Lerp(0.05f, 0.037f, lifeRatio);
             float idealFlySpeed = MathHelper.Lerp(20.5f, 15f, lifeRatio);
@@ -652,7 +674,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             // Lunge if near the player, and prepare to chomp.
-            if (distanceFromDestination * 0.5f < 180f && directionToPlayerOrthogonality > 0.45f && npc.velocity.Length() < idealFlySpeed * 2f)
+            if (distanceFromDestination * 0.5f < 180f && directionToPlayerOrthogonality > 0.45f && npc.velocity.Length() < idealFlySpeed * 2f && !dontChompYet)
             {
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.75f;
                 jawRotation = jawRotation.AngleLerp(idealMouthOpeningAngle, 0.55f);
@@ -728,11 +750,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public static void DoSpecialAttack_ChargeGates(NPC npc, Player target, bool nearDeath, ref float attackTimer, ref float portalIndex, ref float segmentFadeType)
         {
-            int portalTelegraphTime = 52;
+            int fireballCount = 8;
+            int idealPortalTelegraphTime = 52;
             float wrappedAttackTimer = attackTimer % 135f;
-            float chargeSpeed = nearDeath ? 85f : 60f;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
 
+            if (lifeRatio < 0.15f)
+            {
+                fireballCount -= 2;
+                idealPortalTelegraphTime -= 10;
+            }
+            if (lifeRatio < 0.1f)
+            {
+                fireballCount -= 2;
+                idealPortalTelegraphTime -= 10;
+            }
+            if (lifeRatio < 0.05f)
+            {
+                fireballCount -= 2;
+                idealPortalTelegraphTime -= 10;
+            }
+
+            float chargeSpeed = nearDeath ? 85f : 60f;
             ref float initialTeleportPortal = ref npc.Infernum().ExtraAI[36];
+            ref float portalTelegraphTime = ref npc.Infernum().ExtraAI[40];
+
+            // Define the portal telegraph time if it is uninitialized.
+            if (portalTelegraphTime == 0f)
+            {
+                portalTelegraphTime = idealPortalTelegraphTime;
+                npc.netUpdate = true;
+            }
 
             // Disappear if the target is dead and DoG is invisible.
             if (target.dead && npc.Opacity <= 0f)
@@ -790,9 +838,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                     // Create a burst of homing flames.
                     float flameBurstOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 0; i < fireballCount; i++)
                     {
-                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 8f + flameBurstOffsetAngle).ToRotationVector2() * 15f;
+                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / fireballCount + flameBurstOffsetAngle).ToRotationVector2() * 15f;
                         Utilities.NewProjectileBetter(npc.Center + flameShootVelocity * 3f, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
                     }
 
@@ -885,6 +933,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 else
                 {
                     segmentFadeType = (int)BodySegmentFadeType.InhertHeadOpacity;
+                    npc.Infernum().ExtraAI[40] = 0f;
                     npc.Opacity = 0f;
                 }
             }

@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // Wait for a bit before doing anything.
             if (ActionCountdown > 0f)
-			{
+            {
                 // Release some white dust near the rim.
                 if (ActionCountdown % 8f == 7f)
                 {
@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 ActionCountdown--;
                 projectile.timeLeft = 45;
                 return;
-			}
+            }
 
             // Play an explosion sound.
             if (projectile.timeLeft == 25f)
@@ -62,8 +62,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             projectile.scale = MathHelper.SmoothStep(0.05f, 5f + projectile.identity % 4f / 4f * 0.4f, Utils.InverseLerp(45f, 5f, projectile.timeLeft));
         }
 
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
             if (ActionCountdown > 0f)
                 return false;
 
@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             return targetHitbox.Intersects(hitbox);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D telegraphTexture = Main.projectileTexture[projectile.type];
 
@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             telegraphColor.A = 0;
 
             for (int i = 0; i < 35; i++)
-			{
+            {
                 Vector2 drawPosition = projectile.Center + (MathHelper.TwoPi * i / 35f + Main.GlobalTime * 3f).ToRotationVector2();
                 drawPosition -= Main.screenPosition;
 
@@ -100,7 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 scale *= MathHelper.Lerp(0.015f, 1f, i / 35f);
 
                 spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, 0f, telegraphTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-			}
+            }
             return false;
         }
 
@@ -109,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public override void Kill(int timeLeft)
         {
             for (int i = 0; i < 20; i++)
-			{
+            {
                 Dust magic = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(30f, 30f), 267);
                 magic.color = Color.SkyBlue;
                 magic.scale = 1.1f;
@@ -117,11 +117,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 magic.velocity = Main.rand.NextVector2Circular(2f, 2f);
                 magic.velocity = Vector2.Lerp(magic.velocity, -Vector2.UnitY * magic.velocity.Length(), Main.rand.NextFloat(0.65f, 1f));
                 magic.noGravity = true;
-			}
+            }
         }
 
-		public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
-		{
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        {
             drawCacheProjsBehindNPCs.Add(index);
         }
     }

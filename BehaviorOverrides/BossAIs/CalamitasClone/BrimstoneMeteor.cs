@@ -55,8 +55,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         {
             if ((CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI)
                 target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 120);
-			else
-				target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
+            else
+                target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -76,9 +76,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool ShouldUpdatePosition() => Time >= 30f;
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

@@ -1,10 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.Items.Ammo;
 using CalamityMod.Items.TreasureBags;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.Items.Weapons.Summon;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
@@ -59,7 +55,7 @@ namespace InfernumMode
                         "YOU CANNOT HOPE TO OUTSMART A MASTER OF DIMENSIONS!",
                         "NOT SO FAST!"
                 };
-                Main.NewText(Main.rand.Next(possibleEdgyShitToSay), Color.Cyan);
+                Utilities.DisplayText(Main.rand.Next(possibleEdgyShitToSay), Color.Cyan);
             }
         }
 
@@ -110,6 +106,15 @@ namespace InfernumMode
                 itemCount = Main.rand.Next(10, 20);
                 player.QuickSpawnItem(ItemID.TissueSample, itemCount);
             }
+        }
+
+        public override void UpdateAccessory(Item item, Player player, bool hideVisual)
+        {
+            if (!PoDPlayer.ApplyEarlySpeedNerfs)
+                return;
+
+            if (item.prefix == PrefixID.Quick2)
+                player.moveSpeed -= 0.02f;
         }
     }
 }

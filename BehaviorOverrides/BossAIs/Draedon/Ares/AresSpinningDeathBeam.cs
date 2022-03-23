@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (InitialSpinDirection == -100f)
                 InitialSpinDirection = projectile.velocity.ToRotation();
 
-            if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<AresBody>())
+            if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<AresBody>() && Main.npc[OwnerIndex].Opacity > 0.35f)
             {
                 projectile.velocity = (InitialSpinDirection + Main.npc[OwnerIndex].Infernum().ExtraAI[0]).ToRotationVector2();
                 Vector2 fireFrom = new Vector2(Main.npc[OwnerIndex].Center.X - 1f, Main.npc[OwnerIndex].Center.Y + 23f);
@@ -210,7 +210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool CanHitPlayer(Player target) => projectile.scale >= 0.5f;
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.Calamity().lastProjectileHit = projectile;
         }

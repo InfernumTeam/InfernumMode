@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             projectile.localAI[0] = reader.ReadSingle();
-			projectile.localAI[1] = reader.ReadSingle();
+            projectile.localAI[1] = reader.ReadSingle();
             InitialDirection = reader.ReadSingle();
         }
         public override void AttachToSomething()

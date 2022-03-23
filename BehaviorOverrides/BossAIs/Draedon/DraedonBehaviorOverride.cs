@@ -6,10 +6,8 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using static CalamityMod.NPCs.ExoMechs.Draedon;
-using InfernumMode.Buffs;
+using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -38,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 npc.TargetClosest(false);
                 playerToFollow = Main.player[npc.target];
-                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonTeleport"), playerToFollow.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonTeleport"), playerToFollow.Center);
             }
 
             // Pick someone else to pay attention to if the old target is gone.
@@ -120,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (CalamityWorld.TalkedToDraedon)
                     CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonResummonText", TextColorEdgy);
                 else
-                    Main.NewText("My creations will not forget your failures. Choose wisely.", TextColorEdgy);
+                    Utilities.DisplayText("My creations will not forget your failures. Choose wisely.", TextColorEdgy);
 
                 // Mark Draedon as talked to.
                 if (!CalamityWorld.TalkedToDraedon)
@@ -191,35 +189,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {
-                        Main.NewText("Your efforts are very intriguing.", TextColor);
+                        Utilities.DisplayText("Your efforts are very intriguing.", TextColor);
                         npc.netUpdate = true;
                     }
 
                     if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
                     {
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonLaugh"), playerToFollow.Center);
-                        Main.NewText("Go on. Continue feeding information to my machines.", TextColorEdgy);
+                        Utilities.DisplayText("Go on. Continue feeding information to my machines.", TextColorEdgy);
                     }
 
                     break;
 
                 case 4:
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
-                    {
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase4Text1", TextColor);
-                        npc.netUpdate = true;
-                    }
-
-                    if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
-                    {
-                        CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase4Text2", TextColor);
-                        npc.netUpdate = true;
-                    }
-
-                    break;
-
-                case 5:
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && talkTimer == ExoMechPhaseDialogueTime)
                     {

@@ -44,10 +44,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 {
                     Player closestTarget = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
-                    for (int i = 0; i < 2; i++)
+                    for (int i = 0; i < 3; i++)
                     {
-                        float shootOffsetAngle = MathHelper.Lerp(-0.5f, 0.5f, i);
-                        Vector2 blastShootVelocity = projectile.SafeDirectionTo(closestTarget.Center).RotatedBy(shootOffsetAngle) * 21f;
+                        float shootOffsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / 2f);
+                        Vector2 blastShootVelocity = projectile.SafeDirectionTo(closestTarget.Center).RotatedBy(shootOffsetAngle) * 7f;
                         Projectile.NewProjectile(projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), projectile.damage, 0f);
                     }
                 }
@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.Calamity().lastProjectileHit = projectile;
         }

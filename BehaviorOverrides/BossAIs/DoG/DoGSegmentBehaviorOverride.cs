@@ -34,12 +34,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.life = head.life;
             npc.lifeMax = head.lifeMax;
             npc.defense = 0;
-            if (!head.active)
+            if (!head.active || CalamityGlobalNPC.DoGHead < 0)
             {
                 npc.life = 0;
                 npc.HitEffect();
                 npc.active = false;
                 npc.netUpdate = true;
+                return;
             }
 
             // Inherit various attributes from the head segment.
@@ -238,7 +239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
-                    spriteBatch.Draw(bodyTexture, drawPosition + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(bodyTexture, drawPosition + afterimageOffset, null, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
                 }
             }
             spriteBatch.Draw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
@@ -315,7 +316,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
-                    spriteBatch.Draw(tailTexture, drawPosition + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(tailTexture, drawPosition + afterimageOffset, null, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
                 }
             }
             spriteBatch.Draw(tailTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);

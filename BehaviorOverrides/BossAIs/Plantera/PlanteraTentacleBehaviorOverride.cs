@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
         public override bool PreAI(NPC npc)
-		{
+        {
             // Die if Plantera is absent or not using tentacles.
             if (!Main.npc.IndexInRange(NPC.plantBoss) || Main.npc[NPC.plantBoss].ai[0] != (int)PlanteraBehaviorOverride.PlanteraAttackState.TentacleSnap)
             {
@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 npc.checkDead();
                 npc.netUpdate = true;
                 return false;
-			}
+            }
 
             // Ensure that the tentacle always draws, even when far offscreen.
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
@@ -48,12 +48,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 // Die once small enough.
                 npc.Opacity = npc.scale;
                 if (npc.scale < 0.01f)
-				{
+                {
                     npc.life = 0;
                     npc.HitEffect();
                     npc.checkDead();
                     npc.active = false;
-				}
+                }
             }
 
             npc.Center = Main.npc[NPC.plantBoss].Center + attachAngle.ToRotationVector2() * attachOffset;
@@ -62,6 +62,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
             time++;
             return false;
-		}
+        }
     }
 }

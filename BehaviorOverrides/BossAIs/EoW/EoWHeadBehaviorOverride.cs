@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         // Since split worms share HP, the total amount of HP of the boss is equal to Worm HP * (Total Splits + 1).
         public const int TotalLifeAcrossWorm = 4000;
         public const int TotalLifeAcrossWormBossRush = 376810;
-        public const int BaseBodySegmentCount = 40;
+        public const int BaseBodySegmentCount = 32;
         public const int TotalSplitsToPerform = 2;
 
         public override bool PreAI(NPC npc)
@@ -154,7 +154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 
             if (attackTimer >= 720f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_VineCharge(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
@@ -220,7 +220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 
             if (attackTimer >= 520f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_ShadowOrbSummon(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
@@ -235,7 +235,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 
             if (BossRushEvent.BossRushActive)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
 
             DoDefaultMovement(npc, target, flySpeed, turnSpeedFactor);
 
@@ -262,7 +262,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             // Move around normally for a bit afterwards.
             // The spawned enemies may interfere with later attacks if not killed in time.
             if (attackTimer >= 520f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_RainHover(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
@@ -296,7 +296,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 
             if (attackTimer >= 480f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
 
@@ -361,7 +361,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 attackTimer = 600f;
 
             if (attackTimer > 660f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
         #endregion
 
@@ -397,18 +397,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             idealVelocity *= 1f + npc.Distance(target.Center) / 2400f;
             if (BossRushEvent.BossRushActive)
                 idealVelocity *= 2.1f;
-            if (!npc.WithinRange(target.Center, 320f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
+            if (!npc.WithinRange(target.Center, 400f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
             {
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center) + offsetAngle, turnSpeedFactor * 0.023f, true) * idealVelocity.Length();
                 npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, turnSpeedFactor * 0.03f);
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, turnSpeedFactor * 0.56f);
             }
 
-            if (npc.WithinRange(target.Center, 320f) && npc.velocity.Length() < idealVelocity.Length() * 1.6f)
+            if (npc.WithinRange(target.Center, 400f) && npc.velocity.Length() < idealVelocity.Length() * 1.6f)
                 npc.velocity *= 1.03f;
         }
 
-        public static void GotoNextAttackState(NPC npc)
+        public static void SelectNextAttack(NPC npc)
         {
             float splitCounter = npc.ai[2];
             EoWAttackState oldAttackState = (EoWAttackState)(int)npc.ai[0];
@@ -425,6 +425,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 possibleAttacks.AddWithCondition(EoWAttackState.DarkHeartSlam, splitCounter >= 2f);
             possibleAttacks.RemoveAll(p => p == oldAttackState);
 
+            npc.TargetClosest();
             npc.Infernum().ExtraAI[7] = (int)possibleAttacks[Main.rand.Next(possibleAttacks.Count)];
             npc.Infernum().ExtraAI[8] = 0f;
 

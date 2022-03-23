@@ -39,8 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             Lighting.AddLight(npc.Center, Color.Crimson.ToVector3());
 
             // Select a new target if an old one was lost.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
 
             // Reset things.
             npc.damage = npc.alpha > 4 ? 0 : npc.defDamage;
@@ -120,7 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             if (npc.timeLeft > 60)
                 npc.timeLeft = 60;
         }
-        
+
         public static void DoAttack_IdlyFloat(NPC npc, Player target, bool phase2, bool phase3, bool enraged, ref float attackTimer)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -202,7 +201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     npc.netUpdate = true;
                 }
             }
- 
+
             if (attackTimer > teleportFadeTime + 25f)
             {
                 if (attackTimer <= teleportFadeTime + 80f)
@@ -427,8 +426,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 Main.PlaySound(SoundID.Item92, target.Center);
             }
 
-            if (attackTimer >= (enraged ? 315f : 450f))
+            if (attackTimer >= (enraged ? 335f : 450f))
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<PsionicOrb>(), ModContent.ProjectileType<PsionicLightningBolt>(), ProjectileID.MartianTurretBolt);
                 GotoNextAttackState(npc);
+            }
         }
 
         public static void DoAttack_SpinPull(NPC npc, Player target, bool enraged, ref float attackTimer)
@@ -489,6 +491,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         internal const float Subphase3LifeRatio = 0.45f;
         public static void GotoNextAttackState(NPC npc)
         {
+            // Select a new target.
+            npc.TargetClosest();
+
             npc.Opacity = 0f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 

@@ -10,14 +10,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
     public class SuperchargedProbe : ModNPC
     {
         public enum SuperchargedProbeAttackState
-		{
+        {
             ChargePreparation,
             Charge
-		}
+        }
 
         public Player Target => Main.player[npc.target];
         public SuperchargedProbeAttackState AttackState
-		{
+        {
             get => (SuperchargedProbeAttackState)(int)npc.ai[0];
             set => npc.ai[0] = (int)value;
         }
@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             npc.Calamity().canBreakPlayerDefense = false;
             switch (AttackState)
-			{
+            {
                 case SuperchargedProbeAttackState.ChargePreparation:
                     DoBehavior_ChargePreparation();
                     break;
@@ -87,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     DoBehavior_Charge();
                     npc.Calamity().canBreakPlayerDefense = true;
                     break;
-			}
+            }
 
             AttackTimer++;
         }
@@ -113,7 +113,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 npc.rotation += MathHelper.Pi;
 
             if (AttackTimer > 40f)
-			{
+            {
                 horizontalHoverOffset = 0f;
                 AttackState = SuperchargedProbeAttackState.Charge;
                 AttackTimer = 0f;
@@ -169,7 +169,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public override bool PreNPCLoot() => false;
 
-		public override bool CheckDead()
+        public override bool CheckDead()
         {
             Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.position);
 

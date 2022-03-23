@@ -12,14 +12,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
     {
         public enum ExoMechComboAttackType
         {
-            AresTwins_ThermoplasmaDance = 100,
-            AresTwins_DualLaserCharges,
+            AresTwins_DualLaserCharges = 100,
             AresTwins_CircleAttack,
-            AresTwins_LaserFlameHell,
-            ThanatosAres_ExplosionCircle,
             ThanatosAres_LaserCircle,
-            ThanatosAres_LaserBarrage,
-            ThanatosAres_ElectropulseBursts
+            ThanatosAres_ElectricCage,
         }
 
         public static bool ShouldSelectComboAttack(NPC npc, out ExoMechComboAttackType newAttack)
@@ -32,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (initialMech is null || initialMech.Opacity == 0f)
                 return false;
 
+            newAttack = (ExoMechComboAttackType)(int)initialMech.ai[0];
             int complementMechIndex = (int)initialMech.Infernum().ExtraAI[ComplementMechIndexIndex];
             NPC complementMech = complementMechIndex >= 0 && Main.npc[complementMechIndex].active ? Main.npc[complementMechIndex] : null;
 
@@ -47,14 +44,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
 
-                attackSelector.Add(ExoMechComboAttackType.AresTwins_ThermoplasmaDance);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_DualLaserCharges);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_CircleAttack);
-
-                /*
-                if (CurrentTwinsPhase != 4)
-                    attackSelector.Add(ExoMechComboAttackType.AresTwins_LaserFlameHell, 1.35);
-                */
 
                 do
                     newAttack = attackSelector.Get();
@@ -84,11 +75,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (thanatosAndAres)
             {
                 WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
-                attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ExplosionCircle);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserCircle);
-                attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserBarrage);
-                if (CurrentThanatosPhase != 4 && CurrentAresPhase != 4)
-                    attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ElectropulseBursts, 1.65);
+                attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ElectricCage);
 
                 do
                     newAttack = attackSelector.Get();

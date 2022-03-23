@@ -1,12 +1,14 @@
 ﻿using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
+using CalamityMod.World;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
@@ -18,7 +20,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             StickToBody,
             Punch,
             Hover,
-            AccelerationPunch
+            AccelerationPunch,
+            BlueFireBursts
         }
 
         public override int NPCOverrideType => ModContent.NPCType<RavagerClawLeft>();
@@ -31,9 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public static bool DoClawAI(NPC npc, bool leftClaw)
         {
-            if (npc.dontTakeDamage)
-                npc.life = 1;
-
             // Do targeting.
             npc.TargetClosest();
             Player target = Main.player[npc.target];
@@ -78,6 +78,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             npc.damage = npc.defDamage - 15;
             if (attackState < 2 && free)
                 attackState = (int)RavagerClawAttackState.Hover;
+
+            // Don't attack if the Ravager isn't ready to do so yet.
+            if (!free)
+                npc.dontTakeDamage = false;
+
+            if (ravagerBody.Infernum().ExtraAI[5] < RavagerBodyBehaviorOverride.AttackDelay)
+            {
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
+                attackState = (int)RavagerClawAttackState.StickToBody;
+                punchTimer = 0f;
+            }
+            else if (npc.dontTakeDamage)
+                npc.life = 1;
 
             switch ((RavagerClawAttackState)(int)attackState)
             {
@@ -251,6 +265,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
                     punchTimer++;
                     break;
+
+                case RavagerClawAttackState.BlueFireBursts:
+                    hoverDestination = target.Center + Vector2.UnitX * leftClaw.ToDirectionInt() * -600f;
+                    hoverDestination.Y += (float)Math.Sin(punchTimer * MathHelper.TwoPi / 65f) * 250f;
+
+                    if (!npc.WithinRange(hoverDestination, 100f))
+                        npc.velocity = npc.SafeDirectionTo(hoverDestination) * 10f;
+                    if (!npc.WithinRange(hoverDestination, 150f) && punchTimer % 30f == 29f)
+                    {
+                        for (int i = 0; i < 18; i++)
+                        {
+                            Vector2 ringOffset = Vector2.UnitX * -npc.width / 2f - Vector2.UnitY.RotatedBy(MathHelper.TwoPi * i / 18f) * new Vector2(8f, 16f);
+                            ringOffset = ringOffset.RotatedBy(npc.rotation);
+                            Dust darkMagicFire = Dust.NewDustDirect(npc.Center, 0, 0, ModContent.DustType<RavagerMagicDust>(), 0f, 0f, 160, default, 1f);
+                            darkMagicFire.scale = 1.35f;
+                            darkMagicFire.fadeIn = 1.4f;
+                            darkMagicFire.noGravity = true;
+                            darkMagicFire.position = npc.Center - ringOffset + Main.rand.NextVector2Circular(8f, 8f);
+                            darkMagicFire.velocity = npc.velocity * 0.1f;
+                            darkMagicFire.velocity = Vector2.Normalize(npc.Center - npc.velocity * 3f - darkMagicFire.position) * 1.25f;
+                        }
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            int cinderDamage = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive ? 335 : 205;
+
+                            for (int i = 0; i < 3; i++)
+                            {
+                                float offsetAngle = MathHelper.Lerp(-0.47f, 0.47f, i / 2f);
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 12f).RotatedBy(offsetAngle) * 10f;
+                                Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), cinderDamage, 0f);
+                            }
+                        }
+                    }
+
+                    npc.rotation = npc.AngleTo(target.Center);
+                    punchTimer++;
+                    break;
             }
 
             return false;
@@ -269,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 if (npc.WithinRange(drawPosition, 14f))
                     break;
 
-                drawPosition += (npc.Center - drawStart).SafeNormalize(Vector2.Zero) * 14f; 
+                drawPosition += (npc.Center - drawStart).SafeNormalize(Vector2.Zero) * 14f;
                 Color color = npc.GetAlpha(Lighting.GetColor((int)drawPosition.X / 16, (int)(drawPosition.Y / 16f)));
                 Vector2 screenDrawPosition = drawPosition - Main.screenPosition;
                 spriteBatch.Draw(chainTexture, screenDrawPosition, null, color, chainRotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);

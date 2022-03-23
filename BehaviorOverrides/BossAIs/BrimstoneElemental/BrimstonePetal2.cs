@@ -58,17 +58,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             return false;
         }
 
-		public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             if ((CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
                 target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 120);
-			else
-				target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
-		}
+            else
+                target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
+        }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

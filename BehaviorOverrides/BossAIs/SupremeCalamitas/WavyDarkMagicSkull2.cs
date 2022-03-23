@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 float width = Utils.InverseLerp(300f, 285f, projectile.timeLeft, true) * Utils.InverseLerp(270f, 285f, projectile.timeLeft, true) * 4f + 1f;
                 spriteBatch.DrawLineBetter(start, end, Color.Red, width);
                 return false;
-            }    
+            }
 
             lightColor.R = (byte)(255 * projectile.Opacity);
             Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
@@ -80,9 +80,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool ShouldUpdatePosition() => projectile.timeLeft <= 270;
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

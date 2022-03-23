@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
         }
 
         public override void AI()
-		{
+        {
             projectile.alpha = Utils.Clamp(projectile.alpha - 20, 0, 255);
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
             projectile.velocity.Y += 0.15f;
@@ -30,19 +30,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 projectile.Kill();
         }
 
-		public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Poisoned, 120);
+        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Poisoned, 120);
 
         public override void Kill(int timeLeft)
-		{
-			Main.PlaySound(SoundID.NPCDeath1, projectile.Center);
-			for (int i = 0; i < 30; i++)
-			{
-				Dust honey = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 147, 0f, 0f, 0, default, 1f);
-				if (Main.rand.NextBool(2))
+        {
+            Main.PlaySound(SoundID.NPCDeath1, projectile.Center);
+            for (int i = 0; i < 30; i++)
+            {
+                Dust honey = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 147, 0f, 0f, 0, default, 1f);
+                if (Main.rand.NextBool(2))
                     honey.scale *= 1.4f;
 
-				projectile.velocity *= 1.9f;
-			}
+                projectile.velocity *= 1.9f;
+            }
 
             // Don't spawn things client-side.
             if (Main.netMode == NetmodeID.MultiplayerClient)

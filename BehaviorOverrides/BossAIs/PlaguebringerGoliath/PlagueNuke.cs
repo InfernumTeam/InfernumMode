@@ -12,10 +12,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
     {
         public Player Target => Main.player[npc.target];
         public bool Unfinished
-		{
-			get => npc.ai[1] == 1f;
+        {
+            get => npc.ai[1] == 1f;
             set => npc.ai[1] = value.ToInt();
-		}
+        }
         public ref float ExistTimer => ref npc.ai[0];
         public ref float DisappearTimer => ref npc.ai[2];
         public const int BuildTime = 660;
@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             // Fall onto the ground and disappear if unfinished.
             if (Unfinished)
-			{
+            {
                 DisappearTimer++;
                 npc.velocity.X *= 0.95f;
                 npc.Opacity = Utils.InverseLerp(460f, 310f, DisappearTimer, true);
@@ -56,21 +56,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (DisappearTimer > 360f || npc.collideX || npc.collideY)
                 {
                     if (npc.collideX || npc.collideY)
-					{
+                    {
                         for (int i = 1; i <= 5; i++)
                             Gore.NewGore(npc.Center, Main.rand.NextVector2Circular(2f, 2f), mod.GetGoreSlot($"Gores/PlagueNuke{i}"));
-					}
+                    }
                     npc.active = false;
                 }
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                 return;
-			}
+            }
 
             ExistTimer++;
 
             bool moving = ExistTimer >= BuildTime && !Unfinished;
 
             // Attempt to hit the target if moving.
+            List<NPC> builders = Main.npc.Where(n =>
+            {
+                return n.active && (n.type == ModContent.NPCType<BuilderDroneSmall>() || n.type == ModContent.NPCType<BuilderDroneBig>());
+            }).ToList();
             if (moving)
             {
                 npc.velocity = (npc.velocity * 39f + npc.SafeDirectionTo(Target.Center) * 14f) / 40f;
@@ -93,14 +97,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
             else
             {
-                List<NPC> builders = Main.npc.Where(n =>
-                {
-                    return n.active && (n.type == ModContent.NPCType<BuilderDroneSmall>() || n.type == ModContent.NPCType<BuilderDroneBig>());
-                }).ToList();
-
                 // Stop being built mid-way if the builders are all gone.
                 if (builders.Count == 0)
-				{
+                {
                     Unfinished = true;
                     npc.netUpdate = true;
                     return;
@@ -130,7 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override bool PreNPCLoot() => false;
 
-		public override bool CheckDead()
+        public override bool CheckDead()
         {
             Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.position);
 
@@ -140,8 +139,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             return true;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
-		{
+        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
             Texture2D texture = Main.npcTexture[npc.type];
             Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNukeGlowmask");
             Vector2 origin = npc.frame.Size() * 0.5f;
@@ -151,9 +150,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             spriteBatch.Draw(texture, drawPosition, npc.frame, color, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             return false;
-		}
+        }
 
-		public override void FindFrame(int frameHeight)
+        public override void FindFrame(int frameHeight)
         {
             float buildCompletion = MathHelper.Clamp(ExistTimer / BuildTime, 0f, 1f);
             npc.frame.Y = (int)MathHelper.Lerp(0f, Main.npcFrameCount[npc.type] - 1f, buildCompletion) * frameHeight;

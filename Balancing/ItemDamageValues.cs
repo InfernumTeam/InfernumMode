@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using CalamityMod.Items.Ammo;
+using CalamityMod.Items.Weapons.Ranged;
+using CalamityMod.Items.Weapons.Rogue;
+using CalamityMod.Items.Weapons.Summon;
+using System.Collections.Generic;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.Items.Weapons.Rogue;
-using CalamityMod.Items.Ammo;
-using CalamityMod.Items.Weapons.Ranged;
-using CalamityMod.Items.Weapons.Summon;
 
 namespace InfernumMode.Balancing
 {

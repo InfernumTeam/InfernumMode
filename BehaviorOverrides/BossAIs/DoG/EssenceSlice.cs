@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Lighting.AddLight(projectile.Center, Color.Red.ToVector3() * 1.4f);
 
             if (!Main.dedServ && Main.rand.NextBool(5))
-			{
+            {
                 Dust fire = Dust.NewDustPerfect(projectile.Center, 27);
                 fire.velocity = Main.rand.NextVector2CircularEdge(3f, 3f);
                 fire.scale *= 1.1f;

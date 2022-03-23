@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 projectile.Opacity = 1f;
 
             if (projectile.timeLeft == 340)
-			{
+            {
                 var sound = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanSummonBase"), projectile.Center);
                 if (sound != null)
                     sound.Volume = MathHelper.Clamp(sound.Volume * 1.5f, 0f, 1f);
@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             Main.LocalPlayer.Infernum().CurrentScreenShakePower += (float)Math.Sin(MathHelper.Pi * Math.Pow(Utils.InverseLerp(300f, 440f, Time, true), 0.5D)) * 35f;
 
             if (projectile.timeLeft == 45)
-			{
+            {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarCharge"), projectile.Center);
                 if (Main.netMode != NetmodeID.Server)
                 {
@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 dustSpawnPosition.X += Main.rand.NextFloatDirection() * xArea * 0.35f;
                 Dust bubble = Dust.NewDustPerfect(dustSpawnPosition, 267, Vector2.UnitY * -12f);
                 bubble.noGravity = true;
-                bubble.scale = 1.9f;    
+                bubble.scale = 1.9f;
                 bubble.color = Color.CornflowerBlue;
 
                 for (float x = -xArea; x <= xArea; x += 110f)

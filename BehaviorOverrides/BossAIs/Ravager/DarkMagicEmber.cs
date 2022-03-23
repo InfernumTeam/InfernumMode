@@ -10,8 +10,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
     public class DarkMagicEmber : ModProjectile
     {
         public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Dark Magic Ember");
+        {
+            DisplayName.SetDefault("Dark Magic Ember");
             Main.projFrames[projectile.type] = 4;
         }
 
@@ -21,6 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
+            projectile.penetrate = -1;
             projectile.timeLeft = 360;
         }
 
@@ -43,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
 
         public override void Kill(int timeLeft)
-		{
+        {
             if (Main.dedServ)
                 return;
 

@@ -39,10 +39,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         {
             projectile.ai[1] += 1f;
             if (projectile.ai[1] > 720f)
-			{
+            {
                 projectile.localAI[0] += 10f;
-				projectile.damage = 0;
-			}
+                projectile.damage = 0;
+            }
 
             if (projectile.localAI[0] > 255f)
             {
@@ -64,17 +64,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
 
         public override Color? GetAlpha(Color lightColor)
-		{
-			if (projectile.ai[1] > 720f)
-			{
-				byte b2 = (byte)((26f - (projectile.ai[1] - 720f)) * 10f);
-				byte a2 = (byte)(projectile.alpha * (b2 / 255f));
-				return new Color(b2, b2, b2, a2);
-			}
-			return new Color(255, 255, 255, projectile.alpha);
-		}
+        {
+            if (projectile.ai[1] > 720f)
+            {
+                byte b2 = (byte)((26f - (projectile.ai[1] - 720f)) * 10f);
+                byte a2 = (byte)(projectile.alpha * (b2 / 255f));
+                return new Color(b2, b2, b2, a2);
+            }
+            return new Color(255, 255, 255, projectile.alpha);
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = Main.projectileTexture[projectile.type];
             switch ((int)projectile.ai[0])

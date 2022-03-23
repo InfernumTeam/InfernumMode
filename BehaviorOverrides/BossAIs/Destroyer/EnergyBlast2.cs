@@ -6,19 +6,19 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
-	public class EnergyBlast2 : ModProjectile
+    public class EnergyBlast2 : ModProjectile
     {
-		public override void SetStaticDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Energy Blast");
-			Main.projFrames[projectile.type] = 6;
-		}
+            Main.projFrames[projectile.type] = 6;
+        }
 
         public override void SetDefaults()
         {
             projectile.width = projectile.height = 76;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
+            projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 240;
@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         {
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
-            
+
             Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             projectile.velocity = (projectile.velocity * 59f + projectile.SafeDirectionTo(closestPlayer.Center) * 9f) / 60f;
 
@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Lighting.AddLight(projectile.Center, Vector3.One);
         }
 
-		// Explode on death.
+        // Explode on death.
         public override void Kill(int timeLeft)
         {
             Utilities.CreateGenericDustExplosion(projectile.Center, 235, 35, 12f, 4.25f);

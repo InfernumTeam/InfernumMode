@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             projectile.Opacity = Utils.InverseLerp(720f, 700f, projectile.timeLeft, true) * Utils.InverseLerp(5f, 30f, projectile.timeLeft, true);
             projectile.scale = MathHelper.Lerp(0.65f, 0.25f, Utils.InverseLerp(325f, 30f, projectile.timeLeft, true));
-		}
+        }
 
         public override bool CanHitPlayer(Player target) => projectile.Opacity > 0.7f;
 

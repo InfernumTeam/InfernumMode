@@ -47,16 +47,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.075f, 0f, 1f);
 
             Time++;
-		}
+        }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
-		{
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(4, Main.projFrames[projectile.type], (int)Variant % 4, projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
             spriteBatch.Draw(texture, drawPosition, frame, Color.White * projectile.Opacity, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
-		}
-	}
+        }
+    }
 }

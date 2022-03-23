@@ -46,8 +46,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             bool anyBigBois = NPC.AnyNPCs(ModContent.NPCType<CrimulanSGBig>()) || NPC.AnyNPCs(ModContent.NPCType<CrimulanSGSmall>()) || NPC.AnyNPCs(ModContent.NPCType<EbonianSGBig>()) || NPC.AnyNPCs(ModContent.NPCType<EbonianSGSmall>());
             npc.dontTakeDamage = anyBigBois;
 
-            // Do targeting.
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // These debuffs are not fun.
@@ -556,10 +556,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            npc.netUpdate = true;
             for (int i = 0; i < 4; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
+            npc.TargetClosest();
             ref float localState = ref npc.ai[0];
             float oldLocalState = npc.ai[0];
             bool anyBigBois = NPC.AnyNPCs(ModContent.NPCType<CrimulanSGBig>()) || NPC.AnyNPCs(ModContent.NPCType<CrimulanSGSmall>()) || NPC.AnyNPCs(ModContent.NPCType<EbonianSGBig>()) || NPC.AnyNPCs(ModContent.NPCType<EbonianSGSmall>());
@@ -577,6 +577,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             do
                 localState = newStatePicker.Get();
             while (localState == oldLocalState);
+            npc.netUpdate = true;
         }
         #endregion AI
     }

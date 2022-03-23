@@ -1,41 +1,42 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Buffs.StatBuffs;
+using CalamityMod.Buffs.StatDebuffs;
+using CalamityMod.Events;
+using CalamityMod.Items.Materials;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.Bumblebirb;
 using CalamityMod.NPCs.Calamitas;
+using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.DevourerofGods;
+using CalamityMod.NPCs.ExoMechs;
+using CalamityMod.NPCs.GreatSandShark;
+using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Ravager;
+using CalamityMod.NPCs.SupremeCalamitas;
+using CalamityMod.UI;
 using CalamityMod.World;
-using InfernumMode.Buffs;
+using InfernumMode.Balancing;
+using InfernumMode.BehaviorOverrides.BossAIs.BoC;
 using InfernumMode.BehaviorOverrides.BossAIs.Cultist;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh;
+using InfernumMode.Buffs;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.NPCs.AstrumAureus;
-using CalamityMod.NPCs.GreatSandShark;
-using CalamityMod.NPCs.SupremeCalamitas;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
-using CalamityMod.Events;
-using CalamityMod.UI;
-using System.Linq;
-using CalamityMod.NPCs.Perforator;
-using CalamityMod.NPCs.Crabulon;
-using CalamityMod.Buffs.DamageOverTime;
-using InfernumMode.BehaviorOverrides.BossAIs.BoC;
-using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Buffs.StatBuffs;
-using CalamityMod.NPCs.ExoMechs;
-using InfernumMode.BehaviorOverrides.BossAIs.DoG;
-using InfernumMode.Balancing;
-
-using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
-using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
+using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
+using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -56,6 +57,7 @@ namespace InfernumMode.GlobalInstances
 
         public static int Cryogen = -1;
         public static int AstrumAureus = -1;
+        public static int Athena = -1;
 
         #endregion
 
@@ -85,6 +87,7 @@ namespace InfernumMode.GlobalInstances
 
             ResetSavedIndex(ref Cryogen, ModContent.NPCType<CryogenNPC>());
             ResetSavedIndex(ref AstrumAureus, ModContent.NPCType<AstrumAureus>());
+            ResetSavedIndex(ref Athena, ModContent.NPCType<AthenaNPC>());
         }
         #endregion Reset Effects
 
@@ -137,14 +140,44 @@ namespace InfernumMode.GlobalInstances
             if (InfernumMode.CanUseCustomAIs)
             {
                 // Correct an enemy's life depending on its cached true life value.
-                if (NPCHPValues.HPValues.ContainsKey(npc.type) && NPCHPValues.HPValues[npc.type] >= 0 && NPCHPValues.HPValues[npc.type] != npc.lifeMax)
+                if (NPCHPValues.HPValues.ContainsKey(npc.type) && NPCHPValues.HPValues[npc.type] >= 0)
                 {
-                    npc.life = npc.lifeMax = NPCHPValues.HPValues[npc.type];
+                    int maxHP = NPCHPValues.HPValues[npc.type];
+                    float hpMultiplier = 1f;
+                    float accumulatedFactor = 0.35f;
+                    if (Main.netMode != 0)
+                    {
+                        int activePlayerCount = 0;
+                        for (int i = 0; i < Main.maxPlayers; i++)
+                        {
+                            if (Main.player[i].active)
+                                activePlayerCount++;
+                        }
 
-                    if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
-                        BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
+                        for (int i = 1; i < activePlayerCount; i++)
+                        {
+                            hpMultiplier += accumulatedFactor;
+                            accumulatedFactor += (1f - accumulatedFactor) / 3f;
+                        }
+                    }
+                    if (hpMultiplier > 8f)
+                        hpMultiplier = (hpMultiplier * 2f + 8f) / 3f;
 
-                    npc.netUpdate = true;
+                    if (hpMultiplier > 1000f)
+                        hpMultiplier = 1000f;
+
+                    maxHP = (int)(maxHP * hpMultiplier);
+                    maxHP += (int)(maxHP * CalamityConfig.Instance.BossHealthBoost * 0.01);
+
+                    if (maxHP != npc.lifeMax)
+                    {
+                        npc.life = npc.lifeMax = maxHP;
+
+                        if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
+                            BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
+
+                        npc.netUpdate = true;
+                    }
                 }
 
                 // Make perf worms immune to debuffs.
@@ -186,7 +219,7 @@ namespace InfernumMode.GlobalInstances
                             npc.Calamity().dashImmunityTime[i]--;
                     }
 
-                    return (bool)OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].DynamicInvoke(npc);
+                    return OverridingListManager.InfernumNPCPreAIOverrideList[npc.type].Invoke(npc);
                 }
             }
             return base.PreAI(npc);
@@ -209,8 +242,15 @@ namespace InfernumMode.GlobalInstances
                 if (npc.ai[2] >= 2f)
                 {
                     npc.boss = true;
-                    if (BossRushEvent.BossRushActive)
-                        typeof(BossRushEvent).GetMethod("OnBossKill", Utilities.UniversalBindingFlags).Invoke(null, new object[] { npc, mod });
+
+                    if (npc.Infernum().ExtraAI[10] == 0f)
+                    {
+                        npc.Infernum().ExtraAI[10] = 1f;
+                        if (BossRushEvent.BossRushActive)
+                            typeof(BossRushEvent).GetMethod("OnBossKill", Utilities.UniversalBindingFlags).Invoke(null, new object[] { npc, mod });
+                        else
+                            npc.NPCLoot();
+                    }
                 }
 
                 else if (npc.realLife == -1 && npc.Infernum().ExtraAI[10] == 0f)
@@ -242,7 +282,7 @@ namespace InfernumMode.GlobalInstances
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return;
-            
+
             if (npc.type == NPCID.WallofFlesh)
             {
                 for (int i = 0; i < Main.rand.Next(18, 29 + 1); i++)
@@ -251,6 +291,10 @@ namespace InfernumMode.GlobalInstances
                     Main.projectile[soul].localAI[1] = Main.rand.NextBool().ToDirectionInt();
                 }
             }
+
+            // Increase GSS yields.
+            if (npc.type == ModContent.NPCType<GreatSandShark>())
+                DropHelper.DropItem(npc, ModContent.ItemType<GrandScale>(), 3);
 
             if (npc.type == InfernumMode.CalamityMod.NPCType("DevourerofGodsHead"))
             {
@@ -290,13 +334,6 @@ namespace InfernumMode.GlobalInstances
                 }
             }
 
-            if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead)
-            {
-                if (damage > 1500)
-                    damage = 1500;
-                return false;
-            }
-
             double realDamage = crit ? damage * 2 : damage;
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
             if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
@@ -319,6 +356,23 @@ namespace InfernumMode.GlobalInstances
                     npc.Infernum().ExtraAI[32] = 1f;
                 }
                 return false;
+            }
+
+            // Register damage from the tail to the shield when it's vulnerable.
+            if (npc.type == InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"))
+            {
+                Main.npc[npc.realLife].Infernum().ExtraAI[0] += (float)(damage * (crit ? 2D : 1f));
+                Main.npc[npc.realLife].netUpdate = true;
+            }
+
+            if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead)
+            {
+                if (npc.life - realDamage <= 1000)
+                {
+                    npc.life = 0;
+                    npc.StrikeNPCNoInteraction(9999, 0f, 0);
+                    npc.checkDead();
+                }
             }
 
             return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
@@ -344,7 +398,7 @@ namespace InfernumMode.GlobalInstances
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return base.CheckDead(npc);
-            
+
             if (npc.type == NPCID.WallofFleshEye)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)

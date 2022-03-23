@@ -10,10 +10,13 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-	public class BrimstoneBurst : ModProjectile
+    public class BrimstoneBurst : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
         public const int Lifetime = 240;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Flame");
@@ -45,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             Lighting.AddLight(projectile.Center, Color.Red.ToVector3() * 1.4f);
 
             if (!Main.dedServ && Main.rand.NextBool(5))
-			{
+            {
                 Dust fire = Dust.NewDustPerfect(projectile.Center, 27);
                 fire.velocity = Main.rand.NextVector2CircularEdge(3f, 3f);
                 fire.scale *= 1.1f;
@@ -70,17 +73,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         }
 
         public float WidthFunction(float completionRatio)
-		{
+        {
             float squeezeInterpolant = (float)Math.Pow(Utils.InverseLerp(0f, 0.27f, completionRatio, true), 0.4f) * Utils.InverseLerp(1f, 0.86f, completionRatio, true);
             return MathHelper.SmoothStep(3f, projectile.width, squeezeInterpolant) * projectile.Opacity;
         }
 
         public Color ColorFunction(float completionRatio)
-		{
+        {
             Color color = Color.Lerp(Color.Red, Color.DarkRed, (float)Math.Pow(completionRatio, 2D));
             color *= 1f - 0.5f * (float)Math.Pow(completionRatio, 3D);
             return color * projectile.Opacity;
-		}
+        }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {

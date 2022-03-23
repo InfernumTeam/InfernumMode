@@ -56,26 +56,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             npc.dontTakeDamage = GeneralTimer < 60f;
 
-            // Randomly play sounds to indicate building.
-            if (Main.rand.NextBool(10))
-			{
-                switch (Main.rand.Next(4))
-				{
-                    case 0:
-                        Main.PlaySound(SoundID.Item12, npc.Center);
-                        break;
-                    case 1:
-                        Main.PlaySound(SoundID.Item15, npc.Center);
-                        break;
-                    case 2:
-                        Main.PlaySound(SoundID.Item22, npc.Center);
-                        break;
-                    case 3:
-                        Main.PlaySound(SoundID.Item23, npc.Center);
-                        break;
-                }
-			}
-
             Vector2 continousHoverPosition = Target.Center + new Vector2(-250f, -175f);
             if (Vector2.Distance(GeneralHoverPosition, continousHoverPosition) > 325f)
                 GeneralHoverPosition = continousHoverPosition;
@@ -86,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             // Explode into rockets if the small builders are gone.
             if (!NPC.AnyNPCs(ModContent.NPCType<BuilderDroneSmall>()) || GeneralTimer >= PlagueNuke.BuildTime)
-			{
+            {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 5; i++)
@@ -106,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override bool PreNPCLoot() => false;
 
-		public override bool CheckDead()
+        public override bool CheckDead()
         {
             Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.position);
 

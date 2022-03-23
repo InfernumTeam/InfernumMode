@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 dustSpawnPosition.X += Main.rand.NextFloatDirection() * xArea * 0.4f;
                 Dust bubble = Dust.NewDustPerfect(dustSpawnPosition, 267, Vector2.UnitY * -12f);
                 bubble.noGravity = true;
-                bubble.scale = 1.9f;    
+                bubble.scale = 1.9f;
                 bubble.color = Color.CornflowerBlue;
 
                 for (float x = -xArea; x <= xArea; x += 50f)

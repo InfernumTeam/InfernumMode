@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public ref float WaveHeight => ref projectile.ai[1];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Wave");
+            DisplayName.SetDefault("Tidal Wave");
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 150;
         }
@@ -41,36 +41,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             if (WaveHeight < 60f)
                 WaveHeight = 60f;
-            WaveHeight = MathHelper.Lerp(WaveHeight, 720f, 0.04f);
+            WaveHeight = MathHelper.Lerp(WaveHeight, 640f, 0.04f);
             projectile.Opacity = (float)Math.Sin(projectile.timeLeft / 360f * MathHelper.Pi) * 3f;
             if (projectile.Opacity > 1f)
                 projectile.Opacity = 1f;
         }
 
         internal Color ColorFunction(float completionRatio)
-		{
-            return Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime)) * 0.5f) * projectile.Opacity;
-		}
+        {
+            Color c = Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime)) * 0.5f);
+            if (Main.dayTime)
+                c = Color.Lerp(c, Color.Navy, 0.4f);
+
+            return c * projectile.Opacity;
+        }
 
         internal float WidthFunction(float completionRatio) => WaveHeight;
 
         internal Vector2 OffsetFunction(float completionRatio) => Vector2.UnitY * (float)Math.Sin(completionRatio * MathHelper.Pi + Time / 11f) * 60f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
+        {
             for (int i = 0; i < projectile.oldPos.Length; i++)
             {
                 float _ = 0f;
                 float completionRatio = i / (float)projectile.oldPos.Length;
                 Vector2 top = projectile.oldPos[i] + OffsetFunction(completionRatio);
                 Vector2 bottom = projectile.oldPos[i] + Vector2.UnitY * WaveHeight + OffsetFunction(completionRatio);
-                if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), top, bottom, (int)projectile.velocity.X, ref _))
+                if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), top, bottom, (int)Math.Abs(projectile.velocity.X) * 2f, ref _))
                     return true;
             }
             return false;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (TornadoDrawer is null)
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, OffsetFunction, false, GameShaders.Misc["Infernum:DukeTornado"]);
@@ -82,9 +86,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

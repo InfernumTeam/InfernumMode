@@ -1,6 +1,18 @@
-﻿namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
+﻿using CalamityMod;
+using CalamityMod.NPCs;
+using CalamityMod.NPCs.AdultEidolonWyrm;
+using CalamityMod.World;
+using InfernumMode.OverridingSystem;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-    /*
     public class AEWHeadBehaviorOverride : NPCBehaviorOverride
     {
         public enum AEWAttackType
@@ -8,26 +20,39 @@
             AbyssalCrash,
             HadalSpirits,
             PsychicBlasts,
-            UndynesTail
+            UndynesTail,
+            StormCharge,
+            ImpactTail,
+            LightningCage
         }
 
         public static List<AEWAttackType[]> Phase1AttackCycles = new List<AEWAttackType[]>()
         {
-            new AEWAttackType[] { AEWAttackType.HadalSpirits, AEWAttackType.PsychicBlasts, AEWAttackType.UndynesTail },
-            new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash },
-            new AEWAttackType[] { AEWAttackType.UndynesTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.AbyssalCrash },
+            new [] { AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash, AEWAttackType.UndynesTail, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits },
+            new [] { AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash, AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.UndynesTail },
+            new [] { AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.PsychicBlasts, AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash },
+            new [] { AEWAttackType.PsychicBlasts, AEWAttackType.HadalSpirits, AEWAttackType.UndynesTail, AEWAttackType.AbyssalCrash, AEWAttackType.PsychicBlasts },
         };
 
-        public static List<AEWAttackType[]> CurrentAttackCycles => Phase1AttackCycles;
+        public static List<AEWAttackType[]> Phase2AttackCycles = new List<AEWAttackType[]>()
+        {
+            new [] { AEWAttackType.StormCharge, AEWAttackType.ImpactTail },
+        };
 
-        public override int NPCOverrideType => ModContent.NPCType<EidolonWyrmHeadHuge>();
+        public static List<AEWAttackType[]> CurrentAttackCycles => Phase2AttackCycles;
+
+        public const int ShieldHP = 102000;
+        public const float Phase2LifeRatio = 0.8f;
+
+        public override int NPCOverrideType => InfernumMode.CalamityMod.NPCType("EidolonWyrmHeadHuge");
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public static Color CalculateEyeColor(NPC npc)
         {
             float hue = npc.Infernum().ExtraAI[5] / CurrentAttackCycles.Count % 1f;
-            return Main.hslToRgb(hue, 1f, 0.55f);
+            Color c = Main.hslToRgb(hue, 1f, 0.55f);
+            return c;
         }
 
         public override bool PreAI(NPC npc)
@@ -77,12 +102,12 @@
                     if (i >= 0 && i < 40)
                     {
                         if (i % 2 == 0)
-                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmBodyHuge>(), npc.whoAmI + 1);
+                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("EidolonWyrmBodyHuge"), npc.whoAmI + 1);
                         else
-                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmBodyAltHuge>(), npc.whoAmI + 1);
+                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("EidolonWyrmBodyAltHuge"), npc.whoAmI + 1);
                     }
                     else
-                        lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), ModContent.NPCType<EidolonWyrmTailHuge>(), npc.whoAmI + 1);
+                        lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"), npc.whoAmI + 1);
 
                     Main.npc[lol].realLife = npc.whoAmI;
                     Main.npc[lol].ai[2] = npc.whoAmI;
@@ -102,6 +127,7 @@
 
             // Reset damage and other things.
             npc.damage = (int)(npc.defDamage * generalDamageFactor);
+            npc.dontTakeDamage = false;
 
             switch ((AEWAttackType)(int)attackType)
             {
@@ -116,6 +142,15 @@
                     break;
                 case AEWAttackType.UndynesTail:
                     DoBehavior_UndynesTail(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
+                    break;
+                case AEWAttackType.StormCharge:
+                    DoBehavior_StormCharge(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
+                    break;
+                case AEWAttackType.ImpactTail:
+                    DoBehavior_ImpactTail(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
+                    break;
+                case AEWAttackType.LightningCage:
+                    DoBehavior_LightningCage(npc, target, lifeRatio, generalDamageFactor, ref etherealnessFactor, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -195,11 +230,17 @@
             // Periodically release blasts of psychic energy.
             if (attackTimer % psychicBlastCircleShootRate == psychicBlastCircleShootRate - 1f)
             {
-                int blastDamage = (int)(generalDamageFactor * 640f);
-                for (int i = 0; i < 10; i++)
+                // Play a bolt sound.
+                Main.PlaySound(SoundID.Item75, npc.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 blastShootVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 15f;
-                    Projectile.NewProjectile(npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
+                    int blastDamage = (int)(generalDamageFactor * 640f);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Vector2 blastShootVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 15f;
+                        Projectile.NewProjectile(npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
+                    }
                 }
             }
 
@@ -224,7 +265,7 @@
         public static void DoBehavior_PsychicBlasts(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
         {
             int attackShootDelay = 60;
-            int orbCreationRate = (int)MathHelper.Lerp(8f, 4f, 1f - lifeRatio);
+            int orbCreationRate = (int)MathHelper.Lerp(16f, 10f, 1f - lifeRatio);
             int attackChangeDelay = 90;
             int attackTime = 900;
 
@@ -257,7 +298,7 @@
 
         public static void DoBehavior_UndynesTail(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
         {
-            int totalCharges = 8;
+            int totalCharges = 5;
             int redirectTime = 45;
             int chargeTime = 48;
             float chargeSpeed = MathHelper.Lerp(48f, 65f, 1f - lifeRatio);
@@ -278,13 +319,16 @@
                 case 0:
                     Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 500f, -350f);
                     Vector2 idealHoverVelocity = npc.SafeDirectionTo(hoverDestination) * 45f;
-                    npc.velocity = npc.velocity.RotateTowards(idealHoverVelocity.ToRotation(), 0.045f).MoveTowards(idealHoverVelocity, 10f);
+                    npc.velocity = npc.velocity.RotateTowards(idealHoverVelocity.ToRotation(), 0.045f).MoveTowards(idealHoverVelocity, 4f);
 
                     // Fade out.
                     npc.Opacity = Utils.InverseLerp(redirectTime * 0.5f, redirectTime * 0.5f - 12f, attackTimer, true);
 
                     // Disable conct damage.
                     npc.damage = 0;
+
+                    // Determine whether to be invulnerable.
+                    npc.dontTakeDamage = npc.Opacity < 0.65f;
 
                     // Begin the charge.
                     if (attackTimer > redirectTime * 0.5f && (npc.WithinRange(hoverDestination, 60f) || attackTimer > redirectTime))
@@ -307,7 +351,7 @@
 
                     // Release water spears from the tail of the wyrm.
                     int tail = NPC.FindFirstNPC(ModContent.NPCType<EidolonWyrmTailHuge>());
-                    if (tail != -1 && !Main.npc[tail].WithinRange(target.Center, 200f) && attackTimer % 4f == 3f)
+                    if (tail != -1 && !Main.npc[tail].WithinRange(target.Center, 200f) && attackTimer % 6f == 5f)
                     {
                         Main.PlaySound(SoundID.Item66, Main.npc[tail].Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -334,6 +378,305 @@
             }
         }
 
+        public static void DoBehavior_StormCharge(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
+        {
+            int teleportFadeTime = 32;
+            int telegraphTime = 50;
+            int chargeTime = 54;
+            int chargeCount = 4;
+            int lighningCloudCreationRate = 4;
+            float chargeSpeed = 72f;
+            float chargeOffset = MathHelper.Lerp(1750f, 1400f, 1f - lifeRatio);
+            ref float aimDirection = ref npc.Infernum().ExtraAI[0];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
+
+            // Fade out prior to teleporting.
+            if (attackTimer <= teleportFadeTime)
+            {
+                npc.Opacity = MathHelper.Lerp(1f, 0f, attackTimer / teleportFadeTime);
+                npc.dontTakeDamage = npc.Opacity < 0.65f;
+                npc.damage = 0;
+                DoDefaultSwimMovement(npc, target, MathHelper.Lerp(0.45f, 1f, npc.Opacity));
+            }
+
+            // Decide a position to teleport to and create a telegraph.
+            if (attackTimer == teleportFadeTime)
+            {
+                Main.PlaySound(SoundID.Item105, target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 offsetDirection = Main.rand.NextVector2Unit();
+                    offsetDirection = (offsetDirection * new Vector2(1f, 0.13f)).SafeNormalize(Vector2.UnitY);
+
+                    Vector2 teleportPosition = target.Center + offsetDirection * chargeOffset;
+                    Vector2 telegraphDirection = (target.Center - teleportPosition).SafeNormalize(Vector2.UnitY);
+                    npc.Center = teleportPosition;
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        if (Main.npc[i].realLife == npc.whoAmI)
+                        {
+                            Main.npc[i].Center = npc.Center - npc.SafeDirectionTo(target.Center) * i * 0.1f;
+                            Main.npc[i].netUpdate = true;
+                        }
+                    }
+
+                    npc.velocity = Vector2.Zero;
+                    npc.netUpdate = true;
+
+                    int telegraph = Utilities.NewProjectileBetter(teleportPosition, telegraphDirection, ModContent.ProjectileType<StormChargeTelegraph>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(telegraph))
+                        Main.projectile[telegraph].ai[1] = telegraphTime;
+                }
+            }
+
+            // Remain invisible while the telegraph is being made.
+            if (attackTimer >= teleportFadeTime && attackTimer < teleportFadeTime + telegraphTime)
+            {
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
+                npc.Opacity = 0f;
+            }
+
+            // Charge.
+            if (attackTimer == teleportFadeTime + telegraphTime)
+            {
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), target.Center);
+                npc.velocity = aimDirection.ToRotationVector2() * chargeSpeed;
+                npc.Opacity = 1f;
+                npc.netUpdate = true;
+            }
+
+            // Apply post-charge effects.
+            if (attackTimer > teleportFadeTime + telegraphTime)
+            {
+                // Create electric sparks.
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 2f == 1f)
+                {
+                    Vector2 sparkOffsetDirection = Main.rand.NextVector2Unit();
+                    Vector2 sparkSpawnPosition = npc.Center + sparkOffsetDirection * 64f;
+                    Vector2 sparkVelocity = sparkOffsetDirection * 7f;
+                    Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<ElectricSparkParticle>(), 0, 0f);
+                }
+
+                // Create lightning clouds that release lightning from the sky.
+                bool readyToCreateCloud = npc.WithinRange(target.Center, 1100f) && attackTimer % lighningCloudCreationRate == lighningCloudCreationRate - 1f;
+                if (Main.netMode != NetmodeID.MultiplayerClient && readyToCreateCloud)
+                    Utilities.NewProjectileBetter(npc.Center + Main.rand.NextVector2Circular(10f, 10f), Vector2.Zero, ModContent.ProjectileType<StormLightningCloud>(), 0, 0f);
+
+                // Become ethereal-looking.
+                etherealnessFactor = 1f;
+            }
+
+            // Define rotation.
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+
+            // Go to the next attack.
+            if (attackTimer >= teleportFadeTime + telegraphTime + chargeTime)
+            {
+                attackTimer = 0f;
+                chargeCounter++;
+                if (chargeCounter >= chargeCount)
+                    SelectNextAttack(npc);
+                npc.netUpdate = true;
+            }
+        }
+
+        public static void DoBehavior_ImpactTail(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
+        {
+            int timeNeededToDestroyShield = 630;
+            int postShieldBreakTransitionDelay = 125;
+            int pissedOffChargeDelay = 20;
+            int shieldExplosionDelay = 54;
+            int pissedOffChargeTime = 50;
+            NPC tail = Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"))];
+
+            float pissedOffChargeSpeed = MathHelper.Lerp(54f, 66f, 1f - lifeRatio);
+            ref float totalShieldDamage = ref npc.Infernum().ExtraAI[0];
+            ref float shieldHasExploded = ref npc.Infernum().ExtraAI[1];
+            ref float shieldLifetime = ref npc.Infernum().ExtraAI[2];
+            ref float hasRoaredYet = ref npc.Infernum().ExtraAI[3];
+            ref float pissedOff = ref npc.Infernum().ExtraAI[4];
+            shieldLifetime = timeNeededToDestroyShield;
+
+            // Circle around the target.
+            if (hasRoaredYet == 0f)
+            {
+                npc.damage = 0;
+                Vector2 hoverDestination = target.Center + (MathHelper.TwoPi * attackTimer / 105f).ToRotationVector2() * new Vector2(3000f, 1750f);
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 37f;
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.03f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.03f).MoveTowards(idealVelocity, 3f);
+            }
+            
+            // Move slowly near the target if the shield was destroyed.
+            else if (pissedOff == 0f)
+            {
+                if (attackTimer < timeNeededToDestroyShield + postShieldBreakTransitionDelay)
+                    DoDefaultSwimMovement(npc, target, 0.32f);
+                else
+                    SelectNextAttack(npc);
+            }
+            else
+            {
+                etherealnessFactor = Utils.InverseLerp(0f, pissedOffChargeDelay, attackTimer - timeNeededToDestroyShield, true);
+                if (attackTimer < timeNeededToDestroyShield + pissedOffChargeDelay)
+                {
+                    Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 27f;
+
+                    // Approach the ideal velocity magnitude.
+                    npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.08f);
+
+                    // Approach the ideal velocity direction.
+                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 3.5f).SafeNormalize(Vector2.UnitY) * npc.velocity.Length();
+                }
+
+                // Charge at the target.
+                if (attackTimer == timeNeededToDestroyShield + pissedOffChargeDelay)
+                {
+                    Vector2 chargeVelocity = npc.SafeDirectionTo(target.Center) * pissedOffChargeSpeed;
+                    npc.velocity = Vector2.Lerp(npc.velocity, chargeVelocity, 0.9f);
+                    npc.netUpdate = true;
+                }
+
+                // Make the shield explode.
+                if (attackTimer == timeNeededToDestroyShield + shieldExplosionDelay)
+                {
+                    shieldHasExploded = 1f;
+                    npc.netUpdate = true;
+
+                    int explosionDamage = (int)(generalDamageFactor * 900f);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeMechGaussRifle"), tail.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        Utilities.NewProjectileBetter(tail.Center, Vector2.Zero, ModContent.ProjectileType<EidolicExplosion>(), explosionDamage, 0f);
+                }
+
+                if (attackTimer == timeNeededToDestroyShield + pissedOffChargeDelay + pissedOffChargeTime)
+                    SelectNextAttack(npc);
+            }
+
+            bool shieldIsDestroyed = totalShieldDamage >= ShieldHP;
+
+            // Get very angry if the shield was not destroyed in time.
+            if (attackTimer >= timeNeededToDestroyShield && !shieldIsDestroyed)
+            {
+                if (hasRoaredYet == 0f)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmScream"), target.Center);
+                    hasRoaredYet = 1f;
+                    pissedOff = 1f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Roar and take damage once the shield is destroyed.
+            if (shieldIsDestroyed)
+            {
+                if (hasRoaredYet == 0f)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmScream"), target.Center);
+
+                    // Take damage after the shield is destroyed.
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                        npc.StrikeNPC(ShieldHP / 2, 0f, 0);
+
+                    hasRoaredYet = 1f;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Release psychic fields around the tail.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 24f == 23f && attackTimer > 90f && hasRoaredYet == 0f)
+            {
+                int fieldBoltDamage = (int)(generalDamageFactor * 640f);
+                Vector2 fieldSpawnPosition = tail.Center + Main.rand.NextVector2Circular(50f, 50f);
+                Utilities.NewProjectileBetter(fieldSpawnPosition, Vector2.Zero, ModContent.ProjectileType<PsychicEnergyField>(), fieldBoltDamage, 0f);
+            }
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
+        public static void DoBehavior_LightningCage(NPC npc, Player target, float lifeRatio, float generalDamageFactor, ref float etherealnessFactor, ref float attackTimer)
+        {
+            int fieldCreationDelay = 15;
+            int spinTime = 90;
+            int chargePreparationTime = 20;
+            int droneSummonCount = 6;
+            float chargeSpeed = MathHelper.Lerp(54f, 66f, 1f - lifeRatio);
+            float chargeSparkSpeed = MathHelper.Lerp(22.5f, 28f, 1f - lifeRatio);
+            ref float hasChargedYet = ref npc.Infernum().ExtraAI[0];
+            ref float fieldCenterX = ref npc.Infernum().ExtraAI[1];
+            ref float fieldCenterY = ref npc.Infernum().ExtraAI[2];
+
+            // Circle around the target.
+            if (hasChargedYet == 0f)
+            {
+                npc.damage = 0;
+                Vector2 hoverDestination = target.Center + (MathHelper.TwoPi * attackTimer / 210f).ToRotationVector2() * 1900f;
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 50f;
+                npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), 0.08f);
+                npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f).MoveTowards(idealVelocity, 8f);
+            }
+
+            // Create energy fields.
+            if (attackTimer == fieldCreationDelay)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EidolonWyrmRoarClose"), target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int spinDirection = Main.rand.NextBool().ToDirectionInt();
+                    float angularOffsetPerIncrement = Main.rand.NextFloat();
+                    List<int> drones = new List<int>();
+                    for (int i = 0; i < droneSummonCount; i++)
+                    {
+                        int drone = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyFieldLaserProjector>());
+                        Main.npc[drone].target = npc.target;
+                        drones.Add(drone);
+                    }
+
+                    for (int i = 0; i < drones.Count; i++)
+                    {
+                        Main.npc[drones[i]].ai[0] = -2f;
+                        Main.npc[drones[i]].ai[1] = drones[(i + 1) % drones.Count];
+                        Main.npc[drones[i]].ai[2] = MathHelper.TwoPi * (i + angularOffsetPerIncrement) / drones.Count;
+                        Main.npc[drones[i]].ModNPC<EnergyFieldLaserProjector>().SpinDirection = spinDirection;
+                    }
+                    fieldCenterX = target.Center.X;
+                    fieldCenterY = target.Center.Y;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Prepare to charge towards the field center.
+            if (attackTimer >= spinTime && attackTimer < spinTime + chargePreparationTime)
+            {
+                hasChargedYet = 1f;
+                Vector2 chargeVelocity = npc.SafeDirectionTo(new Vector2(fieldCenterX, fieldCenterY)) * chargeSpeed;
+                npc.velocity = Vector2.Lerp(npc.velocity, chargeVelocity, 0.05f).MoveTowards(chargeVelocity, 2f);
+                if (attackTimer == spinTime + chargePreparationTime - 1f)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmScream"), target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        // Release sparks at the target.
+                        for (int i = 0; i < 12; i++)
+                        {
+                            int sparkDamage = (int)(generalDamageFactor * 640f);
+                            Vector2 sparkVelocity = npc.SafeDirectionTo(target.Center) * chargeSparkSpeed + Main.rand.NextVector2Circular(5f, 5f);
+                            Utilities.NewProjectileBetter(npc.Center, sparkVelocity, ModContent.ProjectileType<EidolicSpark>(), sparkDamage, 0f);
+                        }
+                    }
+
+                    npc.velocity = chargeVelocity;
+                    npc.netUpdate = true;
+                }
+            }
+
+            if (attackTimer >= 200f)
+                SelectNextAttack(npc);
+
+            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+        }
+
         public static void DoDefaultSwimMovement(NPC npc, Player target, float generalSpeedFactor = 1f)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -358,7 +701,7 @@
         {
             ref float attackCycleType = ref npc.Infernum().ExtraAI[5];
             ref float attackCycleIndex = ref npc.Infernum().ExtraAI[6];
-            List<AEWAttackType[]> attackCycles = Phase1AttackCycles;
+            List<AEWAttackType[]> attackCycles = CurrentAttackCycles;
             int oldAttackCycle = (int)attackCycleType;
 
             attackCycleIndex++;
@@ -369,10 +712,11 @@
                 attackCycleIndex = 0f;
                 do
                     attackCycleType = Main.rand.Next(attackCycles.Count);
-                while (attackCycleType == oldAttackCycle);
+                while (attackCycleType == oldAttackCycle && attackCycles.Count > 1);
             }
 
             npc.ai[0] = (int)attackCycles[(int)attackCycleType][(int)attackCycleIndex];
+            npc.ai[0] = (int)AEWAttackType.LightningCage;
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -445,6 +789,40 @@
 
             for (int i = 0; i < (int)Math.Round(1f + etherealnessFactor); i++)
                 spriteBatch.Draw(texture, drawPosition, npc.frame, color * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+
+            // Create the shield for the tail in the Impact Tail attack.
+            if (npc.type == InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"))
+            {
+                NPC head = Main.npc[npc.realLife];
+                if (head.ai[0] == (int)AEWAttackType.ImpactTail && head.Infernum().ExtraAI[1] == 0f)
+                {
+                    spriteBatch.SetBlendState(BlendState.Additive);
+                    Vector2 shieldDrawPosition = npc.Center - Main.screenPosition;
+
+                    for (int i = 0; i < 50; i++)
+                    {
+                        float fadeToWhite = 0f;
+                        Texture2D shieldTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/AEWTailShield");
+                        if (i < 8)
+                        {
+                            shieldTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNuclearExplosion");
+                            fadeToWhite = 1f - i / 7f;
+                        }
+
+                        float rotation = (float)Math.Cos(Main.GlobalTime * 3f + i) * MathHelper.Pi * (1f - i / 50f);
+                        float hpBasedShieldOpacity = 1f - (float)Math.Pow(Utils.InverseLerp(0f, ShieldHP, head.Infernum().ExtraAI[0], true), 2D);
+                        float shieldScaleFactor = Utils.InverseLerp(0f, 45f, head.ai[1], true);
+                        shieldScaleFactor += (float)Math.Cos(Main.GlobalTime * -1.9f + i * 2f) * 0.8f;
+
+                        Vector2 shieldScale = Vector2.One / shieldTexture.Size() * MathHelper.Max(npc.frame.Width, npc.frame.Height) * shieldScaleFactor * 0.8f;
+                        shieldScale.Y *= 1.2f;
+
+                        Color shieldColor = Color.Lerp(Color.Cyan, Color.White * 0.5f, fadeToWhite) * shieldScaleFactor * (1f - (i + 1f) / 33f) * hpBasedShieldOpacity;
+                        spriteBatch.Draw(shieldTexture, shieldDrawPosition, null, shieldColor, rotation, shieldTexture.Size() * 0.5f, shieldScale, 0, 0f);
+                    }
+                    spriteBatch.ExitShaderRegion();
+                }
+            }
         }
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
@@ -454,10 +832,15 @@
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * 1.5f;
             Vector2 origin = eyeTexture.Size() * 0.5f;
             Color eyeColor = npc.GetAlpha(CalculateEyeColor(npc));
+            eyeColor.A = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                Vector2 eyeOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 4f;
+                spriteBatch.Draw(eyeTexture, drawPosition + eyeOffset, npc.frame, eyeColor * 0.5f, npc.rotation, origin, npc.scale, 0, 0f);
+            }
 
             spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, 0, 0f);
             return false;
         }
     }
-    */
 }

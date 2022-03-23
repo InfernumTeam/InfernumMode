@@ -126,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 float flameRotation = projectile.rotation + MathHelper.Pi * (flameDrawInterpolant + Main.GlobalTime * 1.2f) * 0.1f + (int)(flameDrawInterpolant * flameCount) * MathHelper.Pi * 0.4f;
                 flameDrawInterpolant %= 1f;
 
-                if ((flameDrawInterpolant <= relativeFrameCompletion % 1f || projectile.frameCounter >= 40f) && 
+                if ((flameDrawInterpolant <= relativeFrameCompletion % 1f || projectile.frameCounter >= 40f) &&
                     (flameDrawInterpolant >= relativeFrameCompletion % 1f || projectile.frameCounter < 40f))
                 {
                     if (flameDrawInterpolant < 0.1f)

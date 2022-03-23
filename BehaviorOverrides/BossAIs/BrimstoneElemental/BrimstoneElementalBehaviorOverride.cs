@@ -52,8 +52,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override bool PreAI(NPC npc)
         {
-            // Do targeting.
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
+
             Player target = Main.player[npc.target];
 
             CalamityGlobalNPC.brimstoneElemental = npc.whoAmI;
@@ -279,7 +280,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             npc.rotation = npc.velocity.X * 0.04f;
 
             if (circleCenterX == 0f)
-			{
+            {
                 circleCenterX = target.Center.X;
                 circleCenterY = target.Center.Y;
                 npc.netUpdate = true;
@@ -287,7 +288,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             // Hurt the player if they walk into the vines.
             else if (!target.WithinRange(circleCenter, RoseCircleRadius - 8f))
-			{
+            {
                 int roseDamage = Main.rand.Next(120, 135);
                 if (CalamityWorld.downedProvidence && ReadyToUseBuffedAI)
                     roseDamage = (int)(roseDamage * 1.75);
@@ -482,10 +483,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
 
                     if (attackTimer > 125f)
-					{
+                    {
                         attackState = 0f;
                         SelectNewAttack(npc);
-					}
+                    }
                     break;
             }
         }
@@ -521,7 +522,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
             // Teleport below the player.
             if (attackTimer == 5f)
-			{
+            {
                 Vector2 teleportDestination = target.Center - Vector2.UnitY * 300f;
 
                 CreateTeleportTelegraph(npc.Center, teleportDestination, 250);
@@ -673,10 +674,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
                         IEnumerable<Projectile> rays = Utilities.AllProjectilesByID(ModContent.ProjectileType<BrimstoneDeathray>());
                         if (Main.netMode != NetmodeID.MultiplayerClient && rays.Count() > 0 && Main.rand.NextBool(2))
-						{
+                        {
                             Projectile deathray = rays.First();
                             Utilities.NewProjectileBetter(npc.Center, -deathray.velocity.RotatedByRandom(MathHelper.PiOver2) * 18f, ModContent.ProjectileType<BrimstonePetal2>(), 150, 0f);
-						}
+                        }
 
                         if (attackTimer >= (totalLaserbeamBursts - 0.02f) * 210f)
                         {
@@ -738,6 +739,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public static void SelectNewAttack(NPC npc)
         {
+            // Select a new target.
+            npc.TargetClosest();
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
             List<BrimmyAttackType> possibleAttacks = new List<BrimmyAttackType>
             {
@@ -794,12 +798,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
         }
 
-		public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
-		{
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
             BrimmyAttackType attackState = (BrimmyAttackType)(int)npc.ai[0];
             UnifiedRandom roseRNG = new UnifiedRandom(npc.whoAmI + 466920161);
             if (attackState == BrimmyAttackType.BrimstoneRoseBurst)
-			{
+            {
                 float circleAngle = 0f;
                 Texture2D vineTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/CharredVine");
                 Texture2D roseTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/BrimstoneElemental/BrimstoneRose");
@@ -818,16 +822,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     circleAngle += vineTexture.Height / RoseCircleRadius;
 
                     if (roseRNG.NextBool(4))
-					{
+                    {
                         float roseRotation = roseRNG.NextFloat(MathHelper.TwoPi);
                         float roseScale = roseRNG.NextFloat(0.5f, 0.8f);
                         Vector2 rosePosition = drawPosition + roseRNG.NextVector2Circular(8f, 1.25f).RotatedBy(circleAngle);
                         spriteBatch.Draw(roseTexture, rosePosition, null, Color.White, roseRotation, roseOrigin, roseScale, SpriteEffects.None, 0f);
                     }
                 }
-			}
+            }
             return true;
-		}
-		#endregion
-	}
+        }
+        #endregion
+    }
 }

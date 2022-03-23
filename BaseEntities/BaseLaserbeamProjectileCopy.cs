@@ -83,7 +83,7 @@ namespace InfernumMode.BaseEntities
             if (projectile.scale > MaxScale)
                 projectile.scale = MaxScale;
         }
-        
+
         /// <summary>
         /// Handles direct attachment to things. The projectile.ai[1] array index is reserved for this. Does nothing by default.
         /// </summary>

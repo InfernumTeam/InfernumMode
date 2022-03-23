@@ -11,8 +11,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
     {
         public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Dark Soul");
+        {
+            DisplayName.SetDefault("Dark Soul");
             Main.projFrames[projectile.type] = 4;
         }
 
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
 
         public override void Kill(int timeLeft)
-		{
+        {
             if (Main.dedServ)
                 return;
 

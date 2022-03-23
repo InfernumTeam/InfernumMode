@@ -23,13 +23,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             projectile.Opacity = Utils.InverseLerp(0f, 15f, projectile.timeLeft, true);
         }
 
-		public override bool OnTileCollide(Vector2 oldVelocity)
+        public override bool OnTileCollide(Vector2 oldVelocity)
         {
             // Bounce after hitting a tile.
             projectile.velocity = -oldVelocity * 0.35f;
             return false;
         }
 
-		public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
     }
 }

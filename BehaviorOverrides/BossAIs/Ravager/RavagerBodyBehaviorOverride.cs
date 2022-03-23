@@ -21,6 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
+        public const int AttackDelay = 135;
         public const float BaseDR = 0.25f;
         public const float SittingStillDR = 0.66f;
 
@@ -41,11 +42,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override bool PreAI(NPC npc)
         {
             // Ensure that the NPC always draws things, even when far away.
-            // Not doing this will result in the arena not being drawn if sufficiently far from the player.
+            // Not doing this will result in the arena not being drawn if far from the target.
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
-            // Do targeting.
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Create limbs.
@@ -78,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             {
                 npc.noTileCollide = true;
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -30f, 0.2f);
-                if (!npc.WithinRange(target.Center, 3000f))
+                if (!npc.WithinRange(target.Center, 1000f) || Main.rand.NextBool(45))
                 {
                     npc.life = 0;
                     npc.active = false;
@@ -175,8 +176,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             // Make the attack delay pass.
             attackDelay++;
-            if (attackDelay < 135f)
+            if (attackDelay < AttackDelay)
+            {
+                npc.damage = 0;
+                npc.dontTakeDamage = true;
                 shouldNotAttack = true;
+            }
 
             // Handle special attacks. Only applicable once limbs are gone.
             if (specialAttackStartDelay < 720f)
@@ -223,7 +228,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     npc.netUpdate = true;
                 }
             }
-            
+
             // Jump towards the target if they're far enough away and enough time passes.
             if (!shouldNotAttack && !npc.WithinRange(target.Center, 200f) && jumpState == 0f && npc.velocity.Y == 0f)
             {
@@ -276,15 +281,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         Gore stompGore = Gore.NewGoreDirect(new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
                         stompGore.velocity *= 0.4f;
                     }
-                    
+
                     int shockwaveDamage = shouldBeBuffed ? 380 : 250;
-                    if (Main.netMode != NetmodeID.MultiplayerClient && !anyLimbsArePresent)
-                        Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        if (!anyLimbsArePresent)
+                            NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BreakableRockPillar>(), npc.whoAmI);
+                        else
+                            Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
+                    }
 
                     jumpState = 0f;
                     npc.netUpdate = true;
                 }
-                
+
                 // Fall through tiles in the way.
                 if (!target.dead)
                 {
@@ -310,8 +320,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         {
             int sitStillTime = (int)MathHelper.Lerp(720f, 560f, 1f - lifeRatio);
             int soulTorrentReleaseTime = shouldBeBuffed ? 295 : 240;
-            int soulShootRate = (int)MathHelper.Lerp(14f, 8f, 1f - lifeRatio);
+            int soulShootRate = (int)MathHelper.Lerp(33f, 24f, 1f - lifeRatio);
             ref float attackState = ref npc.Infernum().ExtraAI[3];
+
+            // Disable contact damage to prevent telefrags.
+            npc.damage = 0;
 
             switch ((int)attackState)
             {
@@ -429,6 +442,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<RavagerScreamBoom>(), 0, 0f);
+
+                            for (int i = 0; i < Main.maxNPCs; i++)
+                            {
+                                bool isClaw = Main.npc[i].type == ModContent.NPCType<RavagerClawLeft>() || Main.npc[i].type == ModContent.NPCType<RavagerClawRight>();
+                                if (Main.npc[i].active && isClaw)
+                                {
+                                    Main.npc[i].ai[0] = (int)RavagerClawLeftBehaviorOverride.RavagerClawAttackState.BlueFireBursts;
+                                    Main.npc[i].ai[1] = 0f;
+                                    Main.npc[i].netUpdate = true;
+                                }
+                            }
                         }
                         else
                         {
@@ -475,6 +499,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     // Go to the next attack.
                     if (attackTimer >= soulTorrentReleaseTime + 45f)
                     {
+                        for (int i = 0; i < Main.maxNPCs; i++)
+                        {
+                            bool isClaw = Main.npc[i].type == ModContent.NPCType<RavagerClawLeft>() || Main.npc[i].type == ModContent.NPCType<RavagerClawRight>();
+                            if (Main.npc[i].active && isClaw)
+                            {
+                                Main.npc[i].ai[0] = (int)RavagerClawLeftBehaviorOverride.RavagerClawAttackState.Hover;
+                                Main.npc[i].ai[1] = 0f;
+                                Main.npc[i].netUpdate = true;
+                            }
+                        }
+
                         attackState = 0f;
                         specialAttackType = (specialAttackType + 1f) % (int)RavagerAttackType.Count;
                         specialAttackStartDelay = 0f;
@@ -574,7 +609,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     // Fall through tiles in the way.
                     if (!target.dead)
                     {
-                        if ((target.position.Y > npc.Bottom.Y && npc.velocity.Y > 0f) || (target.position.Y < npc.Bottom.Y && npc.velocity.Y < 0f))
+                        if ((target.position.Y + 40f > npc.Bottom.Y && npc.velocity.Y > 0f) || (target.position.Y < npc.Bottom.Y && npc.velocity.Y < 0f))
                             npc.noTileCollide = true;
                         else if ((npc.velocity.Y > 0f && npc.Bottom.Y > target.Top.Y) || (Collision.CanHit(npc.position, npc.width, npc.height, target.Center, 1, 1) && !Collision.SolidCollision(npc.position, npc.width, npc.height)))
                             npc.noTileCollide = false;
@@ -603,12 +638,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             // Create the shockwave.
                             Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
 
-                            // And embers that fly outward.
-                            for (int i = 0; i < 20; i++)
+                            // And embers that fly upward.
+                            for (int i = 0; i < 30; i++)
                             {
                                 Vector2 emberSpawnPosition = npc.Bottom + new Vector2(Main.rand.NextFloatDirection() * npc.width * 0.5f, 15f);
-                                Vector2 emberShootVelocity = -Vector2.UnitY.RotatedByRandom(0.75f) * Main.rand.NextFloat(12f, 16f);
-                                Utilities.NewProjectileBetter(emberSpawnPosition, emberShootVelocity, ModContent.ProjectileType<DarkMagicEmber>(), emberDamage, 0f);
+                                Vector2 emberShootVelocity = Vector2.UnitY * Main.rand.NextFloat(3f, 7f);
+                                emberShootVelocity.X += MathHelper.Lerp(-29f, 29f, i / 29f) + Main.rand.NextFloatDirection() * 0.3f;
+                                Utilities.NewProjectileBetter(emberSpawnPosition, emberShootVelocity, ModContent.ProjectileType<RisingDarkMagicFireball>(), emberDamage, 0f);
                             }
                         }
 

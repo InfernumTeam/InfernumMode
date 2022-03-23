@@ -31,10 +31,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
         public override void AI()
         {
             if (projectile.localAI[0] == 0f)
-			{
+            {
                 projectile.frame = Main.rand.Next(Main.projFrames[projectile.type]);
                 projectile.localAI[0] = 1f;
-			}
+            }
 
             projectile.velocity *= 1.026f - AccelerationFactorReduction;
             projectile.rotation = projectile.velocity.ToRotation();
@@ -43,14 +43,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 projectile.rotation += MathHelper.Pi;
 
             for (int i = 0; i < 2; i++)
-			{
+            {
                 Dust magic = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 264);
                 magic.velocity = -projectile.velocity.RotatedByRandom(0.53f) * 0.15f;
                 magic.scale = Main.rand.NextFloat(0.45f, 0.7f);
                 magic.fadeIn = 0.6f;
                 magic.noLight = true;
                 magic.noGravity = true;
-			}
+            }
 
             if (projectile.timeLeft > 250f)
                 Lighting.AddLight(projectile.Center, Color.White.ToVector3() * 0.3f);

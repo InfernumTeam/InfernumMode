@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Plantera's Tentacle");
-			Main.npcFrameCount[npc.type] = 4;
+            Main.npcFrameCount[npc.type] = 4;
 
             // Ensure that the tentacle always draws, even when far offscreen.
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
@@ -84,12 +84,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             time++;
         }
 
-		public override void DrawBehind(int index)
-		{
+        public override void DrawBehind(int index)
+        {
             Main.instance.DrawCacheNPCsOverPlayers.Add(index);
-		}
+        }
 
-		public override void FindFrame(int frameHeight)
+        public override void FindFrame(int frameHeight)
         {
             npc.frameCounter += 0.2f;
             npc.frameCounter %= Main.npcFrameCount[npc.type];
@@ -128,7 +128,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             return true;
         }
 
-		public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(int hitDirection, double damage)
         {
             for (int k = 0; k < 3; k++)
                 Dust.NewDust(npc.position, npc.width, npc.height, 2, hitDirection, -1f, 0, default, 1f);

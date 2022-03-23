@@ -24,6 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.timeLeft = 360;
+            projectile.penetrate = -1;
             projectile.Calamity().canBreakPlayerDefense = true;
         }
 
@@ -61,6 +62,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) =>
             projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size());
 
-		public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<DarkFlames>(), 180);
+        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<DarkFlames>(), 180);
     }
 }

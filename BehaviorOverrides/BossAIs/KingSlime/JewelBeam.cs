@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 {
-	public class JewelBeam : ModProjectile
+    public class JewelBeam : ModProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
@@ -14,10 +14,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
         {
             projectile.width = projectile.height = 8;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
+            projectile.ignoreWater = true;
             projectile.penetrate = -1;
             projectile.timeLeft = 360;
-		}
+        }
 
         public override void AI()
         {

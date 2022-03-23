@@ -47,7 +47,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             if (projectile.Opacity != 1f)
                 return;
 
-            target.AddBuff(ModContent.BuffType<HolyFlames>(), 120);
+            if (Main.dayTime)
+                target.AddBuff(ModContent.BuffType<HolyFlames>(), 120);
+            else
+                target.AddBuff(ModContent.BuffType<Nightwither>(), 120);
         }
 
         public override Color? GetAlpha(Color lightColor)
@@ -58,6 +61,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = Main.projectileTexture[projectile.type];
+            if (!Main.dayTime)
+                texture = ModContent.GetTexture($"{Texture}Night");
+
             Vector2 origin = texture.Size() * 0.5f;
 
             for (int i = 0; i < 4; i++)

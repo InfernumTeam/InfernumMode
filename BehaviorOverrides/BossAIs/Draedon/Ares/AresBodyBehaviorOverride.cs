@@ -2,12 +2,14 @@
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Skies;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -42,6 +44,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public const float Phase1ArmChargeupTime = 240f;
         public const int ProjectileDamageBoostIndex = 8;
+        public const int LineTelegraphInterpolantIndex = 17;
+        public const int LineTelegraphRotationIndex = 18;
+
         public static int ProjectileDamageBoost
         {
             get
@@ -95,6 +100,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
 
+            // Continuously reset the telegraph line things.
+            npc.Infernum().ExtraAI[LineTelegraphInterpolantIndex] = 0f;
+
             // Make the laser and pulse arms swap sometimes.
             if (backarmSwapTimer > 960f)
             {
@@ -103,6 +111,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.netUpdate = true;
             }
             backarmSwapTimer++;
+
+            // Become more resistant to damage as necessary.
+            npc.takenDamageMultiplier = 1f;
+            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
+                npc.takenDamageMultiplier *= 0.5f;
 
             if (Main.netMode != NetmodeID.MultiplayerClient && armsHaveBeenSummoned == 0f)
             {
@@ -170,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.dontTakeDamage = true;
 
             // Get a target.
-            npc.TargetClosest(false);
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Become invincible and disappear if the final mech is present.
@@ -243,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] > 0f)
                 enraged = 1f;
-
+            
             // Perform specific behaviors.
             switch ((AresBodyAttackType)(int)attackState)
             {
@@ -284,11 +297,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 3f)
                 Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
+
+            // Clear away all lasers and laser telegraphs.
+            if (phaseTransitionAnimationTime == 3f)
+            {
+                // Destroy all lasers and telegraphs.
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    if ((Main.projectile[i].type == ModContent.ProjectileType<AresDeathBeamTelegraph>() || Main.projectile[i].type == ModContent.ProjectileType<AresSpinningDeathBeam>()) && Main.projectile[i].active)
+                        Main.projectile[i].Kill();
+                }
+            }
         }
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
-            int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 900 : 1200;
+            int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 1350 : 1200;
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
 
@@ -301,7 +325,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int chargeCount = 7;
             int hoverTime = 35;
             int chargeTime = 35;
-            int contactDamage = 600;
+            int contactDamage = 550;
             float hoverSpeed = 65f;
             float chargeSpeed = 38f;
 
@@ -352,13 +376,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < 12; i++)
+                        for (int i = 0; i < 7; i++)
                         {
-                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 12f) * 8f;
+                            Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 7f) * 8f;
                             Vector2 coreSpawnPosition = npc.Center + Vector2.UnitY * 26f;
                             Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
 
-                            shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 12f) * 8f;
+                            shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * (i + 0.5f) / 7f) * 8f;
                             Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
                         }
                     }
@@ -433,7 +457,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     for (int i = 0; i < totalLasers; i++)
                     {
                         Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
-                        int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeam>(), 900, 0f);
+                        int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresDeathBeam>(), 960, 0f);
                         if (Main.projectile.IndexInRange(deathray))
                         {
                             Main.projectile[deathray].ai[1] = npc.whoAmI;
@@ -575,7 +599,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Make the laser spin.
             float adjustedTimer = attackTimer - (shootDelay + telegraphTime);
-            float spinSpeed = Utils.InverseLerp(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 160f;
+            float spinSpeed = Utils.InverseLerp(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 190f;
             if (npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts)
             {
                 if (adjustedTimer == (int)(spinTime * 0.5f) - 60)
@@ -592,7 +616,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     spinSpeed *= Utils.InverseLerp(spinTime * 0.5f, spinTime * 0.5f - 45f, adjustedTimer, true);
                 else
                     spinSpeed *= -Utils.InverseLerp(spinTime * 0.5f, spinTime * 0.5f + 45f, adjustedTimer, true);
-                spinSpeed *= 0.77f;
+                spinSpeed *= 0.84f;
             }
 
             generalAngularOffset += spinSpeed * laserDirectionSign;
@@ -667,12 +691,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
 
-            // The pulse and laser arm are disabled for 2.5 seconds once they swap.
-            if (aresBody.Infernum().ExtraAI[14] < 150f && (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresPulseCannon>()))
+            int thanatosIndex = NPC.FindFirstNPC(ModContent.NPCType<ThanatosHead>());
+            if (thanatosIndex >= 0 && aresBody.ai[0] >= 100f && Main.npc[thanatosIndex].Infernum().ExtraAI[13] < 240f)
                 return true;
 
-            // The tesla arm is disabled when on the same side as the laser arm during the laser barrage combo attack.
-            if (npc.type == ModContent.NPCType<AresTeslaCannon>() && aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserBarrage && aresBody.Infernum().ExtraAI[15] == 1f)
+            // The pulse and laser arm are disabled for 2.5 seconds once they swap.
+            if (aresBody.Infernum().ExtraAI[14] < 150f && (npc.type == ModContent.NPCType<AresLaserCannon>() || npc.type == ModContent.NPCType<AresPulseCannon>()))
                 return true;
 
             // If Ares is specifically using a combo attack that specifies certain arms should be active, go based on which ones should be active.
@@ -685,7 +709,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 aresBody.ai[0] == (int)AresBodyAttackType.HoverCharge ||
                 aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts ||
-                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ThermoplasmaDance ||
                 aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_DualLaserCharges ||
                 aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle ||
                 chargingUp)
@@ -824,6 +847,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Color armGlowmaskColor = afterimageBaseColor;
             armGlowmaskColor.A = 184;
 
+            if (npc.ai[0] == (int)AresBodyAttackType.HoverCharge)
+            {
+                if (afterimageBaseColor != Color.Red)
+                    armGlowmaskColor = Color.White;
+                afterimageBaseColor = new Color(255, 55, 0, 0);
+            }
+
             (int, bool)[] armProperties = new (int, bool)[]
             {
                 // Laser arm.
@@ -859,7 +889,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
-            int numAfterimages = 5;
+            int numAfterimages = 9;
 
             float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex], true);
             if (finalPhaseGlowInterpolant > 0f)
@@ -876,11 +906,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (CalamityConfig.Instance.Afterimages)
             {
-                for (int i = 1; i < numAfterimages; i += 2)
+                for (int i = numAfterimages - 1; i >= 1; i--)
                 {
                     Color afterimageColor = lightColor;
-                    afterimageColor = Color.Lerp(afterimageColor, afterimageBaseColor, 0.5f);
-                    afterimageColor = npc.GetAlpha(afterimageColor);
+                    afterimageColor = npc.GetAlpha(Color.Lerp(afterimageColor, afterimageBaseColor, 0.8f));
                     afterimageColor *= (numAfterimages - i) / 15f;
                     Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
                     spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, SpriteEffects.None, 0f);
@@ -890,18 +919,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresBodyGlow");
-
-            if (CalamityConfig.Instance.Afterimages)
-            {
-                for (int i = 1; i < numAfterimages; i += 2)
-                {
-                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
-                    Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, SpriteEffects.None, 0f);
-                }
-            }
+            if (npc.ai[0] == (int)AresBodyAttackType.HoverCharge)
+                afterimageBaseColor = Color.White;
 
             spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+
+            // Draw line telegraphs.
+            float telegraphInterpolant = npc.Infernum().ExtraAI[LineTelegraphInterpolantIndex];
+            if (telegraphInterpolant > 0f)
+            {
+                spriteBatch.SetBlendState(BlendState.Additive);
+
+                Texture2D telegraphTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                float telegraphRotation = npc.Infernum().ExtraAI[LineTelegraphRotationIndex];
+                float telegraphScaleFactor = telegraphInterpolant * 1.2f;
+                Vector2 telegraphStart = npc.Center + Vector2.UnitY * 34f + telegraphRotation.ToRotationVector2() * 20f - Main.screenPosition;
+                Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
+                Vector2 telegraphScale = new Vector2(telegraphScaleFactor, 3f);
+                Color telegraphColor = new Color(255, 55, 0) * (float)Math.Pow(telegraphInterpolant, 0.79);
+                spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
+
+                spriteBatch.ResetBlendState();
+            }
 
             return false;
         }

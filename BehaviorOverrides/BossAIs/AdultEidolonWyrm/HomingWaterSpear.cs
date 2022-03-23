@@ -33,13 +33,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.1f, 0f, 1f);
             projectile.rotation = projectile.velocity.ToRotation();
 
-            if (projectile.timeLeft > 300f)
+            if (projectile.timeLeft > 250f)
             {
                 Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-                projectile.velocity = (projectile.velocity * 24f + projectile.SafeDirectionTo(target.Center) * 24f) / 25f;
+                projectile.velocity = (projectile.velocity * 34f + projectile.SafeDirectionTo(target.Center) * 24f) / 35f;
             }
             else if (projectile.velocity.Length() < 48f)
-                projectile.velocity *= 1.045f;
+                projectile.velocity *= 1.04f;
 
             // Emit dust.
             for (int i = 0; i < 2; i++)

@@ -1,10 +1,9 @@
-using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.NPCs.ExoMechs.Ares;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
@@ -85,6 +84,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             return aimDirection;
         }
 
+        public static void DrawAresArmTelegraphEffect(SpriteBatch spriteBatch, NPC npc, Color telegraphColor, Texture2D texture, Vector2 drawCenter, Rectangle frame, Vector2 origin)
+        {
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (npc.spriteDirection == 1)
+                spriteEffects = SpriteEffects.FlipHorizontally;
+
+            float telegraphGlowInterpolant = npc.ai[0] / npc.ai[1];
+            if (telegraphGlowInterpolant >= 1f)
+                telegraphGlowInterpolant = 0f;
+
+            if (telegraphGlowInterpolant > 0f)
+            {
+                float whiteFade = (float)Math.Sin(Main.GlobalTime * 20f) * 0.5f + 0.5f;
+                telegraphColor = Color.Lerp(telegraphColor, Color.White, whiteFade);
+                telegraphColor *= Utils.InverseLerp(0f, 0.65f, telegraphGlowInterpolant, true) * (float)Math.Pow(Utils.InverseLerp(1f, 0.85f, telegraphGlowInterpolant, true), 2D);
+
+                float backAfterimageOffset = telegraphGlowInterpolant * 10f;
+                backAfterimageOffset += Utils.InverseLerp(0.85f, 1f, telegraphGlowInterpolant, true) * 20f;
+                for (int i = 0; i < 13; i++)
+                {
+                    Color color = telegraphColor * 0.6f;
+                    color.A = 0;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 13f).ToRotationVector2() * backAfterimageOffset;
+                    spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                }
+            }
+        }
+
         public static void DrawFinalPhaseGlow(SpriteBatch spriteBatch, NPC npc, Texture2D texture, Vector2 drawCenter, Rectangle frame, Vector2 origin)
         {
             SpriteEffects spriteEffects = SpriteEffects.None;
@@ -93,17 +120,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             float finalPhaseGlowTimer = npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             if (npc.realLife >= 0)
+            {
                 finalPhaseGlowTimer = Main.npc[npc.realLife].Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+                if (Main.npc[npc.realLife].type == ModContent.NPCType<AresBody>())
+                {
+                    float telegraphGlowInterpolant = npc.ai[0] / npc.ai[1];
+                    if (telegraphGlowInterpolant >= 1f)
+                        telegraphGlowInterpolant = 0f;
+                    finalPhaseGlowTimer *= 1f - Utils.InverseLerp(0f, 0.85f, telegraphGlowInterpolant, true) * Utils.InverseLerp(1f, 0.85f, telegraphGlowInterpolant, true);
+                }
+            }
 
             float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, finalPhaseGlowTimer, true);
             if (finalPhaseGlowInterpolant > 0f)
             {
                 float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 6; i++)
                 {
-                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    Color color = Main.hslToRgb((i / 12f + Main.GlobalTime * 0.6f + npc.whoAmI * 0.54f) % 1f, 1f, 0.56f);
                     color.A = 0;
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }

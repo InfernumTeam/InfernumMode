@@ -4,7 +4,6 @@ using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Dusts;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Boss;
-using CalamityMod.Projectiles.Ranged;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -51,8 +50,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public const int AuraTime = 300;
         public const int GuardianApparationTime = 600;
+        public const int CocoonDefense = 620;
         public const float LifeRainbowCrystalStartRatio = 0.8f;
         public const float LifeRainbowCrystalEndRatio = 0.725f;
+
+        public static readonly Color[] NightPalette = new Color[] { new Color(119, 232, 194), new Color(117, 201, 229), new Color(117, 93, 229) };
 
         public override bool PreAI(NPC npc)
         {
@@ -64,9 +66,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             ref float drawState = ref npc.localAI[0];
             ref float burnIntensity = ref npc.localAI[3];
             ref float deathEffectTimer = ref npc.Infernum().ExtraAI[6];
+            ref float wasSummonedAtNight = ref npc.Infernum().ExtraAI[7];
 
             bool inRainbowCrystalState = lifeRatio < LifeRainbowCrystalEndRatio;
             bool phase2 = lifeRatio < 0.45f;
+            bool shouldDespawnAtNight = wasSummonedAtNight == 0f && !Main.dayTime && attackType != (int)ProvidenceAttackType.SpawnEffect;
+            bool shouldDespawnAtDay = wasSummonedAtNight == 1f && Main.dayTime && attackType != (int)ProvidenceAttackType.SpawnEffect;
+            bool shouldDespawnBecauseOfTime = shouldDespawnAtNight || shouldDespawnAtDay;
 
             Vector2 crystalCenter = npc.Center + new Vector2(8f, 56f);
 
@@ -76,7 +82,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             npc.defense = 50;
             drawState = (int)ProvidenceFrameDrawingType.WingFlapping;
 
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // End rain.
@@ -87,13 +94,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             attackTimer++;
 
-            if (!target.dead)
+            if (!target.dead && !shouldDespawnBecauseOfTime)
                 npc.timeLeft = 1800;
             else
             {
                 npc.velocity.Y -= 0.4f;
                 if (npc.timeLeft > 90)
                     npc.timeLeft = 90;
+
+                // Disappear if sufficiently far away from the target.
+                if (!npc.WithinRange(target.Center, 1350f))
+                    npc.active = false;
+
                 return false;
             }
 
@@ -150,7 +162,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         for (int i = 0; i < totalStarsPerBurst; i++)
                         {
                             Vector2 shootVelocity = (MathHelper.TwoPi * i / totalStarsPerBurst).ToRotationVector2().RotatedByRandom(0.1f) * Main.rand.NextFloat(1.5f, 3.2f);
-                            int star = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<GreatStar>(), 256, 0f);
+                            int star = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<GreatStar>(), 280, 0f);
                             Main.projectile[star].Size /= 1.3f;
                             Main.projectile[star].scale /= 1.3f;
                             Main.projectile[star].ai[1] = 1f;
@@ -184,7 +196,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                             if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
                                 shootVelocity *= 1.7f;
 
-                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 270, 0f, 255);
+                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 280, 0f, 255);
                         }
                     }
                 }
@@ -231,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             switch ((ProvidenceAttackType)(int)attackType)
             {
                 case ProvidenceAttackType.SpawnEffect:
-                    DoBehavior_SpawnEffects(npc, target, phase2, inRainbowCrystalState, ref attackTimer);
+                    DoBehavior_SpawnEffects(npc, target, phase2, inRainbowCrystalState, ref wasSummonedAtNight, ref attackTimer);
                     break;
                 case ProvidenceAttackType.Starburst:
                     DoBehavior_Starburst(npc, target, crystalCenter, lifeRatio, phase2, inRainbowCrystalState, ref drawState, ref attackTimer);
@@ -261,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             return false;
         }
 
-        public static void DoBehavior_SpawnEffects(NPC npc, Player target, bool phase2, bool inRainbowCrystalState, ref float attackTimer)
+        public static void DoBehavior_SpawnEffects(NPC npc, Player target, bool phase2, bool inRainbowCrystalState, ref float wasSummonedAtNight, ref float attackTimer)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 10f)
             {
@@ -269,11 +281,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyRay"), npc.Center);
             }
 
+            // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
             for (int i = 0; i < 3; i++)
             {
                 Color rainbowColor = Main.hslToRgb(Main.rand.NextFloat(), 0.95f, 0.5f);
+                if (!Main.dayTime)
+                    rainbowColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), NightPalette);
+
                 Dust rainbowDust = Dust.NewDustDirect(npc.position, npc.width, npc.height, 267, 0f, 0f, 0, rainbowColor);
                 rainbowDust.position = npc.Center + Main.rand.NextVector2Circular(npc.width * 2f, npc.height * 2f) + new Vector2(0f, -150f);
                 rainbowDust.velocity *= Main.rand.NextFloat() * 0.8f;
@@ -290,10 +306,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 }
             }
 
+            // Determine if summoned at night.
+            if (attackTimer == 1f)
+            {
+                wasSummonedAtNight = (!Main.dayTime).ToInt();
+                npc.netUpdate = true;
+            }
+
             // Create a burst of energy and push all players nearby back significantly.
-            if (attackTimer >= AuraTime - 30 &&
-                attackTimer <= AuraTime - 15 &&
-                attackTimer % 3 == 2)
+            if (attackTimer >= AuraTime - 30f && attackTimer <= AuraTime - 15f && attackTimer % 3f == 2f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
@@ -301,7 +322,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
             }
 
-            if (attackTimer == AuraTime - 20)
+            if (attackTimer == AuraTime - 20f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -326,17 +347,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int totalStarsPerBurst = (int)MathHelper.Lerp(7f, 16f, 1f - lifeRatio);
             float burstSpeed = 4f;
 
+            if (!Main.dayTime)
+            {
+                totalStarsPerBurst += 5;
+                burstSpeed += 3f;
+            }
+
             npc.velocity *= 0.9f;
-            npc.defense = (int)MathHelper.Lerp(50, 400, Utils.InverseLerp(0f, 40f, attackTimer, true));
+            npc.defense = (int)MathHelper.Lerp(50, CocoonDefense, Utils.InverseLerp(0f, 40f, attackTimer, true));
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % starShootTime == starShootTime - 1)
             {
                 if (Main.rand.NextBool(2))
-                    Utilities.NewProjectileBetter(crystalCenter, npc.SafeDirectionTo(target.Center) * 12f, ModContent.ProjectileType<GreatStar>(), 256, 0f);
+                    Utilities.NewProjectileBetter(crystalCenter, npc.SafeDirectionTo(target.Center) * 12f, ModContent.ProjectileType<GreatStar>(), 280, 0f);
                 for (int i = 0; i < totalStarsPerBurst; i++)
                 {
                     Vector2 shootVelocity = (MathHelper.TwoPi * i / totalStarsPerBurst).ToRotationVector2() * burstSpeed;
-                    int star = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<GreatStar>(), 256, 0f);
+                    int star = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<GreatStar>(), 280, 0f);
                     Main.projectile[star].Size /= 1.3f;
                     Main.projectile[star].scale /= 1.3f;
                     Main.projectile[star].ai[1] = 1f;
@@ -366,6 +393,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 groundSpearSpacing = 250f;
             }
 
+            if (!Main.dayTime)
+            {
+                starBurstRate = 30;
+                skySpearSpawnRate -= 32;
+            }
+
             ref float currentSpearOffset = ref npc.Infernum().ExtraAI[1];
             ref float skySpearWaveCount = ref npc.Infernum().ExtraAI[2];
             ref float groundSpearCount = ref npc.Infernum().ExtraAI[3];
@@ -385,7 +418,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     Vector2 spawnPosition = target.Bottom + new Vector2(currentSpearOffset + target.velocity.X * 45f, 4f);
                     if (Math.Abs(spawnPosition.X - target.Center.X) > 200f)
-                        Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<CrystalPillar>(), 275, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, Vector2.Zero, ModContent.ProjectileType<CrystalPillar>(), 300, 0f);
                 }
 
                 currentSpearOffset += groundSpearSpacing;
@@ -399,7 +432,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 for (int i = 0; i < 11; i++)
                 {
                     Vector2 shootVelocity = (MathHelper.TwoPi * i / 11f).ToRotationVector2() * 2.3f;
-                    int star = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<GreatStar>(), 210, 0f);
+                    int star = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<GreatStar>(), 280, 0f);
                     Main.projectile[star].Size /= 1.3f;
                     Main.projectile[star].scale /= 1.3f;
                     Main.projectile[star].ai[1] = 1f;
@@ -419,8 +452,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     {
                         float spearXOffset = MathHelper.Lerp(-maxOffset, maxOffset, i / (float)skySpearCountPerWave) + generalOffset;
                         Vector2 spawnPosition = target.Top + new Vector2(spearXOffset, -535f + target.velocity.Y * 28f);
-                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * spearFallSpeed, ModContent.ProjectileType<HolySpear>(), 250, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, Vector2.UnitY * spearFallSpeed, ModContent.ProjectileType<HolySpear>(), 280, 0f);
                     }
+
+                    Vector2 sideSpearSpawnPosition = target.Center + Vector2.UnitX * 800f;
+                    Vector2 sideSpearVelocity = Vector2.UnitX * -33f;
+                    Utilities.NewProjectileBetter(sideSpearSpawnPosition, sideSpearVelocity, ModContent.ProjectileType<ProfanedSpear2>(), 280, 0f);
+
+                    sideSpearSpawnPosition = target.Center + Vector2.UnitX * -800f;
+                    sideSpearVelocity = Vector2.UnitX * 33f;
+                    Utilities.NewProjectileBetter(sideSpearSpawnPosition, sideSpearVelocity, ModContent.ProjectileType<ProfanedSpear2>(), 280, 0f);
                 }
                 skySpearWaveCount++;
             }
@@ -482,7 +523,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float maxPushbackSpeed = MathHelper.Lerp(16f, 25f, 1f - lifeRatio);
+                    float maxPushbackSpeed = MathHelper.Lerp(10f, 19f, 1f - lifeRatio);
                     for (int i = 0; i < Main.maxPlayers; i++)
                     {
                         Player player = Main.player[i];
@@ -530,15 +571,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int shootDelay = 60;
             int swirlingFireTime = 240;
             int swirlingBulletsToSpawn = 60;
-            int swirlingBulletSpawnRate = swirlingFireTime / swirlingBulletsToSpawn;
             float maxFlySpeed = 22f;
+            if (!Main.dayTime)
+            {
+                swirlingFireTime -= 40;
+                swirlingBulletsToSpawn += 20;
+            }
+
+            int swirlingBulletSpawnRate = swirlingFireTime / swirlingBulletsToSpawn;
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= shootDelay && attackTimer <= swirlingFireTime &&
                 attackTimer % swirlingBulletSpawnRate == swirlingBulletSpawnRate - 1)
             {
                 Vector2 shootVelocity = Main.rand.NextVector2Circular(40f, 40f);
                 Vector2 spawnPosition = npc.Center + shootVelocity * 40f;
-                int fire = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SwirlingFire>(), 275, 0f, Main.myPlayer);
+                int fire = Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<SwirlingFire>(), 280, 0f, Main.myPlayer);
                 Main.projectile[fire].ai[0] = Main.rand.NextFloat(0.014f, 0.035f) * Main.rand.NextBool().ToDirectionInt();
 
                 // Make the swirling flames more volatile the less HP providence has.
@@ -566,7 +613,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             int teleportDelay = 45;
             int totalMeteorShowers = 4;
-            int meteorShowerFireRate = 45;
+            int meteorShowerFireRate = 40;
+            int totalMeteorsPerBurst = 2;
+            int attackTransitionDelay = 135;
+
+            if (!Main.dayTime)
+            {
+                totalMeteorShowers += 2;
+                meteorShowerFireRate += 6;
+                totalMeteorsPerBurst++;
+            }
+
             ref float completedMeteorShowers = ref npc.Infernum().ExtraAI[1];
 
             if (attackTimer == teleportDelay)
@@ -576,22 +633,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 npc.Center = Vector2.Lerp(npc.Center, target.Center - Vector2.UnitY * 440f, 0.28f);
 
             // Release a bunch of holy blast meteors from above Providence 
-            if (Main.netMode != NetmodeID.MultiplayerClient &&
-                attackTimer % meteorShowerFireRate == meteorShowerFireRate - 1 &&
-                completedMeteorShowers < totalMeteorShowers)
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % meteorShowerFireRate == meteorShowerFireRate - 1 && completedMeteorShowers < totalMeteorShowers)
             {
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < totalMeteorsPerBurst; i++)
                 {
-                    Vector2 spawnPosition = npc.Top + new Vector2(MathHelper.Lerp(-1100f, 1100f, i / 2f) + target.velocity.X * 60f, -450f);
+                    Vector2 spawnPosition = npc.Top + new Vector2(MathHelper.Lerp(-1100f, 1100f, i / (float)(totalMeteorsPerBurst - 1f)) + target.velocity.X * 60f, -450f);
                     Vector2 showerDirection = (target.Center - spawnPosition + target.velocity * 100f).SafeNormalize(Vector2.UnitY);
 
-                    Utilities.NewProjectileBetter(spawnPosition, showerDirection * 16f, ModContent.ProjectileType<HolyBlast>(), 230, 0f, Main.myPlayer);
+                    Utilities.NewProjectileBetter(spawnPosition, showerDirection * 16f, ModContent.ProjectileType<HolyBlast>(), 280, 0f, Main.myPlayer);
                 }
                 completedMeteorShowers++;
+                if (completedMeteorShowers >= totalMeteorShowers)
+                    attackTimer = 0f;
+
                 npc.netUpdate = true;
             }
 
-            if (completedMeteorShowers >= totalMeteorShowers)
+            if (completedMeteorShowers >= totalMeteorShowers && attackTimer > attackTransitionDelay)
                 SelectNextAttack(npc, phase2, inRainbowCrystalState);
         }
 
@@ -602,6 +660,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int crystalBurstShootRate = (int)MathHelper.Lerp(24f, 12f, 1f - lifeRatio);
             int totalCrystalsPerBurst = 20;
             int transitionDelay = 120;
+
+            if (!Main.dayTime)
+            {
+                crystalBurstShootRate -= 4;
+                totalCrystalsPerBurst += 7;
+            }
 
             ref float burstTimer = ref npc.Infernum().ExtraAI[2];
             ref float burstCounter = ref npc.Infernum().ExtraAI[3];
@@ -628,9 +692,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // This is done to prevent cheap shots.
                 bool veryCloseToPlayer = npc.WithinRange(target.Center, 180f);
 
-                if (!veryCloseToPlayer &&
-                    burstCounter < totalCrystalBursts &&
-                    burstTimer >= crystalBurstShootRate)
+                if (!veryCloseToPlayer && burstCounter < totalCrystalBursts && burstTimer >= crystalBurstShootRate)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -641,7 +703,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                             float hue = (i / (float)totalCrystalsPerBurst + Main.GlobalTime) % 1f;
                             Vector2 shootVelocity = new Vector2(MathHelper.Lerp(-20f, 20f, i / (float)totalCrystalsPerBurst) + xSpeedOffset, -4f);
                             shootVelocity.X += Main.rand.NextFloatDirection() * 0.6f;
-                            int crystal = Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<RainbowCrystal>(), 210, 0f);
+                            int crystal = Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<RainbowCrystal>(), 280, 0f);
                             Main.projectile[crystal].ai[0] = hue;
                             Main.projectile[crystal].ai[1] = phase2.ToInt();
                         }
@@ -694,11 +756,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 flameShootRate = 45;
             }
 
+            if (!Main.dayTime)
+            {
+                crystalShootRate = 2;
+                flameShootRate = 32;
+            }
+
             int totalCrystalsToShoot = 80;
             ref float shootTimer = ref npc.Infernum().ExtraAI[1];
             ref float crystalsShot = ref npc.Infernum().ExtraAI[2];
 
-            npc.defense = (int)MathHelper.Lerp(50, 400, Utils.InverseLerp(0f, 40f, attackTimer, true));
+            npc.defense = (int)MathHelper.Lerp(50, CocoonDefense, Utils.InverseLerp(0f, 40f, attackTimer, true));
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
 
             if (crystalsShot < totalCrystalsToShoot && shootTimer % crystalShootRate == crystalShootRate - 1f && shootTimer >= shootDelay)
@@ -707,10 +775,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    float farAwayEnrageInterpolant = Utils.InverseLerp(800f, 2400f, npc.Distance(target.Center), true);
+                    float crystalShootSpeed = MathHelper.Lerp(5f, 31f, farAwayEnrageInterpolant);
                     Vector2 shootPosition = crystalCenter;
-                    Vector2 shootVelocity = ((attackTimer - shootDelay) * MathHelper.TwoPi / 120f).ToRotationVector2() * 5f;
-                    Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<RainbowCrystal2>(), 240, 0f, Main.myPlayer);
-                    Utilities.NewProjectileBetter(shootPosition, -shootVelocity, ModContent.ProjectileType<RainbowCrystal2>(), 240, 0f, Main.myPlayer);
+                    Vector2 shootVelocity = ((attackTimer - shootDelay) * MathHelper.TwoPi / 120f).ToRotationVector2() * crystalShootSpeed;
+
+                    // Approach a velocity that points directly at the player with a bit of variance the farther away they ary.
+                    Vector2 offsetPointVelocity = npc.SafeDirectionTo(target.Center) * crystalShootSpeed + Main.rand.NextVector2Circular(crystalShootSpeed, crystalShootSpeed) * 0.3f;
+                    shootVelocity = Vector2.Lerp(shootVelocity, offsetPointVelocity, (float)Math.Pow(farAwayEnrageInterpolant, 2D));
+
+                    Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<RainbowCrystal2>(), 280, 0f, Main.myPlayer);
+                    Utilities.NewProjectileBetter(shootPosition, -shootVelocity, ModContent.ProjectileType<RainbowCrystal2>(), 280, 0f, Main.myPlayer);
                 }
 
                 npc.netUpdate = true;
@@ -726,13 +801,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     for (int i = 0; i < 8; i++)
                     {
                         Vector2 shootVelocity = (MathHelper.TwoPi * i / 8f + angularOffset).ToRotationVector2() * 35f;
-                        Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<HolySpear3>(), 256, 0f);
+                        Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<HolySpear3>(), 280, 0f);
                     }
 
                     for (int i = 0; i < 24; i++)
                     {
                         Vector2 shootVelocity = (MathHelper.TwoPi * i / 24f + angularOffset).ToRotationVector2() * 6.5f;
-                        int star = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<GreatStar>(), 256, 0f);
+                        int star = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<GreatStar>(), 280, 0f);
                         Main.projectile[star].Size /= 1.3f;
                         Main.projectile[star].scale /= 1.3f;
                         Main.projectile[star].ai[1] = 1f;
@@ -748,7 +823,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_AttackerGuardians(NPC npc, bool phase2, bool inRainbowCrystalState, ref float drawState, ref float attackTimer)
         {
-            npc.defense = (int)MathHelper.Lerp(50, 400, Utils.InverseLerp(0f, 30f, attackTimer, true));
+            npc.defense = (int)MathHelper.Lerp(50, CocoonDefense, Utils.InverseLerp(0f, 30f, attackTimer, true));
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -787,7 +862,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     npc.ai[0] = (int)ProvidenceAttackType.BurningAir;
                     break;
                 case 3:
-                    npc.ai[0] = phase2 ? (int)ProvidenceAttackType.AttackerGuardians : (int)ProvidenceAttackType.BootlegRadianceSpears;
+                    npc.ai[0] = phase2 && Main.dayTime ? (int)ProvidenceAttackType.AttackerGuardians : (int)ProvidenceAttackType.BootlegRadianceSpears;
                     break;
                 case 4:
                     npc.ai[0] = (int)ProvidenceAttackType.Starburst;
@@ -814,7 +889,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     npc.ai[0] = phase2 ? (int)ProvidenceAttackType.CrystalFlames : (int)ProvidenceAttackType.BootlegRadianceSpears;
                     break;
                 case 12:
-                    npc.ai[0] = phase2 ? (int)ProvidenceAttackType.AttackerGuardians : (int)ProvidenceAttackType.Starburst;
+                    npc.ai[0] = phase2 && Main.dayTime ? (int)ProvidenceAttackType.AttackerGuardians : (int)ProvidenceAttackType.Starburst;
                     break;
                 case 13:
                     npc.ai[0] = inRainbowCrystalState ? (int)ProvidenceAttackType.CrystalRainbowDeathray : (int)ProvidenceAttackType.BurningAir;
@@ -924,6 +999,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
         }
 
+        // Visceral rage. Debugging doesn't work for unexplained reasons due to local functions unless this external method is used.
+        public static void DrawProvidenceWings(NPC npc, SpriteBatch spriteBatch, Texture2D wingTexture, float wingVibrance, Vector2 baseDrawPosition, Rectangle frame, Vector2 drawOrigin, SpriteEffects spriteEffects)
+        {
+            Color deathEffectColor = new Color(6, 6, 6, 0);
+            float deathEffectInterpolant = Utils.InverseLerp(0f, 35f, npc.Infernum().ExtraAI[6], true);
+
+            if (Main.dayTime)
+            {
+                Color c = Color.Lerp(new Color(255, 120, 0, 128), deathEffectColor, deathEffectInterpolant);
+                spriteBatch.Draw(wingTexture, baseDrawPosition, frame, c * npc.Opacity, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+            }
+            else
+            {
+                Color nightWingColor = Color.Lerp(new Color(0, 255, 191, 0), deathEffectColor, deathEffectInterpolant) * npc.Opacity;
+                spriteBatch.Draw(wingTexture, baseDrawPosition, frame, nightWingColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 wingOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTime * 0.72f).ToRotationVector2() * npc.Opacity * wingVibrance * 4f;
+                    spriteBatch.Draw(wingTexture, baseDrawPosition + wingOffset, frame, nightWingColor * 0.55f, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                }
+            }
+        }
+
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             string baseTextureString = "CalamityMod/NPCs/Providence/";
@@ -983,9 +1081,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     }
                 }
 
-                float rainbowWingOpacity = 0f;
+                float wingVibrance = 1f;
                 if (attackType == ProvidenceAttackType.SpawnEffect)
-                    rainbowWingOpacity = 1f - MathHelper.Clamp(npc.ai[1] / AuraTime * 1.7f, 0.56f, 1.5f);
+                    wingVibrance = npc.ai[1] / AuraTime;
 
                 getTextureGlowString += "Night";
 
@@ -1001,6 +1099,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Vector2 drawOrigin = new Vector2(Main.npcTexture[npc.type].Width, Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type]) * 0.5f;
 
                 float rainbowVibrance = npc.Infernum().ExtraAI[5];
+
                 // Draw the crystal behind everything. It will appear if providence is herself invisible.
                 applyShaderAndDoThing(() =>
                 {
@@ -1019,6 +1118,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 baseDrawColor *= npc.Opacity;
                 spriteBatch.Draw(generalTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
 
+                // Draw the wings.
+                DrawProvidenceWings(npc, spriteBatch, wingTexture, wingVibrance, baseDrawPosition, frame, drawOrigin, spriteEffects);
+
                 // Draw the crystals. They become more and more rainbow as Providence gets closer to death.
                 // This effect fades away as she burns.
                 float crystalRainbowIntensity = Utils.InverseLerp(LifeRainbowCrystalStartRatio, LifeRainbowCrystalEndRatio, lifeRatio, true);
@@ -1029,14 +1131,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     spriteBatch.Draw(crystalTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
                 }, crystalRainbowIntensity);
-
-                if (npc.Opacity > 0.99f)
-                {
-                    applyShaderAndDoThing(() =>
-                    {
-                        spriteBatch.Draw(wingTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
-                    }, rainbowWingOpacity);
-                }
             }
 
             void applyShaderAndDoThing(Action thingToDo, float rainbowOpacity)

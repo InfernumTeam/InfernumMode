@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 projectile.Kill();
 
             // Release blood idly.
-                Dust blood = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Blood, 0f, 0f, 100, default, 0.5f);
+            Dust blood = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Blood, 0f, 0f, 100, default, 0.5f);
             blood.velocity = Vector2.Zero;
             blood.noGravity = true;
 

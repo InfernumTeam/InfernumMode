@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.timeLeft = 200;
-		}
+        }
 
         public override void AI()
         {

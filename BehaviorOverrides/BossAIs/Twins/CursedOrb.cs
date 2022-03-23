@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-	public class CursedOrb : ModNPC
+    public class CursedOrb : ModNPC
     {
         public PrimitiveTrailCopy FireDrawer;
         public Player Target => Main.player[npc.target];
@@ -22,13 +22,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cursed Flame Orb");
-			NPCID.Sets.TrailingMode[npc.type] = 0;
+            NPCID.Sets.TrailingMode[npc.type] = 0;
             NPCID.Sets.TrailCacheLength[npc.type] = 7;
         }
 
         public override void SetDefaults()
         {
-			npc.npcSlots = 1f;
+            npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.width = npc.height = 22;
             npc.damage = 5;
@@ -40,24 +40,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             npc.scale = 1.15f;
         }
 
-		public override void AI()
+        public override void AI()
         {
             if (!Main.npc.IndexInRange((int)npc.ai[0]) || !Owner.active)
-			{
-				npc.active = false;
-				npc.netUpdate = true;
-				return;
-			}
+            {
+                npc.active = false;
+                npc.netUpdate = true;
+                return;
+            }
 
             npc.timeLeft = 3600;
             npc.target = Owner.target;
 
             if (StunTimer > 0f)
-			{
+            {
                 StunTimer--;
                 npc.velocity *= 0.9f;
                 return;
-			}
+            }
 
             Vector2 flyDestination = Target.Center;
             float flySpeed = MathHelper.SmoothStep(8f, 23f, Utils.InverseLerp(400f, 1500f, npc.Distance(flyDestination), true));
@@ -130,15 +130,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             return false;
         }
 
-		public override bool CheckDead()
-		{
+        public override bool CheckDead()
+        {
             npc.life = npc.lifeMax;
             StunTimer = 300f;
             npc.netUpdate = true;
             return false;
-		}
+        }
 
-		public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(BuffID.CursedInferno, 150);
         }

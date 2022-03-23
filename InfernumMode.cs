@@ -1,11 +1,14 @@
 using CalamityMod.Events;
-using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.Particles;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
+using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
+using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
 using InfernumMode.ILEditingStuff;
 using InfernumMode.Items;
@@ -22,6 +25,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace InfernumMode
 {
@@ -31,7 +35,7 @@ namespace InfernumMode
         internal static Mod CalamityMod = null;
         internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && PoDWorld.InfernumMode;
 
-        internal static bool BossRushApplies => false;
+        internal static bool BossRushApplies => true;
 
         internal static readonly Color HiveMindSkyColor = new Color(53, 42, 81);
 
@@ -65,6 +69,7 @@ namespace InfernumMode
                     method.GetCustomAttributes(false);
             }
 
+            IntroScreenManager.Load();
             NPCBehaviorOverride.LoadAll();
             ProjectileBehaviorOverride.LoadAll();
 
@@ -118,11 +123,27 @@ namespace InfernumMode
                 ghostlyShader = new Ref<Effect>(GetEffect("Effects/NecroplasmicRoarShader"));
                 GameShaders.Misc["Infernum:NecroplasmicRoar"] = new MiscShaderData(ghostlyShader, "BurstPass");
 
+                Ref<Effect> backgroundShader = new Ref<Effect>(GetEffect("Effects/MoonLordBGDistortionShader"));
+                GameShaders.Misc["Infernum:MoonLordBGDistortion"] = new MiscShaderData(backgroundShader, "DistortionPass");
+
+                Ref<Effect> introShader = new Ref<Effect>(GetEffect("Effects/MechIntroLetterShader"));
+                GameShaders.Misc["Infernum:MechsIntro"] = new MiscShaderData(introShader, "LetterPass");
+
+                introShader = new Ref<Effect>(GetEffect("Effects/SCalIntroLetterShader"));
+                GameShaders.Misc["Infernum:SCalIntro"] = new MiscShaderData(introShader, "LetterPass");
+
+                Ref<Effect> hologramShader = new Ref<Effect>(GetEffect("Effects/HologramShader"));
+                GameShaders.Misc["Infernum:Hologram"] = new MiscShaderData(hologramShader, "HologramPass");
+
                 OverrideMusicBox(ItemID.MusicBoxBoss3, GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
+                OverrideMusicBox(ItemID.MusicBoxLunarBoss, GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
             }
 
             if (BossRushApplies)
                 BossRushChanges.Load();
+
+            if (Main.netMode != NetmodeID.Server)
+                GeneralParticleHandler.LoadModParticleInstances(this);
         }
 
         internal static IDictionary<int, int> SoundLoaderMusicToItem => (IDictionary<int, int>)typeof(SoundLoader).GetField("musicToItem", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
@@ -141,7 +162,13 @@ namespace InfernumMode
 
         public override void UpdateMusic(ref int music, ref MusicPriority priority)
         {
-            if (NPC.AnyNPCs(NPCID.SkeletronHead) || NPC.AnyNPCs(NPCID.EyeofCthulhu))
+            if (NPC.AnyNPCs(NPCID.EyeofCthulhu))
+            {
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/EyeOfCthulhu");
+                priority = MusicPriority.BossLow;
+            }
+
+            if (NPC.AnyNPCs(NPCID.SkeletronHead))
             {
                 music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3");
                 priority = MusicPriority.BossLow;
@@ -153,9 +180,34 @@ namespace InfernumMode
                 priority = MusicPriority.BossLow;
             }
 
+            if (NPC.AnyNPCs(NPCID.DukeFishron))
+            {
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/DukeFishron");
+                priority = MusicPriority.BossMedium;
+            }
+
+            if (NPC.AnyNPCs(NPCID.CultistBoss))
+            {
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/LunaticCultist");
+                priority = MusicPriority.BossMedium;
+            }
+
+            int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
+            if (moonLordIndex != -1)
+            {
+                NPC moonLord = Main.npc[moonLordIndex];
+
+                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord");
+                if (moonLord.Infernum().ExtraAI[10] < MoonLordCoreBehaviorOverride.IntroSoundLength)
+                    music = 0;
+                Main.musicFade[Main.curMusic] = 1f;
+                priority = MusicPriority.BossHigh;
+            }
+
             bool areExoMechsAround = NPC.AnyNPCs(ModContent.NPCType<AresBody>()) ||
                 NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()) ||
-                NPC.AnyNPCs(ModContent.NPCType<Apollo>());
+                NPC.AnyNPCs(ModContent.NPCType<Apollo>()) ||
+                NPC.AnyNPCs(ModContent.NPCType<AthenaNPC>());
 
             if (areExoMechsAround)
             {
@@ -179,6 +231,10 @@ namespace InfernumMode
                 packet.Write(npc.whoAmI);
                 packet.Write(npc.realLife);
                 packet.Write(npc.Infernum().TotalAISlotsInUse);
+                packet.Write(npc.Infernum().arenaRectangle.X);
+                packet.Write(npc.Infernum().arenaRectangle.Y);
+                packet.Write(npc.Infernum().arenaRectangle.Width);
+                packet.Write(npc.Infernum().arenaRectangle.Height);
                 for (int i = 0; i < npc.Infernum().ExtraAI.Length; i++)
                 {
                     if (!npc.Infernum().HasAssociatedAIBeenUsed[i])
@@ -193,8 +249,27 @@ namespace InfernumMode
 
         public override void AddRecipes() => RecipeUpdates.Update();
 
+        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+        {
+            int mouseIndex = layers.FindIndex(layer => layer.Name == "Vanilla: Mouse Text");
+            if (mouseIndex != -1)
+            {
+                layers.Insert(mouseIndex, new LegacyGameInterfaceLayer("Boss Introduction Screens", () =>
+                {
+                    IntroScreenManager.Draw();
+                    return true;
+                }, InterfaceScaleType.None));
+            }
+        }
+
+        public override object Call(params object[] args)
+        {
+            return InfernumModCalls.Call(args);
+        }
+
         public override void Unload()
         {
+            IntroScreenManager.Unload();
             OverridingListManager.Unload();
             BalancingChangesManager.Unload();
             HookManager.Unload();

@@ -47,12 +47,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             // And accelerate downward.
             if (projectile.timeLeft > 270f)
                 projectile.velocity.Y *= 0.98f;
-			else
-			{
+            else
+            {
                 if (projectile.velocity.Y < 2.5f)
                     projectile.velocity.Y = 2.5f;
                 projectile.velocity.Y *= 1.0285f;
-			}
+            }
 
             projectile.rotation = projectile.velocity.ToRotation();
             projectile.spriteDirection = (Math.Cos(projectile.rotation) > 0f).ToDirectionInt();

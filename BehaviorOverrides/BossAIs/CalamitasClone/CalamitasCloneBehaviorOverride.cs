@@ -113,7 +113,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 brotherFadeoutTime = 1f;
                 attackTimer = 0f;
 
-                Main.NewText($"Destroy {(target.Male ? "him" : "her")}, my brothers.", Color.Orange);
+                Utilities.DisplayText($"Destroy {(target.Male ? "him" : "her")}, my brothers.", Color.Orange);
 
                 // Set the ring radius and create a soul seeker ring.
                 npc.Infernum().ExtraAI[6] = shouldBeBuffed ? 950f : 750f;
@@ -138,7 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Create a seeker ring once at a low enough life.
             if (transitionState == 2f && lifeRatio < Phase3LifeRatio)
             {
-                Main.NewText("You will suffer.", Color.Orange);
+                Utilities.DisplayText("You will suffer.", Color.Orange);
 
                 int seekerCount = 7;
                 for (int i = 0; i < seekerCount; i++)
@@ -172,7 +172,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.rotation = npc.AngleTo(target.Center) - MathHelper.PiOver2;
 
                 if (finalPhaseTransitionCountdown == 60f)
-                    Main.NewText("I will not be defeated so easily.", Color.Orange);
+                    Utilities.DisplayText("I will not be defeated so easily.", Color.Orange);
 
                 if (finalPhaseTransitionCountdown == 0f)
                 {

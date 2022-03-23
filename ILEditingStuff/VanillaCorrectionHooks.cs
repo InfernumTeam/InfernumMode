@@ -11,19 +11,28 @@ using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.ILEditingStuff
 {
-    public class RemoveCultistGoreHook : IHookEdit
+    public class ReplaceGoresHook : IHookEdit
     {
-        internal static int RemoveCultistGore(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
+        internal static int AlterGores(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
             if (InfernumMode.CanUseCustomAIs && Type >= GoreID.Cultist1 && Type <= GoreID.CultistBoss2)
                 return Main.maxDust;
 
+            if (InfernumMode.CanUseCustomAIs && Type == 573)
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore1");
+            if (InfernumMode.CanUseCustomAIs && Type == 574)
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore3");
+            if (InfernumMode.CanUseCustomAIs && Type == 575)
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore2");
+            if (InfernumMode.CanUseCustomAIs && Type == 576)
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore4");
+
             return orig(Position, Velocity, Type, Scale);
         }
 
-        public void Load() => On.Terraria.Gore.NewGore += RemoveCultistGore;
+        public void Load() => On.Terraria.Gore.NewGore += AlterGores;
 
-        public void Unload() => On.Terraria.Gore.NewGore -= RemoveCultistGore;
+        public void Unload() => On.Terraria.Gore.NewGore -= AlterGores;
     }
 
     public class AureusPlatformWalkingHook : IHookEdit
@@ -42,6 +51,21 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => On.Terraria.NPC.Collision_DecideFallThroughPlatforms += LetAureusWalkOnPlatforms;
 
         public void Unload() => On.Terraria.NPC.Collision_DecideFallThroughPlatforms -= LetAureusWalkOnPlatforms;
+    }
+
+    public class FishronSkyDistanceLeniancyHook : IHookEdit
+    {
+        internal static void AdjustFishronScreenDistanceRequirement(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            cursor.GotoNext(i => i.MatchLdcR4(3000f));
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldc_R4, 6000f);
+        }
+
+        public void Load() => IL.Terraria.GameContent.Events.ScreenDarkness.Update += AdjustFishronScreenDistanceRequirement;
+
+        public void Unload() => IL.Terraria.GameContent.Events.ScreenDarkness.Update -= AdjustFishronScreenDistanceRequirement;
     }
 
     public class LessenDesertTileRequirementsHook : IHookEdit

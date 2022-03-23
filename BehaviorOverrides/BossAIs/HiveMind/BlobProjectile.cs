@@ -36,10 +36,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.hiveMind))
-			{
+            {
                 projectile.Kill();
                 return;
-			}
+            }
         }
         public override void Kill(int timeLeft)
         {

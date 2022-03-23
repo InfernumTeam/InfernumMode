@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public Vector2 Velocity;
         public const float TelegraphTotalTime = 55f;
         public const float TelegraphFadeTime = 15f;
-        public const float TelegraphWidth = 2800f;
+        public const float TelegraphWidth = 1900f;
         public const float LaserVelocity = 10f;
 
         public override void SetStaticDefaults()
@@ -174,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 180);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.Calamity().lastProjectileHit = projectile;
         }
@@ -202,21 +202,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             float yScale = 2f;
             if (TelegraphDelay < TelegraphFadeTime)
-                yScale = MathHelper.Lerp(0f, 2f, TelegraphDelay / 15f);
+                yScale = MathHelper.Lerp(0f, yScale, TelegraphDelay / 15f);
             if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
-                yScale = MathHelper.Lerp(2f, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
+                yScale = MathHelper.Lerp(yScale, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
 
             Vector2 scaleInner = new Vector2(TelegraphWidth / laserTelegraph.Width, yScale);
             Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
-            Vector2 scaleOuter = scaleInner * new Vector2(1f, 2.2f);
+            Vector2 scaleOuter = scaleInner * new Vector2(1f, 1.5f);
 
-            Color colorOuter = Color.Lerp(Color.Red, Color.Crimson, TelegraphDelay / TelegraphTotalTime * 2f % 1f); // Iterate through crimson and red once and then flash.
-            Color colorInner = Color.Lerp(colorOuter, Color.White, 0.75f);
-
-            colorOuter *= 0.6f;
-            colorInner *= 0.6f;
-
-            spriteBatch.Draw(laserTelegraph, projectile.Center - Main.screenPosition, null, colorInner, Velocity.ToRotation(), origin, scaleInner, SpriteEffects.None, 0f);
+            Color colorOuter = Color.Lerp(Color.Red, Color.White, TelegraphDelay / TelegraphTotalTime * 0.4f);
             spriteBatch.Draw(laserTelegraph, projectile.Center - Main.screenPosition, null, colorOuter, Velocity.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0f);
             return false;
         }

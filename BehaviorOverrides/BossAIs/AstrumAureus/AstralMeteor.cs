@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 shootVelocity = (MathHelper.TwoPi * (i + offsetIncrement) / 12f).ToRotationVector2() * 13f;
-                    Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<AstralBlueComet>(), 200, 0f);
+                    Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<AstralBlueComet>(), 180, 0f);
                 }
             }
         }
@@ -87,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 360);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.Calamity().lastProjectileHit = projectile;
         }

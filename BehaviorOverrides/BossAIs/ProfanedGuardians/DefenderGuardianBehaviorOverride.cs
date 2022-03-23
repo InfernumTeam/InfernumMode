@@ -34,7 +34,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             npc.target = thingToDefend.target;
             npc.damage = 0;
-            npc.target = thingToDefend.target;
             npc.spriteDirection = thingToDefend.spriteDirection;
             npc.alpha = 128;
 

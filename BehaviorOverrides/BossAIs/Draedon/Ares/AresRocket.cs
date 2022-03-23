@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Set AI to stop homing, start accelerating if the rocket has gotten close enough to the player.
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            if (projectile.WithinRange(target.Center, 480f) || projectile.ai[0] == 1f || projectile.timeLeft < 360)
+            if (projectile.WithinRange(target.Center, 480f) || projectile.ai[0] == 1f || projectile.timeLeft < 525)
             {
                 projectile.ai[0] = 1f;
 
@@ -91,7 +91,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], Color.White, 1);
+            Color rocketColor = new Color(185, 185, 185, 0);
+            CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], rocketColor, 1);
             return false;
         }
 

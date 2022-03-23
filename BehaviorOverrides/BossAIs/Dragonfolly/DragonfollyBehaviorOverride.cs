@@ -196,7 +196,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 npc.timeLeft = 7200;
         }
 
-        internal static void GoToNextAttackState(NPC npc)
+        internal static void SelectNextAttack(NPC npc)
         {
             npc.alpha = 0;
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -255,6 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 lastChargeType = (int)newAttackState;
             }
 
+            npc.TargetClosest();
             npc.ai[0] = (int)newAttackState;
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
@@ -323,7 +324,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     npc.velocity *= 0.96f;
                     if (attackTimer >= 305f + chargeDelay)
-                        GoToNextAttackState(npc);
+                        SelectNextAttack(npc);
                 }
 
                 npc.alpha = Utils.Clamp(npc.alpha - 25, 0, 255);
@@ -350,7 +351,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     horizontalOffset = 860f;
                     break;
             }
-            
+
             // Delete plasma orbs during thunder charges.
             if (chargeType == DragonfollyAttackType.ThunderCharge)
             {
@@ -490,7 +491,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     }
 
                     npc.velocity *= chargeType != DragonfollyAttackType.ThunderCharge ? 0.3f : 0.6f;
-                    GoToNextAttackState(npc);
+                    SelectNextAttack(npc);
                 }
 
                 // Release lightning clouds from time to time while charging if doing a lightning charge.
@@ -541,7 +542,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             flapRate = (int)Utils.Clamp(8f - npc.velocity.Length() * 0.125f, 4f, 8f);
             npc.rotation = (npc.rotation * 7f + npc.velocity.X * 0.01f) / 8f;
         }
-        
+
         internal static void DoAttack_SummonSwarmers(NPC npc, Player target, bool phase2, ref float attackTimer, ref float frameType, ref float flapRate)
         {
             npc.rotation = npc.rotation.AngleLerp(0f, 0.125f);
@@ -557,7 +558,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
                 // Don't bother doing this attack if the swarmer count is already at the limit.
                 if (originalSwamerCount >= maxSwarmersAtOnce)
-                    GoToNextAttackState(npc);
+                    SelectNextAttack(npc);
 
                 npc.netUpdate = true;
             }
@@ -618,7 +619,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 }
 
                 if (attackTimer >= ScreamTime + 25f)
-                    GoToNextAttackState(npc);
+                    SelectNextAttack(npc);
             }
         }
 
@@ -636,7 +637,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             if (attackTimer < shootDelay)
             {
                 if (Utilities.AnyProjectiles(ModContent.ProjectileType<BirbAuraFlare>()) || Utilities.AnyProjectiles(ModContent.ProjectileType<BirbAura>()))
-                    GoToNextAttackState(npc);
+                    SelectNextAttack(npc);
                 npc.spriteDirection = (npc.SafeDirectionTo(target.Center).X > 0f).ToDirectionInt();
             }
 
@@ -658,7 +659,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             }
 
             if (attackTimer == shootDelay + 35f)
-                GoToNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         internal static void DoAttack_ReleaseSpreadOfFeathers(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
@@ -738,7 +739,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             if (attackTimer >= flyTime + waveDelay + 90f)
             {
                 if (waveCounter >= totalWaves - 1f)
-                    GoToNextAttackState(npc);
+                    SelectNextAttack(npc);
                 else
                 {
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 34f;
@@ -755,7 +756,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         internal static void DoAttack_ReleasePlasmaBursts(NPC npc, Player target, ref float attackTimer, ref float fadeToRed, ref float frameType, ref float flapRate)
         {
             if (NPC.CountNPCS(ModContent.NPCType<RedPlasmaEnergy>()) >= 3)
-                GoToNextAttackState(npc);
+                SelectNextAttack(npc);
             ref float chargeTime = ref npc.Infernum().ExtraAI[0];
 
             frameType = (int)DragonfollyFrameDrawingType.Screm;
@@ -774,7 +775,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             npc.rotation *= 0.975f;
             npc.velocity *= 0.975f;
             if (attackTimer >= ScreamTime + 45f)
-                GoToNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         internal static void DoAttack_LightningSupercharge(NPC npc, Player target, ref float attackTimer, ref float frameType, ref float flapRate)
@@ -896,7 +897,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 if (attackTimer >= 120f)
                 {
                     Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
-                    GoToNextAttackState(npc);
+                    SelectNextAttack(npc);
                 }
             }
         }

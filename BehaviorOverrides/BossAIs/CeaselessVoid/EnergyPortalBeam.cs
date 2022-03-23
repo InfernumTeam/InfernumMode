@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 Main.PlaySound(SoundID.Item9, projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-				{
+                {
                     Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
                     int energyCount = BossRushEvent.BossRushActive ? 7 : 5;
@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                         Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(shootAngle) * 5f;
                         Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<CeaselessEnergy>(), 250, 0f);
                     }
-				}
+                }
             }
 
             Time++;

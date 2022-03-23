@@ -1,14 +1,14 @@
+using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.Events;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Events;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 {
-	public class HomingAcid : ModProjectile
+    public class HomingAcid : ModProjectile
     {
         public ref float Time => ref projectile.ai[0];
         public Player ClosestPlayer => Main.player[Player.FindClosest(projectile.Center, 1, 1)];
@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 projectile.Kill();
         }
 
-		public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<SulphuricPoisoning>(), 120);
+        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<SulphuricPoisoning>(), 120);
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {

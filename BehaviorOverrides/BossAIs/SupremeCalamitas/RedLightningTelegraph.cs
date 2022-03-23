@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-	public class RedLightningTelegraph : ModProjectile
+    public class RedLightningTelegraph : ModProjectile
     {
         public ref float Lifetime => ref projectile.ai[0];
         public ref float Time => ref projectile.ai[1];
@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.timeLeft = 90;
-		}
+        }
 
         public override void AI()
         {
@@ -48,8 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int lightningDamage = 560;
-            int lightning = Utilities.NewProjectileBetter(projectile.Center, projectile.velocity * 10f, ModContent.ProjectileType<RedLightning2>(), lightningDamage, 0f);
+            int lightning = Utilities.NewProjectileBetter(projectile.Center, projectile.velocity * 10f, ModContent.ProjectileType<RedLightning2>(), 520, 0f);
             if (Main.projectile.IndexInRange(lightning))
             {
                 Main.projectile[lightning].Center -= projectile.velocity * 400f;
@@ -58,6 +57,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
         }
 
-		public override bool ShouldUpdatePosition() => false;
-	}
+        public override bool ShouldUpdatePosition() => false;
+    }
 }

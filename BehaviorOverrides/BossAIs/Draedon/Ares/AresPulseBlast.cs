@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.Opacity = 0f;
-            projectile.timeLeft = 120;
+            projectile.timeLeft = 80;
             cooldownSlot = 1;
         }
 
@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return CalamityUtils.CircularHitboxCollision(projectile.Center, projectile.Size.Length() / 1.414f, targetHitbox);
+            return CalamityUtils.CircularHitboxCollision(projectile.Center, projectile.Size.Length() / 2.6f, targetHitbox);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)

@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             projectile.penetrate = -1;
         }
 
-        public static int GetWaitTime(bool phase2) => phase2 ? 200 : 290;
+        public static int GetWaitTime(bool phase2) => phase2 ? 150 : 200;
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(projectile.timeLeft);
 
@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Time++;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             spriteBatch.SetBlendState(BlendState.Additive);
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
@@ -93,8 +93,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             return false;
         }
 
-		public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
-		{
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        {
             drawCacheProjsBehindNPCs.Add(index);
         }
     }

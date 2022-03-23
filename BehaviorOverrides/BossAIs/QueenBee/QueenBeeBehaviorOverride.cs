@@ -39,8 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
 
             // If none was found or it was too far away, despawn.
             if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead ||
@@ -128,21 +127,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
         #region Specific Attacks
         public static void DoSpawnAnimationStuff(NPC npc, Player target, float animationTimer)
         {
-            // Focus on the boss as it spawns.
-            if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2000f))
-            {
-                Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(0f, 15f, animationTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(140f, 132f, animationTimer, true);
-            }
-
             npc.Opacity = Utils.InverseLerp(0f, 45f, animationTimer, true);
             npc.damage = 0;
             npc.dontTakeDamage = true;
 
             if (animationTimer < 75f)
             {
-                Vector2 hoverDestination = target.Center - Vector2.UnitY * 500f;
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
 
                 npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 32f);
                 if (npc.WithinRange(target.Center, 90f))
@@ -169,7 +160,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
         public static void DoAttack_HorizontalCharge(NPC npc, Player target, float generalAttackTimer, ref float frameType)
         {
-            int chargesToDo = 4;
+            int chargeCount = 4;
             float baseChargeSpeed = 19.5f;
             float chargeSpeedup = 0.0067f;
             float hoverOffset = 320f;
@@ -178,12 +169,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 baseChargeSpeed += 4.5f;
 
             if (npc.life < npc.lifeMax * 0.33)
-                chargesToDo += 2;
+                chargeCount += 2;
 
             if (npc.life < npc.lifeMax * FinalPhaseLifeRatio)
             {
-                baseChargeSpeed *= 1.15f;
-                hoverOffset += 55f;
+                baseChargeSpeed *= 1.1f;
+                hoverOffset += 70f;
             }
 
             ref float attackState = ref npc.Infernum().ExtraAI[0];
@@ -192,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
             if (BossRushEvent.BossRushActive)
             {
-                chargesToDo += 8;
+                chargeCount += 8;
                 chargeSpeedup = 0.1f;
                 hoverOffset -= 110f;
             }
@@ -241,7 +232,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 }
             }
 
-            if (totalChargesDone >= chargesToDo)
+            if (totalChargesDone >= chargeCount)
                 GotoNextAttackState(npc);
         }
 

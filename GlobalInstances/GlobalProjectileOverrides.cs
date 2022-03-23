@@ -2,7 +2,6 @@
 using CalamityMod.Dusts;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Projectiles.Enemy;
-using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -140,20 +139,6 @@ namespace InfernumMode.GlobalInstances
             return base.PreKill(projectile, timeLeft);
         }
 
-        public override void Kill(Projectile projectile, int timeLeft)
-        {
-            if (projectile.type == ProjectileID.PhantasmalEye && projectile.localAI[0] >= 70f && InfernumMode.CanUseCustomAIs)
-            {
-                for (int k = 0; k < 25; k++)
-                {
-                    Vector2 velocity = (MathHelper.TwoPi / 25f * k).ToRotationVector2() * Main.rand.NextFloat(8f, 15f);
-                    velocity = velocity.RotatedByRandom(MathHelper.ToRadians(7f));
-                    Dust.NewDust(projectile.position, projectile.width, projectile.height, 229, velocity.X, velocity.Y, 0, default, 1f);
-                }
-                float angle = MathHelper.ToRadians(30f);
-                Projectile.NewProjectile(projectile.Top, new Vector2(0f, -4f).RotatedByRandom(angle), ModContent.ProjectileType<PhantasmalSpark>(), 39, 1f);
-            }
-        }
         public override bool OnTileCollide(Projectile projectile, Vector2 oldVelocity)
         {
             if (InfernumMode.CanUseCustomAIs)
@@ -190,13 +175,9 @@ namespace InfernumMode.GlobalInstances
             if (InfernumMode.CanUseCustomAIs)
             {
                 if (projectile.type == ProjectileID.PhantasmalSphere)
-                {
-                    return projectile.Infernum().ExtraAI[5] > 70f;
-                }
+                    return projectile.Infernum().ExtraAI[0] > 40f;
                 if (projectile.type == ProjectileID.PhantasmalBolt)
-                {
-                    return projectile.Infernum().ExtraAI[5] > 70f;
-                }
+                    return projectile.Infernum().ExtraAI[0] > 40f;
             }
             return base.CanHitPlayer(projectile, target);
         }

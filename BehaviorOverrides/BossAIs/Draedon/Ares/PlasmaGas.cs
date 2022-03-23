@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 80;
+            projectile.width = projectile.height = 50;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
             projectile.magic = true;
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool CanDamage() => projectile.Opacity > 0.6f;
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Vector2 screenArea = new Vector2(Main.screenWidth, Main.screenHeight);
             Rectangle screenRectangle = Utils.CenteredRectangle(Main.screenPosition + screenArea * 0.5f, screenArea * 1.33f);
@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             float opacity = Utils.InverseLerp(0f, 0.08f, LightPower, true) * projectile.Opacity * 0.8f;
             Color drawColor = new Color(141, 255, 105) * opacity;
-            Vector2 scale = projectile.Size / texture.Size() * projectile.scale;
+            Vector2 scale = projectile.Size / texture.Size() * projectile.scale * 1.35f;
             spriteBatch.Draw(texture, drawPosition, null, drawColor, projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             return false;
         }

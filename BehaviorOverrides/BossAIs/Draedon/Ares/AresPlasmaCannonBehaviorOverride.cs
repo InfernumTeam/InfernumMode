@@ -24,9 +24,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Die if Ares is not present.
             if (CalamityGlobalNPC.draedonExoMechPrime == -1)
             {
+                npc.life = 0;
+                npc.HitEffect();
                 npc.active = false;
                 return false;
             }
+
+            // Update the energy drawer.
+            npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.Update();
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
@@ -53,9 +58,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
-                shootTime += 30;
-                totalFlamesPerBurst++;
-                aimPredictiveness -= 3f;
+                shootTime -= 30;
+                totalFlamesPerBurst += 2;
+                aimPredictiveness -= 2f;
             }
 
             // Get very pissed off if Ares is enraged.
@@ -65,18 +70,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             int shootRate = shootTime / totalFlamesPerBurst;
             ref float attackTimer = ref npc.ai[0];
             ref float chargeDelay = ref npc.ai[1];
+            ref float shouldPrepareToFire = ref npc.Infernum().ExtraAI[1];
 
             // Initialize delays and other timers.
+            shouldPrepareToFire = 0f;
             if (chargeDelay == 0f)
                 chargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
 
             // Don't do anything if this arm should be disabled.
-            if (currentlyDisabled && attackTimer >= chargeDelay)
-                attackTimer = chargeDelay;
+            if (currentlyDisabled)
+                attackTimer = 1f;
+
+            // Become more resistant to damage as necessary.
+            npc.takenDamageMultiplier = 1f;
+            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
+                npc.takenDamageMultiplier *= 0.5f;
 
             // Hover near Ares.
-            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge ||
-                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ThermoplasmaDance;
+            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge; 
             float horizontalOffset = doingHoverCharge ? 250f : 375f;
             float verticalOffset = doingHoverCharge ? 150f : 100f;
             Vector2 hoverDestination = aresBody.Center + new Vector2(horizontalOffset, verticalOffset);
@@ -108,6 +119,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 plasma.velocity = (endOfCannon - plasma.position) * 0.04f;
                 plasma.scale = 1.25f;
                 plasma.noGravity = true;
+            }
+
+            // Decide the state of the particle drawer.
+            npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.ParticleSpawnRate = 99999999;
+            if (attackTimer > chargeDelay * 0.45f)
+            {
+                shouldPrepareToFire = 1f;
+                float chargeCompletion = MathHelper.Clamp(attackTimer / chargeDelay, 0f, 1f);
+                npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.ParticleSpawnRate = 3;
+                npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.SpawnAreaCompactness = 100f;
+                npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.chargeProgress = chargeCompletion;
+
+                if (attackTimer % 15f == 14f && chargeCompletion < 1f)
+                    npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.AddPulse(chargeCompletion * 6f);
             }
 
             // Fire plasma.
@@ -212,6 +237,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
+            ExoMechAIUtilities.DrawAresArmTelegraphEffect(spriteBatch, npc, Color.Lime, texture, center, frame, origin);
             spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresPlasmaFlamethrowerGlow");
@@ -227,6 +253,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            spriteBatch.SetBlendState(BlendState.Additive);
+
+            if (npc.Infernum().ExtraAI[1] == 1f)
+                npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.DrawBloom(npc.ModNPC<AresPlasmaFlamethrower>().CoreSpritePosition);
+            npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.DrawPulses(npc.ModNPC<AresPlasmaFlamethrower>().CoreSpritePosition);
+            npc.ModNPC<AresPlasmaFlamethrower>().EnergyDrawer.DrawSet(npc.ModNPC<AresPlasmaFlamethrower>().CoreSpritePosition);
+
+            spriteBatch.ResetBlendState();
             return false;
         }
         #endregion Frames and Drawcode

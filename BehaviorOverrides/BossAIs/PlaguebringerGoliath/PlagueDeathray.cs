@@ -12,8 +12,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
     public class PlagueDeathray : BaseLaserbeamProjectile
     {
+        public int LocalLifetime = 250;
         public int OwnerIndex => (int)projectile.ai[1];
-        public override float Lifetime => SmallDrone.LaserAttackTime;
+        public override float Lifetime => LocalLifetime;
         public override Color LaserOverlayColor => new Color(79, 150, 21, 50);
         public override Color LightCastColor => Color.Green;
         public override Texture2D LaserBeginTexture => Main.projectileTexture[projectile.type];
@@ -64,24 +65,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             projectile.Center = Main.npc[OwnerIndex].Center;
             projectile.velocity = (Main.npc[(int)Main.npc[OwnerIndex].ai[1]].Center - Main.npc[OwnerIndex].Center).SafeNormalize(Vector2.UnitY);
+
+            projectile.timeLeft = 900;
+            if (Time > 300f)
+                Time = 300f;
         }
 
-		public override float DetermineLaserLength()
-		{
+        public override float DetermineLaserLength()
+        {
             float fuck = Main.npc[OwnerIndex].Distance(Main.npc[(int)Main.npc[OwnerIndex].ai[1]].Center);
             return fuck;
         }
 
-		public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(ModContent.BuffType<Plague>(), 300);
         }
 
-		public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
-		{
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        {
             drawCacheProjsBehindNPCs.Add(index);
-		}
-	}
+        }
+    }
 }

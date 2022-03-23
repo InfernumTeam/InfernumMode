@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         }
 
         public void CreateDustAtBeginning()
-		{
+        {
             for (int i = 0; i < 4; i++)
             {
                 Dust fire = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(30f, 30f), 223);
@@ -62,13 +62,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
         }
 
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
             float _ = 0f;
             float width = projectile.width * 0.8f;
             Vector2 start = projectile.Center;
             Vector2 end = start + projectile.velocity * (LaserLength - 80f);
-			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;

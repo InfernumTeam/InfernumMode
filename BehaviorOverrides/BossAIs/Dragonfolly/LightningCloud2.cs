@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
-	public class LightningCloud2 : ModProjectile
+    public class LightningCloud2 : ModProjectile
     {
         public ref float Time => ref projectile.ai[0];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             projectile.friendly = false;
             projectile.tileCollide = true;
             projectile.timeLeft = 60;
-		}
+        }
 
         public override void AI()
         {
@@ -31,9 +31,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), projectile.Center);
                 projectile.localAI[0] = 1f;
-			}
+            }
             for (int i = 0; i < 16; i++)
-			{
+            {
                 Dust redLightning = Dust.NewDustPerfect(projectile.Center, 60, Main.rand.NextVector2Circular(3f, 3f));
                 redLightning.velocity *= Main.rand.NextFloat(1f, 1.9f);
                 redLightning.scale *= Main.rand.NextFloat(1.85f, 2.25f);
@@ -44,15 +44,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             Time++;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
-		{
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
             Color lineColor = Color.Red;
             float lineWidth = MathHelper.Lerp(0.25f, 3f, Utils.InverseLerp(0f, 22f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 22f, Time, true));
             Utils.DrawLine(spriteBatch, projectile.Center - Vector2.UnitY * 1900f, projectile.Center + Vector2.UnitY * 1900f, lineColor, lineColor, lineWidth);
-			return false;
-		}
+            return false;
+        }
 
-		public override void Kill(int timeLeft)
+        public override void Kill(int timeLeft)
         {
             Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -71,5 +71,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 }
             }
         }
-	}
+    }
 }

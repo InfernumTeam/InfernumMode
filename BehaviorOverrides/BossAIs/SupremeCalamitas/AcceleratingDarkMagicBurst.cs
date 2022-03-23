@@ -64,9 +64,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage("Images/Misc/Perlin");
             TrailDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 24);
             return true;
-		}
+        }
 
-		public override void Kill(int timeLeft)
+        public override void Kill(int timeLeft)
         {
             Main.PlaySound(SoundID.Item74, projectile.Center);
             Utilities.CreateGenericDustExplosion(projectile.Center, 242, 10, 7f, 1.25f);

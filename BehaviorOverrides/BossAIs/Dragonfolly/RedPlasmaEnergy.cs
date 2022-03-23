@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
-	public class RedPlasmaEnergy : ModNPC
+    public class RedPlasmaEnergy : ModNPC
     {
         public Player Target => Main.player[npc.target];
         public ref float Time => ref npc.ai[0];
@@ -20,13 +20,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Plasma Orb");
-			NPCID.Sets.TrailingMode[npc.type] = 0;
+            NPCID.Sets.TrailingMode[npc.type] = 0;
             NPCID.Sets.TrailCacheLength[npc.type] = 7;
         }
 
         public override void SetDefaults()
         {
-			npc.npcSlots = 1f;
+            npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
             npc.width = npc.height = 22;
             npc.damage = 185;
@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             npc.dontTakeDamage = true;
         }
 
-		public override void AI()
+        public override void AI()
         {
             npc.TargetClosest(true);
             Lighting.AddLight(npc.Center, Color.White.ToVector3());

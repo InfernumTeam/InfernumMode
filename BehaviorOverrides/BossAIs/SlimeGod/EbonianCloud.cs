@@ -27,13 +27,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         }
 
         public override void AI()
-		{
+        {
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodPurple))
-			{
+            {
                 npc.active = false;
                 npc.netUpdate = true;
                 return;
-			}
+            }
 
             npc.TargetClosest();
 
@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 npc.velocity = Vector2.Zero;
 
             for (int i = 0; i < 4; i++)
-			{
+            {
                 Dust gel = Dust.NewDustDirect(npc.position, npc.width, npc.height, Main.rand.NextBool(2) ? 4 : 267);
                 gel.color = gel.type == 267 ? Color.Green : Color.Purple;
                 gel.velocity = Main.rand.NextVector2Circular(3f, 3f);

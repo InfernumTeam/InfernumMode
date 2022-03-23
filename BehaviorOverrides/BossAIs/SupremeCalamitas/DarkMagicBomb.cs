@@ -42,10 +42,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 8; i++)
             {
-                Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 16f;
-                Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 540, 0f);
+                Vector2 shootVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 16f;
+                Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<DarkMagicFlame>(), 500, 0f);
             }
         }
     }

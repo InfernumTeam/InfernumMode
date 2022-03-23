@@ -7,6 +7,7 @@ using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.Tiles;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
+using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
@@ -202,11 +203,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Handle initializations.
             if (npc.localAI[0] == 0f)
             {
-                // Teleport above the player.
-                Vector2 oldPosition = npc.Center;
-                npc.Center = target.Center - Vector2.UnitY * 160f;
-                Dust.QuickDustLine(oldPosition, npc.Center, 300f, Color.Red);
-
                 // Define the arena.
                 Vector2 arenaArea = new Vector2(140f, 140f);
                 npc.Infernum().arenaRectangle = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
@@ -233,12 +229,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             else
                                 WorldGen.SquareTileFrame(i, j, true);
                         }
-
-                        // Erase old arena tiles.
-                        else if (CalamityUtils.ParanoidTileRetrieval(i, j).type == arenaTileType)
-                            Main.tile[i, j].active(false);
                     }
                 }
+
+                // Teleport above the player.
+                Vector2 oldPosition = npc.Center;
+                npc.Center = target.Center - Vector2.UnitY * 160f;
+                Dust.QuickDustLine(oldPosition, npc.Center, 300f, Color.Red);
 
                 attackTextDelay = 180f;
 
@@ -277,7 +274,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (textState == 0f && attackTextDelay == 2f)
                     initialChargeupTime = 240f;
 
-                attackTextDelay--;
+                if (!IntroScreenManager.ScreenIsObstructed)
+                    attackTextDelay--;
+                else
+                    npc.netUpdate = true;
                 return false;
             }
 
@@ -325,7 +325,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
 
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
-                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
 
                 return false;
             }
@@ -444,23 +444,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             // Slow down and look at the target.
             npc.velocity *= 0.95f;
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
 
             switch ((int)textState)
             {
                 // Start of battle.
                 case 0:
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 120f)
-                        Main.NewText("...So it's you.", Color.Orange);
+                        Utilities.DisplayText("...So it's you.", Color.Orange);
 
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 20f)
-                        Main.NewText("After all you've done, I will make you suffer.", Color.Orange);
+                        Utilities.DisplayText("After all you've done, I will make you suffer.", Color.Orange);
                     break;
 
                 // After Sepulcher.
                 case 2:
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 100f)
-                        Main.NewText("...You're still alive?", Color.Orange);
+                        Utilities.DisplayText("...You're still alive?", Color.Orange);
                     break;
 
                 // Phase 2.
@@ -468,10 +468,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     frameType = (int)SCalFrameType.Casting;
                     frameChangeSpeed = 0.15f;
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 240f)
-                        Main.NewText("The powers you wield. The strength you've amassed.", Color.Orange);
+                        Utilities.DisplayText("The powers you wield. The strength you've amassed.", Color.Orange);
 
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 150f)
-                        Main.NewText("They will not stop me.", Color.Orange);
+                        Utilities.DisplayText("They will not stop me.", Color.Orange);
 
                     // Summon the shadow demon.
                     if (attackTextDelay == 75f)
@@ -490,10 +490,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     frameType = (int)SCalFrameType.Casting;
                     frameChangeSpeed = 0.15f;
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 240f)
-                        Main.NewText("You are an anomaly. An unforeseen deviation.", Color.Orange);
+                        Utilities.DisplayText("You are an anomaly. An unforeseen deviation.", Color.Orange);
 
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 150f)
-                        Main.NewText("...And in the end, the bloodshed continues.", Color.Orange);
+                        Utilities.DisplayText("...And in the end, the bloodshed continues.", Color.Orange);
 
                     // Do a cast animation.
                     Vector2[] brotherSpawnPositions = new Vector2[]
@@ -508,7 +508,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             Vector2 castDustPosition = Vector2.CatmullRom(npc.Center + Vector2.UnitY * 800f,
                                 npc.Center, brotherSpawnPositions[i],
-                                brotherSpawnPositions[i] + Vector2.UnitY * 800f, 
+                                brotherSpawnPositions[i] + Vector2.UnitY * 800f,
                                 Utils.InverseLerp(150f, 75f, attackTextDelay, true));
                             Dust fire = Dust.NewDustPerfect(castDustPosition, 267);
                             fire.color = Color.Orange;
@@ -548,7 +548,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (attackTextDelay == 90f)
                     {
                         if (!BossRushEvent.BossRushActive)
-                            Main.NewText("When the ashes fall, what will all of this have been for?", Color.Orange);
+                            Utilities.DisplayText("When the ashes fall, what will all of this have been for?", Color.Orange);
 
                         // Transition to the Epiphany section of the track.
                         Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
@@ -596,7 +596,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (attackTextDelay == 150f)
                     {
                         if (!BossRushEvent.BossRushActive)
-                            Main.NewText("I have no future if I lose here!", Color.Orange);
+                            Utilities.DisplayText("I have no future if I lose here!", Color.Orange);
 
                         // Create a lot of fire dust.
                         for (int i = 0; i < 80; i++)
@@ -634,7 +634,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Final phase.
                 case 8:
                     if (!BossRushEvent.BossRushActive && attackTextDelay == 150f)
-                        Main.NewText("Just stop!", Color.Orange);
+                        Utilities.DisplayText("Just stop!", Color.Orange);
 
                     // Release a bunch of energy explosions.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTextDelay == 150f || attackTextDelay == 120f || attackTextDelay == 90f || attackTextDelay == 60f)
@@ -647,7 +647,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             // Slow down and look at the target.
             npc.velocity *= 0.95f;
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
 
             // Charge up power.
             Vector2 dustSpawnPosition = npc.Center + Main.rand.NextVector2Unit(40f, 60f);
@@ -755,7 +755,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Hover in place.
                 case 0:
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 31f, 0.75f);
-                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
 
                     if (npc.WithinRange(hoverDestination, 45f))
                     {
@@ -791,7 +791,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         for (int i = 0; i < bombCount; i++)
                         {
                             Vector2 bombSpawnPosition = (npc.Center + target.Center) * 0.5f + Main.rand.NextVector2Circular(spawnOffsetMax, spawnOffsetMax);
-                            Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkMagicBomb>(), 550, 0f);
+                            Utilities.NewProjectileBetter(bombSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkMagicBomb>(), 500, 0f);
                         }
                     }
 
@@ -820,7 +820,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             int shootTime = 50;
             int shootRate = 2;
             float shootSpeed = enrageFactor * 3f + 10.5f;
-            float angularVariance = 1.53f;
+            float angularVariance = 1.64f;
 
             if (currentPhase >= 1)
             {
@@ -873,7 +873,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed);
             npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.08f);
             npc.SimpleFlyMovement(idealVelocity, hoverSpeed / 50f);
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
 
             // Fire the fan.
             if (firing)
@@ -884,7 +884,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 float shootRotationalOffset = MathHelper.Lerp(-angularVariance, angularVariance, Utils.InverseLerp(attackDelay, attackDelay + shootTime, wrappedAttackTimer, true));
                 Vector2 shootVelocity = (shootRotationalOffset + npc.AngleTo(target.Center)).ToRotationVector2() * shootSpeed;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 540, 0f);
+                {
+                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity.SafeNormalize(Vector2.Zero), ModContent.ProjectileType<FanTelegraphLine>(), 0, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 500, 0f);
+                }
 
                 Main.PlaySound(SoundID.Item73, target.Center);
             }
@@ -959,7 +962,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         npc.TargetClosest();
 
                         Vector2 shootVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * shotCounter / fireBurstCount) * 12f;
-                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<SwervingDarkMagicBlast>(), 540, 0f);
+                        Utilities.NewProjectileBetter(npc.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<SwervingDarkMagicBlast>(), 500, 0f);
 
                         shotCounter++;
                         npc.netUpdate = true;
@@ -967,7 +970,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 }
             }
 
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
 
             if (attackTimer > fireBurstCount * fireBurstShootRate + fireBurstAttackDelay + 105f)
                 SelectNewAttack(npc);
@@ -1013,12 +1016,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center);
                     flameShootVelocity = Vector2.Lerp(flameShootVelocity, -Vector2.UnitY.RotatedByRandom(0.92f), 0.7f) * 13f;
-                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 550, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 500, 0f);
                 }
             }
 
             // Look at the target.
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
 
             if (attackTimer > attackCycleCount * (attackDelay + shootTime + afterShootDelay))
                 SelectNewAttack(npc);
@@ -1040,13 +1043,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (currentPhase >= 3)
                 lightningCount += 6;
 
+            int attackCounter = (int)(attackTimer / (attackDelay + telegraphTime + afterShootDelay));
             float wrappedAttackTimer = attackTimer % (attackDelay + telegraphTime + afterShootDelay);
 
             // Slow down prior to creating lines.
             if (wrappedAttackTimer > attackDelay)
             {
-                hoverSpeed = 0f;
+                if (attackCounter == 0)
+                    hoverSpeed = 0f;
                 npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, hoverSpeed / 30f);
+                hoverSpeed = 0f;
             }
 
             // Hover to the top left/right of the target.
@@ -1123,27 +1129,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             else
             {
                 npc.velocity *= 0.97f;
-                if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == redirectTime  + (int)(shootDelay * 0.5f))
+                if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == redirectTime + (int)(shootDelay * 0.5f))
                 {
                     for (float verticalOffset = -spawnOffsetMax; verticalOffset < spawnOffsetMax; verticalOffset += 150f)
                     {
                         Vector2 spawnPosition = target.Center + new Vector2(1400f, verticalOffset);
                         Vector2 shootVelocity = Vector2.UnitX * -12f;
 
-                        Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 580, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 530, 0f);
 
                         spawnPosition = target.Center + new Vector2(-1100f, verticalOffset);
-                        Utilities.NewProjectileBetter(spawnPosition, -shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 580, 0f);
+                        Utilities.NewProjectileBetter(spawnPosition, -shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 530, 0f);
                     }
 
                     for (int i = 0; i < 7; i++)
                     {
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.79f, 0.79f, i / 6f)) * 3f;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 580, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 530, 0f);
                     }
                 }
             }
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
 
             if (attackTimer >= attackCycleCount * (redirectTime + shootDelay) + redirectTime * 0.9f)
                 SelectNewAttack(npc);
@@ -1160,7 +1166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 500f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed / 45f);
             npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(hoverDestination), 0.05f);
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
 
             // Determine frames.
             frameType = (int)SCalFrameType.FasterUpwardDraft;
@@ -1183,7 +1189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     Vector2 blastSpawnPosition = target.Center + Vector2.UnitX * Main.rand.NextBool().ToDirectionInt() * 1000f;
                     Vector2 blastShootVelocity = (target.Center - blastSpawnPosition).SafeNormalize(Vector2.UnitY) * 8.5f;
-                    Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 600, 0f, Main.myPlayer);
+                    Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 550, 0f, Main.myPlayer);
                 }
             }
 
@@ -1208,7 +1214,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.Opacity = MathHelper.Lerp(npc.Opacity, 0.45f, 0.08f);
                     Vector2 hoverDestination = target.Center - Vector2.UnitY * 200f;
                     hoverDestination.X += hoverDirection * 480f;
-                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
 
                     // After a sufficient amount of time has passed or if close to the destination, grind to a halt.
                     if (npc.WithinRange(hoverDestination, 100f) || attackTimer >= 75f)
@@ -1235,11 +1241,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int projectileType = ModContent.ProjectileType<AcceleratingDarkMagicBurst>();
-                            int damage = 640;
+                            int damage = 580;
 
-                            for (int i = 0; i < 12; i++)
+                            for (int i = 0; i < 7; i++)
                             {
-                                Vector2 shootVelocity = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * 11f;
+                                Vector2 shootVelocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 11f;
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity, shootVelocity, projectileType, damage, 0f);
                             }
 
@@ -1320,11 +1326,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer % 2f == 1f)
                             {
                                 Vector2 flameShootVelocity = shootAngle.ToRotationVector2() * 16f;
-                                Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 600, 0f);
+                                Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<RedirectingDarkMagicFlame>(), 560, 0f);
                             }
                         }
 
-                        npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+                        npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
                     }
                     else
                     {
@@ -1347,14 +1353,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                         Main.PlaySound(SoundID.Item72, target.Center);
                     }
-                    
+
                     if (wrappedAttackTimer == (int)(teleportShootDelay / 2))
                     {
                         for (int i = 0; i < 5; i++)
                         {
                             float shootOffsetAngle = MathHelper.Lerp(-0.71f, 0.71f, i / 4f);
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(shootOffsetAngle) * teleportShootSpeed;
-                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 600, 0f);
+                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 560, 0f);
                         }
                     }
 
@@ -1366,7 +1372,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     }
 
                     npc.velocity *= 0.9f;
-                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
                     break;
 
                 // Do a final, grand bullet hell as a conclusion to the battle.
@@ -1383,30 +1389,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             if (attackTimer < finalBulletHellTime / 3f)
                             {
                                 Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
-                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
                             }
 
                             // Release blasts from both horizontal sides.
                             else if (attackTimer < finalBulletHellTime * 2f / 3f)
                             {
                                 Vector2 blastSpawnPosition = target.Center + new Vector2(1000f, Main.rand.NextFloatDirection() * 1000f);
-                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
 
                                 blastSpawnPosition = target.Center + new Vector2(-1000f, Main.rand.NextFloatDirection() * 1000f);
-                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
                             }
 
                             // Release blasts from above and both horizontal sides.
                             else
                             {
                                 Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
-                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
 
                                 blastSpawnPosition = target.Center + new Vector2(1000f, Main.rand.NextFloatDirection() * 1000f);
-                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
 
                                 blastSpawnPosition = target.Center + new Vector2(-1000f, Main.rand.NextFloatDirection() * 1000f);
-                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 600, 0f);
+                                Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
                             }
                         }
 
@@ -1415,7 +1421,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 1000f, Main.rand.NextFloatDirection() * 1000f);
                             Vector2 blastShootVelocity = Vector2.UnitX * Math.Sign(target.Center.X - blastSpawnPosition.X) * blastShootSpeed * 1.6f;
-                            int skull = Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 600, 0f, Main.myPlayer);
+                            int skull = Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull2>(), 560, 0f, Main.myPlayer);
                             Main.projectile[skull].timeLeft = 270;
                         }
 
@@ -1423,7 +1429,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             Vector2 blastSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(1050f, 1050f);
                             Vector2 blastShootVelocity = (target.Center - blastSpawnPosition).SafeNormalize(Vector2.UnitY) * blastShootSpeed * 1.6f;
-                            Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 600, 0f, Main.myPlayer);
+                            Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<DarkFireblast>(), 560, 0f, Main.myPlayer);
                         }
                     }
 
@@ -1442,7 +1448,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (attackTimer > finalBulletHellTime)
                         npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.05f, 0f, 1f);
 
-                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
                     npc.velocity *= 0.96f;
 
                     if (attackTimer > finalBulletHellTime + 240f)
@@ -1468,25 +1474,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.noGravity = false;
                     npc.noTileCollide = false;
                     npc.velocity.X *= 0.97f;
-                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();;
+                    npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt(); ;
                     npc.damage = 0;
 
                     if (!BossRushEvent.BossRushActive)
                     {
                         if (attackTimer == 60f)
-                            Main.NewText("So...This is how it ends.", Color.Orange);
+                            Utilities.DisplayText("So...This is how it ends.", Color.Orange);
 
                         if (attackTimer == 210f)
-                            Main.NewText("...I have no energy left to resent you.", Color.Orange);
+                            Utilities.DisplayText("...I have no energy left to resent you.", Color.Orange);
 
                         if (attackTimer == 360f)
-                            Main.NewText("Yet perhaps... from this, a new age will begin.", Color.Orange);
+                            Utilities.DisplayText("Yet perhaps... from this, a new age will begin.", Color.Orange);
 
                         if (attackTimer == 510f)
-                            Main.NewText("Whatever awaits you, I am certain the consequences will be felt.", Color.Orange);
+                            Utilities.DisplayText("Whatever awaits you, I am certain the consequences will be felt.", Color.Orange);
 
                         if (attackTimer == 640f)
-                            Main.NewText("It will all be in your hands now.", Color.Orange);
+                            Utilities.DisplayText("It will all be in your hands now.", Color.Orange);
 
                         if (attackTimer == 760f)
                         {

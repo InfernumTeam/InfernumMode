@@ -8,12 +8,15 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-	public class HomingBrimstoneBurst : ModProjectile
+    public class HomingBrimstoneBurst : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
         public const int HomeTime = 90;
         public const int Lifetime = 360;
         public const int TimeBeforeSwirl = 170;
+
+        public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Flame");
@@ -42,18 +45,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             Lighting.AddLight(projectile.Center, Color.Red.ToVector3() * 0.75f);
 
             if (projectile.timeLeft >= Lifetime - HomeTime)
-			{
+            {
                 Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
                 float idealAngle = projectile.AngleTo(target.Center);
                 projectile.velocity = projectile.velocity.ToRotation().AngleLerp(idealAngle, 0.009f).ToRotationVector2() * projectile.velocity.Length();
-			}
+            }
 
             // Make an incomplete arc after a certain amount of time has passed.
             if (projectile.timeLeft <= Lifetime - TimeBeforeSwirl)
                 projectile.velocity = projectile.velocity.RotatedBy(MathHelper.TwoPi * 0.8f / (Lifetime - TimeBeforeSwirl));
 
             if (!Main.dedServ && Main.rand.NextBool(5))
-			{
+            {
                 Dust fire = Dust.NewDustPerfect(projectile.Center, 267);
                 fire.velocity = Main.rand.NextVector2CircularEdge(3f, 3f);
                 fire.color = Color.Red;
@@ -80,17 +83,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         }
 
         public float WidthFunction(float completionRatio)
-		{
+        {
             float squeezeInterpolant = (float)Math.Pow(Utils.InverseLerp(0f, 0.27f, completionRatio, true), 0.4f) * Utils.InverseLerp(1f, 0.86f, completionRatio, true);
             return MathHelper.SmoothStep(3f, projectile.width, squeezeInterpolant) * projectile.Opacity;
         }
 
         public Color ColorFunction(float completionRatio)
-		{
+        {
             Color color = Color.Lerp(Color.Red, Color.White, (float)Math.Pow(completionRatio, 2D));
             color *= 1f - 0.67f * (float)Math.Pow(completionRatio, 3D);
             return color * projectile.Opacity;
-		}
+        }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {

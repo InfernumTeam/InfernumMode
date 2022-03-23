@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Auto use LF for CS files
+*.cs eol=lf

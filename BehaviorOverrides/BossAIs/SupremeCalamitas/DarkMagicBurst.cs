@@ -53,9 +53,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             for (int i = 0; i < DartCountFactor * 10f; i++)
             {
-                int dartDamage = 540;
                 Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedByRandom(0.77f) * projectile.velocity.Length() * Main.rand.NextFloat(0.65f, 0.85f);
-                int dart = Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), dartDamage, 0f);
+                int dart = Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<BrimstoneBarrage>(), 540, 0f);
                 if (Main.projectile.IndexInRange(dart))
                 {
                     Main.projectile[dart].ai[0] = 1f;

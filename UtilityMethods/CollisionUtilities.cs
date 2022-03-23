@@ -1,10 +1,18 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.World.Generation;
 
 namespace InfernumMode
 {
     public static partial class Utilities
     {
+        public static Vector2 GetGroundPositionFrom(Vector2 v)
+        {
+            if (!WorldUtils.Find(v.ToTileCoordinates(), Searches.Chain(new Searches.Down(9001), new Conditions.IsSolid()), out Point result))
+                return v;
+            return result.ToWorldCoordinates();
+        }
+
         public static bool RotatingHitboxCollision(this Entity entity, Vector2 targetTopLeft, Vector2 targetHitboxDimensions, Vector2? directionOverride = null)
         {
             Vector2 lineDirection = directionOverride ?? entity.velocity;

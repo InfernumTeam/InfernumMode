@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
-	public class CultistFireBeamTelegraph : ModProjectile
+    public class CultistFireBeamTelegraph : ModProjectile
     {
         public ref float TargetIndex => ref projectile.ai[0];
         public Player Target => Main.player[(int)TargetIndex];
@@ -27,11 +27,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         {
             // Determine an initial target.
             if (Main.netMode != NetmodeID.MultiplayerClient && projectile.localAI[0] == 0f)
-			{
+            {
                 TargetIndex = Player.FindClosest(projectile.Center, 1, 1);
                 projectile.localAI[0] = 1f;
                 projectile.netUpdate = true;
-			}
+            }
 
             projectile.scale = Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * Utils.InverseLerp(85f, 75f, projectile.timeLeft, true);
             projectile.scale = MathHelper.SmoothStep(0.04f, 4f, projectile.scale);
@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool ShouldUpdatePosition() => false;
 
-		public override void Kill(int timeLeft)
+        public override void Kill(int timeLeft)
         {
             Main.PlaySound(SoundID.Zombie, Target.Center, 104);
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -61,9 +61,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             float aimDirection = (MathHelper.WrapAngle(projectile.AngleTo(Target.Center) - projectile.velocity.ToRotation()) > 0f).ToDirectionInt();
             Vector2 beamDirection = projectile.velocity.SafeNormalize(Vector2.UnitY);
 
-            int beam = Utilities.NewProjectileBetter(projectile.Center, beamDirection, ModContent.ProjectileType<FireBeam>(), 205, 0f);
+            int beam = Utilities.NewProjectileBetter(projectile.Center, beamDirection, ModContent.ProjectileType<FireBeam>(), 235, 0f);
             if (Main.projectile.IndexInRange(beam))
-                Main.projectile[beam].ai[1] = aimDirection * 0.028f;
+                Main.projectile[beam].ai[1] = aimDirection * 0.0254f;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;

@@ -9,7 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
     public class CursedSoul : ModProjectile
     {
         public bool SoulOfNight
-		{
+        {
             get => projectile.ai[0] == 1f;
             set => projectile.ai[0] = value.ToInt();
         }
@@ -46,11 +46,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             }
 
             if (ShouldFloatUpward)
-			{
+            {
                 projectile.velocity.X *= MathHelper.Lerp(0.982f, 0.974f, projectile.identity % 8f / 8f);
                 if (projectile.velocity.Y > -20f)
                     projectile.velocity.Y -= 0.24f;
-			}
+            }
             else
             {
                 if (projectile.timeLeft > 190f)
@@ -78,12 +78,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 projectile.alpha = Utils.Clamp(projectile.alpha - 9, 0, 255);
         }
 
-		public override Color? GetAlpha(Color lightColor)
-		{
-			return (SoulOfNight ? Color.Lerp(Color.MediumPurple, Color.Black, 0.6f) : Color.Wheat) * projectile.Opacity;
-		}
+        public override Color? GetAlpha(Color lightColor)
+        {
+            return (SoulOfNight ? Color.Lerp(Color.MediumPurple, Color.Black, 0.6f) : Color.Wheat) * projectile.Opacity;
+        }
 
-		public override void Kill(int timeLeft)
+        public override void Kill(int timeLeft)
         {
             CalamityGlobalProjectile.ExpandHitboxBy(projectile, 60);
             projectile.alpha = 0;
@@ -99,5 +99,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 ectoplasm.color = projectile.GetAlpha(Color.White);
             }
         }
-	}
+    }
 }

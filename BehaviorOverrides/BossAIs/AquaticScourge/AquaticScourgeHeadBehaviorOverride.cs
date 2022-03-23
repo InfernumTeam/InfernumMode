@@ -16,7 +16,7 @@ using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 {
-	public class AquaticScourgeHeadBehaviorOverride : NPCBehaviorOverride
+    public class AquaticScourgeHeadBehaviorOverride : NPCBehaviorOverride
     {
         public enum AquaticScourgeAttackType
         {
@@ -33,13 +33,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
-        #region AI
-
         public override bool PreAI(NPC npc)
         {
             // Select a new target if an old one was lost.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
 
             npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
 
@@ -63,6 +60,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 if (npc.damage == 0)
                     npc.timeLeft *= 20;
+
+                CalamityMod.CalamityMod.bossKillTimes.TryGetValue(npc.type, out int revKillTime);
+                npc.Calamity().KillTime = revKillTime;
 
                 angeredYet = 1f;
                 npc.damage = npc.defDamage;
@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                             case AquaticScourgeAttackType.JustCharges:
                                 speedFactor = 1.5f;
                                 if (attackTimer > 300f)
-                                    GotoNextAttack(npc);
+                                    SelectNextAttack(npc);
                                 break;
                         }
                         attackTimer++;
@@ -206,7 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             if (attackTimer >= shootRate * shootCount)
-                GotoNextAttack(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_SpitTeeth(NPC npc, Player target, float attackTimer, float enrageFactor)
@@ -238,7 +238,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             if (attackTimer >= shootRate * shootCount)
-                GotoNextAttack(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_ReleaseCircleOfSand(NPC npc, Player target, float attackTimer, float enrageFactor)
@@ -269,7 +269,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             if (attackTimer >= shootRate * shootCount)
-                GotoNextAttack(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_BelchParasites(NPC npc, float attackTimer, ref float speedFactor)
@@ -294,7 +294,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             if (attackTimer >= 205f)
-                GotoNextAttack(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoAttack_BubbleSummon(NPC npc, Player target, float attackTimer, float enrageFactor, ref float speedFactor)
@@ -318,9 +318,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             if (attackTimer >= 385f)
-                GotoNextAttack(npc);
+                SelectNextAttack(npc);
         }
-        
+
         public static void DoAttack_CallForSeekers(NPC npc, Player target, float attackTimer, ref float speedFactor)
         {
             int summonRate = 90;
@@ -360,7 +360,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             }
 
             if (attackTimer >= summonRate * summonCount)
-                GotoNextAttack(npc);
+                SelectNextAttack(npc);
         }
 
         public static void DoMovement_IdleHoverMovement(NPC npc, Player target)
@@ -463,7 +463,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             }
         }
 
-        internal static void GotoNextAttack(NPC npc)
+        internal static void SelectNextAttack(NPC npc)
         {
             npc.alpha = 0;
             float lifeRatio = npc.life / (float)npc.lifeMax;
@@ -488,6 +488,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             else
                 nextAttack = AquaticScourgeAttackType.JustCharges;
 
+            // Get a new target.
+            npc.TargetClosest();
+
             npc.ai[2] = (int)nextAttack;
             npc.ai[3] = 0f;
 
@@ -500,7 +503,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
         }
 
         #endregion AI Utility Methods
-
-        #endregion AI
     }
 }

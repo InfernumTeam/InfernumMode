@@ -95,7 +95,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         if (Vector2.Dot(npc.SafeDirectionTo(arena.Center.ToVector2()), shootVelocity) < 0f)
                             shootVelocity *= -1f;
                         shootVelocity *= shootSpeed;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast2>(), 575, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast2>(), 530, 0f);
                     }
                     break;
 
@@ -108,7 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (Main.netMode != NetmodeID.MultiplayerClient && npc.WithinRange(hoverDestination, 50f) && attackTimer % 24f == 23f)
                     {
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 4f;
-                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 575, 0f);
+                        Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 530, 0f);
                         npc.netUpdate = true;
                     }
                     offsetAngle += MathHelper.ToRadians(0.67f);

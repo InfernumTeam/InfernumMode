@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             return false;
         }
 
-		public override void FindFrame(NPC npc, int frameHeight)
+        public override void FindFrame(NPC npc, int frameHeight)
         {
             int currentFrame = 0;
             float frameUpdateSpeed = npc.ai[0] == (int)SupremeCatastropheAttackState.SliceTarget ? 260f : 130f;
@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.frame.Y = yFrame * npc.frame.Height;
         }
 
-		public static void DoBehavior_SliceTarget(NPC npc, Player target, bool alone, ref float attackTimer)
+        public static void DoBehavior_SliceTarget(NPC npc, Player target, bool alone, ref float attackTimer)
         {
             float predictivenessFactor = 0f;
             float chargeSpeed = 36f;
@@ -146,7 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         if (Main.netMode != NetmodeID.MultiplayerClient && alone)
                         {
                             int projectileType = ModContent.ProjectileType<DarkMagicBurst>();
-                            int damage = 560;
+                            int damage = 520;
                             Vector2 burstVelocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * 8f;
                             Utilities.NewProjectileBetter(npc.Center + burstVelocity * 2f, burstVelocity, projectileType, damage, 0f);
                             Utilities.NewProjectileBetter(npc.Center - burstVelocity * 2f, -burstVelocity, projectileType, damage, 0f);
@@ -242,7 +242,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int projectileType = ModContent.ProjectileType<DarkMagicBurst>();
-                        int damage = 560;
+                        int damage = 520;
 
                         for (int i = 0; i < burstsPerBurst; i++)
                         {
@@ -315,7 +315,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 shootVelocity = Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * 16f;
-                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull>(), 550, 0f);
+                    Utilities.NewProjectileBetter(npc.Center, shootVelocity, ModContent.ProjectileType<WavyDarkMagicSkull>(), 500, 0f);
                 }
             }
 

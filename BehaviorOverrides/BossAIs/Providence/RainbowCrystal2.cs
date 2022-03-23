@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
-	public class RainbowCrystal2 : ModProjectile
+    public class RainbowCrystal2 : ModProjectile
     {
         public float ProvidenceLifeRatio => Main.npc[CalamityGlobalNPC.holyBoss].life / (float)Main.npc[CalamityGlobalNPC.holyBoss].lifeMax;
         public ref float CrystalHue => ref projectile.ai[0];
@@ -57,14 +57,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 return;
             }
 
-			if (projectile.timeLeft < 300)
+            if (projectile.timeLeft < 300)
                 projectile.tileCollide = true;
 
             projectile.alpha = Utils.Clamp(projectile.alpha - 8, 0, 255);
             if (projectile.alpha == 0)
                 Lighting.AddLight(projectile.Center, CrystalColor.ToVector3() * 0.7f);
 
-            projectile.velocity *= 1.004f;
+            projectile.velocity *= 1.003f;
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             EmitIdleDust();
@@ -154,9 +154,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

@@ -1,334 +1,340 @@
 ﻿using CalamityMod;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
-
-using static InfernumMode.Utilities;
-using CalamityMod.NPCs;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
     public class MoonLordHeadBehaviorOverride : NPCBehaviorOverride
     {
-        public enum MoonLordHeadAttackState
-        {
-            Death = -3,
-            FreeEye = -2,
-            DeathrayPupilAdjusetments = 0,
-            FireDeathray = 1,
-            LookAtTarget = 2,
-            FirePhantasmalBolts = 3,
-            Reset = 4
-        }
-
         public override int NPCOverrideType => NPCID.MoonLordHead;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-
-        // ai[0] = ai state. -3 = true death. Occurs when the core is killed instead of the head. -2 = dead, don't do anything.
-        //         0 = prepare deathray. 1 = do deathray. 2 = do nothing for a bit. 3 = spawn phantasmal bolts. (5) = go to next ai state
-        // ai[1] = weird tentacle thing animation counter when dead (frame is determined by this divided by 8)
-        // ai[2] = value used in determining the angle of the pupil while deathray is active
-        // ai[3] = core index
-        // localAI[0] = angle of pupil when eye is open
-        // localAI[1] = 0-1 multiplier of the imaginary ellipse used to determine where the pupil is when eye is open
-        // localAI[2] = scale of the pupil when eye is open
-        // localAI[3] = eye open/close animation counter (does not apply when dead)
-        // ExtraAI[0] = state counter (used in check for what the next attack will be)
-        // ExtraAI[1] = ai counter
-        // ExtraAI[2] and newAI[0] = things to make sure the eye appears properly. these can be ignored.
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public override bool PreAI(NPC npc)
         {
-            CalamityGlobalNPC calamityGlobalNPC = npc.Calamity();
-
-            // Despawn instantly if anything happened to the core.
-            if (!Main.npc.IndexInRange((int)npc.ai[3]) || !Main.npc[(int)npc.ai[3]].active || Main.npc[(int)npc.ai[3]].type != NPCID.MoonLordCore)
+            // Disappear if the body is not present.
+            if (!Main.npc.IndexInRange((int)npc.ai[3]) || !Main.npc[(int)npc.ai[3]].active)
             {
-                npc.life = 0;
-                npc.HitEffect();
                 npc.active = false;
                 return false;
             }
 
-            // Ref local variables.
-            ref float attackStateValue = ref npc.ai[0];
-            MoonLordHeadAttackState attackState = (MoonLordHeadAttackState)attackStateValue;
-            ref float tentacleAnimationFrameCounter = ref npc.ai[1];
-            Projectile currentlyFiredRay = Main.projectile[(int)npc.ai[2]];
+            // Define the core NPC and inherit properties from it.
             NPC core = Main.npc[(int)npc.ai[3]];
-            ref float pupilAngle = ref npc.localAI[0];
+
+            // Hacky workaround to problems with popping.
+            if (npc.life < 1000)
+                npc.life = 1000;
+
+            npc.target = core.target;
+            npc.dontTakeDamage = false;
+
+            float attackTimer = core.ai[1];
+            bool hasPopped = npc.ai[0] == -2f;
+            Player target = Main.player[npc.target];
+            ref float pupilRotation = ref npc.localAI[0];
             ref float pupilOutwardness = ref npc.localAI[1];
             ref float pupilScale = ref npc.localAI[2];
             ref float eyeAnimationFrameCounter = ref npc.localAI[3];
 
-            // Kill and spawn true eyes
-            if ((calamityGlobalNPC.newAI[0] == 1f || npc.life < 1700) && npc.Infernum().ExtraAI[2] != -2f)
-                MoonLordHandBehaviorOverride.SummonTrueEye(npc);
-
-            // Variables
-            npc.dontTakeDamage = eyeAnimationFrameCounter >= 15f || calamityGlobalNPC.newAI[0] == 1f || (npc.ai[0] <= 1f && npc.life < 1800);
-
-            // Enrage if the player leaves the arena
-            bool enrage = core.Infernum().ExtraAI[0] == 0f;
-
-            npc.velocity = Vector2.Zero;
-            npc.Center = core.Center + new Vector2(0f, -400f);
-
-            Vector2 ellipseVector = Utils.Vector2FromElipse(pupilAngle.ToRotationVector2(), new Vector2(27f, 59f) * pupilOutwardness);
-
             int idealFrame = 0;
-            float lifeRatio = npc.life / (float)npc.lifeMax;
 
-            // Invulnerablility state. Does nothing.
-            if (npc.ai[0] >= 0f || attackState == MoonLordHeadAttackState.FreeEye)
+            // Glue the head above the body.
+            npc.velocity = Vector2.Zero;
+            npc.Center = core.Center - Vector2.UnitY * 400f;
+
+            switch ((MoonLordCoreBehaviorOverride.MoonLordAttackState)(int)core.ai[0])
             {
-                if (attackState == MoonLordHeadAttackState.FreeEye)
-                {
-                    if (calamityGlobalNPC.newAI[0] != 2f)
-                        calamityGlobalNPC.newAI[0] = 2f;
-
-                    npc.life = npc.lifeMax;
-                    npc.netUpdate = true;
-                    npc.dontTakeDamage = true;
-
-                    // Tentacle animation.
-                    tentacleAnimationFrameCounter++;
-                    if (tentacleAnimationFrameCounter >= 32f)
-                        tentacleAnimationFrameCounter = 0f;
-                    if (tentacleAnimationFrameCounter < 0f)
-                        tentacleAnimationFrameCounter = 0f;
-                }
-
-                // Prepare for death.
-                if (core.ai[0] == 2f)
-                {
-                    attackStateValue = (int)MoonLordHeadAttackState.Death;
-                    return false;
-                }
-            }
-
-            switch (attackState)
-            {
-                // Death effects.
-                case MoonLordHeadAttackState.Death:
-                    // Don't take damage, and snap neck by rotating the head pi/12 radians.
-                    npc.dontTakeDamage = true;
-                    npc.rotation = MathHelper.Lerp(npc.rotation, MathHelper.Pi / 12f, 0.07f);
-
-                    // Tentacle animation.
-                    tentacleAnimationFrameCounter++;
-                    if (tentacleAnimationFrameCounter >= 32f)
-                        tentacleAnimationFrameCounter = 0f;
-                    if (tentacleAnimationFrameCounter < 0f)
-                        tentacleAnimationFrameCounter = 0f;
-
-                    if (pupilScale < 14f)
-                        pupilScale += 1f;
-                    break;
-                case MoonLordHeadAttackState.DeathrayPupilAdjusetments:
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.DeathEffects:
                     idealFrame = 3;
-                    npc.TargetClosest(false);
-
-                    Vector2 distanceFromPlayer = Main.player[npc.target].Center - npc.Center + Vector2.UnitY * -22f;
-                    pupilOutwardness = distanceFromPlayer.Length() / 500f;
-                    pupilOutwardness = Utils.Clamp(2f * (1f - pupilOutwardness), 0f, 1f);
-
-                    // Look in the direction of the player.
-                    pupilAngle = distanceFromPlayer.ToRotation();
-
-                    pupilScale = MathHelper.Lerp(pupilScale, 1f, 0.2f);
-
-                    if (npc.Infernum().ExtraAI[1] >= 5f)
-                    {
-                        npc.Infernum().ExtraAI[1] = 0f;
-                        attackStateValue = (int)MoonLordHeadAttackState.FireDeathray;
-                    }
+                    npc.dontTakeDamage = true;
+                    npc.rotation = npc.rotation.AngleLerp(MathHelper.Pi / 12f, 0.1f);
                     break;
-                case MoonLordHeadAttackState.FireDeathray:
-                    // Charge energy for a little bit.
-                    if (npc.Infernum().ExtraAI[1] < 180f)
-                    {
-                        pupilOutwardness -= 0.05f;
-                        if (pupilOutwardness < 0f)
-                            pupilOutwardness = 0f;
-
-                        if (npc.Infernum().ExtraAI[1] >= 60f)
-                        {
-                            int dustCount = 1;
-                            if (npc.Infernum().ExtraAI[1] >= 120f)
-                                dustCount = 2;
-
-                            for (int i = 0; i < dustCount; i++)
-                            {
-                                float scale = 0.8f;
-                                if (i % 2 == 1)
-                                    scale = 1.65f;
-
-                                Vector2 dustSpawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(27f, 59f) * 0.5f;
-
-                                Dust dust = Dust.NewDustDirect(dustSpawnPosition - Vector2.One * 8f, 16, 16, 229, npc.velocity.X / 2f, npc.velocity.Y / 2f, 0, default, 1f);
-                                dust.velocity = Vector2.Normalize(npc.Center - dustSpawnPosition) * 3.5f * (10f - (dustCount - 1f) * 2f) / 10f;
-                                dust.noGravity = true;
-                                dust.scale = scale;
-                                dust.customData = npc;
-                            }
-                        }
-                    }
-                    else if (npc.Infernum().ExtraAI[1] < 360f)
-                    {
-                        float laserTurnSpeed = 560f;
-                        if (calamityGlobalNPC.newAI[0] == 1f)
-                            laserTurnSpeed -= 60f;
-                        if (enrage)
-                            laserTurnSpeed /= 2f;
-                        if (npc.Infernum().ExtraAI[1] == 180f && Main.netMode != NetmodeID.MultiplayerClient)
-                        {
-                            npc.TargetClosest(false);
-                            Vector2 angleVector = npc.SafeDirectionTo(Main.player[npc.target].Center);
-
-                            float angleSign = -1f;
-                            if (angleVector.X < 0f)
-                                angleSign = 1f;
-
-                            angleVector = angleVector.RotatedBy(-angleSign * MathHelper.TwoPi / 6f);
-                            int deathray = NewProjectileBetter(npc.Center, angleVector, ProjectileID.PhantasmalDeathray, 425, 0f, Main.myPlayer, angleSign * MathHelper.TwoPi / laserTurnSpeed, npc.whoAmI);
-                            npc.ai[2] = deathray;
-                            npc.netUpdate = true;
-                        }
-
-                        pupilOutwardness += 0.05f;
-                        if (pupilOutwardness > 1f)
-                            pupilOutwardness = 1f;
-
-                        pupilAngle = currentlyFiredRay.velocity.ToRotation();
-                    }
-                    else
-                    {
-                        pupilOutwardness -= 0.07f;
-                        if (pupilOutwardness < 0f)
-                            pupilOutwardness = 0f;
-
-                        idealFrame = 3;
-                    }
-                    if (npc.Infernum().ExtraAI[1] >= 375f)
-                    {
-                        npc.Infernum().ExtraAI[1] = 0f;
-                        attackStateValue = (int)MoonLordHeadAttackState.Reset;
-                    }
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBoltEyeBursts:
+                    DoBehavior_PhantasmalBoltEyeBursts(npc, core, target, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
                     break;
-                case MoonLordHeadAttackState.LookAtTarget:
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalDeathrays:
+                    DoBehavior_PhantasmalDeathrays(npc, core, target, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
+                    break;
+                default:
+                    pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0f, 0.125f);
+                    pupilRotation = pupilRotation.AngleLerp(0f, 0.2f);
+                    pupilScale = MathHelper.Lerp(pupilScale, 1f, 0.1f);
                     idealFrame = 3;
-                    pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.7f, 0.2f);
-                    pupilAngle = pupilAngle.AngleTowards(npc.AngleTo(Main.player[npc.target].Center), MathHelper.Pi / 12f);
-                    if (npc.Infernum().ExtraAI[1] >= 360f)
-                    {
-                        npc.Infernum().ExtraAI[1] = 0f;
-                        attackStateValue = (int)MoonLordHeadAttackState.Reset;
-                    }
-                    break;
-                case MoonLordHeadAttackState.FirePhantasmalBolts:
-                    if (npc.Infernum().ExtraAI[1] == 0f)
-                    {
-                        npc.TargetClosest(false);
-                        npc.netUpdate = true;
-                    }
-
-                    Vector2 directionAheadOfPlayer = npc.SafeDirectionTo(Main.player[npc.target].Center + Main.player[npc.target].velocity * 20f);
-                    pupilAngle = pupilAngle.AngleLerp(directionAheadOfPlayer.ToRotation(), 0.5f);
-
-                    // Cause the pupil to go outward.
-                    pupilOutwardness += 0.05f;
-                    if (pupilOutwardness > 1f)
-                        pupilOutwardness = 1f;
-
-                    if (npc.Infernum().ExtraAI[1] == 150f - 35f)
-                        Main.PlaySound(SoundID.NPCDeath6, npc.position);
-
-                    if ((npc.Infernum().ExtraAI[1] == 150f - 14f ||
-                        npc.Infernum().ExtraAI[1] == 150f - 7f ||
-                        npc.Infernum().ExtraAI[1] == 150f)
-                        && Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        float boltSpeed = enrage ? 4.5f : 2.7f;
-                        NewProjectileBetter(npc.Center + ellipseVector, directionAheadOfPlayer * boltSpeed, ProjectileID.PhantasmalBolt, 185, 0f, Main.myPlayer, 0f, 0f);
-                    }
-                    if (npc.Infernum().ExtraAI[1] >= 150f)
-                    {
-                        npc.Infernum().ExtraAI[1] = 0f;
-                        attackStateValue = (int)MoonLordHeadAttackState.Reset;
-                    }
-                    break;
-                case MoonLordHeadAttackState.Reset:
-                    npc.Infernum().ExtraAI[0]++;
-                    switch ((int)npc.Infernum().ExtraAI[0] % 12)
-                    {
-                        case 0:
-                            attackStateValue = (int)MoonLordHeadAttackState.LookAtTarget;
-                            break;
-                        case 1:
-                            attackStateValue = (int)MoonLordHeadAttackState.DeathrayPupilAdjusetments;
-                            break;
-                        case 2:
-                            attackStateValue = (int)MoonLordHeadAttackState.FirePhantasmalBolts;
-                            break;
-                        case 3:
-                            attackStateValue = (int)MoonLordHeadAttackState.LookAtTarget;
-                            break;
-                        case 4:
-                            attackStateValue = (int)MoonLordHeadAttackState.FirePhantasmalBolts;
-                            break;
-                        case 5:
-                            attackStateValue = (int)MoonLordHeadAttackState.FirePhantasmalBolts;
-                            break;
-                        case 6:
-                            attackStateValue = NPC.AnyNPCs(NPCID.MoonLordFreeEye) ? (int)MoonLordHeadAttackState.LookAtTarget : (int)MoonLordHeadAttackState.DeathrayPupilAdjusetments;
-                            break;
-                        case 7:
-                            attackStateValue = lifeRatio < 0.4f ? 3f : (int)MoonLordHeadAttackState.DeathrayPupilAdjusetments;
-                            break;
-                        case 8:
-                            attackStateValue = (int)MoonLordHeadAttackState.DeathrayPupilAdjusetments;
-                            break;
-                        case 9:
-                            attackStateValue = (int)MoonLordHeadAttackState.FirePhantasmalBolts;
-                            break;
-                        case 10:
-                            attackStateValue = (int)MoonLordHeadAttackState.FirePhantasmalBolts;
-                            break;
-                        case 11:
-                            attackStateValue = (int)MoonLordHeadAttackState.DeathrayPupilAdjusetments;
-                            break;
-                    }
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        if (Main.npc[i].type == NPCID.MoonLordHand && Main.npc[i].active)
-                        {
-                            Main.npc[i].ai[0] = npc.ai[0];
-                            Main.npc[i].netSpam = 0;
-                            Main.npc[i].netUpdate = true;
-                        }
-                    }
-                    npc.netSpam = 0;
-                    npc.netUpdate = true;
+                    npc.dontTakeDamage = true;
                     break;
             }
 
-            npc.Infernum().ExtraAI[1]++;
+            if (hasPopped)
+            {
+                idealFrame = 0;
+                npc.life = 1;
+                npc.dontTakeDamage = true;
+            }
 
-            // Dictates whether this npc is vulnerable or not
-
-            int frameCounterFromIdeal = idealFrame * 5;
-            if (frameCounterFromIdeal > eyeAnimationFrameCounter)
+            // Handle frames.
+            int idealFrameCounter = idealFrame * 5;
+            if (idealFrameCounter > eyeAnimationFrameCounter)
                 eyeAnimationFrameCounter += 1f;
-            if (frameCounterFromIdeal < eyeAnimationFrameCounter)
+            if (idealFrameCounter < eyeAnimationFrameCounter)
                 eyeAnimationFrameCounter -= 1f;
+            eyeAnimationFrameCounter = MathHelper.Clamp((float)eyeAnimationFrameCounter, 0f, 15f);
 
-            if (eyeAnimationFrameCounter < 0f)
-                pupilScale = 0f;
-            if (eyeAnimationFrameCounter > 15f)
-                pupilScale = 15f;
+            return false;
+        }
+
+        public static void DoBehavior_PhantasmalBoltEyeBursts(NPC npc, NPC core, Player target, float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale, ref int idealFrame)
+        {
+            int initialShootDelay = 72;
+            int boltBurstCount = 8;
+            int boltShootDelay = 32;
+            int circularSpreadBoltCount = 12;
+            int randomBurstBoltCount = 6;
+            float boltShootSpeed = 4.25f;
+            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            {
+                boltShootDelay -= 14;
+                boltShootSpeed += 5f;
+                circularSpreadBoltCount += 8;
+                randomBurstBoltCount += 7;
+            }
+
+            float wrappedAttackTimer = (attackTimer - initialShootDelay) % boltShootDelay;
+
+            // Have a small delay prior to attacking.
+            if (attackTimer < initialShootDelay)
+            {
+                idealFrame = 3;
+                npc.dontTakeDamage = true;
+                return;
+            }
+
+            idealFrame = 0;
+
+            Vector2 pupilPosition = npc.Center + Utils.Vector2FromElipse(pupilRotation.ToRotationVector2(), new Vector2(27f, 59f) * pupilOutwardness);
+
+            // Create dust telegraphs prior to firing.
+            if (wrappedAttackTimer < boltShootDelay * 0.7f)
+            {
+                int dustCount = (int)MathHelper.Lerp(1f, 4f, attackTimer / boltShootDelay / 0.7f);
+                for (int i = 0; i < dustCount; i++)
+                {
+                    if (!Main.rand.NextBool(24))
+                        continue;
+
+                    Vector2 dustMoveDirection = Main.rand.NextVector2Unit();
+                    Vector2 dustSpawnPosition = pupilPosition + dustMoveDirection * 8f;
+                    Dust electricity = Dust.NewDustPerfect(dustSpawnPosition, 267);
+                    electricity.color = Color.Lerp(Color.Cyan, Color.Wheat, Main.rand.NextFloat());
+                    electricity.velocity = dustMoveDirection * 3.6f;
+                    electricity.scale = 1.25f;
+                    electricity.noGravity = true;
+
+                    if (dustCount >= 3)
+                        electricity.scale *= 1.5f;
+                }
+            }
+
+            // Calculate pupil variables.
+            float pupilDilationInterpolant = Utils.InverseLerp(0f, 0.7f, attackTimer, true) * 0.5f + Utils.InverseLerp(0.7f, 1f, attackTimer, true) * 0.5f;
+            pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.1f);
+            pupilScale = MathHelper.Lerp(0.4f, 1f, pupilDilationInterpolant);
+            pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.65f, 0.1f);
+
+            // Create a burst of phantasmal bolts after the telegraph completes.
+            if (wrappedAttackTimer == boltShootDelay - 1f)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float circularSpreadOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < circularSpreadBoltCount; i++)
+                    {
+                        Vector2 boltShootVelocity = (MathHelper.TwoPi * i / circularSpreadBoltCount + circularSpreadOffsetAngle).ToRotationVector2() * boltShootSpeed;
+                        Utilities.NewProjectileBetter(pupilPosition, boltShootVelocity, ProjectileID.PhantasmalBolt, 200, 0f);
+                    }
+
+                    for (int i = 0; i < randomBurstBoltCount; i++)
+                    {
+                        Vector2 boltShootVelocity = npc.SafeDirectionTo(target.Center) * boltShootSpeed * Main.rand.NextFloat(1.4f, 1.55f);
+                        boltShootVelocity += Main.rand.NextVector2Circular(1.9f, 1.9f);
+                        Utilities.NewProjectileBetter(pupilPosition, boltShootVelocity, ProjectileID.PhantasmalBolt, 200, 0f);
+                    }
+                }
+            }
+
+            if (attackTimer >= boltShootDelay * boltBurstCount || !MoonLordCoreBehaviorOverride.EyeIsActive)
+                core.Infernum().ExtraAI[5] = 1f;
+        }
+
+        public static void DoBehavior_PhantasmalDeathrays(NPC npc, NPC core, Player target, float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale, ref int idealFrame)
+        {
+            int idealDeathrayTelegraphTime = 110;
+            int idealDeathrayLifetime = 90;
+            int deathrayShootCount = 3;
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[0];
+            ref float angularOffset = ref npc.Infernum().ExtraAI[1];
+            ref float deathrayTelegraphTime = ref npc.Infernum().ExtraAI[2];
+            ref float deathrayLifetime = ref npc.Infernum().ExtraAI[3];
+
+            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            {
+                idealDeathrayTelegraphTime -= 45;
+                idealDeathrayLifetime -= 25;
+            }
+            if (deathrayTelegraphTime == 0f || deathrayLifetime == 0f)
+            {
+                deathrayTelegraphTime = idealDeathrayTelegraphTime;
+                deathrayLifetime = idealDeathrayLifetime;
+                angularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+            }
+
+            float wrappedAttackTimer = attackTimer % (deathrayTelegraphTime + deathrayLifetime);
+
+            idealFrame = 0;
+
+            // Determine the size of the telegraph.
+            telegraphInterpolant = 0f;
+            if (wrappedAttackTimer < deathrayTelegraphTime)
+            {
+                if (wrappedAttackTimer == 25f)
+                {
+                    var sound = Main.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
+                    if (sound != null)
+                    {
+                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.85f, 0f, 1f);
+                        sound.Pitch = -0.2f;
+                    }
+                }
+
+                telegraphInterpolant = Utils.InverseLerp(0f, deathrayTelegraphTime, wrappedAttackTimer, true);
+                angularOffset += CalamityUtils.Convert01To010(telegraphInterpolant) * MathHelper.TwoPi / 300f;
+            }
+            else
+                core.velocity *= 0.9f;
+
+            // Calculate pupil variables.
+            pupilScale = MathHelper.Lerp(0.35f, 1f, Utils.InverseLerp(0f, deathrayTelegraphTime, wrappedAttackTimer, true));
+            pupilRotation = npc.AngleTo(target.Center).AngleLerp(angularOffset, Utils.InverseLerp(35f, deathrayTelegraphTime * 0.3f, wrappedAttackTimer, true));
+            pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.4f, 0.1f);
+            Vector2 pupilPosition = npc.Center + Utils.Vector2FromElipse(pupilRotation.ToRotationVector2(), new Vector2(27f, 59f) * pupilOutwardness);
+
+            // Fire lasers.
+            if (wrappedAttackTimer == deathrayTelegraphTime)
+            {
+                // Make some strong sounds.
+                var sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), target.Center);
+                if (sound != null)
+                    sound.Volume = MathHelper.Clamp(sound.Volume * 1.61f, -1f, 1f);
+                sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
+                if (sound != null)
+                    sound.Pitch = -0.21f;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    // Release a spread of bolts. They do not fire if the target is close to the eye.
+                    if (!target.WithinRange(npc.Center, 270f))
+                    {
+                        float middleRingAngularOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+                        for (int i = 0; i < 42; i++)
+                        {
+                            Vector2 boltVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 42f) * 5.5f;
+                            Vector2 middleBoltVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.TwoPi * i / 42f + middleRingAngularOffset) * 3.69f;
+                            Utilities.NewProjectileBetter(pupilPosition, boltVelocity, ProjectileID.PhantasmalBolt, 200, 0f);
+                            Utilities.NewProjectileBetter(pupilPosition, middleBoltVelocity, ProjectileID.PhantasmalBolt, 200, 0f);
+                            Utilities.NewProjectileBetter(pupilPosition, boltVelocity * 0.4f, ProjectileID.PhantasmalBolt, 200, 0f);
+                        }
+                    }
+
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Vector2 beamDirection = (MathHelper.TwoPi * i / 10f + angularOffset).ToRotationVector2();
+                        int deathray = Utilities.NewProjectileBetter(npc.Center, beamDirection, ModContent.ProjectileType<PhantasmalDeathray>(), 330, 0f);
+                        if (Main.projectile.IndexInRange(deathray))
+                        {
+                            Main.projectile[deathray].ai[1] = deathrayLifetime;
+                            Main.projectile[deathray].ModProjectile<PhantasmalDeathray>().InitialRotationalOffset = MathHelper.TwoPi * i / 10f;
+                            Main.projectile[deathray].ModProjectile<PhantasmalDeathray>().OwnerIndex = npc.whoAmI + 1;
+                        }
+                    }
+                }
+            }
+
+            if (attackTimer >= (deathrayTelegraphTime + deathrayLifetime) * deathrayShootCount || !MoonLordCoreBehaviorOverride.EyeIsActive)
+                core.Infernum().ExtraAI[5] = 1f;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D headTexture = Main.npcTexture[npc.type];
+            Texture2D headGlowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/MoonLordHeadGlowmask");
+            Vector2 headOrigin = new Vector2(191f, 130f);
+            Texture2D eyeScleraTexture = Main.extraTexture[18];
+            Texture2D pupilTexture = Main.extraTexture[19];
+            Vector2 mouthOrigin = new Vector2(19f, 34f);
+            Texture2D mouthTexture = Main.extraTexture[25];
+            Vector2 mouthOffset = new Vector2(0f, 214f).RotatedBy(npc.rotation);
+            Rectangle mouthFrame = mouthTexture.Frame(1, 1, 0, 0);
+            mouthFrame.Height /= 3;
+            Texture2D eyeTexture = Main.extraTexture[29];
+            Vector2 eyeOffset = new Vector2(0f, 4f).RotatedBy(npc.rotation);
+            Rectangle eyeFrame = eyeTexture.Frame(1, 1, 0, 0);
+            eyeFrame.Height /= 4;
+            eyeFrame.Y += eyeFrame.Height * (int)(npc.localAI[3] / 5f);
+            Texture2D mouthOutlineTexture = Main.extraTexture[26];
+            Rectangle mouthOuterFrame = mouthOutlineTexture.Frame(1, 1, 0, 0);
+            mouthOuterFrame.Height /= 4;
+            Point centerTileCoords = npc.Center.ToTileCoordinates();
+            Color color = npc.GetAlpha(Color.Lerp(Lighting.GetColor(centerTileCoords.X, centerTileCoords.Y), Color.White, 0.3f));
+
+            float pupilRotation = npc.localAI[0];
+            float pupilOutwardness = npc.localAI[1];
+            Vector2 pupilOffset = Utils.Vector2FromElipse(pupilRotation.ToRotationVector2(), new Vector2(27f, 59f) * pupilOutwardness);
+
+            if (npc.ai[0] < 0f)
+            {
+                mouthOuterFrame.Y += mouthOuterFrame.Height * (int)(Main.GlobalTime * 9.3f % 4);
+                spriteBatch.Draw(mouthOutlineTexture, npc.Center - Main.screenPosition, mouthOuterFrame, color, npc.rotation, mouthOrigin + new Vector2(4f, 4f), 1f, 0, 0f);
+            }
+            else
+            {
+                spriteBatch.Draw(eyeScleraTexture, npc.Center - Main.screenPosition, null, Color.White * npc.Opacity * 0.6f, npc.rotation, mouthOrigin, 1f, 0, 0f);
+                spriteBatch.Draw(pupilTexture, npc.Center - Main.screenPosition + pupilOffset, null, Color.White * npc.Opacity * 0.6f, npc.rotation, pupilTexture.Size() * 0.5f, npc.localAI[2], SpriteEffects.None, 0f);
+            }
+            spriteBatch.Draw(headTexture, npc.Center - Main.screenPosition, npc.frame, color, npc.rotation, headOrigin, 1f, 0, 0f);
+            spriteBatch.Draw(headGlowmask, npc.Center - Main.screenPosition, npc.frame, Color.White * npc.Opacity * 0.6f, npc.rotation, headOrigin, 1f, 0, 0f);
+            spriteBatch.Draw(eyeTexture, (npc.Center - Main.screenPosition + eyeOffset).Floor(), eyeFrame, color, npc.rotation, eyeFrame.Size() / 2f, 1f, 0, 0f);
+            spriteBatch.Draw(mouthTexture, (npc.Center - Main.screenPosition + mouthOffset).Floor(), mouthFrame, color, npc.rotation, mouthFrame.Size() / 2f, 1f, 0, 0f);
+
+            // Draw line telegraphs as necessary.
+            NPC core = Main.npc[(int)npc.ai[3]];
+            if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalDeathrays)
+            {
+                float lineTelegraphInterpolant = npc.Infernum().ExtraAI[0];
+
+                if (lineTelegraphInterpolant > 0f)
+                {
+                    spriteBatch.SetBlendState(BlendState.Additive);
+
+                    Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLineSmall");
+
+                    float angularOffset = npc.Infernum().ExtraAI[1];
+                    Color outlineColor = Color.Lerp(Color.Turquoise, Color.White, lineTelegraphInterpolant);
+                    Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                    Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 0.5f, 2.4f);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Vector2 drawPosition = npc.Center + pupilOffset - Main.screenPosition;
+                        Vector2 beamDirection = (MathHelper.TwoPi * i / 10f + angularOffset).ToRotationVector2();
+                        float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                        spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                    }
+                    spriteBatch.ResetBlendState();
+                }
+            }
 
             return false;
         }

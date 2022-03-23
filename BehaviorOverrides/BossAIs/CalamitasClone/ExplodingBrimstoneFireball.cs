@@ -38,13 +38,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
         }
 
-		public override void Kill(int timeLeft)
-		{
+        public override void Kill(int timeLeft)
+        {
             Main.PlaySound(SoundID.Item74, projectile.Center);
             Utilities.CreateGenericDustExplosion(projectile.Center, (int)CalamityDusts.Brimstone, 10, 7f, 1.25f);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(projectile, lightColor, 0);
             return false;

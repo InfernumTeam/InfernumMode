@@ -25,12 +25,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.timeLeft = 45;
-		}
+        }
 
         public override void AI()
         {
             projectile.scale = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 45f);
-		}
+        }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
@@ -59,5 +59,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 }
             }
         }
-	}
+    }
 }

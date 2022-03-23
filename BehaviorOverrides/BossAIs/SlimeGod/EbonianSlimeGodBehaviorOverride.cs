@@ -30,8 +30,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override bool PreAI(NPC npc)
         {
+            // Disappear if the core is not present.
+            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGod))
+            {
+                npc.active = false;
+                return false;
+            }
+
             // Do targeting.
-            npc.TargetClosest();
+            npc.target = Main.npc[CalamityGlobalNPC.slimeGod].target;
             Player target = Main.player[npc.target];
 
             // This will affect the other gods as well in terms of behavior.
@@ -53,6 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             }
 
             // Reset things.
+            npc.timeLeft = 3600;
             npc.Opacity = 1f;
             npc.damage = npc.defDamage;
             npc.noGravity = false;
@@ -76,14 +84,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             // Set the universal whoAmI variable.
             CalamityGlobalNPC.slimeGodPurple = npc.whoAmI;
-
-            // Disappear if the core is missing.
-            npc.timeLeft = 3600;
-            if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGod))
-            {
-                npc.active = false;
-                return false;
-            }
 
             if (doneWithSpawnAnimationFlag == 0f)
             {

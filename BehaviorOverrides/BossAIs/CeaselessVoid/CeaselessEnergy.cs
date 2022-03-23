@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         }
 
         public override Color? GetAlpha(Color lightColor)
-		{
+        {
             float alpha = Utils.InverseLerp(0f, 30f, Time, true);
             return new Color(1f, 1f, 1f, alpha) * projectile.Opacity * MathHelper.Lerp(0.6f, 1f, alpha);
         }
@@ -56,9 +56,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

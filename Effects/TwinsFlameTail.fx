@@ -1,16 +1,3 @@
- @
-DominicKarma
-DominicKarma
-Resprited Persecuted
-Enchantment demons
-
-Latest commit
-c36d6ca on
-Sep12
-History
-1
-contributor
-64 lines(57 sloc) 1.83 KB
 sampler uImage0 : register(s0);
 sampler uImage1 : register(s1);
 float3 uColor;

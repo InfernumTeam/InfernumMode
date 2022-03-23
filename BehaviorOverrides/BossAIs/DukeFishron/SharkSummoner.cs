@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             Main.npc[shark].ai[0] = 1f;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.Calamity().lastProjectileHit = projectile;
         }

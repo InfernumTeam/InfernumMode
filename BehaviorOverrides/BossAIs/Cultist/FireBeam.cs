@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
-            projectile.timeLeft = 120;
+            projectile.timeLeft = 210;
             projectile.alpha = 255;
             projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Fade in.
             projectile.alpha = Utils.Clamp(projectile.alpha - 25, 0, 255);
 
-            projectile.scale = (float)Math.Sin(Time / 120f * MathHelper.Pi) * 3f;
+            projectile.scale = (float)Math.Sin(Time / 210f * MathHelper.Pi) * 3f;
             if (projectile.scale > 1f)
                 projectile.scale = 1f;
 
@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         }
 
         public void CreateDustAtBeginning()
-		{
+        {
             for (int i = 0; i < 14; i++)
             {
                 Dust fire = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(50f, 50f), 222);
@@ -61,13 +61,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
         }
 
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
             float _ = 0f;
             float width = projectile.width * 0.8f;
             Vector2 start = projectile.Center;
             Vector2 end = start + projectile.velocity * (LaserLength - 80f);
-			return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;

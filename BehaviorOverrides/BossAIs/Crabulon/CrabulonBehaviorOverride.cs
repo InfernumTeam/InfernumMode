@@ -44,8 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             Lighting.AddLight(npc.Center, 0f, 0.3f, 0.7f);
 
             // Select a new target if an old one was lost.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
 
             // Reset things.
             npc.defDamage = 84;
@@ -134,7 +133,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             spore.scale = MathHelper.Lerp(0.75f, 1.45f, Utils.InverseLerp(npc.Top.Y, npc.Bottom.Y, spore.position.Y));
 
             if (attackTimer >= 210f || npc.justHit)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
 
         internal static void DoAttack_JumpToTarget(NPC npc, Player target, float attackTimer, bool enraged, ref float jumpCount)
@@ -258,7 +257,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
                     npc.velocity.X *= 0.9f;
                     if (Math.Abs(npc.velocity.X) < 0.2f)
-                        GotoNextAttackState(npc);
+                        SelectNextAttack(npc);
                 }
                 jumpTimer++;
             }
@@ -344,7 +343,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
             if (attackTimer >= 160f || npc.collideX || target.Center.Y < npc.Top.Y - 200f || target.Center.Y > npc.Bottom.Y + 80f)
             {
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
                 if (target.Center.Y > npc.Bottom.Y + 80f)
                     npc.ai[2] = (int)CrabulonAttackState.JumpToTarget;
             }
@@ -388,14 +387,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             }
 
             if (attackTimer >= 120f)
-                GotoNextAttackState(npc);
+                SelectNextAttack(npc);
         }
         #endregion Specific Attacks
 
         #region AI Utility Methods
 
-        internal static void GotoNextAttackState(NPC npc)
+        internal static void SelectNextAttack(NPC npc)
         {
+            npc.TargetClosest();
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
             CrabulonAttackState currentAttackState = (CrabulonAttackState)(int)npc.ai[2];
             CrabulonAttackState newAttackState = CrabulonAttackState.JumpToTarget;

@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -33,15 +34,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ref float segmentAttackIndex = ref npc.ai[0];
             frameType = (int)ThanatosFrameType.Closed;
 
-            // Die if the head is not present.
-            if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active)
-            {
-                npc.active = false;
-                return;
-            }
-
-            // Die if the ahead segment is not present.
-            if (!Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)
+            // Die if necessary segments are not present.
+            if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active || !Main.npc.IndexInRange((int)npc.ai[1]) || !Main.npc[(int)npc.ai[1]].active)
             {
                 npc.active = false;
                 return;
@@ -57,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 directionToNextSegment = directionToNextSegment.RotatedBy(MathHelper.WrapAngle(aheadSegment.rotation - npc.rotation) * 0.08f);
 
             npc.rotation = directionToNextSegment.ToRotation() + MathHelper.PiOver2;
-            npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale;
+            npc.Center = aheadSegment.Center - directionToNextSegment.SafeNormalize(Vector2.Zero) * npc.width * npc.scale * 0.9f;
             npc.spriteDirection = (directionToNextSegment.X > 0).ToDirectionInt();
 
             // Locate the head as an NPC.
@@ -78,10 +72,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             bool thanatosIsFiring = headAttackType != ThanatosHeadAttackType.AggressiveCharge && head.Infernum().ExtraAI[1] > 0f;
             bool segmentShouldContiuouslyBeOpen = headAttackType == ThanatosHeadAttackType.MaximumOverdrive && head.Infernum().ExtraAI[0] == 1f;
 
-            // Prevent the player for dashing through segments during the spin combo attack by becoming completely invincible.
-            if ((int)head.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_ExplosionCircle)
-                npc.dontTakeDamage = true;
-
             // Handle segment opening/closing and projectile firing.
             if (thanatosIsFiring && canBeOpen)
             {
@@ -96,22 +86,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                 if (segmentFireCountdown == (int)(segmentFireTime / 2) + fireDelay)
                 {
-                    bool willShootProjectile = true;
+                    bool willShootProjectile = (int)headAttackType != (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_ElectricCage;
 
                     // Decide what sound to play.
                     if (willShootProjectile)
                     {
                         string soundType = "LaserCannon";
-                        switch (headAttackType)
-                        {
-                            case ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
-                                soundType = "PlasmaCasterFire";
-                                break;
-                            case ThanatosHeadAttackType.RocketCharge:
-                                soundType = "PlasmaBlast";
-                                break;
-                        }
-
                         SoundEffectInstance sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, $"Sounds/Item/{soundType}"), target.Center);
                         if (sound != null)
                             sound.Volume *= 0.5f;
@@ -135,16 +115,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                         if ((int)headAttackType == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle)
                             generalShootSpeedFactor *= 0.5f;
-                        
+
                         switch ((int)headAttackType)
                         {
                             // Fire regular lasers.
-                            case (int)ThanatosHeadAttackType.ProjectileShooting_RedLaser:
-                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserBarrage:
-                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle:
+                            case (int)ThanatosHeadAttackType.LaserBarrage:
                                 int type = ModContent.ProjectileType<ThanatosLaser>();
                                 float predictionFactor = 21f;
-                                float shootSpeed = generalShootSpeedFactor * 11f;
+                                float shootSpeed = generalShootSpeedFactor * 10f;
 
                                 // Predictive laser.
                                 Vector2 projectileDestination = target.Center + target.velocity * predictionFactor;
@@ -167,65 +145,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                                     Main.projectile[laser].netUpdate = true;
                                 }
                                 break;
-
-                            // Fire pulse lasers.
-                            case (int)ThanatosHeadAttackType.ProjectileShooting_PurpleLaser:
-                                type = ModContent.ProjectileType<PulseLaser>();
+                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle:
+                                type = ModContent.ProjectileType<ThanatosComboLaser>();
                                 shootSpeed = generalShootSpeedFactor * 10f;
-
-                                projectileDestination = target.Center;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);
-                                if (Main.projectile.IndexInRange(laser))
-                                {
-                                    Main.projectile[laser].owner = npc.target;
-                                    Main.projectile[laser].ModProjectile<PulseLaser>().InitialDestination = projectileDestination;
-                                    Main.projectile[laser].ai[1] = npc.whoAmI;
-                                    Main.projectile[laser].netUpdate = true;
-                                }
-                                break;
-
-                            // Fire plasma lasers.
-                            case (int)ThanatosHeadAttackType.ProjectileShooting_GreenLaser:
-                                type = ModContent.ProjectileType<PlasmaLaser>();
-                                shootSpeed = generalShootSpeedFactor * 9.5f;
-
-                                projectileDestination = target.Center;
+                                projectileDestination = Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Center + Vector2.UnitY * 34f;
                                 laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
                                     Main.projectile[laser].owner = npc.target;
-                                    Main.projectile[laser].ModProjectile<PlasmaLaser>().InitialDestination = projectileDestination;
-                                    Main.projectile[laser].ai[1] = npc.whoAmI;
-                                    Main.projectile[laser].netUpdate = true;
-                                }
-                                break;
-
-                            // Fire rockets.
-                            case (int)ThanatosHeadAttackType.RocketCharge:
-                                type = ModContent.ProjectileType<ThanatosRocket>();
-                                shootSpeed = generalShootSpeedFactor * 11f;
-
-                                projectileDestination = target.Center;
-                                Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 530, 0f, Main.myPlayer, 0f, npc.whoAmI);
-                                break;
-
-                            // Fire pulse and electricity lasers.
-                            case (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_ElectropulseBursts:
-                                type = ModContent.ProjectileType<PulseLaser>();
-                                if (npc.whoAmI % 2 == 0)
-                                    type = ModContent.ProjectileType<ElectricLaser>();
-
-                                shootSpeed = generalShootSpeedFactor * 10f;
-
-                                projectileDestination = target.Center;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 550, 0f, Main.myPlayer, 0f, npc.whoAmI);
-                                if (Main.projectile.IndexInRange(laser))
-                                {
-                                    Main.projectile[laser].owner = npc.target;
-                                    if (npc.whoAmI % 2 == 0)
-                                        Main.projectile[laser].ModProjectile<ElectricLaser>().InitialDestination = projectileDestination;
-                                    else
-                                        Main.projectile[laser].ModProjectile<PulseLaser>().InitialDestination = projectileDestination;
+                                    Main.projectile[laser].ModProjectile<ThanatosComboLaser>().InitialDestination = projectileDestination;
                                     Main.projectile[laser].ai[1] = npc.whoAmI;
                                     Main.projectile[laser].netUpdate = true;
                                 }
@@ -249,7 +177,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
             else
                 npc.frameCounter = 0f;
-            
+
             // Handle smoke venting and open/closed DR.
             npc.Calamity().DR = ClosedSegmentDR;
             npc.Calamity().unbreakableDR = true;
@@ -289,12 +217,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     }
                 }
                 npc.Calamity().DR = OpenSegmentDR;
+                if (head.ai[0] >= 100f)
+                    npc.takenDamageMultiplier *= 2f;
+
                 npc.Calamity().unbreakableDR = false;
                 npc.chaseable = true;
             }
             // Emit light.
             else
                 Lighting.AddLight(npc.Center, 0.05f * npc.Opacity, 0.2f * npc.Opacity, 0.2f * npc.Opacity);
+
+            if (head.Infernum().ExtraAI[17] >= 1f)
+                npc.takenDamageMultiplier *= 0.5f;
 
             // Handle smoke updating.
             if (npc.type == ModContent.NPCType<ThanatosBody1>())
@@ -307,7 +241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Become vulnerable on the map.
             npc.modNPC.GetType().GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, frameType == (int)ThanatosFrameType.Open);
         }
-        
+
         public override void FindFrame(NPC npc, int frameHeight)
         {
             npc.frame.Y = (int)npc.frameCounter * frameHeight;
@@ -329,6 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody1Glow");
             spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            npc.ModNPC<ThanatosBody1>().SmokeDrawer.DrawSet(npc.Center);
             return false;
         }
     }
@@ -366,6 +301,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
             texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody2Glow");
             spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            npc.ModNPC<ThanatosBody2>().SmokeDrawer.DrawSet(npc.Center);
             return false;
         }
     }

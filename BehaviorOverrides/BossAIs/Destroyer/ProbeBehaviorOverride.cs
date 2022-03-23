@@ -14,6 +14,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public override bool PreAI(NPC npc)
         {
+            if (npc.scale != 1f)
+            {
+                npc.Size /= npc.scale;
+                npc.scale = 1f;
+            }
+
             npc.TargetClosest();
             Player target = Main.player[npc.target];
 

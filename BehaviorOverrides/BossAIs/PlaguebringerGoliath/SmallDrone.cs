@@ -1,3 +1,4 @@
+using CalamityMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -7,13 +8,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
     public class SmallDrone : ModNPC
     {
+        public int SpinDirection = 1;
+        public float MoveIncrement = 0;
         public Vector2 InitialTargetPosition;
         public Player Target => Main.player[npc.target];
         public ref float AttackTimer => ref npc.ai[0];
         public ref float NextDroneIndex => ref npc.ai[1];
         public ref float OffsetDirection => ref npc.ai[2];
         public ref float MoveOffset => ref npc.ai[3];
-        public const int LaserAttackTime = 250;
+        public int LaserAttackTime => (int)MoveIncrement * TimeOffsetPerIncrement + 250;
+        public const int TimeOffsetPerIncrement = 45;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Small Drone");
@@ -26,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             npc.npcSlots = 0f;
             npc.width = npc.height = 42;
             npc.defense = 15;
-            npc.lifeMax = 1620;
+            npc.lifeMax = 1150;
             npc.aiStyle = aiType = -1;
             npc.knockBackResist = 0f;
             npc.noGravity = true;
@@ -56,9 +60,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (InitialTargetPosition == Vector2.Zero)
                 InitialTargetPosition = Target.Center;
 
-            MoveOffset = MathHelper.Lerp(0f, 1400f, 1f - AttackTimer / LaserAttackTime);
+            MoveOffset = MathHelper.Lerp(0f, MoveIncrement * 100f + 1400f, 1f - AttackTimer / LaserAttackTime);
             MoveOffset += MathHelper.Lerp(450f, 0f, Utils.InverseLerp(-35f, 0f, AttackTimer, true));
             npc.Center = InitialTargetPosition + OffsetDirection.ToRotationVector2() * MoveOffset;
+
             if (AttackTimer == 0f)
             {
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MechGaussRifle"), npc.Center);
@@ -67,7 +72,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     Vector2 laserDirection = npc.SafeDirectionTo(Main.npc[(int)NextDroneIndex].Center, Vector2.UnitY);
                     int laser = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<PlagueDeathray>(), 270, 0f);
                     if (Main.projectile.IndexInRange(laser))
+                    {
+                        Main.projectile[laser].ModProjectile<PlagueDeathray>().LocalLifetime = 1200;
                         Main.projectile[laser].ai[1] = npc.whoAmI;
+                    }
                 }
             }
             AttackTimer++;
@@ -83,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override bool PreNPCLoot() => false;
 
-		public override bool CheckDead()
+        public override bool CheckDead()
         {
             Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.position);
 

@@ -1,14 +1,12 @@
 ﻿using CalamityMod;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
-
-using static InfernumMode.Utilities;
-using CalamityMod.NPCs;
-using CalamityMod.Events;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -16,418 +14,413 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
     {
         public override int NPCOverrideType => NPCID.MoonLordHand;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
-        
-        // ai[0] = ai state. -2 = dead, don't do anything. 0 = move around. 1 = spawn phantasmal eyes. 2 = spawn phantasmal spheres. 3 = spawn phantasmal bolts. (5) = go to next ai state
-        // ai[1] = see head
-        // ai[2] = left/right hand. If 0, left hand. Otherwise, right hand
-        // ai[3] = see head
-        // localAI[0] = see head
-        // localAI[1] = see head
-        // localAI[2] = see head
-        // localAI[3] = see head
-        // ExtraAI[0] = see head
-        // ExtraAI[1] = see head
-        // ExtraAI[2] = see head
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
+
         public override bool PreAI(NPC npc)
         {
-            CalamityGlobalNPC calamityGlobalNPC = npc.Calamity();
-
-            // Hands life ratio
-            NPC[] hands = Main.npc.Where(n => n.type == npc.type && n.active).ToArray();
-            float handsRatio = hands.Sum(h => h.life / (float)h.lifeMax);
-
-            if ((calamityGlobalNPC.newAI[0] == 2f || npc.life < 1700) && npc.Infernum().ExtraAI[2] != -2f)
+            // Disappear if the body is not present.
+            if (!Main.npc.IndexInRange((int)npc.ai[3]) || !Main.npc[(int)npc.ai[3]].active)
             {
-                SummonTrueEye(npc);
-            }
-
-            // Despawn
-            if (!Main.npc[(int)npc.ai[3]].active || Main.npc[(int)npc.ai[3]].type != NPCID.MoonLordCore)
-            {
-                npc.life = 0;
-                npc.HitEffect();
                 npc.active = false;
+                return false;
             }
 
-            // Variables
+            // Define the core NPC and inherit properties from it.
+            NPC core = Main.npc[(int)npc.ai[3]];
+
+            npc.target = core.target;
+
+            int handSide = (npc.ai[2] == 1f).ToDirectionInt();
+            bool hasPopped = npc.ai[0] == -2f;
+            float attackTimer = core.ai[1];
+            Player target = Main.player[npc.target];
+
+            npc.dontTakeDamage = hasPopped;
+
+            ref float pupilRotation = ref npc.localAI[0];
+            ref float pupilOutwardness = ref npc.localAI[1];
+            ref float pupilScale = ref npc.localAI[2];
+
+            // Hacky workaround to problems with popping.
+            if (npc.life < 1000)
+                npc.life = 1000;
+
             int idealFrame = 0;
-            bool leftHand = npc.ai[2] == 0f;
-            float handSign = -leftHand.ToDirectionInt();
-            bool enrage = Main.npc[(int)npc.ai[3]].Infernum().ExtraAI[0] == 0f;
 
-            npc.spriteDirection = (int)handSign;
-            npc.dontTakeDamage = npc.frameCounter >= 21.0 || !Main.npc[NPC.FindFirstNPC(NPCID.MoonLordHead)].dontTakeDamage || calamityGlobalNPC.newAI[0] == 1f;
-
-            // Go to die
-            if (Main.npc[(int)npc.ai[3]].ai[0] == 2f)
-                npc.ai[0] = -2f;
-
-            if (npc.Infernum().ExtraAI[2] == -2f)
-                npc.ai[0] = -2f;
-
-            // Choose attacks
-            if (npc.ai[0] != -2f || (npc.ai[0] == -2f && Main.npc[(int)npc.ai[3]].ai[0] != 2f))
+            switch ((MoonLordCoreBehaviorOverride.MoonLordAttackState)(int)core.ai[0])
             {
-                if (npc.ai[0] == -2f && Main.npc[(int)npc.ai[3]].ai[0] != 2f)
-                {
-                    if (calamityGlobalNPC.newAI[0] != 2f)
-                        calamityGlobalNPC.newAI[0] = 2f;
-
-                    npc.life = npc.lifeMax;
-                    npc.netUpdate = true;
-                    npc.dontTakeDamage = true;
-
-                    // For animating the weird tentacle hand thingy
-                    npc.ai[1] += 1f;
-                    if (npc.ai[1] >= 32f)
-                    {
-                        npc.ai[1] = 0f;
-                    }
-                    if (npc.ai[1] < 0f)
-                    {
-                        npc.ai[1] = 0f;
-                    }
-                }
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalSphereHandWaves:
+                    if (!hasPopped)
+                        DoBehavior_PhantasmalSphereHandWaves(npc, core, target, handSide, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
+                    break;
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalFlareBursts:
+                    if (!hasPopped)
+                        DoBehavior_PhantasmalFlareBursts(npc, core, target, handSide, attackTimer, ref pupilRotation, ref pupilOutwardness, ref pupilScale, ref idealFrame);
+                    break;
+                case MoonLordCoreBehaviorOverride.MoonLordAttackState.ExplodingConstellations:
+                    DoBehavior_ExplodingConstellations(npc, core, target, handSide, attackTimer, ref idealFrame);
+                    break;
+                default:
+                    DoBehavior_DefaultHandHover(npc, core, handSide, attackTimer, ref idealFrame);
+                    break;
             }
 
-            const int ai0Reset = 5;
-            Vector2 coreCenter = Main.npc[(int)npc.ai[3]].Center;
-            Vector2 perfectHandPosition = coreCenter + new Vector2(350f * handSign, -100f);
-            Vector2 ellipseVector = Utils.Vector2FromElipse(npc.localAI[0].ToRotationVector2(), new Vector2(30f, 66f) * npc.localAI[1]);
-
-            if (npc.ai[0] == -2f)
+            if (hasPopped)
             {
-                Vector2 distanceToPerfect = perfectHandPosition - npc.Center;
+                npc.life = 1;
 
-                if (distanceToPerfect.Length() > 20f)
-                {
-                    distanceToPerfect.Normalize();
-                    float velocity = BossRushEvent.BossRushActive ? 10.5f : 7.5f;
-                    distanceToPerfect *= velocity;
-                    Vector2 oldVelocity = npc.velocity;
-
-                    if (distanceToPerfect != Vector2.Zero)
-                        npc.SimpleFlyMovement(distanceToPerfect, 0.3f);
-
-                    npc.velocity = Vector2.Lerp(oldVelocity, npc.velocity, 0.5f);
-                }
-                npc.Calamity().newAI[1] = 2f;
-                npc.dontTakeDamage = true;
-            }
-
-            // Move
-            else if (npc.ai[0] == 0f)
-            {
-                idealFrame = 3;
-                npc.localAI[1] -= 0.05f;
-                if (npc.localAI[1] < 0f)
-                    npc.localAI[1] = 0f;
-
-                Vector2 distanceToPerfect = perfectHandPosition - npc.Center;
-
-                if (distanceToPerfect.Length() > 20f)
-                {
-                    distanceToPerfect.Normalize();
-                    float velocity = BossRushEvent.BossRushActive ? 10.5f : 7.5f;
-                    distanceToPerfect *= velocity;
-                    Vector2 velocity5 = npc.velocity;
-
-                    if (distanceToPerfect != Vector2.Zero)
-                        npc.SimpleFlyMovement(distanceToPerfect, 0.3f);
-
-                    npc.velocity = Vector2.Lerp(velocity5, npc.velocity, 0.5f);
-                }
-                if (npc.Infernum().ExtraAI[1] >= 90)
-                {
-                    if (npc.life > 1700)
-                        npc.ai[0] = ai0Reset;
-                    npc.Infernum().ExtraAI[1] = 0f;
-                }
-            }
-
-            // Phantasmal Eyes
-            else if (npc.ai[0] == 1f)
-            {
+                DoBehavior_DefaultHandHover(npc, core, handSide, attackTimer, ref idealFrame);
                 idealFrame = 0;
-                int phantasmalEyeCount = 14;
-                int shootRate = 4;
-                if (enrage)
-                {
-                    phantasmalEyeCount = 24;
-                    shootRate = 2;
-                }
-
-                if (npc.Infernum().ExtraAI[1] >= phantasmalEyeCount * shootRate * 2)
-                {
-                    npc.localAI[1] -= 0.07f;
-                    if (npc.localAI[1] < 0f)
-                        npc.localAI[1] = 0f;
-                }
-                else if (npc.Infernum().ExtraAI[1] >= phantasmalEyeCount * shootRate)
-                {
-                    npc.localAI[1] += 0.05f;
-                    if (npc.localAI[1] > 0.75f)
-                        npc.localAI[1] = 0.75f;
-
-                    float pupilAngle = MathHelper.TwoPi * (npc.Infernum().ExtraAI[1] % (phantasmalEyeCount * shootRate)) / (phantasmalEyeCount * shootRate) - 1.57079637f;
-                    npc.localAI[0] = (pupilAngle.ToRotationVector2() * ellipseVector).ToRotation();
-
-                    if (npc.Infernum().ExtraAI[1] % shootRate == 0f)
-                    {
-                        Vector2 eyeSpawnDelta = new Vector2(-handSign, 3f);
-                        Vector2 eyeSpawnPos = npc.Center + Vector2.Normalize(ellipseVector) * ellipseVector.Length() * 0.4f + eyeSpawnDelta;
-                        float velocity = BossRushEvent.BossRushActive ? 9f : 5.45f;
-                        Vector2 eyeVelocity = Vector2.Normalize(ellipseVector) * velocity;
-                        float ai = (MathHelper.TwoPi * (float)Main.rand.NextDouble() - MathHelper.Pi) / 30f + MathHelper.ToRadians(handSign);
-                        NewProjectileBetter(eyeSpawnPos, eyeVelocity, ProjectileID.PhantasmalEye, 175, 0f, Main.myPlayer, 0f, ai);
-                    }
-                }
-                else
-                {
-                    npc.localAI[1] -= 0.02f;
-                    if (npc.localAI[1] < 0f)
-                        npc.localAI[1] = 0f;
-
-                    npc.localAI[0] = npc.localAI[0].AngleTowards(0f, 0.7f);
-                }
-                if (npc.Infernum().ExtraAI[1] >= phantasmalEyeCount * shootRate + 10)
-                {
-                    if (npc.life > 1700)
-                        npc.ai[0] = ai0Reset;
-                    npc.Infernum().ExtraAI[1] = 0f;
-                }
             }
 
-            // Phantasmal Spheres
-            else if (npc.ai[0] == 2f)
-            {
-                // No stupid spheres during deathray
-                if (Main.npc[NPC.FindFirstNPC(NPCID.MoonLordHead)].ai[0] == 1f)
-                {
-                    npc.ai[0] = Utils.SelectRandom(Main.rand, 1f, 3f);
-                }
-                npc.localAI[1] -= 0.05f;
-                if (npc.localAI[1] < 0f)
-                    npc.localAI[1] = 0f;
-
-                Vector2 idealBase = new Vector2(220f * handSign, -60f) + coreCenter;
-                idealBase += new Vector2(handSign * 100f, -50f);
-                Vector2 idealDelta = new Vector2(400f * handSign, -60f);
-
-                float velocityMultiplier = BossRushEvent.BossRushActive ? 0.87f : 0.885f;
-                if (npc.Infernum().ExtraAI[1] < 30f)
-                {
-                    Vector2 intialVelocity = idealBase - npc.Center;
-                    if (intialVelocity != Vector2.Zero)
-                    {
-                        float velocityMult = 16f;
-                        npc.velocity = Vector2.SmoothStep(npc.velocity, Vector2.Normalize(intialVelocity) * Math.Min(velocityMult, intialVelocity.Length()), 0.2f);
-                    }
-                }
-                else if (npc.Infernum().ExtraAI[1] < 210f)
-                {
-                    idealFrame = 1;
-                    int modifiedAICounter = (int)npc.Infernum().ExtraAI[1] - 30;
-                    int shootRate = enrage ? 8 : 24;
-                    if (modifiedAICounter % shootRate == 0 && Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Vector2 sphereVelocity = new Vector2(5f * handSign, -8f);
-                        int counterDivided = modifiedAICounter / 30;
-                        sphereVelocity.X += (counterDivided - 3.5f) * handSign * 3f;
-                        sphereVelocity.Y += (counterDivided - 4.5f) * 1f;
-                        sphereVelocity *= 1.35f;
-                        int idx = NewProjectileBetter(npc.Center, sphereVelocity, ProjectileID.PhantasmalSphere, 215, 1f, Main.myPlayer, 0f, npc.whoAmI);
-                        Main.projectile[idx].timeLeft = 540 + Main.rand.Next(0, 120);
-                    }
-
-                    Vector2 smoothDistance = Vector2.SmoothStep(idealBase, idealBase + idealDelta, (npc.Infernum().ExtraAI[1] - 30f) / 180f) - npc.Center;
-                    if (smoothDistance != Vector2.Zero)
-                    {
-                        float velocity = BossRushEvent.BossRushActive ? 35f : 25f;
-                        npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Normalize(smoothDistance) * Math.Min(velocity, smoothDistance.Length()), 0.5f);
-                    }
-                }
-                else if (npc.Infernum().ExtraAI[1] < 282f)
-                {
-                    idealFrame = 0;
-                    npc.velocity *= velocityMultiplier;
-                }
-                else if (npc.Infernum().ExtraAI[1] < 287f)
-                {
-                    idealFrame = 1;
-                    npc.velocity *= velocityMultiplier;
-                }
-                else if (npc.Infernum().ExtraAI[1] < 292f)
-                {
-                    idealFrame = 2;
-                    npc.velocity *= velocityMultiplier;
-                }
-                else if (npc.Infernum().ExtraAI[1] < 300f)
-                {
-                    idealFrame = 3;
-                    if (npc.Infernum().ExtraAI[1] == 292f && Main.netMode != NetmodeID.MultiplayerClient && enrage)
-                    {
-                        int closestPlayerIdx = Player.FindClosest(npc.position, npc.width, npc.height);
-                        float velocityMult = BossRushEvent.BossRushActive ? 18f : 14f;
-                        Vector2 closestPlayerDistNorm = (Main.player[closestPlayerIdx].Center - (npc.Center + Vector2.UnitY * -350f)).SafeNormalize(Vector2.UnitY) * velocityMult;
-
-                        for (int projectileIdx = 0; projectileIdx < 1000; projectileIdx++)
-                        {
-                            Projectile projectile = Main.projectile[projectileIdx];
-                            if (projectile.active && projectile.type == ProjectileID.PhantasmalSphere && projectile.ai[1] == npc.whoAmI && projectile.ai[0] != -1f)
-                            {
-                                projectile.ai[0] = -1f;
-                                projectile.velocity = closestPlayerDistNorm;
-                                projectile.netUpdate = true;
-                            }
-                        }
-                    }
-                    Vector2 smoothDistance = Vector2.SmoothStep(idealBase, idealBase + idealDelta, 1f - (npc.Infernum().ExtraAI[1] - 270f) / 30f) - npc.Center;
-                    if (smoothDistance != Vector2.Zero)
-                    {
-                        float velocityMult = BossRushEvent.BossRushActive ? 24.5f : 17.5f;
-                        npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Normalize(smoothDistance) * Math.Min(velocityMult, smoothDistance.Length()), 0.1f);
-                    }
-                }
-                else
-                {
-                    idealFrame = 3;
-
-                    Vector2 distanceFromIdeal = idealBase - npc.Center;
-                    float velocityMult = BossRushEvent.BossRushActive ? 14f : 10f;
-                    npc.velocity = Vector2.SmoothStep(npc.velocity, distanceFromIdeal.SafeNormalize(Vector2.Zero) * Math.Min(velocityMult, distanceFromIdeal.Length()), 0.2f);
-                }
-                if (npc.Infernum().ExtraAI[1] >= 330f)
-                {
-                    if (npc.life > 1700)
-                        npc.ai[0] = ai0Reset;
-                    npc.Infernum().ExtraAI[1] = 0f;
-                }
-            }
-
-            // Phantasmal Bolts
-            else if (npc.ai[0] == 3f)
-            {
-                if (npc.Infernum().ExtraAI[1] == 1f)
-                {
-                    npc.netUpdate = true;
-                }
-                npc.TargetClosest(false);
-                Vector2 playerDistance = Main.player[npc.target].Center + Main.player[npc.target].velocity * 20f - npc.Center;
-                npc.localAI[0] = playerDistance.ToRotation();
-
-                npc.localAI[1] += 0.05f;
-                if (npc.localAI[1] > 1f)
-                    npc.localAI[1] = 1f;
-
-                if (npc.Infernum().ExtraAI[1] == 20f)
-                    Main.PlaySound(SoundID.NPCDeath6, npc.position);
-
-                if (npc.Infernum().ExtraAI[1] >= 20f && npc.Infernum().ExtraAI[1] % 5f == 4f && Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    float velocity = BossRushEvent.BossRushActive ? 7f : 5f;
-                    if (enrage)
-                        velocity *= 1.8f;
-                    Vector2 boltVelocity = Vector2.Normalize(playerDistance) * velocity;
-                    NewProjectileBetter(npc.Center + ellipseVector, boltVelocity, ProjectileID.PhantasmalBolt, 185, 0f, Main.myPlayer, 0f, 0f);
-                }
-                if (npc.Infernum().ExtraAI[1] >= 70f)
-                {
-                    if (npc.life > 1700)
-                        npc.ai[0] = ai0Reset;
-                    npc.Infernum().ExtraAI[1] = 0f;
-                }
-            }
-
-            // Reset
-            else if (npc.ai[0] == ai0Reset)
-            {
-                npc.Infernum().ExtraAI[0] += 1f;
-                switch ((int)npc.Infernum().ExtraAI[0] % 8)
-                {
-                    case 0:
-                        npc.ai[0] = 1f;
-                        break;
-                    case 1:
-                        npc.ai[0] = 2f;
-                        break;
-                    case 2:
-                        npc.ai[0] = 1f;
-                        break;
-                    case 3:
-                        npc.ai[0] = 0f;
-                        break;
-                    case 4:
-                        npc.ai[0] = 2f;
-                        break;
-                    case 5:
-                        npc.ai[0] = 0f;
-                        break;
-                    case 6:
-                        npc.ai[0] = 3f;
-                        break;
-                    case 7:
-                        npc.ai[0] = 2f;
-                        break;
-                }
-                npc.netSpam = 0;
-                npc.netUpdate = true;
-            }
-            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
-
-            npc.Infernum().ExtraAI[1] += 1f;
-            Vector2 baseHandIdeal = new Vector2(220f * handSign, -60f) + coreCenter;
-            Vector2 handIdeal = baseHandIdeal + new Vector2(handSign * 110f, -150f);
-            Vector2 handIdeal2 = handIdeal + new Vector2(handSign * 370f, 150f);
-
-            if (handIdeal.X > handIdeal2.X)
-                Utils.Swap(ref handIdeal.X, ref handIdeal2.X);
-            if (handIdeal.Y > handIdeal2.Y)
-                Utils.Swap(ref handIdeal.Y, ref handIdeal2.Y);
-            Vector2 clippedPositionDelta = Vector2.Clamp(npc.Center + npc.velocity, handIdeal, handIdeal2);
-            if (clippedPositionDelta != npc.Center + npc.velocity)
-                npc.Center = clippedPositionDelta - npc.velocity;
-            // Frames
+            // Handle frames.
             int idealFrameCounter = idealFrame * 7;
             if (idealFrameCounter > npc.frameCounter)
-            {
-                npc.frameCounter += 1.0;
-            }
+                npc.frameCounter += 1D;
             if (idealFrameCounter < npc.frameCounter)
-            {
-                npc.frameCounter -= 1.0;
-            }
+                npc.frameCounter -= 1D;
+            npc.frameCounter = MathHelper.Clamp((float)npc.frameCounter, 0f, 21f);
 
-            if (npc.frameCounter < 0.0)
-                npc.frameCounter = 0.0;
-            if (npc.frameCounter > 21.0)
-                npc.frameCounter = 21.0;
             return false;
         }
 
-        public static int[] GetTrueEyesIndex => Main.npc.Where(entity => entity.active && entity.type == NPCID.MoonLordFreeEye).Select(entity => entity.whoAmI).ToArray();
-        public static NPC[] GetTrueEyes => Main.npc.Where(entity => entity.active && entity.type == NPCID.MoonLordFreeEye).Select(entity => Main.npc[entity.whoAmI]).ToArray();
-
-        /// <summary>
-        /// Summons a true eye of cthulhu from a body part and then adjusts said body part so it doesn't do this again
-        /// </summary>
-        /// <param name="npc">The body part from which to modify/derive from</param>
-        public static void SummonTrueEye(NPC npc)
+        public static void DoBehavior_DefaultHandHover(NPC npc, NPC core, int handSide, float attackTimer, ref int idealFrame)
         {
-            npc.Infernum().ExtraAI[2] = -2f;
-            npc.ai[0] = -2f;
-            npc.life = npc.lifeMax;
-            npc.netUpdate = true;
+            idealFrame = 3;
             npc.dontTakeDamage = true;
-            int groupIndex = 0;
-            if (GetTrueEyes.Length > 0)
-                groupIndex = (int)GetTrueEyes.Max(eye => eye.Infernum().ExtraAI[0]) + 1;
-            npc.Infernum().ExtraAI[0] = groupIndex;
-            int idx = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.MoonLordFreeEye, 0, 0f, 0f, 0f, 0f, 255);
-            Main.npc[idx].ai[3] = -1;
-            Main.npc[idx].Infernum().ExtraAI[0] = groupIndex;
-            Main.npc[idx].netUpdate = true;
+
+            Vector2 idealPosition = core.Center + new Vector2(handSide * 450f, -70f);
+            idealPosition += (attackTimer / 32f + npc.whoAmI * 2.3f).ToRotationVector2() * 24f;
+
+            Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 15f);
+            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.125f).MoveTowards(idealVelocity, 2f);
+        }
+
+        public static void DoBehavior_PhantasmalSphereHandWaves(NPC npc, NPC core, Player target, int handSide, float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale, ref int idealFrame)
+        {
+            int waveTime = 270;
+            int sphereShootDelay = 36;
+            int sphereShootRate = 12;
+            int attackTransitionDelay = 40;
+            float sphereShootSpeed = 12f;
+            float sphereSlamSpeed = 6f;
+            if (MoonLordCoreBehaviorOverride.CurrentActiveArms <= 1)
+            {
+                sphereShootRate -= 4;
+                sphereSlamSpeed += 3f;
+            }
+            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            {
+                sphereShootRate /= 2;
+                sphereSlamSpeed += 7f;
+            }
+
+            float handCloseInterpolant = Utils.InverseLerp(0f, 16f, attackTimer - waveTime, true);
+
+            Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -125f);
+            Vector2 endingIdealPosition = core.Center + new Vector2(handSide * 750f, -70f);
+            Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, MathHelper.Clamp(attackTimer / waveTime - handCloseInterpolant, 0f, 1f));
+            idealPosition += (attackTimer / 16f).ToRotationVector2() * new Vector2(10f, 30f);
+
+            Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 15f);
+            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f).MoveTowards(idealVelocity, 1.6f);
+
+            // Open the hand right before firing.
+            if (attackTimer < sphereShootDelay - 12f || attackTimer >= waveTime)
+            {
+                pupilScale = MathHelper.Lerp(pupilScale, 0.3f, 0.1f);
+                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0f, 0.1f);
+                idealFrame = 3;
+
+                // Shut hands faster after the spheres have been released.
+                if (attackTimer >= waveTime && attackTimer < waveTime + 16f)
+                    npc.frameCounter = MathHelper.Clamp((float)npc.frameCounter + 1f, 0f, 21f);
+            }
+            else
+            {
+                pupilScale = MathHelper.Lerp(pupilScale, 0.75f, 0.1f);
+                pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.5f, 0.1f);
+                pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.1f);
+                idealFrame = 0;
+            }
+
+            // Become invulnerable if the hand is closed.
+            if (npc.frameCounter > 7)
+                npc.dontTakeDamage = true;
+
+            bool canShootPhantasmalSpheres = true;
+            if (attackTimer < sphereShootDelay)
+                canShootPhantasmalSpheres = false;
+            if (attackTimer >= waveTime)
+                canShootPhantasmalSpheres = false;
+
+            if (canShootPhantasmalSpheres)
+            {
+                float attackCompletion = Utils.InverseLerp(0f, waveTime, attackTimer, true);
+                float maximumAngularDisparity = MathHelper.TwoPi;
+                float angularShootOffset = MathHelper.SmoothStep(0f, maximumAngularDisparity, attackCompletion) * -handSide;
+                Vector2 sphereShootVelocity = -Vector2.UnitY.RotatedBy(angularShootOffset) * sphereShootSpeed;
+                pupilRotation = sphereShootVelocity.ToRotation();
+
+                if (attackTimer % sphereShootRate == sphereShootRate - 1f)
+                {
+                    Main.PlaySound(SoundID.Item122, npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int sphere = Utilities.NewProjectileBetter(npc.Center, sphereShootVelocity, ProjectileID.PhantasmalSphere, 215, 0f, npc.target);
+                        if (Main.projectile.IndexInRange(sphere))
+                        {
+                            Main.projectile[sphere].ai[1] = npc.whoAmI;
+                            Main.projectile[sphere].netUpdate = true;
+                        }
+
+                        // Sync the entire moon lord's current state. This will be executed on the frame immediately after this one.
+                        core.netUpdate = true;
+                    }
+                }
+            }
+
+            // Slam all phantasmal spheres at the target after they have been fired.
+            if (attackTimer == waveTime + 16f && (handSide == 1 || MoonLordCoreBehaviorOverride.CurrentActiveArms == 1))
+            {
+                if (Main.netMode != NetmodeID.Server)
+                {
+                    var sound = Main.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
+                    if (sound != null)
+                    {
+                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.85f, 0f, 1f);
+                        sound.Pitch = -0.5f;
+                    }
+                }
+                    
+                foreach (Projectile sphere in Utilities.AllProjectilesByID(ProjectileID.PhantasmalSphere))
+                {
+                    sphere.ai[0] = -1f;
+                    sphere.velocity = sphere.SafeDirectionTo(target.Center) * sphereSlamSpeed;
+                    sphere.tileCollide = Collision.CanHit(sphere.Center, 0, 0, target.Center, 0, 0);
+                    sphere.timeLeft = sphere.MaxUpdates * 270;
+                    sphere.netUpdate = true;
+                }
+            }
+
+            if (attackTimer >= waveTime + attackTransitionDelay)
+                core.Infernum().ExtraAI[5] = 1f;
+        }
+
+        public static void DoBehavior_PhantasmalFlareBursts(NPC npc, NPC core, Player target, int handSide, float attackTimer, ref float pupilRotation, ref float pupilOutwardness, ref float pupilScale, ref int idealFrame)
+        {
+            int flareCreationRate = 4;
+            int flareTelegraphTime = 150;
+            int flareReleaseDelay = 32;
+            int flareShootTime = 60;
+            float flareSpawnOffsetMax = 900f;
+            if (MoonLordCoreBehaviorOverride.IsEnraged)
+            {
+                flareCreationRate -= 2;
+                flareSpawnOffsetMax += 400f;
+            }
+
+            idealFrame = 0;
+            pupilRotation = pupilRotation.AngleLerp(0f, 0.1f);
+            pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0f, 0.1f);
+            pupilScale = MathHelper.Lerp(pupilScale, 0.35f, 0.1f);
+
+            float handCloseInterpolant = Utils.InverseLerp(0f, flareReleaseDelay, attackTimer - flareTelegraphTime, true);
+            Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -100f);
+            Vector2 endingIdealPosition = core.Center + new Vector2(handSide * 750f, -150f);
+            Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, MathHelper.Clamp(attackTimer / flareTelegraphTime - handCloseInterpolant, 0f, 1f));
+            idealPosition += (attackTimer / 16f).ToRotationVector2() * 12f;
+
+            Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 15f);
+            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.1f).MoveTowards(idealVelocity, 1.6f);
+
+            // Create flare telegraphs.
+            if (attackTimer < flareTelegraphTime && attackTimer % flareCreationRate == flareCreationRate - 1f && (handSide == 1 || MoonLordCoreBehaviorOverride.CurrentActiveArms == 1))
+            {
+                Main.PlaySound(SoundID.Item72, target.Center);
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 flareSpawnPosition = target.Center + Vector2.UnitX * Main.rand.NextFloatDirection() * flareSpawnOffsetMax;
+                    int telegraph = Utilities.NewProjectileBetter(flareSpawnPosition, Vector2.Zero, ModContent.ProjectileType<LunarFlareTelegraph>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(telegraph))
+                    {
+                        Main.projectile[telegraph].ai[0] = flareTelegraphTime - attackTimer + flareReleaseDelay;
+                        Main.projectile[telegraph].ai[1] = Main.rand.NextBool(8).ToInt();
+                    }
+                }
+            }
+
+            if (attackTimer >= flareTelegraphTime + flareReleaseDelay + flareShootTime)
+                core.Infernum().ExtraAI[5] = 1f;
+        }
+
+        public static void DoBehavior_ExplodingConstellations(NPC npc, NPC core, Player target, int handSide, float attackTimer, ref int idealFrame)
+        {
+            idealFrame = 0;
+            int initialAnimationTime = 54;
+            int starCreationRate = 4;
+            int totalStarsToCreate = 15;
+            int explosionTime = 130;
+            int constellationCount = 3;
+
+            if (MoonLordCoreBehaviorOverride.InFinalPhase)
+            {
+                starCreationRate--;
+                totalStarsToCreate += 3;
+            }
+
+            int starCreationTime = totalStarsToCreate * starCreationRate;
+            float animationCompletionRatio = MathHelper.Clamp(attackTimer / initialAnimationTime, 0f, 1f);
+            float wrappedAttackTimer = (attackTimer + (handSide == 0f ? 0f : 36f)) % (initialAnimationTime + starCreationTime + explosionTime);
+            Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -125f);
+            Vector2 endingIdealPosition = core.Center + new Vector2(handSide * 450f, -350f);
+
+            ref float constellationPatternType = ref npc.Infernum().ExtraAI[0];
+            ref float constellationSeed = ref npc.Infernum().ExtraAI[1];
+
+            // Create charge dust and close hands before the attack begins.
+            if (wrappedAttackTimer < initialAnimationTime - 12f)
+            {
+                float chargePowerup = Utils.InverseLerp(0f, 0.5f, animationCompletionRatio, true);
+                int chargeDustCount = (int)Math.Round(MathHelper.Lerp(1f, 3f, chargePowerup));
+                float chargeDustOffset = MathHelper.Lerp(30f, 75f, chargePowerup);
+
+                for (int i = 0; i < chargeDustCount; i++)
+                {
+                    Vector2 chargeDustSpawnPosition = npc.Center + Main.rand.NextVector2CircularEdge(chargeDustOffset, chargeDustOffset) * Main.rand.NextFloat(0.8f, 1f);
+                    Vector2 chargeDustVelocity = (npc.Center - chargeDustSpawnPosition) * 0.05f;
+                    Dust electricity = Dust.NewDustPerfect(chargeDustSpawnPosition, 229);
+                    electricity.velocity = chargeDustVelocity * Main.rand.NextFloat(0.9f, 1.1f);
+                    electricity.scale = MathHelper.Lerp(1f, 1.45f, chargePowerup);
+                    electricity.alpha = 84;
+                    electricity.noGravity = true;
+                }
+
+                idealFrame = 3;
+            }
+
+            float hoverInterpolant = CalamityUtils.Convert01To010(animationCompletionRatio);
+            Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, hoverInterpolant);
+            idealPosition += (attackTimer / 16f).ToRotationVector2() * new Vector2(10f, 30f);
+
+            Vector2 idealVelocity = Vector2.Zero.MoveTowards(idealPosition - npc.Center, 18f);
+            npc.velocity = Vector2.Lerp(npc.velocity, idealVelocity, 0.18f).MoveTowards(idealVelocity, 1.8f);
+
+            // Determine what constellation pattern this arm will use. Each arm has their own pattern that they create.
+            if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer == initialAnimationTime - 30f)
+            {
+                constellationSeed = Main.rand.NextFloat();
+                constellationPatternType = Main.rand.Next(3);
+                npc.netUpdate = true;
+            }
+
+            // Create stars.
+            if (wrappedAttackTimer >= initialAnimationTime &&
+                wrappedAttackTimer < initialAnimationTime + starCreationTime && 
+                (wrappedAttackTimer - initialAnimationTime) % starCreationRate == 0f)
+            {
+                float patternCompletion = Utils.InverseLerp(initialAnimationTime, initialAnimationTime + starCreationTime, wrappedAttackTimer, true);
+                Vector2 currentPoint;
+                switch ((int)constellationPatternType)
+                {
+                    // Diagonal stars from top left to bottom right.
+                    case 0:
+                        Vector2 startingPoint = target.Center + new Vector2(-800f, -600f);
+                        Vector2 endingPoint = target.Center + new Vector2(800f, 600f);
+                        currentPoint = Vector2.Lerp(startingPoint, endingPoint, patternCompletion);
+                        break;
+
+                    // Diagonal stars from top right to bottom left.
+                    case 1:
+                        startingPoint = target.Center + new Vector2(800f, -600f);
+                        endingPoint = target.Center + new Vector2(-800f, 600f);
+                        currentPoint = Vector2.Lerp(startingPoint, endingPoint, patternCompletion);
+                        break;
+
+                    // Horizontal sinusoid.
+                    case 2:
+                    default:
+                        float horizontalOffset = MathHelper.Lerp(-775f, 775f, patternCompletion);
+                        float verticalOffset = (float)Math.Cos(patternCompletion * MathHelper.Pi + constellationSeed * MathHelper.TwoPi) * 420f;
+                        currentPoint = target.Center + new Vector2(horizontalOffset, verticalOffset);
+                        break;
+                }
+
+                Main.PlaySound(SoundID.Item72, currentPoint);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int star = Utilities.NewProjectileBetter(currentPoint, Vector2.Zero, ModContent.ProjectileType<StardustConstellation>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(star))
+                    {
+                        Main.projectile[star].ai[0] = (int)(patternCompletion * totalStarsToCreate);
+                        Main.projectile[star].ai[1] = npc.whoAmI;
+                    }
+                }
+            }
+
+            // Make all constellations spawned by this hand prepare to explode.
+            if (wrappedAttackTimer == initialAnimationTime + starCreationTime)
+            {
+                foreach (Projectile star in Utilities.AllProjectilesByID(ModContent.ProjectileType<StardustConstellation>()).Where(p => p.ai[1] == npc.whoAmI))
+                    star.timeLeft = 50;
+            }
+
+            if (attackTimer >= (initialAnimationTime + starCreationTime + explosionTime) * constellationCount - 1f)
+                core.Infernum().ExtraAI[5] = 1f;
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D texture = Main.npcTexture[npc.type];
+            Vector2 shoulderOffset = new Vector2(220f, -60f);
+            Texture2D armTexture = Main.extraTexture[15];
+            Vector2 coreCenter = Main.npc[(int)npc.ai[3]].Center;
+            Point centerTileCoords = npc.Center.ToTileCoordinates();
+            Color color = npc.GetAlpha(Color.Lerp(Lighting.GetColor(centerTileCoords.X, centerTileCoords.Y), Color.White, 0.3f));
+            bool isLeftHand = npc.ai[2] == 0f;
+            Vector2 directionThing = new Vector2((!isLeftHand).ToDirectionInt(), 1f);
+            Vector2 handOrigin = new Vector2(120f, 180f);
+            if (!isLeftHand)
+                handOrigin.X = texture.Width - handOrigin.X;
+
+            Texture2D scleraTexture = Main.extraTexture[17];
+            Texture2D pupilTexture = Main.extraTexture[19];
+            Vector2 scleraFrame = new Vector2(26f, 42f);
+            if (!isLeftHand)
+                scleraFrame.X = scleraTexture.Width - scleraFrame.X;
+
+            Texture2D exposedEyeTexture = Main.extraTexture[26];
+            Rectangle exposedEyeFrame = exposedEyeTexture.Frame(1, 1, 0, 0);
+            exposedEyeFrame.Height /= 4;
+            Vector2 shoulderCenter = coreCenter + shoulderOffset * directionThing;
+            Vector2 handBottom = npc.Center + new Vector2(0f, 76f);
+            Vector2 v = (shoulderCenter - handBottom) * 0.5f;
+            Vector2 armOrigin = new Vector2(60f, 30f);
+            SpriteEffects direction = npc.ai[2] != 1f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            if (!isLeftHand)
+                armOrigin.X = armTexture.Width - armOrigin.X;
+
+            float armAngularOffset = (float)Math.Acos(MathHelper.Clamp(v.Length() / 340f, 0f, 1f)) * -directionThing.X;
+            float armRotation = v.ToRotation() + armAngularOffset - MathHelper.PiOver2;
+            spriteBatch.Draw(armTexture, handBottom - Main.screenPosition, null, color, armRotation, armOrigin, 1f, direction, 0f);
+            if (npc.ai[0] == -2f)
+            {
+                int frame = (int)(Main.GlobalTime * 9.3f) % 4;
+                exposedEyeFrame.Y += exposedEyeFrame.Height * frame;
+                Vector2 exposedEyeDrawPosition = npc.Center - Main.screenPosition;
+                spriteBatch.Draw(exposedEyeTexture, exposedEyeDrawPosition, exposedEyeFrame, color, 0f, scleraFrame - new Vector2(4f, 4f), 1f, direction, 0f);
+            }
+            else
+            {
+                Vector2 scleraDrawPosition = npc.Center - Main.screenPosition;
+                spriteBatch.Draw(scleraTexture, scleraDrawPosition, null, Color.White * npc.Opacity * 0.6f, 0f, scleraFrame, 1f, direction, 0f);
+                Vector2 pupilOffset = Utils.Vector2FromElipse(npc.localAI[0].ToRotationVector2(), new Vector2(30f, 66f) * npc.localAI[1]) + new Vector2(-directionThing.X, 3f);
+                spriteBatch.Draw(pupilTexture, npc.Center - Main.screenPosition + pupilOffset, null, Color.White * npc.Opacity * 0.6f, 0f, pupilTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            }
+            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, npc.frame, color, 0f, handOrigin, 1f, direction, 0f);
+            return false;
         }
     }
 }

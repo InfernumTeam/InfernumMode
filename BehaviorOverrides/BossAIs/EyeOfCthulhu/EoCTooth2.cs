@@ -17,9 +17,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         {
             projectile.width = projectile.height = 22;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
+            projectile.ignoreWater = true;
             projectile.tileCollide = false;
-			projectile.alpha = 255;
+            projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.timeLeft = 600;
             cooldownSlot = 1;
@@ -33,9 +33,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver4;
         }
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public override bool ShouldUpdatePosition() => false;
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             // Create an inner and outer telegraph.
             Color outerTelegraphColor = new Color(255, 70, 53, 0);
@@ -51,14 +51,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             return false;
         }
 
-		public override void Kill(int timeLeft)
-		{
+        public override void Kill(int timeLeft)
+        {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
             int laser = Utilities.NewProjectileBetter(projectile.Center, projectile.velocity * 18f, ProjectileID.DeathLaser, 120, 0f);
             if (Main.projectile.IndexInRange(laser))
                 Main.projectile[laser].tileCollide = false;
-		}
-	}
+        }
+    }
 }

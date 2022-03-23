@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
-	public class BirbThunderAuraFlare : ModProjectile
+    public class BirbThunderAuraFlare : ModProjectile
     {
         public ref float Time => ref projectile.localAI[0];
         public ref float PulsationFactor => ref projectile.localAI[1];
@@ -24,23 +24,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         {
             projectile.width = projectile.height = 32;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
+            projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
             projectile.timeLeft = 1200;
-		}
+        }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(Time);
-			writer.Write(PulsationFactor);
-		}
+            writer.Write(PulsationFactor);
+        }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             Time = reader.ReadSingle();
             PulsationFactor = reader.ReadSingle();
-		}
+        }
 
         public override void AI()
         {
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         // Dust pulse effect
                         PulsationFactor = (float)Math.Abs(Math.Cos(MathHelper.ToRadians(Time * 2f)));
                         EmitDust();
-					}
+                    }
 
                     projectile.velocity = projectile.SafeDirectionTo(Main.player[targetIndex].Center) * (Time / 8f + 7f);
                     if (projectile.WithinRange(Main.player[targetIndex].Center, 32f))
@@ -65,8 +65,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         }
 
         public void EmitDust()
-		{
-            if (Main.dedServ) 
+        {
+            if (Main.dedServ)
                 return;
 
             for (int i = 0; i < 10; i++)
@@ -82,17 +82,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override void Kill(int timeLeft)
         {
-			Main.PlaySound(SoundID.DD2_BetsyFireballImpact, (int)projectile.position.X, (int)projectile.position.Y);
+            Main.PlaySound(SoundID.DD2_BetsyFireballImpact, (int)projectile.position.X, (int)projectile.position.Y);
 
             if (projectile.owner != Main.myPlayer)
                 return;
 
             int type = ModContent.ProjectileType<BirbAura>();
             if (CalamityUtils.CountProjectiles(type) >= 2)
-			{
+            {
                 Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
                 return;
-			}
+            }
             float x = Utils.Clamp((int)(projectile.Center.Y / 16f), 10, Main.maxTilesX - 110) * 16;
             float y = Utils.Clamp((int)(projectile.Center.X / 16f), 10, Main.maxTilesX - 110) * 16 + 900;
             Vector2 laserVelocity;

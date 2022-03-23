@@ -10,6 +10,8 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.World.Generation;
 
+using ModInstance = InfernumMode.InfernumMode;
+
 namespace InfernumMode
 {
     public class PoDWorld : ModWorld
@@ -84,6 +86,10 @@ namespace InfernumMode
         #region Updating
         public override void PostUpdate()
         {
+            // Disable natural GSS spawns.
+            if (ModInstance.CanUseCustomAIs)
+                CalamityMod.CalamityMod.sharkKillCount = 0;
+
             if (!NPC.AnyNPCs(ModContent.NPCType<Draedon>()))
                 CalamityGlobalNPC.draedon = -1;
         }

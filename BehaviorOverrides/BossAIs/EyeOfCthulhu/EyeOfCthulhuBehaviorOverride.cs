@@ -88,12 +88,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         {
             Player target = Main.player[npc.target];
 
-            if (target.dead)
+            if (target.dead || !target.active)
             {
                 npc.TargetClosest();
                 target = Main.player[npc.target];
 
-                if (target.dead)
+                if (target.dead || !target.active)
                 {
                     npc.velocity.Y -= 0.18f;
                     npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
@@ -106,7 +106,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 }
             }
 
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
 
             ref float attackTimer = ref npc.ai[2];
             ref float phase2ResetTimer = ref npc.Infernum().ExtraAI[6];
@@ -452,8 +453,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
         public static void DoBehavior_SpinDash(NPC npc, Player target, bool enraged, bool phase4, ref float attackTimer)
         {
-            int spinCycles = 2;
-            int spinTime = 120;
+            int spinCycles = 1;
+            int spinTime = 75;
             int chargeDelay = 25;
             int chargeChainCount = 3;
             float chargeTime = 60;
@@ -463,7 +464,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
 
             if (phase4)
             {
-                spinTime -= 30;
+                spinTime -= 20;
                 chargeDelay -= 5;
                 chargeTime -= 8;
                 chargeSpeed += 2f;
@@ -524,7 +525,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // Spin.
             if (attackSubstate == 1f)
             {
-                spinAngle += MathHelper.TwoPi * spinCycles / spinTime;
+                spinAngle += MathHelper.TwoPi * spinCycles / spinTime * Utils.InverseLerp(spinTime + 4f, spinTime - 15f, attackTimer, true);
                 npc.Center = target.Center + spinAngle.ToRotationVector2() * spinRadius;
                 npc.rotation = spinAngle;
                 if (attackTimer >= spinTime)
@@ -690,6 +691,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             // And reset the misc ai slots.
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+
+            npc.TargetClosest();
             npc.netUpdate = true;
         }
         #endregion

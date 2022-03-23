@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -14,8 +15,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresPulseCannon : ModNPC
     {
+        public AresCannonChargeParticleSet EnergyDrawer = new AresCannonChargeParticleSet(-1, 15, 40f, Color.Fuchsia);
+
         public ref float AttackTimer => ref npc.ai[0];
         public ref float ChargeDelay => ref npc.ai[1];
+        public Vector2 CoreSpritePosition => npc.Center + npc.spriteDirection * npc.rotation.ToRotationVector2() * 35f + (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * 5f;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("XF-09 Ares Pulse Cannon");
@@ -27,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public override void SetDefaults()
         {
             npc.npcSlots = 5f;
-            npc.damage = 100;
+            npc.damage = 0;
             npc.width = 170;
             npc.height = 120;
             npc.defense = 80;
@@ -49,14 +54,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.hide = true;
             music = (InfernumMode.CalamityMod as CalamityModClass).GetMusicFromMusicMod("ExoMechs") ?? MusicID.Boss3;
         }
-
+        
         public override void AI()
         {
             if (CalamityGlobalNPC.draedonExoMechPrime < 0)
             {
+                npc.life = 0;
+                npc.HitEffect();
                 npc.active = false;
                 return;
             }
+
+            // Update the energy drawer.
+            EnergyDrawer.Update();
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
@@ -70,9 +80,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Define attack variables.
             bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
             int shootTime = 180;
-            int totalFlamesPerBurst = 3;
+            int totalPulseBlastsPerBurst = 3;
             float blastShootSpeed = 7.5f;
-            float aimPredictiveness = 15f;
+            float aimPredictiveness = 27f;
+            ref float shouldPrepareToFire = ref npc.Infernum().ExtraAI[1];
 
             // Nerf things while Ares' complement mech is present.
             if (ExoMechManagement.CurrentAresPhase == 4)
@@ -81,32 +92,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase >= 5)
             {
                 shootTime += 60;
-                totalFlamesPerBurst += 2;
+                totalPulseBlastsPerBurst += 2;
                 blastShootSpeed *= 1.25f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
-                shootTime += 30;
-                totalFlamesPerBurst++;
+                shootTime -= 16;
+                totalPulseBlastsPerBurst++;
             }
 
             // Get very pissed off if Ares is enraged.
             if (aresBody.Infernum().ExtraAI[13] == 1f)
-                totalFlamesPerBurst += 5;
+                totalPulseBlastsPerBurst += 5;
 
-            int shootRate = shootTime / totalFlamesPerBurst;
+            int shootRate = shootTime / totalPulseBlastsPerBurst;
 
             // Initialize delays and other timers.
+            shouldPrepareToFire = 0f;
             if (ChargeDelay == 0f)
                 ChargeDelay = AresBodyBehaviorOverride.Phase1ArmChargeupTime;
 
             // Don't do anything if this arm should be disabled.
-            if (currentlyDisabled && AttackTimer >= ChargeDelay)
-                AttackTimer = ChargeDelay;
+            if (currentlyDisabled)
+                AttackTimer = 1f;
+            
+            // Become more resistant to damage as necessary.
+            npc.takenDamageMultiplier = 1f;
+            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
+                npc.takenDamageMultiplier *= 0.5f;
 
             // Hover near Ares.
-            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge ||
-                aresBody.ai[0] == (int)ExoMechComboAttackContent.ExoMechComboAttackType.AresTwins_ThermoplasmaDance;
+            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge;
             float horizontalOffset = doingHoverCharge ? 380f : 575f;
             float verticalOffset = doingHoverCharge ? 150f : 0f;
             Vector2 hoverDestination = aresBody.Center + new Vector2((aresBody.Infernum().ExtraAI[15] == 1f ? -1f : 1f) * horizontalOffset, verticalOffset);
@@ -139,6 +155,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     Dust.NewDustPerfect(endOfCannon + offset, 234, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.35f).noGravity = true;
                     Dust.NewDustPerfect(endOfCannon - offset, 234, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.35f).noGravity = true;
                 }
+            }
+
+            // Decide the state of the particle drawer.
+            EnergyDrawer.ParticleSpawnRate = 99999999;
+            if (AttackTimer > ChargeDelay * 0.45f)
+            {
+                shouldPrepareToFire = 1f;
+                float chargeCompletion = MathHelper.Clamp(AttackTimer / ChargeDelay, 0f, 1f);
+                EnergyDrawer.ParticleSpawnRate = 3;
+                EnergyDrawer.SpawnAreaCompactness = 100f;
+                EnergyDrawer.chargeProgress = chargeCompletion;
+
+                if (AttackTimer % 15f == 14f && chargeCompletion < 1f)
+                    EnergyDrawer.AddPulse(chargeCompletion * 6f);
             }
 
             // Fire a pulse blast.
@@ -191,6 +221,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.frame = new Rectangle(currentFrame / 12 * 150, currentFrame % 12 * 148, 150, 148);
         }
 
+        public override void HitEffect(int hitDirection, double damage)
+        {
+            for (int k = 0; k < 3; k++)
+                Dust.NewDust(npc.position, npc.width, npc.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1f);
+
+            if (npc.life <= 0)
+            {
+                for (int i = 0; i < 2; i++)
+                    Dust.NewDust(npc.position, npc.width, npc.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
+
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust exoEnergy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 107, 0f, 0f, 0, new Color(0, 255, 255), 2.5f);
+                    exoEnergy.noGravity = true;
+                    exoEnergy.velocity *= 3f;
+
+                    exoEnergy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
+                    exoEnergy.velocity *= 2f;
+                    exoEnergy.noGravity = true;
+                }
+
+                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/AresPulseCannon1"), npc.scale);
+                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase1"), npc.scale);
+                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase2"), npc.scale);
+                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase3"), npc.scale);
+            }
+        }
+
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
@@ -230,6 +288,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
+            ExoMechAIUtilities.DrawAresArmTelegraphEffect(spriteBatch, npc, Color.Violet, texture, center, frame, origin);
             spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/AresPulseCannonGlow");
@@ -245,6 +304,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+
+            spriteBatch.SetBlendState(BlendState.Additive);
+
+            if (npc.Infernum().ExtraAI[1] == 1f)
+                EnergyDrawer.DrawBloom(CoreSpritePosition);
+            EnergyDrawer.DrawPulses(CoreSpritePosition);
+            EnergyDrawer.DrawSet(CoreSpritePosition);
+
+            spriteBatch.ResetBlendState();
             return false;
         }
 

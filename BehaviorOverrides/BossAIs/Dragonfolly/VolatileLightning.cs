@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
-	public class VolatileLightning : ModProjectile
+    public class VolatileLightning : ModProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
@@ -21,12 +21,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             projectile.friendly = false;
             projectile.tileCollide = true;
             projectile.timeLeft = 45;
-		}
+        }
 
         public override void AI()
         {
             for (int i = 0; i < 7; i++)
-			{
+            {
                 Dust redLightning = Dust.NewDustPerfect(projectile.Center, 267, Main.rand.NextVector2Circular(2f, 2f));
                 redLightning.velocity *= Main.rand.NextFloat(1f, 1.7f);
                 redLightning.scale *= Main.rand.NextFloat(1.85f, 2.25f);
@@ -34,9 +34,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 redLightning.fadeIn = 1f;
                 redLightning.noGravity = true;
             }
-		}
+        }
 
-		public override void Kill(int timeLeft)
+        public override void Kill(int timeLeft)
         {
             for (float speed = 2f; speed <= 6f; speed += 0.7f)
             {
@@ -58,5 +58,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             projectile.damage = 80;
             projectile.Damage();
         }
-	}
+    }
 }

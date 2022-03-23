@@ -59,18 +59,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 StartingVelocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * 2f;
 
             if (Time < 0f)
-			{
+            {
                 float speedInterpolant = (float)Math.Pow(Utils.InverseLerp(-150f, -1f, Time, true), 4D);
                 Vector2 endingVelocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MaxSpeed;
                 projectile.velocity = Vector2.Lerp(StartingVelocity, endingVelocity, speedInterpolant);
-			}
+            }
             else if (Time < 50f)
             {
                 float initialSpeed = projectile.velocity.Length();
                 Player closestTarget = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
                 projectile.velocity = (projectile.velocity * 34f + projectile.SafeDirectionTo(closestTarget.Center) * initialSpeed) / 35f;
                 projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * initialSpeed;
-			}
+            }
             else
                 projectile.velocity *= 1.022f;
 
@@ -87,18 +87,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-			lightColor.R = (byte)(255 * projectile.Opacity);
-			Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
+            lightColor.R = (byte)(255 * projectile.Opacity);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
             return false;
         }
 
-		public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             if ((CalamityWorld.downedProvidence || BossRushEvent.BossRushActive) && BrimstoneElementalBehaviorOverride.ReadyToUseBuffedAI)
                 target.AddBuff(ModContent.BuffType<AbyssalFlames>(), 180);
-			else
-				target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
-		}
+            else
+                target.AddBuff(ModContent.BuffType<BrimstoneFlames>(), 120);
+        }
 
         public override void Kill(int timeLeft)
         {
@@ -107,9 +107,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, (int)CalamityDusts.Brimstone, 0f, 0f);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

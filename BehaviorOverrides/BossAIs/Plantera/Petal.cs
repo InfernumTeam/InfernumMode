@@ -22,6 +22,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-		public override Color? GetAlpha(Color lightColor) => Color.White;
+        public override Color? GetAlpha(Color lightColor) => Color.White;
     }
 }

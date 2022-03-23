@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCPreDraw;
 
-		public override void SetDefaults(NPC npc)
+        public override void SetDefaults(NPC npc)
         {
             npc.damage = 0;
             npc.width = npc.height = 24;
@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.DeathSound = SoundID.NPCDeath1;
         }
 
-		public override bool PreAI(NPC npc)
+        public override bool PreAI(NPC npc)
         {
             // Die if Sepulcher is not present.
             if (CalamityGlobalNPC.SCalWorm == -1)
@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             ref float rotationalOffset = ref npc.ai[0];
             rotationalOffset += MathHelper.TwoPi / 300f;
 
-            npc.Center = sepulcher.Center + rotationalOffset.ToRotationVector2() * 120f;
+            npc.Center = Main.player[sepulcher.target].Center + rotationalOffset.ToRotationVector2() * 180f;
             return false;
         }
 

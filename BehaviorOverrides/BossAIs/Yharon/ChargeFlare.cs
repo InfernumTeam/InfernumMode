@@ -26,8 +26,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.timeLeft = 180;
-			projectile.scale = 0.15f;
-		}
+            projectile.scale = 0.15f;
+        }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
@@ -97,8 +97,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         break;
                     }
                 }
-				int spawnLimitY = (int)(Main.player[projectile.owner].Center.Y / 16f) + 50;
-				if (yTileCoords > spawnLimitY)
+                int spawnLimitY = (int)(Main.player[projectile.owner].Center.Y / 16f) + 50;
+                if (yTileCoords > spawnLimitY)
                     yTileCoords = spawnLimitY;
                 Projectile infernado = Projectile.NewProjectileDirect(new Vector2(xTileCoords * 16 + 8, yTileCoords * 16 - 24), Vector2.Zero, ModContent.ProjectileType<Infernado>(), 0, 4f, Main.myPlayer, 11f, 25f);
                 infernado.netUpdate = true;

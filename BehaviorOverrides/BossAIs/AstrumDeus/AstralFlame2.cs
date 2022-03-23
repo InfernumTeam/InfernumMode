@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 projectile.velocity = (projectile.velocity * 41f + projectile.SafeDirectionTo(closestPlayer.Center) * 15f) / 42f;
 
             if (Time > 150f && projectile.velocity.Length() < 20f)
-                projectile.velocity *= 1.01f; 
+                projectile.velocity *= 1.01f;
 
             Time++;
         }

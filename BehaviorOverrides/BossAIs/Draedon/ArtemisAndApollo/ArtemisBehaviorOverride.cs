@@ -30,6 +30,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Despawn if Apollo is not present.
             if (!Main.npc.IndexInRange(npc.realLife) || !Main.npc[npc.realLife].active)
             {
+                npc.life = 0;
+                npc.HitEffect();
                 npc.active = false;
                 return false;
             }
@@ -52,6 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+            ref float sideSwitchAttackDelay = ref npc.Infernum().ExtraAI[18];
             NPC finalMech = ExoMechManagement.FindFinalMech();
             NPC apollo = Main.npc[npc.realLife];
 
@@ -85,10 +88,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             wasNotInitialSummon = apollo.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             finalMechIndex = apollo.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             finalPhaseAnimationTime = apollo.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+            sideSwitchAttackDelay = apollo.Infernum().ExtraAI[18];
             npc.Calamity().newAI[0] = (int)Artemis.Phase.Charge;
 
             // Get a target.
             Player target = Main.player[npc.target];
+
+            // Become more resistant to damage as necessary.
+            npc.takenDamageMultiplier = 1f;
+            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
+                npc.takenDamageMultiplier *= 0.5f;
 
             // Become invincible and disappear if the final mech is present.
             npc.Calamity().newAI[1] = 0f;
@@ -141,7 +150,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             switch ((TwinsAttackType)(int)attackState)
             {
                 case TwinsAttackType.BasicShots:
-                    DoBehavior_BasicShots(npc, target, false, hoverSide, ref frame, ref attackTimer);
+                    DoBehavior_BasicShots(npc, target, sideSwitchAttackDelay > 0f, false, hoverSide, ref frame, ref attackTimer);
+                    break;
+                case TwinsAttackType.SynchronizedCharges:
+                    DoBehavior_SynchronizedCharges(npc, target, hoverSide, ref frame, ref attackTimer);
                     break;
                 case TwinsAttackType.FireCharge:
                     DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
@@ -241,7 +253,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 {
                     for (int i = 1; i < numAfterimages; i += 2)
                     {
-                        Color afterimageColor = npc.GetAlpha(Color.Lerp(baseColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
+                        Color afterimageColor = npc.GetAlpha(Color.Lerp(baseColor, afterimageBaseColor, 0.75f)) * ((numAfterimages - i) / 15f);
+                        afterimageColor.A /= 8;
+
                         Vector2 afterimageCenter = npc.oldPos[i] + frame.Size() * 0.5f - Main.screenPosition;
                         spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, SpriteEffects.None, 0f);
                     }

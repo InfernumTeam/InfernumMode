@@ -67,17 +67,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (Time < 20f)
-			{
+            {
                 float telegraphFade = Utils.InverseLerp(0f, 8f, Time, true) * Utils.InverseLerp(20f, 10f, Time, true);
                 float telegraphWidth = telegraphFade * 4f;
                 Color telegraphColor = Color.Lerp(Color.Purple, Color.DarkRed, 0.375f) * telegraphFade;
                 Vector2 start = projectile.Center - Vector2.UnitY * 2000f;
                 Vector2 end = projectile.Center + Vector2.UnitY * 2000f;
                 Utilities.DrawLineBetter(spriteBatch, start, end, telegraphColor, telegraphWidth);
-			}
+            }
 
             if (LavaDrawer is null)
                 LavaDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:WoFGeyserTexture"]);
@@ -97,9 +97,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
-	}
+            target.Calamity().lastProjectileHit = projectile;
+        }
+    }
 }

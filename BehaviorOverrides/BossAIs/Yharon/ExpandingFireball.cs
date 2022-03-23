@@ -5,7 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-	public class ExpandingFireball : ModProjectile
+    public class ExpandingFireball : ModProjectile
     {
         public int TotalPointsInExplosion => (int)projectile.ai[0];
         public override void SetStaticDefaults()

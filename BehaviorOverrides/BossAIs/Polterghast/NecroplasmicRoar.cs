@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
-	public class NecroplasmicRoar : ModProjectile
+    public class NecroplasmicRoar : ModProjectile
     {
         public override void SetStaticDefaults()
         {
@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             return false;
         }
 
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
             Vector2 offset = projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedBy(MathHelper.PiOver2) * projectile.scale * 60f;
@@ -65,8 +65,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, projectile.scale * 105f, ref _))
                 return true;
             return false;
-		}
+        }
 
-		public override bool CanDamage() => projectile.Opacity >= 1f;
+        public override bool CanDamage() => projectile.Opacity >= 1f;
     }
 }

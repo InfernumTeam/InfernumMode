@@ -291,22 +291,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             CalamityMod.CalamityMod.StopRain();
 
             // Aquire a new target if the current one is dead or inactive.
+            npc.TargetClosestIfTargetIsInvalid();
             if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
             {
-                npc.TargetClosest(false);
-
-                // If no possible target was found, fly away.
-                if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                {
-                    npc.velocity.Y -= 0.5f;
-                    npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
-                    if (npc.timeLeft > 120)
-                        npc.timeLeft = 120;
-                    if (!npc.WithinRange(Main.player[npc.target].Center, 4200f))
-                        npc.active = false;
-                    return false;
-                }
-                npc.netUpdate = true;
+                npc.velocity.Y -= 0.8f;
+                npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
+                if (npc.timeLeft > 120)
+                    npc.timeLeft = 120;
+                if (!npc.WithinRange(Main.player[npc.target].Center, 4200f))
+                    npc.active = false;
+                return false;
             }
             else
                 npc.timeLeft = 7200;
@@ -314,7 +308,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Player target = Main.player[npc.target];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float phase2InvincibilityTime = 900f;
+            float phase2InvincibilityTime = 300f;
             float transitionTimer = 120f;
 
             ref float attackType = ref npc.ai[0];
@@ -335,7 +329,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 string text = "The air is scorching your skin...";
 
                 if (Main.netMode == NetmodeID.SinglePlayer)
-                    Main.NewText(text, Color.Orange);
+                    Utilities.DisplayText(text, Color.Orange);
                 else if (Main.netMode == NetmodeID.Server)
                     NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Orange);
 
@@ -608,10 +602,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public static void DoBehavior_SpawnEffects(NPC npc, ref float attackType, ref float attackTimer)
         {
-            int spawnEffectsTime = 48;
+            int spawnEffectsTime = 288;
 
             // Idly spawn pretty sparkles.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextBool())
             {
                 Vector2 sparkleSpawnPosition = npc.Center + Main.rand.NextVector2Circular(210f, 210f);
                 Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(18f, 18f), ModContent.ProjectileType<YharonMajesticSparkle>(), 0, 0f);
@@ -631,6 +625,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 }
                 SelectNextAttack(npc, ref attackType);
             }
+
+            // Disable contact damage.
+            npc.damage = 0;
         }
 
         public static void DoBehavior_ChargesAndTeleportCharges(NPC npc, Player target, float chargeDelay, float chargeTime, float chargeSpeed, float teleportChargeCounter, ref float attackTimer, ref float attackType, ref float specialFrameType)
@@ -821,7 +818,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 // Begin the delay if the destination is reached.
                 if (npc.WithinRange(hoverDestination, 50f) && wrappedAttackTimer < flamethrowerHoverTime - 2f)
                     attackTimer += flamethrowerHoverTime - wrappedAttackTimer - 1f;
-                
+
                 // Release fire and smoke from the mouth as a telegraph.
                 for (int i = 0; i < 3; i++)
                 {
@@ -1379,7 +1376,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 {
                     npc.life = (int)(npc.lifeMax * 0.025);
                     if (Main.netMode == NetmodeID.SinglePlayer)
-                        Main.NewText("The heat is surging...", Color.Orange);
+                        Utilities.DisplayText("The heat is surging...", Color.Orange);
                     else if (Main.netMode == NetmodeID.Server)
                         NetMessage.BroadcastChatMessage(NetworkText.FromLiteral("The heat is surging..."), Color.Orange);
                     finalAttackCompletionState = 1f;
@@ -1702,13 +1699,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             if ((YharonAttackType)(int)npc.ai[0] == YharonAttackType.SpawnEffects)
             {
-                // Open mouth for a little bit and roar.
+                // Open mouth for a little bit.
                 if (npc.frameCounter >= 30 &&
                     npc.frameCounter <= 40)
                 {
                     npc.frame.Y = 0;
-                    if (npc.frameCounter == 35)
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/YharonRoar"), npc.Center);
                 }
                 // Otherwise flap wings.
                 else if (npc.frameCounter % 5 == 4)

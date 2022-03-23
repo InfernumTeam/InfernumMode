@@ -1,32 +1,33 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
-	public class SwirlingFire : ModProjectile
+    public class SwirlingFire : ModProjectile
     {
-		public ref float AngularTurnSpeed => ref projectile.ai[0];
-		public ref float Time => ref projectile.ai[1];
+        public ref float AngularTurnSpeed => ref projectile.ai[0];
+        public ref float Time => ref projectile.ai[1];
 
         public float MaxScale = 0f;
         public const int FadeinTime = 180;
-		public override void SetStaticDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fire");
-			Main.projFrames[projectile.type] = 4;
-		}
+            Main.projFrames[projectile.type] = 4;
+        }
 
         public override void SetDefaults()
         {
             projectile.width = projectile.height = 10;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
+            projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.alpha = 255;
-			projectile.scale = 0.04f;
+            projectile.scale = 0.04f;
             projectile.penetrate = -1;
             projectile.timeLeft = 1200;
             cooldownSlot = 1;
@@ -34,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-			Time++;
+            Time++;
             if (MaxScale == 0f)
                 MaxScale = Main.rand.NextFloat(0.8f, 1.25f);
 
@@ -47,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     for (int i = 1; i <= 1; i += 2)
                     {
-                        Dust fire = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(3f, 3f), DustID.Fire);
+                        Dust fire = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : DustID.Fire);
                         fire.velocity = Main.rand.NextVector2Circular(3f, 3f);
                         fire.scale = Main.rand.NextFloat(1.3f, 1.45f);
                         fire.noGravity = true;
@@ -70,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 Lighting.AddLight(projectile.Center, Color.White.ToVector3());
             }
-            
+
             // Release a bunch of fiery dust from the cinder before it burns.
             else
             {
@@ -79,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     for (int i = 1; i <= 1; i += 2)
                     {
                         Vector2 fireVelocity = (Time / 6f).ToRotationVector2().RotatedBy(i * MathHelper.PiOver2) * Main.rand.NextFloat(1.7f, 2.2f);
-                        Dust fire = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(3f, 3f), DustID.Fire);
+                        Dust fire = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : DustID.Fire);
                         fire.velocity = fireVelocity;
                         fire.scale = Main.rand.NextFloat(1.3f, 1.45f);
                         fire.noGravity = true;
@@ -89,11 +90,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
         }
 
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            if (!Main.dayTime)
+                texture = ModContent.GetTexture($"{Texture}Night");
+
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
+            Vector2 origin = frame.Size() * 0.5f;
+            spriteBatch.Draw(texture, drawPosition, frame, projectile.GetAlpha(lightColor * 1.3f), projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
+            return false;
+        }
+
         public override bool CanDamage() => Time >= FadeinTime + 30f;
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

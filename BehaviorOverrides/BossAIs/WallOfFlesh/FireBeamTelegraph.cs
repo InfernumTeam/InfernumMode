@@ -28,11 +28,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         {
             // Determine an initial target.
             if (Main.netMode != NetmodeID.MultiplayerClient && projectile.localAI[0] == 0f)
-			{
+            {
                 TargetIndex = Player.FindClosest(projectile.Center, 1, 1);
                 projectile.localAI[0] = 1f;
                 projectile.netUpdate = true;
-			}
+            }
 
             projectile.scale = Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * Utils.InverseLerp(85f, 75f, projectile.timeLeft, true);
             projectile.scale = MathHelper.SmoothStep(0.04f, 4f, projectile.scale);
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override bool ShouldUpdatePosition() => false;
 
-		public override void Kill(int timeLeft)
+        public override void Kill(int timeLeft)
         {
             if (Target.Center.Y > (Main.maxTilesY - 300f) * 16f)
                 Main.PlaySound(SoundID.Item74, Target.Center);
@@ -94,9 +94,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 Main.projectile[beam].ai[1] = Owner.whoAmI;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

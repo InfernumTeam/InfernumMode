@@ -63,8 +63,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override bool PreAI(NPC npc)
         {
-            // Do targeting.
-            npc.TargetClosest();
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
             // Manually offset the boss graphically.
@@ -77,11 +77,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             ref float nextAttackType = ref npc.Infernum().ExtraAI[5];
             ref float onlyDoOneJump = ref npc.Infernum().ExtraAI[6];
             ref float frameType = ref npc.localAI[0];
+            ref float phase2AnimationTimer = ref npc.localAI[1];
 
             // Reset things every frame.
-            npc.defDefense = 15;
+            npc.defDefense = 27;
             npc.damage = npc.defDamage;
             npc.defense = npc.defDefense;
+            npc.Calamity().DR = 0.4f;
 
             // Reset gravity affection and tile collision.
             npc.noGravity = false;
@@ -96,6 +98,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 npc.Calamity().CurrentlyEnraged = true;
             if (enrageCountdown > 0f)
                 enrageCountdown--;
+
+            // Start glowing in Phase 2.
+            if (lifeRatio < Phase2LifeRatio)
+                phase2AnimationTimer++;
 
             // Despawn if necessary.
             npc.timeLeft = 3600;
@@ -289,9 +295,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (attackTimer == 1f)
                 npc.frame.Y = 0;
 
+            int jumpDelay = meteorSlam ? 85 : 50;
+            int attackTransitionDelay = meteorSlam ? 50 : 1;
             ref float attackState = ref npc.Infernum().ExtraAI[0];
             ref float stompCounter = ref npc.Infernum().ExtraAI[1];
             ref float jumpIntensity = ref npc.Infernum().ExtraAI[2];
+
+            if (jumpDelay > 75 && lifeRatio < Phase2LifeRatio)
+                jumpDelay -= 20;
 
             switch ((int)attackState)
             {
@@ -306,7 +317,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         npc.velocity.X *= 0.8f;
 
                         // Jump after a delay.
-                        if (attackTimer >= 50f)
+                        if (attackTimer >= jumpDelay)
                         {
                             npc.spriteDirection = (npc.Center.X < target.Center.X).ToDirectionInt();
                             npc.velocity.X = npc.spriteDirection * 21f;
@@ -367,8 +378,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                         {
                             npc.noTileCollide = false;
                             npc.noGravity = false;
-                            onlyDoOneJump = 0f;
-                            SelectNextAttack(npc);
+                            attackTimer = 0f;
+                            attackState = 2f;
+                            npc.netUpdate = true;
                         }
                         else
                         {
@@ -389,19 +401,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             }
                         }
 
-                        // Create a shockwave.
-                        // In phase 2, create astral flames that rise upward.
+                        // Perform stomp effects.
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
+                            int shockwaveDamage = 200;
+                            if (enraged)
+                                shockwaveDamage = (int)(shockwaveDamage * EnragedDamageFactor);
+
                             if (meteorSlam)
                             {
-                                int meteorDamage = 205;
+                                int meteorDamage = 180;
                                 if (enraged)
                                     meteorDamage = (int)(meteorDamage * EnragedDamageFactor);
 
                                 for (int i = 0; i < 2; i++)
                                 {
-                                    Vector2 spawnPosition = npc.Top + new Vector2(MathHelper.Lerp(-900f, 900f, i) + target.velocity.X * 60f, -570f);
+                                    Vector2 spawnPosition = target.Top + new Vector2(MathHelper.Lerp(-900f, 900f, i) + target.velocity.X * 60f, -640f);
                                     Vector2 showerDirection = (target.Center - spawnPosition + target.velocity * 100f).SafeNormalize(Vector2.UnitY);
                                     if (showerDirection.Y < 0.4f)
                                     {
@@ -414,23 +429,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             }
                             else
                             {
-                                int shockwaveDamage = 200;
-                                int crystalDamage = 155;
+                                int missileDamage = 155;
                                 if (enraged)
-                                {
-                                    shockwaveDamage = (int)(shockwaveDamage * EnragedDamageFactor);
-                                    crystalDamage = (int)(crystalDamage * EnragedDamageFactor);
-                                }
+                                    missileDamage = (int)(missileDamage * EnragedDamageFactor);
 
-                                Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
                                 if (lifeRatio < Phase2LifeRatio)
                                 {
                                     for (int i = 0; i < 6; i++)
                                     {
                                         Vector2 crystalVelocity = npc.SafeDirectionTo(target.Center).RotatedByRandom(0.9f) * Main.rand.NextFloat(12f, 18f);
-                                        Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralMissile>(), crystalDamage, 0f);
+                                        Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, crystalVelocity, ModContent.ProjectileType<AstralMissile>(), missileDamage, 0f);
                                     }
                                 }
+                                Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
                             }
                         }
                     }
@@ -474,6 +485,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                         EnforceCustomGravity(npc);
                         npc.noGravity = true;
+                    }
+                    break;
+
+                // Sit in place for a moment to allow the target to compose themselves.
+                case 2:
+                    // Slow down.
+                    npc.velocity.X *= 0.8f;
+
+                    if (attackTimer > attackTransitionDelay)
+                    {
+                        onlyDoOneJump = 0f;
+                        attackTimer = 0f;
+                        attackState = 0f;
+                        npc.netUpdate = true;
+                        SelectNextAttack(npc);
                     }
                     break;
             }
@@ -640,6 +666,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             frameType = (int)AureusFrameType.Idle;
 
             int cometShootRate = lifeRatio < Phase3LifeRatio ? 3 : 6;
+            int meteorShootRate = lifeRatio < Phase3LifeRatio ? 90 : 125;
             ref float rainAngle = ref npc.Infernum().ExtraAI[0];
 
             // Slow down horziontally.
@@ -674,20 +701,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 Utilities.CreateGenericDustExplosion(npc.Center, ModContent.DustType<AstralOrange>(), 60, 11f, 1.8f);
             }
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cometShootRate == cometShootRate - 1f && attackTimer > 120f)
+            if (attackTimer > 120f)
             {
-                int cometDamage = 160;
-                Vector2 cometSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-1050, 1050f), -780f);
-                Vector2 shootDirection = Vector2.UnitY.RotatedBy(rainAngle);
-                Vector2 shootVelocity = shootDirection * 14.5f;
-                if (enraged)
+                if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cometShootRate == cometShootRate - 1f)
                 {
-                    cometDamage = (int)(cometDamage * EnragedDamageFactor);
-                    shootVelocity *= 1.3f;
-                }
+                    int cometDamage = 160;
+                    Vector2 cometSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-1050, 1050f), -780f);
+                    Vector2 shootDirection = Vector2.UnitY.RotatedBy(rainAngle);
+                    Vector2 shootVelocity = shootDirection * 14.5f;
+                    if (enraged)
+                    {
+                        cometDamage = (int)(cometDamage * EnragedDamageFactor);
+                        shootVelocity *= 1.3f;
+                    }
 
-                int cometType = ModContent.ProjectileType<AstralBlueComet>();
-                Utilities.NewProjectileBetter(cometSpawnPosition, shootVelocity, cometType, cometDamage, 0f);
+                    int cometType = ModContent.ProjectileType<AstralBlueComet>();
+                    Utilities.NewProjectileBetter(cometSpawnPosition, shootVelocity, cometType, cometDamage, 0f);
+                }
+                if (attackTimer % meteorShootRate == meteorShootRate - 1f)
+                {
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int meteorDamage = 195;
+                        Vector2 meteorSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-550, 550f), -720f);
+                        Vector2 shootVelocity = (target.Center - meteorSpawnPosition).SafeNormalize(Vector2.UnitY) * 12f;
+                        if (enraged)
+                        {
+                            meteorDamage = (int)(meteorDamage * EnragedDamageFactor);
+                            shootVelocity *= 1.3f;
+                        }
+
+                        int meteorType = ModContent.ProjectileType<AstralMeteor>();
+                        Utilities.NewProjectileBetter(meteorSpawnPosition, shootVelocity, meteorType, meteorDamage, 0f);
+                    }
+                }
             }
 
             if (attackTimer > 520f)
@@ -863,8 +911,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             attackSelector.Add(AureusAttackType.WalkAndShootLasers);
             if (oldAttackState != AureusAttackType.CelestialRain)
             {
-                attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight * 0.5);
-                attackSelector.Add(AureusAttackType.MeteorSlam, jumpWeight * 10.5);
+                attackSelector.Add(AureusAttackType.LeapAtTarget, jumpWeight * 0.7);
+                attackSelector.Add(AureusAttackType.MeteorSlam, jumpWeight * 0.7);
             }
             attackSelector.Add(AureusAttackType.RocketBarrage);
 
@@ -910,6 +958,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 npc.Infernum().ExtraAI[7] = npc.ai[0];
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
+
+            // Select a new target.
+            npc.TargetClosest();
+
             npc.netUpdate = true;
         }
 
@@ -1008,8 +1060,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 }
             }
 
-            // Draw the normal texture.
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
+
+            // Draw the second phase back afterimage if applicable.
+            float backAfterimageInterpolant = Utils.InverseLerp(0f, 180f, npc.localAI[1], true) * npc.Opacity;
+            if (backAfterimageInterpolant > 0f)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    float colorInterpolant = (float)Math.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTime * 10f) * 0.5f + 0.5f;
+                    Color backAfterimageColor = Color.Lerp(new Color(109, 242, 196, 0), new Color(255, 119, 102, 0), colorInterpolant);
+                    backAfterimageColor *= backAfterimageInterpolant;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
+                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backAfterimageColor, rotation, origin, scale, spriteEffects, 0f);
+                }
+            }
+
+            // Draw the normal texture.
             spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), rotation, origin, scale, spriteEffects, 0f);
 
             // And draw glowmasks (and their afterimages) if not recharging.

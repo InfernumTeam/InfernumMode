@@ -10,10 +10,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
     {
         public Player Target => Main.player[(int)projectile.ai[0]];
         public bool HasTouchedGroundYet
-		{
+        {
             get => projectile.ai[1] == 1f;
             set => projectile.ai[1] = value.ToInt();
-		}
+        }
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Tooth");
@@ -23,8 +23,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         {
             projectile.width = projectile.height = 22;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
-			projectile.alpha = 255;
+            projectile.ignoreWater = true;
+            projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.tileCollide = true;
             projectile.timeLeft = 720;
@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             if (!HasTouchedGroundYet)
-			{
+            {
                 HasTouchedGroundYet = true;
                 projectile.velocity.X = 0f;
                 projectile.netUpdate = true;
@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             return false;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
@@ -65,17 +65,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             }
             spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
-		}
+        }
 
-		public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough)
+        public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough)
         {
             fallThrough = false;
             return base.TileCollideStyle(ref width, ref height, ref fallThrough);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)	
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-			target.Calamity().lastProjectileHit = projectile;
-		}
+            target.Calamity().lastProjectileHit = projectile;
+        }
     }
 }

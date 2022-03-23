@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         {
             projectile.width = projectile.height = 24;
             projectile.hostile = true;
-			projectile.ignoreWater = true;
+            projectile.ignoreWater = true;
             projectile.timeLeft = 360;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         }
 
         public override Color? GetAlpha(Color lightColor)
-		{
+        {
             Color color = Color.Pink * projectile.Opacity;
             color.A = 0;
             return color;
@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
-		{
+        {
             target.AddBuff(ModContent.BuffType<Shadowflame>(), 180);
         }
     }

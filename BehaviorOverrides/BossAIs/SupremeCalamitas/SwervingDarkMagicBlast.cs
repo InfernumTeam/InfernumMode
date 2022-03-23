@@ -95,9 +95,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage("Images/Misc/Perlin");
             TrailDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 44);
             return true;
-		}
+        }
 
-		public override void Kill(int timeLeft)
+        public override void Kill(int timeLeft)
         {
             Main.PlaySound(SoundID.Item74, projectile.Center);
             Utilities.CreateGenericDustExplosion(projectile.Center, 242, 10, 7f, 1.25f);
@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 shootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2.25f, 4.25f);
-                Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast>(), 550, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<ShadowBlast>(), 500, 0f);
             }
         }
     }

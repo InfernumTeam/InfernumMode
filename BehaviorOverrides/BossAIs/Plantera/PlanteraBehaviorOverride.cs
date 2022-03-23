@@ -42,8 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             NPC.plantBoss = npc.whoAmI;
 
             // Select a new target if an old one was lost.
-            if (npc.target < 0 || npc.target >= 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
+            npc.TargetClosestIfTargetIsInvalid();
 
             // Reset damage.
             npc.damage = 0;

@@ -1,5 +1,7 @@
 ﻿using CalamityMod;
+using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
+using CalamityMod.Items.Armor;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.World;
@@ -9,9 +11,14 @@ using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Graphics.Effects;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -62,7 +69,10 @@ namespace InfernumMode
             set => twinsSpecialAttackTypeSelector = value;
         }
 
+        public static bool ApplyEarlySpeedNerfs => InfernumMode.CalamityMod.Version < new Version("1.5.0.004");
+
         #region Skies
+        internal static readonly FieldInfo EffectsField = typeof(SkyManager).GetField("_effects", BindingFlags.NonPublic | BindingFlags.Instance);
         public override void UpdateBiomeVisuals()
         {
             if (!InfernumMode.CanUseCustomAIs)
@@ -208,6 +218,9 @@ namespace InfernumMode
             else
                 return;
 
+            if (CalamityConfig.Instance.DisableScreenShakes)
+                return;
+
             Main.screenPosition += Main.rand.NextVector2CircularEdge(CurrentScreenShakePower, CurrentScreenShakePower);
         }
         #endregion
@@ -231,20 +244,38 @@ namespace InfernumMode
         #region Misc Effects
         public void MakeAnxious(int time)
         {
-            player.DelBuff(Player.MaxBuffs - 1);
+            int deleteIndex = Player.MaxBuffs - 1;
+            int[] buffsToSkip = new int[]
+            {
+                BuffID.ChaosState,
+                BuffID.PotionSickness,
+                BuffID.ManaSickness,
+                ModContent.BuffType<ManaBurn>()
+            };
+            while (buffsToSkip.Contains(player.buffType[deleteIndex]) && deleteIndex > 0)
+                deleteIndex--;
+
+            player.DelBuff(deleteIndex);
             player.AddBuff(ModContent.BuffType<Anxiety>(), time);
         }
         public override void PostUpdateMiscEffects()
         {
-            NPC.MoonLordCountdown = 0;
             if (player.mount.Active && player.mount.Type == Mount.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DesertScourgeHead")))
             {
                 player.mount.Dismount(player);
             }
+
+            // Ensure that Revengeance Mode is always active while Infernum is active.
             if (PoDWorld.InfernumMode && !CalamityWorld.revenge)
-            {
                 CalamityWorld.revenge = true;
+
+            // Ensure that Malice Mode is never active while Infernum is active.
+            if (PoDWorld.InfernumMode && CalamityWorld.malice)
+            {
+                CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.MaliceText2", Color.Crimson);
+                CalamityWorld.malice = false;
             }
+
             if (PoDWorld.InfernumMode && CalamityWorld.DoGSecondStageCountdown > 600)
             {
                 for (int i = 0; i < Main.maxNPCs; i++)
@@ -292,6 +323,18 @@ namespace InfernumMode
                     shadowflame.noGravity = true;
                 }
             }
+        }
+        #endregion
+        #region Fuck
+        public override void UpdateEquips(ref bool wallSpeedBuff, ref bool tileSpeedBuff, ref bool tileRangeBuff)
+        {
+            if (!ApplyEarlySpeedNerfs)
+                return;
+
+            if (player.armor[0].type == ModContent.ItemType<AuricTeslaCuisses>())
+                player.moveSpeed -= 0.1f;
+            if (player.armor[0].type == ModContent.ItemType<AuricTeslaPlumedHelm>())
+                player.moveSpeed -= 0.15f;
         }
         #endregion
     }

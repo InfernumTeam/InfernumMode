@@ -35,12 +35,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             ref float initialized01Flag = ref npc.localAI[0];
             ref float attackTimer = ref npc.ai[3];
 
-            // Determine a target.
-            if (!Main.player.IndexInRange(npc.target) || Main.player[npc.target].dead || !Main.player[npc.target].active)
-                npc.TargetClosest();
-
+            // Select a new target if an old one was lost.
+            npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
             float lifeRatio = MathHelper.Clamp(npc.life / (float)npc.lifeMax, 0f, 1f);
+
+            // If the target isn't in the underworld check to see if anyone else is. If not, despawn.
+            if (target.Center.Y <= (Main.maxTilesY - 300f) * 16f)
+            {
+                int newTarget = -1;
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (!Main.player[i].active || Main.player[i].dead)
+                        continue;
+
+                    if (Main.player[i].Center.Y > (Main.maxTilesY - 300f) * 16f)
+                    {
+                        newTarget = i;
+                        break;
+                    }
+                }
+
+                if (newTarget >= 0f)
+                {
+                    npc.target = newTarget;
+                    npc.netUpdate = true;
+                }
+                else
+                    npc.active = false;
+            }
 
             Main.wof = npc.whoAmI;
 
@@ -104,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     }
                     catch
                     {
-                        tries += 15; 
+                        tries += 15;
                     }
                 }
             }
@@ -138,7 +161,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     }
                     catch
                     {
-                        tries += 15; 
+                        tries += 15;
                     }
                 }
             }
@@ -244,7 +267,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     Vector2 spawnPosition = target.Center + Main.rand.NextVector2CircularEdge(320f, 320f);
                     for (int tries = 0; tries < 2500; tries++)
                     {
-                        int checkArea = 30 + tries / 20;   
+                        int checkArea = 30 + tries / 20;
                         Vector2 potentialSpawnPosition = target.Center + target.velocity * 10f + Main.rand.NextVector2CircularEdge(checkArea, checkArea) * 16f;
                         Tile spawnTile = CalamityUtils.ParanoidTileRetrieval((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16);
                         Tile aboveTile = CalamityUtils.ParanoidTileRetrieval((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16 - 2);

@@ -11,7 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
     public class BrimstoneLightning : BasePrimitiveLightningProjectile
     {
         public override int Lifetime => 90;
-        public override int TrailPointCount => 150;
+        public override int TrailPointCount => 100;
 
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

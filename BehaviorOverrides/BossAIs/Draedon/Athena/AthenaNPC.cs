@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
@@ -33,7 +32,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public enum AthenaAttackType
         {
             CircleOfLightning,
-            ExowlHologramSwarm
+            ExowlHologramSwarm,
+            AimedPulseLasers
         }
 
         public enum AthenaTurretFrameType
@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public PrimitiveTrail FlameTrail = null;
 
-        public PrimitiveTrail LightDrawer = null;
+        public PrimitiveTrail LightRayDrawer = null;
 
         public AthenaTurret[] Turrets = new AthenaTurret[5];
 
@@ -94,15 +94,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         {
             DisplayName.SetDefault("XM-04 Athena");
             NPCID.Sets.TrailingMode[npc.type] = 3;
-            NPCID.Sets.TrailCacheLength[npc.type] = npc.oldPos.Length;
+            NPCID.Sets.TrailCacheLength[npc.type] = 10;
         }
 
         public override void SetDefaults()
         {
             npc.npcSlots = 5f;
             npc.damage = 100;
-            npc.width = 220;
-            npc.height = 248;
+            npc.width = 230;
+            npc.height = 170;
             npc.defense = 100;
             npc.DR_NERD(0.35f);
             npc.LifeMaxNERB(1300000, 1300000, 1300000);
@@ -201,6 +201,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     break;
                 case AthenaAttackType.ExowlHologramSwarm:
                     DoBehavior_ExowlHologramSwarm();
+                    break;
+                case AthenaAttackType.AimedPulseLasers:
+                    DoBehavior_AimedPulseLasers();
                     break;
             }
             AttackTimer++;
@@ -318,7 +321,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             int teleportFadeTime = 8;
             int teleportTime = teleportFadeTime * 2;
             int hologramCreationTime = 150;
-            int holographFadeoutTime = 64;
+            int holographFadeoutTime = 50;
+            int hologramAttackTime = 360;
             ref float hologramInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float illusionCount = ref npc.Infernum().ExtraAI[1];
             ref float hologramSpan = ref npc.Infernum().ExtraAI[2];
@@ -355,9 +359,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             hologramInterpolant = Utils.InverseLerp(0f, 36f, AttackTimer - teleportTime, true);
             hologramRayDissipation = Utils.InverseLerp(hologramCreationTime, hologramCreationTime - 12f, AttackTimer - teleportTime, true);
             hologramSpan = MathHelper.Lerp(8f, 450f, (float)Math.Pow(hologramInterpolant, 1.73) * hologramRayDissipation);
-            exowlIllusionFadeInterpolant = Utils.InverseLerp(0f, 50f, AttackTimer - teleportTime - hologramCreationTime, true);
+            exowlIllusionFadeInterpolant = Utils.InverseLerp(0f, holographFadeoutTime, AttackTimer - teleportTime - hologramCreationTime, true);
             if (AttackTimer > teleportTime + hologramCreationTime)
+            {
+                Vector2 idealVelocity = npc.SafeDirectionTo(Target.Center + (MathHelper.TwoPi * AttackTimer / 150f).ToRotationVector2() * 500f) * 16f;
+                npc.SimpleFlyMovement(idealVelocity, idealVelocity.Length() / 20f);
                 hologramInterpolant = 0f;
+            }
 
             // Transform the holograms into true exowls.
             if (AttackTimer == teleportTime + hologramCreationTime)
@@ -379,6 +387,47 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     npc.netUpdate = true;
                 }
             }
+
+            if (AttackTimer == teleportTime + hologramCreationTime + hologramAttackTime)
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].type == ModContent.NPCType<Exowl>())
+                        Main.npc[i].active = false;
+                }
+                npc.netUpdate = true;
+            }
+
+            if (AttackTimer >= teleportTime + hologramCreationTime + hologramAttackTime + 45f)
+                SelectNextAttack();
+        }
+
+        public void DoBehavior_AimedPulseLasers()
+        {
+            int teleportFadeTime = 10;
+            int teleportTime = teleportFadeTime * 2;
+
+            // Fade out.
+            if (AttackTimer < teleportFadeTime)
+            {
+                npc.velocity *= 0.5f;
+                npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.15f, 0f, 1f);
+            }
+
+            // Teleport.
+            if (AttackTimer == teleportFadeTime)
+            {
+                Main.PlaySound(SoundID.Item103, npc.Center);
+                npc.velocity = Vector2.Zero;
+                npc.Center = Target.Center - Target.velocity.SafeNormalize(Main.rand.NextVector2Unit()) * 400f;
+                Main.PlaySound(SoundID.Item104, npc.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/CodebreakerBeam"), npc.Center);
+                npc.netUpdate = true;
+            }
+
+            // Fade back in.
+            if (AttackTimer >= teleportFadeTime && AttackTimer < teleportTime)
+                npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.15f, 0f, 1f);
         }
 
         public void SelectNextAttack()
@@ -390,6 +439,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             {
                 case AthenaAttackType.CircleOfLightning:
                     AttackState = AthenaAttackType.ExowlHologramSwarm;
+                    break;
+                case AthenaAttackType.ExowlHologramSwarm:
+                    AttackState = AthenaAttackType.AimedPulseLasers;
                     break;
             }
 
@@ -468,8 +520,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public void DrawLightRay(float initialRayRotation, float rayBrightness, Vector2 rayStartingPoint)
         {
-            if (LightDrawer is null)
-                LightDrawer = new PrimitiveTrail(RayWidthFunction, RayColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
+            if (LightRayDrawer is null)
+                LightRayDrawer = new PrimitiveTrail(RayWidthFunction, RayColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
             Vector2 currentRayDirection = initialRayRotation.ToRotationVector2();
 
             float length = rayBrightness * npc.Infernum().ExtraAI[4] * 400f;
@@ -477,7 +529,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             for (int i = 0; i <= 12; i++)
                 points.Add(Vector2.Lerp(rayStartingPoint, rayStartingPoint + initialRayRotation.ToRotationVector2() * length, i / 12f));
 
-            LightDrawer.Draw(points, -Main.screenPosition, 47);
+            LightRayDrawer.Draw(points, -Main.screenPosition, 47);
         }
 
         public void DrawExowlHologram(SpriteBatch spriteBatch, Vector2 drawPosition, int exowlFrame, float hologramInterpolant)

@@ -1,6 +1,7 @@
 ﻿using InfernumMode.OverridingSystem;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
@@ -16,23 +17,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         SpikeTrapWaves,
         HeatRay,
         SpinLaser,
-        Slingshot
+        Slingshot,
+
+        LandingState,
+        SummonDelay,
+        BIGSHOT,
+        BadTime,
     }
 
     public class GolemBodyBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.Golem;
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public static int ArenaWidth = 115;
         public static int ArenaHeight = 105;
+        public const float ConstAttackCooldown = 90f;
+        public const int AttacksNotToPool = 4; // The last X states in GolemAttackState should not be selected as attacks during the fight
 
         public override bool PreAI(NPC npc)
         {
             ref float AITimer = ref npc.ai[0];
             ref float AttackState = ref npc.ai[1];
             ref float AttackTimer = ref npc.ai[2];
+            ref float FightStarted = ref npc.ai[3];
 
             ref float LeftFistNPC = ref npc.Infernum().ExtraAI[0];
             ref float RightFistNPC = ref npc.Infernum().ExtraAI[1];
@@ -42,6 +51,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref float EnrageState = ref npc.Infernum().ExtraAI[5];
             ref float ReturnFromEnrageState = ref npc.Infernum().ExtraAI[6];
             ref float AttackCooldown = ref npc.Infernum().ExtraAI[7];
+            ref float PreviousAttackState = ref npc.Infernum().ExtraAI[8];
+            // ref float DarknessRatio = ref npc.Infernum().ExtraAI[9]; (later in code)
             bool FreeHead = HeadState == 1;
 
             Vector2 attachedHeadCenterPos = new Vector2(npc.Center.X, npc.Top.Y);
@@ -70,12 +81,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.noGravity = true;
                 npc.noTileCollide = false;
                 npc.chaseable = false;
-                npc.Opacity = 1f;
-                AttackState = (float)GolemAttackState.FistSpin;
+                npc.Opacity = 0f;
+                AttackState = Utilities.IsAprilFirst() ? (Main.rand.NextBool() ? (float)GolemAttackState.BIGSHOT : (float)GolemAttackState.BadTime) : (float)GolemAttackState.SummonDelay;
+                PreviousAttackState = (float)GolemAttackState.LandingState;
+                CreateGolemArena(npc);
+                leftHandCenterPos = new Vector2(npc.Left.X, npc.Left.Y);
+                rightHandCenterPos = new Vector2(npc.Right.X, npc.Right.Y);
+                attachedHeadCenterPos = new Vector2(npc.Center.X, npc.Top.Y);
                 npc.netUpdate = true;
 
                 // Set the whoAmI variable.
-                NPC.golemBoss = npc.whoAmI;
+                //NPC.golemBoss = npc.whoAmI;
 
                 int freeHeadInt = NPC.NewNPC((int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHeadFree);
                 Main.npc[freeHeadInt].Center = attachedHeadCenterPos;
@@ -96,27 +112,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Main.npc[attachedHeadInt].netUpdate = true;
                 AttachedHeadNPC = attachedHeadInt;
 
-                int leftHand = NPC.NewNPC((int)npc.Left.X, (int)npc.Left.Y, NPCID.GolemFistLeft);
-                Main.npc[leftHand].lifeMax = Main.npc[leftHand].life = 1;
-                Main.npc[leftHand].dontTakeDamage = true;
-                Main.npc[leftHand].noGravity = true;
-                Main.npc[leftHand].noTileCollide = false;
+                int leftHand = NPC.NewNPC((int)leftHandCenterPos.X, (int)leftHandCenterPos.Y, ModContent.NPCType<GolemFistLeft>());
                 Main.npc[leftHand].ai[0] = npc.whoAmI;
-                Main.npc[leftHand].Center = leftHandCenterPos;
                 Main.npc[leftHand].netUpdate = true;
                 LeftFistNPC = leftHand;
 
-                int rightHand = NPC.NewNPC((int)npc.Right.X, (int)npc.Right.Y, NPCID.GolemFistRight);
-                Main.npc[rightHand].lifeMax = Main.npc[rightHand].life = 1;
-                Main.npc[rightHand].dontTakeDamage = true;
-                Main.npc[rightHand].noGravity = true;
-                Main.npc[rightHand].noTileCollide = false;
+                int rightHand = NPC.NewNPC((int)rightHandCenterPos.X, (int)rightHandCenterPos.Y, ModContent.NPCType<GolemFistRight>());
                 Main.npc[rightHand].ai[0] = npc.whoAmI;
-                Main.npc[rightHand].Center = rightHandCenterPos;
                 Main.npc[rightHand].netUpdate = true;
                 RightFistNPC = rightHand;
 
-                CreateGolemArena(npc);
                 AITimer++;
 
                 return false;
@@ -187,8 +192,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.checkDead();
                 npc.NPCLoot();
                 npc.active = false;
+                npc.netUpdate = true;
 
                 DeleteGolemArena();
+                return false;
             }
             else if (ReturnFromEnrageState == 0f)
             {
@@ -208,6 +215,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     freeHead.Center = attachedHeadCenterPos;
             }
 
+            if (!rightFist.active)
+                rightFist.active = true;
+
+            if (!leftFist.active)
+                leftFist.active = true;
+
             freeHead.ai[1]++;
             if (freeHead.ai[1] >= 240f)
                 freeHead.ai[1] = 0f;
@@ -219,18 +232,88 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             float LifeRatio = npc.life / npc.lifeMax;
             npc.dontTakeDamage = true;
 
-            if (AITimer < 60f)
+            if (FightStarted == 0f)
             {
+                if (npc.Bottom.Y > npc.Infernum().arenaRectangle.Bottom)
+                {
+                    npc.Bottom = new Vector2(npc.Center.X, npc.Infernum().arenaRectangle.Bottom);
+                    npc.velocity = Vector2.Zero;
+                }
+
                 leftFist.Center = leftHandCenterPos;
                 rightFist.Center = rightHandCenterPos;
 
-                if (npc.velocity.Y == 0f && AITimer > 10f)
+                // Fade the screen to black
+                // Starting by setting opacities to 0 and having golem fall invisibly
+                if (AITimer == 1f || (AITimer > 1f && npc.velocity.Y != 0f))
                 {
-                    AITimer = 61f;
-                    AttackState = (float)GolemAttackState.FistSpin;
+                    npc.Opacity = 0f;
+                    leftFist.Opacity = 0f;
+                    rightFist.Opacity = 0f;
+                    freeHead.Opacity = 0f;
+                    attachedHead.Opacity = 0f;
+                    npc.damage = 0;
+                    leftFist.damage = 0;
+                    rightFist.damage = 0;
+                    freeHead.damage = 0;
+                    attachedHead.damage = 0;
+                    attachedHead.dontTakeDamage = true;
+
+                    npc.velocity.Y += 0.5f;
+                    AITimer++;
+                    return false;
+                }
+
+                // Start the epic once golem lands
+                else if (PreviousAttackState == (float)GolemAttackState.LandingState)
+                {
+                    PreviousAttackState = AttackState;
+                    AITimer = 2f;
+                }
+
+                ref float DarknessRatio = ref npc.Infernum().ExtraAI[9];
+                float Timer = AITimer - 2f;
+
+                // Fade in for the first 60 frames
+                // Hold black for the second 60 frames
+                if (Timer < 180f)
+                    DarknessRatio = MathHelper.Clamp(Timer / 60f, 0f, 1f);
+
+                // Fade out for the last 60 frames
+                else if (Timer < 240f)
+                {
+                    DarknessRatio = 1f - MathHelper.Clamp((Timer - 180f) / 60f, 0f, 1f);
+                    npc.Opacity = 1f;
+                    freeHead.Opacity = 1f;
+                    leftFist.Opacity = 1f;
+                    rightFist.Opacity = 1f;
+                    attachedHead.Opacity = 1f;
                 }
                 else
-                    npc.velocity.Y += 0.5f;
+                {
+                    DarknessRatio = 0f;
+                    AITimer++;
+                    FightStarted = 1f;
+                    AttackCooldown = ConstAttackCooldown;
+                    PreviousAttackState = (float)GolemAttackState.SummonDelay;
+                    AttackState = (float)GolemAttackState.FistSpin;
+                    npc.damage = npc.defDamage;
+                    leftFist.damage = leftFist.defDamage;
+                    rightFist.damage = rightFist.defDamage;
+                    freeHead.damage = freeHead.defDamage;
+                    attachedHead.damage = attachedHead.defDamage;
+                    attachedHead.dontTakeDamage = false;
+                    return false;
+                }
+
+                // Play the sound
+                if (Timer == 120f)
+                {
+                    if (AttackState == (float)GolemAttackState.BadTime)
+                        Main.PlaySound(SoundLoader.customSoundType, -1, -1, InfernumMode.Instance.GetSoundSlot(SoundType.Custom, "Sounds/Custom/BadTime"));
+                    else
+                        Main.PlaySound(SoundLoader.customSoundType, -1, -1, InfernumMode.Instance.GetSoundSlot(SoundType.Custom, "Sounds/Custom/[BIG SHOT]"));
+                }
 
                 AITimer++;
                 return false;
@@ -286,12 +369,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                 // If it will pass, reattach
                 // It's fine if the head was unattached before enraging, the attack will continue like normal
-                if (attachedHead.Distance(freeHead.Center + freeHead.velocity) > attachedHead.Distance(freeHead.Center))
+                if (attachedHead.Distance(freeHead.Center + freeHead.velocity) > attachedHead.Distance(freeHead.Center) && attachedHead.Distance(freeHead.Center) < 20f)
                 {
                     freeHead.defense = freeHead.defDefense;
                     SwapHeads(npc);
                     freeHead.velocity = Vector2.Zero;
                     ReturnFromEnrageState = 0f;
+                    return false;
+                }
+                else if (attachedHead.Distance(freeHead.Center + freeHead.velocity) > attachedHead.Distance(freeHead.Center))
+                {
+                    freeHead.velocity *= 0.925f;
+                    // Once stopped, approach the attached position
+                    if (freeHead.velocity.Length() < 1)
+                        freeHead.velocity = freeHead.DirectionTo(attachedHeadCenterPos);
                     return false;
                 }
 
@@ -329,10 +420,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         {
                             // Rotate the fists around the body over the course of 3 seconds, spawning projectiles every so often
                             float rotation = MathHelper.Lerp(0f, MathHelper.TwoPi * 2, AttackTimer / 240f);
-                            float distance = 160f;
-                            rightFist.Center = body.Center + rotation.ToRotationVector2() * distance;
+                            float distance = 145f;
+                            rightFist.Center = rightHandCenterPos + rotation.ToRotationVector2() * distance;
                             rightFist.rotation = rotation;
-                            leftFist.Center = body.Center + MathHelper.WrapAngle(rotation + MathHelper.Pi).ToRotationVector2() * distance;
+                            leftFist.Center = leftHandCenterPos + MathHelper.WrapAngle(rotation + MathHelper.Pi).ToRotationVector2() * distance;
                             leftFist.rotation = rotation; ;
 
                             if (AttackTimer % 15f == 0f)
@@ -355,11 +446,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                             }
                         }
 
-                        if (AttackTimer >= 300f)
+                        if (AttackTimer > 240f)
                         {
-                            rightFist.Center = rightHandCenterPos;
-                            leftFist.Center = leftHandCenterPos;
-                            AttackCooldown = 90f;
+                            AttackCooldown = ConstAttackCooldown;
                             GoToNextAttack(npc);
                             break;
                         }
@@ -415,9 +504,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
             else
             {
+                // Attack swapping
                 freeHead.velocity *= 0.9f;
-                if (freeHead.velocity.Length() < 1f)
+                if (freeHead.velocity.Length() < 0.25f)
                     freeHead.velocity = Vector2.Zero;
+
+                float lerp = Utils.InverseLerp(ConstAttackCooldown, 0f, AttackCooldown, true);
+                if (lerp <= 0.5f)
+                {
+                    lerp *= 2f;
+                    if (PreviousAttackState == (float)GolemAttackState.FistSpin)
+                    {
+                        lerp = lerp >= 0.5f ? (float)Math.Sqrt(0.25D - Math.Pow(lerp - 1D, 2)) + 0.5f : (float)-Math.Sqrt(0.25D - Math.Pow(lerp, 2)) + 0.5f;
+                        float distance = MathHelper.Lerp(160f, 0f, lerp);
+                        rightFist.Center = rightHandCenterPos + Vector2.UnitX * distance;
+                        leftFist.Center = leftHandCenterPos - Vector2.UnitX * distance;
+                    }
+                }
+                else
+                {
+                    lerp = lerp * 2f - 1f;
+                    if (AttackState == (float)GolemAttackState.FistSpin)
+                    {
+                        lerp = lerp >= 0.5f ? (float)Math.Sqrt(0.25D - Math.Pow(lerp - 1D, 2)) + 0.5f : (float)-Math.Sqrt(0.25D - Math.Pow(lerp, 2)) + 0.5f;
+                        float distance = MathHelper.Lerp(0f, 160f, lerp);
+                        rightFist.Center = rightHandCenterPos + Vector2.UnitX * distance;
+                        leftFist.Center = leftHandCenterPos - Vector2.UnitX * distance;
+                    }
+                }
+
                 AttackCooldown--;
             }
 
@@ -445,17 +560,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         {
             ref float AttackState = ref npc.ai[1];
             ref float AttackTimer = ref npc.ai[2];
+            ref float PreviousAttackState = ref npc.Infernum().ExtraAI[8];
 
-            /* GolemAttackState NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length);
+            /*GolemAttackState NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length - AttacksNotToPool);
             while ((float)NextAttack == AttackState)
-                NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length); */
+                NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length - AttacksNotToPool);*/
             GolemAttackState NextAttack = GolemAttackState.FistSpin;
 
+            PreviousAttackState = AttackState;
             AttackState = (float)NextAttack;
             AttackTimer = 0f;
         }
 
-        private void DespawnNPC(int NPCID)
+        public static void DespawnNPC(int NPCID)
         {
             Main.npc[NPCID].life = 0;
             Main.npc[NPCID].active = false;
@@ -485,6 +602,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Main.npc[(int)FreeHeadNPC].dontTakeDamage = true;
                 FreeHead = 0f;
             }
+        }
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/GolemBody");
+            Texture2D glowMask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/BodyGlow");
+            Rectangle rect = new Rectangle(0, 0, texture.Width, texture.Height);
+            Vector2 drawPos = npc.Center - Main.screenPosition;
+            drawPos += new Vector2(4, -12);
+            Main.spriteBatch.Draw(texture, drawPos, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowMask, drawPos, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            return false;
         }
 
         private void CreateGolemArena(NPC npc)
@@ -518,6 +647,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 arenaCenter = new Vector2(altarX, arenaBottom - (ArenaHeight / 2) - 5);
             Vector2 arenaArea = new Vector2(ArenaWidth, ArenaHeight);
             npc.Infernum().arenaRectangle = Utils.CenteredRectangle(arenaCenter * 16f, arenaArea * 16f);
+            npc.Center = npc.Infernum().arenaRectangle.Center.ToVector2();
 
             int left = (int)(npc.Infernum().arenaRectangle.Center().X / 16 - arenaArea.X * 0.5f);
             int right = (int)(npc.Infernum().arenaRectangle.Center().X / 16 + arenaArea.X * 0.5f);
@@ -575,6 +705,5 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
             }
         }
-
     }
 }

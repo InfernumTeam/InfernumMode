@@ -28,8 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             HoverCharge,
             EyeLaserRays,
             LightningSupercharge,
-            ReleaseTeslaMines,
-            CarpetBombLaserCharge
+            ReleaseTeslaMines
         }
 
         public enum PrimeFrameType
@@ -157,9 +156,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 case PrimeAttackType.ReleaseTeslaMines:
                     DoAttack_ReleaseTeslaMines(npc, target, lifeRatio, ref attackTimer, ref frameType);
                     break;
-                case PrimeAttackType.CarpetBombLaserCharge:
-                    DoAttack_CarpetBombLaserCharge(npc, target, lifeRatio, ref attackTimer, ref frameType);
-                    break;
             }
 
             if (npc.position.Y < 900f)
@@ -248,7 +244,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public static void DoAttack_MetalBurst(NPC npc, Player target, float attackTimer, ref float frameType)
         {
-            int shootRate = AnyArms ? 125 : 45;
+            int shootRate = AnyArms ? 125 : 70;
             int shootCount = AnyArms ? 4 : 5;
             int spikesPerBurst = AnyArms ? 7 : 23;
             float hoverSpeed = AnyArms ? 15f : 36f;
@@ -468,7 +464,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         Vector2 beamSpawnPosition = npc.Center + new Vector2(-i * 16f, -7f);
                         Vector2 beamDirection = (target.Center - beamSpawnPosition).SafeNormalize(-Vector2.UnitY).RotatedBy(angularOffset * -i);
 
-                        int beam = Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<LaserRay>(), 230, 0f);
+                        int beam = Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<PrimeEyeLaserRay>(), 230, 0f);
                         if (Main.projectile.IndexInRange(beam))
                         {
                             Main.projectile[beam].ai[0] = i * angularOffset / 120f * 0.4f;
@@ -493,7 +489,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 {
                     float rocketAngularOffset = Utils.InverseLerp(shootDelay, 195f, attackTimer, true) * MathHelper.TwoPi;
                     Vector2 rocketVelocity = rocketAngularOffset.ToRotationVector2() * (Main.rand.NextFloat(5.5f, 6.2f) + npc.Distance(target.Center) * 0.00267f);
-                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f + rocketVelocity * 2.5f, rocketVelocity, ProjectileID.SaucerMissile, 155, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f + rocketVelocity * 2.5f, rocketVelocity, ModContent.ProjectileType<MetallicSpike>(), 155, 0f);
                 }
             }
 
@@ -791,8 +787,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
                 if (lifeRatio < Phase2LifeRatio)
                 {
-                    attackSelector.Add(PrimeAttackType.ReleaseTeslaMines, 1.9);
-                    attackSelector.Add(PrimeAttackType.CarpetBombLaserCharge, 1.9);
+                    attackSelector.Add(PrimeAttackType.ReleaseTeslaMines, 1.7);
                     if (Main.rand.NextFloat() < 0.3f)
                         attackSelector.Add(PrimeAttackType.LightningSupercharge, 20D);
                 }

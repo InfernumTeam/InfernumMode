@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
-    public class LaserRay : BaseLaserbeamProjectile
+    public class PrimeEyeLaserRay : BaseLaserbeamProjectile
     {
         public ref float AngularVelocity => ref projectile.ai[0];
         public int OwnerIndex => (int)projectile.ai[1];

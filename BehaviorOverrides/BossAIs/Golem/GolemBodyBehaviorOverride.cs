@@ -1,4 +1,5 @@
-﻿using InfernumMode.OverridingSystem;
+﻿using CalamityMod;
+using InfernumMode.OverridingSystem;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
     public enum GolemAttackState
     {
-        ArmBullets,
+        FloorFire,
         FistSpin,
         SpikeTrapWaves,
         HeatRay,
@@ -33,11 +34,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public static int ArenaWidth = 115;
         public static int ArenaHeight = 105;
-        public const float ConstAttackCooldown = 90f;
         public const int AttacksNotToPool = 4; // The last X states in GolemAttackState should not be selected as attacks during the fight
+        public const int Phase2TransitionAnimationTime = 180;
+        public const float ConstAttackCooldown = 90f;
+        public const float Phase2LifeRatio = 0.6f;
 
         public override bool PreAI(NPC npc)
         {
+            // Set the whoAmI variable.
+            NPC.golemBoss = npc.whoAmI;
+
             ref float AITimer = ref npc.ai[0];
             ref float AttackState = ref npc.ai[1];
             ref float AttackTimer = ref npc.ai[2];
@@ -53,11 +59,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref float AttackCooldown = ref npc.Infernum().ExtraAI[7];
             ref float PreviousAttackState = ref npc.Infernum().ExtraAI[8];
             // ref float DarknessRatio = ref npc.Infernum().ExtraAI[9]; (later in code)
+            ref float eyeLaserRayInterpolant = ref npc.Infernum().ExtraAI[10];
+            ref float slingshotRotation = ref npc.Infernum().ExtraAI[11];
+            ref float fistSlamDestinationX = ref npc.Infernum().ExtraAI[12];
+            ref float fistSlamDestinationY = ref npc.Infernum().ExtraAI[13];
+            ref float attackCounter = ref npc.Infernum().ExtraAI[14];
+            ref float jumpState = ref npc.Infernum().ExtraAI[15];
+            ref float phase2TransitionTimer = ref npc.Infernum().ExtraAI[16];
             bool FreeHead = HeadState == 1;
 
             Vector2 attachedHeadCenterPos = new Vector2(npc.Center.X, npc.Top.Y);
-            Vector2 leftHandCenterPos = new Vector2(npc.Left.X, npc.Left.Y);
-            Vector2 rightHandCenterPos = new Vector2(npc.Right.X, npc.Right.Y);
+            Vector2 leftHandCenterPos = new Vector2(npc.Left.X - 24f, npc.Left.Y - 6f);
+            Vector2 rightHandCenterPos = new Vector2(npc.Right.X + 24f, npc.Right.Y - 6f);
 
             if (AITimer == 0f)
             {
@@ -89,9 +102,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 rightHandCenterPos = new Vector2(npc.Right.X, npc.Right.Y);
                 attachedHeadCenterPos = new Vector2(npc.Center.X, npc.Top.Y);
                 npc.netUpdate = true;
-
-                // Set the whoAmI variable.
-                //NPC.golemBoss = npc.whoAmI;
 
                 int freeHeadInt = NPC.NewNPC((int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHeadFree);
                 Main.npc[freeHeadInt].Center = attachedHeadCenterPos;
@@ -170,6 +180,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.TargetClosest(false);
             }
 
+            // Reset the laser eye interpolant.
+            eyeLaserRayInterpolant = 0f;
+
             bool Enraged = EnrageState == 1f;
 
             ref NPC body = ref npc;
@@ -229,7 +242,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attachedHead.ai[1] >= 240f)
                 attachedHead.ai[1] = 0f;
 
-            float LifeRatio = npc.life / npc.lifeMax;
+            float lifeRatio = npc.life / (float)npc.lifeMax;
             npc.dontTakeDamage = true;
 
             if (FightStarted == 0f)
@@ -319,6 +332,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 return false;
             }
 
+            // Enter the second phase.
+            if (lifeRatio < Phase2LifeRatio && phase2TransitionTimer < Phase2TransitionAnimationTime)
+            {
+                // Make the head return to the body before doing anything else.
+                // This negates the enrage state.
+                ReturnFromEnrageState = 0f;
+                if (FreeHead)
+                {
+                    phase2TransitionTimer = 0f;
+                    ReAttachHead(npc);
+                }
+
+                // Make fists return.
+                leftFist.rotation = 0f;
+                rightFist.rotation = 0f;
+                leftFist.Center = Vector2.Lerp(leftFist.Center, leftHandCenterPos, 0.8f);
+                rightFist.Center = Vector2.Lerp(rightFist.Center, rightHandCenterPos, 0.8f);
+
+                // Obey gravity and tile collision.
+                npc.noGravity = false;
+                npc.noTileCollide = false;
+
+                DoBehavior_EnterSecondPhase(npc, phase2TransitionTimer);
+                if (phase2TransitionTimer == 2f)
+                {
+                    fistSlamDestinationX = fistSlamDestinationY = 0f;
+                    jumpState = 0f;
+                    slingshotRotation = 0f;
+                    attackCounter = 0f;
+                    SelectNextAttackState(npc);
+                    npc.netUpdate = true;
+                }
+
+                phase2TransitionTimer++;
+                return false;
+            }
+
             if (Enraged)
             {
                 // Swap to the free head so that death can ensue
@@ -329,8 +379,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 freeHead.defense = 9999;
 
                 // Accelerate the X and Y separately for sporadic movement
-                if (freeHead.velocity.Length() < 2)
-                    freeHead.velocity = freeHead.DirectionTo(target.Center) * 2f;
+                if (freeHead.velocity.Length() < 2f)
+                    freeHead.velocity = freeHead.SafeDirectionTo(target.Center) * 2f;
 
                 if (Math.Abs((freeHead.Center + freeHead.velocity).X - target.Center.X) > Math.Abs(freeHead.Center.X - target.Center.X))
                     freeHead.velocity.X += freeHead.Center.X > target.Center.X ? -1f : 1f;
@@ -354,16 +404,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 // Custom re-attach code rather than the method so that the fight can return to normal faster
                 // Slow down for the first part
-                // TODO - Use AngleBetween for this
-                if (!(freeHead.velocity.ToRotation() < freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() + MathHelper.ToRadians(3) &&
-                    freeHead.velocity.ToRotation() > freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() - MathHelper.ToRadians(3)) &&
-                    !(freeHead.velocity.ToRotation() < MathHelper.WrapAngle(freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() + MathHelper.Pi) + MathHelper.ToRadians(3) &&
-                    freeHead.velocity.ToRotation() > MathHelper.WrapAngle(freeHead.DirectionTo(attachedHeadCenterPos).ToRotation() + MathHelper.Pi) - MathHelper.ToRadians(3)))
+                Vector2 idealDirection = freeHead.SafeDirectionTo(attachedHeadCenterPos);
+                float idealDirectionDisparity = freeHead.velocity.AngleBetween(idealDirection);
+                if (idealDirectionDisparity < MathHelper.Pi / 30f)
                 {
                     freeHead.velocity *= 0.925f;
-                    // Once stopped, approach the attached position
-                    if (freeHead.velocity.Length() < 1)
-                        freeHead.velocity = freeHead.DirectionTo(attachedHeadCenterPos);
+
+                    // Once stopped, approach the attached position.
+                    if (freeHead.velocity.Length() < 16f)
+                        freeHead.velocity = freeHead.SafeDirectionTo(attachedHeadCenterPos) * 16f;
                     return false;
                 }
 
@@ -381,8 +430,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 {
                     freeHead.velocity *= 0.925f;
                     // Once stopped, approach the attached position
-                    if (freeHead.velocity.Length() < 1)
-                        freeHead.velocity = freeHead.DirectionTo(attachedHeadCenterPos);
+                    if (freeHead.velocity.Length() < 1f)
+                        freeHead.velocity = freeHead.SafeDirectionTo(attachedHeadCenterPos);
                     return false;
                 }
 
@@ -395,14 +444,111 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 switch ((GolemAttackState)AttackState)
                 {
-                    case GolemAttackState.ArmBullets:
+                    case GolemAttackState.FloorFire:
                         if (FreeHead)
                         {
                             ReAttachHead(npc);
                             break;
                         }
 
-                        #region Arm Bullets
+                        #region Floor Fire
+
+                        int jumpDelay = 50;
+                        int jumpCount = 3;
+                        int postJumpSitTime = 120;
+                        npc.noTileCollide = false;
+
+                        // Attach hands.
+                        leftFist.Center = leftHandCenterPos;
+                        rightFist.Center = rightHandCenterPos;
+                        leftFist.rotation = 0f;
+                        rightFist.rotation = 0f;
+
+                        // Sit in place and await the next jump.
+                        if (jumpState == 0f)
+                        {
+                            npc.velocity.X *= 0.8f;
+                            if (AttackTimer >= jumpDelay && Math.Abs(npc.velocity.X) < 0.35f)
+                            {
+                                AttackTimer = 0f;
+                                jumpState = 1f;
+                                npc.velocity.X = MathHelper.Lerp(5f, 16f, lifeRatio) * (target.Center.X > npc.Center.X).ToDirectionInt();
+
+                                if (target.Top.Y < npc.Bottom.Y)
+                                    npc.velocity.Y = -15.1f;
+                                else
+                                    npc.velocity.Y = 1f;
+                                npc.netUpdate = true;
+                            }
+                        }
+
+                        // Fall.
+                        else
+                        {
+                            if (npc.velocity.Y == 0f)
+                            {
+                                if (jumpState == 1f)
+                                {
+                                    Main.PlaySound(SoundID.Item14, npc.position);
+                                    for (int i = (int)npc.position.X - 20; i < (int)npc.position.X + npc.width + 40; i += 20)
+                                    {
+                                        for (int j = 0; j < 4; j++)
+                                        {
+                                            Dust smokeDust = Dust.NewDustDirect(new Vector2(npc.position.X - 20f, npc.position.Y + npc.height), npc.width + 20, 4, 31, 0f, 0f, 100, default, 1.5f);
+                                            smokeDust.velocity *= 0.2f;
+                                        }
+                                        Gore smoke = Gore.NewGoreDirect(new Vector2(i - 20, npc.position.Y + npc.height - 8f), default, Main.rand.Next(61, 64), 1f);
+                                        smoke.velocity *= 0.4f;
+                                    }
+
+                                    // Summon crystals on the floor that accelerate upward.
+                                    for (float x = npc.Infernum().arenaRectangle.Left + 20f; x < npc.Infernum().arenaRectangle.Right - 20f; x += 120f)
+                                    {
+                                        float y = npc.Infernum().arenaRectangle.Center.Y;
+                                        Vector2 crystalSpawnPosition = Utilities.GetGroundPositionFrom(new Vector2(x, y));
+
+                                        // Create puffs of fire at the crystal's position.
+                                        for (int i = 0; i < 6; i++)
+                                        {
+                                            Dust fire = Dust.NewDustPerfect(crystalSpawnPosition + Main.rand.NextVector2Square(-24f, 24f), 6);
+                                            fire.velocity = Main.rand.NextVector2Circular(5f, 5f) - Vector2.UnitY * 2.5f;
+                                            fire.scale = 1.3f;
+                                            fire.fadeIn = 0.75f;
+                                            fire.noGravity = true;
+                                        }
+
+                                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                                            Utilities.NewProjectileBetter(crystalSpawnPosition, -Vector2.UnitY * 0.004f, ModContent.ProjectileType<GroundFireCrystal>(), 190, 0f);
+                                    }
+                                    jumpState = 2f;
+                                    npc.netUpdate = true;
+                                }
+
+                                if (AttackTimer >= postJumpSitTime)
+                                {
+                                    AttackTimer = 0f;
+                                    attackCounter++;
+                                    jumpState = 0f;
+
+                                    if (attackCounter >= jumpCount)
+                                    {
+                                        attackCounter = 0f;
+                                        AttackCooldown = ConstAttackCooldown;
+                                        SelectNextAttackState(npc);
+                                    }
+
+                                    npc.velocity = Vector2.Zero;
+                                    npc.netUpdate = true;
+                                }
+                            }
+                            else
+                            {
+                                if (npc.Bottom.Y < target.position.Y)
+                                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -20f, 20f);
+                            }
+                        }
+
+                        AttackTimer++;
 
                         #endregion
 
@@ -416,7 +562,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         #region Fist Spin
 
-                        if (AttackTimer <= 240f)
+                        if (AttackTimer <= 300f)
                         {
                             // Rotate the fists around the body over the course of 3 seconds, spawning projectiles every so often
                             float rotation = MathHelper.Lerp(0f, MathHelper.TwoPi * 2, AttackTimer / 240f);
@@ -424,33 +570,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                             rightFist.Center = rightHandCenterPos + rotation.ToRotationVector2() * distance;
                             rightFist.rotation = rotation;
                             leftFist.Center = leftHandCenterPos + MathHelper.WrapAngle(rotation + MathHelper.Pi).ToRotationVector2() * distance;
-                            leftFist.rotation = rotation; ;
+                            leftFist.rotation = rotation;
 
-                            if (AttackTimer % 15f == 0f)
+                            if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer % 15f == 0f)
                             {
                                 int type = ModContent.ProjectileType<FistBullet>();
-                                int bullet = Utilities.NewProjectileBetter(rightFist.Center, Vector2.Zero, type, 280, 0);
+                                int bullet = Utilities.NewProjectileBetter(rightFist.Center, Vector2.Zero, type, 185, 0);
                                 if (Main.projectile.IndexInRange(bullet))
                                 {
                                     Main.projectile[bullet].Infernum().ExtraAI[0] = 0f;
+                                    Main.projectile[bullet].Infernum().ExtraAI[2] = target.whoAmI;
                                     Main.projectile[bullet].rotation = rotation;
-                                    Main.projectile[bullet].Infernum().ExtraAI[2] = target.whoAmI;
+                                    Main.projectile[bullet].netUpdate = true;
                                 }
-                                bullet = Utilities.NewProjectileBetter(leftFist.Center, Vector2.Zero, type, 280, 0);
+
+                                bullet = Utilities.NewProjectileBetter(leftFist.Center, Vector2.Zero, type, 185, 0);
                                 if (Main.projectile.IndexInRange(bullet))
                                 {
                                     Main.projectile[bullet].Infernum().ExtraAI[0] = 0f;
-                                    Main.projectile[bullet].rotation = MathHelper.WrapAngle(rotation + MathHelper.Pi);
                                     Main.projectile[bullet].Infernum().ExtraAI[2] = target.whoAmI;
+                                    Main.projectile[bullet].rotation = MathHelper.WrapAngle(rotation + MathHelper.Pi);
+                                    Main.projectile[bullet].netUpdate = true;
                                 }
                             }
                         }
-
-                        if (AttackTimer > 240f)
+                        else
                         {
-                            AttackCooldown = ConstAttackCooldown;
-                            GoToNextAttack(npc);
-                            break;
+                            leftFist.rotation = 0f;
+                            rightFist.rotation = 0f;
+                            leftFist.Center = Vector2.Lerp(leftFist.Center, leftHandCenterPos, 0.8f);
+                            rightFist.Center = Vector2.Lerp(rightFist.Center, rightHandCenterPos, 0.8f);
+                            if (AttackTimer >= 360f)
+                            {
+                                AttackCooldown = ConstAttackCooldown;
+                                SelectNextAttackState(npc);
+                            }
                         }
 
                         AttackTimer++;
@@ -467,14 +621,151 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         #region Spiketrap Waves
 
+                        int fistSlamTime = 45;
+                        int spikeWaveCreationTime = 420;
+                        int spikeTrapCreationRate = 50;
+                        float fistSlamInterpolant = 1f;
+
+                        // Make fists slam into the wall.
+                        if (AttackTimer < fistSlamTime)
+                        {
+                            fistSlamInterpolant = (float)Math.Pow(AttackTimer / fistSlamTime, 2D);
+
+                            // Create impact effects.
+                            if (AttackTimer == fistSlamTime - 1f)
+                            {
+                                Vector2 leftImpactPoint = new Vector2(npc.Infernum().arenaRectangle.Left, leftFist.Center.Y);
+                                Vector2 rightImpactPoint = new Vector2(npc.Infernum().arenaRectangle.Right, leftFist.Center.Y);
+
+                                Main.PlaySound(SoundID.DD2_KoboldExplosion, leftImpactPoint);
+                                Main.PlaySound(SoundID.DD2_KoboldExplosion, rightImpactPoint);
+                                Utils.PoofOfSmoke(leftImpactPoint);
+                                Utils.PoofOfSmoke(rightImpactPoint);
+                                Collision.HitTiles(leftImpactPoint, -Vector2.UnitX, 40, 40);
+                                Collision.HitTiles(rightImpactPoint, Vector2.UnitX, 40, 40);
+                            }
+                        }
+
+                        // Summon waves of spikes.
+                        else if (AttackTimer < fistSlamTime + spikeWaveCreationTime)
+                        {
+                            if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer % spikeTrapCreationRate == spikeTrapCreationRate - 1f)
+                            {
+                                Vector2 trapSpawnPosition = npc.Infernum().arenaRectangle.TopLeft();
+                                Vector2 trapVelocity = Vector2.UnitX * 8f;
+                                int spike = Utilities.NewProjectileBetter(trapSpawnPosition, trapVelocity, ModContent.ProjectileType<SpikeTrap>(), 190, 0f);
+                                if (Main.projectile.IndexInRange(spike))
+                                    Main.projectile[spike].ai[1] = 1f;
+
+                                trapSpawnPosition = npc.Infernum().arenaRectangle.BottomRight();
+                                trapVelocity = Vector2.UnitX * -8f;
+                                spike = Utilities.NewProjectileBetter(trapSpawnPosition, trapVelocity, ModContent.ProjectileType<SpikeTrap>(), 190, 0f);
+                                if (Main.projectile.IndexInRange(spike))
+                                    Main.projectile[spike].ai[1] = -1f;
+                            }
+                        }
+                        else
+                        {
+                            leftFist.rotation = 0f;
+                            rightFist.rotation = 0f;
+                            if (AttackTimer >= fistSlamTime + spikeTrapCreationRate + 210f)
+                            {
+                                AttackCooldown = ConstAttackCooldown;
+                                SelectNextAttackState(npc);
+                            }
+                            break;
+                        }
+
+                        // Do the slam animation.
+                        leftFist.Center = leftHandCenterPos;
+                        leftFist.position.X = MathHelper.Lerp(leftFist.position.X, npc.Infernum().arenaRectangle.Left + 8f, fistSlamInterpolant) - leftFist.width * 0.5f;
+                        rightFist.Center = rightHandCenterPos;
+                        rightFist.position.X = MathHelper.Lerp(rightFist.position.X, npc.Infernum().arenaRectangle.Right - 8f, fistSlamInterpolant) - rightFist.width * 0.5f;
+                        leftFist.rotation = 0f;
+                        rightFist.rotation = 0f;
+
+                        AttackTimer++;
+
                         #endregion
 
                         break;
                     case GolemAttackState.HeatRay:
-                        if (!FreeHead)
-                            SwapHeads(npc);
 
                         #region Heat Ray
+
+                        int hoverTelegraphTime = 90;
+                        int fireReleaseRate = 32;
+                        if (AttackTimer >= hoverTelegraphTime + 120f)
+                        {
+                            if (FreeHead)
+                                ReAttachHead(npc);
+                        }
+                        else if (!FreeHead)
+                            SwapHeads(npc);
+
+                        leftFist.rotation = 0f;
+                        rightFist.rotation = 0f;
+
+                        // Have the head hover in place and perform the telegraph prior to firing.
+                        if (AttackTimer < hoverTelegraphTime)
+                        {
+                            Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f - freeHead.velocity * 4f;
+                            float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.InverseLerp(hoverTelegraphTime / 2, hoverTelegraphTime - 5f, AttackTimer, true));
+                            freeHead.velocity = (freeHead.velocity * 7f + freeHead.SafeDirectionTo(hoverDestination) * MathHelper.Min(freeHead.Distance(hoverDestination), movementSpeed)) / 8f;
+
+                            // Calculate the telegraph interpolant.
+                            eyeLaserRayInterpolant = Utils.InverseLerp(0f, hoverTelegraphTime - 20f, AttackTimer, true);
+
+                            // Play a telegraph sound prior to firing.
+                            if (AttackTimer == 5f)
+                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+                        }
+
+                        // Release the lasers from eyes.
+                        if (AttackTimer == hoverTelegraphTime)
+                        {
+                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                freeHead.velocity *= 0.2f;
+                                freeHead.netUpdate = true;
+
+                                for (int i = -1; i <= 1; i += 2)
+                                {
+                                    Vector2 beamSpawnPosition = freeHead.Center + new Vector2(-i * 16f, -7f);
+                                    Vector2 beamDirection = Vector2.UnitX * i;
+
+                                    int beam = Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<GolemEyeLaserRay>(), 275, 0f);
+                                    if (Main.projectile.IndexInRange(beam))
+                                    {
+                                        Main.projectile[beam].ai[0] = i * MathHelper.PiOver2 / 120f * 0.46f;
+                                        Main.projectile[beam].ai[1] = freeHead.whoAmI;
+                                        Main.projectile[beam].netUpdate = true;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Release bursts of fire after firing.
+                        if (AttackTimer >= hoverTelegraphTime && AttackTimer % fireReleaseRate == fireReleaseRate - 1f && AttackTimer < hoverTelegraphTime + 120f)
+                        {
+                            Main.PlaySound(SoundID.Item12, freeHead.Center);
+
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                                for (int i = 0; i < 9; i++)
+                                {
+                                    Vector2 fireShootVelocity = (MathHelper.TwoPi * i / 9f + shootOffsetAngle).ToRotationVector2() * 6.7f;
+                                    Utilities.NewProjectileBetter(freeHead.Center, fireShootVelocity, ProjectileID.EyeBeam, 190, 0f);
+                                }
+                            }
+                        }
+
+                        AttackTimer++;
+
+                        if (AttackTimer >= hoverTelegraphTime + 180f)
+                            SelectNextAttackState(npc);
 
                         #endregion
 
@@ -497,6 +788,179 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         #region Slingshot
 
+                        int dustTelegraphTime = 25;
+                        fistSlamTime = 15;
+                        int bodyReelTime = 25;
+                        int shootTime = 150;
+                        int slingshotCount = 2;
+                        float armSlamInterpolant = 0f;
+                        float bodySlamInterpolant = 0f;
+
+                        // Determine the initial slingshot rotation.
+                        if (AttackTimer == 1f)
+                        {
+                            do
+                                slingshotRotation = Main.rand.NextFloat(MathHelper.TwoPi);
+                            while (Vector2.Dot(slingshotRotation.ToRotationVector2(), Vector2.UnitY) > -0.2f);
+                            npc.netUpdate = true;
+                        }
+
+                        NPC fistToChargeWith = Math.Cos(slingshotRotation) > 0f ? rightFist : leftFist;
+                        NPC otherFist = fistToChargeWith.whoAmI == leftFist.whoAmI ? rightFist : leftFist;
+                        fistToChargeWith.rotation = slingshotRotation;
+                        otherFist.rotation = 0f;
+
+                        if (fistToChargeWith.whoAmI == leftFist.whoAmI)
+                            fistToChargeWith.rotation += MathHelper.Pi;
+
+                        float[] samples = new float[24];
+                        Vector2 fistStart = fistToChargeWith.whoAmI == leftFist.whoAmI ? leftHandCenterPos : rightHandCenterPos;
+                        Collision.LaserScan(fistStart, slingshotRotation.ToRotationVector2(), 30f, 10000f, samples);
+                        Vector2 fistEnd = fistStart + slingshotRotation.ToRotationVector2() * samples.Average();
+
+                        // Determine the initial fist destination.
+                        if (fistSlamDestinationX == 0f || fistSlamDestinationY == 0f)
+                        {
+                            fistSlamDestinationX = fistEnd.X;
+                            fistSlamDestinationY = fistEnd.Y;
+                            npc.netUpdate = true;
+                        }
+                        else
+                            fistEnd = new Vector2(fistSlamDestinationX, fistSlamDestinationY);
+
+                        // Create fire sparks as a telegraph that indicates which fist will charge.
+                        if (AttackTimer < dustTelegraphTime)
+                        {
+                            Dust fire = Dust.NewDustDirect(fistToChargeWith.position, fistToChargeWith.width, fistToChargeWith.height, 6);
+                            fire.velocity = slingshotRotation.ToRotationVector2() * Main.rand.NextFloat(4f, 7f) + Main.rand.NextVector2Circular(1.1f, 1.1f);
+                            fire.noGravity = Main.rand.NextBool();
+                            fire.scale *= 1.3f;
+                        }
+
+                        // Make arms do a slam effect.
+                        else if (AttackTimer <= dustTelegraphTime + fistSlamTime)
+                        {
+                            armSlamInterpolant = (float)Math.Pow(Utils.InverseLerp(0f, fistSlamTime, AttackTimer - dustTelegraphTime, true), 2D);
+
+                            if (AttackTimer == dustTelegraphTime + fistSlamTime)
+                            {
+                                // Create impact effects.
+                                if (AttackTimer == fistSlamTime - 1f)
+                                {
+                                    Main.PlaySound(SoundID.DD2_KoboldExplosion, fistEnd);
+                                    Utils.PoofOfSmoke(fistEnd);
+                                    Collision.HitTiles(fistEnd, slingshotRotation.ToRotationVector2(), 40, 40);
+                                }
+                            }
+                        }
+
+                        // Make the body lunge into position.
+                        else if (AttackTimer <= dustTelegraphTime + fistSlamTime + bodyReelTime)
+                        {
+                            armSlamInterpolant = 1f;
+                            bodySlamInterpolant = (float)Math.Pow(Utils.InverseLerp(0f, bodyReelTime, AttackTimer - dustTelegraphTime - fistSlamTime, true), 2D);
+
+                            // Play a launch sound.
+                            if (AttackTimer == dustTelegraphTime + fistSlamTime + 4f)
+                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ScorchedEarthShot3"), npc.Center);
+
+                            otherFist.Center = otherFist.whoAmI == leftFist.whoAmI ? leftHandCenterPos : rightHandCenterPos;
+                        }
+
+                        // Have the other arm release fist rockets at the target.
+                        else if (AttackTimer < dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime)
+                        {
+                            armSlamInterpolant = 1f;
+                            bodySlamInterpolant = 1f;
+
+                            // Rotate the fists around the body over the course of 3 seconds, spawning projectiles every so often
+                            float rotation = npc.AngleTo(target.Center) + (float)Math.Cos(AttackTimer / 13f) * 0.31f;
+                            otherFist.Center = npc.Center + rotation.ToRotationVector2() * 180f;
+                            otherFist.rotation = rotation;
+                            if (otherFist.whoAmI == leftFist.whoAmI)
+                                otherFist.rotation += MathHelper.Pi;
+
+                            if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer % 15f == 0f)
+                            {
+                                int type = ModContent.ProjectileType<FistBullet>();
+                                int bullet = Utilities.NewProjectileBetter(otherFist.Center, Vector2.Zero, type, 185, 0);
+                                if (Main.projectile.IndexInRange(bullet))
+                                {
+                                    Main.projectile[bullet].Infernum().ExtraAI[0] = 0f;
+                                    Main.projectile[bullet].Infernum().ExtraAI[2] = target.whoAmI;
+                                    Main.projectile[bullet].rotation = rotation;
+                                    Main.projectile[bullet].netUpdate = true;
+                                }
+                            }
+
+                            // Release bursts of fire after firing.
+                            if (AttackTimer % 35f == 34f)
+                            {
+                                Main.PlaySound(SoundID.Item12, freeHead.Center);
+
+                                if (Main.netMode != NetmodeID.MultiplayerClient)
+                                {
+                                    float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                                    for (int i = 0; i < 9; i++)
+                                    {
+                                        Vector2 fireShootVelocity = (MathHelper.TwoPi * i / 9f + shootOffsetAngle).ToRotationVector2() * 6.7f;
+                                        Utilities.NewProjectileBetter(attachedHead.Center, fireShootVelocity, ProjectileID.EyeBeam, 190, 0f);
+                                    }
+                                }
+                            }
+                        }
+
+                        // Jump back to the center of the arena.
+                        else
+                        {
+                            npc.noGravity = false;
+                            fistSlamDestinationX = fistSlamDestinationY = 0f;
+                            armSlamInterpolant = Utils.InverseLerp(15f, 0f, AttackTimer - (dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime), true);
+                            bodySlamInterpolant = 0f;
+                            leftFist.rotation = 0f;
+                            rightFist.rotation = 0f;
+                            otherFist.Center = Vector2.Lerp(otherFist.Center, otherFist.whoAmI == leftFist.whoAmI ? leftHandCenterPos : rightHandCenterPos, 0.1f);
+
+                            if (AttackTimer >= dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime + 100f)
+                            {
+                                // Slow down dramatically on the X axis when there's little Y movement, to prevent sliding.
+                                if (Math.Abs(npc.velocity.Y) <= 0.35f)
+                                    npc.velocity.X *= 0.8f;
+                                else
+                                    npc.position.Y += 5f;
+                            }
+
+                            if (AttackTimer == dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime + 30f)
+                                npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, npc.Infernum().arenaRectangle.Center.ToVector2(), 0.3f, 21f, out _);
+
+                            if (AttackTimer >= dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime + 180f)
+                            {
+                                npc.velocity.X = 0f;
+
+                                if (attackCounter < slingshotCount)
+                                {
+                                    AttackTimer = 0f;
+                                    attackCounter++;
+                                }
+                                else
+                                {
+                                    attackCounter = 0f;
+                                    AttackCooldown = ConstAttackCooldown;
+                                    SelectNextAttackState(npc);
+                                }
+                                npc.netUpdate = true;
+                            }
+                        }
+
+                        fistToChargeWith.Center = Vector2.Lerp(fistStart, fistEnd, armSlamInterpolant);
+                        Vector2 bodyDestination = fistEnd + (fistEnd - fistStart).SafeNormalize(Vector2.UnitY) * 90f;
+                        npc.Center = Vector2.Lerp(npc.Center, bodyDestination, bodySlamInterpolant * 0.1f);
+
+                        if (bodySlamInterpolant > 0f)
+                            npc.velocity = Vector2.Zero;
+
+                        AttackTimer++;
+
                         #endregion
 
                         break;
@@ -509,35 +973,87 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 if (freeHead.velocity.Length() < 0.25f)
                     freeHead.velocity = Vector2.Zero;
 
-                float lerp = Utils.InverseLerp(ConstAttackCooldown, 0f, AttackCooldown, true);
-                if (lerp <= 0.5f)
-                {
-                    lerp *= 2f;
-                    if (PreviousAttackState == (float)GolemAttackState.FistSpin)
-                    {
-                        lerp = lerp >= 0.5f ? (float)Math.Sqrt(0.25D - Math.Pow(lerp - 1D, 2)) + 0.5f : (float)-Math.Sqrt(0.25D - Math.Pow(lerp, 2)) + 0.5f;
-                        float distance = MathHelper.Lerp(160f, 0f, lerp);
-                        rightFist.Center = rightHandCenterPos + Vector2.UnitX * distance;
-                        leftFist.Center = leftHandCenterPos - Vector2.UnitX * distance;
-                    }
-                }
-                else
-                {
-                    lerp = lerp * 2f - 1f;
-                    if (AttackState == (float)GolemAttackState.FistSpin)
-                    {
-                        lerp = lerp >= 0.5f ? (float)Math.Sqrt(0.25D - Math.Pow(lerp - 1D, 2)) + 0.5f : (float)-Math.Sqrt(0.25D - Math.Pow(lerp, 2)) + 0.5f;
-                        float distance = MathHelper.Lerp(0f, 160f, lerp);
-                        rightFist.Center = rightHandCenterPos + Vector2.UnitX * distance;
-                        leftFist.Center = leftHandCenterPos - Vector2.UnitX * distance;
-                    }
-                }
-
+                rightFist.Center = Vector2.Lerp(rightFist.Center, rightHandCenterPos, 0.3f);
+                leftFist.Center = Vector2.Lerp(leftFist.Center, leftHandCenterPos, 0.3f);
                 AttackCooldown--;
             }
 
             AITimer++;
             return false;
+        }
+
+        public static void DoBehavior_EnterSecondPhase(NPC npc, float phase2TransitionTimer)
+        {
+            // Create spikes throughout the arena at first. This will activate soon afterwards.
+            if (phase2TransitionTimer == 1f)
+            {
+                for (float i = npc.Infernum().arenaRectangle.Left; i < npc.Infernum().arenaRectangle.Right; i += 16f)
+                {
+                    Vector2 top = Utilities.GetCeilingPositionFrom(new Vector2(i, npc.Infernum().arenaRectangle.Center.Y)).Floor();
+                    top.Y -= 16f;
+                    Vector2 bottom = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().arenaRectangle.Center.Y)).Floor();
+
+                    int topSpike = Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 190, 0f);
+                    int bottomSpike = Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 190, 0f);
+                    if (Main.projectile.IndexInRange(topSpike))
+                    {
+                        Main.projectile[topSpike].ModProjectile<StationarySpikeTrap>().SpikeDirection = 1f;
+                        Main.projectile[topSpike].netUpdate = true;
+                    }
+                    if (Main.projectile.IndexInRange(bottomSpike))
+                    {
+                        Main.projectile[bottomSpike].ModProjectile<StationarySpikeTrap>().SpikeDirection = -1f;
+                        Main.projectile[bottomSpike].netUpdate = true;
+                    }
+                }
+            }
+
+            // Create a rumble effect.
+            if (phase2TransitionTimer > 30f && phase2TransitionTimer < 75f && Main.LocalPlayer.WithinRange(npc.Center, 5000f))
+                Main.LocalPlayer.Calamity().GeneralScreenShakePower = 10f;
+
+            // Create some platforms before the spike traps are released.
+            if (Main.netMode != NetmodeID.MultiplayerClient && phase2TransitionTimer == 35f)
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    int platformX = (int)MathHelper.Lerp(npc.Infernum().arenaRectangle.Left + 60f, npc.Infernum().arenaRectangle.Right - 60f, i / 6f);
+                    int platformY = npc.Infernum().arenaRectangle.Bottom - 16;
+                    int platform = NPC.NewNPC(platformX, platformY, ModContent.NPCType<GolemArenaPlatform>(), npc.whoAmI);
+                    if (Main.npc.IndexInRange(platform))
+                    {
+                        Main.npc[platform].velocity = -Vector2.UnitY * 2.5f;
+                        Main.npc[platform].netUpdate = true;
+                    }
+                }
+            }
+
+            // Make all spike traps release their spears.
+            if (phase2TransitionTimer == 75f)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/MeatySlash"));
+                foreach (Projectile spear in Utilities.AllProjectilesByID(ModContent.ProjectileType<StationarySpikeTrap>()))
+                {
+                    spear.ModProjectile<StationarySpikeTrap>().SpikesShouldExtendOutward = true;
+                    spear.netUpdate = true;
+                }
+            }
+
+            // Release a burst of fireballs outward. This happens after some platforms have spawned, and serves to teach the player about the platforms by
+            // forcing them to dodge the burst while utilizing them.
+            if (phase2TransitionTimer == 100f)
+            {
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"));
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                    for (int i = 0; i < 16; i++)
+                    {
+                        Vector2 fireShootVelocity = (MathHelper.TwoPi * i / 16f + shootOffsetAngle).ToRotationVector2() * 8f;
+                        Utilities.NewProjectileBetter(npc.Center, fireShootVelocity, ProjectileID.EyeBeam, 190, 0f);
+                    }
+                }
+            }
         }
 
         private void ReAttachHead(NPC npc)
@@ -546,26 +1062,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             NPC AttachedHeadNPC = Main.npc[(int)npc.Infernum().ExtraAI[2]];
 
             // If the free head is close enough or it will pass the correct position, reattach it
-            if (FreeHeadNPC.Distance(AttachedHeadNPC.Center) < 1f || AttachedHeadNPC.Distance(FreeHeadNPC.Center + FreeHeadNPC.velocity) > AttachedHeadNPC.Distance(FreeHeadNPC.Center))
+            if (FreeHeadNPC.Distance(AttachedHeadNPC.Center) < 70f)
             {
                 SwapHeads(npc);
                 return;
             }
 
             // Otherwise accelerate towards the proper position
-            FreeHeadNPC.velocity += FreeHeadNPC.DirectionTo(AttachedHeadNPC.Center) * 0.1f;
+            FreeHeadNPC.velocity += FreeHeadNPC.SafeDirectionTo(AttachedHeadNPC.Center) * 0.35f;
         }
 
-        private void GoToNextAttack(NPC npc)
+        private void SelectNextAttackState(NPC npc)
         {
             ref float AttackState = ref npc.ai[1];
             ref float AttackTimer = ref npc.ai[2];
             ref float PreviousAttackState = ref npc.Infernum().ExtraAI[8];
 
-            /*GolemAttackState NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length - AttacksNotToPool);
+            GolemAttackState NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length - AttacksNotToPool);
             while ((float)NextAttack == AttackState)
-                NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length - AttacksNotToPool);*/
+                NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length - AttacksNotToPool);
+
+            /*
             GolemAttackState NextAttack = GolemAttackState.FistSpin;
+            if (AttackState == (int)GolemAttackState.FistSpin)
+                NextAttack = GolemAttackState.FloorFire;
+            */
 
             PreviousAttackState = AttackState;
             AttackState = (float)NextAttack;
@@ -611,8 +1132,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Rectangle rect = new Rectangle(0, 0, texture.Width, texture.Height);
             Vector2 drawPos = npc.Center - Main.screenPosition;
             drawPos += new Vector2(4, -12);
-            Main.spriteBatch.Draw(texture, drawPos, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(glowMask, drawPos, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPos, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glowMask, drawPos, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -641,6 +1162,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         altarY = j;
                     }
                 }
+            }
+            if (altarX == 0 || altarY == 0)
+            {
+                altarX = num;
+                altarY = num2;
             }
 
             int arenaBottom = altarY + 15;

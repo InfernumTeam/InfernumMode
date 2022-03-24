@@ -9,20 +9,19 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
-
     public class GolemHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.GolemHead;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        private static Dictionary<GolemAttackState, Color> AttackEyeColorPairs = new Dictionary<GolemAttackState, Color>
+        public static Dictionary<GolemAttackState, Color> AttackEyeColorPairs => new Dictionary<GolemAttackState, Color>
         {
             [GolemAttackState.SummonDelay] = Color.Transparent,
             [GolemAttackState.BIGSHOT] = Color.Transparent,
             [GolemAttackState.BadTime] = Color.Transparent,
 
-            [GolemAttackState.ArmBullets] = Color.AntiqueWhite,
+            [GolemAttackState.FloorFire] = Color.AntiqueWhite,
             [GolemAttackState.FistSpin] = Color.Orange,
             [GolemAttackState.HeatRay] = Color.Aquamarine,
             [GolemAttackState.SpikeTrapWaves] = Color.LightBlue,
@@ -59,8 +58,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Texture2D texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/AttachedHead");
             Texture2D glowMask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/AttachedHeadGlow");
             Rectangle rect = new Rectangle(0, 0, texture.Width, texture.Height);
-            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(glowMask, npc.Center - Main.screenPosition, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glowMask, npc.Center - Main.screenPosition, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             DoEyeDrawing(npc);
             return false;
         }
@@ -77,6 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 drawPos2 = new Vector2(drawPos.X + 30f, drawPos.Y);
 
             NPC body = Main.npc[(int)npc.ai[0]];
+            float laserRayTelegraphInterpolant = body.Infernum().ExtraAI[10];
 
             if ((GolemAttackState)body.ai[1] == GolemAttackState.BIGSHOT || (GolemAttackState)body.ai[1] == GolemAttackState.BadTime || (GolemAttackState)body.ai[1] == GolemAttackState.SummonDelay)
             {
@@ -134,6 +134,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Main.spriteBatch.Draw(texture, drawPos2 - Main.screenPosition, rect, drawColor, rotation2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(texture, drawPos - Main.screenPosition, rect, drawColor, rotation + MathHelper.PiOver2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(texture, drawPos2 - Main.screenPosition, rect, drawColor, rotation2 + MathHelper.PiOver2, rect.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            }
+
+            // Draw laser ray telegraphs.
+            if (laserRayTelegraphInterpolant > 0f)
+            {
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
+
+                Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                Color outlineColor = Color.Lerp(Color.OrangeRed, Color.White, laserRayTelegraphInterpolant);
+                Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                Vector2 beamScale = new Vector2(laserRayTelegraphInterpolant * 0.5f, 2.4f);
+
+                Vector2 drawPosition = drawPos - Main.screenPosition;
+                Vector2 beamDirection = -Vector2.UnitX;
+                float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+
+                drawPosition = drawPos2 - Main.screenPosition;
+                beamDirection = Vector2.UnitX;
+                beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+
+                Main.spriteBatch.ResetBlendState();
             }
         }
     }

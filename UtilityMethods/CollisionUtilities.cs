@@ -13,6 +13,13 @@ namespace InfernumMode
             return result.ToWorldCoordinates();
         }
 
+        public static Vector2 GetCeilingPositionFrom(Vector2 v)
+        {
+            if (!WorldUtils.Find(v.ToTileCoordinates(), Searches.Chain(new Searches.Up(9001), new Conditions.IsSolid()), out Point result))
+                return v;
+            return result.ToWorldCoordinates();
+        }
+
         public static bool RotatingHitboxCollision(this Entity entity, Vector2 targetTopLeft, Vector2 targetHitboxDimensions, Vector2? directionOverride = null)
         {
             Vector2 lineDirection = directionOverride ?? entity.velocity;

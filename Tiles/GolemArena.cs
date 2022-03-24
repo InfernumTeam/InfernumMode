@@ -1,11 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Tiles
 {
-    class GolemArena : ModTile
+    public class GolemArena : ModTile
     {
         public override void SetDefaults()
         {
@@ -15,6 +16,7 @@ namespace InfernumMode.Tiles
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Arena");
             AddMapEntry(new Color(40, 70, 70), name);
+            CalamityUtils.SetMerge(Type, TileID.LihzahrdBrick);
         }
 
         public override bool CanKillTile(int i, int j, ref bool blockDamaged) => false;

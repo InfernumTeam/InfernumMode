@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             float offsetFromPreviousPosition = npc.position.Y - npc.oldPosition.Y;
             foreach (Player player in Main.player)
             {
-                if (!player.active || player.dead || player.GoingDownWithGrapple || Collision.SolidCollision(player.position, player.width, player.height))
+                if (!player.active || player.dead || player.GoingDownWithGrapple || Collision.SolidCollision(player.position, player.width, player.height) || player.controlDown)
                     continue;
 
                 Rectangle playerRect = new Rectangle((int)player.position.X, (int)player.position.Y + (player.height), player.width, 1);

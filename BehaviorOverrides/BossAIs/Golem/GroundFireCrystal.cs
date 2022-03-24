@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
@@ -23,13 +24,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override void AI()
         {
-            if (projectile.localAI[0] == 0f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.localAI[0] == 0f)
             {
-                Dust.QuickDustLine(projectile.Center, projectile.Center + projectile.velocity.SafeNormalize(Vector2.UnitY) * 2000f, 20f, Color.Orange);
+                Utilities.NewProjectileBetter(projectile.Center, projectile.velocity.SafeNormalize(Vector2.UnitY), ModContent.ProjectileType<FistBulletTelegraph>(), 0, 0f);
                 projectile.localAI[0] = 1f;
             }
 
-            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.033f, 0f, 1f);
+            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.03f, 0f, 1f);
             
             if (projectile.Opacity >= 1f)
                 projectile.velocity = (projectile.velocity * 1.05f).ClampMagnitude(5f, 36f);

@@ -67,8 +67,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 float spikeRotation = SpikeDirection == -1f ? 0f : MathHelper.Pi;
                 Rectangle spikeFrame = new Rectangle(0, (int)frameTop, Main.chain17Texture.Width, (int)frameHeight);
-                spriteBatch.Draw(Main.chain17Texture, spikeTip - Main.screenPosition, spikeFrame, Color.White, spikeRotation, new Vector2(Main.chain17Texture.Width / 2f, 0f), 1f, 0, 0f);
-                spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.White, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
+                spriteBatch.Draw(Main.chain17Texture, spikeTip - Main.screenPosition, spikeFrame, Color.OrangeRed, spikeRotation, new Vector2(Main.chain17Texture.Width / 2f, 0f), 1f, 0, 0f);
+                spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.OrangeRed, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
             }
 
             Texture2D texture = Main.projectileTexture[projectile.type];

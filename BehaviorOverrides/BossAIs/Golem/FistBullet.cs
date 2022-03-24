@@ -33,6 +33,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     float rotation = -(projectile.rotation + MathHelper.Pi - (projectile.AngleTo(target) + MathHelper.Pi));
                     projectile.rotation = MathHelper.WrapAngle(projectile.rotation + MathHelper.Clamp(rotation, -MathHelper.ToRadians(10), MathHelper.ToRadians(10)));
                 }
+
+                // Create a line telegraph.
+                if (Main.netMode != NetmodeID.MultiplayerClient && projectile.localAI[0] == 0f)
+                {
+                    Utilities.NewProjectileBetter(projectile.Center, projectile.rotation.ToRotationVector2(), ModContent.ProjectileType<FistBulletTelegraph>(), 0, 0f);
+                    projectile.localAI[0] = 1f;
+                }
             }
             else if (projectile.Infernum().ExtraAI[0] == 60f)
             {

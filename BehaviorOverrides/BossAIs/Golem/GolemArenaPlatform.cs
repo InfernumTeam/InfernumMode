@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
-            npc.gfxOffY = -8;
+            npc.gfxOffY = -12;
 
             float offsetFromPreviousPosition = npc.position.Y - npc.oldPosition.Y;
             foreach (Player player in Main.player)

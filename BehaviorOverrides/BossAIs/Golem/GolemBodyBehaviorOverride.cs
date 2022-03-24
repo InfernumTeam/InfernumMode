@@ -69,6 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref float phase2TransitionTimer = ref npc.Infernum().ExtraAI[16];
             ref float coreLaserRayInterpolant = ref npc.Infernum().ExtraAI[17];
             ref float coreLaserRayDirection = ref npc.Infernum().ExtraAI[18];
+            ref float fistTelegraphInterpolant = ref npc.Infernum().ExtraAI[19];
 
             bool FreeHead = HeadState == 1;
 
@@ -185,9 +186,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.TargetClosest(false);
             }
 
-            // Reset the eye and core laser telegraph interpolant.
+            // Reset telegraph interpolants.
             eyeLaserRayInterpolant = 0f;
             coreLaserRayInterpolant = 0f;
+            fistTelegraphInterpolant = 0f;
 
             bool Enraged = EnrageState == 1f;
 
@@ -458,6 +460,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 return false;
             }
 
+            // Return the arena if stuck.
+            if (Collision.SolidCollision(npc.Center - Vector2.One * 15f, 30, 30) || !npc.Hitbox.Intersects(npc.Infernum().arenaRectangle))
+                npc.Center = npc.Center.MoveTowards(npc.Infernum().arenaRectangle.Center.ToVector2(), 3f);
+
             if (AttackCooldown <= 0f)
             {
                 switch ((GolemAttackState)AttackState)
@@ -527,10 +533,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                                     }
 
                                     // Summon crystals on the floor that accelerate upward.
+                                    float horizontalOffset = Main.rand.NextFloat(120f);
                                     for (float x = npc.Infernum().arenaRectangle.Left + 20f; x < npc.Infernum().arenaRectangle.Right - 20f; x += fireCrystalSpacing)
                                     {
                                         float y = npc.Infernum().arenaRectangle.Center.Y;
-                                        Vector2 crystalSpawnPosition = Utilities.GetGroundPositionFrom(new Vector2(x, y));
+                                        Vector2 crystalSpawnPosition = Utilities.GetGroundPositionFrom(new Vector2(x + horizontalOffset, y));
 
                                         // Create puffs of fire at the crystal's position.
                                         for (int i = 0; i < 6; i++)
@@ -692,6 +699,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                                 Utils.PoofOfSmoke(rightImpactPoint);
                                 Collision.HitTiles(leftImpactPoint, -Vector2.UnitX, 40, 40);
                                 Collision.HitTiles(rightImpactPoint, Vector2.UnitX, 40, 40);
+                            }
+
+                            // Create dust on the walls where spikes will appear.
+                            for (int i = 0; i < 6; i++)
+                            {
+                                Vector2 trapSpawnPosition = npc.Infernum().arenaRectangle.TopLeft();
+                                Dust.NewDustDirect(trapSpawnPosition, 8, 600, 6);
+
+                                trapSpawnPosition = npc.Infernum().arenaRectangle.BottomRight();
+                                Dust.NewDustDirect(trapSpawnPosition - new Vector2(600f, -8f), 8, 600, 6);
                             }
                         }
 
@@ -875,7 +892,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         {
                             coreLaserRayInterpolant = Utils.InverseLerp(0f, laserTelegraphTime - 32f, AttackTimer, true);
                             if (coreLaserRayInterpolant < 1f)
-                                coreLaserRayDirection = (target.Center - coreCenterPos).ToRotation();
+                                coreLaserRayDirection = (target.Center - coreCenterPos).ToRotation().AngleLerp(-MathHelper.PiOver2, 0.6f);
                         }
 
                         // Create platforms.
@@ -988,6 +1005,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         // Create fire sparks as a telegraph that indicates which fist will charge.
                         if (AttackTimer < dustTelegraphTime)
                         {
+                            fistTelegraphInterpolant = Utils.InverseLerp(0f, dustTelegraphTime - 8f, AttackTimer, true);
                             Dust fire = Dust.NewDustDirect(fistToChargeWith.position, fistToChargeWith.width, fistToChargeWith.height, 6);
                             fire.velocity = slingshotRotation.ToRotationVector2() * Main.rand.NextFloat(4f, 7f) + Main.rand.NextVector2Circular(1.1f, 1.1f);
                             fire.noGravity = Main.rand.NextBool();

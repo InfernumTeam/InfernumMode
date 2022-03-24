@@ -254,7 +254,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             bool inPhase2 = phase2TransitionTimer >= Phase2TransitionAnimationTime && lifeRatio < Phase2LifeRatio;
             bool inPhase3 = inPhase2 && lifeRatio < Phase3LifeRatio;
 
+            // Reset things.
             npc.dontTakeDamage = true;
+            freeHead.damage = freeHead.defDamage;
 
             if (FightStarted == 0f)
             {
@@ -324,7 +326,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     npc.damage = npc.defDamage;
                     leftFist.damage = leftFist.defDamage;
                     rightFist.damage = rightFist.defDamage;
-                    freeHead.damage = freeHead.defDamage;
                     attachedHead.damage = attachedHead.defDamage;
                     attachedHead.dontTakeDamage = false;
                     return false;
@@ -793,6 +794,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         // Reset the rotations of the fists.
                         leftFist.rotation = 0f;
                         rightFist.rotation = 0f;
+                        freeHead.damage = 0;
 
                         // Have the head hover in place and perform the telegraph prior to firing.
                         if (AttackTimer < hoverTelegraphTime)
@@ -877,9 +879,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         platformReleaseRate = 95;
                         int laserTelegraphTime = 75;
                         int laserLifetime = 160;
-                        float laserArc = MathHelper.Pi * 0.63f;
+                        float laserArc = MathHelper.Pi * 0.44f;
                         if (inPhase3)
-                            laserArc *= 1.15f;
+                            laserArc *= 1.1f;
 
                         float angularVelocity = laserArc / laserLifetime;
 
@@ -892,7 +894,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         {
                             coreLaserRayInterpolant = Utils.InverseLerp(0f, laserTelegraphTime - 32f, AttackTimer, true);
                             if (coreLaserRayInterpolant < 1f)
-                                coreLaserRayDirection = (target.Center - coreCenterPos).ToRotation().AngleLerp(-MathHelper.PiOver2, 0.6f);
+                                coreLaserRayDirection = (target.Center - coreCenterPos).ToRotation().AngleLerp(-MathHelper.PiOver2, 0.84f);
                         }
 
                         // Create platforms.

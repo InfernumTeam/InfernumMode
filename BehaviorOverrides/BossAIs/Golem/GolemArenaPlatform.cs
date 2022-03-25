@@ -69,6 +69,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         player.velocity.Y = 0;
                         player.position.Y = npc.position.Y - player.height + 4;
                         player.position += npc.velocity;
+
+                        if (Math.Abs(player.velocity.X) < 0.01f)
+                        {
+                            player.legFrame.Y = 0;
+                            player.legFrameCounter = 0;
+                        }
+                        player.wingFrame = 0;
+                        player.wingFrameCounter = 0;
+                        player.bodyFrame.Y = 0;
+                        player.bodyFrameCounter = 0;
                     }
                 }
             }

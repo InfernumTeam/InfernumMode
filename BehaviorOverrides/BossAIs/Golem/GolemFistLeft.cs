@@ -63,8 +63,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Vector2 beamScale = new Vector2(telegraphInterpolant * 0.5f, 2.4f);
 
                 Vector2 drawPosition = npc.Center - Main.screenPosition;
-                Vector2 beamDirection = -telegraphRotation.ToRotationVector2();
-                float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
+                Vector2 beamDirection = npc.rotation.ToRotationVector2();
+                float beamRotation = beamDirection.ToRotation() + MathHelper.PiOver2;
                 Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
 
                 Main.spriteBatch.ResetBlendState();

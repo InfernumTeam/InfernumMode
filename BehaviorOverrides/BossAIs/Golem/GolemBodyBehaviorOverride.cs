@@ -366,6 +366,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.noGravity = false;
                 npc.noTileCollide = false;
 
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<GolemEyeLaserRay>());
                 DoBehavior_EnterSecondPhase(npc, phase2TransitionTimer);
                 if (phase2TransitionTimer == 2f)
                 {
@@ -709,7 +710,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                                 Dust.NewDustDirect(trapSpawnPosition, 8, 600, 6);
 
                                 trapSpawnPosition = npc.Infernum().arenaRectangle.BottomRight();
-                                Dust.NewDustDirect(trapSpawnPosition - new Vector2(600f, -8f), 8, 600, 6);
+                                Dust.NewDustDirect(trapSpawnPosition - new Vector2(-8f, 600f), 8, 600, 6);
                             }
                         }
 

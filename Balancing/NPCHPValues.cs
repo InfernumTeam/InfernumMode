@@ -71,7 +71,7 @@ namespace InfernumMode.Balancing
             [NPCID.PrimeLaser] = BossRushEvent.BossRushActive ? -1 : CalculateMechHP(5005),
             [NPCID.TheDestroyer] = BossRushEvent.BossRushActive ? 610580 : CalculateMechHP(111000),
             [NPCID.Probe] = BossRushEvent.BossRushActive ? 15000 : CalculateMechHP(170),
-            [ModContent.NPCType<BrimstoneElemental>()] = BossRushEvent.BossRushActive ? 1105000 : 51515,
+            [ModContent.NPCType<BrimstoneElemental>()] = BossRushEvent.BossRushActive ? 1105000 : 85515,
             [ModContent.NPCType<CalamitasRun3>()] = BossRushEvent.BossRushActive ? 485000 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 244444 : 76250,
             [ModContent.NPCType<CalamitasRun>()] = BossRushEvent.BossRushActive ? 193380 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 55000 : 20600,
             [ModContent.NPCType<CalamitasRun2>()] = BossRushEvent.BossRushActive ? 176085 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 41000 : 13000,

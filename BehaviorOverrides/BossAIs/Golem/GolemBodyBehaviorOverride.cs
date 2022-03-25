@@ -151,24 +151,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 // If no possible target was found, die.
                 if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead || !Main.player[npc.target].active)
                 {
-                    npc.velocity.Y += 0.5f;
-                    if (npc.timeLeft > 120)
-                        npc.timeLeft = 120;
+                    DespawnNPC((int)AttachedHeadNPC);
+                    DespawnNPC((int)FreeHeadNPC);
+                    DespawnNPC((int)LeftFistNPC);
+                    DespawnNPC((int)RightFistNPC);
 
-                    if (!npc.WithinRange(Main.player[npc.target].Center, 4200f))
-                    {
-                        DespawnNPC((int)AttachedHeadNPC);
-                        DespawnNPC((int)FreeHeadNPC);
-                        DespawnNPC((int)LeftFistNPC);
-                        DespawnNPC((int)RightFistNPC);
+                    npc.life = 0;
+                    npc.active = false;
+                    if (Main.netMode == NetmodeID.Server)
+                        NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
 
-                        npc.life = 0;
-                        npc.active = false;
-                        if (Main.netMode == NetmodeID.Server)
-                            NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
-
-                        DeleteGolemArena();
-                    }
+                    DeleteGolemArena();
 
                     return false;
                 }
@@ -479,9 +472,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         #region Floor Fire
 
-                        int jumpDelay = 50;
+                        int jumpDelay = 32;
                         int jumpCount = 3;
-                        int postJumpSitTime = 120;
+                        int postJumpSitTime = 90;
                         float fireCrystalSpacing = 140f;
 
                         if (inPhase2)
@@ -736,9 +729,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         {
                             leftFist.rotation = 0f;
                             rightFist.rotation = 0f;
-                            if (AttackTimer >= fistSlamTime + spikeTrapCreationRate + 210f)
+                            if (AttackTimer >= fistSlamTime + spikeTrapCreationRate + 270f)
                             {
                                 AttackCooldown = ConstAttackCooldown;
+                                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<SpikeTrap>());
                                 SelectNextAttackState(npc);
                             }
                             break;
@@ -773,7 +767,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         platformReleaseRate = 90;
                         int hoverTelegraphTime = 90;
-                        int fireReleaseRate = 36;
+                        int fireReleaseRate = 30;
                         int fireCircleCount = 9;
 
                         if (inPhase2)
@@ -981,8 +975,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         float[] samples = new float[24];
                         Vector2 fistStart = fistToChargeWith.whoAmI == leftFist.whoAmI ? leftHandCenterPos : rightHandCenterPos;
-                        Collision.LaserScan(fistStart, slingshotRotation.ToRotationVector2(), 30f, 10000f, samples);
-                        Vector2 fistEnd = fistStart + slingshotRotation.ToRotationVector2() * samples.Average();
+                        Vector2 offsetDirection = (slingshotRotation + (fistToChargeWith.whoAmI == leftFist.whoAmI ? MathHelper.Pi : 0f)).ToRotationVector2();
+                        Collision.LaserScan(fistStart, offsetDirection, 30f, 10000f, samples);
+                        Vector2 fistEnd = fistStart + offsetDirection * samples.Average();
 
                         // Determine the initial fist destination.
                         if (fistSlamDestinationX == 0f || fistSlamDestinationY == 0f)
@@ -1009,10 +1004,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         if (AttackTimer < dustTelegraphTime)
                         {
                             fistTelegraphInterpolant = Utils.InverseLerp(0f, dustTelegraphTime - 8f, AttackTimer, true);
-                            Dust fire = Dust.NewDustDirect(fistToChargeWith.position, fistToChargeWith.width, fistToChargeWith.height, 6);
-                            fire.velocity = slingshotRotation.ToRotationVector2() * Main.rand.NextFloat(4f, 7f) + Main.rand.NextVector2Circular(1.1f, 1.1f);
-                            fire.noGravity = Main.rand.NextBool();
-                            fire.scale *= 1.3f;
+
+                            for (int i = 0; i < 6; i++)
+                            {
+                                Dust fire = Dust.NewDustDirect(fistToChargeWith.position, fistToChargeWith.width, fistToChargeWith.height, 6);
+                                fire.velocity = offsetDirection * Main.rand.NextFloat(7f, 28f) + Main.rand.NextVector2Circular(4f, 4f);
+                                fire.noGravity = Main.rand.NextBool();
+                                fire.scale *= 1.67f;
+                            }
                         }
 
                         // Make arms do a slam effect.
@@ -1027,7 +1026,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                                 {
                                     Main.PlaySound(SoundID.DD2_KoboldExplosion, fistEnd);
                                     Utils.PoofOfSmoke(fistEnd);
-                                    Collision.HitTiles(fistEnd, slingshotRotation.ToRotationVector2(), 40, 40);
+                                    Collision.HitTiles(fistEnd, offsetDirection, 40, 40);
                                 }
                             }
                         }
@@ -1271,8 +1270,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length - AttacksNotToPool);
 
                 // Only use the spin laser in phase 2.
-                if (inPhase2 && NextAttack == GolemAttackState.SpinLaser)
-                    continue;
+                if (!inPhase2 && NextAttack == GolemAttackState.SpinLaser)
+                    NextAttack = GolemAttackState.FloorFire;
             }
 
             PreviousAttackState = AttackState;

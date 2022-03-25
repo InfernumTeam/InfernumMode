@@ -48,28 +48,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 return false;
 
             NPC body = Main.npc[(int)npc.ai[0]];
-            float telegraphRotation = body.Infernum().ExtraAI[11];
-            float telegraphInterpolant = body.Infernum().ExtraAI[19];
-            bool isCorrectArmForTelegraph = Math.Cos(telegraphRotation) > 0f ? npc.type == ModContent.NPCType<GolemFistRight>() : npc.type == ModContent.NPCType<GolemFistLeft>();
-
-            // Draw the telegraph as necessary.
-            if (telegraphInterpolant > 0f && isCorrectArmForTelegraph)
-            {
-                Main.spriteBatch.SetBlendState(BlendState.Additive);
-
-                Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
-                Color outlineColor = Color.Lerp(Color.OrangeRed, Color.White, telegraphInterpolant);
-                Vector2 origin = new Vector2(line.Width / 2f, line.Height);
-                Vector2 beamScale = new Vector2(telegraphInterpolant * 0.5f, 2.4f);
-
-                Vector2 drawPosition = npc.Center - Main.screenPosition;
-                Vector2 beamDirection = npc.rotation.ToRotationVector2();
-                float beamRotation = beamDirection.ToRotation() + MathHelper.PiOver2;
-                Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
-
-                Main.spriteBatch.ResetBlendState();
-            }
-
             Vector2 FistCenterPos = leftFist ? new Vector2(body.Left.X, body.Left.Y) : new Vector2(body.Right.X, body.Right.Y);
             float armRotation = npc.AngleFrom(FistCenterPos) + MathHelper.PiOver2;
             bool continueDrawing = true;

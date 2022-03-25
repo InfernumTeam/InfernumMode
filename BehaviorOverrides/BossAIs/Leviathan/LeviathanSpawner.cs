@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
                 for (int i = -1; i <= 1; i += 2)
                 {
-                    int wave = Utilities.NewProjectileBetter(projectile.Center, Vector2.UnitX * 15f * i, ModContent.ProjectileType<LeviathanSpawnWave>(), 150, 0f);
+                    int wave = Utilities.NewProjectileBetter(projectile.Center, Vector2.UnitX * 15f * i, ModContent.ProjectileType<LeviathanSpawnWave>(), 0, 0f);
                     Main.projectile[wave].Bottom = projectile.Center + Vector2.UnitY * 700f;
                 }
 

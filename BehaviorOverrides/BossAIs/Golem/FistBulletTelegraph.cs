@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         {
             Vector2 start = projectile.Center;
             Vector2 end = projectile.Center + projectile.velocity * 7000f;
-            spriteBatch.DrawLineBetter(start, end, Color.Orange, projectile.scale * 4f);
+            spriteBatch.DrawLineBetter(start, end, Color.Orange * 0.4f, projectile.scale * 4f);
             return false;
         }
 

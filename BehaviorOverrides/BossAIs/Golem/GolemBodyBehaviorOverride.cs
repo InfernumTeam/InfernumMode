@@ -4,6 +4,7 @@ using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
@@ -19,6 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         HeatRay,
         SpinLaser,
         Slingshot,
+        SpikeRush,
 
         LandingState,
         SummonDelay,
@@ -417,23 +419,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
             else if (ReturnFromEnrageState == 1f)
             {
-                // Custom re-attach code rather than the method so that the fight can return to normal faster
-                // Slow down for the first part
-                Vector2 idealDirection = freeHead.SafeDirectionTo(attachedHeadCenterPos);
-                float idealDirectionDisparity = freeHead.velocity.AngleBetween(idealDirection);
-                if (idealDirectionDisparity < MathHelper.Pi / 30f)
-                {
-                    freeHead.velocity *= 0.925f;
-
-                    // Once stopped, approach the attached position.
-                    if (freeHead.velocity.Length() < 16f)
-                        freeHead.velocity = freeHead.SafeDirectionTo(attachedHeadCenterPos) * 16f;
-                    return false;
-                }
-
                 // If it will pass, reattach
                 // It's fine if the head was unattached before enraging, the attack will continue like normal
-                if (attachedHead.Distance(freeHead.Center + freeHead.velocity) > attachedHead.Distance(freeHead.Center) && attachedHead.Distance(freeHead.Center) < 20f)
+                if (freeHead.Distance(attachedHeadCenterPos) < 50f)
                 {
                     freeHead.defense = freeHead.defDefense;
                     SwapHeads(npc);
@@ -442,22 +430,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     return false;
                 }
                 else if (attachedHead.Distance(freeHead.Center + freeHead.velocity) > attachedHead.Distance(freeHead.Center))
-                {
-                    freeHead.velocity *= 0.925f;
-                    // Once stopped, approach the attached position
-                    if (freeHead.velocity.Length() < 1f)
-                        freeHead.velocity = freeHead.SafeDirectionTo(attachedHeadCenterPos);
-                    return false;
-                }
+                    freeHead.velocity = freeHead.SafeDirectionTo(attachedHeadCenterPos) * 18f;
 
-                // Accelerate towards the optimal position
-                freeHead.velocity = (freeHead.velocity * 1.085f).ClampMagnitude(0, 20f);
                 return false;
             }
 
-            // Return the arena if stuck.
+            // Return to the arena if stuck.
             if (Collision.SolidCollision(npc.Center - Vector2.One * 15f, 30, 30) || !npc.Hitbox.Intersects(npc.Infernum().arenaRectangle))
-                npc.Center = npc.Center.MoveTowards(npc.Infernum().arenaRectangle.Center.ToVector2(), 3f);
+            {
+                if (!npc.Hitbox.Intersects(npc.Infernum().arenaRectangle))
+                    npc.velocity = Vector2.Zero;
+                npc.Center = npc.Center.MoveTowards(npc.Infernum().arenaRectangle.Center.ToVector2(), 8f);
+            }
 
             if (AttackCooldown <= 0f)
             {
@@ -874,9 +858,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         platformReleaseRate = 95;
                         int laserTelegraphTime = 75;
                         int laserLifetime = 160;
+                        int coreLaserFireRate = 45;
                         float laserArc = MathHelper.Pi * 0.44f;
                         if (inPhase3)
+                        {
+                            coreLaserFireRate -= 6;
                             laserArc *= 1.1f;
+                        }
 
                         float angularVelocity = laserArc / laserLifetime;
 
@@ -917,6 +905,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                                     Main.projectile[laser].ModProjectile<ThermalDeathray>().Lifetime = laserLifetime;
                                     Main.projectile[laser].netUpdate = true;
                                 }
+                            }
+                        }
+
+                        // Create lasers from the core after firing.
+                        if (AttackTimer > laserTelegraphTime && AttackTimer % coreLaserFireRate == coreLaserFireRate - 1f)
+                        {
+                            Main.PlaySound(SoundID.Item12, npc.Center);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 8f;
+                                Utilities.NewProjectileBetter(npc.Center, shootVelocity, ProjectileID.EyeBeam, 190, 0f);
                             }
                         }
 
@@ -961,7 +960,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         {
                             do
                                 slingshotRotation = Main.rand.NextFloat(MathHelper.TwoPi);
-                            while (Vector2.Dot(slingshotRotation.ToRotationVector2(), Vector2.UnitY) > -0.2f);
+                            while (Vector2.Dot((slingshotRotation + (Math.Cos(slingshotRotation) > 0f ? 0f : MathHelper.Pi)).ToRotationVector2(), Vector2.UnitY) > -0.2f);
                             npc.netUpdate = true;
                         }
 
@@ -1141,6 +1140,69 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         #endregion
 
                         break;
+
+                    case GolemAttackState.SpikeRush:
+                        if (FreeHead)
+                        {
+                            ReAttachHead(npc);
+                            break;
+                        }
+
+                        #region Spike Rush
+
+                        platformReleaseRate = 82;
+                        int laserReleaseRate = 18;
+                        int rushTime = 420;
+                        float platformRiseSpeed = 7f;
+
+                        // Destroy all old platforms and create a few new ones in their place
+                        if (AttackTimer == 25f)
+                        {
+                            DestroyAllPlatforms();
+                            if (Main.netMode != NetmodeID.MultiplayerClient && phase2TransitionTimer == 35f)
+                            {
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    int platformX = (int)MathHelper.Lerp(npc.Infernum().arenaRectangle.Left + 60f, npc.Infernum().arenaRectangle.Right - 60f, i / 2f);
+                                    int platformY = npc.Infernum().arenaRectangle.Bottom - 16;
+                                    CreatePlatform(new Vector2(platformX, platformY), Vector2.UnitY * -platformRiseSpeed);
+                                }
+                            }
+                        }
+
+                        // Create lasers from the sides of the arena.
+                        if (AttackTimer >= 25f && AttackTimer % laserReleaseRate == laserReleaseRate - 1f)
+                        {
+                            Vector2 laserSpawnOffsetFactors = new Vector2(Main.rand.NextBool().ToDirectionInt() * 0.95f, Main.rand.NextFloat(-0.85f, 0.85f));
+                            Vector2 laserSpawnPosition = npc.Infernum().arenaRectangle.Center.ToVector2() + npc.Infernum().arenaRectangle.Size() * laserSpawnOffsetFactors * 0.5f;
+                            Main.PlaySound(SoundID.Item12, laserSpawnPosition);
+
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Vector2 laserShootVelocity = Vector2.UnitX * Math.Sign(npc.Infernum().arenaRectangle.Center.X - laserSpawnPosition.X) * 5f;
+                                Utilities.NewProjectileBetter(laserSpawnPosition, laserShootVelocity, ProjectileID.EyeBeam, 190, 0f);
+                            }
+                        }
+
+                        // Create new platforms afterwards.
+                        if (AttackTimer % platformReleaseRate == platformReleaseRate - 1f)
+                        {
+                            int platformX = (int)MathHelper.Lerp(npc.Infernum().arenaRectangle.Left + 150f, npc.Infernum().arenaRectangle.Right - 150f, Main.rand.NextFloat());
+                            int platformY = npc.Infernum().arenaRectangle.Bottom - 16;
+                            CreatePlatform(new Vector2(platformX, platformY), Vector2.UnitY * -platformRiseSpeed);
+                        }
+
+                        AttackTimer++;
+
+                        if (AttackTimer >= rushTime + 25f)
+                        {
+                            AttackCooldown = ConstAttackCooldown;
+                            SelectNextAttackState(npc);
+                        }
+
+                        #endregion Spike Rush
+
+                        break;
                 }
             }
             else
@@ -1169,6 +1231,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 Main.npc[platform].velocity = velocity;
                 Main.npc[platform].netUpdate = true;
+            }
+        }
+
+        public static void DestroyAllPlatforms()
+        {
+            int platformID = ModContent.NPCType<GolemArenaPlatform>();
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].active && Main.npc[i].type == platformID)
+                {
+                    for (int j = 0; j < 12; j++)
+                        Dust.NewDust(Main.npc[i].position, Main.npc[i].width, Main.npc[i].height, 148);
+
+                    Main.npc[i].active = false;
+                    Main.npc[i].netUpdate = true;
+                }
             }
         }
 
@@ -1259,20 +1337,47 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         private void SelectNextAttackState(NPC npc)
         {
+            bool inRealTemple = false;
             bool inPhase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
             ref float AttackState = ref npc.ai[1];
             ref float AttackTimer = ref npc.ai[2];
             ref float PreviousAttackState = ref npc.Infernum().ExtraAI[8];
 
-            GolemAttackState NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length - AttacksNotToPool);
-            while ((float)NextAttack == AttackState)
+            int x = (int)(npc.Center.X / 16f);
+            int y = (int)(npc.Center.Y / 16f);
+            for (int i = x - 10; i < x + 10; i++)
             {
-                NextAttack = (GolemAttackState)Main.rand.Next(0, Enum.GetNames(typeof(GolemAttackState)).Length - AttacksNotToPool);
-
-                // Only use the spin laser in phase 2.
-                if (!inPhase2 && NextAttack == GolemAttackState.SpinLaser)
-                    NextAttack = GolemAttackState.FloorFire;
+                for (int j = y - 10; j < y + 10; j++)
+                {
+                    if (!inRealTemple && Main.tile[i, j].wall == WallID.LihzahrdBrickUnsafe)
+                    {
+                        inRealTemple = true;
+                        goto LeaveLoop;
+                    }
+                }
             }
+            LeaveLoop:
+
+            List<GolemAttackState> possibleAttacks = new List<GolemAttackState>()
+            {
+                GolemAttackState.FloorFire,
+                GolemAttackState.FistSpin,
+                GolemAttackState.SpikeTrapWaves,
+                GolemAttackState.HeatRay,
+            };
+
+            if (inRealTemple)
+                possibleAttacks.Add(GolemAttackState.Slingshot);
+            if (inPhase2)
+            {
+                possibleAttacks.Add(GolemAttackState.SpinLaser);
+                possibleAttacks.Add(GolemAttackState.SpikeRush);
+            }
+
+            GolemAttackState NextAttack;
+            do
+                NextAttack = Main.rand.Next(possibleAttacks);
+            while ((float)NextAttack == AttackState);
 
             PreviousAttackState = AttackState;
             AttackState = (float)NextAttack;

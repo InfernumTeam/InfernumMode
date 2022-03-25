@@ -27,6 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             [GolemAttackState.SpikeTrapWaves] = Color.LightBlue,
             [GolemAttackState.SpinLaser] = Color.Firebrick,
             [GolemAttackState.Slingshot] = Color.MediumPurple,
+            [GolemAttackState.SpikeRush] = Color.Green
         };
 
         public override bool PreAI(NPC npc)

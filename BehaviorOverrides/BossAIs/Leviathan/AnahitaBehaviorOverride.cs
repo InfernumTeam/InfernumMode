@@ -86,11 +86,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             ref float summonedLeviathanFlag = ref npc.Infernum().ExtraAI[6];
             ref float leviathanMusicFade = ref npc.Infernum().ExtraAI[7];
 
-            if (!target.active || target.dead || !npc.WithinRange(target.Center, 8100f))
+            if (!target.active || target.dead)
             {
                 npc.TargetClosest(false);
                 target = Main.player[npc.target];
-                if (!target.active || target.dead || !npc.WithinRange(target.Center, 8100f))
+                if (!target.active || target.dead)
                 {
                     npc.rotation = npc.velocity.X * 0.014f;
 
@@ -368,6 +368,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             {
                 totalCharges = 4f;
                 chargeSpeed *= 1.22f;
+                chargeTime -= 5;
             }
 
             if (attackTimer == 5f)

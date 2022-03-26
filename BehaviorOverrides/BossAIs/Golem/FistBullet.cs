@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     Vector2 target = Main.player[(int)projectile.Infernum().ExtraAI[2]].Center;
                     projectile.rotation = projectile.SafeDirectionTo(target).ToRotation();
 
-                    projectile.velocity = projectile.rotation.ToRotationVector2() * (projectile.Distance(target) / 50f);
+                    projectile.velocity = projectile.rotation.ToRotationVector2() * (projectile.Distance(target) / 40f);
                 }
             }
 

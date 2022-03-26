@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
 
                 // Otherwise prepare the fight
-                npc.life = npc.lifeMax = 80000;
+                npc.life = npc.lifeMax = 112000;
                 npc.noGravity = true;
                 npc.noTileCollide = false;
                 npc.chaseable = false;
@@ -456,10 +456,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         #region Floor Fire
 
-                        int jumpDelay = 32;
+                        int jumpDelay = 25;
                         int jumpCount = 3;
                         int postJumpSitTime = 90;
-                        float fireCrystalSpacing = 140f;
+                        float fireCrystalSpacing = 120f;
 
                         if (inPhase2)
                             fireCrystalSpacing -= 20f;
@@ -655,11 +655,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         if (inPhase2)
                         {
-                            spikeTrapCreationRate -= 5;
+                            spikeTrapCreationRate -= 7;
                             platformReleaseRate -= 4;
                         }
                         if (inPhase3)
-                            spikeTrapCreationRate -= 4;
+                            spikeTrapCreationRate -= 7;
 
                         // Make fists slam into the wall.
                         if (AttackTimer < fistSlamTime)
@@ -751,7 +751,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                         platformReleaseRate = 90;
                         int hoverTelegraphTime = 90;
-                        int fireReleaseRate = 30;
+                        int fireReleaseRate = 27;
                         int fireCircleCount = 9;
 
                         if (inPhase2)
@@ -858,11 +858,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         platformReleaseRate = 95;
                         int laserTelegraphTime = 75;
                         int laserLifetime = 160;
-                        int coreLaserFireRate = 45;
+                        int coreLaserFireRate = 40;
                         float laserArc = MathHelper.Pi * 0.44f;
                         if (inPhase3)
                         {
-                            coreLaserFireRate -= 6;
+                            coreLaserFireRate -= 10;
                             laserArc *= 1.1f;
                         }
 
@@ -976,7 +976,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         Vector2 fistStart = fistToChargeWith.whoAmI == leftFist.whoAmI ? leftHandCenterPos : rightHandCenterPos;
                         Vector2 offsetDirection = (slingshotRotation + (fistToChargeWith.whoAmI == leftFist.whoAmI ? MathHelper.Pi : 0f)).ToRotationVector2();
                         Collision.LaserScan(fistStart, offsetDirection, 30f, 10000f, samples);
-                        Vector2 fistEnd = fistStart + offsetDirection * samples.Average();
+                        Vector2 fistEnd = fistStart + offsetDirection * (samples.Average() - 45f);
 
                         // Determine the initial fist destination.
                         if (fistSlamDestinationX == 0f || fistSlamDestinationY == 0f)
@@ -1151,9 +1151,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         #region Spike Rush
 
                         platformReleaseRate = 82;
-                        int laserReleaseRate = 18;
+                        int laserReleaseRate = 16;
                         int rushTime = 420;
-                        float platformRiseSpeed = 7f;
+                        float platformRiseSpeed = 8.4f;
 
                         // Destroy all old platforms and create a few new ones in their place
                         if (AttackTimer == 25f)

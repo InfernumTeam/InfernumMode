@@ -72,6 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref float coreLaserRayInterpolant = ref npc.Infernum().ExtraAI[17];
             ref float coreLaserRayDirection = ref npc.Infernum().ExtraAI[18];
             ref float fistTelegraphInterpolant = ref npc.Infernum().ExtraAI[19];
+            ref float slingshotArmToCharge = ref npc.Infernum().ExtraAI[20];
 
             bool FreeHead = HeadState == 1;
 
@@ -368,6 +369,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     fistSlamDestinationX = fistSlamDestinationY = 0f;
                     jumpState = 0f;
                     slingshotRotation = 0f;
+                    slingshotArmToCharge = 0f;
                     attackCounter = 0f;
                     SelectNextAttackState(npc);
                     npc.netUpdate = true;
@@ -485,7 +487,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                                 npc.velocity.X = MathHelper.Lerp(5f, 16f, lifeRatio) * (target.Center.X > npc.Center.X).ToDirectionInt();
 
                                 if (target.Top.Y < npc.Bottom.Y)
-                                    npc.velocity.Y = -15.1f;
+                                    npc.velocity.Y = -7f;
                                 else
                                     npc.velocity.Y = 1f;
                                 npc.netUpdate = true;
@@ -553,10 +555,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                                 }
                             }
                             else
-                            {
-                                if (npc.Bottom.Y < target.position.Y)
-                                    npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -20f, 20f);
-                            }
+                                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -20f, 20f);
                         }
 
                         AttackTimer++;
@@ -958,25 +957,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         // Determine the initial slingshot rotation.
                         if (AttackTimer == 1f)
                         {
-                            do
-                                slingshotRotation = Main.rand.NextFloat(MathHelper.TwoPi);
-                            while (Vector2.Dot((slingshotRotation + (Math.Cos(slingshotRotation) > 0f ? 0f : MathHelper.Pi)).ToRotationVector2(), Vector2.UnitY) > -0.2f);
+                            slingshotArmToCharge = Main.rand.NextBool().ToDirectionInt();
+                            slingshotRotation = Main.rand.NextFloat(0.23f, MathHelper.PiOver2) * -slingshotArmToCharge;
                             npc.netUpdate = true;
                         }
 
-                        NPC fistToChargeWith = Math.Cos(slingshotRotation) > 0f ? rightFist : leftFist;
+                        NPC fistToChargeWith = slingshotArmToCharge == 1f ? rightFist : leftFist;
                         NPC otherFist = fistToChargeWith.whoAmI == leftFist.whoAmI ? rightFist : leftFist;
                         fistToChargeWith.rotation = slingshotRotation;
                         otherFist.rotation = 0f;
 
-                        if (fistToChargeWith.whoAmI == leftFist.whoAmI)
-                            fistToChargeWith.rotation += MathHelper.Pi;
-
                         float[] samples = new float[24];
                         Vector2 fistStart = fistToChargeWith.whoAmI == leftFist.whoAmI ? leftHandCenterPos : rightHandCenterPos;
-                        Vector2 offsetDirection = (slingshotRotation + (fistToChargeWith.whoAmI == leftFist.whoAmI ? MathHelper.Pi : 0f)).ToRotationVector2();
+                        Vector2 offsetDirection = slingshotRotation.ToRotationVector2() * slingshotArmToCharge;
                         Collision.LaserScan(fistStart, offsetDirection, 30f, 10000f, samples);
-                        Vector2 fistEnd = fistStart + offsetDirection * (samples.Average() - 45f);
+                        Vector2 fistEnd = fistStart + offsetDirection * samples.Average();
 
                         // Determine the initial fist destination.
                         if (fistSlamDestinationX == 0f || fistSlamDestinationY == 0f)
@@ -1129,8 +1124,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         }
 
                         fistToChargeWith.Center = Vector2.Lerp(fistStart, fistEnd, armSlamInterpolant);
-                        Vector2 bodyDestination = fistEnd + (fistEnd - fistStart).SafeNormalize(Vector2.UnitY) * 90f;
-                        npc.Center = Vector2.Lerp(npc.Center, bodyDestination, bodySlamInterpolant * 0.1f);
+                        Vector2 bodyDestination = fistEnd - offsetDirection * 160f;
+                        npc.Center = Vector2.Lerp(npc.Center, bodyDestination, (float)Math.Pow(bodySlamInterpolant, 8.4D));
 
                         if (bodySlamInterpolant > 0f)
                             npc.velocity = Vector2.Zero;

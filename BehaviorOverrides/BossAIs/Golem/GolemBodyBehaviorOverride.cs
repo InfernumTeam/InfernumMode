@@ -207,7 +207,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 npc.life = 0;
                 npc.HitEffect();
                 npc.checkDead();
-                npc.NPCLoot();
                 npc.active = false;
                 npc.netUpdate = true;
 
@@ -487,7 +486,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                                 npc.velocity.X = MathHelper.Lerp(5f, 16f, lifeRatio) * (target.Center.X > npc.Center.X).ToDirectionInt();
 
                                 if (target.Top.Y < npc.Bottom.Y)
-                                    npc.velocity.Y = -7f;
+                                    npc.velocity.Y = -12.5f;
                                 else
                                     npc.velocity.Y = 1f;
                                 npc.netUpdate = true;
@@ -497,8 +496,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         // Fall.
                         else
                         {
-                            if (npc.velocity.Y == 0f)
+                            npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -20f, 20f);
+                            if (Math.Abs(npc.velocity.Y) <= 0.85f)
                             {
+                                npc.velocity.X *= 0.8f;
                                 if (jumpState == 1f)
                                 {
                                     Main.PlaySound(SoundID.Item14, npc.position);
@@ -554,8 +555,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                                     npc.netUpdate = true;
                                 }
                             }
-                            else
-                                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.5f, -20f, 20f);
                         }
 
                         AttackTimer++;
@@ -1148,13 +1147,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         platformReleaseRate = 82;
                         int laserReleaseRate = 16;
                         int rushTime = 420;
-                        float platformRiseSpeed = 8.4f;
+                        float platformRiseSpeed = 7.5f;
 
                         // Destroy all old platforms and create a few new ones in their place
                         if (AttackTimer == 25f)
                         {
                             DestroyAllPlatforms();
-                            if (Main.netMode != NetmodeID.MultiplayerClient && phase2TransitionTimer == 35f)
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 for (int i = 0; i < 3; i++)
                                 {

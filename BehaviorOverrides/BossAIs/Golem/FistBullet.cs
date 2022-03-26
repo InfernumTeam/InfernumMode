@@ -29,14 +29,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 if (Main.player.IndexInRange((int)projectile.Infernum().ExtraAI[2]))
                 {
-                    Vector2 target = Main.player[(int)projectile.Infernum().ExtraAI[2]].Center;
-                    float rotation = -(projectile.rotation + MathHelper.Pi - (projectile.AngleTo(target) + MathHelper.Pi));
+                    Player target = Main.player[(int)projectile.Infernum().ExtraAI[2]];
+                    Vector2 shootDirection = projectile.SafeDirectionTo(target.Center + target.velocity * 4f);
+                    float rotation = -(projectile.rotation + MathHelper.Pi - (shootDirection.ToRotation() + MathHelper.Pi));
                     projectile.rotation = MathHelper.WrapAngle(projectile.rotation + MathHelper.Clamp(rotation, -MathHelper.ToRadians(10), MathHelper.ToRadians(10)));
 
                     // Create a line telegraph.
                     if (Main.netMode != NetmodeID.MultiplayerClient && projectile.localAI[0] == 0f)
                     {
-                        Utilities.NewProjectileBetter(projectile.Center, projectile.SafeDirectionTo(Main.player[(int)projectile.Infernum().ExtraAI[2]].Center), ModContent.ProjectileType<FistBulletTelegraph>(), 0, 0f);
+                        Utilities.NewProjectileBetter(projectile.Center, shootDirection, ModContent.ProjectileType<FistBulletTelegraph>(), 0, 0f);
                         projectile.localAI[0] = 1f;
                     }
                 }

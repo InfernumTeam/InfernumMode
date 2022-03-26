@@ -251,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
             // Reset things.
             npc.dontTakeDamage = true;
-            freeHead.damage = freeHead.defDamage;
+            freeHead.damage = AITimer < 120f ? 0 : freeHead.defDamage;
 
             if (FightStarted == 0f)
             {
@@ -318,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     AttackCooldown = ConstAttackCooldown;
                     PreviousAttackState = (float)GolemAttackState.SummonDelay;
                     AttackState = (float)GolemAttackState.FistSpin;
-                    npc.damage = npc.defDamage;
+                    npc.damage = npc.defDamage + 10;
                     leftFist.damage = leftFist.defDamage;
                     rightFist.damage = rightFist.defDamage;
                     attachedHead.damage = attachedHead.defDamage;
@@ -360,6 +360,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 // Obey gravity and tile collision.
                 npc.noGravity = false;
                 npc.noTileCollide = false;
+                if (Math.Abs(npc.velocity.Y) < 0.5f)
+                    npc.velocity.X *= 0.8f;
 
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<GolemEyeLaserRay>());
                 DoBehavior_EnterSecondPhase(npc, phase2TransitionTimer);
@@ -437,11 +439,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
 
             // Return to the arena if stuck.
-            if (Collision.SolidCollision(npc.Center - Vector2.One * 15f, 30, 30) || !npc.Hitbox.Intersects(npc.Infernum().arenaRectangle))
+            Rectangle deflatedArena = npc.Infernum().arenaRectangle;
+            deflatedArena.Inflate(-80, -32);
+            if (Collision.SolidCollision(npc.Center - Vector2.One * 15f, 30, 30) || !npc.Hitbox.Intersects(deflatedArena))
             {
                 if (!npc.Hitbox.Intersects(npc.Infernum().arenaRectangle))
                     npc.velocity = Vector2.Zero;
-                npc.Center = npc.Center.MoveTowards(npc.Infernum().arenaRectangle.Center.ToVector2(), 8f);
+                npc.Center = npc.Center.MoveTowards(npc.Infernum().arenaRectangle.Center.ToVector2(), 14f);
             }
 
             if (AttackCooldown <= 0f)
@@ -1123,7 +1127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         }
 
                         fistToChargeWith.Center = Vector2.Lerp(fistStart, fistEnd, armSlamInterpolant);
-                        Vector2 bodyDestination = fistEnd - offsetDirection * 160f;
+                        Vector2 bodyDestination = fistEnd - offsetDirection * 100f;
                         npc.Center = Vector2.Lerp(npc.Center, bodyDestination, (float)Math.Pow(bodySlamInterpolant, 8.4D));
 
                         if (bodySlamInterpolant > 0f)

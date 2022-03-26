@@ -42,6 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public const float BorderWidth = 5472f;
         public const float Phase2LifeRatio = 0.65f;
         public const float Phase3LifeRatio = 0.25f;
+        public const float TransitionAnimationTime = 90f;
 
         #region AI
 
@@ -158,8 +159,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             return false;
         }
-
-        internal const float TransitionAnimationTime = 90f;
 
         public static void DoEyeEffect(NPC npc)
         {
@@ -359,9 +358,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public static void DoAttack_SpawnEffects(NPC npc, Player target, ref float frameType, ref float attackTimer)
         {
-            if (attackTimer < 150f)
+            int absorbEffectTime = 24;
+            int hoverTime = 240;
+
+            if (attackTimer < absorbEffectTime + hoverTime)
             {
-                if (attackTimer < 24f)
+                if (attackTimer < absorbEffectTime)
                     frameType = (int)CultistFrameState.AbsorbEffect;
                 else
                     frameType = (int)CultistFrameState.Hover;
@@ -372,9 +374,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             else
             {
                 // Create a laugh sound effect.
-                if (attackTimer == 165f)
+                if (attackTimer == absorbEffectTime + hoverTime + 15f)
                     Main.PlaySound(SoundID.Zombie, npc.Center, 105);
-                if (attackTimer > 170f)
+                if (attackTimer > absorbEffectTime + hoverTime + 20f)
                 {
                     // Fade out.
                     npc.alpha = Utils.Clamp(npc.alpha + 21, 0, 255);
@@ -661,7 +663,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
                             else if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                int lightningCircleCount = phase2 ? 6 : 1;
+                                int lightningCircleCount = phase2 ? 4 : 1;
                                 for (int k = 0; k < lightningCircleCount; k++)
                                 {
                                     Vector2 predictivenessOffset = target.velocity * new Vector2(40f, 20f);
@@ -675,7 +677,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                                     if (BossRushEvent.BossRushActive)
                                         lightningVelocity *= 1.3f;
 
-                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 190, 0f);
+                                    int lightning = Utilities.NewProjectileBetter(orbSummonPosition, lightningVelocity, ProjectileID.CultistBossLightningOrbArc, 200, 0f);
                                     Main.projectile[lightning].ai[0] = lightningVelocity.ToRotation();
                                     Main.projectile[lightning].ai[1] = Main.rand.Next(100);
                                     Main.projectile[lightning].tileCollide = false;

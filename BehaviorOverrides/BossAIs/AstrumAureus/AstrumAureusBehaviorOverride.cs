@@ -326,7 +326,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             float distanceBelowTarget = npc.Top.Y - (target.Top.Y + 80f);
 
                             if (distanceBelowTarget > 0f)
-                                jumpIntensity = 1f + distanceBelowTarget * 0.00115f;
+                                jumpIntensity = 1f + distanceBelowTarget * 0.0011f;
 
                             jumpIntensity *= 1.15f;
                             if (enraged)
@@ -360,8 +360,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 case 1:
                     if (npc.velocity.Y == 0f && attackTimer > 30f)
                     {
-                        frameType = (int)AureusFrameType.Stomp;
-
                         // Play a stomp sound.
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LegStomp"), npc.Center);
 
@@ -447,6 +445,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     }
                     else
                     {
+                        frameType = (int)AureusFrameType.Stomp;
+
                         // Set velocities while falling. This happens before the stomp.
                         // Fall through tiles if necessary.
                         if (!target.dead)
@@ -558,7 +558,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             bool shouldSlowDown = horizontalDistanceFromTarget < 50f;
 
             int laserShootDelay = 225;
-            float laserSpeed = 9.25f;
+            float laserSpeed = 10.5f;
             float walkSpeed = MathHelper.Lerp(8f, 12f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
@@ -717,24 +717,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                     int cometType = ModContent.ProjectileType<AstralBlueComet>();
                     Utilities.NewProjectileBetter(cometSpawnPosition, shootVelocity, cometType, cometDamage, 0f);
-                }
-                if (attackTimer % meteorShootRate == meteorShootRate - 1f)
-                {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        int meteorDamage = 195;
-                        Vector2 meteorSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-550, 550f), -720f);
-                        Vector2 shootVelocity = (target.Center - meteorSpawnPosition).SafeNormalize(Vector2.UnitY) * 12f;
-                        if (enraged)
-                        {
-                            meteorDamage = (int)(meteorDamage * EnragedDamageFactor);
-                            shootVelocity *= 1.3f;
-                        }
-
-                        int meteorType = ModContent.ProjectileType<AstralMeteor>();
-                        Utilities.NewProjectileBetter(meteorSpawnPosition, shootVelocity, meteorType, meteorDamage, 0f);
-                    }
                 }
             }
 

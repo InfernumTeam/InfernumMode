@@ -326,7 +326,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                             float distanceBelowTarget = npc.Top.Y - (target.Top.Y + 80f);
 
                             if (distanceBelowTarget > 0f)
-                                jumpIntensity = 1f + distanceBelowTarget * 0.0011f;
+                            {
+                                float intensityFactor = lifeRatio < Phase2LifeRatio ? 0.00115f : 0.0011f;
+                                jumpIntensity = 1f + distanceBelowTarget * intensityFactor;
+                            }
 
                             jumpIntensity *= 1.15f;
                             if (enraged)

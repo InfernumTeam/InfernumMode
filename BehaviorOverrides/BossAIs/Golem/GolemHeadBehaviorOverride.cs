@@ -71,7 +71,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Rectangle rect = new Rectangle(0, 0, texture.Width, texture.Height);
             float rotation = MathHelper.Lerp(0f, MathHelper.TwoPi, npc.ai[1] / 240f);
             float rotation2 = MathHelper.Lerp(MathHelper.TwoPi, 0f, npc.ai[1] / 240f);
-            Color nextColor = AttackEyeColorPairs[(GolemAttackState)Main.npc[(int)npc.ai[0]].ai[1]];
+            Color nextColor = Color.Transparent;
+            if (AttackEyeColorPairs.TryGetValue((GolemAttackState)Main.npc[(int)npc.ai[0]].ai[1], out Color fuckYou))
+                nextColor = fuckYou;
             nextColor.A = 0;
             Vector2 drawPos = npc.type == NPCID.GolemHead ? new Vector2(npc.Center.X - 15f, npc.Bottom.Y - 33f) : new Vector2(npc.Center.X - 15f, npc.Bottom.Y - 57f);
             Vector2 drawPos2 = new Vector2(drawPos.X + 30f, drawPos.Y);

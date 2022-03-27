@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Particles;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Tiles;
@@ -86,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref float coreLaserRayInterpolant = ref npc.Infernum().ExtraAI[17];
             ref float coreLaserRayDirection = ref npc.Infernum().ExtraAI[18];
             ref float slingshotArmToCharge = ref npc.Infernum().ExtraAI[19];
-            ref float madePhase3TransitionEffect = ref npc.Infernum().ExtraAI[20];
+            ref float madePhase3TransitionEffect = ref npc.Infernum().ExtraAI[21];
 
             bool headIsFree = HeadState == 1;
 
@@ -538,6 +539,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 leftFist.Center = Vector2.Lerp(leftFist.Center, leftHandCenterPos, 0.3f);
                 AttackCooldown--;
             }
+
+            if (Math.Abs(npc.velocity.Y) < 0.5f && !npc.noTileCollide)
+                npc.velocity.X *= 0.8f;
 
             AITimer++;
             return false;
@@ -1072,7 +1076,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attackTimer == 1f)
             {
                 slingshotArmToCharge = Main.rand.NextBool().ToDirectionInt();
-                slingshotRotation = -Vector2.UnitY.RotatedByRandom(Main.rand.NextFloat(-1.1f, 1.1f)).ToRotation();
+                slingshotRotation = -Vector2.UnitY.RotatedByRandom(Main.rand.NextFloat(-0.83f, 0.83f)).ToRotation();
                 npc.netUpdate = true;
             }
 
@@ -1122,14 +1126,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
 
             // Create fire sparks as a telegraph that indicates which fist will charge.
-            if (attackTimer < dustTelegraphTime)
+            if (Main.netMode != NetmodeID.Server && attackTimer < dustTelegraphTime)
             {
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < 3; i++)
                 {
-                    Dust fire = Dust.NewDustDirect(fistToChargeWith.position, fistToChargeWith.width, fistToChargeWith.height, 6);
-                    fire.velocity = offsetDirection * Main.rand.NextFloat(7f, 28f) + Main.rand.NextVector2Circular(4f, 4f);
-                    fire.noGravity = Main.rand.NextBool();
-                    fire.scale *= 1.67f;
+                    Vector2 fireSpawnVelocity = offsetDirection * Main.rand.NextFloat(6f, 27f) + Main.rand.NextVector2Circular(4f, 4f);
+                    float scale = Main.rand.NextFloat(0.4f, 1f);
+                    GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(fistStart, fireSpawnVelocity, scale, Color.Orange, 50));
                 }
             }
 

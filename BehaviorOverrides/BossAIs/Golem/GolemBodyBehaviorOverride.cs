@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
@@ -9,6 +10,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
@@ -109,7 +111,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
 
                 // Otherwise prepare the fight
-                npc.life = npc.lifeMax = 112000;
+                int maxHP = 142320;
+                GlobalNPCOverrides.AdjustMaxHP(ref maxHP);
+                npc.life = npc.lifeMax = maxHP;
                 npc.noGravity = true;
                 npc.noTileCollide = false;
                 npc.chaseable = false;
@@ -611,6 +615,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                                 Utilities.NewProjectileBetter(crystalSpawnPosition, -Vector2.UnitY * 0.004f, ModContent.ProjectileType<GroundFireCrystal>(), 190, 0f);
                         }
+
+                        // As well as on the sides of the arena in the third phase.
+                        if (inPhase3)
+                        {
+                            for (float y = npc.Infernum().arenaRectangle.Top + 20f; y < npc.Infernum().arenaRectangle.Bottom - 20f; y += fireCrystalSpacing * 2f)
+                            {
+                                float x = npc.Infernum().arenaRectangle.Center.X;
+                                Vector2 crystalSpawnPosition = Utilities.GetGroundPositionFrom(new Vector2(x, y + horizontalOffset), new Searches.Left(9001));
+
+                                // Create puffs of fire at the crystal's position.
+                                for (int i = 0; i < 6; i++)
+                                {
+                                    Dust fire = Dust.NewDustPerfect(crystalSpawnPosition + Main.rand.NextVector2Square(-24f, 24f), 6);
+                                    fire.velocity = Main.rand.NextVector2Circular(5f, 5f) + Vector2.UnitX * 2.5f;
+                                    fire.scale = 1.3f;
+                                    fire.fadeIn = 0.75f;
+                                    fire.noGravity = true;
+                                }
+
+                                if (Main.netMode != NetmodeID.MultiplayerClient)
+                                    Utilities.NewProjectileBetter(crystalSpawnPosition, Vector2.UnitX * 0.004f, ModContent.ProjectileType<GroundFireCrystal>(), 190, 0f);
+                            }
+                        }
+
                         jumpState = 2f;
                         npc.netUpdate = true;
                     }
@@ -712,6 +740,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             int fistSlamTime = 45;
             int spikeWaveCreationTime = 420;
             int spikeTrapCreationRate = 50;
+            int fireCrystalReleaseRate = 60;
             float fistSlamInterpolant = 1f;
 
             if (inPhase2)
@@ -720,7 +749,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 platformReleaseRate -= 4;
             }
             if (inPhase3)
-                spikeTrapCreationRate -= 7;
+                spikeTrapCreationRate -= 3;
 
             NPC leftFist = GetLeftFist(npc);
             NPC rightFist = GetRightFist(npc);
@@ -758,6 +787,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Summon waves of spikes.
             else if (attackTimer < fistSlamTime + spikeWaveCreationTime)
             {
+                if (inPhase3 && Main.netMode != NetmodeID.MultiplayerClient && attackTimer % fireCrystalReleaseRate == fireCrystalReleaseRate - 1f)
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        float[] samples = new float[16];
+                        Vector2 crystalSpawnPosition = npc.Infernum().arenaRectangle.Center.ToVector2();
+                        Vector2 crystalSpawnOffsetDirection = (MathHelper.TwoPi * i / 10f).ToRotationVector2();
+                        Collision.LaserScan(crystalSpawnPosition, crystalSpawnOffsetDirection, 24f, 10000f, samples);
+                        crystalSpawnPosition += crystalSpawnOffsetDirection * samples.Average();
+                        Utilities.NewProjectileBetter(crystalSpawnPosition, crystalSpawnOffsetDirection * -0.004f, ModContent.ProjectileType<GroundFireCrystal>(), 190, 0f);
+                    }
+                }
+
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % spikeTrapCreationRate == spikeTrapCreationRate - 1f)
                 {
                     Vector2 trapSpawnPosition = npc.Infernum().arenaRectangle.TopLeft();
@@ -829,7 +871,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attackTimer >= hoverTelegraphTime + 120f)
             {
                 if (headIsFree)
+                {
+                    freeHead.Center = freeHead.Center.MoveTowards(GetAttachedHead(npc).Center, 12f);
                     ReAttachHead(npc);
+                }
             }
             else if (!headIsFree)
                 SwapHeads(npc);
@@ -904,7 +949,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
             attackTimer++;
 
-            if (attackTimer >= hoverTelegraphTime + 180f)
+            if (attackTimer >= hoverTelegraphTime + 210f)
             {
                 attackCooldown = ConstAttackCooldown;
                 SelectNextAttackState(npc);
@@ -1036,7 +1081,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Vector2 fistEnd = fistStart + offsetDirection * samples.Average();
 
             // Determine the initial fist destination.
-            if (fistSlamDestinationX == 0f || fistSlamDestinationY == 0f)
+
+            if ((fistSlamDestinationX == 0f || fistSlamDestinationY == 0f) && attackTimer <= 2f)
             {
                 fistSlamDestinationX = fistEnd.X;
                 fistSlamDestinationY = fistEnd.Y;
@@ -1046,7 +1092,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 fistEnd = new Vector2(fistSlamDestinationX, fistSlamDestinationY);
 
             Rectangle deflatedArena = npc.Infernum().arenaRectangle;
-            deflatedArena.Inflate(-120, 16);
+            deflatedArena.Inflate(-20, 16);
             while (!Utils.CenteredRectangle(new Vector2(fistSlamDestinationX, fistSlamDestinationY), Vector2.One).Intersects(deflatedArena))
             {
                 Vector2 directionToCenter = (npc.Infernum().arenaRectangle.Center.ToVector2() - new Vector2(fistSlamDestinationX, fistSlamDestinationY)).SafeNormalize(Vector2.UnitY);
@@ -1291,7 +1337,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 for (float i = npc.Infernum().arenaRectangle.Left + 16f; i < npc.Infernum().arenaRectangle.Right; i += 16f)
                 {
-                    Vector2 top = Utilities.GetCeilingPositionFrom(new Vector2(i, npc.Infernum().arenaRectangle.Center.Y)).Floor();
+                    Vector2 top = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().arenaRectangle.Center.Y), new Searches.Up(9001)).Floor();
                     top.Y -= 16f;
                     Vector2 bottom = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().arenaRectangle.Center.Y)).Floor();
 
@@ -1398,6 +1444,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref float AttackState = ref npc.ai[1];
             ref float AttackTimer = ref npc.ai[2];
             ref float PreviousAttackState = ref npc.Infernum().ExtraAI[8];
+            ref float PreviousAttackState2 = ref npc.Infernum().ExtraAI[20];
 
             int x = (int)(npc.Center.X / 16f);
             int y = (int)(npc.Center.Y / 16f);
@@ -1430,11 +1477,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 possibleAttacks.Add(GolemAttackState.SpikeRush);
             }
 
+            int failsafeCounter = 0;
             GolemAttackState NextAttack;
             do
+            {
                 NextAttack = Main.rand.Next(possibleAttacks);
-            while ((float)NextAttack == AttackState);
+                failsafeCounter++;
 
+                if (failsafeCounter >= 100)
+                    break;
+            }
+            while ((float)NextAttack == AttackState || (float)NextAttack == PreviousAttackState2);
+
+            PreviousAttackState2 = PreviousAttackState;
             PreviousAttackState = AttackState;
             AttackState = (float)NextAttack;
             AttackTimer = 0f;

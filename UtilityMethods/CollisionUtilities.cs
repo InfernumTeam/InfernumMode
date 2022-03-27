@@ -6,16 +6,11 @@ namespace InfernumMode
 {
     public static partial class Utilities
     {
-        public static Vector2 GetGroundPositionFrom(Vector2 v)
+        public static Vector2 GetGroundPositionFrom(Vector2 v, GenSearch search = null)
         {
-            if (!WorldUtils.Find(v.ToTileCoordinates(), Searches.Chain(new Searches.Down(9001), new Conditions.IsSolid()), out Point result))
-                return v;
-            return result.ToWorldCoordinates();
-        }
-
-        public static Vector2 GetCeilingPositionFrom(Vector2 v)
-        {
-            if (!WorldUtils.Find(v.ToTileCoordinates(), Searches.Chain(new Searches.Up(9001), new Conditions.IsSolid()), out Point result))
+            if (search is null)
+                search = new Searches.Down(9001);
+            if (!WorldUtils.Find(v.ToTileCoordinates(), Searches.Chain(search, new Conditions.IsSolid()), out Point result))
                 return v;
             return result.ToWorldCoordinates();
         }

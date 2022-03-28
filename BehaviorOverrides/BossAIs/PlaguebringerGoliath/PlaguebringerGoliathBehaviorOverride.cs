@@ -201,6 +201,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (chargeTimer > chargeTime - 15f)
                     npc.velocity *= 0.97f;
 
+                if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 6f == 5f)
+                    Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2Circular(5f, 5f), ModContent.ProjectileType<PlagueCloud>(), 170, 0f);
+
                 if (chargeTimer >= chargeTime)
                 {
                     chargeCount++;
@@ -267,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                             Vector2 shootDirection = (abdomenPosition - npc.Center).SafeNormalize(Vector2.UnitY);
                             shootDirection = shootDirection.RotateTowards(npc.SafeDirectionTo(target.Center).ToRotation(), Main.rand.NextFloat(0.74f, 1.04f));
                             Vector2 shootVelocity = shootDirection.RotatedByRandom(0.31f) * missileShootSpeed;
-                            Utilities.NewProjectileBetter(abdomenPosition, shootVelocity, ModContent.ProjectileType<RedirectingPlagueMissile>(), 160, 0f);
+                            Utilities.NewProjectileBetter(abdomenPosition, shootVelocity, ModContent.ProjectileType<RedirectingPlagueMissile>(), 175, 0f);
                         }
                         missileShootTimer = 0f;
                         npc.netUpdate = true;
@@ -346,7 +349,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                             mouthPosition += Vector2.UnitY.RotatedBy(npc.rotation) * 18f;
                             mouthPosition -= Vector2.UnitX.RotatedBy(npc.rotation) * npc.spriteDirection * -68f;
                             Vector2 shootVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY) * vomitShootSpeed;
-                            Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<PlagueVomit>(), 160, 0f);
+                            Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<PlagueVomit>(), 180, 0f);
                         }
                         vomitShootTimer = 0f;
                         npc.netUpdate = true;
@@ -449,7 +452,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 {
                     Vector2 missileShootVelocity = new Vector2(npc.velocity.X * 0.6f, 15f);
                     missileShootVelocity += Main.rand.NextVector2Circular(1.25f, 1.25f);
-                    Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 2f, missileShootVelocity, ModContent.ProjectileType<PlagueMissile>(), 160, 0f);
+                    Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 2f, missileShootVelocity, ModContent.ProjectileType<PlagueMissile>(), 180, 0f);
                 }
 
                 if (chargeTimer >= chargeTime)
@@ -890,18 +893,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             {
                 case PBGAttackType.Charge:
                     newAttackState = PBGAttackType.MissileLaunch;
+                    if (lifeRatio < Phase3LifeRatio)
+                        newAttackState = PBGAttackType.CarpetBombing3;
                     break;
                 case PBGAttackType.MissileLaunch:
                     newAttackState = PBGAttackType.CarpetBombing;
                     if (Main.rand.NextBool(2) && lifeRatio < Phase2LifeRatio)
                         newAttackState = PBGAttackType.CarpetBombing2;
-                    if (lifeRatio < Phase3LifeRatio)
-                        newAttackState = PBGAttackType.CarpetBombing3;
                     break;
                 case PBGAttackType.CarpetBombing:
                 case PBGAttackType.CarpetBombing2:
                 case PBGAttackType.CarpetBombing3:
                     newAttackState = PBGAttackType.PlagueVomit;
+                    if (lifeRatio < Phase3LifeRatio)
+                        newAttackState = PBGAttackType.DroneSummoning;
                     break;
                 case PBGAttackType.PlagueVomit:
                     newAttackState = PBGAttackType.Charge;

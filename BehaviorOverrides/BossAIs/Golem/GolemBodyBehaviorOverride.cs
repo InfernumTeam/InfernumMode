@@ -1287,7 +1287,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         public static void DoBehavior_SpikeRush(NPC npc, ref float attackTimer, ref float attackCooldown)
         {
             int platformReleaseRate = 82;
-            int laserReleaseRate = 16;
+            int laserReleaseRate = 12;
             int rushTime = 420;
             float platformRiseSpeed = 7.5f;
 

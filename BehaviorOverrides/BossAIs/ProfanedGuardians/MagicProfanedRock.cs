@@ -64,14 +64,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Main.PlaySound(SoundID.Item73, projectile.Center);
 
                     GeneralTimer = 120f;
-                    projectile.velocity = projectile.SafeDirectionTo(target.Center) * 16.5f;
+                    projectile.velocity = projectile.SafeDirectionTo(target.Center) * 11f;
                     projectile.netUpdate = true;
                 }
             }
 
             // Accelerate after being launched.
-            else if (projectile.velocity.Length() < 36f)
-                projectile.velocity *= 1.027f;
+            else if (projectile.velocity.Length() < 30f)
+                projectile.velocity *= 1.025f;
 
             projectile.rotation += projectile.velocity.X * 0.006f;
             projectile.alpha = Utils.Clamp(projectile.alpha - 30, 0, 255);

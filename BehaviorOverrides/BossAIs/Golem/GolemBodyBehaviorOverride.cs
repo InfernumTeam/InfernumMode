@@ -87,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref float coreLaserRayInterpolant = ref npc.Infernum().ExtraAI[17];
             ref float coreLaserRayDirection = ref npc.Infernum().ExtraAI[18];
             ref float slingshotArmToCharge = ref npc.Infernum().ExtraAI[19];
-            ref float madePhase3TransitionEffect = ref npc.Infernum().ExtraAI[21];
+            ref float phase3TransitionTimer = ref npc.Infernum().ExtraAI[21];
 
             bool headIsFree = HeadState == 1;
 
@@ -267,11 +267,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             bool inPhase3 = inPhase2 && lifeRatio < Phase3LifeRatio;
 
             // Create a boom as a phase transition for phase 3.
-            if (Main.netMode != NetmodeID.MultiplayerClient && inPhase3 && madePhase3TransitionEffect == 0f)
-            {
-                Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<GolemPhaseTransitionBoom>(), 0, 0f);
-                madePhase3TransitionEffect = 1f;
-            }
+            if (Main.netMode != NetmodeID.MultiplayerClient && inPhase3 && phase3TransitionTimer < 90f)
+                phase3TransitionTimer++;
 
             // Reset things.
             npc.dontTakeDamage = true;
@@ -1555,6 +1552,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Rectangle rect = new Rectangle(0, 0, texture.Width, texture.Height);
             Vector2 drawPos = npc.Center - Main.screenPosition;
             drawPos += new Vector2(4, -12);
+
+            // Draw the second phase back afterimage if applicable.
+            float backAfterimageInterpolant = Utils.InverseLerp(0f, 90f, npc.Infernum().ExtraAI[21], true) * npc.Opacity;
+            if (backAfterimageInterpolant > 0f)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    float colorInterpolant = (float)Math.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTime * 10f) * 0.5f + 0.5f;
+                    Color backAfterimageColor = Color.Lerp(Color.Yellow, Color.Orange, colorInterpolant);
+                    backAfterimageColor *= backAfterimageInterpolant;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
+                    spriteBatch.Draw(texture, drawPos + drawOffset, npc.frame, backAfterimageColor, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                }
+            }
+
             spriteBatch.Draw(texture, drawPos, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             spriteBatch.Draw(glowMask, drawPos, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 

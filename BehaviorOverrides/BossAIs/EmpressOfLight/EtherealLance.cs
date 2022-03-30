@@ -99,8 +99,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Color outerLanceColor = Color.White * Utils.InverseLerp(0f, 20f, Time, true);
             outerLanceColor.A /= 2;
 
-            spriteBatch.Draw(telegraphTex, drawPos, null, fadedLanceColor, projectile.rotation, telegraphOrigin, innerTelegraphScale, 0, 0f);
-            spriteBatch.Draw(telegraphTex, drawPos, null, fadedLanceColor * 0.3f, projectile.rotation, telegraphOrigin, outerTelegraphScale, 0, 0f);
+            spriteBatch.Draw(telegraphTex, drawPos, null, fadedLanceColor * 0.65f, projectile.rotation, telegraphOrigin, innerTelegraphScale, 0, 0f);
+            spriteBatch.Draw(telegraphTex, drawPos, null, fadedLanceColor * 0.24f, projectile.rotation, telegraphOrigin, outerTelegraphScale, 0, 0f);
 
             Vector2 origin = tex.Size() / 2f;
             float scale = MathHelper.Lerp(0.7f, 1f, Utils.InverseLerp(FireDelay - 5f, FireDelay, Time, true));

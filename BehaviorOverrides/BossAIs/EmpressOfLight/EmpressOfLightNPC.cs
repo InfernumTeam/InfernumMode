@@ -171,7 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             npc.height = 100;
             npc.damage = 80;
             npc.defense = 50;
-            npc.lifeMax = 93750;
+            npc.lifeMax = 176000;
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.knockBackResist = 0f;
@@ -186,7 +186,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void ScaleExpertStats(int numPlayers, float bossLifeScale)
         {
-            npc.lifeMax = (int)(npc.lifeMax * 0.8f * bossLifeScale);
             npc.damage = (int)(npc.damage * 0.8f);
         }
 
@@ -476,7 +475,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             int shootCount = 6;
             float wrappedAttackTimer = AttackTimer % shootRate;
             float slowdownFactor = Utils.InverseLerp(shootRate - 8f, shootRate - 24f, wrappedAttackTimer, true);
-            float boltShootSpeed = 23f;
+            float boltShootSpeed = 17f;
             ref float telegraphRotation = ref npc.Infernum().ExtraAI[0];
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[1];
             ref float boltCount = ref npc.Infernum().ExtraAI[2];
@@ -508,7 +507,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             // Hover to the top left/right of the target.
             Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * 120f, -300f);
-            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 10f;
+            Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 8f;
             if (!npc.WithinRange(hoverDestination, 40f))
                 npc.SimpleFlyMovement(idealVelocity * slowdownFactor, slowdownFactor * 0.7f);
             else

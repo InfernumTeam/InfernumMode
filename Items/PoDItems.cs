@@ -40,6 +40,15 @@ namespace InfernumMode
                     }
                 }
             }
+
+            if (item.type == ItemID.LihzahrdPowerCell)
+            {
+                foreach (TooltipLine line2 in tooltips)
+                {
+                    if (line2.mod == "Terraria" && line2.Name == "Tooltip0")
+                        line2.text += "\nCreates a rectangular arena around the altar. If the altar is inside of the temple solid tiles within the arena are broken";
+                }
+            }
         }
 
         internal static void DoGTeleportDenialText(Player player)

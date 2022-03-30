@@ -56,11 +56,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
 
             float offsetAngleFromTarget = Math.Abs(MathHelper.WrapAngle(projectile.velocity.ToRotation() - projectile.AngleTo(target.Center)));
-            bool playerIsFarFromLaser = offsetAngleFromTarget > MathHelper.PiOver2 * 1.4f;
             if (Time <= 60f)
                 RotationalSpeed = Time / 60f * InitialRotationalSpeed;
-            else if (playerIsFarFromLaser)
-                RotationalSpeed *= 1.01f;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

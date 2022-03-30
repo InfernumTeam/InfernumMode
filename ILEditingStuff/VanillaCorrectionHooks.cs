@@ -1,9 +1,11 @@
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
+using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -51,6 +53,21 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => On.Terraria.NPC.Collision_DecideFallThroughPlatforms += LetAureusWalkOnPlatforms;
 
         public void Unload() => On.Terraria.NPC.Collision_DecideFallThroughPlatforms -= LetAureusWalkOnPlatforms;
+    }
+
+    public class FishronSkyDistanceLeniancyHook : IHookEdit
+    {
+        internal static void AdjustFishronScreenDistanceRequirement(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            cursor.GotoNext(i => i.MatchLdcR4(3000f));
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldc_R4, 6000f);
+        }
+
+        public void Load() => IL.Terraria.GameContent.Events.ScreenDarkness.Update += AdjustFishronScreenDistanceRequirement;
+
+        public void Unload() => IL.Terraria.GameContent.Events.ScreenDarkness.Update -= AdjustFishronScreenDistanceRequirement;
     }
 
     public class LessenDesertTileRequirementsHook : IHookEdit

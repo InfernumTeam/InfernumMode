@@ -14,7 +14,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public ref float TotalLasersToFire => ref projectile.ai[0];
         public ref float LaserShootOffsetAngle => ref projectile.ai[1];
         public Player Target => Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-        public float PointAtTargetInterpolant => Utils.InverseLerp(1600f, 2500f, projectile.Distance(Target.Center), true);
+        public float PointAtTargetInterpolant => Utils.InverseLerp(1400f, 2120f, projectile.Distance(Target.Center), true);
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Refraction Rotor");

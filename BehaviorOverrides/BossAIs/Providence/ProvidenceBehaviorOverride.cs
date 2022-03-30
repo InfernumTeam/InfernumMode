@@ -157,19 +157,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if (deathEffectTimer % 40f == 39f)
-                    {
-                        for (int i = 0; i < totalStarsPerBurst; i++)
-                        {
-                            Vector2 shootVelocity = (MathHelper.TwoPi * i / totalStarsPerBurst).ToRotationVector2().RotatedByRandom(0.1f) * Main.rand.NextFloat(1.5f, 3.2f);
-                            int star = Utilities.NewProjectileBetter(crystalCenter, shootVelocity, ModContent.ProjectileType<GreatStar>(), 280, 0f);
-                            Main.projectile[star].Size /= 1.3f;
-                            Main.projectile[star].scale /= 1.3f;
-                            Main.projectile[star].ai[1] = 1f;
-                            Main.projectile[star].netUpdate = true;
-                        }
-                    }
-
                     int shootRate = (int)MathHelper.Lerp(12f, 5f, Utils.InverseLerp(0f, 250f, deathEffectTimer, true));
                     if (deathEffectTimer % shootRate == shootRate - 1 || deathEffectTimer == 92f)
                     {

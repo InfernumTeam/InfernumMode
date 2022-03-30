@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.UI;
 using Microsoft.Xna.Framework;
@@ -80,6 +81,9 @@ namespace InfernumMode.BossIntroScreens
         public virtual void Draw(SpriteBatch sb)
         {
             bool notInvolvedWithBoss = !Main.LocalPlayer.HasBuff(ModContent.BuffType<BossZen>());
+            if (!CalamityConfig.Instance.BossZen)
+                notInvolvedWithBoss = false;
+
             if (Main.netMode == NetmodeID.Server || AnimationTimer <= 0 || AnimationTimer >= AnimationTime || notInvolvedWithBoss)
             {
                 if (AnimationTimer < AnimationTime)

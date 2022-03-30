@@ -135,6 +135,35 @@ namespace InfernumMode.GlobalInstances
             }
         }
 
+        public static void AdjustMaxHP(ref int maxHP)
+        {
+            float hpMultiplier = 1f;
+            float accumulatedFactor = 0.35f;
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                int activePlayerCount = 0;
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    if (Main.player[i].active)
+                        activePlayerCount++;
+                }
+
+                for (int i = 1; i < activePlayerCount; i++)
+                {
+                    hpMultiplier += accumulatedFactor;
+                    accumulatedFactor += (1f - accumulatedFactor) / 3f;
+                }
+            }
+            if (hpMultiplier > 8f)
+                hpMultiplier = (hpMultiplier * 2f + 8f) / 3f;
+
+            if (hpMultiplier > 1000f)
+                hpMultiplier = 1000f;
+
+            maxHP = (int)(maxHP * hpMultiplier);
+            maxHP += (int)(maxHP * CalamityConfig.Instance.BossHealthBoost * 0.01);
+        }
+
         public override bool PreAI(NPC npc)
         {
             if (InfernumMode.CanUseCustomAIs)
@@ -143,36 +172,11 @@ namespace InfernumMode.GlobalInstances
                 if (NPCHPValues.HPValues.ContainsKey(npc.type) && NPCHPValues.HPValues[npc.type] >= 0)
                 {
                     int maxHP = NPCHPValues.HPValues[npc.type];
-                    float hpMultiplier = 1f;
-                    float accumulatedFactor = 0.35f;
-                    if (Main.netMode != 0)
-                    {
-                        int activePlayerCount = 0;
-                        for (int i = 0; i < Main.maxPlayers; i++)
-                        {
-                            if (Main.player[i].active)
-                                activePlayerCount++;
-                        }
-
-                        for (int i = 1; i < activePlayerCount; i++)
-                        {
-                            hpMultiplier += accumulatedFactor;
-                            accumulatedFactor += (1f - accumulatedFactor) / 3f;
-                        }
-                    }
-                    if (hpMultiplier > 8f)
-                        hpMultiplier = (hpMultiplier * 2f + 8f) / 3f;
-
-                    if (hpMultiplier > 1000f)
-                        hpMultiplier = 1000f;
-
-                    maxHP = (int)(maxHP * hpMultiplier);
-                    maxHP += (int)(maxHP * CalamityConfig.Instance.BossHealthBoost * 0.01);
+                    AdjustMaxHP(ref maxHP);
 
                     if (maxHP != npc.lifeMax)
                     {
                         npc.life = npc.lifeMax = maxHP;
-
                         if (BossHealthBarManager.Bars.Any(b => b.NPCIndex == npc.whoAmI))
                             BossHealthBarManager.Bars.First(b => b.NPCIndex == npc.whoAmI).InitialMaxLife = npc.lifeMax;
 
@@ -242,8 +246,15 @@ namespace InfernumMode.GlobalInstances
                 if (npc.ai[2] >= 2f)
                 {
                     npc.boss = true;
-                    if (BossRushEvent.BossRushActive)
-                        typeof(BossRushEvent).GetMethod("OnBossKill", Utilities.UniversalBindingFlags).Invoke(null, new object[] { npc, mod });
+
+                    if (npc.Infernum().ExtraAI[10] == 0f)
+                    {
+                        npc.Infernum().ExtraAI[10] = 1f;
+                        if (BossRushEvent.BossRushActive)
+                            typeof(BossRushEvent).GetMethod("OnBossKill", Utilities.UniversalBindingFlags).Invoke(null, new object[] { npc, mod });
+                        else
+                            npc.NPCLoot();
+                    }
                 }
 
                 else if (npc.realLife == -1 && npc.Infernum().ExtraAI[10] == 0f)

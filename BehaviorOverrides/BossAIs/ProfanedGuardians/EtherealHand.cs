@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             npc.npcSlots = 1f;
             npc.aiStyle = aiType = -1;
-            npc.damage = 230;
+            npc.damage = 160;
             npc.width = npc.height = 50;
             npc.dontTakeDamage = true;
             npc.lifeMax = 10000;

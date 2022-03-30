@@ -26,7 +26,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             SuperchargedProbeBombing,
             DiveBombing,
             EnergyBlasts,
-            HyperspeedCharge,
             LaserSpin
         }
         #endregion
@@ -44,19 +43,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.ProbeBombing,
             DestroyerAttackType.DivingAttack,
-            DestroyerAttackType.HyperspeedCharge,
         };
 
         public static readonly DestroyerAttackType[] Phase3AttackPattern = new DestroyerAttackType[]
         {
             DestroyerAttackType.RegularCharge,
-            DestroyerAttackType.HyperspeedCharge,
             DestroyerAttackType.DivingAttack,
             DestroyerAttackType.EnergyBlasts,
             DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.SuperchargedProbeBombing,
-            DestroyerAttackType.HyperspeedCharge,
             DestroyerAttackType.LaserBarrage,
             DestroyerAttackType.EnergyBlasts,
             DestroyerAttackType.SuperchargedProbeBombing,
@@ -68,13 +64,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         public static readonly DestroyerAttackType[] Phase4AttackPattern = new DestroyerAttackType[]
         {
             DestroyerAttackType.RegularCharge,
-            DestroyerAttackType.HyperspeedCharge,
             DestroyerAttackType.DivingAttack,
             DestroyerAttackType.EnergyBlasts,
             DestroyerAttackType.LaserSpin,
             DestroyerAttackType.DiveBombing,
             DestroyerAttackType.SuperchargedProbeBombing,
-            DestroyerAttackType.HyperspeedCharge,
             DestroyerAttackType.LaserSpin,
             DestroyerAttackType.EnergyBlasts,
             DestroyerAttackType.SuperchargedProbeBombing,
@@ -155,9 +149,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     break;
                 case DestroyerAttackType.EnergyBlasts:
                     DoAttack_EnergyBlasts(npc, target, ref attackTimer);
-                    break;
-                case DestroyerAttackType.HyperspeedCharge:
-                    DoAttack_HyperspeedCharge(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case DestroyerAttackType.LaserSpin:
                     DoAttack_LaserSpin(npc, target, lifeRatio, ref attackTimer);

@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 
 namespace InfernumMode
@@ -30,6 +31,25 @@ namespace InfernumMode
             {
                 if (Main.projectile[i].active && Main.projectile[i].type == desiredType)
                     yield return Main.projectile[i];
+            }
+        }
+
+        /// <summary>
+        /// Deletes all projectiles of certain IDs.
+        /// </summary>
+        /// <param name="setToInactive">Whether to set the active bool to false directly instead of killing the projectile.</param>
+        /// <param name="projectileIDs">The projectiles to kill.</param>
+        public static void DeleteAllProjectiles(bool setToInactive, params int[] projectileIDs)
+        {
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                if (!Main.projectile[i].active || !projectileIDs.Contains(Main.projectile[i].type))
+                    continue;
+
+                if (setToInactive)
+                    Main.projectile[i].active = false;
+                else
+                    Main.projectile[i].Kill();
             }
         }
 

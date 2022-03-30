@@ -32,6 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override void AI()
         {
+            projectile.tileCollide = projectile.timeLeft < 40;
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 7 % Main.projFrames[projectile.type];
 

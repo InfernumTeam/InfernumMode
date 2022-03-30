@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Reset things.
             npc.damage = 0;
-            npc.defDamage = 640;
+            npc.defDamage = 560;
             npc.dontTakeDamage = false;
             npc.Calamity().newAI[0] = (int)Apollo.Phase.ChargeCombo;
 
@@ -329,7 +329,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
-                shootRate -= 5;
+                shootRate -= 3;
 
             if (ExoMechManagement.CurrentTwinsPhase >= 5)
             {

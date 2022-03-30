@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             npc.npcSlots = 0f;
             npc.width = npc.height = 42;
             npc.defense = 15;
-            npc.lifeMax = 1280;
+            npc.lifeMax = 1200;
             if (BossRushEvent.BossRushActive)
                 npc.lifeMax = 11256;
 

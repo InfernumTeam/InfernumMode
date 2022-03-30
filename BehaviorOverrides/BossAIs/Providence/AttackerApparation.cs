@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     break;
                 case AttackState.HorizontalCharge:
                     projectile.rotation = 0f;
-                    projectile.velocity = Vector2.UnitX * -DirectionBias * 31f;
+                    projectile.velocity = Vector2.UnitX * -DirectionBias * 28f;
                     if (!Main.dayTime)
                         projectile.velocity *= 1.4f;
 

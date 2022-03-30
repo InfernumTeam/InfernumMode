@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 ulong seed = (ulong)(i + 1) * 3141592uL;
                 float rayDirection = MathHelper.TwoPi * i / 8f + (float)Math.Sin(Main.GlobalTime * (i + 1f) * 0.3f) * 0.51f;
                 rayDirection += Main.GlobalTime * 0.48f;
-                DrawLightArc(seed, rayDirection, rayAnimationCompletion, projectile.Center);
+                DrawLightRay(seed, rayDirection, rayAnimationCompletion, projectile.Center);
             }
             spriteBatch.ExitShaderRegion();
 
@@ -95,29 +95,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             return false;
         }
 
-        public void DrawLightArc(ulong seed, float initialCrackRotation, float rayBrightness, Vector2 crackStartingPoint)
+        public void DrawLightRay(ulong seed, float initialRayRotation, float rayBrightness, Vector2 rayStartingPoint)
         {
             // Parameters are not correctly passed into the delegates after the primitive drawer is created.
             // As a substitute, a direct NPC variable is used as storage to allow for access.
             projectile.Infernum().ExtraAI[8] = rayBrightness;
 
-            float crackWidthFunction(float completionRatio, float rayBrightness2)
+            float rayWidthFunction(float completionRatio, float rayBrightness2)
             {
                 return MathHelper.Lerp(2f, 28f, completionRatio) * (1f + (rayBrightness2 - 1f) * 1.6f);
             }
-            Color crackColorFunction(float completionRatio, float rayBrightness2)
+            Color rayColorFunction(float completionRatio, float rayBrightness2)
             {
                 return Color.White * projectile.Opacity * Utils.InverseLerp(0.8f, 0.5f, completionRatio, true) * MathHelper.Clamp(0f, 1.5f, rayBrightness2) * 0.6f;
             }
 
             if (LightDrawer is null)
-                LightDrawer = new PrimitiveTrailCopy(c => crackWidthFunction(c, projectile.Infernum().ExtraAI[8]), c => crackColorFunction(c, projectile.Infernum().ExtraAI[8]), null, false);
-            Vector2 currentCrackDirection = initialCrackRotation.ToRotationVector2();
+                LightDrawer = new PrimitiveTrailCopy(c => rayWidthFunction(c, projectile.Infernum().ExtraAI[8]), c => rayColorFunction(c, projectile.Infernum().ExtraAI[8]), null, false);
+            Vector2 currentRayDirection = initialRayRotation.ToRotationVector2();
 
             float length = MathHelper.Lerp(225f, 360f, Utils.RandomFloat(ref seed)) * rayBrightness;
             List<Vector2> points = new List<Vector2>();
             for (int i = 0; i <= 12; i++)
-                points.Add(Vector2.Lerp(crackStartingPoint, crackStartingPoint + initialCrackRotation.ToRotationVector2() * length, i / 12f));
+                points.Add(Vector2.Lerp(rayStartingPoint, rayStartingPoint + initialRayRotation.ToRotationVector2() * length, i / 12f));
 
             LightDrawer.Draw(points, -Main.screenPosition, 47);
         }

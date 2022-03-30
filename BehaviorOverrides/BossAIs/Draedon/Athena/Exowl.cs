@@ -17,11 +17,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
     {
         public int NPCToAttachTo = -1;
 
-        public Vector2 CircleCenter;
+        public bool UseConfusionEffect = false;
+
+        public bool IsIllusion = false;
 
         public float CircleRadius;
 
         public float CircleOffsetAngle;
+
+        public Vector2 CircleCenter;
 
         public PrimitiveTrail FlameTrail = null;
 
@@ -31,7 +35,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public NPC Athena => Main.npc[GlobalNPCOverrides.Athena];
 
+        public Player Target => Main.player[Athena.target];
+
         public ref float AttackTimer => ref Athena.ai[1];
+
+        public ref float AttackState => ref npc.ai[0];
+
+        public ref float IndividualAttackTimer => ref npc.ai[1];
 
         public ref float MinionRedCrystalGlow => ref Athena.localAI[1];
 
@@ -90,6 +100,78 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 npc.rotation = npc.AngleTo(CircleCenter) + MathHelper.PiOver2;
                 CircleOffsetAngle += MathHelper.ToRadians(0.67f);
             }
+
+            // Charge in an attempt to confuse the target if variables for such behavior are used.
+            if (UseConfusionEffect)
+                DoBehavior_ConfusionCharges();
+        }
+
+        public void DoBehavior_ConfusionCharges()
+        {
+            // Use contact damage as necessary.
+            if (!IsIllusion)
+                npc.damage = 500;
+            else
+                npc.dontTakeDamage = true;
+
+            switch ((int)AttackState)
+            {
+                // Rise upward.
+                case 0:
+                    float horizontalOffset = MathHelper.Lerp(350f, 560f, npc.whoAmI % 7f / 7f);
+                    Vector2 flyDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * horizontalOffset, -240f);
+                    Vector2 idealVelocity = npc.SafeDirectionTo(flyDestination) * 30f;
+                    npc.velocity = (npc.velocity * 29f + idealVelocity) / 29f;
+                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 1.5f);
+
+                    if (npc.WithinRange(flyDestination, 40f) || IndividualAttackTimer > 150f)
+                    {
+                        AttackState = 1f;
+                        npc.velocity *= 0.65f;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Slow down and look at the target.
+                case 1:
+                    npc.spriteDirection = (Target.Center.X > npc.Center.X).ToDirectionInt();
+                    npc.velocity *= 0.96f;
+                    npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.7f);
+
+                    // Charge once sufficiently slowed down.
+                    float chargeSpeed = 40f;
+                    if (npc.velocity.Length() < 1.25f)
+                    {
+                        Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                        Main.PlaySound(SoundID.Zombie, npc.Center, 68);
+                        AttackState = 2f;
+                        IndividualAttackTimer = 0f;
+                        npc.velocity = npc.SafeDirectionTo(Target.Center) * chargeSpeed;
+                        npc.netUpdate = true;
+                    }
+                    break;
+
+                // Charge and swoop.
+                case 2:
+                    float angularTurnSpeed = MathHelper.Pi / 300f;
+                    idealVelocity = npc.SafeDirectionTo(Target.Center);
+                    Vector2 leftVelocity = npc.velocity.RotatedBy(-angularTurnSpeed);
+                    Vector2 rightVelocity = npc.velocity.RotatedBy(angularTurnSpeed);
+                    if (leftVelocity.AngleBetween(idealVelocity) < rightVelocity.AngleBetween(idealVelocity))
+                        npc.velocity = leftVelocity;
+                    else
+                        npc.velocity = rightVelocity;
+
+                    if (IndividualAttackTimer > 25f)
+                    {
+                        AttackState = 0f;
+                        IndividualAttackTimer = 0f;
+                        npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 12.5f, 0.14f);
+                        npc.netUpdate = true;
+                    }
+                    break;
+            }
+            IndividualAttackTimer++;
         }
 
         public override void FindFrame(int frameHeight)
@@ -149,65 +231,101 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         {
             Texture2D texture = Main.npcTexture[npc.type];
             Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/Exowl_Glowmask");
-            Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;
 
-            spriteBatch.EnterShaderRegion();
-
-            // Declare the primitive drawers if they have yet to be defined.
-            if (FlameTrail is null)
-                FlameTrail = new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
-            if (LightningDrawer is null)
-                LightningDrawer = new PrimitiveTrail(LightningWidthFunction, LightningColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
-            if (LightningBackgroundDrawer is null)
-                LightningBackgroundDrawer = new PrimitiveTrail(LightningBackgroundWidthFunction, LightningBackgroundColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
-
-            // Draw electricity between NPCs.
-            if (NPCToAttachTo >= 0 && Main.npc[NPCToAttachTo].active)
+            void drawInstance(Vector2 drawPosition, bool drawThrusters, Color? colorOverride = null)
             {
-                NPC npcToAttachTo = Main.npc[NPCToAttachTo];
-                Vector2 end = npcToAttachTo.Center + npcToAttachTo.rotation.ToRotationVector2() * 30f;
-                List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(npc.Center, end, 250290787);
-                LightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 40);
-                LightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 40);
-            }
+                // Declare the primitive drawers if they have yet to be defined.
+                if (FlameTrail is null)
+                    FlameTrail = new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
+                if (LightningDrawer is null)
+                    LightningDrawer = new PrimitiveTrail(LightningWidthFunction, LightningColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
+                if (LightningBackgroundDrawer is null)
+                    LightningBackgroundDrawer = new PrimitiveTrail(LightningBackgroundWidthFunction, LightningBackgroundColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
 
-            // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+                spriteBatch.EnterShaderRegion();
 
-            // Draw a flame trail on the thrusters.
-            for (int direction = -1; direction <= 1; direction += 2)
-            {
-                Vector2 baseDrawOffset = new Vector2(0f, -10f).RotatedBy(npc.rotation);
-                baseDrawOffset += new Vector2(direction * 18f, 0f).RotatedBy(npc.rotation);
-
-                float backFlameLength = 70f;
-                Vector2 drawStart = npc.Center + baseDrawOffset;
-                Vector2 drawEnd = drawStart - (npc.rotation - MathHelper.PiOver2 - MathHelper.PiOver4 * direction).ToRotationVector2() * backFlameLength;
-                Vector2[] drawPositions = new Vector2[]
+                // Draw electricity between NPCs.
+                if (NPCToAttachTo >= 0 && Main.npc[NPCToAttachTo].active)
                 {
-                    drawStart,
-                    drawEnd
-                };
+                    NPC npcToAttachTo = Main.npc[NPCToAttachTo];
+                    Vector2 end = npcToAttachTo.Center + npcToAttachTo.rotation.ToRotationVector2() * 30f;
+                    List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(npc.Center, end, 250290787);
+                    LightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 40);
+                    LightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 40);
+                }
 
-                for (int i = 0; i < 3; i++)
+                // Draw thrusters as necessary.
+                if (drawThrusters)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 2f;
-                    FlameTrail.Draw(drawPositions, drawOffset - Main.screenPosition, 33);
+                    // Prepare the flame trail shader with its map texture.
+                    GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+
+                    // Draw a flame trail on the thrusters.
+                    for (int direction = -1; direction <= 1; direction += 2)
+                    {
+                        Vector2 baseDrawOffset = new Vector2(0f, -10f).RotatedBy(npc.rotation);
+                        baseDrawOffset += new Vector2(direction * 18f, 0f).RotatedBy(npc.rotation);
+
+                        float backFlameLength = 70f;
+                        Vector2 drawStart = npc.Center + baseDrawOffset;
+                        Vector2 drawEnd = drawStart - (npc.rotation - MathHelper.PiOver2 - MathHelper.PiOver4 * direction).ToRotationVector2() * backFlameLength;
+                        Vector2[] drawPositions = new Vector2[]
+                        {
+                            drawStart,
+                            drawEnd
+                        };
+
+                        for (int i = 0; i < 3; i++)
+                        {
+                            Vector2 drawOffset = (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 2f;
+                            FlameTrail.Draw(drawPositions, drawOffset - Main.screenPosition, 33);
+                        }
+                    }
+                }
+                spriteBatch.ExitShaderRegion();
+
+                // Draw the glowmask and regular texture.
+                // This is influenced by the crystal glow at the end.
+                Color glowmaskColor = Color.Lerp(Color.White, new Color(1f, 0f, 0f, 0.3f), MinionRedCrystalGlow);
+                spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(colorOverride ?? drawColor), npc.rotation, origin, npc.scale, 0, 0f);
+
+                for (int i = 0; i < 2; i++)
+                    spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(colorOverride ?? glowmaskColor), npc.rotation, origin, npc.scale, 0, 0f);
+                if (MinionRedCrystalGlow > 0f)
+                {
+                    float backimageOpacity = MathHelper.Lerp(0f, 0.1f, MinionRedCrystalGlow);
+                    spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(colorOverride ?? Color.White) * backimageOpacity, npc.rotation, origin, npc.scale, 0, 0f);
                 }
             }
-            spriteBatch.ExitShaderRegion();
 
-            Color glowmaskColor = Color.Lerp(Color.White, new Color(1f, 0f, 0f, 0.3f), MinionRedCrystalGlow);
-            spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor), npc.rotation, origin, npc.scale, 0, 0f);
+            Color? color = null;
+            if (UseConfusionEffect)
+                color = Color.Lerp(Color.White, new Color(89, 207, 218, 51), IsIllusion ? 1f : 0.51f);
 
-            for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(glowmaskColor), npc.rotation, origin, npc.scale, 0, 0f);
-            if (MinionRedCrystalGlow > 0f)
+            if (UseConfusionEffect)
             {
-                float backimageOpacity = MathHelper.Lerp(0f, 0.1f, MinionRedCrystalGlow);
-                spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White) * backimageOpacity, npc.rotation, origin, npc.scale, 0, 0f);
+                float illusionFadeInterpolant = Athena.Infernum().ExtraAI[3];
+                float illusionOffsetFactor = MathHelper.Lerp(0f, 75f, illusionFadeInterpolant);
+
+                for (int i = 0; i < 8; i++)
+                {
+                    Color hologramColor = Main.hslToRgb(i / 7f, 1f, 0.5f);
+                    hologramColor.A = 51;
+                    float drawOffsetFactor = 20f;
+                    Vector3 offsetInformation = Vector3.Transform(Vector3.Forward,
+                        Matrix.CreateRotationX((Main.GlobalTime - 0.3f + i * 0.1f) * 0.7f * MathHelper.TwoPi) *
+                        Matrix.CreateRotationY((Main.GlobalTime - 0.8f + i * 0.3f) * 0.7f * MathHelper.TwoPi) *
+                        Matrix.CreateRotationZ((Main.GlobalTime + 0.1f + i * 0.5f) * 0.1f * MathHelper.TwoPi));
+                    drawOffsetFactor += Utils.InverseLerp(-1f, 1f, offsetInformation.Z, true) * 12f;
+                    Vector2 drawOffset = new Vector2(offsetInformation.X, offsetInformation.Y) * drawOffsetFactor;
+                    if (!IsIllusion)
+                        drawOffset *= 0.4f;
+
+                    drawInstance(npc.Center - Main.screenPosition + drawOffset, false, Color.Lerp(color.Value, hologramColor, 0.36f) * 0.27f);
+                }
             }
+            drawInstance(npc.Center - Main.screenPosition, true, color);
 
             return false;
         }

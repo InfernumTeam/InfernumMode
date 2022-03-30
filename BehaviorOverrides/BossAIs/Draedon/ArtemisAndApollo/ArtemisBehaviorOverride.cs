@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Reset things and use variables from Apollo.
             npc.damage = 0;
-            npc.defDamage = 640;
+            npc.defDamage = 560;
             npc.dontTakeDamage = apollo.dontTakeDamage;
             npc.target = apollo.target;
             npc.life = apollo.life;

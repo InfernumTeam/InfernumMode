@@ -426,8 +426,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 Main.PlaySound(SoundID.Item92, target.Center);
             }
 
-            if (attackTimer >= (enraged ? 315f : 450f))
+            if (attackTimer >= (enraged ? 335f : 450f))
+            {
+                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<PsionicOrb>(), ModContent.ProjectileType<PsionicLightningBolt>(), ProjectileID.MartianTurretBolt);
                 GotoNextAttackState(npc);
+            }
         }
 
         public static void DoAttack_SpinPull(NPC npc, Player target, bool enraged, ref float attackTimer)

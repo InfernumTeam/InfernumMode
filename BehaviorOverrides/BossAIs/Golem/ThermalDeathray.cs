@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override void AI()
         {
-            if (OwnerIndex <= 0 || Main.npc[OwnerIndex - 1].ai[0] == -2f)
+            if (OwnerIndex <= 0 || !Main.npc[OwnerIndex - 1].active)
             {
                 projectile.Kill();
                 return;

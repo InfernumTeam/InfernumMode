@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
-            projectile.timeLeft = 360;
+            projectile.timeLeft = 300;
         }
 
         public override bool PreAI()

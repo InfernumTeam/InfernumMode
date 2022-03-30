@@ -113,7 +113,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
 
                 // Otherwise prepare the fight
-                int maxHP = 164400;
+                int maxHP = 155250;
                 GlobalNPCOverrides.AdjustMaxHP(ref maxHP);
                 npc.life = npc.lifeMax = maxHP;
                 npc.noGravity = true;
@@ -208,6 +208,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             ref NPC leftFist = ref Main.npc[(int)LeftFistNPC];
             ref NPC rightFist = ref Main.npc[(int)RightFistNPC];
             ref Player target = ref Main.player[npc.target];
+
+            // Reset head DR.
+            freeHead.Calamity().DR = 0.3f;
+            attachedHead.Calamity().DR = 0.3f;
 
             // Sync the heads, and end the fight if necessary
             if (!attachedHead.active || !freeHead.active || attachedHead.life <= 0 || freeHead.life <= 0)
@@ -338,7 +342,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     AttackCooldown = ConstAttackCooldown;
                     PreviousAttackState = (float)GolemAttackState.SummonDelay;
                     AttackState = (float)GolemAttackState.FistSpin;
-                    npc.damage = npc.defDamage + 10;
+                    npc.damage = npc.defDamage + 20;
                     leftFist.damage = leftFist.defDamage;
                     rightFist.damage = rightFist.defDamage;
                     attachedHead.damage = attachedHead.defDamage;
@@ -383,6 +387,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 if (Math.Abs(npc.velocity.Y) < 0.5f)
                     npc.velocity.X *= 0.8f;
 
+                freeHead.Calamity().DR = 0.9f;
+                attachedHead.Calamity().DR = 0.9f;
                 Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<GolemEyeLaserRay>());
                 DoBehavior_EnterSecondPhase(npc, phase2TransitionTimer);
                 if (phase2TransitionTimer == 2f)
@@ -552,13 +558,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             int jumpDelay = 25;
             int jumpCount = 3;
             int postJumpSitTime = 90;
+            int platformReleaseRate = 0;
             float fireCrystalSpacing = 120f;
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
             if (inPhase2)
                 fireCrystalSpacing -= 20f;
             if (inPhase3)
+            {
+                platformReleaseRate += 72;
                 fireCrystalSpacing -= 15f;
+            }
 
             npc.noTileCollide = false;
 
@@ -676,6 +686,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
             }
 
+            // Create platforms below the target in the third phase.
+            if (attackTimer % platformReleaseRate == 0f && inPhase3)
+            {
+                Vector2 platformSpawnPosition = new Vector2(target.Center.X, npc.Infernum().arenaRectangle.Bottom - 16f);
+                CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 1.5f);
+            }
+
+
             attackTimer++;
         }
 
@@ -754,7 +772,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             int fistSlamTime = 45;
             int spikeWaveCreationTime = 420;
             int spikeTrapCreationRate = 50;
-            int fireCrystalReleaseRate = 60;
+            int fireCrystalReleaseRate = 72;
             float fistSlamInterpolant = 1f;
 
             if (inPhase2)
@@ -927,7 +945,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                         Vector2 beamSpawnPosition = freeHead.Center + new Vector2(-i * 16f, -7f);
                         Vector2 beamDirection = Vector2.UnitX * i;
 
-                        int beam = Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<GolemEyeLaserRay>(), 275, 0f);
+                        int beam = Utilities.NewProjectileBetter(beamSpawnPosition, beamDirection, ModContent.ProjectileType<GolemEyeLaserRay>(), 290, 0f);
                         if (Main.projectile.IndexInRange(beam))
                         {
                             Main.projectile[beam].ai[0] = i * MathHelper.PiOver2 / 120f * 0.46f;
@@ -1014,7 +1032,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int laser = Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), 300, 0f);
+                    int laser = Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), 320, 0f);
                     if (Main.projectile.IndexInRange(laser))
                     {
                         Main.projectile[laser].ModProjectile<ThermalDeathray>().AngularVelocity = (MathHelper.WrapAngle(npc.AngleTo(target.Center) - coreLaserRayDirection) > 0f).ToDirectionInt() * angularVelocity;
@@ -1076,7 +1094,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attackTimer == 1f)
             {
                 slingshotArmToCharge = Main.rand.NextBool().ToDirectionInt();
-                slingshotRotation = -Vector2.UnitY.RotatedByRandom(Main.rand.NextFloat(-0.83f, 0.83f)).ToRotation();
+
+                float oldSlingshotRotation = slingshotRotation;
+                do
+                    slingshotRotation = -Vector2.UnitY.RotatedByRandom(Main.rand.NextFloat(-0.83f, 0.83f)).ToRotation();
+                while (Math.Abs(MathHelper.WrapAngle(slingshotRotation - oldSlingshotRotation)) < 0.4f && oldSlingshotRotation != 0f);
                 npc.netUpdate = true;
             }
 
@@ -1245,6 +1267,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     {
                         attackCounter = 0f;
                         attackCooldown = ConstAttackCooldown;
+                        slingshotRotation = 0f;
                         SelectNextAttackState(npc);
                     }
                     npc.netUpdate = true;
@@ -1354,17 +1377,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     top.Y -= 16f;
                     Vector2 bottom = Utilities.GetGroundPositionFrom(new Vector2(i, npc.Infernum().arenaRectangle.Center.Y)).Floor();
 
-                    int topSpike = Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 200, 0f);
-                    int bottomSpike = Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 200, 0f);
-                    if (Main.projectile.IndexInRange(topSpike))
+                    if (Collision.CanHit(top, 1, 1, top + Vector2.UnitY * 100f, 1, 1))
                     {
-                        Main.projectile[topSpike].ModProjectile<StationarySpikeTrap>().SpikeDirection = 1f;
-                        Main.projectile[topSpike].netUpdate = true;
+                        int topSpike = Utilities.NewProjectileBetter(top, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 230, 0f);
+                        if (Main.projectile.IndexInRange(topSpike))
+                        {
+                            Main.projectile[topSpike].ModProjectile<StationarySpikeTrap>().SpikeDirection = 1f;
+                            Main.projectile[topSpike].netUpdate = true;
+                        }
                     }
-                    if (Main.projectile.IndexInRange(bottomSpike))
+
+                    if (Collision.CanHit(bottom, 1, 1, bottom - Vector2.UnitY * 100f, 1, 1))
                     {
-                        Main.projectile[bottomSpike].ModProjectile<StationarySpikeTrap>().SpikeDirection = -1f;
-                        Main.projectile[bottomSpike].netUpdate = true;
+                        int bottomSpike = Utilities.NewProjectileBetter(bottom, Vector2.Zero, ModContent.ProjectileType<StationarySpikeTrap>(), 230, 0f);
+                        if (Main.projectile.IndexInRange(bottomSpike))
+                        {
+                            Main.projectile[bottomSpike].ModProjectile<StationarySpikeTrap>().SpikeDirection = -1f;
+                            Main.projectile[bottomSpike].netUpdate = true;
+                        }
                     }
                 }
             }

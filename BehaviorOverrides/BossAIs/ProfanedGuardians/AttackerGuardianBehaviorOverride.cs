@@ -139,7 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     Main.PlaySound(SoundID.Item45, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 9f) * chargeSpeed;
+                        npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 3.5f) * chargeSpeed;
 
                         // Release a burst of spears outward.
                         int spearBurstCount = 3;
@@ -421,7 +421,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                     }
 
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
-                    npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 10f) * chargeSpeed;
+                    npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 4f) * chargeSpeed;
                     npc.velocity = (npc.velocity * new Vector2(1f, 0.5f)).SafeNormalize(Vector2.UnitY) * npc.velocity.Length();
                     npc.netUpdate = true;
                 }

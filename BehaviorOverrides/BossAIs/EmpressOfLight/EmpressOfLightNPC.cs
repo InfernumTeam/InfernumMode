@@ -274,6 +274,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
+            if (Enraged)
+                npc.Calamity().CurrentlyEnraged = true;
+
             switch (AttackType)
             {
                 case EmpressOfLightAttackType.SpawnAnimation:

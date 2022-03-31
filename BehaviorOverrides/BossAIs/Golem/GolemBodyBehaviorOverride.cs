@@ -1093,22 +1093,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Determine the initial slingshot rotation.
             if (attackTimer == 1f)
             {
-                slingshotArmToCharge = Main.rand.NextBool().ToDirectionInt();
-
-                int emergencyIncrementThing = 0;
-                float oldSlingshotRotation = slingshotRotation;
-                do
-                {
-                    emergencyIncrementThing++;
-                    slingshotRotation = -Vector2.UnitY.RotatedByRandom(Main.rand.NextFloat(-0.83f, 0.83f)).ToRotation();
-                    if (Collision.SolidCollision(npc.position, npc.width, npc.height))
-                        npc.Center = npc.Center.MoveTowards(npc.Infernum().arenaRectangle.Center(), 20f);
-
-                    if (emergencyIncrementThing >= 1000)
-                        break;
-                }
-                while ((Math.Abs(MathHelper.WrapAngle(slingshotRotation - oldSlingshotRotation)) < 0.4f && oldSlingshotRotation != 0f) ||
-                       !Collision.CanHit(npc.position, npc.width, npc.height, npc.position + slingshotRotation.ToRotationVector2() * 420f, npc.width, npc.height));
+                slingshotRotation = (-Vector2.UnitY).ToRotation();
                 npc.netUpdate = true;
             }
 
@@ -1122,10 +1107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
             float[] samples = new float[24];
             Vector2 fistStart = fistToChargeWith.whoAmI == leftFist.whoAmI ? leftFistAttachmentPosition : rightFistAttachmentPosition;
-            Vector2 offsetDirection = slingshotRotation.ToRotationVector2();
-            if (offsetDirection.Y > -0.3f)
-                offsetDirection.Y = -0.3f;
-
+            Vector2 offsetDirection = -Vector2.UnitY;
             Collision.LaserScan(fistStart, offsetDirection, 30f, 10000f, samples);
             Vector2 fistEnd = fistStart + offsetDirection * samples.Average();
 
@@ -1272,7 +1254,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
 
                 if (attackTimer == dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime + 30f)
-                    npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, npc.Infernum().arenaRectangle.Center.ToVector2(), 0.3f, 21f, out _);
+                    npc.velocity.X = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, npc.Infernum().arenaRectangle.Center.ToVector2(), 0.3f, 21f, out _).X;
 
                 if (attackTimer >= dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime + 180f)
                 {

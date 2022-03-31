@@ -113,7 +113,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
 
                 // Otherwise prepare the fight
-                int maxHP = 155250;
+                int maxHP = 164000;
                 GlobalNPCOverrides.AdjustMaxHP(ref maxHP);
                 npc.life = npc.lifeMax = maxHP;
                 npc.noGravity = true;
@@ -1077,7 +1077,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (inPhase2)
                 fistShootRate -= 3;
             if (inPhase3)
-                fistShootRate -= 2;
+            {
+                fistShootRate -= 4;
+                shootTime -= 45;
+            }
 
             npc.noTileCollide = false;
             NPC leftFist = GetLeftFist(npc);
@@ -1092,10 +1095,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 slingshotArmToCharge = Main.rand.NextBool().ToDirectionInt();
 
+                int emergencyIncrementThing = 0;
                 float oldSlingshotRotation = slingshotRotation;
                 do
+                {
+                    emergencyIncrementThing++;
                     slingshotRotation = -Vector2.UnitY.RotatedByRandom(Main.rand.NextFloat(-0.83f, 0.83f)).ToRotation();
-                while (Math.Abs(MathHelper.WrapAngle(slingshotRotation - oldSlingshotRotation)) < 0.4f && oldSlingshotRotation != 0f);
+                    if (Collision.SolidCollision(npc.position, npc.width, npc.height))
+                        npc.Center = npc.Center.MoveTowards(npc.Infernum().arenaRectangle.Center(), 20f);
+
+                    if (emergencyIncrementThing >= 1000)
+                        break;
+                }
+                while ((Math.Abs(MathHelper.WrapAngle(slingshotRotation - oldSlingshotRotation)) < 0.4f && oldSlingshotRotation != 0f) ||
+                       !Collision.CanHit(npc.position, npc.width, npc.height, npc.position + slingshotRotation.ToRotationVector2() * 420f, npc.width, npc.height));
                 npc.netUpdate = true;
             }
 
@@ -1110,19 +1123,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             float[] samples = new float[24];
             Vector2 fistStart = fistToChargeWith.whoAmI == leftFist.whoAmI ? leftFistAttachmentPosition : rightFistAttachmentPosition;
             Vector2 offsetDirection = slingshotRotation.ToRotationVector2();
+            if (offsetDirection.Y > -0.3f)
+                offsetDirection.Y = -0.3f;
+
             Collision.LaserScan(fistStart, offsetDirection, 30f, 10000f, samples);
             Vector2 fistEnd = fistStart + offsetDirection * samples.Average();
 
             // Determine the initial fist destination.
 
-            if ((fistSlamDestinationX == 0f || fistSlamDestinationY == 0f) && attackTimer <= 2f)
+            if ((fistSlamDestinationX == 0f || fistSlamDestinationY == 0f) && attackTimer <= 5f)
             {
                 fistSlamDestinationX = fistEnd.X;
                 fistSlamDestinationY = fistEnd.Y;
                 npc.netUpdate = true;
             }
             else
+            {
+                if (fistSlamDestinationX == 0f || fistSlamDestinationY == 0f)
+				{
+                    fistSlamDestinationX = fistStart.X;
+                    fistSlamDestinationY = fistStart.Y;
+                }
                 fistEnd = new Vector2(fistSlamDestinationX, fistSlamDestinationY);
+            }
 
             Rectangle deflatedArena = npc.Infernum().arenaRectangle;
             deflatedArena.Inflate(-20, 16);
@@ -1481,6 +1504,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         {
             bool inRealTemple = false;
             bool inPhase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
+            bool inPhase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
             ref float AttackState = ref npc.ai[1];
             ref float AttackTimer = ref npc.ai[2];
             ref float PreviousAttackState = ref npc.Infernum().ExtraAI[8];
@@ -1504,7 +1528,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             List<GolemAttackState> possibleAttacks = new List<GolemAttackState>()
             {
                 GolemAttackState.FloorFire,
-                GolemAttackState.FistSpin,
                 GolemAttackState.SpikeTrapWaves,
                 GolemAttackState.HeatRay,
             };
@@ -1516,6 +1539,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 possibleAttacks.Add(GolemAttackState.SpinLaser);
                 possibleAttacks.Add(GolemAttackState.SpikeRush);
             }
+            if (!inPhase3)
+                possibleAttacks.Add(GolemAttackState.FistSpin);
 
             int failsafeCounter = 0;
             GolemAttackState NextAttack;
@@ -1562,6 +1587,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     float colorInterpolant = (float)Math.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTime * 10f) * 0.5f + 0.5f;
                     Color backAfterimageColor = Color.Lerp(Color.Yellow, Color.Orange, colorInterpolant);
                     backAfterimageColor *= backAfterimageInterpolant;
+                    backAfterimageColor.A /= 8;
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
                     spriteBatch.Draw(texture, drawPos + drawOffset, npc.frame, backAfterimageColor, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 }

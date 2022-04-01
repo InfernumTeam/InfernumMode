@@ -1,4 +1,5 @@
 ﻿using CalamityMod.Items.Ammo;
+using CalamityMod.Items.Weapons.Magic;
 using CalamityMod.Items.Weapons.Ranged;
 using CalamityMod.Items.Weapons.Rogue;
 using CalamityMod.Items.Weapons.Summon;
@@ -20,6 +21,7 @@ namespace InfernumMode.Balancing
             [ModContent.ItemType<SeasSearing>()] = 39,
             [ModContent.ItemType<HivePod>()] = 74,
             [ModContent.ItemType<HeavenfallenStardisk>()] = 87,
+            [ModContent.ItemType<Atlantis>()] = 55,
             [ModContent.ItemType<ResurrectionButterfly>()] = 44,
             [ModContent.ItemType<FinalDawn>()] = 855,
         };

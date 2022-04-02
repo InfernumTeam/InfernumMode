@@ -49,6 +49,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool PreAI(NPC npc)
         {
+            // FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK
+            if (npc.scale != 1f)
+            {
+                npc.width = 120;
+                npc.height = 120;
+                npc.scale = 1f;
+            }
+
             // Do targeting.
             npc.TargetClosest();
             Player target = Main.player[npc.target];

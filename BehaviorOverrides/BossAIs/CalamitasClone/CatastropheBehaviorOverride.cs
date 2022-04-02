@@ -35,6 +35,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 return false;
             }
 
+            // FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK
+            if (npc.scale != 1f)
+            {
+                npc.width = 120;
+                npc.height = 120;
+                npc.scale = 1f;
+            }
+
             // Do targeting.
             npc.target = Main.npc[CalamityGlobalNPC.calamitas].target;
             Player target = Main.player[npc.target];

@@ -65,13 +65,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase >= 5)
             {
                 shootTime += 40;
-                totalOrbsPerBurst = 6;
-                orbShootSpeed *= 1.1f;
+                totalOrbsPerBurst = 7;
+                orbShootSpeed *= 1.33f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
                 shootTime += 40;
-                totalOrbsPerBurst = 8;
+                totalOrbsPerBurst = 9;
             }
 
             // Get very pissed off if Ares is enraged.

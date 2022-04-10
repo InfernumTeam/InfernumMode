@@ -53,8 +53,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase >= 5)
             {
                 shootTime += 60;
-                totalFlamesPerBurst++;
-                flameShootSpeed *= 1.2f;
+                totalFlamesPerBurst += 2;
+                flameShootSpeed *= 1.55f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {

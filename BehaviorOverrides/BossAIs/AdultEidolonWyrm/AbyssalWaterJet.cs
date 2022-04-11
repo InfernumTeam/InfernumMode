@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 for (int i = 0; i < 7; i++)
                 {
                     Vector2 boltShootVelocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 12f;
-                    Projectile.NewProjectile(Projectile.Center, boltShootVelocity, ModContent.ProjectileType<AbyssalWaterBolt>(), (int)(Projectile.damage * 0.8f), 0f);
+                    Projectile.NewProjectile(new InfernumSource(), new InfernumSource(), Projectile.Center, boltShootVelocity, ModContent.ProjectileType<AbyssalWaterBolt>(), (int)(Projectile.damage * 0.8f), 0f);
                 }
             }
 
@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 ref _) && Projectile.timeLeft < 72f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (TornadoDrawer is null)
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);

@@ -61,10 +61,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[3] == 0f)
             {
-                int fuck = NPC.NewNPC((int)target.Center.X - 500, (int)target.Center.Y - 750, ModContent.NPCType<EbonianSGBig>());
+                int fuck = NPC.NewNPC(new InfernumSource(), (int)target.Center.X - 500, (int)target.Center.Y - 750, ModContent.NPCType<EbonianSGBig>());
                 Main.npc[fuck].velocity = Vector2.UnitY * 8f;
 
-                fuck = NPC.NewNPC((int)target.Center.X + 500, (int)target.Center.Y - 750, ModContent.NPCType<CrimulanSGBig>());
+                fuck = NPC.NewNPC(new InfernumSource(), (int)target.Center.X + 500, (int)target.Center.Y - 750, ModContent.NPCType<CrimulanSGBig>());
                 Main.npc[fuck].velocity = Vector2.UnitY * 8f;
                 npc.localAI[3] = 1f;
             }

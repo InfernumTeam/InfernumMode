@@ -43,9 +43,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             return color * Projectile.Opacity * 0.45f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D plasmaTexture = Main.projectileTexture[Projectile.type];
+            Texture2D plasmaTexture = Utilities.ProjTexture(Projectile.type);
             for (int i = 0; i < 5; i++)
             {
                 Matrix drawOffsetEncoding = Matrix.CreateRotationX(Main.GlobalTimeWrappedHourly * 2.32f + i * 1.37f);
@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 Vector2 drawOffset = new Vector2(vectorizedOffset.X, vectorizedOffset.Y) * MathHelper.Lerp(1f, 16f, vectorizedOffset.Z);
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition + drawOffset;
 
-                spriteBatch.Draw(plasmaTexture, drawPosition, null, Projectile.GetAlpha(Color.White), drawOffset.ToRotation(), plasmaTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(plasmaTexture, drawPosition, null, Projectile.GetAlpha(Color.White), drawOffset.ToRotation(), plasmaTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
             return false;
         }

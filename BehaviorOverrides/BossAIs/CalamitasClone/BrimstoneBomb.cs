@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             Projectile.velocity.X *= 0.985f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, 0);
             return false;

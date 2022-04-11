@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Projectile.oldPos[segmentIndex].X = MathHelper.Clamp(Projectile.oldPos[segmentIndex].X, Projectile.Center.X - 30f, Projectile.Center.X + 30f);
             }
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D lightningTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/PhotovisceratorLight").Value;
             for (int i = 0; i < Projectile.oldPos.Length - 1; i++)
@@ -70,8 +70,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 while (Vector2.DistanceSquared(drawPosition, Projectile.oldPos[i + 1]) > 3f * 3f)
                 {
                     drawPosition += (Projectile.oldPos[i + 1] - drawPosition).SafeNormalize(Vector2.UnitY) * 2f;
-                    spriteBatch.Draw(lightningTexture, drawPosition - Main.screenPosition, null, Color.Cyan * 0.31f, angleToNext, lightningTexture.Size() * 0.5f, 0.3f, SpriteEffects.None, 0f);
-                    spriteBatch.Draw(lightningTexture, drawPosition - Main.screenPosition, null, Color.White * 0.62f, angleToNext, lightningTexture.Size() * 0.5f, 0.12f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(lightningTexture, drawPosition - Main.screenPosition, null, Color.Cyan * 0.31f, angleToNext, lightningTexture.Size() * 0.5f, 0.3f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(lightningTexture, drawPosition - Main.screenPosition, null, Color.White * 0.62f, angleToNext, lightningTexture.Size() * 0.5f, 0.12f, SpriteEffects.None, 0f);
                 }
             }
             return false;

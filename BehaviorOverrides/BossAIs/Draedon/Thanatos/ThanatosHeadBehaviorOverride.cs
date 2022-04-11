@@ -94,12 +94,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     if (i < SegmentCount - 1)
                     {
                         if (i % 2 == 0)
-                            lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ThanatosBody1>(), npc.whoAmI);
+                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ThanatosBody1>(), npc.whoAmI);
                         else
-                            lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ThanatosBody2>(), npc.whoAmI);
+                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ThanatosBody2>(), npc.whoAmI);
                     }
                     else
-                        lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ThanatosTail>(), npc.whoAmI);
+                        lol = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ThanatosTail>(), npc.whoAmI);
 
                     Main.npc[lol].realLife = npc.whoAmI;
                     Main.npc[lol].ai[0] = i;
@@ -972,10 +972,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (flySpeed > 15f)
                     flySpeed -= 0.065f;
 
-                if (directionToPlayerOrthogonality < 0.85f && directionToPlayerOrthogonality > 0.5f)
+                if (directionToPlayerOrthogonality is < 0.85f and > 0.5f)
                     flySpeed += 0.16f;
 
-                if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
+                if (directionToPlayerOrthogonality is < 0.5f and > (-0.7f))
                     flySpeed -= 0.1f;
 
                 flySpeed = MathHelper.Clamp(flySpeed, 12f, 19f) * generalSpeedFactor;
@@ -1008,8 +1008,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Update learning stuff.
             ExoMechManagement.DoPostAttackSelections(npc);
 
-            bool wasCharging = oldAttackType == ThanatosHeadAttackType.AggressiveCharge ||
-                oldAttackType == ThanatosHeadAttackType.MaximumOverdrive;
+            bool wasCharging = oldAttackType is ThanatosHeadAttackType.AggressiveCharge or
+				ThanatosHeadAttackType.MaximumOverdrive;
 
             if (wasCharging)
             {
@@ -1093,10 +1093,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Vector2 center = npc.Center - Main.screenPosition;
 
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, npc.frame, origin);
-            spriteBatch.Draw(texture, center, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, center, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosHeadGlow").Value;
-            spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             npc.ModNPC<ThanatosHead>().SmokeDrawer.DrawSet(npc.Center);
             return false;
         }

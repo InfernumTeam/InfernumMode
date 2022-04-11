@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Projectile.Opacity = Utils.GetLerpValue(480f, 470f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 10f, Projectile.timeLeft, true) * 0.75f;
 
-            if (Time >= -10f && Time <= 8f)
+            if (Time is >= (-10f) and <= 8f)
             {
                 float flySpeed = MathHelper.Lerp(10f, 21f, Utils.GetLerpValue(-10f, 8f, Time, true));
                 Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * flySpeed;
@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (Projectile.timeLeft > 475)
                 return false;

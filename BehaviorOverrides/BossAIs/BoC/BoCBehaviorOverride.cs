@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 for (int i = 0; i < creeperCount; i++)
                 {
                     Point spawnPosition = (npc.position + npc.Size * Main.rand.NextVector2Square(0f, 1f)).ToPoint();
-                    int creeperAwMan = NPC.NewNPC(spawnPosition.X, spawnPosition.Y, NPCID.Creeper, ai0: i / (float)creeperCount);
+                    int creeperAwMan = NPC.NewNPC(new InfernumSource(), spawnPosition.X, spawnPosition.Y, NPCID.Creeper, ai0: i / (float)creeperCount);
                     if (Main.npc.IndexInRange(creeperAwMan))
                         Main.npc[creeperAwMan].velocity = Main.rand.NextVector2Circular(3f, 3f);
                 }
@@ -345,7 +345,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             {
                 for (int i = 1; i < 8; i++)
                 {
-                    int illusion = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion>());
+                    int illusion = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion>());
                     Main.npc[illusion].ai[1] = MathHelper.TwoPi * i / 8f;
                 }
             }
@@ -451,7 +451,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             {
                 spinAngle += MathHelper.TwoPi * 2f / spinTime * Utils.GetLerpValue(teleportFadeTime * 1.5f + spinTime, teleportFadeTime * 1.5f + spinTime - 30f, attackTimer, true);
                 if (Main.netMode != NetmodeID.MultiplayerClient && (int)attackTimer % 16f == 15f)
-                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion2>(), npc.whoAmI);
+                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion2>(), npc.whoAmI);
             }
 
             npc.localAI[1] = (float)Math.Sin(Utils.GetLerpValue((int)(teleportFadeTime * 1.5f) + spinTime - 20f, (int)(teleportFadeTime * 1.5f) + spinTime + 45f, attackTimer, true) * MathHelper.Pi);
@@ -586,7 +586,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             void drawInstance(Vector2 drawPosition, Color color, float scale)
             {
                 drawPosition -= Main.screenPosition;
-                spriteBatch.Draw(texture, drawPosition, frame, color, npc.rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, frame, color, npc.rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
 
             float cyanAuraStrength = npc.localAI[1];

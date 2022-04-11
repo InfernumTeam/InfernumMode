@@ -94,7 +94,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             return color * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (BeamDrawer is null)
                 BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
@@ -115,6 +115,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             return false;
         }
 
-        public override bool CanDamage() => Time >= 8f;
+        public override bool? CanDamage() => Time >= 8f ? null : false;
     }
 }

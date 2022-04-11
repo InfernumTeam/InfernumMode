@@ -41,12 +41,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             Projectile.scale = Utils.GetLerpValue(0f, 8f, LifetimeCountdown, true);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 start = Projectile.Center - AngularOffset.ToRotationVector2() * 2600f;
             Vector2 end = Projectile.Center + AngularOffset.ToRotationVector2() * 5600f;
             float width = Projectile.scale * 5f;
-            spriteBatch.DrawLineBetter(start, end, Color.DarkViolet, width);
+            Main.spriteBatch.DrawLineBetter(start, end, Color.DarkViolet, width);
             return false;
         }
 

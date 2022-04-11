@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 if (Projectile.velocity.Y != oldVelocity.Y)
                     Projectile.velocity.Y = -oldVelocity.Y;
 
-                if (Projectile.velocity.Y < 3f && Projectile.velocity.Y > -3f)
+                if (Projectile.velocity.Y is < 3f and > (-3f))
                     Projectile.velocity = Vector2.Zero;
             }
             else
@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             return false;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Color drawColor = Poisonous ? Color.Green : Color.White;
             drawColor.A = 0;

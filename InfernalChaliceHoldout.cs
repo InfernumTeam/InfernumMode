@@ -176,9 +176,9 @@ namespace InfernumMode
             Projectile.Center = Owner.RotatedRelativePoint(Owner.MountedCenter, true) + new Vector2(Projectile.spriteDirection * 16f, -16f);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 baseDrawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = frame.Size() * 0.5f;
@@ -193,10 +193,10 @@ namespace InfernumMode
                 for (int i = 0; i < 10; i++)
                 {
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * 4.4f).ToRotationVector2() * outwardness;
-                    spriteBatch.Draw(texture, baseDrawPosition + drawOffset, frame, afterimageColor, 0f, origin, Projectile.scale, direction, 0f);
+                    Main.spriteBatch.Draw(texture, baseDrawPosition + drawOffset, frame, afterimageColor, 0f, origin, Projectile.scale, direction, 0f);
                 }
             }
-            spriteBatch.Draw(texture, baseDrawPosition, frame, baseColor, 0f, origin, Projectile.scale, direction, 0f);
+            Main.spriteBatch.Draw(texture, baseDrawPosition, frame, baseColor, 0f, origin, Projectile.scale, direction, 0f);
 
             return false;
         }

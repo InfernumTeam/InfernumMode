@@ -32,11 +32,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / 20f) * 6f;
         }
 
-        public override bool CanDamage() => false;
+        public override bool? CanDamage() => false ? null : false;
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             // Create an inner and outer telegraph.
             Color outerTelegraphColor = new(255, 70, 53, 0);
@@ -46,8 +46,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Vector2 telegraphStart = Projectile.Center;
             Vector2 telegraphEnd = telegraphStart + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 5000f;
 
-            spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, outerTelegraphColor, outerTelegraphScale);
-            spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, innerTelegraphColor, innerTelegraphScale);
+            Main.spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, outerTelegraphColor, outerTelegraphScale);
+            Main.spriteBatch.DrawLineBetter(telegraphStart, telegraphEnd, innerTelegraphColor, innerTelegraphScale);
             return false;
         }
 

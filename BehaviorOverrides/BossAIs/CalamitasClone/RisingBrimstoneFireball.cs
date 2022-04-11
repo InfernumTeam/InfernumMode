@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
+            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
             int fireDamage = shouldBeBuffed ? 380 : 160;
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 5f, shootVelocity, ModContent.ProjectileType<HomingBrimstoneBurst>(), fireDamage, 0f);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, 0);
             return false;

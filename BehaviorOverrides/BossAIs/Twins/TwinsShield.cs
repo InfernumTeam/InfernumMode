@@ -71,12 +71,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             CalamityGlobalProjectile.ExpandHitboxBy(Projectile, (int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (!Main.npc.IndexInRange((int)OwnerIndex) || !Main.npc[(int)OwnerIndex].active)
                 return false;
 
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             Vector2 scale = new(1.5f, 1f);
             DrawData drawData = new(ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value,
@@ -92,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             GameShaders.Misc["ForceField"].Apply(drawData);
             drawData.Draw(spriteBatch);
 
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
     }

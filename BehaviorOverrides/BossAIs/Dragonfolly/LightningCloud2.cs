@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Color lineColor = Color.Red;
             float lineWidth = MathHelper.Lerp(0.25f, 3f, Utils.GetLerpValue(0f, 22f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 22f, Time, true));

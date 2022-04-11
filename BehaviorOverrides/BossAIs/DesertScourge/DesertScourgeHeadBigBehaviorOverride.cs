@@ -424,7 +424,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         break;
 
                     Vector2 vultureSpawnPosition = target.Center + new Vector2(MathHelper.Lerp(-600f, 600f, i / 2f), -500f);
-                    NPC.NewNPC((int)vultureSpawnPosition.X, (int)vultureSpawnPosition.Y, NPCID.Vulture);
+                    NPC.NewNPC(new InfernumSource(), (int)vultureSpawnPosition.X, (int)vultureSpawnPosition.Y, NPCID.Vulture);
                 }
             }
 
@@ -487,9 +487,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             {
                 int nextIndex;
                 if (i < wormLength - 1)
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
                 Main.npc[nextIndex].realLife = npc.whoAmI;
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;

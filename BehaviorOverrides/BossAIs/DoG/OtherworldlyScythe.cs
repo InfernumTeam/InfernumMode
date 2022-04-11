@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Projectile.velocity = (Projectile.velocity * 40f + Projectile.SafeDirectionTo(closest.Center) * 19f) / 41f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;

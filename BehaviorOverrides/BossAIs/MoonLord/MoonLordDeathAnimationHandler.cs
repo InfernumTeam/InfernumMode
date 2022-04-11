@@ -35,9 +35,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Projectile.Center = core.Center;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             float deathAnimationTimer = AnimationTimer;
             float totalDeathRays = MathHelper.Lerp(0f, 8f, Utils.GetLerpValue(0f, 180f, deathAnimationTimer, true));
@@ -55,9 +55,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 rayDirection += Main.GlobalTimeWrappedHourly * 0.48f;
                 DrawLightRay(seed, rayDirection, rayAnimationCompletion, Projectile.Center);
             }
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.ExitShaderRegion();
 
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             float coreBloomPower = Utils.GetLerpValue(0f, 120f, deathAnimationTimer, true);
 
@@ -69,10 +69,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 Vector2 bloomSize = new Vector2(200f) / bloomCircle.Size() * (float)Math.Pow(coreBloomPower, 2D);
                 bloomSize *= 1f + (rayExpandFactor - 1f) * 2f;
 
-                spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise * coreBloomPower, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
+                Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise * coreBloomPower, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
             }
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
 
             float giantTwinkleSize = Utils.GetLerpValue(570f, 530f, deathAnimationTimer, true) * Utils.GetLerpValue(450f, 510f, deathAnimationTimer, true);
             if (giantTwinkleSize > 0f)
@@ -82,14 +82,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
                 float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 5.13f;
 
-                spriteBatch.SetBlendState(BlendState.Additive);
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 for (int i = 0; i < 2; i++)
                 {
-                    spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, 0f, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1f, 1.85f), SpriteEffects.None, 0f);
-                    spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, secondaryTwinkleRotation, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1.3f, 1f), SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, 0f, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1f, 1.85f), SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, secondaryTwinkleRotation, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1.3f, 1f), SpriteEffects.None, 0f);
                 }
-                spriteBatch.ResetBlendState();
+                Main.spriteBatch.ResetBlendState();
             }
 
             return false;

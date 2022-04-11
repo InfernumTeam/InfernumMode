@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             return color * NPC.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2[] baseOldPositions = NPC.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
             if (baseOldPositions.Length <= 2)
@@ -126,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 3f;
                 Vector2 drawPosition = NPC.Center - Main.screenPosition + drawOffset;
-                spriteBatch.Draw(texture, drawPosition, null, afterimageColor, 0f, origin, NPC.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, afterimageColor, 0f, origin, NPC.scale, SpriteEffects.None, 0f);
             }
 
             return false;

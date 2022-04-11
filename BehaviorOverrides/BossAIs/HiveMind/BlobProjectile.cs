@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Color drawColor = Color.MediumPurple;
             drawColor.A = 0;

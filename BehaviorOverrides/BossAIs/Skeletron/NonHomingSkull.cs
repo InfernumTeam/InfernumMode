@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 0.3f);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Color drawColor = Color.Purple;
             drawColor.A = 0;

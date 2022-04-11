@@ -245,7 +245,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (LightningBackgroundDrawer is null)
                     LightningBackgroundDrawer = new PrimitiveTrail(LightningBackgroundWidthFunction, LightningBackgroundColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
 
-                spriteBatch.EnterShaderRegion();
+                Main.spriteBatch.EnterShaderRegion();
 
                 // Draw electricity between NPCs.
                 if (NPCToAttachTo >= 0 && Main.npc[NPCToAttachTo].active)
@@ -285,19 +285,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                         }
                     }
                 }
-                spriteBatch.ExitShaderRegion();
+                Main.spriteBatch.ExitShaderRegion();
 
                 // Draw the glowmask and regular texture.
                 // This is influenced by the crystal glow at the end.
                 Color glowmaskColor = Color.Lerp(Color.White, new Color(1f, 0f, 0f, 0.3f), MinionRedCrystalGlow);
-                spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? drawColor), NPC.rotation, origin, NPC.scale, 0, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? drawColor), NPC.rotation, origin, NPC.scale, 0, 0f);
 
                 for (int i = 0; i < 2; i++)
-                    spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? glowmaskColor), NPC.rotation, origin, NPC.scale, 0, 0f);
+                    Main.spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? glowmaskColor), NPC.rotation, origin, NPC.scale, 0, 0f);
                 if (MinionRedCrystalGlow > 0f)
                 {
                     float backimageOpacity = MathHelper.Lerp(0f, 0.1f, MinionRedCrystalGlow);
-                    spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? Color.White) * backimageOpacity, NPC.rotation, origin, NPC.scale, 0, 0f);
+                    Main.spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? Color.White) * backimageOpacity, NPC.rotation, origin, NPC.scale, 0, 0f);
                 }
             }
 

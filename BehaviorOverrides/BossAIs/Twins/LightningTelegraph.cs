@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool CanDamage() => false;
+        public override bool? CanDamage() => false ? null : false;
 
         public override void Kill(int timeLeft)
         {

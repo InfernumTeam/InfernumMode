@@ -273,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 if (!Main.npc[i].active)
                     continue;
-                if (Main.npc[i].type != NPCID.Retinazer && Main.npc[i].type != NPCID.Spazmatism)
+                if (Main.npc[i].type is not NPCID.Retinazer and not NPCID.Spazmatism)
                     continue;
                 if (Main.npc[i].type == npc.type)
                     continue;
@@ -291,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int shield = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, 255);
+                    int shield = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, 255);
                     Main.projectile[shield].ai[0] = npc.whoAmI;
                 }
                 Utilities.DisplayText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: DEFENSES PENETRATED. INITIATING PROCEDURE SHLD-17ECF9.", npc.type == NPCID.Spazmatism ? Color.LimeGreen : Color.IndianRed);
@@ -329,16 +329,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient && overdriveTimer == 105f)
                         {
-                            int explosion = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+                            int explosion = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
                             Main.projectile[explosion].ai[0] = npc.type;
 
                             if (npc.type == NPCID.Retinazer)
                             {
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyOrb>(), 0, npc.whoAmI, 1f);
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyOrb>(), 0, npc.whoAmI, -1f);
+                                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyOrb>(), 0, npc.whoAmI, 1f);
+                                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyOrb>(), 0, npc.whoAmI, -1f);
                             }
                             else if (npc.type == NPCID.Spazmatism)
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CursedOrb>(), 0, npc.whoAmI);
+                                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CursedOrb>(), 0, npc.whoAmI);
                         }
 
                         overdriveTimer++;
@@ -878,10 +878,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         npc.Opacity = 1f - attackTimer / 60f;
                     }
 
-                    if (attackTimer > 60f && attackTimer < 240f)
+                    if (attackTimer is > 60f and < 240f)
                         npc.velocity *= 0.97f;
 
-                    if (attackTimer >= 240f && attackTimer <= 270f)
+                    if (attackTimer is >= 240f and <= 270f)
                     {
                         npc.Opacity = Utils.GetLerpValue(240f, 270f, attackTimer, true);
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
@@ -951,7 +951,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             if (Main.netMode != NetmodeID.MultiplayerClient && orbResummonTimer > 900f)
             {
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CursedOrb>(), 0, npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CursedOrb>(), 0, npc.whoAmI);
                 orbResummonTimer = 0f;
             }
 

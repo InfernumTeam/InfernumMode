@@ -42,9 +42,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             Projectile.Opacity = Utils.GetLerpValue(660f, 620f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 30f, Projectile.timeLeft, true);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tipTexture = Main.projectileTexture[Projectile.type];
+            Texture2D tipTexture = Utilities.ProjTexture(Projectile.type);
             Texture2D body1Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Plantera/NettlevineArenaSeparatorBody1").Value;
             Texture2D body2Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Plantera/NettlevineArenaSeparatorBody2").Value;
             Vector2 bodyOrigin = body1Texture.Size() * new Vector2(0.5f, 1f);
@@ -56,12 +56,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             while (!Projectile.WithinRange(currentDrawPosition, 36f))
             {
                 Texture2D textureToUse = fuck % 2 == 0 ? body1Texture : body2Texture;
-                spriteBatch.Draw(textureToUse, currentDrawPosition - Main.screenPosition, null, drawColor, Projectile.rotation, bodyOrigin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(textureToUse, currentDrawPosition - Main.screenPosition, null, drawColor, Projectile.rotation, bodyOrigin, Projectile.scale, SpriteEffects.None, 0f);
                 currentDrawPosition += (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * body1Texture.Height;
                 fuck++;
             }
 
-            spriteBatch.Draw(tipTexture, currentDrawPosition - Main.screenPosition, null, drawColor, Projectile.rotation, tipOrigin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tipTexture, currentDrawPosition - Main.screenPosition, null, drawColor, Projectile.rotation, tipOrigin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 

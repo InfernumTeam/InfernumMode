@@ -144,7 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             Main.instance.DrawCacheNPCsBehindNonSolidTiles.Add(index);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
             Vector2 handScale = new Vector2(HandSize) / texture.Size() * 1.6f;
@@ -178,14 +178,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 {
                     Vector2 fingerDrawPosition = NPC.Center + fingerAngle.ToRotationVector2() * HandSize * 0.5f - Main.screenPosition;
                     fingerDrawPosition += fingerAngle.ToRotationVector2() * currentFingerOutwardness * j / 3f;
-                    spriteBatch.Draw(texture, fingerDrawPosition, null, handColor, fingerAngle + MathHelper.PiOver2, texture.Size() * new Vector2(0.5f, 0f), fingerScale, direction, 0f);
+                    Main.spriteBatch.Draw(texture, fingerDrawPosition, null, handColor, fingerAngle + MathHelper.PiOver2, texture.Size() * new Vector2(0.5f, 0f), fingerScale, direction, 0f);
                 }
             }
 
             for (int i = 0; i < 30; i++)
             {
                 float handRotation = NPC.rotation + MathHelper.PiOver2 + MathHelper.TwoPi * i / 30f;
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, null, handColor * 0.08f, handRotation, texture.Size() * 0.5f, handScale, direction, 0f);
+                Main.spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, null, handColor * 0.08f, handRotation, texture.Size() * 0.5f, handScale, direction, 0f);
             }
 
             for (int i = 0; i < drawPoints.Length - 1; i++)
@@ -208,8 +208,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float rotation = (nextPoint - currentPoint).ToRotation() + MathHelper.PiOver2;
                 Vector2 segmentScale = handScale * MathHelper.Lerp(0.6f, 1f, Utils.GetLerpValue(0.36f, 0f, completionRatio, true));
 
-                spriteBatch.Draw(texture, currentPoint - Main.screenPosition, null, handColor * 0.5f, rotation, texture.Size() * 0.5f, segmentScale, direction, 0f);
-                spriteBatch.Draw(texture, midPoint - Main.screenPosition, null, handColor * 0.5f, rotation, texture.Size() * 0.5f, segmentScale, direction, 0f);
+                Main.spriteBatch.Draw(texture, currentPoint - Main.screenPosition, null, handColor * 0.5f, rotation, texture.Size() * 0.5f, segmentScale, direction, 0f);
+                Main.spriteBatch.Draw(texture, midPoint - Main.screenPosition, null, handColor * 0.5f, rotation, texture.Size() * 0.5f, segmentScale, direction, 0f);
             }
 
             return false;

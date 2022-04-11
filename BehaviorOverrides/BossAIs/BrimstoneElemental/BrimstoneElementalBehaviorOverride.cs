@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
+            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && ReadyToUseBuffedAI;
             bool pissedOff = target.Bottom.Y < (Main.maxTilesY - 200f) * 16f && !BossRushEvent.BossRushActive;
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -291,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
             else if (!target.WithinRange(circleCenter, RoseCircleRadius - 8f))
             {
                 int roseDamage = Main.rand.Next(120, 135);
-                if (CalamityWorld.downedProvidence && ReadyToUseBuffedAI)
+                if (DownedBossSystem.downedProvidence && ReadyToUseBuffedAI)
                     roseDamage = (int)(roseDamage * 1.75);
 
                 target.Center = circleCenter + (target.Center - circleCenter).SafeNormalize(Vector2.Zero) * (RoseCircleRadius - 10f);
@@ -816,7 +816,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                     float vineRotation = circleAngle;
                     Vector2 drawPosition = new(npc.Infernum().ExtraAI[2], npc.Infernum().ExtraAI[3]);
                     drawPosition += circleAngle.ToRotationVector2() * RoseCircleRadius - Main.screenPosition;
-                    spriteBatch.Draw(vineTexture, drawPosition, null, Color.White, vineRotation, vineOrigin, 1f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(vineTexture, drawPosition, null, Color.White, vineRotation, vineOrigin, 1f, SpriteEffects.None, 0f);
 
                     // A benefit of using radians is that a necessary angle increment can be easily computed by the formula:
                     // theta = arc length / radius.
@@ -827,7 +827,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                         float roseRotation = roseRNG.NextFloat(MathHelper.TwoPi);
                         float roseScale = roseRNG.NextFloat(0.5f, 0.8f);
                         Vector2 rosePosition = drawPosition + roseRNG.NextVector2Circular(8f, 1.25f).RotatedBy(circleAngle);
-                        spriteBatch.Draw(roseTexture, rosePosition, null, Color.White, roseRotation, roseOrigin, roseScale, SpriteEffects.None, 0f);
+                        Main.spriteBatch.Draw(roseTexture, rosePosition, null, Color.White, roseRotation, roseOrigin, roseScale, SpriteEffects.None, 0f);
                     }
                 }
             }

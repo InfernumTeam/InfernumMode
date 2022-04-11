@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int spawnedNPC = NPC.NewNPC((int)Projectile.Center.X, (int)Projectile.Center.Y, (int)Projectile.ai[0]);
+            int spawnedNPC = NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y, (int)Projectile.ai[0]);
             if (Main.npc.IndexInRange(spawnedNPC))
                 Main.npc[spawnedNPC].velocity = Vector2.UnitY.RotatedByRandom(0.4f) * -12f;
         }

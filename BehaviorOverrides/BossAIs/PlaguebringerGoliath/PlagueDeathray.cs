@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override float Lifetime => LocalLifetime;
         public override Color LaserOverlayColor => new(79, 150, 21, 50);
         public override Color LightCastColor => Color.Green;
-        public override Texture2D LaserBeginTexture => Main.projectileTexture[Projectile.type];
+        public override Texture2D LaserBeginTexture => Utilities.ProjTexture(Projectile.type);
         public override Texture2D LaserMiddleTexture => Main.extraTexture[21];
         public override Texture2D LaserEndTexture => Main.extraTexture[22];
         public override float MaxLaserLength => 20f;

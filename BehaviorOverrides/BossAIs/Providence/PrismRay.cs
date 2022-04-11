@@ -60,9 +60,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 RotationalSpeed = Time / 60f * InitialRotationalSpeed;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             // Apply a super special shader to the laser.
             Texture2D laserTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTextureTransparent").Value;

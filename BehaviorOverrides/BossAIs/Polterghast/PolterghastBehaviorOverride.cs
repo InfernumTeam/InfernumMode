@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[3] == 0f)
             {
                 for (int i = 0; i < 4; i++)
-                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EerieLimb>(), 0, i);
+                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EerieLimb>(), 0, i);
                 npc.localAI[3] = 1f;
             }
 
@@ -522,7 +522,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // Slow down.
-            if (attackTimer > 80f && attackTimer < 105f)
+            if (attackTimer is > 80f and < 105f)
             {
                 npc.velocity *= 0.94f;
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
@@ -547,7 +547,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // And release accelerating stones.
-            if (attackTimer >= 105f && attackTimer < 160f)
+            if (attackTimer is >= 105f and < 160f)
             {
                 npc.velocity *= 1.005f;
 
@@ -654,7 +654,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (attackTimer > 60f)
                 npc.velocity *= 0.965f;
 
-            if (attackTimer <= 145f || attackTimer > 285f)
+            if (attackTimer is <= 145f or > 285f)
                 npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.15f);
             else
                 npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.0085f);
@@ -760,7 +760,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        int clone = NPC.NewNPC((int)npc.Center.X - 1, (int)npc.Center.Y, cloneType);
+                        int clone = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 1, (int)npc.Center.Y, cloneType);
 
                         // An NPC must update once for it to recieve a whoAmI variable.
                         // Without this, the below IEnumerable collection would not incorporate this NPC.
@@ -795,7 +795,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 }
             }
 
-            if (adjustedTimer > 50f && adjustedTimer < 105f)
+            if (adjustedTimer is > 50f and < 105f)
             {
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 npc.velocity *= 1.01f;
@@ -837,14 +837,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             void drawInstance(Vector2 position, Color color)
             {
-                spriteBatch.Draw(polterTexture, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(polterGlowmaskHeart, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(polterGlowmaskEctoplasm, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(polterTexture, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(polterGlowmaskHeart, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(polterGlowmaskEctoplasm, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
 
             if (inPhase3 || enraged)
             {
-                spriteBatch.SetBlendState(BlendState.Additive);
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 Color baseColor = Color.White;
                 float drawOffsetFactor = MathHelper.Lerp(6.5f, 8.5f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.7f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
@@ -862,7 +862,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     drawInstance(baseDrawPosition + drawOffset, npc.GetAlpha(baseColor) * fadeFactor);
                 }
             }
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
 
             drawInstance(baseDrawPosition, npc.GetAlpha(Color.White));
             return false;

@@ -37,9 +37,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Projectile.scale = Utils.GetLerpValue(45f, 5f, Projectile.timeLeft);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D telegraphTexture = Main.projectileTexture[Projectile.type];
+            Texture2D telegraphTexture = Utilities.ProjTexture(Projectile.type);
             Color telegraphColor = Color.White * Projectile.Opacity * 0.2f;
             telegraphColor.A = 0;
 
@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 Vector2 scale = new Vector2(0.58f, 1f) * Projectile.scale;
                 scale *= MathHelper.Lerp(0.015f, 1f, i / 35f);
 
-                spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, 0f, telegraphTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, 0f, telegraphTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
             return false;
         }

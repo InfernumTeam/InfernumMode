@@ -89,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             npc.rotation = (npc.rotation * 4f + npc.velocity.X * 0.04f * 1.25f) / 10f;
 
             // Repel from other swarmers.
-            if (attackState == 0f || attackState == 1f)
+            if (attackState is 0f or 1f)
             {
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
@@ -349,7 +349,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     Vector2 drawPosition = baseDrawPosition - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
                     if (fadeToRed > 0.4f)
                         drawPosition += (MathHelper.TwoPi * i / drawInstances + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2() * 2.5f;
-                    spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor) * opacity, npc.rotation, origin, scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor) * opacity, npc.rotation, origin, scale, spriteEffects, 0f);
                 }
             }
 

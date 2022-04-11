@@ -35,13 +35,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Lighting.AddLight(Projectile.Center, Color.White.ToVector3());
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 2);
             return false;
         }
 
-        public override bool CanDamage() => Projectile.Opacity >= 1f;
+        public override bool? CanDamage() => Projectile.Opacity >= 1f ? null : false;
 
         public override void Kill(int timeLeft)
         {

@@ -77,13 +77,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, Main.projectileTexture[Projectile.type], false);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, Utilities.ProjTexture(Projectile.type), false);
             return false;
         }
 
-        public override bool CanDamage() => Projectile.timeLeft > RedirectDelay;
+        public override bool? CanDamage() => Projectile.timeLeft > RedirectDelay ? null : false;
 
         public override void Kill(int timeLeft)
         {

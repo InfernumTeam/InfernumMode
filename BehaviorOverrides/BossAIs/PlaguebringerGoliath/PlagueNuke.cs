@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     if (NPC.collideX || NPC.collideY)
                     {
                         for (int i = 1; i <= 5; i++)
-                            Gore.NewGore(NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Mod.GetGoreSlot($"Gores/PlagueNuke{i}"));
+                            Gore.NewGore(NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Utilities.GetGoreID($"PlagueNuke{i}"));
                     }
                     NPC.active = false;
                 }
@@ -149,8 +149,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             Vector2 drawPosition = NPC.Center - Main.screenPosition;
             Color color = NPC.GetAlpha(drawColor);
 
-            spriteBatch.Draw(texture, drawPosition, NPC.frame, color, NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, color, NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
             return false;
         }
 

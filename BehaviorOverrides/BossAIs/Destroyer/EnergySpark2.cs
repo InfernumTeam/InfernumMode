@@ -38,18 +38,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             return new Color(255, 255, 255, 56) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (Projectile.timeLeft > 330)
             {
                 float width = (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(360f, 330f, Projectile.timeLeft, true)) * 5f + 1f;
                 Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 5100f;
-                spriteBatch.DrawLineBetter(Projectile.Center, end, Color.Red * 0.4f, width * 1.8f);
-                spriteBatch.DrawLineBetter(Projectile.Center, end, Color.White * 0.6f, width);
+                Main.spriteBatch.DrawLineBetter(Projectile.Center, end, Color.Red * 0.4f, width * 1.8f);
+                Main.spriteBatch.DrawLineBetter(Projectile.Center, end, Color.White * 0.6f, width);
                 return false;
             }
 
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Vector2 origin = texture.Size() * 0.5f;
 
             for (int i = 0; i < 7; i++)
@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 Vector2 drawOffset = -Projectile.velocity.SafeNormalize(Vector2.Zero) * i * 7f;
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
                 Color backAfterimageColor = Projectile.GetAlpha(lightColor) * ((7f - i) / 7f);
-                spriteBatch.Draw(texture, afterimageDrawPosition, null, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
 
             Color frontAfterimageColor = Projectile.GetAlpha(lightColor) * 0.15f;
@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 4f;
                 Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
-                spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             return false;
         }

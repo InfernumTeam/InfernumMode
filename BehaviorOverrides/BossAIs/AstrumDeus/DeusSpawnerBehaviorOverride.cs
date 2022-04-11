@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AstrumDeusSpawn"), projectile.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int deus = NPC.NewNPC((int)projectile.Center.X, (int)projectile.Center.Y - 3300, ModContent.NPCType<AstrumDeusHeadSpectral>());
+                    int deus = NPC.NewNPC(new InfernumSource(), (int)projectile.Center.X, (int)projectile.Center.Y - 3300, ModContent.NPCType<AstrumDeusHeadSpectral>());
                     CalamityMod.CalamityUtils.BossAwakenMessage(deus);
                 }
             }
@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 Color beamColor = Color.Lerp(Color.Lerp(Color.OrangeRed, Color.Red, 0.5f), Color.Cyan, ((float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.2f + i * 0.26f) * 0.5f + 0.5f) * 0.4f + 0.3f);
                 beamColor *= intensity * 0.36f;
                 beamColor.A = 0;
-                spriteBatch.Draw(Main.magicPixel, drawPosition, null, beamColor, 0f, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(Main.magicPixel, drawPosition, null, beamColor, 0f, origin, scale, SpriteEffects.None, 0f);
             }
 
             // TODO - Use a cool star texture here, after the beacon is drawn.

@@ -127,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 attachedHeadCenterPos = new Vector2(npc.Center.X, npc.Top.Y);
                 npc.netUpdate = true;
 
-                int freeHeadInt = NPC.NewNPC((int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHeadFree);
+                int freeHeadInt = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHeadFree);
                 Main.npc[freeHeadInt].Center = attachedHeadCenterPos;
                 Main.npc[freeHeadInt].dontTakeDamage = true;
                 Main.npc[freeHeadInt].noGravity = true;
@@ -137,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Main.npc[freeHeadInt].netUpdate = true;
                 FreeHeadNPC = freeHeadInt;
 
-                int attachedHeadInt = NPC.NewNPC((int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHead);
+                int attachedHeadInt = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHead);
                 Main.npc[attachedHeadInt].Center = attachedHeadCenterPos;
                 Main.npc[attachedHeadInt].lifeMax = Main.npc[attachedHeadInt].life = npc.lifeMax;
                 Main.npc[attachedHeadInt].noGravity = true;
@@ -146,12 +146,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Main.npc[attachedHeadInt].netUpdate = true;
                 AttachedHeadNPC = attachedHeadInt;
 
-                int leftHand = NPC.NewNPC((int)leftHandCenterPos.X, (int)leftHandCenterPos.Y, ModContent.NPCType<GolemFistLeft>());
+                int leftHand = NPC.NewNPC(new InfernumSource(), (int)leftHandCenterPos.X, (int)leftHandCenterPos.Y, ModContent.NPCType<GolemFistLeft>());
                 Main.npc[leftHand].ai[0] = npc.whoAmI;
                 Main.npc[leftHand].netUpdate = true;
                 LeftFistNPC = leftHand;
 
-                int rightHand = NPC.NewNPC((int)rightHandCenterPos.X, (int)rightHandCenterPos.Y, ModContent.NPCType<GolemFistRight>());
+                int rightHand = NPC.NewNPC(new InfernumSource(), (int)rightHandCenterPos.X, (int)rightHandCenterPos.Y, ModContent.NPCType<GolemFistRight>());
                 Main.npc[rightHand].ai[0] = npc.whoAmI;
                 Main.npc[rightHand].netUpdate = true;
                 RightFistNPC = rightHand;
@@ -1345,7 +1345,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int platform = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GolemArenaPlatform>());
+            int platform = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GolemArenaPlatform>());
             if (Main.npc.IndexInRange(platform))
             {
                 Main.npc[platform].velocity = velocity;
@@ -1572,12 +1572,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     backAfterimageColor *= backAfterimageInterpolant;
                     backAfterimageColor.A /= 8;
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
-                    spriteBatch.Draw(texture, drawPos + drawOffset, npc.frame, backAfterimageColor, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPos + drawOffset, npc.frame, backAfterimageColor, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 }
             }
 
-            spriteBatch.Draw(texture, drawPos, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(glowMask, drawPos, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPos, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowMask, drawPos, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             // Draw laser ray telegraphs.
             float laserRayTelegraphInterpolant = npc.Infernum().ExtraAI[17];

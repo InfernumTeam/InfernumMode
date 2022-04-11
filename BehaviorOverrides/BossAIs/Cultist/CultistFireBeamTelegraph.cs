@@ -42,12 +42,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(Target.Center), 0.15f);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             Vector2 aimDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
             Utils.DrawLine(spriteBatch, Projectile.Center, Projectile.Center + aimDirection * FireBeam.LaserLength, Color.Orange, Color.OrangeRed, Projectile.scale);
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

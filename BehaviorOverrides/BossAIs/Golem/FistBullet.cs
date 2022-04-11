@@ -60,9 +60,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             return false;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Rectangle rectangle = new(0, 0, texture.Width, texture.Height);
             Vector2 origin = rectangle.Size() * .5f;
             Color drawColor = Projectile.GetAlpha(lightColor);

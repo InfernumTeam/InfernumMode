@@ -107,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         npc.velocity = -Vector2.UnitY * 4f;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
+                            Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
                     }
 
                     attackTimer = 0f;
@@ -198,13 +198,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int hand = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
+                    int hand = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
                     Main.npc[hand].ai[0] = -1f;
                     Main.npc[hand].ai[1] = npc.whoAmI;
                     Main.npc[hand].target = npc.target;
                     Main.npc[hand].netUpdate = true;
 
-                    hand = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
+                    hand = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
                     Main.npc[hand].ai[0] = 1f;
                     Main.npc[hand].ai[1] = npc.whoAmI;
                     Main.npc[hand].target = npc.target;
@@ -494,7 +494,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 }
             }
 
-            if (attackTimer > 50f && attackTimer < 270f)
+            if (attackTimer is > 50f and < 270f)
             {
                 float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 7.25f;
                 if (phase3)
@@ -663,7 +663,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 Color drawColor = Color.Lerp(Color.Transparent, Color.Fuchsia, backGlowFade) * backGlowFade * 0.24f;
                 drawColor.A = 0;
 
-                spriteBatch.Draw(npcTexture, drawPosition, null, drawColor, npc.rotation, npcTexture.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(npcTexture, drawPosition, null, drawColor, npc.rotation, npcTexture.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
 
             return true;

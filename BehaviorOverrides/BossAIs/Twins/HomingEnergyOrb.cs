@@ -43,13 +43,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2[] baseOldPositions = Projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
             if (baseOldPositions.Length <= 2)
                 return true;
 
-            Texture2D projectileTexture = Main.projectileTexture[Projectile.type];
+            Texture2D projectileTexture = Utilities.ProjTexture(Projectile.type);
             Vector2 origin = projectileTexture.Size() * 0.5f;
             List<Vector2> adjustedOldPositions = new BezierCurve(baseOldPositions).GetPoints(40);
             for (int i = 0; i < adjustedOldPositions.Count; i++)
@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 float scale = Projectile.scale * (float)Math.Pow(MathHelper.Lerp(1f, 0.4f, completionRatio), 2D);
                 Color drawColor = Color.Lerp(Color.Red, Color.Purple, completionRatio) * (1f - completionRatio) * Projectile.Opacity * 0.8f;
                 Vector2 drawPosition = adjustedOldPositions[i] + Projectile.Size * 0.5f - Main.screenPosition;
-                spriteBatch.Draw(projectileTexture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(projectileTexture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             }
             return false;
         }

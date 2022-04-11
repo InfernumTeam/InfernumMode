@@ -39,17 +39,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 Projectile.scale = 1f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 top = Projectile.Center - Vector2.UnitY * 3000f;
             Vector2 bottom = Projectile.Center + Vector2.UnitY * 3000f;
-            spriteBatch.DrawLineBetter(top, bottom, Color.Turquoise, Projectile.scale * 4f);
+            Main.spriteBatch.DrawLineBetter(top, bottom, Color.Turquoise, Projectile.scale * 4f);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            int shark = NPC.NewNPC((int)Projectile.Center.X, (int)Projectile.Center.Y - 16, NPCID.Sharkron2);
+            int shark = NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y - 16, NPCID.Sharkron2);
 
             Main.npc[shark].velocity = Vector2.UnitY * -Projectile.ai[1];
             Main.npc[shark].life = Main.npc[shark].lifeMax = BossRushEvent.BossRushActive ? 11000 : 1200;

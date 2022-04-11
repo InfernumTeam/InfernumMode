@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Time++;
         }
 
-        public override bool CanDamage() => Projectile.Opacity > 0.75f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.75f ? null : false;
 
         public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
 

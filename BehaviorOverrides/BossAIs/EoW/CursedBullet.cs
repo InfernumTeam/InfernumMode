@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             target.Calamity().lastProjectileHit = Projectile;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 3);
             return false;

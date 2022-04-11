@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             target.AddBuff(BuffID.CursedInferno, 300);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], Color.White * Projectile.Opacity, 1);
             return false;

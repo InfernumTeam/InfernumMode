@@ -133,7 +133,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
             Texture2D noiseTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawPosition2 = NPC.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
@@ -142,8 +142,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].UseSecondaryColor(Color.Lerp(Color.Purple, Color.Black, 0.25f));
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].Apply();
 
-            spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 0.4f, SpriteEffects.None, 0f);
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 0.4f, SpriteEffects.None, 0f);
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
     }

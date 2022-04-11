@@ -41,6 +41,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             }
         }
 
-        public override bool CanDamage() => Projectile.alpha < 20;
+        public override bool? CanDamage() => Projectile.alpha < 20 ? null : false;
     }
 }

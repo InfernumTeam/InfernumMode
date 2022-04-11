@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     for (int i = 1; i <= 1; i += 2)
                     {
-                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : DustID.Fire);
+                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : 6);
                         fire.velocity = Main.rand.NextVector2Circular(3f, 3f);
                         fire.scale = Main.rand.NextFloat(1.3f, 1.45f);
                         fire.noGravity = true;
@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     for (int i = 1; i <= 1; i += 2)
                     {
                         Vector2 fireVelocity = (Time / 6f).ToRotationVector2().RotatedBy(i * MathHelper.PiOver2) * Main.rand.NextFloat(1.7f, 2.2f);
-                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : DustID.Fire);
+                        Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f), !Main.dayTime ? 245 : 6);
                         fire.velocity = fireVelocity;
                         fire.scale = Main.rand.NextFloat(1.3f, 1.45f);
                         fire.noGravity = true;
@@ -90,20 +90,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             if (!Main.dayTime)
                 texture = ModContent.Request<Texture2D>($"{Texture}Night").Value;
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
-            spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor * 1.3f), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor * 1.3f), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 
-        public override bool CanDamage() => Time >= FadeinTime + 30f;
+        public override bool? CanDamage() => Time >= FadeinTime + 30f ? null : false;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {

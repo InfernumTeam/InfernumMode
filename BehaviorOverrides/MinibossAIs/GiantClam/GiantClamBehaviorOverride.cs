@@ -84,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                     if (attackTimer > 180)
                         hidingInShell = 1f;
 
-                    if (attackTimer == 0 || attackTimer == 180)
+                    if (attackTimer is 0 or 180)
                     {
                         int projectileType = ModContent.ProjectileType<PearlSwirl>();
                         for (float angle = 0; angle <= MathHelper.TwoPi; angle += MathHelper.PiOver2)
@@ -309,12 +309,12 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.Transparent, (i + 1f) / 4f));
                     Vector2 drawOffset = -npc.velocity * i * 0.6f;
-                    spriteBatch.Draw(npcTexture, drawPosition + drawOffset, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(npcTexture, drawPosition + drawOffset, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
-            spriteBatch.Draw(npcTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
-            spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.LightBlue, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(npcTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.LightBlue, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             return false;
         }
     }

@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override float Lifetime => 90;
         public override Color LaserOverlayColor => new Color(153, 84, 176, 0) * 0.945f;
         public override Color LightCastColor => Color.Fuchsia;
-        public override Texture2D LaserBeginTexture => Main.projectileTexture[Projectile.type];
+        public override Texture2D LaserBeginTexture => Utilities.ProjTexture(Projectile.type);
         public override Texture2D LaserMiddleTexture => Main.extraTexture[21];
         public override Texture2D LaserEndTexture => Main.extraTexture[22];
         public override float MaxLaserLength => 2400f;

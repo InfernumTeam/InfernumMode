@@ -261,7 +261,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Time++;
         }
 
-        public override bool CanDamage() => Projectile.alpha <= 40 && State != AttackState.HorizontalRedirect && State != AttackState.TopLeftRedirect;
+        public override bool? CanDamage() => Projectile.alpha <= 40 && State != AttackState.HorizontalRedirect && State != AttackState.TopLeftRedirect ? null : false;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {

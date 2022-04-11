@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void ModifyHitByProjectile(Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (projectile.penetrate > 1 || projectile.penetrate == -1)
+            if (projectile.penetrate is > 1 or (-1))
                 damage = (int)(damage * 0.1);
         }
 

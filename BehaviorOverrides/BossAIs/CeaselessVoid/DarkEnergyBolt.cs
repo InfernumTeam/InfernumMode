@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return Color.Lerp(startingColor, Color.Transparent, MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(0f, endFadeRatio, completionRatio, true)));
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (TrailDrawer is null)
                 TrailDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             {
                 Vector2 start = Projectile.Center;
                 Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 5000f;
-                spriteBatch.DrawLineBetter(start, end, Color.Purple, Projectile.Opacity * 7.5f);
+                Main.spriteBatch.DrawLineBetter(start, end, Color.Purple, Projectile.Opacity * 7.5f);
                 return false;
             }
 
@@ -112,7 +112,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // This state reset is necessary to ensure that the backbuffer is flushed immediately and the
             // trail is drawn before anything else. Not doing this may cause problems with vertex/index buffers down the line.
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

@@ -45,22 +45,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Projectile.scale = Projectile.timeLeft / 40f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 scale = Projectile.Size / texture.Size();
             Color color = Color.Lerp(Color.Turquoise, Color.White, Projectile.scale) * Projectile.scale;
 
-            spriteBatch.Draw(texture, drawPosition, null, color, 0f, texture.Size() * 0.5f, scale * (float)Math.Pow(Projectile.scale, 1.5), 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, color, 0f, texture.Size() * 0.5f, scale * (float)Math.Pow(Projectile.scale, 1.5), 0, 0f);
             for (int i = 0; i < 2; i++)
             {
                 float rotation = MathHelper.Lerp(-MathHelper.PiOver4, MathHelper.PiOver4, i);
-                spriteBatch.Draw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, scale * new Vector2(0.1f, 1f) * 1.45f, 0, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, color, rotation, texture.Size() * 0.5f, scale * new Vector2(0.1f, 1f) * 1.45f, 0, 0f);
             }
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
 
             return false;
         }

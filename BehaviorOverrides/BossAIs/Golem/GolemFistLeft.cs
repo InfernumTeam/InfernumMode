@@ -3,11 +3,10 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using System;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
-    public class GolemFistLeft : ModNPC
+	public class GolemFistLeft : ModNPC
     {
         public override void SetStaticDefaults()
         {
@@ -62,12 +61,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Color color = Lighting.GetColor((int)(FistCenterPos.X / 16f), (int)(FistCenterPos.Y / 16f));
                 Texture2D armTexture = Main.chain21Texture;
                 Rectangle frame = new(0, 0, armTexture.Width, moveDistance);
-                spriteBatch.Draw(armTexture, FistCenterPos - Main.screenPosition, frame, color, armRotation, armTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(armTexture, FistCenterPos - Main.screenPosition, frame, color, armRotation, armTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 FistCenterPos += (npc.Center - FistCenterPos).SafeNormalize(Vector2.Zero) * moveDistance;
             }
 
             SpriteEffects effect = leftFist ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            Texture2D texture = Main.projectileTexture[ModContent.ProjectileType<FistBullet>()];
+            Texture2D texture = Utilities.ProjTexture(ModContent.ProjectileType<FistBullet>());
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
             Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, effect, 0f);
             return false;

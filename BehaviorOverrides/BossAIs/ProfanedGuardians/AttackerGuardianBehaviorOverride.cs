@@ -45,8 +45,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Summon the defender and healer guardian.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[1] == 0f)
             {
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianBoss3>());
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianBoss2>());
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianBoss3>());
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianBoss2>());
                 npc.localAI[1] = 1f;
             }
 
@@ -196,8 +196,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == phase2TransitionTime - 45)
                 {
-                    NPC.NewNPC((int)npc.Center.X - 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, -1);
-                    NPC.NewNPC((int)npc.Center.X + 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, 1);
+                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, -1);
+                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X + 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, 1);
                 }
                 return;
             }
@@ -232,7 +232,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             // Move back and re-appear.
-            if (attackTimer > 30f && attackTimer < 75f)
+            if (attackTimer is > 30f and < 75f)
             {
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(1f, 6f, Utils.GetLerpValue(30f, 75, attackTimer, true));
                 npc.alpha = Utils.Clamp(npc.alpha - 15, 0, 255);
@@ -257,7 +257,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             // Arc around a bit.
-            if (attackTimer >= 75f && attackTimer < 150f)
+            if (attackTimer is >= 75f and < 150f)
             {
                 npc.velocity = npc.velocity.RotatedBy(arcDirection * MathHelper.TwoPi / 75f);
 

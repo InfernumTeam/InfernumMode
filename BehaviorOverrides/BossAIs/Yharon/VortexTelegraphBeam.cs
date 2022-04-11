@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             return color * Projectile.Opacity * 0.6f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (BeamDrawer is null)
                 BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
@@ -82,6 +82,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             drawCacheProjsBehindProjectiles.Add(index);
         }
 
-        public override bool CanDamage() => false;
+        public override bool? CanDamage() => false ? null : false;
     }
 }

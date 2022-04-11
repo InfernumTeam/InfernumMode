@@ -88,21 +88,22 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.Emit(OpCodes.Ldarg_2);
-            cursor.EmitDelegate(new Func<NPC, SpriteBatch, Color, bool>((npc, spriteBatch, drawColor) =>
+            cursor.Emit(OpCodes.Ldarg_3);
+            cursor.EmitDelegate(new Func<NPC, SpriteBatch, Vector2, Color, bool>((npc, spriteBatch, screenPosition, drawColor) =>
             {
                 object instance = typeof(NPCLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
                 GlobalNPC[] arr = hookListArrayField.GetValue(instance) as GlobalNPC[];
 
                 if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
-                    return npc.GetGlobalNPC<GlobalNPCDrawEffects>().PreDraw(npc, spriteBatch, drawColor);
+                    return npc.GetGlobalNPC<GlobalNPCDrawEffects>().PreDraw(npc, spriteBatch, screenPosition, drawColor);
 
                 for (int i = 0; i < arr.Length; i++)
                 {
                     GlobalNPC globalNPC = arr[i];
-                    if (!globalNPC.Instance(npc).PreDraw(npc, spriteBatch, drawColor))
+                    if (!globalNPC.Instance(npc).PreDraw(npc, spriteBatch, screenPosition, drawColor))
                         return false;
                 }
-                return npc.ModNPC == null || npc.ModNPC.PreDraw(spriteBatch, drawColor);
+                return npc.ModNPC == null || npc.ModNPC.PreDraw(spriteBatch, screenPosition, drawColor);
             }));
             cursor.Emit(OpCodes.Ret);
         }
@@ -116,9 +117,9 @@ namespace InfernumMode.ILEditingStuff
             cursor.EmitDelegate(new Action<NPC, int>((npc, frameHeight) =>
             {
                 int type = npc.type;
-                if (npc.ModNPC != null && npc.ModNPC.animationType > 0)
+                if (npc.ModNPC != null && npc.ModNPC.AnimationType > 0)
                 {
-                    npc.type = npc.ModNPC.animationType;
+                    npc.type = npc.ModNPC.AnimationType;
                 }
                 if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(type) && InfernumMode.CanUseCustomAIs)
                 {
@@ -186,10 +187,12 @@ namespace InfernumMode.ILEditingStuff
                         return false;
                     }
                 }
-                return projectile.modProjectile == null || projectile.modProjectile.PreAI();
+                return projectile.ModProjectile == null || projectile.ModProjectile.PreAI();
             }));
             cursor.Emit(OpCodes.Ret);
         }
+
+        internal delegate bool PreDrawDelegate(Projectile projectile, ref Color lightColor);
 
         internal static void ProjectilePreDrawChange(ILContext context)
         {
@@ -197,26 +200,26 @@ namespace InfernumMode.ILEditingStuff
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.Emit(OpCodes.Ldarg_2);
-            cursor.EmitDelegate(new Func<Projectile, SpriteBatch, Color, bool>((projectile, spriteBatch, lightColor) =>
+            cursor.EmitDelegate(new PreDrawDelegate((Projectile projectile, ref Color lightColor) =>
             {
                 object instance = typeof(ProjectileLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
                 GlobalProjectile[] arr = typeof(ProjectileLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags).GetValue(instance) as GlobalProjectile[];
                 if (OverridingListManager.InfernumProjectilePreDrawOverrideList.ContainsKey(projectile.type))
-                    return (bool)OverridingListManager.InfernumProjectilePreDrawOverrideList[projectile.type].DynamicInvoke(projectile, spriteBatch, lightColor);
+                    return (bool)OverridingListManager.InfernumProjectilePreDrawOverrideList[projectile.type].DynamicInvoke(projectile, lightColor);
                 for (int i = 0; i < arr.Length; i++)
                 {
                     GlobalProjectile globalNPC = arr[i];
-                    if (globalNPC != null &&
-                        globalNPC is CalamityMod.Projectiles.CalamityGlobalProjectile)
+                    if (globalNPC is not null and
+                        CalamityMod.Projectiles.CalamityGlobalProjectile)
                     {
                         continue;
                     }
-                    if (!globalNPC.Instance(projectile).PreDraw(projectile, spriteBatch, lightColor))
+                    if (!globalNPC.Instance(projectile).PreDraw(projectile, ref lightColor))
                     {
                         return false;
                     }
                 }
-                return projectile.modProjectile == null || projectile.modProjectile.PreDraw(spriteBatch, lightColor);
+                return projectile.ModProjectile == null || projectile.ModProjectile.PreDraw(ref lightColor);
             }));
             cursor.Emit(OpCodes.Ret);
         }

@@ -260,7 +260,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     List<int> circle = new();
                     for (int i = 0; i < 30; i++)
                     {
-                        int exowl = NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Exowl>(), NPC.whoAmI);
+                        int exowl = NPC.NewNPC(new InfernumSource(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<Exowl>(), NPC.whoAmI);
                         if (Main.npc.IndexInRange(exowl))
                         {
                             Main.npc[exowl].ModNPC<Exowl>().CircleCenter = NPC.Center;
@@ -379,7 +379,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     for (int i = 0; i < illusionCount; i++)
                     {
                         Vector2 hologramPosition = GetHologramPosition(i, illusionCount, hologramSpan, hologramInterpolant);
-                        int exowl = NPC.NewNPC((int)hologramPosition.X, (int)hologramPosition.Y, ModContent.NPCType<Exowl>(), NPC.whoAmI);
+                        int exowl = NPC.NewNPC(new InfernumSource(), (int)hologramPosition.X, (int)hologramPosition.Y, ModContent.NPCType<Exowl>(), NPC.whoAmI);
                         if (Main.npc.IndexInRange(exowl))
                         {
                             Main.npc[exowl].ModNPC<Exowl>().UseConfusionEffect = true;
@@ -597,8 +597,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/AthenaNPC_Glowmask").Value;
             Vector2 drawPosition = NPC.Center - Main.screenPosition;
             Vector2 origin = NPC.frame.Size() * 0.5f;
-            spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, 0, 0f);
-            spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, 0, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, 0, 0f);
 
             for (int i = 0; i < Turrets.Length; i++)
             {
@@ -619,13 +619,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 Rectangle turretFrame = turretTexture.Frame(1, totalFrames, 0, Turrets[i].Frame);
                 Vector2 turretOrigin = turretFrame.Size() * 0.5f;
                 Vector2 turretDrawPosition = drawPosition + TurretOffsets[i].RotatedBy(NPC.rotation);
-                spriteBatch.Draw(turretTexture, turretDrawPosition, turretFrame, NPC.GetAlpha(turretColor), 0f, turretOrigin, NPC.scale, 0, 0f);
+                Main.spriteBatch.Draw(turretTexture, turretDrawPosition, turretFrame, NPC.GetAlpha(turretColor), 0f, turretOrigin, NPC.scale, 0, 0f);
             }
 
             // Draw a line telegraph as necessary
             if (TelegraphInterpolant > 0f)
             {
-                spriteBatch.SetBlendState(BlendState.Additive);
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 Texture2D telegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
                 float telegraphScaleFactor = TelegraphInterpolant * 1.2f;
@@ -636,10 +636,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                     Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
                     Color telegraphColor = new Color(74, 255, 204) * (float)Math.Pow(TelegraphInterpolant, 0.79) * ((0.2f - offsetAngle) / 0.2f) * 1.6f;
-                    spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, TelegraphRotation + offsetAngle - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
+                    Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, TelegraphRotation + offsetAngle - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
                 }
 
-                spriteBatch.ResetBlendState();
+                Main.spriteBatch.ResetBlendState();
             }
 
             // Draw holograms.
@@ -649,11 +649,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 float illusionCount = NPC.Infernum().ExtraAI[1];
                 float hologramSpan = NPC.Infernum().ExtraAI[2];
 
-                spriteBatch.EnterShaderRegion();
+                Main.spriteBatch.EnterShaderRegion();
 
                 float rayBrightness = Utils.GetLerpValue(0f, 0.45f, hologramInterpolant, true);
                 DrawLightRay(-MathHelper.PiOver2, rayBrightness, MainTurretCenter);
-                spriteBatch.EnterShaderRegion();
+                Main.spriteBatch.EnterShaderRegion();
 
                 for (int i = 0; i < illusionCount; i++)
                 {
@@ -662,7 +662,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     Vector2 hologramDrawPosition = GetHologramPosition(i, illusionCount, hologramSpan, hologramInterpolant) - Main.screenPosition;
                     DrawExowlHologram(spriteBatch, hologramDrawPosition, illusionFrame, hologramInterpolant);
                 }
-                spriteBatch.ExitShaderRegion();
+                Main.spriteBatch.ExitShaderRegion();
             }
 
             return false;

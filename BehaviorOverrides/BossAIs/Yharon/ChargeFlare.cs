@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if (!Main.dedServ)
             {
                 Vector2 dustSpawnPosition = Projectile.Center + Main.rand.NextVector2CircularEdge(30, 30f) * (float)Math.Pow(Projectile.scale, 2f);
-                Dust dust = Dust.NewDustPerfect(dustSpawnPosition, DustID.Fire);
+                Dust dust = Dust.NewDustPerfect(dustSpawnPosition, 6);
                 dust.scale = 0.2f + Projectile.scale;
                 dust.noGravity = true;
                 dust.velocity = Projectile.DirectionFrom(dustSpawnPosition) * 3f;
@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             return new Color(255, Main.DiscoG, 53, Projectile.alpha);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;
@@ -90,9 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 for (int y = yTileCoords; y < yTileCoords + spawnAreaY; y++)
                 {
                     Tile tile = Main.tile[xTileCoords, y + 10];
-                    if (tile is null)
-                        tile = new Tile();
-                    if (tile.HasTile && !TileID.Sets.Platforms[tile.TileType] && (Main.tileSolid[tile.TileType] || tile.liquid != 0))
+                    if (tile.HasTile && !TileID.Sets.Platforms[tile.TileType] && (Main.tileSolid[tile.TileType] || tile.LiquidAmount != 0))
                     {
                         yTileCoords = y;
                         break;
@@ -101,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 int spawnLimitY = (int)(Main.player[Projectile.owner].Center.Y / 16f) + 50;
                 if (yTileCoords > spawnLimitY)
                     yTileCoords = spawnLimitY;
-                Projectile infernado = Projectile.NewProjectileDirect(new Vector2(xTileCoords * 16 + 8, yTileCoords * 16 - 24), Vector2.Zero, ModContent.ProjectileType<Infernado>(), 0, 4f, Main.myPlayer, 11f, 25f);
+                Projectile infernado = Projectile.NewProjectileDirect(new InfernumSource(), new Vector2(xTileCoords * 16 + 8, yTileCoords * 16 - 24), Vector2.Zero, ModContent.ProjectileType<Infernado>(), 0, 4f, Main.myPlayer, 11f, 25f);
                 infernado.netUpdate = true;
             }
         }

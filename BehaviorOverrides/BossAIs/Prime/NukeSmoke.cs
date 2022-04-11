@@ -25,17 +25,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Projectile.velocity *= 0.985f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Color particle = Color.Lerp(Color.White, Color.Yellow, Projectile.identity % 6f / 6f * 0.6f) * Projectile.Opacity;
             float scaleFactor = MathHelper.Lerp(0.4f, 0.75f, Projectile.identity % 9f / 9f) * 0.11f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
-            spriteBatch.Draw(texture, drawPosition, null, particle, Projectile.rotation, texture.Size() * 0.5f, scaleFactor, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, particle, Projectile.rotation, texture.Size() * 0.5f, scaleFactor, SpriteEffects.None, 0f);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

@@ -57,13 +57,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.White, Color.MediumPurple, Utils.GetLerpValue(45f, 0f, Projectile.timeLeft, true)) * Projectile.Opacity;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 3);
             return false;
         }
 
-        public override bool CanDamage() => Projectile.Opacity >= 1f;
+        public override bool? CanDamage() => Projectile.Opacity >= 1f ? null : false;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {

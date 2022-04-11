@@ -214,7 +214,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
                     for (int i = 0; i < totalSlimesToSpawn; i++)
                     {
-                        int slime = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SlimeSpawnCorrupt2>(), npc.whoAmI);
+                        int slime = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SlimeSpawnCorrupt2>(), npc.whoAmI);
                         if (Main.npc.IndexInRange(slime))
                         {
                             Main.npc[slime].velocity = Main.rand.NextVector2CircularEdge(6f, 6f);

@@ -144,7 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     npc.Center = Main.player[Player.FindClosest(npc.Center, 1, 1)].Center - Vector2.UnitY * 600f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        portalIndex = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGRealityRendEntranceGate>(), 0, 0f);
+                        portalIndex = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGRealityRendEntranceGate>(), 0, 0f);
                 }
 
                 npc.Opacity = 0f;
@@ -162,7 +162,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     npc.netUpdate = true;
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
+                        Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
 
                     // Reset the special attack portal index to -1.
                     portalIndex = -1f;
@@ -218,7 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     // Enter a portal before performing a special attack.
                     if (Main.netMode != NetmodeID.MultiplayerClient && specialAttackTimer == specialAttackDelay - specialAttackTransitionPreparationTime)
                     {
-                        portalIndex = Projectile.NewProjectile(npc.Center + npc.velocity * 75f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                        portalIndex = Projectile.NewProjectile(new InfernumSource(), npc.Center + npc.velocity * 75f, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                         Main.projectile[(int)portalIndex].localAI[0] = 1f;
                         npc.netUpdate = true;
                     }
@@ -507,7 +507,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (deathTimer == 442f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
+                    Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGSpawnBoom>(), 0, 0f);
 
                 if (Main.netMode != NetmodeID.Server)
                 {
@@ -640,10 +640,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (speed > 26f)
                     speed -= 0.08f;
 
-                if (directionToPlayerOrthogonality < 0.85f && directionToPlayerOrthogonality > 0.5f)
+                if (directionToPlayerOrthogonality is < 0.85f and > 0.5f)
                     speed += 0.24f;
 
-                if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
+                if (directionToPlayerOrthogonality is < 0.5f and > (-0.7f))
                     speed -= 0.1f;
 
                 speed = MathHelper.Clamp(speed, flySpeedFactor * 15f, flySpeedFactor * 35f);
@@ -664,7 +664,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         if (chompTime == 0f)
                         {
                             chompTime = 18f;
-                            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
+                            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
                         }
                     }
                 }
@@ -683,7 +683,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (chompTime == 0f)
                 {
                     chompTime = 26f;
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
                 }
             }
         }
@@ -744,7 +744,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     Vector2 spawnOffset = (spawnOffsetAngle + MathHelper.TwoPi * i / 6f).ToRotationVector2() * radius;
                     Vector2 spawnPosition = target.Center + spawnOffset;
-                    Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<RealityBreakPortalLaserWall>(), 0, 0f);
+                    Projectile.NewProjectile(new InfernumSource(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<RealityBreakPortalLaserWall>(), 0, 0f);
                 }
             }
         }
@@ -810,7 +810,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 portalIndex = -1f;
                 Vector2 portalSpawnPosition = target.Center + Main.rand.NextVector2CircularEdge(600f, 600f);
-                initialTeleportPortal = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                initialTeleportPortal = Projectile.NewProjectile(new InfernumSource(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                 Main.projectile[(int)initialTeleportPortal].ai[1] = portalTelegraphTime;
                 npc.netUpdate = true;
             }
@@ -849,7 +849,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     if (!target.dead)
                     {
                         Vector2 portalSpawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitY) * 1900f;
-                        portalIndex = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                        portalIndex = Projectile.NewProjectile(new InfernumSource(), portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
                         Main.projectile[(int)portalIndex].localAI[0] = 1f;
                         Main.projectile[(int)portalIndex].ai[1] = portalTelegraphTime;
                     }
@@ -981,7 +981,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Vector2 jawPosition = drawPosition;
                 jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * i * (jawBaseOffset + (float)Math.Sin(jawRotation) * 24f);
                 jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (58f + (float)Math.Sin(jawRotation) * 30f);
-                spriteBatch.Draw(jawTexture, jawPosition, null, npc.GetAlpha(lightColor), npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
+                Main.spriteBatch.Draw(jawTexture, jawPosition, null, npc.GetAlpha(lightColor), npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
             }
 
             // Draw head backimages as a telegraph.
@@ -1000,12 +1000,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
-                    spriteBatch.Draw(headTexture, drawPosition + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(headTexture, drawPosition + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
                 }
             }
 
-            spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
-            spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
             return false;
         }
         #endregion Drawing

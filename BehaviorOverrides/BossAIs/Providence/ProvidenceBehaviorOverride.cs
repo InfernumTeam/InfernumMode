@@ -266,7 +266,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 10f)
             {
-                Projectile.NewProjectile(npc.Center - Vector2.UnitY * 80f, Vector2.Zero, ModContent.ProjectileType<HolyAura>(), 0, 0f, Main.myPlayer);
+                Projectile.NewProjectile(new InfernumSource(), npc.Center - Vector2.UnitY * 80f, Vector2.Zero, ModContent.ProjectileType<HolyAura>(), 0, 0f, Main.myPlayer);
                 SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyRay"), npc.Center);
             }
 
@@ -816,16 +816,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             drawState = (int)ProvidenceFrameDrawingType.CocoonState;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if ((int)attackTimer == 1 || (int)attackTimer == 10)
+                if ((int)attackTimer is 1 or 10)
                 {
                     int directionalBias = attackTimer <= 1f ? 1 : -1;
                     int guardian = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -8f, ModContent.ProjectileType<AttackerApparation>(), 250, 0f, Main.myPlayer);
-                    (Main.projectile[guardian].modProjectile as AttackerApparation).Time = 10 - attackTimer;
+                    (Main.projectile[guardian].ModProjectile as AttackerApparation).Time = 10 - attackTimer;
                     Main.projectile[guardian].localAI[1] = directionalBias;
 
                     if ((int)attackTimer == 10)
                     {
-                        (Main.projectile[guardian].modProjectile as AttackerApparation).OtherGuardianIndex =
+                        (Main.projectile[guardian].ModProjectile as AttackerApparation).OtherGuardianIndex =
                             Utilities.AllProjectilesByID(ModContent.ProjectileType<AttackerApparation>()).First().identity;
                     }
                 }
@@ -997,16 +997,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             if (Main.dayTime)
             {
                 Color c = Color.Lerp(new Color(255, 120, 0, 128), deathEffectColor, deathEffectInterpolant);
-                spriteBatch.Draw(wingTexture, baseDrawPosition, frame, c * npc.Opacity, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(wingTexture, baseDrawPosition, frame, c * npc.Opacity, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
             }
             else
             {
                 Color nightWingColor = Color.Lerp(new Color(0, 255, 191, 0), deathEffectColor, deathEffectInterpolant) * npc.Opacity;
-                spriteBatch.Draw(wingTexture, baseDrawPosition, frame, nightWingColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(wingTexture, baseDrawPosition, frame, nightWingColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 wingOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTimeWrappedHourly * 0.72f).ToRotationVector2() * npc.Opacity * wingVibrance * 4f;
-                    spriteBatch.Draw(wingTexture, baseDrawPosition + wingOffset, frame, nightWingColor * 0.55f, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(wingTexture, baseDrawPosition + wingOffset, frame, nightWingColor * 0.55f, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
                 }
             }
         }
@@ -1097,7 +1097,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                     Vector2 crystalOrigin = fatCrystalTexture.Size() * 0.5f;
                     Vector2 crystalDrawPosition = npc.Center - Main.screenPosition;
-                    spriteBatch.Draw(fatCrystalTexture, crystalDrawPosition, null, Color.White, npc.rotation, crystalOrigin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(fatCrystalTexture, crystalDrawPosition, null, Color.White, npc.rotation, crystalOrigin, npc.scale, spriteEffects, 0f);
                 }, rainbowVibrance * 1.5f);
 
                 int frameHeight = generalTexture.Height / 3;
@@ -1105,7 +1105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 // Draw the base texture.
                 baseDrawColor *= npc.Opacity;
-                spriteBatch.Draw(generalTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(generalTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
 
                 // Draw the wings.
                 DrawProvidenceWings(npc, spriteBatch, wingTexture, wingVibrance, baseDrawPosition, frame, drawOrigin, spriteEffects);
@@ -1118,13 +1118,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 crystalRainbowIntensity *= 1f - npc.localAI[3];
                 applyShaderAndDoThing(() =>
                 {
-                    spriteBatch.Draw(crystalTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(crystalTexture, baseDrawPosition, frame, baseDrawColor, npc.rotation, drawOrigin, npc.scale, spriteEffects, 0f);
                 }, crystalRainbowIntensity);
             }
 
             void applyShaderAndDoThing(Action thingToDo, float rainbowOpacity)
             {
-                spriteBatch.EnterShaderRegion();
+                Main.spriteBatch.EnterShaderRegion();
 
                 // Apply a super special shader.
                 MiscShaderData gradientShader = GameShaders.Misc["Infernum:GradientWingShader"];
@@ -1136,7 +1136,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 thingToDo();
 
-                spriteBatch.ExitShaderRegion();
+                Main.spriteBatch.ExitShaderRegion();
             }
 
             int totalProvidencesToDraw = (int)MathHelper.Lerp(1f, 30f, burnIntensity);

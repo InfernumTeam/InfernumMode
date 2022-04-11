@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         if (Time >= Main.rand.Next(12, 14))
                             projType = ModContent.ProjectileType<AtlantisSpear2>();
 
-                        int number = Projectile.NewProjectile(Projectile.Center + Projectile.velocity, Projectile.velocity, projType, Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, Time + 1f);
+                        int number = Projectile.NewProjectile(new InfernumSource(), Projectile.Center + Projectile.velocity, Projectile.velocity, projType, Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, Time + 1f);
                         NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, number, 0f, 0f, 0f, 0, 0, 0);
                     }
                 }
@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             for (int i = 0; i < numProj; i++)
             {
                 Vector2 perturbedSpeed = new Vector2(Projectile.velocity.X, Projectile.velocity.Y).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numProj - 1)));
-                int projectile2 = Projectile.NewProjectile(Projectile.Center.X, Projectile.Center.Y, perturbedSpeed.X, perturbedSpeed.Y, ModContent.ProjectileType<AtlantisSpear2>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, 0f);
+                int projectile2 = Projectile.NewProjectile(new InfernumSource(), Projectile.Center.X, Projectile.Center.Y, perturbedSpeed.X, perturbedSpeed.Y, ModContent.ProjectileType<AtlantisSpear2>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, 0f);
                 Main.projectile[projectile2].penetrate = 1;
             }
             for (int k = 0; k < 3; k++)

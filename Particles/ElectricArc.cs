@@ -55,8 +55,8 @@ namespace InfernumMode.Particles
                 float rotation = (TrailPositions[i - 1] - position).ToRotation();
 
                 position -= Main.screenPosition;
-                spriteBatch.Draw(texture, position, null, Color.White * opacity, rotation, origin, scale * new Vector2(4f, 0.5f), 0, 0f);
-                spriteBatch.Draw(texture, position, null, Color * opacity, rotation, origin, scale * new Vector2(4f, 1f), 0, 0f);
+                Main.spriteBatch.Draw(texture, position, null, Color.White * opacity, rotation, origin, scale * new Vector2(4f, 0.5f), 0, 0f);
+                Main.spriteBatch.Draw(texture, position, null, Color * opacity, rotation, origin, scale * new Vector2(4f, 1f), 0, 0f);
             }
         }
     }

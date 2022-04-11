@@ -79,6 +79,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool CanDamage() => Time > TelegraphTime;
+        public override bool? CanDamage() => Time > TelegraphTime ? null : false;
     }
 }

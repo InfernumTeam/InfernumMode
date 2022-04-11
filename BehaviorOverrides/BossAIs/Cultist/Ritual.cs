@@ -74,11 +74,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Texture2D outerRingTexture = Main.projectileTexture[Projectile.type];
+            Texture2D outerRingTexture = Utilities.ProjTexture(Projectile.type);
             Texture2D innerRingTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/RitualInnerRing").Value;
             Texture2D auraTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/LightBurst").Value;
             float pulse = Main.GlobalTimeWrappedHourly * 0.67f % 1f;
@@ -86,11 +86,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Color auraColor = Color.White * 0.25f;
             auraColor *= pulse;
 
-            spriteBatch.Draw(auraTexture, drawPosition, null, auraColor, Projectile.rotation, auraTexture.Size() * 0.5f, auraScale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(outerRingTexture, drawPosition, null, RitualColor, Projectile.rotation, outerRingTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(innerRingTexture, drawPosition, null, RitualColor, -Projectile.rotation, innerRingTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(auraTexture, drawPosition, null, auraColor, Projectile.rotation, auraTexture.Size() * 0.5f, auraScale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(outerRingTexture, drawPosition, null, RitualColor, Projectile.rotation, outerRingTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(innerRingTexture, drawPosition, null, RitualColor, -Projectile.rotation, innerRingTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

@@ -98,17 +98,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     int lol;
                     if (i < segmentCount - 1)
                     {
-                        lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SCalWormBody>(), npc.whoAmI);
+                        lol = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SCalWormBody>(), npc.whoAmI);
                         Main.npc[lol].localAI[3] = i;
                     }
                     else
-                        lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SCalWormTail>(), npc.whoAmI);
+                        lol = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SCalWormTail>(), npc.whoAmI);
 
                     // Create arms.
                     if (i >= 3 && i % 4 == 0)
                     {
                         NPC segment = Main.npc[lol];
-                        int arm = NPC.NewNPC((int)segment.Center.X, (int)segment.Center.Y, ModContent.NPCType<SCalWormArm>(), lol);
+                        int arm = NPC.NewNPC(new InfernumSource(), (int)segment.Center.X, (int)segment.Center.Y, ModContent.NPCType<SCalWormArm>(), lol);
                         if (Main.npc.IndexInRange(arm))
                         {
                             Main.npc[arm].ai[0] = lol;
@@ -118,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                         rotationalOffset += MathHelper.Pi / 6f;
 
-                        arm = NPC.NewNPC((int)segment.Center.X, (int)segment.Center.Y, ModContent.NPCType<SCalWormArm>(), lol);
+                        arm = NPC.NewNPC(new InfernumSource(), (int)segment.Center.X, (int)segment.Center.Y, ModContent.NPCType<SCalWormArm>(), lol);
                         if (Main.npc.IndexInRange(arm))
                         {
                             Main.npc[arm].ai[0] = lol;
@@ -147,7 +147,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFuryShot, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrimstoneHeart>());
+                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrimstoneHeart>());
 
                 heartState++;
                 npc.netUpdate = true;

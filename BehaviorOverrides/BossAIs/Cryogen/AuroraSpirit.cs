@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             return Color.Lerp(new Color(128, 88, 160, 0) * 0.45f, endColor, Projectile.Opacity);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
             return false;

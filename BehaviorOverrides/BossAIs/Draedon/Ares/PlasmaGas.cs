@@ -53,9 +53,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
         }
 
-        public override bool CanDamage() => Projectile.Opacity > 0.6f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.6f ? null : false;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 screenArea = new(Main.screenWidth, Main.screenHeight);
             Rectangle screenRectangle = Utils.CenteredRectangle(Main.screenPosition + screenArea * 0.5f, screenArea * 1.33f);
@@ -63,13 +63,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (!Projectile.Hitbox.Intersects(screenRectangle))
                 return false;
 
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity * 0.8f;
             Color drawColor = new Color(141, 255, 105) * opacity;
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 1.35f;
-            spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale, SpriteEffects.None, 0f);
             return false;
         }
     }

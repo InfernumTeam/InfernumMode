@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Projectile.Opacity = Utils.GetLerpValue(5f, 36f, Projectile.timeLeft, true);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Texture2D lightTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/PhotovisceratorLight").Value;
@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Color lightBurstColor = Color.Lerp(Color.Fuchsia, Color.White, 0.4f) * Projectile.Opacity * 0.07f;
                 lightBurstColor.A = 0;
 
-                spriteBatch.Draw(lightTexture, lightDrawPosition, null, lightBurstColor, 0f, lightTexture.Size() * 0.5f, Projectile.scale * 2.5f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(lightTexture, lightDrawPosition, null, lightBurstColor, 0f, lightTexture.Size() * 0.5f, Projectile.scale * 2.5f, SpriteEffects.None, 0f);
             }
             return false;
         }

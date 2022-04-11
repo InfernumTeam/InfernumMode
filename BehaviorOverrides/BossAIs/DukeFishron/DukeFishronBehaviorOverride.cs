@@ -144,8 +144,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public static readonly Dictionary<DukeAttackType[], Func<NPC, bool>> SubphaseTable = new()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > Phase2LifeRatio,
-            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio,
-            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase3LifeRatio && npc.life / (float)npc.lifeMax >= Phase4LifeRatio,
+            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax is < Phase2LifeRatio and >= Phase3LifeRatio,
+            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax is < Phase3LifeRatio and >= Phase4LifeRatio,
             [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase4LifeRatio,
         };
 
@@ -480,7 +480,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
+                    int bubble = NPC.NewNPC(new InfernumSource(), (int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
                     Main.npc[bubble].velocity = Main.npc[bubble].SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * Main.rand.NextFloat(minBubbleSpeed, maxBubbleSpeed);
                 }
             }
@@ -564,7 +564,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
+                        int bubble = NPC.NewNPC(new InfernumSource(), (int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
                         Main.npc[bubble].velocity = Main.npc[bubble].SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * Main.rand.NextFloat(10f, 16f);
                     }
                 }
@@ -623,7 +623,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bubbleShootRate == bubbleShootRate - 1)
                 {
-                    int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedirectingBubble>());
+                    int bubble = NPC.NewNPC(new InfernumSource(), (int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedirectingBubble>());
                     Main.npc[bubble].Center += npc.velocity * 1.5f;
                     Main.npc[bubble].velocity = Vector2.UnitY * ((int)(attackTimer / bubbleShootRate) % 2 == 0).ToDirectionInt() * RedirectingBubble.InitialSpeed;
                     Main.npc[bubble].velocity += npc.velocity * 0.4f;
@@ -997,17 +997,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * drawOffsetFactor;
-                        spriteBatch.Draw(dukeTexture, drawPosition + drawOffset - Main.screenPosition, npc.frame, backimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                        Main.spriteBatch.Draw(dukeTexture, drawPosition + drawOffset - Main.screenPosition, npc.frame, backimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                     }
                 }
 
-                spriteBatch.Draw(dukeTexture, drawPosition - Main.screenPosition, npc.frame, color, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(dukeTexture, drawPosition - Main.screenPosition, npc.frame, color, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
                 if (hasEyes)
                 {
                     Color eyeColor = Color.Lerp(Color.White, Color.Yellow, 0.5f) * npc.Infernum().ExtraAI[11];
                     eyeColor *= (float)Math.Pow(color.ToVector3().Length() / 1.414f, 0.6);
-                    spriteBatch.Draw(eyeTexture, drawPosition - Main.screenPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(eyeTexture, drawPosition - Main.screenPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 

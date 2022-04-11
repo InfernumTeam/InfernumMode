@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public override void AI() => Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Color drawColor = Color.MediumPurple;
             drawColor.A = 0;

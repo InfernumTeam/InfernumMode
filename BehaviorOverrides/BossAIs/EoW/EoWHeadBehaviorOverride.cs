@@ -344,7 +344,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                             {
                                 Vector2 initialSeekerVelocity = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 8f;
                                 Vector2 spawnPosition = npc.Center + initialSeekerVelocity * 2f;
-                                int seeker = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<DarkHeart>(), 1);
+                                int seeker = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<DarkHeart>(), 1);
                                 if (Main.npc.IndexInRange(seeker))
                                     Main.npc[seeker].velocity = initialSeekerVelocity;
                             }
@@ -452,10 +452,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             // Create new worms with linked HP.
             int wormCount = (int)Math.Pow(2D, splitCounter);
-            int realLife = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
+            int realLife = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
             for (int i = 0; i < wormCount - 1; i++)
             {
-                int secondWorm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
+                int secondWorm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
                 if (Main.npc.IndexInRange(secondWorm))
                 {
                     Main.npc[secondWorm].realLife = realLife;
@@ -473,9 +473,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             {
                 int nextIndex;
                 if (i < segmentCount)
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
                 // The head.
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;
@@ -487,7 +487,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 // Mark an index based on whether it can be split at a specific split counter value.
 
                 // Small worm split indices.
-                if (i == BaseBodySegmentCount / 4 || i == BaseBodySegmentCount * 3 / 4)
+                if (i is (BaseBodySegmentCount / 4) or (BaseBodySegmentCount * 3 / 4))
                     Main.npc[nextIndex].ai[3] = 2f;
 
                 // Medium worm split index.

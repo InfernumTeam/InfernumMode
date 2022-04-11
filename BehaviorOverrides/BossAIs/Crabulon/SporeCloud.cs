@@ -74,9 +74,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             return new Color(255, 255, 255, Projectile.alpha);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             switch ((int)Projectile.ai[0])
             {
                 case 0:

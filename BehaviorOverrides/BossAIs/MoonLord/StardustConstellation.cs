@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Projectile projectileToConnectTo = null;
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Color solarColor = new(255, 140, 0);
             Color starColor = Color.Lerp(stardustColor, solarColor, fadeToOrange);
 
-            Texture2D starTexture = Main.projectileTexture[Projectile.type];
+            Texture2D starTexture = Utilities.ProjTexture(Projectile.type);
             float scaleFactor = Utils.GetLerpValue(0f, 15f, Time, true) + Utils.GetLerpValue(30f, 0f, Projectile.timeLeft, true) * 2f;
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
@@ -64,9 +64,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 float drawOffsetFactor = ((float)Math.Cos(Main.GlobalTimeWrappedHourly * 40f) * 0.5f + 0.5f) * scaleFactor * fadeToOrange * 8f + 1f;
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * drawOffsetFactor;
-                spriteBatch.Draw(starTexture, drawPosition + drawOffset, null, starColor * 0.4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(starTexture, drawPosition + drawOffset, null, starColor * 0.4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
             }
-            spriteBatch.Draw(starTexture, drawPosition, null, starColor * 4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(starTexture, drawPosition, null, starColor * 4f, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
 
             if (projectileToConnectTo != null)
             {
@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 Color drawColor = Color.White;
                 float rotation = (end - start).ToRotation() - MathHelper.PiOver2;
 
-                spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
             }
 
             return false;

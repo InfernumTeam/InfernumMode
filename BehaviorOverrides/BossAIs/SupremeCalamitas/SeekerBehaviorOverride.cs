@@ -147,9 +147,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = pulseTexture.Size() * 0.5f;
 
-            spriteBatch.SetBlendState(BlendState.Additive);
-            spriteBatch.Draw(pulseTexture, drawPosition, null, Color.MediumPurple, 0f, origin, npc.scale * 1.8f, SpriteEffects.None, 0f);
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.Draw(pulseTexture, drawPosition, null, Color.MediumPurple, 0f, origin, npc.scale * 1.8f, SpriteEffects.None, 0f);
+            Main.spriteBatch.ResetBlendState();
             return true;
         }
     }

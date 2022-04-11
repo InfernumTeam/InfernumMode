@@ -53,7 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             ref float time = ref NPC.ai[2];
 
             // Reel inward prior to snapping.
-            if (time > 0f && time < 45f)
+            if (time is > 0f and < 45f)
                 attachOffset = MathHelper.Lerp(attachOffset, 60f, 0.05f);
 
             // Reach outward swiftly in hopes of hitting a target.
@@ -124,7 +124,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 drawPosition += plantera.SafeDirectionTo(NPC.Center, Vector2.Zero) * moveDistance;
                 Color color = Lighting.GetColor((int)(drawPosition.X / 16f), (int)(drawPosition.Y / 16f));
                 Rectangle frame = new(0, 0, Main.chain27Texture.Width, moveDistance);
-                spriteBatch.Draw(Main.chain27Texture, drawPosition - Main.screenPosition, frame, color, rotation, Main.chain27Texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(Main.chain27Texture, drawPosition - Main.screenPosition, frame, color, rotation, Main.chain27Texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
             return true;
         }

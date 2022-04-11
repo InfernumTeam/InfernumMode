@@ -169,10 +169,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             for (int i = 0; i < BodySegmentCount; i++)
             {
                 int newSegment;
-                if (i >= 0 && i < BodySegmentCount - 1f)
-                    newSegment = NPC.NewNPC((int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
+                if (i is >= 0 and < (int)(BodySegmentCount - 1f))
+                    newSegment = NPC.NewNPC(new InfernumSource(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
                 else
-                    newSegment = NPC.NewNPC((int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);
+                    newSegment = NPC.NewNPC(new InfernumSource(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);
 
                 Main.npc[newSegment].realLife = head.whoAmI;
 
@@ -263,7 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     int probeCount = 2;
                     for (int i = 0; i < probeCount; i++)
                     {
-                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                        int probe = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
                         Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
                     }
                 }
@@ -400,7 +400,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
                     for (int i = 0; i < probeCount; i++)
                     {
-                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                        int probe = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
                         Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
                     }
                 }
@@ -428,7 +428,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     int probeCount = (int)Math.Round(MathHelper.Lerp(3f, 6f, 1f - lifeRatio));
                     for (int i = 0; i < probeCount; i++)
                     {
-                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());
+                        int probe = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());
                         Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
                         Main.npc[probe].ai[3] = (i == 0f).ToInt();
                     }
@@ -587,7 +587,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaCasterFire"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                    int probe = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
                     Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
                 }
             }
@@ -638,7 +638,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                         if (NPC.CountNPCS(NPCID.Probe) >= 7)
                             break;
 
-                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                        int probe = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
                         Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
                     }
                 }

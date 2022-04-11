@@ -30,12 +30,12 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
                 // Play the portal opening sound at the moment of the portal's creation.
                 if (fadeInTimer == 0f)
                 {
-                    Main.PlayTrackedSound(SoundID.DD2_EtherianPortalOpen, npc.Center);
+                    SoundEngine.PlayTrackedSound(SoundID.DD2_EtherianPortalOpen, npc.Center);
                     idlePlaySoundId = SlotId.Invalid.ToFloat();
                 }
 
                 if (fadeInTimer > 150f && Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId)) == null)
-                    idlePlaySoundId = Main.PlayTrackedSound(SoundID.DD2_EtherianPortalIdleLoop, npc.Center).ToFloat();
+                    idlePlaySoundId = SoundEngine.PlayTrackedSound(SoundID.DD2_EtherianPortalIdleLoop, npc.Center).ToFloat();
 
                 if (!DD2Event.EnemySpawningIsOnHold)
                     enemySpawnTimer++;
@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
                             DD2Event.SpawnMonsterFromGate(npc.Bottom);
                         else if (!NPC.AnyNPCs(minibossID) && minibossID != NPCID.DD2Betsy)
                         {
-                            int miniboss = NPC.NewNPC((int)npc.Bottom.X, (int)npc.Bottom.Y, minibossID);
+                            int miniboss = NPC.NewNPC(new InfernumSource(), (int)npc.Bottom.X, (int)npc.Bottom.Y, minibossID);
                             if (Main.npc.IndexInRange(miniboss))
                                 Main.npc[miniboss].Infernum().ExtraAI[5] = 1f;
                         }
@@ -85,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
 
                 // Reset the idle play sound if it didn't get activated before for some reason.
                 if (Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId)) == null)
-                    idlePlaySoundId = Main.PlayTrackedSound(SoundID.DD2_EtherianPortalIdleLoop, npc.Center).ToFloat();
+                    idlePlaySoundId = SoundEngine.PlayTrackedSound(SoundID.DD2_EtherianPortalIdleLoop, npc.Center).ToFloat();
 
                 ActiveSound activeSound = Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId));
                 if (activeSound != null)

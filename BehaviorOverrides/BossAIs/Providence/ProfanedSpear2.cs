@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.ai[1] += 1f;
             if (Projectile.ai[1] <= 20f)
                 Projectile.velocity *= 0.95f;
-            else if (Projectile.ai[1] > 20f && Projectile.ai[1] <= 39f)
+            else if (Projectile.ai[1] is > 20f and <= 39f)
                 Projectile.velocity *= 1.1f;
             else if (Projectile.ai[1] == 40f)
                 Projectile.ai[1] = 0f;
@@ -89,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             return baseColor;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1);
             return false;

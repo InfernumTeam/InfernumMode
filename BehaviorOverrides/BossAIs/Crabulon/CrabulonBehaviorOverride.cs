@@ -72,14 +72,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedClumpFlag == 0f && lifeRatio < Phase2LifeRatio)
             {
                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(25f, 25f);
-                NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
                 hasSummonedClumpFlag = 1f;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedClumpFlag == 1f && lifeRatio < Phase3LifeRatio)
             {
                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(25f, 25f);
-                NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
                 hasSummonedClumpFlag = 2f;
             }
 
@@ -230,7 +230,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                                     break;
 
                                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f;
-                                int shroom = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<CrabShroom>());
+                                int shroom = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<CrabShroom>());
                                 if (Main.npc.IndexInRange(shroom))
                                 {
                                     Main.npc[shroom].velocity = -Vector2.UnitY.RotatedByRandom(0.36f) * Main.rand.NextFloat(3f, 6f);
@@ -378,7 +378,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 {
                     int x = (int)(npc.position.X + Main.rand.Next(npc.width - 32));
                     int y = (int)(npc.position.Y + Main.rand.Next(npc.height - 32));
-                    int fuck = NPC.NewNPC(x, y, ModContent.NPCType<CrabShroom>());
+                    int fuck = NPC.NewNPC(new InfernumSource(), x, y, ModContent.NPCType<CrabShroom>());
                     Main.npc[fuck].SetDefaults(ModContent.NPCType<CrabShroom>());
                     Main.npc[fuck].velocity.X = Main.rand.NextFloat(-5f, 5f);
                     Main.npc[fuck].velocity.Y = Main.rand.NextFloat(-9f, -6f);

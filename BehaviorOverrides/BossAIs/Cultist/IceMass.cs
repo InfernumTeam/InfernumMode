@@ -43,11 +43,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             // Draw telegraph lines.
             // The amount of these will create a somewhat geometric pattern.
-            if (Time > 60f && Time < 170f)
+            if (Time is > 60f and < 170f)
             {
                 float lineWidth = Utils.GetLerpValue(60f, 90f, Time, true) * Utils.GetLerpValue(170f, 140f, Time, true) * 2.5f + 0.2f;
 
@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 for (int i = 0; i < ShardBurstCount; i++)
                 {
                     Vector2 lineDirection = (MathHelper.TwoPi * (i + 0.5f) / ShardBurstCount).ToRotationVector2();
-                    spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + lineDirection * 5980f, Color.SkyBlue, lineWidth);
+                    Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + lineDirection * 5980f, Color.SkyBlue, lineWidth);
                 }
             }
             return true;

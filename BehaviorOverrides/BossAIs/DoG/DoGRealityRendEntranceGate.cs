@@ -41,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Play idle sounds.
             if (Main.netMode != NetmodeID.Server)
             {
-                if (Time == 10f || Time == 70f || Time == 130f)
+                if (Time is 10f or 70f or 130f)
                 {
                     var soundInstance = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaGrenadeExplosion"), Projectile.Center);
                     if (soundInstance != null)
@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
             Time++;
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             float leftCleaveAngularOffset = MathHelper.Pi * -0.18f;
             float rightCleaveAngularOffset = MathHelper.Pi * 0.18f;
@@ -89,12 +89,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 while (Vector2.Distance(drawPosition, endingPosition) > 90f)
                 {
                     drawPosition += (endingPosition - drawPosition).SafeNormalize(Vector2.UnitY) * texture.Width * 0.2f;
-                    spriteBatch.Draw(texture, drawPosition - Main.screenPosition, null, rendLineColor, rotation, texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-                    spriteBatch.Draw(texture, drawPosition - Main.screenPosition, null, Color.Lerp(rendLineColor, Color.White, 0.5f), rotation, texture.Size() * 0.5f, new Vector2(0.5f, 1f), SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition, null, rendLineColor, rotation, texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition, null, Color.Lerp(rendLineColor, Color.White, 0.5f), rotation, texture.Size() * 0.5f, new Vector2(0.5f, 1f), SpriteEffects.None, 0f);
                 }
             }
 
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             float fade = Utils.GetLerpValue(280f, 235f, Projectile.timeLeft, true);
             if (Projectile.timeLeft <= 45f)
@@ -107,8 +107,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Fuchsia);
             GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
-            spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 3.5f, SpriteEffects.None, 0f);
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 3.5f, SpriteEffects.None, 0f);
+            Main.spriteBatch.ExitShaderRegion();
 
             return false;
         }

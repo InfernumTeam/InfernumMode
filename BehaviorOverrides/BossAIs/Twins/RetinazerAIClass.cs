@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             void drawInstance(Vector2 drawPosition, Color drawColor, float rotation)
             {
                 Vector2 origin = texture.Size() * 0.5f / new Vector2(1f, Main.npcFrameCount[npc.type]);
-                spriteBatch.Draw(texture, drawPosition - Main.screenPosition, npc.frame, npc.GetAlpha(drawColor), rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition, npc.frame, npc.GetAlpha(drawColor), rotation, origin, npc.scale, SpriteEffects.None, 0f);
             }
 
             int totalInstancesToDraw = 1;

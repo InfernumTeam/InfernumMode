@@ -59,8 +59,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Golem/AttachedHead").Value;
             Texture2D glowMask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Golem/AttachedHeadGlow").Value;
             Rectangle rect = new(0, 0, texture.Width, texture.Height);
-            spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(glowMask, npc.Center - Main.screenPosition, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowMask, npc.Center - Main.screenPosition, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             DoEyeDrawing(npc);
             return false;
         }
@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             NPC body = Main.npc[(int)npc.ai[0]];
             float laserRayTelegraphInterpolant = body.Infernum().ExtraAI[10];
 
-            if ((GolemAttackState)body.ai[1] == GolemAttackState.BIGSHOT || (GolemAttackState)body.ai[1] == GolemAttackState.BadTime || (GolemAttackState)body.ai[1] == GolemAttackState.SummonDelay)
+            if ((GolemAttackState)body.ai[1] is GolemAttackState.BIGSHOT or GolemAttackState.BadTime or GolemAttackState.SummonDelay)
             {
                 float DarknessRatio = body.Infernum().ExtraAI[9];
                 Color leftColor;

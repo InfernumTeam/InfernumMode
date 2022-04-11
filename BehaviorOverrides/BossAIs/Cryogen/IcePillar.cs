@@ -99,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             Projectile.netUpdate = true;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tipTexture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 aimDirection = Vector2.UnitY.RotatedBy(Projectile.rotation);
@@ -108,7 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 float telegraphLineWidth = (float)Math.Sin(Time / 60f * MathHelper.Pi) * 5f;
                 if (telegraphLineWidth > 3f)
                     telegraphLineWidth = 3f;
-                spriteBatch.DrawLineBetter(Projectile.Top + aimDirection * 10f, Projectile.Top + aimDirection * -MaxPillarHeight, Color.LightCyan, telegraphLineWidth);
+                Main.spriteBatch.DrawLineBetter(Projectile.Top + aimDirection * 10f, Projectile.Top + aimDirection * -MaxPillarHeight, Color.LightCyan, telegraphLineWidth);
             }
 
             float tipBottom = 0f;
@@ -117,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             DrawPillar(spriteBatch, scale, aimDirection, ref tipBottom);
 
             Vector2 tipDrawPosition = Projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
-            spriteBatch.Draw(tipTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, tipTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tipTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, tipTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -128,14 +128,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             for (int i = pillarBodyPiece.Height; i < CurrentHeight + pillarBodyPiece.Height; i += pillarBodyPiece.Height)
             {
                 Vector2 drawPosition = Projectile.Bottom - aimDirection * i - Main.screenPosition;
-                spriteBatch.Draw(pillarBodyPiece, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, pillarBodyPiece.Size() * new Vector2(0.5f, 0f), scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(pillarBodyPiece, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, pillarBodyPiece.Size() * new Vector2(0.5f, 0f), scale, SpriteEffects.None, 0f);
                 tipBottom = i;
             }
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
-        public override bool CanDamage() => Time >= 70f;
+        public override bool? CanDamage() => Time >= 70f ? null : false;
 
         public override void Kill(int timeLeft)
         {

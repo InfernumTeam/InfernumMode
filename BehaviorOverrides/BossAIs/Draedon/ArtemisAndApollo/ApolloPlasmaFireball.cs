@@ -109,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             target.AddBuff(BuffID.CursedInferno, 180);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             lightColor.R = (byte)(255 * Projectile.Opacity);
             lightColor.G = (byte)(255 * Projectile.Opacity);
@@ -137,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     Vector2 shootVelocity = (MathHelper.TwoPi * i / projectileCount).ToRotationVector2() * 0.5f;
                     if (ShouldExplodeDiagonally)
                         shootVelocity = shootVelocity.RotatedBy(MathHelper.Pi / projectileCount);
-                    Projectile.NewProjectile(Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.8), 0f);
+                    Projectile.NewProjectile(new InfernumSource(), Projectile.Center, shootVelocity, type, (int)(Projectile.damage * 0.8), 0f);
                 }
             }
 

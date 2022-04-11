@@ -70,10 +70,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), StartingPosition, Projectile.Center, Projectile.scale * 22f, ref _);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 baseDrawPosition = Projectile.Center + Vector2.UnitY * Projectile.gfxOffY - Main.screenPosition;
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 origin = frame.Size() / 2f;
             Color fadedRayColor = Projectile.GetAlpha(lightColor);
@@ -91,8 +91,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     drawPosition += (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2() * Projectile.Opacity * 1.5f;
                     drawPosition += drawOffset;
 
-                    spriteBatch.Draw(texture, drawPosition, frame, fullbrightRayColor, rotation, origin, scale, SpriteEffects.None, 0f);
-                    spriteBatch.Draw(texture, drawPosition, frame, fadedRayColor, rotation, origin, scale * 0.5f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, frame, fullbrightRayColor, rotation, origin, scale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, frame, fadedRayColor, rotation, origin, scale * 0.5f, SpriteEffects.None, 0f);
                 }
             }
             return false;

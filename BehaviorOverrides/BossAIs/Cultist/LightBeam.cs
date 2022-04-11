@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public Color ColorFunction(float completionRatio) => Color.White * Projectile.Opacity * Utils.GetLerpValue(0.95f, 0.725f, completionRatio, true);
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (BeamDrawer is null)
                 BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true);
@@ -79,6 +79,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             drawCacheProjsBehindNPCsAndTiles.Add(index);
         }
 
-        public override bool CanDamage() => Time >= 10f;
+        public override bool? CanDamage() => Time >= 10f ? null : false;
     }
 }

@@ -68,15 +68,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 {
                     offsetAngle = startAngle + deltaAngle * (i + i * i) / 2f + 32f * i;
                     Vector2 shootVelocity = offsetAngle.ToRotationVector2() * Main.rand.NextFloat(4f, 6f);
-                    Projectile.NewProjectile(Projectile.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), Projectile.damage, 0f);
-                    Projectile.NewProjectile(Projectile.Center, -shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), Projectile.damage, 0f);
+                    Projectile.NewProjectile(new InfernumSource(), Projectile.Center, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), Projectile.damage, 0f);
+                    Projectile.NewProjectile(new InfernumSource(), Projectile.Center, -shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), Projectile.damage, 0f);
                 }
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, Main.projectileTexture[Projectile.type], false);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, Utilities.ProjTexture(Projectile.type), false);
             return false;
         }
     }

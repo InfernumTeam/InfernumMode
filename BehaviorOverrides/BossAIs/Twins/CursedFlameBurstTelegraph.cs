@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             return color * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utils.DrawLine(spriteBatch, Projectile.Center - Vector2.UnitX * 1600f, Projectile.Center + Vector2.UnitX * 1600f, Color.LimeGreen, Color.LimeGreen, Projectile.Opacity * 1.6f + 0.1f);
             return false;
@@ -60,6 +60,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool CanDamage() => false;
+        public override bool? CanDamage() => false ? null : false;
     }
 }

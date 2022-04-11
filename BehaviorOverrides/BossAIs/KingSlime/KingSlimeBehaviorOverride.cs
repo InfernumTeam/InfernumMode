@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.life < npc.lifeMax * Phase3LifeRatio && hasSummonedNinjaFlag == 0f)
             {
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<Ninja>());
                 hasSummonedNinjaFlag = 1f;
             }
 
@@ -125,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 Dust.QuickDustLine(npc.Top + Vector2.UnitY * 60f, jewelSpawnPosition, 150f, Color.Red);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
-                    NPC.NewNPC((int)jewelSpawnPosition.X, (int)jewelSpawnPosition.Y, ModContent.NPCType<KingSlimeJewel>());
+                    NPC.NewNPC(new InfernumSource(), (int)jewelSpawnPosition.X, (int)jewelSpawnPosition.Y, ModContent.NPCType<KingSlimeJewel>());
                 hasSummonedJewelFlag = 1f;
             }
 
@@ -334,10 +334,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     drawOffset.Y -= 6f;
 
                 Vector2 ninjaDrawPosition = npc.Center - Main.screenPosition + drawOffset;
-                spriteBatch.Draw(TextureAssets.Ninja, ninjaDrawPosition, null, lightColor, ninjaRotation, TextureAssets.Ninja.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(TextureAssets.Ninja, ninjaDrawPosition, null, lightColor, ninjaRotation, TextureAssets.Ninja.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
 
-            spriteBatch.Draw(kingSlimeTexture, kingSlimeDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(kingSlimeTexture, kingSlimeDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
 
             float verticalCrownOffset = 0f;
             switch (npc.frame.Y / (TextureAssets.Npc[npc.type].Value.Height / Main.npcFrameCount[npc.type]))
@@ -363,7 +363,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             }
             Texture2D crownTexture = TextureAssets.Extra[39].Value;
             Vector2 crownDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * (npc.gfxOffY - (56f - verticalCrownOffset) * npc.scale);
-            spriteBatch.Draw(crownTexture, crownDrawPosition, null, lightColor, 0f, crownTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(crownTexture, crownDrawPosition, null, lightColor, 0f, crownTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             return false;
         }
         #endregion Drawcode

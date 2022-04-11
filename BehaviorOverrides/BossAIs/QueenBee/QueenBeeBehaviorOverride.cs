@@ -403,7 +403,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 }
                 else
                 {
-                    int bee = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, NPCID.Bee);
+                    int bee = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, NPCID.Bee);
                     Main.npc[bee].velocity = Main.npc[bee].SafeDirectionTo(target.Center, Vector2.UnitY).RotatedByRandom(0.37f) * 4f;
                 }
             }

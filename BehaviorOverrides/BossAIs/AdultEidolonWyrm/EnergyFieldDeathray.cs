@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override float Lifetime => LocalLifetime;
         public override Color LaserOverlayColor => new(79, 174, 255, 32);
         public override Color LightCastColor => Color.Cyan;
-        public override Texture2D LaserBeginTexture => Main.projectileTexture[Projectile.type];
+        public override Texture2D LaserBeginTexture => Utilities.ProjTexture(Projectile.type);
         public override Texture2D LaserMiddleTexture => Main.extraTexture[21];
         public override Texture2D LaserEndTexture => Main.extraTexture[22];
         public override float MaxLaserLength => 20f;

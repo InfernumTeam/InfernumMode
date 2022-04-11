@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Timer++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             lightColor = Color.Lerp(lightColor, Color.LightCyan, 0.7f);
             lightColor.A = 128;
@@ -63,6 +63,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
         }
 
-        public override bool CanDamage() => Projectile.alpha < 20;
+        public override bool? CanDamage() => Projectile.alpha < 20 ? null : false;
     }
 }

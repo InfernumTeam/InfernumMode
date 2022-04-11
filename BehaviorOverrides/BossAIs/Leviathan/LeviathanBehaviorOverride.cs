@@ -204,7 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                                 if (BossRushEvent.BossRushActive)
                                     bubbleVelocity *= 1.6f;
 
-                                int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, Main.rand.NextBool(2) ? ModContent.NPCType<RedirectingBubble>() : NPCID.DetonatingBubble);
+                                int bubble = NPC.NewNPC(new InfernumSource(), (int)mouthPosition.X, (int)mouthPosition.Y, Main.rand.NextBool(2) ? ModContent.NPCType<RedirectingBubble>() : NPCID.DetonatingBubble);
                                 if (Main.npc.IndexInRange(bubble))
                                 {
                                     Main.npc[bubble].velocity = bubbleVelocity;
@@ -271,7 +271,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                                 }
 
                                 int typeToSummon = ModContent.NPCType<AquaticAberration>();
-                                int spawner = Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<LeviathanMinionSpawner>(), 0, 0f);
+                                int spawner = Projectile.NewProjectile(new InfernumSource(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<LeviathanMinionSpawner>(), 0, 0f);
                                 if (Main.projectile.IndexInRange(spawner))
                                 {
                                     Main.projectile[spawner].ai[0] = typeToSummon;
@@ -325,7 +325,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                         SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/LeviathanRoarMeteor"), npc.Center);
                     }
 
-                    if (attackTimer % vomitTime >= 50f && attackTimer % vomitTime <= 75f)
+                    if (attackTimer % vomitTime is >= 50f and <= 75f)
                         npc.frameCounter--;
 
                     if (attackTimer >= vomitTime * vomitCount)

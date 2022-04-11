@@ -145,7 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             return color;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (OrbDrawer is null)
                 OrbDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:BrainPsychic"]);
@@ -155,7 +155,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             // Draw a line telegraph as necessary
             if (TelegraphInterpolant > 0f)
             {
-                spriteBatch.SetBlendState(BlendState.Additive);
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 Texture2D telegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
                 float telegraphScaleFactor = TelegraphInterpolant * 0.7f;
@@ -164,11 +164,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                 Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
                 Color telegraphColor = new Color(50, 255, 232) * (float)Math.Pow(TelegraphInterpolant, 0.79) * 1.4f;
-                spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, PredictiveAimRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
-                spriteBatch.ResetBlendState();
+                Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, PredictiveAimRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
+                Main.spriteBatch.ResetBlendState();
             }
 
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             // Create a charged circle out of several primitives.
             for (float offsetAngle = 0f; offsetAngle <= MathHelper.TwoPi; offsetAngle += MathHelper.Pi / 6f)
@@ -183,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
                 OrbDrawer.Draw(drawPoints, Projectile.Size * 0.5f - Main.screenPosition, 24);
             }
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
     }

@@ -56,9 +56,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Projectile.velocity *= 0.96f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Thanatos/RefractionRotorGlowmask").Value;
             Vector2 origin = texture.Size() * 0.5f;
             float pulseInterpolant = Utils.GetLerpValue(60f, 45f, Projectile.timeLeft, true);
@@ -96,9 +96,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     telegraphColor *= 0.7f;
 
                     // Draw an inner and outer telegraph line.
-                    spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
+                    Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth);
                     telegraphColor.A = 0;
-                    spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth * 0.5f);
+                    Main.spriteBatch.DrawLineBetter(start, end, telegraphColor, telegraphWidth * 0.5f);
                 }
             }
 
@@ -108,8 +108,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             Color color = Color.White;
             color = Color.Lerp(color, glowmaskColor, Utils.GetLerpValue(40f, 18f, Projectile.timeLeft, true) * 0.4f);
             color.A = 255;
-            spriteBatch.Draw(texture, drawPosition, null, color * Projectile.Opacity, rotation, origin, Projectile.scale, 0, 0f);
-            spriteBatch.Draw(glowmask, drawPosition, null, glowmaskColor * Projectile.Opacity, rotation, origin, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, color * Projectile.Opacity, rotation, origin, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, null, glowmaskColor * Projectile.Opacity, rotation, origin, Projectile.scale, 0, 0f);
 
             return false;
         }

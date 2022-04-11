@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 Projectile.velocity *= 0.98f;
         }
 
-        public override bool CanHitPlayer(Player target) => Time <= 1800f && Time > 120f;
+        public override bool CanHitPlayer(Player target) => Time is <= 1800f and > 120f;
 
         public override Color? GetAlpha(Color lightColor)
         {
@@ -78,10 +78,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             return new Color(255, 255, 255, Projectile.alpha) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             // Changes the texture of the projectile
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             switch ((int)Projectile.ai[0])
             {
                 case 0:
@@ -101,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Time <= 1800f && Time > 120f)
+            if (Time is <= 1800f and > 120f)
                 target.AddBuff(BuffID.Poisoned, 240);
         }
     }

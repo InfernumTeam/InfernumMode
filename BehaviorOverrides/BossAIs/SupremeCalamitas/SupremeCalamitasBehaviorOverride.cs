@@ -138,9 +138,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static readonly Dictionary<SCalAttackType[], Func<NPC, bool>> SubphaseTable = new()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax >= Phase2LifeRatio,
-            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio,
-            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase3LifeRatio && npc.life / (float)npc.lifeMax >= Phase4LifeRatio,
-            [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase4LifeRatio && npc.life / (float)npc.lifeMax >= Phase5LifeRatio,
+            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax is < Phase2LifeRatio and >= Phase3LifeRatio,
+            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax is < Phase3LifeRatio and >= Phase4LifeRatio,
+            [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax is < Phase4LifeRatio and >= Phase5LifeRatio,
             [Funny] = (npc) => npc.life / (float)npc.lifeMax < Phase5LifeRatio,
         };
 
@@ -480,7 +480,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         Vector2 demonSpawnPosition = npc.Center + Main.rand.NextVector2Circular(150f, 75f);
                         SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/BrimstoneMonsterSpawn"), demonSpawnPosition);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            NPC.NewNPC((int)demonSpawnPosition.X, (int)demonSpawnPosition.Y, ModContent.NPCType<ShadowDemon>(), npc.whoAmI);
+                            NPC.NewNPC(new InfernumSource(), (int)demonSpawnPosition.X, (int)demonSpawnPosition.Y, ModContent.NPCType<ShadowDemon>(), npc.whoAmI);
                     }
 
                     InfernumMode.BlackFade = Utils.GetLerpValue(300f, 125f, attackTextDelay, true) * 0.6f;
@@ -503,7 +503,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         npc.Center + Vector2.UnitX * 600f,
                     };
 
-                    if (attackTextDelay >= 45f && attackTextDelay < 150f)
+                    if (attackTextDelay is >= 45f and < 150f)
                     {
                         for (int i = 0; i < brotherSpawnPositions.Length; i++)
                         {
@@ -531,7 +531,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 int npcType = i == 0 ? ModContent.NPCType<SupremeCatastrophe>() : ModContent.NPCType<SupremeCataclysm>();
-                                NPC.NewNPC((int)brotherSpawnPositions[i].X, (int)brotherSpawnPositions[i].Y, npcType);
+                                NPC.NewNPC(new InfernumSource(), (int)brotherSpawnPositions[i].X, (int)brotherSpawnPositions[i].Y, npcType);
                             }
                         }
 
@@ -564,19 +564,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         {
                             // The four arena huggers.
                             Vector2 seekerPosition = new(npc.Infernum().arenaRectangle.Left, npc.Infernum().arenaRectangle.Center.Y);
-                            NPC.NewNPC((int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 1f);
-                            int fuck = NPC.NewNPC((int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 3f);
+                            NPC.NewNPC(new InfernumSource(), (int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 1f);
+                            int fuck = NPC.NewNPC(new InfernumSource(), (int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 3f);
                             Main.npc[fuck].velocity = Vector2.UnitY;
                             seekerPosition = new Vector2(npc.Infernum().arenaRectangle.Right, npc.Infernum().arenaRectangle.Center.Y);
-                            NPC.NewNPC((int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 1f);
-                            fuck = NPC.NewNPC((int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 3f);
+                            NPC.NewNPC(new InfernumSource(), (int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 1f);
+                            fuck = NPC.NewNPC(new InfernumSource(), (int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 3f);
                             Main.npc[fuck].velocity = Vector2.UnitY;
 
                             for (int i = 0; i < 4; i++)
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 1f, 0f, MathHelper.TwoPi * i / 4f);
+                                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 1f, 0f, MathHelper.TwoPi * i / 4f);
 
                             for (int i = 0; i < 2; i++)
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y + Main.rand.Next(-180, 180), ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 2f, 0f, 0f);
+                                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y + Main.rand.Next(-180, 180), ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 2f, 0f, 0f);
                         }
                     }
 
@@ -714,7 +714,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (Main.netMode != NetmodeID.MultiplayerClient && initialChargeupTime == 1f)
             {
-                int sepulcher = NPC.NewNPC((int)sepulcherSpawnPosition.X, (int)sepulcherSpawnPosition.Y, ModContent.NPCType<SCalWormHead>(), 1);
+                int sepulcher = NPC.NewNPC(new InfernumSource(), (int)sepulcherSpawnPosition.X, (int)sepulcherSpawnPosition.Y, ModContent.NPCType<SCalWormHead>(), 1);
                 if (Main.npc.IndexInRange(sepulcher))
                 {
                     Main.npc[sepulcher].velocity = -Vector2.UnitY * 11f;
@@ -1390,7 +1390,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             if (attackTimer < finalBulletHellTime / 3f)
                             {
                                 Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
-                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
+                                Projectile.NewProjectile(new InfernumSource(), blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
                             }
 
                             // Release blasts from both horizontal sides.
@@ -1407,7 +1407,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             else
                             {
                                 Vector2 blastSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1000f);
-                                Projectile.NewProjectile(blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
+                                Projectile.NewProjectile(new InfernumSource(), blastSpawnPosition, Vector2.UnitY * blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);
 
                                 blastSpawnPosition = target.Center + new Vector2(1000f, Main.rand.NextFloatDirection() * 1000f);
                                 Utilities.NewProjectileBetter(blastSpawnPosition, Vector2.UnitX * -blastShootSpeed, ModContent.ProjectileType<DarkMagicSkull>(), 560, 0f);

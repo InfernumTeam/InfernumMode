@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             Projectile.velocity.X *= 0.98f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, 0);
             return false;

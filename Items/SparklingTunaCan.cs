@@ -3,13 +3,12 @@ using CalamityMod.Items.Placeables;
 using CalamityMod.NPCs.SunkenSea;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Items
 {
-    public class SparklingTunaCan : ModItem
+	public class SparklingTunaCan : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -47,7 +46,7 @@ namespace InfernumMode.Items
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 spawnPosition = player.Center + Vector2.UnitX * player.direction * 300f;
-                NPC.NewNPC(player.GetItemSource_Misc(0), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GiantClam>());
+                NPC.NewNPC(new InfernumSource(), player.GetItemSource_Misc(0), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GiantClam>());
             }
             return true;
         }

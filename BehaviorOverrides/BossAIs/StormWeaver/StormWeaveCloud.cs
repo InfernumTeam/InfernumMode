@@ -82,9 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             return Color.Lerp(lightColor, Color.Black, Utils.GetLerpValue(0f, 25f, Time, true) * 0.45f) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            if (Variant <= 0f || Variant > 4f)
+            if (Variant is <= 0f or > 4f)
                 return false;
 
             Texture2D texture = ModContent.Request<Texture2D>($"InfernumMode/BehaviorOverrides/BossAIs/StormWeaver/StormWeaveCloud{(int)Variant}").Value;
@@ -98,9 +98,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 drawOffset *= MathHelper.Lerp(-1f, 8f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.3f) * 0.5f + 0.5f);
 
                 Vector2 afterimageDrawPosition = drawPosition + drawOffset;
-                spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
-            spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

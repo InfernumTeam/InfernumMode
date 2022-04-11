@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (WaterDrawer is null)
                 WaterDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);

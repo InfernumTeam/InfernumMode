@@ -123,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             // This should never happen, but just in case-
             if (Projectile.velocity == Vector2.Zero)
@@ -135,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
 
             // Start texture drawing.
-            spriteBatch.Draw(LaserBeginTexture,
+            Main.spriteBatch.Draw(LaserBeginTexture,
                              Projectile.Center - Main.screenPosition,
                              startFrameArea,
                              beamColor,
@@ -164,7 +164,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         continue;
                     }
 
-                    spriteBatch.Draw(LaserMiddleTexture,
+                    Main.spriteBatch.Draw(LaserMiddleTexture,
                                      centerOnLaser - Main.screenPosition,
                                      middleFrameArea,
                                      beamColor,
@@ -182,7 +182,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             Vector2 laserEndCenter = centerOnLaser - Main.screenPosition;
-            spriteBatch.Draw(LaserEndTexture,
+            Main.spriteBatch.Draw(LaserEndTexture,
                              laserEndCenter,
                              endFrameArea,
                              beamColor,

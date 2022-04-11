@@ -56,7 +56,7 @@ namespace InfernumMode.BaseEntities
             LaserLength = MathHelper.Lerp(LaserLength, idealLaserLength, 0.9f); // Very quickly approach the ideal laser length.
 
             DelegateMethods.v3_1 = LightCastColor.ToVector3();
-            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, new Utils.PerLinePoint(DelegateMethods.CastLight));
+            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, DelegateMethods.CastLight);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace InfernumMode.BaseEntities
             Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[Projectile.type], 0, endFrame);
 
             // Start texture drawing.
-            spriteBatch.Draw(LaserBeginTexture,
+            Main.spriteBatch.Draw(LaserBeginTexture,
                              Projectile.Center - Main.screenPosition,
                              startFrameArea,
                              beamColor,
@@ -144,7 +144,7 @@ namespace InfernumMode.BaseEntities
                 float incrementalBodyLength = 0f;
                 while (incrementalBodyLength + 1f < laserBodyLength)
                 {
-                    spriteBatch.Draw(LaserMiddleTexture,
+                    Main.spriteBatch.Draw(LaserMiddleTexture,
                                      centerOnLaser - Main.screenPosition,
                                      middleFrameArea,
                                      beamColor,
@@ -162,7 +162,7 @@ namespace InfernumMode.BaseEntities
             if (Math.Abs(LaserLength - DetermineLaserLength()) < 30f)
             {
                 Vector2 laserEndCenter = centerOnLaser - Main.screenPosition;
-                spriteBatch.Draw(LaserEndTexture,
+                Main.spriteBatch.Draw(LaserEndTexture,
                                  laserEndCenter,
                                  endFrameArea,
                                  beamColor,
@@ -184,15 +184,15 @@ namespace InfernumMode.BaseEntities
         public override void CutTiles()
         {
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackMelee;
-            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.Size.Length() * Projectile.scale, new Utils.PerLinePoint(DelegateMethods.CutTiles));
+            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.Size.Length() * Projectile.scale, DelegateMethods.CutTiles);
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             // This should never happen, but just in case-
             if (Projectile.velocity == Vector2.Zero)
                 return false;
 
-            DrawBeamWithColor(spriteBatch, LaserOverlayColor, Projectile.scale);
+            DrawBeamWithColor(Main.spriteBatch, LaserOverlayColor, Projectile.scale);
             return false;
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

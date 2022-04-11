@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             double HPBoost = CalamityConfig.Instance.BossHealthBoost * 0.01;
             NPC.lifeMax += (int)(NPC.lifeMax * HPBoost);
             NPC.aiStyle = -1;
-            aiType = -1;
+            AIType = -1;
             NPC.Opacity = 0f;
             NPC.knockBackResist = 0f;
             NPC.canGhostHeal = false;
@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             NPC.netAlways = true;
             NPC.boss = true;
             NPC.hide = true;
-            music = (InfernumMode.CalamityMod as CalamityModClass).GetMusicFromMusicMod("ExoMechs") ?? MusicID.Boss3;
+            Music = (InfernumMode.CalamityMod as CalamityModClass).GetMusicFromMusicMod("ExoMechs") ?? MusicID.Boss3;
         }
         
         public override void AI()
@@ -244,14 +244,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     exoEnergy.noGravity = true;
                 }
 
-                Gore.NewGore(NPC.position, NPC.velocity, Mod.GetGoreSlot("Gores/AresPulseCannon1"), NPC.scale);
-                Gore.NewGore(NPC.position, NPC.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase1"), NPC.scale);
-                Gore.NewGore(NPC.position, NPC.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase2"), NPC.scale);
-                Gore.NewGore(NPC.position, NPC.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase3"), NPC.scale);
+                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresPulseCannon1"), NPC.scale);
+                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase1", InfernumMode.CalamityMod), NPC.scale);
+                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase2", InfernumMode.CalamityMod), NPC.scale);
+                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase3", InfernumMode.CalamityMod), NPC.scale);
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (NPC.Infernum().OptionalPrimitiveDrawer is null)
             {
@@ -285,13 +285,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 {
                     Color afterimageColor = NPC.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
                     Vector2 afterimageCenter = NPC.oldPos[i] + origin - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageCenter, NPC.frame, afterimageColor, NPC.oldRot[i], origin, NPC.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageCenter, NPC.frame, afterimageColor, NPC.oldRot[i], origin, NPC.scale, spriteEffects, 0f);
                 }
             }
 
-            ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, NPC, texture, center, frame, origin);
-            ExoMechAIUtilities.DrawAresArmTelegraphEffect(spriteBatch, NPC, Color.Violet, texture, center, frame, origin);
-            spriteBatch.Draw(texture, center, frame, NPC.GetAlpha(lightColor), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
+            ExoMechAIUtilities.DrawFinalPhaseGlow(Main.spriteBatch, NPC, texture, center, frame, origin);
+            ExoMechAIUtilities.DrawAresArmTelegraphEffect(Main.spriteBatch, NPC, Color.Violet, texture, center, frame, origin);
+            Main.spriteBatch.Draw(texture, center, frame, NPC.GetAlpha(lightColor), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
 
             texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/AresPulseCannonGlow").Value;
 
@@ -301,20 +301,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 {
                     Color afterimageColor = NPC.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
                     Vector2 afterimageCenter = NPC.oldPos[i] + origin - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageCenter, NPC.frame, afterimageColor, NPC.oldRot[i], origin, NPC.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageCenter, NPC.frame, afterimageColor, NPC.oldRot[i], origin, NPC.scale, spriteEffects, 0f);
                 }
             }
 
-            spriteBatch.Draw(texture, center, frame, afterimageBaseColor * NPC.Opacity, NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * NPC.Opacity, NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
 
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             if (NPC.Infernum().ExtraAI[1] == 1f)
                 EnergyDrawer.DrawBloom(CoreSpritePosition);
             EnergyDrawer.DrawPulses(CoreSpritePosition);
             EnergyDrawer.DrawSet(CoreSpritePosition);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

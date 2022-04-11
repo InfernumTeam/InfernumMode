@@ -91,14 +91,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             return new Color(255, 255, 255, Projectile.alpha);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (ShootCountdown > 0f)
             {
                 Vector2 start = Projectile.Center;
                 Vector2 end = Projectile.Center + AngularOffset.ToRotationVector2() * 5200f;
                 float width = Projectile.Opacity * 2.75f + 0.25f;
-                spriteBatch.DrawLineBetter(start, end, Color.Fuchsia * Projectile.Opacity, width);
+                Main.spriteBatch.DrawLineBetter(start, end, Color.Fuchsia * Projectile.Opacity, width);
             }
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;

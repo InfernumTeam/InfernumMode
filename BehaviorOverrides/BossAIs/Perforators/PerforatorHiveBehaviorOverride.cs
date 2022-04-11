@@ -42,9 +42,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 int meme;
                 if (i < segmentCount - 1)
-                    meme = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    meme = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
-                    meme = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    meme = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
                 Main.npc[meme].realLife = npc.whoAmI;
                 Main.npc[meme].ai[3] = npc.whoAmI;
@@ -175,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                                 break;
                         }
 
-                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, wormTypeToSpawn, 1);
+                        NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, wormTypeToSpawn, 1);
                     }
 
                     float explosionSpeed = 10f;
@@ -305,7 +305,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             }
 
             // Swoop.
-            if (attackTimer >= 90f && attackTimer <= 160f)
+            if (attackTimer is >= 90f and <= 160f)
             {
                 npc.velocity = npc.velocity.RotatedBy(MathHelper.PiOver2 / 70f * -npc.direction);
                 if (enraged && Math.Abs(npc.velocity.X) < 15f)
@@ -509,7 +509,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             if (attackTimer == 90f)
                 SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
 
-            if (attackTimer > 90f && attackTimer < 300f)
+            if (attackTimer is > 90f and < 300f)
             {
                 if (Math.Abs(npc.velocity.X) > 7f)
                     npc.velocity.X *= 0.985f;
@@ -565,7 +565,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             for (int i = 0; i < 6; i++)
             {
                 Vector2 drawPosition = npc.Center - Main.screenPosition + (MathHelper.TwoPi * i / 6f).ToRotationVector2() * glowOutwardness + Vector2.UnitY * (glowOutwardness * 0.5f - 22f);
-                spriteBatch.Draw(texture, drawPosition, npc.frame, glowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, npc.frame, glowColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
             return true;
         }

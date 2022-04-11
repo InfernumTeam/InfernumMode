@@ -320,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
                     // Release lightning clouds from time to time while charging.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f)
-                        Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
+                        Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
                 }
                 if (attackTimer >= 230f + chargeDelay)
                 {
@@ -441,7 +441,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         featherVelocity.Y = -Math.Abs(featherVelocity.Y);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Projectile.NewProjectile(npc.Center + Main.rand.NextVector2CircularEdge(50f, 50f), featherVelocity, ModContent.ProjectileType<FollyFeather>(), 0, 0f);
+                            Projectile.NewProjectile(new InfernumSource(), npc.Center + Main.rand.NextVector2CircularEdge(50f, 50f), featherVelocity, ModContent.ProjectileType<FollyFeather>(), 0, 0f);
                     }
 
                     // If in phase 2 and doing a lightning attack, release an aura from the mouth that goes towards the player.
@@ -456,11 +456,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                             if (phase3)
                             {
                                 Vector2 baseShootVelocity = npc.SafeDirectionTo(mouthPosition) * 7f;
-                                Projectile.NewProjectile(mouthPosition, baseShootVelocity.RotatedBy(-0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
-                                Projectile.NewProjectile(mouthPosition, baseShootVelocity.RotatedBy(0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
+                                Projectile.NewProjectile(new InfernumSource(), mouthPosition, baseShootVelocity.RotatedBy(-0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
+                                Projectile.NewProjectile(new InfernumSource(), mouthPosition, baseShootVelocity.RotatedBy(0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                             }
                             else
-                                Projectile.NewProjectile(mouthPosition, Vector2.Zero, ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
+                                Projectile.NewProjectile(new InfernumSource(), mouthPosition, Vector2.Zero, ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                         }
                     }
                 }
@@ -499,7 +499,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 // Release lightning clouds from time to time while charging if doing a lightning charge.
                 int cloudSpawnRate = (int)MathHelper.Lerp(12f, 6f, 1f - npc.life / (float)npc.lifeMax);
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudSpawnRate == cloudSpawnRate - 1f && chargeType == DragonfollyAttackType.ThunderCharge)
-                    Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
+                    Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
 
                 if (hasDoneFakeoutFlag == 0f && chargeType == DragonfollyAttackType.FakeoutCharge)
                 {
@@ -607,7 +607,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         // Ensure that the spawn position is not near the target, to prevent potentially unfair hits.
                         if (!target.WithinRange(potentialSpawnPosition, 160f))
                         {
-                            int swarmer = NPC.NewNPC((int)potentialSpawnPosition.X, (int)potentialSpawnPosition.Y, ModContent.NPCType<Bumblefuck2>(), npc.whoAmI);
+                            int swarmer = NPC.NewNPC(new InfernumSource(), (int)potentialSpawnPosition.X, (int)potentialSpawnPosition.Y, ModContent.NPCType<Bumblefuck2>(), npc.whoAmI);
                             Main.npc[swarmer].ai[3] = phase2.ToInt();
                             Main.npc[swarmer].velocity = Vector2.UnitY * -12f;
                         }
@@ -650,7 +650,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * (float)Math.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
-                    Projectile.NewProjectile(mouthPosition, Vector2.Zero, ModContent.ProjectileType<BirbAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
+                    Projectile.NewProjectile(new InfernumSource(), mouthPosition, Vector2.Zero, ModContent.ProjectileType<BirbAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                 }
             }
 
@@ -768,7 +768,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * (float)Math.Cos(npc.rotation) * (npc.width * 0.5f + 27f);
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == ScreamTime - 30f + delay)
                 {
-                    int plasmaBall = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedPlasmaEnergy>());
+                    int plasmaBall = NPC.NewNPC(new InfernumSource(), (int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedPlasmaEnergy>());
                     if (Main.npc.IndexInRange(plasmaBall))
                         Main.npc[plasmaBall].velocity = Vector2.UnitX.RotatedByRandom(0.4f) * npc.direction * 7f;
                 }
@@ -826,7 +826,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     frameType = (int)DragonfollyFrameDrawingType.Screm;
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == ScreamTime + 10f)
-                        Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+                        Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
                 }
                 else
                 {
@@ -988,7 +988,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         afterimageColor *= 1f - outwardnessFactor;
 
                         Vector2 drawPosition = npc.Center + (i / 6f * MathHelper.TwoPi + npc.rotation).ToRotationVector2() * outwardnessFactor * 42f - Main.screenPosition;
-                        spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, spriteEffects, 0f);
+                        Main.spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, spriteEffects, 0f);
                     }
                 }
 
@@ -997,7 +997,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     Vector2 drawPosition = baseDrawPosition - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
                     if (fadeToRed > 0.4f)
                         drawPosition += (MathHelper.TwoPi * i / drawInstances + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2() * 5f;
-                    spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor) * opacity, npc.rotation, origin, scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor) * opacity, npc.rotation, origin, scale, spriteEffects, 0f);
                 }
             }
 

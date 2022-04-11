@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Projectile.gfxOffY = -36;
         }
 
-        public override bool CanDamage() => Projectile.timeLeft < Lifetime - 30;
+        public override bool? CanDamage() => Projectile.timeLeft < Lifetime - 30 ? null : false;
 
         public override void Kill(int timeLeft)
         {
@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 for (int i = 0; i < 30; i++)
                 {
-                    Dust dust = Dust.NewDustPerfect(Projectile.Center, DustID.Fire);
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center, 6);
                     dust.velocity = Main.rand.NextVector2Circular(15f, 15f);
                     dust.noGravity = true;
                 }

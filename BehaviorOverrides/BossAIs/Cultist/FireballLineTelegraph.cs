@@ -72,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D laserTelegraph = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Line").Value;
 
@@ -88,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             Color colorOuter = Color.Lerp(Color.Orange, Color.Yellow, TelegraphDelay / 38f * 0.4f);
             Vector2 direction = Projectile.SafeDirectionTo(Destination);
-            spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, direction.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, direction.ToRotation(), origin, scaleOuter, SpriteEffects.None, 0f);
             return false;
         }
     }

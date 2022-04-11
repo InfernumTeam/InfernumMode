@@ -152,9 +152,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             MiscShaderData gradientShader = GameShaders.Misc["Infernum:GradientWingShader"];
             gradientShader.UseImage1("Images/Misc/Noise");
@@ -168,9 +168,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Texture2D crystalTexture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 crystalOrigin = crystalTexture.Size() * 0.5f;
             Vector2 crystalDrawPosition = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(crystalTexture, crystalDrawPosition, null, Color.White, Projectile.rotation, crystalOrigin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(crystalTexture, crystalDrawPosition, null, Color.White, Projectile.rotation, crystalOrigin, Projectile.scale, SpriteEffects.None, 0f);
 
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
 

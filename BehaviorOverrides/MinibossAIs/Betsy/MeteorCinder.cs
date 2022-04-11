@@ -42,6 +42,6 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             Time++;
         }
 
-        public override bool CanDamage() => Projectile.Opacity >= 0.8f;
+        public override bool? CanDamage() => Projectile.Opacity >= 0.8f ? null : false;
     }
 }

@@ -370,7 +370,7 @@ namespace InfernumMode.GlobalInstances
                 Main.npc[npc.realLife].netUpdate = true;
             }
 
-            if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead)
+            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead)
             {
                 if (npc.life - realDamage <= 1000)
                 {
@@ -463,14 +463,14 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if ((npc.type == NPCID.Spazmatism || npc.type == NPCID.Retinazer))
+            if ((npc.type is NPCID.Spazmatism or NPCID.Retinazer))
             {
                 bool otherTwinHasCreatedShield = false;
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (!Main.npc[i].active)
                         continue;
-                    if (Main.npc[i].type != NPCID.Retinazer && Main.npc[i].type != NPCID.Spazmatism)
+                    if (Main.npc[i].type is not NPCID.Retinazer and not NPCID.Spazmatism)
                         continue;
                     if (Main.npc[i].type == npc.type)
                         continue;
@@ -596,7 +596,7 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == NPCID.Spazmatism && !NPC.AnyNPCs(NPCID.Retinazer))
                 target.AddBuff(ModContent.BuffType<ShadowflameInferno>(), 180);
 
-            if (npc.type == NPCID.PrimeSaw || npc.type == NPCID.PrimeVice)
+            if (npc.type is NPCID.PrimeSaw or NPCID.PrimeVice)
             {
                 target.AddBuff(BuffID.BrokenArmor, 180);
                 target.AddBuff(ModContent.BuffType<ArmorCrunch>(), 180);

@@ -53,11 +53,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             // Create limbs.
             if (npc.localAI[0] == 0f && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                NPC.NewNPC((int)npc.Center.X - 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegLeft>(), npc.whoAmI);
-                NPC.NewNPC((int)npc.Center.X + 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegRight>(), npc.whoAmI);
-                NPC.NewNPC((int)npc.Center.X - 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawLeft>(), npc.whoAmI);
-                NPC.NewNPC((int)npc.Center.X + 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawRight>(), npc.whoAmI);
-                NPC.NewNPC((int)npc.Center.X + 1, (int)npc.Center.Y - 20, ModContent.NPCType<RavagerHead>(), npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegLeft>(), npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X + 70, (int)npc.Center.Y + 88, ModContent.NPCType<RavagerLegRight>(), npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawLeft>(), npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X + 120, (int)npc.Center.Y + 50, ModContent.NPCType<RavagerClawRight>(), npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X + 1, (int)npc.Center.Y - 20, ModContent.NPCType<RavagerHead>(), npc.whoAmI);
                 npc.localAI[0] = 1f;
             }
 
@@ -127,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool anyLimbsArePresent = leftLegActive || rightLegActive || leftClawActive || rightClawActive || headActive;
-            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
+            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive;
 
             int darkMagicFireballShootRate = 75;
             int fireballsPerBurst = shouldBeBuffed ? 11 : 8;
@@ -287,7 +287,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         if (!anyLimbsArePresent)
-                            NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BreakableRockPillar>(), npc.whoAmI);
+                            NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BreakableRockPillar>(), npc.whoAmI);
                         else
                             Utilities.NewProjectileBetter(npc.Bottom + Vector2.UnitY * 40f, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), shockwaveDamage, 0f);
                     }
@@ -372,7 +372,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         for (int i = -8; i < 8; i++)
                         {
                             Tile ground = CalamityUtils.ParanoidTileRetrieval(teleportPosition.X + i, teleportPosition.Y + 1);
-                            bool notAFuckingTree = ground.TileType != TileID.Trees && ground.TileType != TileID.PineTree && ground.TileType != TileID.PalmTree;
+                            bool notAFuckingTree = ground.TileType is not TileID.Trees and not TileID.PineTree and not TileID.PalmTree;
                             if (ground.HasUnactuatedTile && notAFuckingTree && (Main.tileSolid[ground.TileType] || Main.tileSolidTop[ground.TileType]))
                             {
                                 solidGround = true;
@@ -393,8 +393,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             for (int i = 0; i < totalPillarsOnEachSide; i++)
                             {
                                 float horizontalSpawnOffset = MathHelper.Lerp(195f, 475f, i / 3f);
-                                NPC.NewNPC((int)(npc.Bottom.X - horizontalSpawnOffset), (int)npc.Bottom.Y - 8, ModContent.NPCType<FlamePillar>());
-                                NPC.NewNPC((int)(npc.Bottom.X + horizontalSpawnOffset), (int)npc.Bottom.Y - 8, ModContent.NPCType<FlamePillar>());
+                                NPC.NewNPC(new InfernumSource(), (int)(npc.Bottom.X - horizontalSpawnOffset), (int)npc.Bottom.Y - 8, ModContent.NPCType<FlamePillar>());
+                                NPC.NewNPC(new InfernumSource(), (int)(npc.Bottom.X + horizontalSpawnOffset), (int)npc.Bottom.Y - 8, ModContent.NPCType<FlamePillar>());
                             }
                         }
 
@@ -831,7 +831,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         Vector2 drawPosition = new(horizontalArenaCenterX - ArenaBorderOffset * direction, Main.LocalPlayer.Center.Y + verticalOffset);
                         drawPosition.Y -= drawPosition.Y % borderTexture.Height;
                         drawPosition -= Main.screenPosition;
-                        spriteBatch.Draw(borderTexture, drawPosition, null, Color.White, 0f, borderTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                        Main.spriteBatch.Draw(borderTexture, drawPosition, null, Color.White, 0f, borderTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                     }
                 }
             }

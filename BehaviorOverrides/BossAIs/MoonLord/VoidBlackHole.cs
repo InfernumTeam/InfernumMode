@@ -91,13 +91,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             return CalamityUtils.CircularHitboxCollision(Projectile.Center, Projectile.scale * 80f, targetHitbox);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D blackHoleTexture = Main.projectileTexture[Projectile.type];
+            Texture2D blackHoleTexture = Utilities.ProjTexture(Projectile.type);
             Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             Vector2 diskScale = Projectile.scale * new Vector2(1.3f, 0.85f);
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(Projectile.Opacity);
@@ -105,21 +105,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Green);
             GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
-            spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, diskScale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, diskScale, SpriteEffects.None, 0f);
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(Projectile.Opacity);
             GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Turquoise);
             GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.MediumTurquoise);
             GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
             for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, diskScale, SpriteEffects.None, 0f);
-            spriteBatch.ExitShaderRegion();
+                Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin, diskScale, SpriteEffects.None, 0f);
+            Main.spriteBatch.ExitShaderRegion();
 
             Vector2 blackHoleScale = Projectile.Size / blackHoleTexture.Size() * Projectile.scale;
             for (int i = 0; i < 3; i++)
-                spriteBatch.Draw(blackHoleTexture, drawPosition, null, Color.White, 0f, blackHoleTexture.Size() * 0.5f, blackHoleScale * 1.01f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(blackHoleTexture, drawPosition, null, Color.White, 0f, blackHoleTexture.Size() * 0.5f, blackHoleScale * 1.01f, SpriteEffects.None, 0f);
             for (int i = 0; i < 3; i++)
-                spriteBatch.Draw(blackHoleTexture, drawPosition, null, Color.Black, 0f, blackHoleTexture.Size() * 0.5f, blackHoleScale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(blackHoleTexture, drawPosition, null, Color.Black, 0f, blackHoleTexture.Size() * 0.5f, blackHoleScale, SpriteEffects.None, 0f);
             return false;
         }
     }

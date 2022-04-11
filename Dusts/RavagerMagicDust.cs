@@ -10,13 +10,13 @@ namespace InfernumMode.Dusts
 
         public override bool MidUpdate(Dust dust)
         {
-            if (dust.customData != null && dust.customData is NPC npc)
+            if (dust.customData is not null and NPC npc)
                 dust.position += npc.position - npc.oldPos[1];
 
-            else if (dust.customData != null && dust.customData is Player player)
+            else if (dust.customData is not null and Player player)
                 dust.position += player.position - player.oldPosition;
 
-            else if (dust.customData != null && dust.customData is Vector2 vector)
+            else if (dust.customData is not null and Vector2 vector)
             {
                 Vector2 idealVelocity = (vector - dust.position).SafeNormalize(-Vector2.UnitY);
                 dust.velocity = (dust.velocity * 4f + idealVelocity * dust.velocity.Length()) / 5f;

@@ -39,9 +39,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float etherealnessFactor = Projectile.Opacity * 0.6f;
             float opacity = MathHelper.Lerp(1f, 0.75f, etherealnessFactor) * Projectile.Opacity;
@@ -60,12 +60,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     Color etherealAfterimageColor = Color.Lerp(lightColor, baseColor, etherealnessFactor * 0.85f) * 0.32f;
                     etherealAfterimageColor.A = (byte)(int)(255 - etherealnessFactor * 255f);
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * etherealOffsetPulse;
-                    spriteBatch.Draw(texture, drawPosition + drawOffset, frame, etherealAfterimageColor * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, etherealAfterimageColor * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
                 }
             }
 
             for (int i = 0; i < (int)Math.Round(1f + etherealnessFactor); i++)
-                spriteBatch.Draw(texture, drawPosition, frame, color * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, frame, color * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 

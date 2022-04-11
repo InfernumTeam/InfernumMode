@@ -105,11 +105,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 Projectile.Kill();
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 startOfFlame = Projectile.Center - Main.screenPosition;
             float relativeFrameCompletion = Projectile.frameCounter / 40f;
-            Texture2D texture2D5 = Main.projectileTexture[Projectile.type];
+            Texture2D texture2D5 = Utilities.ProjTexture(Projectile.type);
             Color flameDrawColor;
             Color startingFlameColor = new(255, 255, 255, 0);
             Color midFlameColor = new(167, 232, 30, 40);
@@ -152,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                     Vector2 currentFlameDrawPosition = Vector2.SmoothStep(startOfFlame, endOfFlame, flameDrawInterpolant);
                     Rectangle frame = texture2D5.Frame(1, 7, 0, (int)(flameDrawInterpolant * 7f));
-                    spriteBatch.Draw(texture2D5, currentFlameDrawPosition, frame, flameDrawColor, flameRotation, frame.Size() / 2f, flameScale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture2D5, currentFlameDrawPosition, frame, flameDrawColor, flameRotation, frame.Size() / 2f, flameScale, SpriteEffects.None, 0f);
                 }
             }
             return false;

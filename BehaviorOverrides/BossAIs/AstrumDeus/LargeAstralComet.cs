@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Lighting.AddLight(Projectile.Center, 0.35f, 0.16f, 0.095f);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;

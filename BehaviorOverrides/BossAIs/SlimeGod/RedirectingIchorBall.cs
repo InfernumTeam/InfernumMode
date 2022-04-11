@@ -36,14 +36,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             Projectile.Opacity = Utils.GetLerpValue(300f, 290f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 10f, Projectile.timeLeft, true) * 0.75f;
 
             float homingSpeed = BossRushEvent.BossRushActive ? 21f : 7f;
-            if (Projectile.timeLeft > 170 && Projectile.timeLeft < 235)
+            if (Projectile.timeLeft is > 170 and < 235)
                 Projectile.velocity = Projectile.velocity.MoveTowards(Projectile.SafeDirectionTo(target.Center) * homingSpeed, 0.25f);
 
             if (Projectile.timeLeft < 35)
                 Projectile.velocity *= 0.98f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (Projectile.timeLeft > 295)
                 return false;

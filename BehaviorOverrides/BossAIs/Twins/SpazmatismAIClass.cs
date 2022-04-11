@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     currentChainPosition += (Main.npc[i].Center - currentChainPosition).SafeNormalize(Vector2.Zero) * chainTexture.Height;
                     Color chainColor = npc.GetAlpha(lightColor);
-                    spriteBatch.Draw(chainTexture, currentChainPosition - Main.screenPosition, null, chainColor, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(chainTexture, currentChainPosition - Main.screenPosition, null, chainColor, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 }
             }
 
@@ -88,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             void drawInstance(Vector2 drawPosition, Color drawColor, float rotation)
             {
                 Vector2 origin = texture.Size() * 0.5f / new Vector2(1f, Main.npcFrameCount[npc.type]);
-                spriteBatch.Draw(texture, drawPosition - Main.screenPosition, npc.frame, npc.GetAlpha(drawColor), rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition, npc.frame, npc.GetAlpha(drawColor), rotation, origin, npc.scale, SpriteEffects.None, 0f);
             }
 
             int totalInstancesToDraw = 1;

@@ -230,16 +230,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
                 HiveMindP2AttackState nextAttack = (HiveMindP2AttackState)(int)npc.Infernum().ExtraAI[5];
                 bool shouldBecomeInvisible =
-                    nextAttack == HiveMindP2AttackState.NPCSpawnArc ||
-                    nextAttack == HiveMindP2AttackState.SpinLunge ||
-                    nextAttack == HiveMindP2AttackState.CloudDash ||
-                    nextAttack == HiveMindP2AttackState.UndergroundFlameDash ||
-                    nextAttack == HiveMindP2AttackState.EaterOfSoulsWall ||
-                    nextAttack == HiveMindP2AttackState.CursedRain ||
-                    nextAttack == HiveMindP2AttackState.BlobBurst;
+                    nextAttack is HiveMindP2AttackState.NPCSpawnArc or
+					HiveMindP2AttackState.SpinLunge or
+					HiveMindP2AttackState.CloudDash or
+					HiveMindP2AttackState.UndergroundFlameDash or
+					HiveMindP2AttackState.EaterOfSoulsWall or
+					HiveMindP2AttackState.CursedRain or
+					HiveMindP2AttackState.BlobBurst;
                 if (shouldBecomeInvisible)
                 {
-                    if (nextAttack == HiveMindP2AttackState.EaterOfSoulsWall || nextAttack == HiveMindP2AttackState.CursedRain)
+                    if (nextAttack is HiveMindP2AttackState.EaterOfSoulsWall or HiveMindP2AttackState.CursedRain)
                     {
                         npc.Center = target.Center - Vector2.UnitY * 350f;
                         npc.velocity = Vector2.Zero;
@@ -328,13 +328,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     // Spawn things if nothing is in the way of the target.
                     if (Main.netMode != NetmodeID.MultiplayerClient && Collision.CanHit(npc.Center, 1, 1, target.position, target.width, target.height))
                     {
-                        if (spawnedEnemyCount == 2 || spawnedEnemyCount == 4)
+                        if (spawnedEnemyCount is 2 or 4)
                         {
                             if (!NPC.AnyNPCs(ModContent.NPCType<DarkHeart>()))
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkHeart>());
+                                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<DarkHeart>());
                         }
                         else if (NPC.CountNPCS(NPCID.EaterofSouls) < 2)
-                            NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofSouls);
+                            NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofSouls);
                     }
 
                     // Reset to the slowdown state in preparation for the next attack.
@@ -730,7 +730,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             hoverOffsetAngle += MathHelper.ToRadians(5f);
             if ((int)attackTimer == 120f)
             {
-                Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
+                Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<HiveMindWave>(), 0, 0f);
                 SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
                 var explosionSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
                 if (explosionSound != null)
@@ -815,7 +815,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 drawColor *= npc.Opacity;
 
                 Vector2 drawPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * -MathHelper.Lerp(8f, trailLength, i / (float)npc.oldPos.Length);
-                spriteBatch.Draw(texture, drawPosition - Main.screenPosition + new Vector2(0, npc.gfxOffY),
+                Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition + new Vector2(0, npc.gfxOffY),
                     frameRectangle, drawColor, npc.rotation, frameRectangle.Size() / 2f, scale, SpriteEffects.None, 0f);
             }
 
@@ -824,7 +824,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             // If performing the blob snipe attack
             if (npc.Infernum().ExtraAI[0] == 8f)
             {
-                spriteBatch.Draw(texture, npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY),
+                Main.spriteBatch.Draw(texture, npc.Center - Main.screenPosition + new Vector2(0, npc.gfxOffY),
                     frameRectangle, Color.White, npc.rotation, frameRectangle.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
             }
 
@@ -832,7 +832,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             // going below 20% life.
             if (npc.Infernum().ExtraAI[0] >= 4f || npc.Infernum().ExtraAI[11] > 0f)
             {
-                spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, frameRectangle.Size() / 2f, Utilities.AngularSmoothstep(npc.Infernum().ExtraAI[7], 1f, 1.5f), SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, frameRectangle.Size() / 2f, Utilities.AngularSmoothstep(npc.Infernum().ExtraAI[7], 1f, 1.5f), SpriteEffects.None, 0f);
                 npc.Infernum().ExtraAI[6] = HiveMindFadeoutTime;
             }
 
@@ -840,11 +840,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             else if (npc.Infernum().ExtraAI[6] > 0f)
             {
                 float scale = npc.Infernum().ExtraAI[6] / HiveMindFadeoutTime / Utilities.AngularSmoothstep(npc.Infernum().ExtraAI[7], 1f, 1.5f);
-                spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, frameRectangle.Size() / 2f, MathHelper.Clamp(scale, 1f, 1000f), SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, new Color(91f / 255f, 71f / 255f, 127f / 255f, 0.3f * npc.Opacity) * npc.Opacity, npc.rotation, frameRectangle.Size() / 2f, MathHelper.Clamp(scale, 1f, 1000f), SpriteEffects.None, 0f);
                 npc.Infernum().ExtraAI[6] -= 1f;
             }
 
-            spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, npc.GetAlpha(lightColor), npc.rotation, frameRectangle.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, baseDrawPosition, frameRectangle, npc.GetAlpha(lightColor), npc.rotation, frameRectangle.Size() / 2f, npc.scale, SpriteEffects.None, 0f);
 
             return false;
         }

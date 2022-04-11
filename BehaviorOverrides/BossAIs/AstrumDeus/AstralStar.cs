@@ -64,19 +64,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Texture2D starTexture = Main.projectileTexture[Projectile.type];
+            Texture2D starTexture = Utilities.ProjTexture(Projectile.type);
             Vector2 largeScale = new Vector2(0.8f, 4f) * Projectile.Opacity * 0.5f;
             Vector2 smallScale = new Vector2(0.8f, 1.25f) * Projectile.Opacity * 0.5f;
-            spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale, SpriteEffects.None, 0);
-            spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), 0f, starTexture.Size() * 0.5f, smallScale, SpriteEffects.None, 0);
-            spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale * 0.6f, SpriteEffects.None, 0);
-            spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), 0f, starTexture.Size() * 0.5f, smallScale * 0.6f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), 0f, starTexture.Size() * 0.5f, smallScale, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale * 0.6f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), 0f, starTexture.Size() * 0.5f, smallScale * 0.6f, SpriteEffects.None, 0);
 
             if (Time < 185f || Projectile.velocity.Length() < 9f)
-                spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, starTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(starTexture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, starTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             else
             {
                 for (int i = 0; i < Projectile.oldPos.Length - 1; ++i)
@@ -105,6 +105,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 180);
 
-        public override bool CanDamage() => Time > 75f;
+        public override bool? CanDamage() => Time > 75f ? null : false;
     }
 }

@@ -37,11 +37,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Projectile.rotation = Projectile.velocity.ToRotation();
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Vector2 scale = new Vector2(135f / texture.Height, 1f) * Projectile.scale;
             GameShaders.Misc["Infernum:NecroplasmicRoar"].UseOpacity(Projectile.Opacity);
 
@@ -50,9 +50,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             GameShaders.Misc["Infernum:NecroplasmicRoar"].UseColor(pulseColor);
             GameShaders.Misc["Infernum:NecroplasmicRoar"].Apply();
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Cyan, Projectile.rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.Cyan, Projectile.rotation, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
 
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
 
@@ -67,6 +67,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             return false;
         }
 
-        public override bool CanDamage() => Projectile.Opacity >= 1f;
+        public override bool? CanDamage() => Projectile.Opacity >= 1f ? null : false;
     }
 }

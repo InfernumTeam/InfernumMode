@@ -43,6 +43,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.White, Color.DarkGreen, Utils.GetLerpValue(45f, 0f, Projectile.timeLeft, true)) * Projectile.Opacity;
 
-        public override bool CanDamage() => Projectile.Opacity >= 0.8f;
+        public override bool? CanDamage() => Projectile.Opacity >= 0.8f ? null : false;
     }
 }

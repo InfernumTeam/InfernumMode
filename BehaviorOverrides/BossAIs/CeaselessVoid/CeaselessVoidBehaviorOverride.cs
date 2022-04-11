@@ -109,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             // Do bullet hells.
-            if (bulletHellTimer > 0f && bulletHellTimer < BulletHellTime)
+            if (bulletHellTimer is > 0f and < BulletHellTime)
             {
                 DoBehavior_DarkEnergyBulletHell(npc, target, lifeRatio, ref bulletHellTimer);
 
@@ -399,7 +399,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse, target.Center);
 
             // Don't fire near the start/end of the attack.
-            if (attackTimer < 90f || attackTimer > BulletHellTime - 120f)
+            if (attackTimer is < 90f or > (BulletHellTime - 120f))
                 return;
 
             // Create bursts.

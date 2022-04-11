@@ -48,10 +48,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             return new Color(184, 184, 184, Projectile.alpha);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tex = Main.projectileTexture[Projectile.type];
-            int height = Main.projectileTexture[Projectile.type].Height / Main.projFrames[Projectile.type];
+            Texture2D tex = Utilities.ProjTexture(Projectile.type);
+            int height = Utilities.ProjTexture(Projectile.type).Height / Main.projFrames[Projectile.type];
             int y = height * Projectile.frame;
             Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), new Rectangle(0, y, tex.Width, height), Projectile.GetAlpha(lightColor), Projectile.rotation, new Vector2(tex.Width / 2f, height / 2f), Projectile.scale, SpriteEffects.None, 0f);
             return false;

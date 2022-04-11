@@ -32,20 +32,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Lighting.AddLight(Projectile.Center, Color.Orange.ToVector3());
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Color explosionColor = Color.Lerp(Color.Orange, Color.Yellow, 0.5f);
             explosionColor = Color.Lerp(explosionColor, Color.White, Projectile.Opacity * 0.2f);
             explosionColor *= Projectile.Opacity * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < (int)MathHelper.Lerp(3f, 6f, Projectile.Opacity); i++)
-                spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 
@@ -54,6 +54,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             return Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * 135f);
         }
 
-        public override bool CanDamage() => Projectile.Opacity > 0.45f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.45f ? null : false;
     }
 }

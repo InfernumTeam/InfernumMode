@@ -37,23 +37,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Projectile.rotation = Projectile.velocity.ToRotation();
         }
 
-        public override bool CanDamage() => Projectile.Opacity >= 1f;
+        public override bool? CanDamage() => Projectile.Opacity >= 1f ? null : false;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Rectangle rectangle = new(0, 0, texture.Width, texture.Height);
             Vector2 origin = rectangle.Size() * .5f;
             Color drawColor = Projectile.GetAlpha(lightColor);
             drawColor = Color.Lerp(drawColor, Color.Yellow, 0.5f);
             drawColor.A /= 7;
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, rectangle, drawColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, rectangle, drawColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             for (int i = 0; i < 3; i++)
             {
                 Vector2 drawOffset = Projectile.velocity * -i * 0.6f;
                 Color afterimageColor = drawColor * (1f - i / 3f);
-                spriteBatch.Draw(texture, Projectile.Center + drawOffset - Main.screenPosition, rectangle, afterimageColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
+                Main.spriteBatch.Draw(texture, Projectile.Center + drawOffset - Main.screenPosition, rectangle, afterimageColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
             return false;
         }

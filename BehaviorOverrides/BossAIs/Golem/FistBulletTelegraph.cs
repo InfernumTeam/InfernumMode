@@ -30,11 +30,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 start = Projectile.Center;
             Vector2 end = Projectile.Center + Projectile.velocity * 7000f;
-            spriteBatch.DrawLineBetter(start, end, Color.Orange * 0.4f, Projectile.scale * 4f);
+            Main.spriteBatch.DrawLineBetter(start, end, Color.Orange * 0.4f, Projectile.scale * 4f);
             return false;
         }
 

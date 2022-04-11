@@ -634,7 +634,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % entitySummonRate == entitySummonRate - 1f)
             {
                 Vector2 entitySpawnPosition = npc.Center + Main.rand.NextVector2Circular(250f, 250f);
-                NPC.NewNPC((int)entitySpawnPosition.X, (int)entitySpawnPosition.Y, ModContent.NPCType<UnworldlyEntity>(), npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)entitySpawnPosition.X, (int)entitySpawnPosition.Y, ModContent.NPCType<UnworldlyEntity>(), npc.whoAmI);
 
                 entitySummonCounter++;
                 npc.netUpdate = true;
@@ -729,14 +729,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
                         afterimageDrawPosition -= new Vector2(NPCTexture.Width, NPCTexture.Height / frameCount) * scale / 2f;
                         afterimageDrawPosition += origin * scale + new Vector2(0f, 4f + offsetY);
-                        spriteBatch.Draw(NPCTexture, afterimageDrawPosition, new Rectangle?(frame), afterimageColor, rotation, origin, scale, direction, 0f);
+                        Main.spriteBatch.Draw(NPCTexture, afterimageDrawPosition, new Rectangle?(frame), afterimageColor, rotation, origin, scale, direction, 0f);
                     }
                 }
 
                 Vector2 drawPosition = baseDrawPosition - Main.screenPosition;
                 drawPosition -= new Vector2(NPCTexture.Width, NPCTexture.Height / frameCount) * scale / 2f;
                 drawPosition += origin * scale + new Vector2(0f, 4f + offsetY);
-                spriteBatch.Draw(NPCTexture, drawPosition, new Rectangle?(frame), npc.GetAlpha(lightColor), rotation, origin, scale, direction, 0f);
+                Main.spriteBatch.Draw(NPCTexture, drawPosition, new Rectangle?(frame), npc.GetAlpha(lightColor), rotation, origin, scale, direction, 0f);
 
                 Color glowmaskColor = Color.Lerp(Color.White, Color.Fuchsia, 0.5f);
 
@@ -751,11 +751,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
                         afterimageDrawPosition -= new Vector2(glowMaskTexture.Width, glowMaskTexture.Height / frameCount) * scale / 2f;
                         afterimageDrawPosition += origin * scale + new Vector2(0f, 4f + offsetY);
-                        spriteBatch.Draw(glowMaskTexture, afterimageDrawPosition, new Rectangle?(frame), afterimageColor, rotation, origin, scale, direction, 0f);
+                        Main.spriteBatch.Draw(glowMaskTexture, afterimageDrawPosition, new Rectangle?(frame), afterimageColor, rotation, origin, scale, direction, 0f);
                     }
                 }
 
-                spriteBatch.Draw(glowMaskTexture, drawPosition, new Rectangle?(frame), glowmaskColor, rotation, origin, scale, direction, 0f);
+                Main.spriteBatch.Draw(glowMaskTexture, drawPosition, new Rectangle?(frame), glowmaskColor, rotation, origin, scale, direction, 0f);
             }
 
             Player target = Main.player[npc.target];

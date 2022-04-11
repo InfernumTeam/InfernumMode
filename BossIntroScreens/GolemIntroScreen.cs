@@ -1,14 +1,12 @@
-using CalamityMod.NPCs.GreatSandShark;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.BossIntroScreens
 {
-    public class GolemIntroScreen : BaseIntroScreen
+	public class GolemIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => new(completionRatio =>
         {

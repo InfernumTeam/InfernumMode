@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Home in on the closest target after a small period of time.
-            if (Time < 120f && Time > 30f)
+            if (Time is < 120f and > 30f)
             {
                 float speed = Projectile.velocity.Length();
                 Vector2 idealVelocity = Projectile.SafeDirectionTo(Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center) * speed;

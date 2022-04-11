@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             // Quickly rise.
-            if (Time >= 60f && Time < 75f)
+            if (Time is >= 60f and < 75f)
             {
                 CurrentHeight = MathHelper.Lerp(StartingHeight, MaxPillarHeight, Utils.GetLerpValue(60f, 75f, Time, true));
                 if (Time == 74 || Time % 6 == 0)
@@ -99,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         }
 
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (Time < 60f)
             {
@@ -118,12 +118,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             for (int i = pillarTexture.Height; i < CurrentHeight + pillarTexture.Height; i += pillarTexture.Height)
             {
                 Vector2 drawPosition = Projectile.Bottom - Vector2.UnitY * i - Main.screenPosition;
-                spriteBatch.Draw(pillarTexture, drawPosition, null, drawColor, 0f, pillarTexture.Size() * new Vector2(0.5f, 0f), Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(pillarTexture, drawPosition, null, drawColor, 0f, pillarTexture.Size() * new Vector2(0.5f, 0f), Projectile.scale, SpriteEffects.None, 0f);
                 tipBottom = i;
             }
 
             Vector2 tipDrawPosition = Projectile.Bottom - Vector2.UnitY * (tipBottom - 8f) - Main.screenPosition;
-            spriteBatch.Draw(tipTexture, tipDrawPosition, null, drawColor, 0f, tipTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tipTexture, tipDrawPosition, null, drawColor, 0f, tipTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 

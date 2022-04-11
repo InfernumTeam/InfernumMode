@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         float ai0 = Main.rand.NextFloat(0.01f, 0.08f) * Main.rand.NextBool().ToDirectionInt();
                         float ai1 = Main.rand.NextFloat(0.01f, 0.08f) * Main.rand.NextBool().ToDirectionInt();
 
-                        int tentacle = Projectile.NewProjectile(Target.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<VoidTentacle>(), 250, 0f);
+                        int tentacle = Projectile.NewProjectile(new InfernumSource(), Target.Center, Main.rand.NextVector2Circular(4f, 4f), ModContent.ProjectileType<VoidTentacle>(), 250, 0f);
                         if (Main.projectile.IndexInRange(tentacle))
                         {
                             Main.projectile[tentacle].ai[0] = ai0;

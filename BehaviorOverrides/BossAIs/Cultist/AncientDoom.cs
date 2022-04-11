@@ -53,20 +53,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D doomTexture = Main.projectileTexture[Projectile.type];
+            Texture2D doomTexture = Utilities.ProjTexture(Projectile.type);
             Rectangle frame = doomTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             for (int i = 0; i < 10; i++)
             {
                 Color drawColor = Color.Magenta * Projectile.Opacity * 0.18f;
                 Vector2 drawPosition = Projectile.Center + (MathHelper.TwoPi * i / 10f + Main.GlobalTimeWrappedHourly * 4.4f).ToRotationVector2() * 5f;
-                spriteBatch.Draw(doomTexture, drawPosition, frame, drawColor, Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(doomTexture, drawPosition, frame, drawColor, Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
 
             // Make line telegraphs.
             if (Projectile.timeLeft < 40f)
@@ -76,7 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     Vector2 beamDirection = (MathHelper.TwoPi * i / 9f).ToRotationVector2();
                     if (Projectile.localAI[1] == 1f)
                         beamDirection = beamDirection.RotatedBy(MathHelper.TwoPi / 18f);
-                    spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + beamDirection * DoomBeam.LaserLength, Color.Purple, (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true)) * 2f);
+                    Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + beamDirection * DoomBeam.LaserLength, Color.Purple, (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true)) * 2f);
                 }
             }
 

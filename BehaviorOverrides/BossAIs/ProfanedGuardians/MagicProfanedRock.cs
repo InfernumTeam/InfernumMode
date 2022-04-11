@@ -79,9 +79,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             GeneralTimer++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 baseDrawPosition = Projectile.Center - Main.screenPosition;
             Color afterimageColor = Projectile.GetAlpha(Color.Lerp(Color.Orange, Color.Yellow, 0.56f)) * 0.4f;
@@ -92,10 +92,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 float drawOffset = MathHelper.Lerp(16f, 1f, Projectile.Opacity);
                 drawOffset = MathHelper.Lerp(drawOffset, 6f, Utils.GetLerpValue(120f, 135f, GeneralTimer, true));
                 Vector2 drawPosition = baseDrawPosition + (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 0.47f).ToRotationVector2() * drawOffset;
-                spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(afterimageColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
             }
 
-            spriteBatch.Draw(texture, baseDrawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, baseDrawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
             return false;
         }
 

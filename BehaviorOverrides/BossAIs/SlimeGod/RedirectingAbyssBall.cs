@@ -35,14 +35,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Projectile.Opacity = Utils.GetLerpValue(360f, 340f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * 0.8f;
 
-            if (Projectile.timeLeft < 270 && Projectile.timeLeft > 225)
+            if (Projectile.timeLeft is < 270 and > 225)
                 Projectile.velocity = Projectile.velocity.MoveTowards(Projectile.SafeDirectionTo(target.Center) * 11f, 0.55f);
 
             if (Projectile.timeLeft < 35)
                 Projectile.velocity *= 0.98f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (Projectile.timeLeft > 355)
                 return false;

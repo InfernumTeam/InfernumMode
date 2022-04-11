@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.08f, 0f, 1f);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 start = Projectile.Center - Vector2.UnitY.RotatedBy(Projectile.rotation) * 4350f;
             Vector2 end = Projectile.Center + Vector2.UnitY.RotatedBy(Projectile.rotation) * 4350f;

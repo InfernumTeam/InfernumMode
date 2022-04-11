@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 if (subphaseState == 0f)
                 {
                     for (int i = 1; i <= 5; i++)
-                        Gore.NewGore(npc.Center, npc.velocity, InfernumMode.Instance.GetGoreSlot("Gores/CryogenChainGore" + i), npc.scale);
+                        Gore.NewGore(npc.Center, npc.velocity, Utilities.GetGoreID("CryogenChainGore" + i), npc.scale);
 
                     SoundEngine.PlaySound(SoundID.NPCDeath7, npc.Center);
                 }
@@ -140,7 +140,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 if (subphaseState == 1f)
                 {
                     for (int i = 1; i <= 7; i++)
-                        Gore.NewGore(npc.Center, npc.velocity, InfernumMode.Instance.GetGoreSlot("Gores/CryogenGore" + i), npc.scale);
+                        Gore.NewGore(npc.Center, npc.velocity, Utilities.GetGoreID("CryogenGore" + i), npc.scale);
                 }
 
                 // Reset everything and sync.
@@ -148,7 +148,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    var sound = Main.GetActiveSound(SlotId.FromFloat(npc.Infernum().ExtraAI[0]));
+                    var sound = SoundEngine.GetActiveSound(SlotId.FromFloat(npc.Infernum().ExtraAI[0]));
                     sound?.Stop();
                 }
 
@@ -815,8 +815,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             float intensityFactor = Utils.GetLerpValue(60f, 120f, attackTimer, true) * Utils.GetLerpValue(spiritSummonTime, spiritSummonTime - 60f, attackTimer, true);
 
             bool shouldStopSound = Main.ambientVolume > 0f;
-            if (attackTimer == 60f && Main.netMode != NetmodeID.Server && Main.GetActiveSound(SlotId.FromFloat(blizzardSound)) == null && !shouldStopSound)
-                blizzardSound = Main.PlayTrackedSound(SoundID.BlizzardStrongLoop, npc.Center).ToFloat();
+            if (attackTimer == 60f && Main.netMode != NetmodeID.Server && SoundEngine.GetActiveSound(SlotId.FromFloat(blizzardSound)) == null && !shouldStopSound)
+                blizzardSound = SoundEngine.PlayTrackedSound(SoundID.BlizzardStrongLoop, npc.Center).ToFloat();
 
             bool canShoot = attackTimer > shootDelay && attackTimer < spiritSummonTime;
             if (Main.netMode != NetmodeID.MultiplayerClient && canShoot && attackTimer % spiritSummonRate == spiritSummonRate - 1f)
@@ -838,7 +838,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
             if (Main.netMode != NetmodeID.Server)
             {
-                var sound = Main.GetActiveSound(SlotId.FromFloat(blizzardSound));
+                var sound = SoundEngine.GetActiveSound(SlotId.FromFloat(blizzardSound));
                 if (sound != null)
                 {
                     if (shouldStopSound)
@@ -995,8 +995,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             }
 
             Vector2 drawPosition = npc.Center - Main.screenPosition;
-            spriteBatch.Draw(drawTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(drawTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
 

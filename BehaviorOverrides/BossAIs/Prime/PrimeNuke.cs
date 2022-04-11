@@ -35,9 +35,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             float fadeToRed = Utils.GetLerpValue(65f, 10f, Projectile.timeLeft, true) * 0.8f;
             Color redFade = Color.Red * 0.67f;
             redFade.A = 0;
@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             for (int i = 0; i < 4; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * outwardness;
-                spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + drawOffset, null, drawColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition + drawOffset, null, drawColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
             return false;
         }
@@ -60,6 +60,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearExplosion>(), 220, 0f);
         }
 
-        public override bool CanDamage() => false;
+        public override bool? CanDamage() => false ? null : false;
     }
 }

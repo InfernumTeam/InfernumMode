@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 Projectile.Kill();
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Color innerColor = Color.Lerp(Color.Cyan, Color.White, 0.6f) * Projectile.Opacity * 0.6f;
             innerColor.A = 72;
@@ -76,8 +76,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             Vector2 start = Projectile.Center;
             Vector2 end = start + Projectile.velocity * 4500f;
 
-            spriteBatch.DrawLineBetter(start, end, outerColor, Projectile.scale);
-            spriteBatch.DrawLineBetter(start, end, innerColor, Projectile.scale * 0.5f);
+            Main.spriteBatch.DrawLineBetter(start, end, outerColor, Projectile.scale);
+            Main.spriteBatch.DrawLineBetter(start, end, innerColor, Projectile.scale * 0.5f);
             return false;
         }
 

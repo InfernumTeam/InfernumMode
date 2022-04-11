@@ -99,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             float generalOpacity = Utils.GetLerpValue(0f, 30f, Time, true) * Utils.GetLerpValue(Lifetime, Lifetime - 60f, Time, true);
             Vector2 top = Projectile.Top;
@@ -107,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
             Vector2 tornadoArea = Vector2.UnitY * (bottom.Y - top.Y);
             tornadoArea.X = tornadoArea.Y * HorizontalCollisionAreaFactor;
 
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Vector2 origin = texture.Size() * 0.5f;
             float baseRotation = MathHelper.TwoPi / -12f * Time * (Projectile.velocity.X <= 0f).ToDirectionInt();
             SpriteEffects direction = Projectile.velocity.X > 0f ? SpriteEffects.FlipVertically : SpriteEffects.None;
@@ -149,9 +149,9 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
 
                     afterimageColor.A = (byte)(afterimageColor.A * 0.5f);
                     afterimageColor *= generalOpacity;
-                    spriteBatch.Draw(texture, drawPosition, null, afterimageColor, baseRotation + heightBasedRotation, origin, (1f + scaleAdditive) * 0.8f, direction, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, null, afterimageColor, baseRotation + heightBasedRotation, origin, (1f + scaleAdditive) * 0.8f, direction, 0f);
                 }
-                spriteBatch.Draw(texture, drawPosition, null, color, baseRotation + heightBasedRotation, origin, 1f + scaleAdditive, direction, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, color, baseRotation + heightBasedRotation, origin, 1f + scaleAdditive, direction, 0f);
             }
             return false;
         }

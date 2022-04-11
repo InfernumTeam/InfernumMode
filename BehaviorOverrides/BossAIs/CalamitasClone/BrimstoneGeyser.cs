@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (Time < 20f)
             {

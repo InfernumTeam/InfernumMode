@@ -67,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                     Main.projectile[wave].Bottom = Projectile.Center + Vector2.UnitY * 700f;
                 }
 
-                int leviathan = NPC.NewNPC((int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<LeviathanNPC>());
+                int leviathan = NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<LeviathanNPC>());
                 if (Main.npc.IndexInRange(leviathan))
                     Main.npc[leviathan].velocity = Vector2.UnitY * -7f;
             }

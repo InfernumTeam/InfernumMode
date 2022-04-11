@@ -52,13 +52,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
         public override Color? GetAlpha(Color lightColor) => Color.White;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 top = Projectile.Center - Vector2.UnitY * 2000f;
             Vector2 bottom = Projectile.Center + Vector2.UnitY * 2000f;
             float telegraphWidth = CalamityUtils.Convert01To010(Time / 30f) * 4f;
             if (telegraphWidth > 0.1f)
-                spriteBatch.DrawLineBetter(top, bottom, Color.Violet * Utils.GetLerpValue(0f, 30f, Time, true), telegraphWidth);
+                Main.spriteBatch.DrawLineBetter(top, bottom, Color.Violet * Utils.GetLerpValue(0f, 30f, Time, true), telegraphWidth);
 
             return true;
         }

@@ -53,9 +53,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
         }
 
-        public override bool CanDamage() => Projectile.Opacity > 0.6f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.6f ? null : false;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 screenArea = new(Main.screenWidth, Main.screenHeight);
             Rectangle screenRectangle = Utils.CenteredRectangle(Main.screenPosition + screenArea * 0.5f, screenArea * 1.33f);
@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (!Projectile.Hitbox.Intersects(screenRectangle))
                 return false;
 
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * Projectile.Opacity * 0.8f;
@@ -82,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Vector2 scale = Projectile.Size / texture.Size() * Projectile.scale * 0.9f;
 
             for (int i = 0; i < 2; i++)
-                spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale * 1.5f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, scale * 1.5f, SpriteEffects.None, 0f);
             return false;
         }
     }

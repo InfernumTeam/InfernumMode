@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             for (float i = 0; i < 4f; i += 1f)
             {
                 float angle = MathHelper.TwoPi / 4f * i;
-                Projectile.NewProjectile(Projectile.Center, (angle + MathHelper.PiOver2).ToRotationVector2() * 6f, InfernumMode.CalamityMod.Find<ModProjectile>("CosmicFlameBurst").Type, 80, 0f);
+                Projectile.NewProjectile(new InfernumSource(), Projectile.Center, (angle + MathHelper.PiOver2).ToRotationVector2() * 6f, InfernumMode.CalamityMod.Find<ModProjectile>("CosmicFlameBurst").Type, 80, 0f);
             }
         }
     }

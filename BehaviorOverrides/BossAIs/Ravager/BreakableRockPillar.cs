@@ -30,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             NPC.noTileCollide = true;
             NPC.noGravity = true;
             NPC.canGhostHeal = false;
-            NPC.lifeMax = CalamityWorld.downedProvidence ? 5600 : 1300;
+            NPC.lifeMax = DownedBossSystem.downedProvidence ? 5600 : 1300;
             NPC.alpha = 255;
             NPC.aiStyle = -1;
             aiType = -1;
@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 SoundEngine.PlaySound(SoundID.Item51, NPC.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int rockDamage = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive ? 340 : 205;
+                    int rockDamage = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive ? 340 : 205;
                     Vector2 rockSpawnPosition = NPC.Center + NPC.rotation.ToRotationVector2() * Main.rand.NextFloatDirection() * 120f;
                     Utilities.NewProjectileBetter(rockSpawnPosition, Vector2.UnitY * 5f, ModContent.ProjectileType<RockPiece>(), rockDamage, 0f);
                 }

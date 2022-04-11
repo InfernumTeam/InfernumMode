@@ -89,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             target.AddBuff(BuffID.OnFire, 360);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Color rocketColor = new(185, 185, 185, 0);
             CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], rocketColor, 1);

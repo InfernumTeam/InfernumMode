@@ -34,12 +34,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 Projectile.Opacity = 1f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 start = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
             Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 1600f;
-            spriteBatch.DrawLineBetter(start, end, Color.DarkRed, Projectile.Opacity * 6f + 0.5f);
-            spriteBatch.DrawLineBetter(start, end, Color.Red, (Projectile.Opacity * 6f + 0.5f) * 0.5f);
+            Main.spriteBatch.DrawLineBetter(start, end, Color.DarkRed, Projectile.Opacity * 6f + 0.5f);
+            Main.spriteBatch.DrawLineBetter(start, end, Color.Red, (Projectile.Opacity * 6f + 0.5f) * 0.5f);
             return false;
         }
 
@@ -48,13 +48,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
+            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
             int fireDamage = shouldBeBuffed ? 380 : 160;
             Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity, ModContent.ProjectileType<BrimstoneBurst>(), fireDamage, 0f);
         }
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool CanDamage() => false;
+        public override bool? CanDamage() => false ? null : false;
     }
 }

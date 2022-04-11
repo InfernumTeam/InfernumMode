@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             ref float time = ref npc.ai[2];
 
             // Reel inward prior to snapping.
-            if (time > -20f && time < 5f)
+            if (time is > (-20f) and < 5f)
                 attachOffset = MathHelper.Lerp(attachOffset, 45f, 0.05f);
 
             // Reach outward swiftly in hopes of hitting a target.

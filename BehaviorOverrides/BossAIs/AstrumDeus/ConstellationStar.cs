@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Projectile projectileToConnectTo = null;
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -51,13 +51,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             Color starColor = Projectile.identity % 3 == 0 ? new Color(109, 242, 196) : new Color(255, 132, 66);
             starColor.A = 0;
 
-            Texture2D starTexture = Main.projectileTexture[Projectile.type];
+            Texture2D starTexture = Utilities.ProjTexture(Projectile.type);
             float scaleFactor = Utils.GetLerpValue(0f, 35f, Time, true);
 
             for (int i = 0; i < 8; i++)
             {
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition + (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 2f;
-                spriteBatch.Draw(starTexture, drawPosition, null, starColor, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(starTexture, drawPosition, null, starColor, 0f, starTexture.Size() * 0.5f, Projectile.scale * scaleFactor, SpriteEffects.None, 0f);
             }
 
             if (projectileToConnectTo != null)
@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
                 float rotation = (end - start).ToRotation() - MathHelper.PiOver2;
 
-                spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(lineTexture, start - Main.screenPosition, null, drawColor, rotation, origin, scale, SpriteEffects.None, 0f);
             }
 
             return false;

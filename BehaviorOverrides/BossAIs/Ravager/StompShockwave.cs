@@ -36,7 +36,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Projectile.scale = Projectile.scale * 1.018f + 0.055f;
         }
 
-        public override bool CanDamage() => Projectile.Opacity > 0.75f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.75f ? null : false;
 
         public override void Kill(int timeLeft)
         {
@@ -63,14 +63,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), 0f, texture.Size() * 0.5f, Scale, SpriteEffects.None, 0f);
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), 0f, texture.Size() * 0.5f, Scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

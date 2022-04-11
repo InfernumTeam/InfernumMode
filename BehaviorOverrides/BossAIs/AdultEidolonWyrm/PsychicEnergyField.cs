@@ -49,16 +49,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     {
                         float shootOffsetAngle = MathHelper.Lerp(-0.4f, 0.4f, i / 2f);
                         Vector2 blastShootVelocity = Projectile.SafeDirectionTo(closestTarget.Center).RotatedBy(shootOffsetAngle) * 7f;
-                        Projectile.NewProjectile(Projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), Projectile.damage, 0f);
+                        Projectile.NewProjectile(new InfernumSource(), Projectile.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), Projectile.damage, 0f);
                     }
                 }
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.EnterShaderRegion();
-            Texture2D noiseTexture = Main.projectileTexture[Projectile.type];
+            Main.spriteBatch.EnterShaderRegion();
+            Texture2D noiseTexture = Utilities.ProjTexture(Projectile.type);
             Vector2 drawPosition2 = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].UseOpacity(Projectile.Opacity);
@@ -66,8 +66,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].UseSecondaryColor(Color.Lerp(Color.Purple, Color.Black, 0.25f));
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].Apply();
 
-            spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 0.4f, SpriteEffects.None, 0f);
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.Draw(noiseTexture, drawPosition2, null, Color.White, 0f, origin, 0.4f, SpriteEffects.None, 0f);
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
 
@@ -76,6 +76,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             target.Calamity().lastProjectileHit = Projectile;
         }
 
-        public override bool CanDamage() => false;
+        public override bool? CanDamage() => false ? null : false;
     }
 }

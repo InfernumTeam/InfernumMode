@@ -258,7 +258,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 else if (npc.velocity.Y < 15f)
                     npc.velocity.Y += 0.3f;
 
-                if (chargeInterpolantTimer > 0f && chargeInterpolantTimer < 25f)
+                if (chargeInterpolantTimer is > 0f and < 25f)
                 {
                     npc.velocity = Vector2.Lerp(npc.velocity, chargeDirection * chargeSpeed, chargeInterpolantTimer / 45f);
                     chargeInterpolantTimer++;
@@ -310,7 +310,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 float spawnOffsetFactor = MathHelper.Lerp(50f, 340f, attackTimer / 120f);
                 for (int i = -1; i <= 1; i += 2)
                 {
-                    int shark = NPC.NewNPC((int)(npc.Center.X + spawnOffsetFactor * i), (int)npc.Center.Y, ModContent.NPCType<FlyingSandShark>());
+                    int shark = NPC.NewNPC(new InfernumSource(), (int)(npc.Center.X + spawnOffsetFactor * i), (int)npc.Center.Y, ModContent.NPCType<FlyingSandShark>());
                     if (Main.npc.IndexInRange(shark))
                         Main.npc[shark].ai[2] = desertTextureVariant;
                 }
@@ -655,12 +655,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     float afterimageFade = 8f - i;
                     afterimageColor *= afterimageFade / (NPCID.Sets.TrailCacheLength[npc.type] * 1.5f);
                     Vector2 afterimageDrawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-            spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(averageColor), npc.rotation, origin, npc.scale, spriteEffects, 0);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(averageColor), npc.rotation, origin, npc.scale, spriteEffects, 0);
             return false;
         }
     }

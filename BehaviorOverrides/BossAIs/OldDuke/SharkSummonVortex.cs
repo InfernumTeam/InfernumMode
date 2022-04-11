@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Main.netMode != NetmodeID.MultiplayerClient && Time % 12f == 11f)
             {
                 Vector2 sharkVelocity = (MathHelper.TwoPi * Time / 120f).ToRotationVector2() * 8f;
-                int shark = NPC.NewNPC((int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<OldDukeSharkron>());
+                int shark = NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<OldDukeSharkron>());
                 if (Main.npc.IndexInRange(shark))
                 {
                     Main.npc[shark].velocity = sharkVelocity;
@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;

@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             return color;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (CrackDrawer is null)
                 CrackDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, true, GameShaders.Misc["Infernum:BrainPsychic"]);
@@ -99,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // This state reset is necessary to ensure that the backbuffer is flushed immediately and the
             // trail is drawn before anything else. Not doing this may cause problems with vertex/index buffers down the line.
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
     }

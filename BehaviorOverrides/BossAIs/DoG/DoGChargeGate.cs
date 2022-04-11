@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Destination = Vector2.Lerp(Destination, idealDestination, 0.1f).MoveTowards(idealDestination, 5f);
             }
         }
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             float fade = Utils.GetLerpValue(600f, 565f, Projectile.timeLeft, true);
             if (Projectile.timeLeft <= 600f - Lifetime + 45f)
@@ -76,15 +76,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Vector2 origin2 = noiseTexture.Size() * 0.5f;
             if (NoTelegraph)
             {
-                spriteBatch.EnterShaderRegion();
+                Main.spriteBatch.EnterShaderRegion();
 
                 GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);
                 GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(new Color(0.2f, 1f, 1f, 0f));
                 GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(new Color(1f, 0.2f, 1f, 0f));
                 GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
-                spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin2, 3.5f, SpriteEffects.None, 0f);
-                spriteBatch.ExitShaderRegion();
+                Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin2, 3.5f, SpriteEffects.None, 0f);
+                Main.spriteBatch.ExitShaderRegion();
                 return false;
             }
 
@@ -108,18 +108,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             colorOuter *= 0.7f;
             colorInner *= 0.7f;
 
-            spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Projectile.AngleTo(Destination), origin, scaleInner, SpriteEffects.None, 0f);
-            spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Projectile.AngleTo(Destination), origin, scaleOuter, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorInner, Projectile.AngleTo(Destination), origin, scaleInner, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(laserTelegraph, Projectile.Center - Main.screenPosition, null, colorOuter, Projectile.AngleTo(Destination), origin, scaleOuter, SpriteEffects.None, 0f);
 
-            spriteBatch.EnterShaderRegion();
+            Main.spriteBatch.EnterShaderRegion();
 
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);
             GameShaders.Misc["CalamityMod:DoGPortal"].UseColor(Color.Cyan);
             GameShaders.Misc["CalamityMod:DoGPortal"].UseSecondaryColor(Color.Fuchsia);
             GameShaders.Misc["CalamityMod:DoGPortal"].Apply();
 
-            spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin2, 2.7f, SpriteEffects.None, 0f);
-            spriteBatch.ExitShaderRegion();
+            Main.spriteBatch.Draw(noiseTexture, drawPosition, null, Color.White, 0f, origin2, 2.7f, SpriteEffects.None, 0f);
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
     }

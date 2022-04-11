@@ -205,10 +205,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     CalamityUtils.StartRain(true);
                     Main.cloudBGActive = 1f;
-                    Main.numCloudsTemp = Main.cloudLimit;
+                    Main.numCloudsTemp = Main.maxClouds;
                     Main.numClouds = Main.numCloudsTemp;
-                    Main.windSpeedTemp = 1.04f;
-                    Main.windSpeedSet = Main.windSpeedTemp;
+                    Main.windSpeedCurrent = 1.04f;
+                    Main.windSpeedTarget = Main.windSpeedCurrent;
                     Main.maxRaining = 0.87f;
                 }
 
@@ -360,7 +360,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.rotation = npc.rotation.AngleLerp(0f, 0.1f).AngleTowards(0f, 0.15f);
 
             // Decide frames.
-            if (phaseTransitionTimer < PhaseTransitionTime - 48f && phaseTransitionTimer > PhaseTransitionTime - 65f)
+            if (phaseTransitionTimer is < (PhaseTransitionTime - 48f) and > (PhaseTransitionTime - 65f))
                 frameType = (int)OldDukeFrameType.Roar;
             else
             {
@@ -378,8 +378,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     phaseTransitionSharkSpawnOffset += 135f;
                     Vector2 spawnOffset = new(phaseTransitionSharkSpawnOffset + 50f, 340f);
-                    NPC.NewNPC((int)(npc.Center.X + spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<OldDukeSharkron>(), 0, 0f, 0f, 1f, -18f, 255);
-                    NPC.NewNPC((int)(npc.Center.X - spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<OldDukeSharkron>(), 0, 0f, 0f, -1f, -18f, 255);
+                    NPC.NewNPC(new InfernumSource(), (int)(npc.Center.X + spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<OldDukeSharkron>(), 0, 0f, 0f, 1f, -18f, 255);
+                    NPC.NewNPC(new InfernumSource(), (int)(npc.Center.X - spawnOffset.X), (int)(npc.Center.Y + spawnOffset.Y), ModContent.NPCType<OldDukeSharkron>(), 0, 0f, 0f, -1f, -18f, 255);
                 }
             }
         }
@@ -403,7 +403,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.velocity *= 0.97f;
 
             // Right before and after the spawn animation dust stuff, roar.
-            if (attackTimer > 52f && attackTimer < 64f)
+            if (attackTimer is > 52f and < 64f)
                 frameType = (int)OldDukeFrameType.Roar;
 
             // Otherwise, flap wings.
@@ -437,7 +437,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             npc.damage = 0;
 
             OldDukeAttackState upcomingAttack = (OldDukeAttackState)(int)npc.ai[2];
-            bool goingToCharge = upcomingAttack == OldDukeAttackState.Charge || upcomingAttack == OldDukeAttackState.FastRegularCharge;
+            bool goingToCharge = upcomingAttack is OldDukeAttackState.Charge or OldDukeAttackState.FastRegularCharge;
             int waitDelay = 45;
             if (goingToCharge)
                 waitDelay = 30;
@@ -707,7 +707,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 spawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f, -1050f);
-                        int shark = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<OldDukeSharkron>());
+                        int shark = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<OldDukeSharkron>());
                         if (Main.npc.IndexInRange(shark))
                         {
                             Main.npc[shark].velocity = Main.rand.NextVector2CircularEdge(8f, 8f);
@@ -770,7 +770,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % belchRate == belchRate - 1f)
             {
                 Vector2 shootVelocity = (mouthPosition - npc.Center).SafeNormalize(Vector2.UnitX * npc.spriteDirection) * 11f;
-                int toothBall = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<OldDukeToothBall>());
+                int toothBall = NPC.NewNPC(new InfernumSource(), (int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<OldDukeToothBall>());
                 if (Main.npc.IndexInRange(toothBall))
                     Main.npc[toothBall].velocity = shootVelocity;
             }
@@ -973,7 +973,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (currentAttack == OldDukeAttackState.AttackSelectionWait)
                 afterimageCount = 7;
 
-            if (currentAttack == OldDukeAttackState.AcidBubbleFountain || currentAttack == OldDukeAttackState.AcidBelch)
+            if (currentAttack is OldDukeAttackState.AcidBubbleFountain or OldDukeAttackState.AcidBelch)
                 afterimageCount = 4;
 
             if (currentAttack == OldDukeAttackState.Charge || inPhase3)
@@ -991,7 +991,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(color, afterimageEndColor, rotationalAfterimageFade)) * ((afterimageCount - i) / 15f);
                     Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
 
                 // Draw eye afterimages.
@@ -1005,7 +1005,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                         afterimageColor *= (afterimageCount - i) / 15f;
 
                         Vector2 afterimageDrawPosition = npc.oldPos[i] + new Vector2(npc.width, npc.height) / 2f - Main.screenPosition;
-                        spriteBatch.Draw(eyeTexture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                        Main.spriteBatch.Draw(eyeTexture, afterimageDrawPosition, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                     }
                 }
             }
@@ -1038,7 +1038,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                     Color rotationalAfterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageEndColor, rotationalAfterimageFade)) * rotationalOffsetFade;
                     Vector2 rotationalDrawPosition = npc.Center - Main.screenPosition;
                     rotationalDrawPosition += (i / (float)rotationalOffsetImageCount * MathHelper.TwoPi + npc.rotation).ToRotationVector2() * rotationalOffsetOutwardness * rotationalOffsetFade;
-                    spriteBatch.Draw(texture, rotationalDrawPosition, npc.frame, rotationalAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, rotationalDrawPosition, npc.frame, rotationalAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
                     Color eyeAfterimageColor = eyeColor;
                     if (!inPhase3)
@@ -1047,16 +1047,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
                     // Draw eye afterimages.
                     if (inPhase2)
-                        spriteBatch.Draw(eyeTexture, rotationalDrawPosition, npc.frame, eyeAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                        Main.spriteBatch.Draw(eyeTexture, rotationalDrawPosition, npc.frame, eyeAfterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
             Color phase3Color = npc.GetAlpha(Color.Lerp(lightColor, afterimageEndColor, rotationalAfterimageFade));
             Vector2 drawPosition = npc.Center - Main.screenPosition;
-            spriteBatch.Draw(texture, drawPosition, npc.frame, inPhase3 ? phase3Color : npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, inPhase3 ? phase3Color : npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             if (inPhase2)
-                spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, inPhase3 ? eyeColor : npc.GetAlpha(eyeColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, inPhase3 ? eyeColor : npc.GetAlpha(eyeColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
             return false;
         }

@@ -52,10 +52,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                     for (int i = 0; i < MaxLength; i++)
                     {
                         int lol;
-                        if (i >= 0 && i < MinLength)
-                            lol = NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AquaticSeekerBody2>(), NPC.whoAmI);
+                        if (i is >= 0 and < MinLength)
+                            lol = NPC.NewNPC(new InfernumSource(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AquaticSeekerBody2>(), NPC.whoAmI);
                         else
-                            lol = NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AquaticSeekerTail2>(), NPC.whoAmI);
+                            lol = NPC.NewNPC(new InfernumSource(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AquaticSeekerTail2>(), NPC.whoAmI);
 
                         Main.npc[lol].realLife = NPC.whoAmI;
                         Main.npc[lol].ai[2] = NPC.whoAmI;

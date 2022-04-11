@@ -146,7 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Make the screen rumble and summon the exo mechs.
-            if (talkTimer > ExoMechChooseDelay + 8f && talkTimer < ExoMechPhaseDialogueTime)
+            if (talkTimer is > (ExoMechChooseDelay + 8f) and < ExoMechPhaseDialogueTime)
             {
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(4200f, 1400f, Main.LocalPlayer.Distance(playerToFollow.Center), true) * 18f;
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower *= Utils.GetLerpValue(ExoMechChooseDelay + 5f, ExoMechPhaseDialogueTime, talkTimer, true);

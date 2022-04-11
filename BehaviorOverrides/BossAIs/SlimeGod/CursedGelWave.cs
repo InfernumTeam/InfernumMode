@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 Projectile.velocity *= 0.98f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (Projectile.timeLeft > 295)
                 return false;

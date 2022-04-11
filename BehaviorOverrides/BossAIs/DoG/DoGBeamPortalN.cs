@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             // Decelerate after the final charge.
-            if (Time > 180f && Time <= 240f)
+            if (Time is > 180f and <= 240f)
                 Projectile.velocity *= 0.95f;
 
             // Release some cosmic dust.
@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
 
             // And push all close players towards the portal.
-            if (Time >= 260 && Time <= 270f)
+            if (Time is >= 260 and <= 270f)
             {
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 for (float i = 0f; i < 12f; i += 1f)
                 {
                     float angle = MathHelper.TwoPi / 12f * i;
-                    Projectile.NewProjectile(Projectile.Center, angle.ToRotationVector2() * 14.5f, ModContent.ProjectileType<DoGBeamN>(), 75, 0f);
+                    Projectile.NewProjectile(new InfernumSource(), Projectile.Center, angle.ToRotationVector2() * 14.5f, ModContent.ProjectileType<DoGBeamN>(), 75, 0f);
                 }
             }
 

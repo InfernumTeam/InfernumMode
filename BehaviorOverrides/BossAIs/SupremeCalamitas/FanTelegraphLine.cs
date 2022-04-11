@@ -35,12 +35,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             Time++;
         }
 
-        public override bool CanDamage() => false;
+        public override bool? CanDamage() => false ? null : false;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 2700f;
-            spriteBatch.DrawLineBetter(Projectile.Center, end, Color.Red * Projectile.Opacity, Projectile.Opacity * 6f);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center, end, Color.Red * Projectile.Opacity, Projectile.Opacity * 6f);
             return false;
         }
     }

@@ -68,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             if (target != null && !target.dead && target.active)
             {
                 float squareTargetDistance = NPC.DistanceSQ(target.Center);
-                if (squareTargetDistance > 180f * 180f && squareTargetDistance < 1000f * 1000f)
+                if (squareTargetDistance is > (180f * 180f) and < (1000f * 1000f))
                     NPC.velocity = NPC.velocity.RotateTowards(NPC.AngleTo(target.Center), 0.0145f);
             }
 

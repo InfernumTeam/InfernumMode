@@ -89,6 +89,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
             target.Calamity().lastProjectileHit = Projectile;
         }
 
-        public override bool CanDamage() => Time >= 67f;
+        public override bool? CanDamage() => Time >= 67f ? null : false;
     }
 }

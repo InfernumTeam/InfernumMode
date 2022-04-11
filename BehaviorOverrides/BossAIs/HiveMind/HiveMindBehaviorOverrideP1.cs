@@ -88,13 +88,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 if (hiveBlobSummonTimer >= 540f)
                 {
                     hiveBlobSummonTimer = 0f;
-                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
+                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
                 }
                 if (hasSummonedInitialBlobsFlag == 0f)
                 {
                     hasSummonedInitialBlobsFlag = 1f;
                     for (int i = 0; i < 7; i++)
-                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
+                        NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
                 }
             }
 
@@ -120,7 +120,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                             if (Main.rand.NextBool(3))
                                 thingToSummon = ModContent.NPCType<DankCreeper>();
 
-                            int summonedThing = NPC.NewNPC(x, y, thingToSummon, 0, 0f, 0f, 0f, 0f, 255);
+                            int summonedThing = NPC.NewNPC(new InfernumSource(), x, y, thingToSummon, 0, 0f, 0f, 0f, 0f, 255);
                             Main.npc[summonedThing].SetDefaults(thingToSummon, -1f);
                             Main.npc[summonedThing].velocity = -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * 3f;
                             if (Main.netMode == NetmodeID.Server && summonedThing < Main.maxNPCs)

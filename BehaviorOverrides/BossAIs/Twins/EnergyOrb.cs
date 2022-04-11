@@ -71,11 +71,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 // Have the orbs fire outward in a cone.
                 if (OwnerAttackTimer == 75f)
                     NPC.velocity = NPC.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.ToRadians(-AngularDirection * Main.rand.NextFloat(38f, 48f))) * 22f;
-                if (OwnerAttackTimer >= 105f && OwnerAttackTimer <= 120f)
+                if (OwnerAttackTimer is >= 105f and <= 120f)
                     NPC.velocity *= 0.86f;
 
                 // Have both orbs charge at the player.
-                if (OwnerAttackTimer == 120f || OwnerAttackTimer == 320f)
+                if (OwnerAttackTimer is 120f or 320f)
                     NPC.velocity = NPC.SafeDirectionTo(Target.Center) * 22f;
 
                 // Perform collision/explosion logic and transition to the charge attack part.
@@ -103,7 +103,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     }
                 }
 
-                if (OwnerAttackTimer >= 240f && OwnerAttackTimer <= 320f)
+                if (OwnerAttackTimer is >= 240f and <= 320f)
                     NPC.Center = Vector2.Lerp(NPC.Center, Target.Center + new Vector2(AngularDirection * 480f, -360f), 0.09f);
 
                 // Explode into homing energy orbs if the two did not collide.
@@ -138,7 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Vector2[] baseOldPositions = NPC.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
             if (baseOldPositions.Length <= 2)
@@ -153,7 +153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 float scale = NPC.scale * (float)Math.Pow(MathHelper.Lerp(1f, 0.4f, completionRatio), 2D);
                 Color drawColor = Color.Lerp(Color.Red, Color.Purple, completionRatio) * (1f - completionRatio) * 0.8f;
                 Vector2 drawPosition = adjustedOldPositions[i] + NPC.Size * 0.5f - Main.screenPosition;
-                spriteBatch.Draw(npcTexture, drawPosition, NPC.frame, drawColor, NPC.rotation, origin, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(npcTexture, drawPosition, NPC.frame, drawColor, NPC.rotation, origin, scale, SpriteEffects.None, 0f);
             }
             return false;
         }

@@ -284,7 +284,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 parasiteVelocity = (npc.rotation - MathHelper.PiOver2).ToRotationVector2().RotatedByRandom(0.37f) * Main.rand.NextFloat(8.5f, 12f);
-                        int parasite = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AquaticParasite2>());
+                        int parasite = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AquaticParasite2>());
                         if (Main.npc.IndexInRange(parasite))
                         {
                             Main.npc[parasite].velocity = parasiteVelocity;
@@ -356,7 +356,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 if (Main.netMode != NetmodeID.MultiplayerClient && potentialSpawnPoints.Count > 0)
                 {
                     Vector2 spawnPoint = Main.rand.Next(potentialSpawnPoints);
-                    NPC.NewNPC((int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<AquaticSeekerHead2>());
+                    NPC.NewNPC(new InfernumSource(), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<AquaticSeekerHead2>());
                 }
             }
 
@@ -448,9 +448,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 int nextIndex;
                 if (i < wormLength - 1)
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI + 1);
+                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI + 1);
                 else
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI + 1);
+                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI + 1);
 
                 Main.npc[nextIndex].realLife = npc.whoAmI;
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;

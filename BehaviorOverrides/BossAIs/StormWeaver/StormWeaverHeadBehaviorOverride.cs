@@ -44,10 +44,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 {
                     CalamityUtils.StartRain(true);
                     Main.cloudBGActive = 1f;
-                    Main.numCloudsTemp = Main.cloudLimit;
+                    Main.numCloudsTemp = Main.maxClouds;
                     Main.numClouds = Main.numCloudsTemp;
-                    Main.windSpeedTemp = 1.56f;
-                    Main.windSpeedSet = Main.windSpeedTemp;
+                    Main.windSpeedCurrent = 1.56f;
+                    Main.windSpeedTarget = Main.windSpeedCurrent;
                     Main.maxRaining = 0.9f;
                 }
 

@@ -46,15 +46,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             Vector2 offset = Projectile.ai[0].ToRotationVector2() * 4000f;
-            spriteBatch.DrawLineBetter(Projectile.Center - offset, Projectile.Center + offset, Color.Purple, LineWidth);
-            spriteBatch.DrawLineBetter(Projectile.Center - offset, Projectile.Center + offset, Color.Magenta * 0.6f, LineWidth * 0.5f);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center - offset, Projectile.Center + offset, Color.Purple, LineWidth);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center - offset, Projectile.Center + offset, Color.Magenta * 0.6f, LineWidth * 0.5f);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return true;
         }
     }

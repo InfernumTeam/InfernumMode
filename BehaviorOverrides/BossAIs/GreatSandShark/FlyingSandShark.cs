@@ -181,7 +181,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             Vector2 origin = NPC.frame.Size() * 0.5f;
             Vector2 drawPosition = NPC.Center - Main.screenPosition;
             SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, direction, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, direction, 0f);
             return false;
         }
 

@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             return c * Projectile.Opacity * 1.6f;
         }
 
-        public override bool CanDamage() => Projectile.Opacity >= 0.8f;
+        public override bool? CanDamage() => Projectile.Opacity >= 0.8f ? null : false;
 
         internal float WidthFunction(float completionRatio)
         {
@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 ref _);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (TornadoDrawer is null)
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);

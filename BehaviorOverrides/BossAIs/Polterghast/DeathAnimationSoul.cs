@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/SoulLarge" + (Cyan ? "Cyan" : "").Value);
             if (Projectile.whoAmI % 2 == 0)
@@ -75,6 +75,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             return color * Projectile.Opacity;
         }
 
-        public override bool CanDamage() => Projectile.Opacity >= 1f;
+        public override bool? CanDamage() => Projectile.Opacity >= 1f ? null : false;
     }
 }

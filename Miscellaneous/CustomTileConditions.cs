@@ -9,12 +9,12 @@ namespace InfernumMode.Miscellaneous
     {
         public class ActiveAndNotActuated : GenCondition
         {
-            protected override bool CheckValidity(int x, int y) => CalamityUtils.ParanoidTileRetrieval(x, y).nactive();
+            protected override bool CheckValidity(int x, int y) => CalamityUtils.ParanoidTileRetrieval(x, y).HasUnactuatedTile;
         }
 
         public class NotPlatform : GenCondition
         {
-            protected override bool CheckValidity(int x, int y) => !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval(x, y).type];
+            protected override bool CheckValidity(int x, int y) => !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval(x, y).TileType];
         }
 
         public class IsSolidOrSolidTop : GenCondition
@@ -31,7 +31,7 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return (tile.liquid >= 200 && !tile.honey() && !tile.lava());
+                return tile.LiquidAmount >= 200 && tile.LiquidType == LiquidID.Water;
             }
         }
 
@@ -40,7 +40,7 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return (tile.liquid >= 200 && !tile.honey() && !tile.lava()) || (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]);
+                return (tile.LiquidAmount >= 200 && tile.LiquidType == LiquidID.Water) || (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]);
             }
         }
 
@@ -49,7 +49,7 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return (tile.liquid >= 200 && tile.lava()) || (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]);
+                return (tile.LiquidAmount >= 200 && tile.LiquidType == LiquidID.Lava) || (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]);
             }
         }
     }

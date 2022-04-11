@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
@@ -56,28 +57,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Vector2.UnitY * SpikeDirection * SpikeReach, 4f, ref _);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             // Draw the spike.
             Main.instance.LoadProjectile(ProjectileID.SpearTrap);
-            Texture2D spikeTipTexture = Main.projectileTexture[ProjectileID.SpearTrap];
+            Texture2D spikeTipTexture = Utilities.ProjTexture(ProjectileID.SpearTrap);
             Vector2 spikeTip = Projectile.Center + Vector2.UnitY * SpikeDirection * SpikeReach;
             float frameHeight = Vector2.Distance(Projectile.Center, spikeTip) - Projectile.velocity.Length();
-            float frameTop = Main.chain17Texture.Height - frameHeight;
+            float frameTop = TextureAssets.Chain17.Value.Height - frameHeight;
             if (frameHeight > 0f)
             {
                 float spikeRotation = SpikeDirection == -1f ? 0f : MathHelper.Pi;
-                Rectangle spikeFrame = new(0, (int)frameTop, Main.chain17Texture.Width, (int)frameHeight);
-                spriteBatch.Draw(Main.chain17Texture, spikeTip - Main.screenPosition, spikeFrame, Color.OrangeRed, spikeRotation, new Vector2(Main.chain17Texture.Width / 2f, 0f), 1f, 0, 0f);
-                spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.OrangeRed, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
+                Rectangle spikeFrame = new(0, (int)frameTop, TextureAssets.Chain17.Value.Width, (int)frameHeight);
+                Main.spriteBatch.Draw(TextureAssets.Chain17.Value, spikeTip - Main.screenPosition, spikeFrame, Color.OrangeRed, spikeRotation, new Vector2(TextureAssets.Chain17.Value.Width / 2f, 0f), 1f, 0, 0f);
+                Main.spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.OrangeRed, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
             }
 
-            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Rectangle rectangle = new(0, 0, texture.Width, texture.Height);
             Vector2 origin = rectangle.Size() * 0.5f;
             Color drawColor = Projectile.GetAlpha(lightColor);
 
-            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, rectangle, drawColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, rectangle, drawColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             return false;
         }
     }

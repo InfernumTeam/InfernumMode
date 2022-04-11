@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
-using CalamityMod.Items.Armor;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.OldDuke;
 using CalamityMod.World;
@@ -10,9 +9,7 @@ using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Terraria;
@@ -24,7 +21,7 @@ using Terraria.ModLoader.IO;
 
 namespace InfernumMode
 {
-    public class PoDPlayer : ModPlayer
+	public class PoDPlayer : ModPlayer
     {
         public bool RedElectrified = false;
         public bool ShadowflameInferno = false;

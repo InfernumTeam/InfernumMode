@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 for (int i = 0; i < 200; i++)
                 {
-                    Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(200f, 200f), DustID.Fire);
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(200f, 200f), 6);
                     dust.velocity = Main.rand.NextVector2Circular(15f, 15f);
                     dust.fadeIn = 1.4f;
                     dust.scale = 1.6f;
@@ -71,11 +71,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 600);
         }
 
-        public override bool CanDamage() => Timer > 60f && Projectile.timeLeft > 60f;
+        public override bool? CanDamage() => Timer > 60f && Projectile.timeLeft > 60f ? null : false;
 
         public override bool PreDrawExtras(SpriteBatch spriteBatch)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             for (int j = 0; j < 16f; j++)
@@ -84,10 +84,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 Vector2 offset = angle.ToRotationVector2() * 32f;
                 Color drawColor = Color.White * Projectile.Opacity * 0.08f;
                 drawColor.A = 127;
-                spriteBatch.Draw(texture, Projectile.Center + offset - Main.screenPosition, null, drawColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, Projectile.Center + offset - Main.screenPosition, null, drawColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
     }

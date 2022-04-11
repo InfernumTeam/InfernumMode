@@ -549,7 +549,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            int beam = Projectile.NewProjectile(npc.Center, Vector2.Zero, type, 0, 0f, 255, npc.whoAmI);
+                            int beam = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, type, 0, 0f, 255, npc.whoAmI);
 
                             // Determine the initial offset angle of telegraph. It will be smoothened to give a "stretch" effect.
                             if (Main.projectile.IndexInRange(beam))

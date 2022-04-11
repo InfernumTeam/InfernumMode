@@ -56,7 +56,7 @@ namespace InfernumMode
             if (!player.chaosState)
             {
                 player.AddBuff(BuffID.ChaosState, CalamityPlayer.chaosStateDurationBoss, true);
-                Projectile.NewProjectile(Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
+                Projectile.NewProjectile(new InfernumSource(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
 
                 string[] possibleEdgyShitToSay = new string[]
                 {
@@ -84,7 +84,7 @@ namespace InfernumMode
         {
             if (item.type == ItemID.CelestialSigil && !NPC.AnyNPCs(NPCID.MoonLordCore))
             {
-                NPC.NewNPC((int)player.Center.X, (int)player.Center.Y, NPCID.MoonLordCore);
+                NPC.NewNPC(new InfernumSource(), (int)player.Center.X, (int)player.Center.Y, NPCID.MoonLordCore);
             }
             return base.UseItem(item, player);
         }

@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         public override float Lifetime => LaserLifetime;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.Orange;
-        public override Texture2D LaserBeginTexture => Main.projectileTexture[Projectile.type];
+        public override Texture2D LaserBeginTexture => Utilities.ProjTexture(Projectile.type);
         public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/OrangeLaserbeamMid").Value;
         public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/OrangeLaserbeamEnd").Value;
         public override float MaxLaserLength => 3100f;
@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
-        public override bool CanDamage() => Time > 35f;
+        public override bool? CanDamage() => Time > 35f ? null : false;
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 300);
     }

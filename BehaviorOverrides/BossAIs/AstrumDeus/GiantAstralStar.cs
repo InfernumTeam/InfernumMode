@@ -78,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
         public Color SunColorFunction(float completionRatio) => Color.Lerp(new Color(237, 93, 83), Color.Red, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.2f + 0.3f) * Projectile.Opacity;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (FireDrawer is null)
                 FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);

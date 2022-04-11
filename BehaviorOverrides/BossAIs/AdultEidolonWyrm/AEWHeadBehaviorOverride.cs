@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override bool PreAI(NPC npc)
         {
             // Use the default AI if SCal and Draedon are not both dead.
-            if (!CalamityWorld.downedExoMechs || !CalamityWorld.downedSCal)
+            if (!DownedBossSystem.downedExoMechs || !DownedBossSystem.downedSCal)
                 return true;
 
             npc.TargetClosest();
@@ -101,15 +101,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 for (int i = 0; i < 41; i++)
                 {
                     int lol;
-                    if (i >= 0 && i < 40)
+                    if (i is >= 0 and < 40)
                     {
                         if (i % 2 == 0)
-                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyHuge").Type, npc.whoAmI + 1);
+                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyHuge").Type, npc.whoAmI + 1);
                         else
-                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyAltHuge").Type, npc.whoAmI + 1);
+                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyAltHuge").Type, npc.whoAmI + 1);
                     }
                     else
-                        lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type, npc.whoAmI + 1);
+                        lol = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type, npc.whoAmI + 1);
 
                     Main.npc[lol].realLife = npc.whoAmI;
                     Main.npc[lol].ai[2] = npc.whoAmI;
@@ -241,7 +241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     for (int i = 0; i < 10; i++)
                     {
                         Vector2 blastShootVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 15f;
-                        Projectile.NewProjectile(npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
+                        Projectile.NewProjectile(new InfernumSource(), npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
                     }
                 }
             }
@@ -630,7 +630,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     List<int> drones = new();
                     for (int i = 0; i < droneSummonCount; i++)
                     {
-                        int drone = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyFieldLaserProjector>());
+                        int drone = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyFieldLaserProjector>());
                         Main.npc[drone].target = npc.target;
                         drones.Add(drone);
                     }
@@ -785,12 +785,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     Color etherealAfterimageColor = Color.Lerp(lightColor, baseColor, etherealnessFactor * 0.85f) * 0.24f;
                     etherealAfterimageColor.A = (byte)(int)(255 - etherealnessFactor * 255f);
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 32f).ToRotationVector2() * etherealOffsetPulse;
-                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, etherealAfterimageColor * opacity, npc.rotation, origin, npc.scale, 0, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, etherealAfterimageColor * opacity, npc.rotation, origin, npc.scale, 0, 0f);
                 }
             }
 
             for (int i = 0; i < (int)Math.Round(1f + etherealnessFactor); i++)
-                spriteBatch.Draw(texture, drawPosition, npc.frame, color * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, npc.frame, color * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
             // Create the shield for the tail in the Impact Tail attack.
             if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type)
@@ -798,7 +798,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 NPC head = Main.npc[npc.realLife];
                 if (head.ai[0] == (int)AEWAttackType.ImpactTail && head.Infernum().ExtraAI[1] == 0f)
                 {
-                    spriteBatch.SetBlendState(BlendState.Additive);
+                    Main.spriteBatch.SetBlendState(BlendState.Additive);
                     Vector2 shieldDrawPosition = npc.Center - Main.screenPosition;
 
                     for (int i = 0; i < 50; i++)
@@ -820,9 +820,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                         shieldScale.Y *= 1.2f;
 
                         Color shieldColor = Color.Lerp(Color.Cyan, Color.White * 0.5f, fadeToWhite) * shieldScaleFactor * (1f - (i + 1f) / 33f) * hpBasedShieldOpacity;
-                        spriteBatch.Draw(shieldTexture, shieldDrawPosition, null, shieldColor, rotation, shieldTexture.Size() * 0.5f, shieldScale, 0, 0f);
+                        Main.spriteBatch.Draw(shieldTexture, shieldDrawPosition, null, shieldColor, rotation, shieldTexture.Size() * 0.5f, shieldScale, 0, 0f);
                     }
-                    spriteBatch.ExitShaderRegion();
+                    Main.spriteBatch.ExitShaderRegion();
                 }
             }
         }
@@ -838,10 +838,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             for (int i = 0; i < 10; i++)
             {
                 Vector2 eyeOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 4f;
-                spriteBatch.Draw(eyeTexture, drawPosition + eyeOffset, npc.frame, eyeColor * 0.5f, npc.rotation, origin, npc.scale, 0, 0f);
+                Main.spriteBatch.Draw(eyeTexture, drawPosition + eyeOffset, npc.frame, eyeColor * 0.5f, npc.rotation, origin, npc.scale, 0, 0f);
             }
 
-            spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, 0, 0f);
+            Main.spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, 0, 0f);
             return false;
         }
     }

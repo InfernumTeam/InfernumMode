@@ -334,7 +334,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 if (Main.netMode == NetmodeID.SinglePlayer)
                     Utilities.DisplayText(text, Color.Orange);
                 else if (Main.netMode == NetmodeID.Server)
-                    NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Orange);
+                    ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), Color.Orange);
 
                 // Reset the attack cycle index.
                 npc.Infernum().ExtraAI[0] = 0f;
@@ -351,8 +351,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 }
                 Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
                 if (calamityModMusic != null)
-                    npc.ModNPC.Music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/DragonGod");
-                else npc.ModNPC.Music = MusicID.LunarBoss;
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/DragonGod");
+                else 
+                    npc.ModNPC.Music = MusicID.LunarBoss;
                 invincibilityTime = phase2InvincibilityTime;
             }
 
@@ -447,7 +448,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             Filters.Scene["HeatDistortion"].GetShader().UseIntensity(0.5f);
             npc.Infernum().ExtraAI[10] = 0f;
 
-            if (nextAttackType != YharonAttackType.PhoenixSupercharge && nextAttackType != YharonAttackType.HeatFlashRing)
+            if (nextAttackType is not YharonAttackType.PhoenixSupercharge and not YharonAttackType.HeatFlashRing)
                 fireIntensity = MathHelper.Lerp(fireIntensity, 0f, 0.075f);
 
             float chargeSpeed = 37f;
@@ -1050,7 +1051,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         Vector2 fireSpawnPosition = npc.Center + angle.ToRotationVector2() * Main.rand.NextFloat(720f, 900f);
                         Vector2 fireVelocity = (angle - MathHelper.Pi).ToRotationVector2() * (29f + 11f * intensity);
 
-                        Dust fire = Dust.NewDustPerfect(fireSpawnPosition, DustID.Fire, fireVelocity);
+                        Dust fire = Dust.NewDustPerfect(fireSpawnPosition, 6, fireVelocity);
                         fire.scale = 0.9f;
                         fire.fadeIn = 1.15f + intensity * 0.3f;
                         fire.noGravity = true;
@@ -1097,7 +1098,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 Vector2 flareSpawnPosition = npc.Center + ((attackTimer - flareRingSpawnRate + 1) / flareRingSpawnRate * MathHelper.TwoPi / totalFlaresInRing).ToRotationVector2() * 665f;
 
                 if (!target.WithinRange(flareSpawnPosition, 700f))
-                    NPC.NewNPC((int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
+                    NPC.NewNPC(new InfernumSource(), (int)flareSpawnPosition.X, (int)flareSpawnPosition.Y, ModContent.NPCType<DetonatingFlare>());
                 */
             }
 
@@ -1560,7 +1561,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 npc.rotation = npc.rotation.AngleTowards(0f, 0.04f);
                 npc.life = (int)MathHelper.Lerp(npc.life, 0, 0.007f);
 
-                if (npc.life <= 1000 && npc.life > 1)
+                if (npc.life is <= 1000 and > 1)
                     npc.life = 1;
 
                 specialFrameType = (int)YharonFrameDrawingType.FlapWings;
@@ -1653,8 +1654,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     npc.Infernum().arenaRectangle.Width = width;
                     npc.Infernum().arenaRectangle.Height = 320000;
 
-                    Projectile.NewProjectile(player.Center.X + width * 0.5f, player.Center.Y + 100f, 0f, 0f, ModContent.ProjectileType<SkyFlareRevenge>(), 0, 0f, Main.myPlayer, 0f, 0f);
-                    Projectile.NewProjectile(player.Center.X - width * 0.5f, player.Center.Y + 100f, 0f, 0f, ModContent.ProjectileType<SkyFlareRevenge>(), 0, 0f, Main.myPlayer, 0f, 0f);
+                    Projectile.NewProjectile(new InfernumSource(), player.Center.X + width * 0.5f, player.Center.Y + 100f, 0f, 0f, ModContent.ProjectileType<SkyFlareRevenge>(), 0, 0f, Main.myPlayer, 0f, 0f);
+                    Projectile.NewProjectile(new InfernumSource(), player.Center.X - width * 0.5f, player.Center.Y + 100f, 0f, 0f, ModContent.ProjectileType<SkyFlareRevenge>(), 0, 0f, Main.myPlayer, 0f, 0f);
                 }
 
                 // Force Yharon to send a sync packet so that the arena gets sent immediately
@@ -1703,8 +1704,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if ((YharonAttackType)(int)npc.ai[0] == YharonAttackType.SpawnEffects)
             {
                 // Open mouth for a little bit.
-                if (npc.frameCounter >= 30 &&
-                    npc.frameCounter <= 40)
+                if (npc.frameCounter is >= 30 and
+					<= 40)
                 {
                     npc.frame.Y = 0;
                 }
@@ -1819,7 +1820,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                     SpriteEffects spriteEffects = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
                     if (changeDirection)
                         spriteEffects = npc.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-                    spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor * npc.Opacity, npc.rotation + rotationOffset, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition, npc.frame, afterimageColor * npc.Opacity, npc.rotation + rotationOffset, origin, npc.scale, spriteEffects, 0f);
                 }
             }
             int illusionCount = (int)npc.Infernum().ExtraAI[10];
@@ -1846,14 +1847,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                 Vector2 drawPosition = npc.Center - Main.screenPosition;
                 float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 7.13f;
 
-                spriteBatch.SetBlendState(BlendState.Additive);
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 for (int i = 0; i < 2; i++)
                 {
-                    spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, 0f, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1f, 1.85f), SpriteEffects.None, 0f);
-                    spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, secondaryTwinkleRotation, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1.3f, 1f), SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, 0f, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1f, 1.85f), SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(twinkleTexture, drawPosition, null, Color.White, secondaryTwinkleRotation, twinkleTexture.Size() * 0.5f, twinkleScale * new Vector2(1.3f, 1f), SpriteEffects.None, 0f);
                 }
-                spriteBatch.ResetBlendState();
+                Main.spriteBatch.ResetBlendState();
             }
 
             return false;

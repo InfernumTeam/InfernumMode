@@ -6,6 +6,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 {
@@ -88,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                         if (npc.WithinRange(destination, 100f) && attackTimer % 5f == 4f && attackTimer > 50f && owner.life < owner.lifeMax * 0.825f)
                         {
-                            Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                            SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -117,7 +118,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         int waveCounter = (int)(attackTimer / 160) % 2;
                         if (facingPlayer && adjustedTimer > 65f && adjustedTimer < 140f)
                         {
-                            float swipeAngularOffset = MathHelper.Lerp(-0.6f, 1.22f, Utils.InverseLerp(90f, 140f, adjustedTimer, true));
+                            float swipeAngularOffset = MathHelper.Lerp(-0.6f, 1.22f, Utils.GetLerpValue(90f, 140f, adjustedTimer, true));
                             idealPosition = owner.Center + owner.SafeDirectionTo(target.Center).RotatedBy(swipeAngularOffset) * 250f;
                         }
 
@@ -152,7 +153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                         adjustedTimer = attackTimer % 210f;
                         if (adjustedTimer > 50f && adjustedTimer < 180f && adjustedTimer % 45f == 44f && attackTimer < 520f)
                         {
-                            Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                            SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -182,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                         if (attackTimer < 590f && adjustedTimer > 45f && adjustedTimer % 7f == 6f && shouldAttack)
                         {
-                            Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                            SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {

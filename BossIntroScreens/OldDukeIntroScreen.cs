@@ -11,11 +11,11 @@ namespace InfernumMode.BossIntroScreens
 {
     public class OldDukeIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        public override TextColorData TextColor => new(completionRatio =>
         {
-            float limeColorInterpolant = Utils.InverseLerp(0.77f, 1f, (float)Math.Sin(AnimationCompletion * -MathHelper.Pi * 4f + completionRatio * MathHelper.Pi) * 0.5f + 0.5f);
-            Color skinColor = new Color(113, 90, 71);
-            Color irradiatedColor = new Color(170, 216, 15);
+            float limeColorInterpolant = Utils.GetLerpValue(0.77f, 1f, (float)Math.Sin(AnimationCompletion * -MathHelper.Pi * 4f + completionRatio * MathHelper.Pi) * 0.5f + 0.5f);
+            Color skinColor = new(113, 90, 71);
+            Color irradiatedColor = new(170, 216, 15);
             return Color.Lerp(skinColor, irradiatedColor, limeColorInterpolant);
         });
 

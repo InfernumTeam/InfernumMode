@@ -8,7 +8,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
     public class AtlantisSpear : ModProjectile
     {
-        public ref float Time => ref projectile.ai[1];
+        public ref float Time => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Atlantis Spear");
@@ -16,71 +16,71 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 52;
-            projectile.aiStyle = 4;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.alpha = 255;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.width = Projectile.height = 52;
+            Projectile.aiStyle = 4;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.alpha = 255;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.Calamity().canBreakPlayerDefense = true;
             aiType = ProjectileID.CrystalVileShardHead;
         }
 
         public override void AI()
         {
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver4;
-            if (projectile.ai[0] == 0f)
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            if (Projectile.ai[0] == 0f)
             {
-                projectile.alpha -= 50;
-                if (projectile.alpha <= 0)
+                Projectile.alpha -= 50;
+                if (Projectile.alpha <= 0)
                 {
-                    projectile.alpha = 0;
-                    projectile.ai[0] = 1f;
+                    Projectile.alpha = 0;
+                    Projectile.ai[0] = 1f;
                     if (Time == 0f)
                     {
                         Time++;
-                        projectile.position += projectile.velocity;
+                        Projectile.position += Projectile.velocity;
                     }
-                    if (Main.myPlayer == projectile.owner)
+                    if (Main.myPlayer == Projectile.owner)
                     {
-                        int projType = projectile.type;
+                        int projType = Projectile.type;
                         if (Time >= Main.rand.Next(12, 14))
                             projType = ModContent.ProjectileType<AtlantisSpear2>();
 
-                        int number = Projectile.NewProjectile(projectile.Center + projectile.velocity, projectile.velocity, projType, projectile.damage, projectile.knockBack, projectile.owner, 0f, Time + 1f);
+                        int number = Projectile.NewProjectile(Projectile.Center + Projectile.velocity, Projectile.velocity, projType, Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, Time + 1f);
                         NetMessage.SendData(MessageID.SyncProjectile, -1, -1, null, number, 0f, 0f, 0f, 0, 0, 0);
                     }
                 }
             }
             else
             {
-                if (projectile.alpha < 170 && projectile.alpha + 5 >= 170)
+                if (Projectile.alpha < 170 && Projectile.alpha + 5 >= 170)
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        Dust water = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 206, projectile.velocity.X * 0.005f, projectile.velocity.Y * 0.005f, 200, default, 1f);
+                        Dust water = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 206, Projectile.velocity.X * 0.005f, Projectile.velocity.Y * 0.005f, 200, default, 1f);
                         water.noGravity = true;
                         water.velocity *= 0.5f;
                     }
                 }
-                projectile.alpha += 7;
-                if (projectile.alpha >= 255)
+                Projectile.alpha += 7;
+                if (Projectile.alpha >= 255)
                 {
-                    projectile.Kill();
+                    Projectile.Kill();
                 }
             }
             if (Main.rand.NextBool(4))
             {
-                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, 206, projectile.velocity.X * 0.005f, projectile.velocity.Y * 0.005f);
+                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, 206, Projectile.velocity.X * 0.005f, Projectile.velocity.Y * 0.005f);
             }
         }
 
-        public override Color? GetAlpha(Color lightColor) => new Color(200, 200, 200, projectile.alpha);
+        public override Color? GetAlpha(Color lightColor) => new Color(200, 200, 200, Projectile.alpha);
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            target.immune[projectile.owner] = 6;
+            target.immune[Projectile.owner] = 6;
         }
 
         public override void Kill(int timeLeft)
@@ -89,13 +89,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             float rotation = MathHelper.ToRadians(20);
             for (int i = 0; i < numProj; i++)
             {
-                Vector2 perturbedSpeed = new Vector2(projectile.velocity.X, projectile.velocity.Y).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numProj - 1)));
-                int projectile2 = Projectile.NewProjectile(projectile.Center.X, projectile.Center.Y, perturbedSpeed.X, perturbedSpeed.Y, ModContent.ProjectileType<AtlantisSpear2>(), projectile.damage, projectile.knockBack, projectile.owner, 0f, 0f);
+                Vector2 perturbedSpeed = new Vector2(Projectile.velocity.X, Projectile.velocity.Y).RotatedBy(MathHelper.Lerp(-rotation, rotation, i / (numProj - 1)));
+                int projectile2 = Projectile.NewProjectile(Projectile.Center.X, Projectile.Center.Y, perturbedSpeed.X, perturbedSpeed.Y, ModContent.ProjectileType<AtlantisSpear2>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, 0f);
                 Main.projectile[projectile2].penetrate = 1;
             }
             for (int k = 0; k < 3; k++)
             {
-                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, 206, projectile.oldVelocity.X * 0.005f, projectile.oldVelocity.Y * 0.005f);
+                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, 206, Projectile.oldVelocity.X * 0.005f, Projectile.oldVelocity.Y * 0.005f);
             }
         }
     }

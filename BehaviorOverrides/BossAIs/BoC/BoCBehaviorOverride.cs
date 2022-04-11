@@ -7,6 +7,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
@@ -182,14 +184,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             if (canFloatFlag == 1f)
             {
-                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * Utils.InverseLerp(120f, 108f, attackTimer, true) * 5f, 0.125f);
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * Utils.GetLerpValue(120f, 108f, attackTimer, true) * 5f, 0.125f);
                 if (attackTimer >= 120f)
                     GotoNextAttackState(npc);
                 return;
             }
             if (attackTimer == teleportFadeTime + 25f)
             {
-                Main.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -249,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             if (attackTimer == teleportFadeTime + 10f)
             {
-                Main.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -350,7 +352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             if (attackTimer == teleportFadeTime + 75f)
             {
-                Main.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
 
                 npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 20f) * 17f;
                 if (enraged)
@@ -396,7 +398,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             if (attackTimer >= 70f)
                 npc.velocity *= 0.94f;
 
-            cyanAuraStrength = Utils.InverseLerp(105f, 125f, attackTimer, true) * Utils.InverseLerp(445f, 425f, attackTimer, true);
+            cyanAuraStrength = Utils.GetLerpValue(105f, 125f, attackTimer, true) * Utils.GetLerpValue(445f, 425f, attackTimer, true);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             if (attackTimer == 130f)
@@ -423,7 +425,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 }
                 npc.velocity = Vector2.Zero;
                 npc.netUpdate = true;
-                Main.PlaySound(SoundID.Item92, target.Center);
+                SoundEngine.PlaySound(SoundID.Item92, target.Center);
             }
 
             if (attackTimer >= (enraged ? 335f : 450f))
@@ -447,12 +449,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             if (attackTimer > teleportFadeTime * 1.5f)
             {
-                spinAngle += MathHelper.TwoPi * 2f / spinTime * Utils.InverseLerp(teleportFadeTime * 1.5f + spinTime, teleportFadeTime * 1.5f + spinTime - 30f, attackTimer, true);
+                spinAngle += MathHelper.TwoPi * 2f / spinTime * Utils.GetLerpValue(teleportFadeTime * 1.5f + spinTime, teleportFadeTime * 1.5f + spinTime - 30f, attackTimer, true);
                 if (Main.netMode != NetmodeID.MultiplayerClient && (int)attackTimer % 16f == 15f)
                     NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrainIllusion2>(), npc.whoAmI);
             }
 
-            npc.localAI[1] = (float)Math.Sin(Utils.InverseLerp((int)(teleportFadeTime * 1.5f) + spinTime - 20f, (int)(teleportFadeTime * 1.5f) + spinTime + 45f, attackTimer, true) * MathHelper.Pi);
+            npc.localAI[1] = (float)Math.Sin(Utils.GetLerpValue((int)(teleportFadeTime * 1.5f) + spinTime - 20f, (int)(teleportFadeTime * 1.5f) + spinTime + 45f, attackTimer, true) * MathHelper.Pi);
             if (attackTimer == (int)(teleportFadeTime * 1.5f) + spinTime + 15f)
             {
                 npc.velocity = npc.SafeDirectionTo(target.Center) * 26f;
@@ -467,7 +469,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     Main.npc[i].netUpdate = true;
                 }
 
-                Main.PlaySound(SoundID.ForceRoar, (int)target.Center.X, (int)target.Center.Y, -1, 1f, 0f);
+                SoundEngine.PlaySound(SoundID.ForceRoar, (int)target.Center.X, (int)target.Center.Y, -1, 1f, 0f);
             }
 
             if (attackTimer < (int)(teleportFadeTime * 1.5f) + spinTime)
@@ -566,7 +568,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
             // Fade back in after teleporting.
             if (time > teleportFadeTime && time <= teleportFadeTime * 1.5f)
-                npc.Opacity = MathHelper.Lerp(0f, 1f, Utils.InverseLerp(teleportFadeTime, teleportFadeTime * 1.5f, time, true));
+                npc.Opacity = MathHelper.Lerp(0f, 1f, Utils.GetLerpValue(teleportFadeTime, teleportFadeTime * 1.5f, time, true));
             return true;
         }
         #endregion AI Utility Methods
@@ -577,7 +579,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             frame.Y += texture.Height / Main.npcFrameCount[npc.type] * 4;
 
@@ -596,7 +598,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
                 for (int i = 0; i < 7; i++)
                 {
-                    Vector2 drawPosition = npc.Center + (MathHelper.TwoPi * i / 7f + Main.GlobalTime * 4.3f).ToRotationVector2() * cyanAuraStrength * 4f;
+                    Vector2 drawPosition = npc.Center + (MathHelper.TwoPi * i / 7f + Main.GlobalTimeWrappedHourly * 4.3f).ToRotationVector2() * cyanAuraStrength * 4f;
                     drawInstance(drawPosition, auraColor, scale);
                 }
             }

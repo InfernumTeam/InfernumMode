@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.width = npc.height = 24;
             npc.defense = 0;
             npc.lifeMax = 24000;
-            npc.aiStyle = npc.modNPC.aiType = -1;
+            npc.aiStyle = npc.ModNPC.aiType = -1;
             npc.knockBackResist = 0f;
             npc.noGravity = true;
             npc.noTileCollide = true;
@@ -54,16 +54,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public float PrimitiveWidthFunction(NPC npc, float completionRatio)
         {
-            float widthInterpolant = Utils.InverseLerp(0f, 0.16f, completionRatio, true) * Utils.InverseLerp(1f, 0.84f, completionRatio, true);
+            float widthInterpolant = Utils.GetLerpValue(0f, 0.16f, completionRatio, true) * Utils.GetLerpValue(1f, 0.84f, completionRatio, true);
             widthInterpolant = (float)Math.Pow(widthInterpolant, 8D);
             float baseWidth = MathHelper.Lerp(4f, 1f, widthInterpolant);
-            float pulseWidth = MathHelper.Lerp(0f, 3.2f, (float)Math.Pow(Math.Sin(Main.GlobalTime * 2.6f + npc.whoAmI * 1.3f + completionRatio), 16D));
+            float pulseWidth = MathHelper.Lerp(0f, 3.2f, (float)Math.Pow(Math.Sin(Main.GlobalTimeWrappedHourly * 2.6f + npc.whoAmI * 1.3f + completionRatio), 16D));
             return baseWidth + pulseWidth;
         }
 
         public Color PrimitiveColorFunction(float completionRatio)
         {
-            float colorInterpolant = MathHelper.SmoothStep(0f, 1f, Utils.InverseLerp(0f, 0.34f, completionRatio, true) * Utils.InverseLerp(1.07f, 0.66f, completionRatio, true));
+            float colorInterpolant = MathHelper.SmoothStep(0f, 1f, Utils.GetLerpValue(0f, 0.34f, completionRatio, true) * Utils.GetLerpValue(1.07f, 0.66f, completionRatio, true));
             return Color.Lerp(Color.DarkRed * 0.7f, Color.Red, colorInterpolant) * 0.425f;
         }
 
@@ -76,7 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(c => PrimitiveWidthFunction(npc, c), PrimitiveColorFunction);
 
             NPC sepulcher = Main.npc[CalamityGlobalNPC.SCalWorm];
-            List<Vector2> points = new List<Vector2>()
+            List<Vector2> points = new()
             {
                 npc.Center,
                 Vector2.Lerp(npc.Center, sepulcher.Center, 0.5f),

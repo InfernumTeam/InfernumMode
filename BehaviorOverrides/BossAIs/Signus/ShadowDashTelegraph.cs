@@ -5,46 +5,47 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 {
     public class ShadowDashTelegraph : ModProjectile
     {
-        public ref float LifetimeCountdown => ref projectile.ai[0];
-        public ref float AngularOffset => ref projectile.ai[1];
+        public ref float LifetimeCountdown => ref Projectile.ai[0];
+        public ref float AngularOffset => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Telegraph");
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 2;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 600;
-            projectile.alpha = 255;
-            projectile.penetrate = -1;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 2;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 600;
+            Projectile.alpha = 255;
+            Projectile.penetrate = -1;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
             LifetimeCountdown--;
             if (LifetimeCountdown < 0f)
-                projectile.Kill();
+                Projectile.Kill();
 
-            projectile.scale = Utils.InverseLerp(0f, 8f, LifetimeCountdown, true);
+            Projectile.scale = Utils.GetLerpValue(0f, 8f, LifetimeCountdown, true);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Vector2 start = projectile.Center - AngularOffset.ToRotationVector2() * 2600f;
-            Vector2 end = projectile.Center + AngularOffset.ToRotationVector2() * 5600f;
-            float width = projectile.scale * 5f;
+            Vector2 start = Projectile.Center - AngularOffset.ToRotationVector2() * 2600f;
+            Vector2 end = Projectile.Center + AngularOffset.ToRotationVector2() * 5600f;
+            float width = Projectile.scale * 5f;
             spriteBatch.DrawLineBetter(start, end, Color.DarkViolet, width);
             return false;
         }
@@ -56,12 +57,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item74, projectile.position);
+            SoundEngine.PlaySound(SoundID.Item74, Projectile.position);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

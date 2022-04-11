@@ -5,70 +5,71 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
     public class Ritual : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
-        public int MainCultistIndex => (int)projectile.ai[1];
+        public ref float Time => ref Projectile.ai[0];
+        public int MainCultistIndex => (int)Projectile.ai[1];
         public Color RitualColor => Color.White;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 2;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.netImportant = true;
-            projectile.hide = true;
-            projectile.timeLeft = 325;
-            projectile.penetrate = -1;
+            Projectile.width = Projectile.height = 2;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
+            Projectile.hide = true;
+            Projectile.timeLeft = 325;
+            Projectile.penetrate = -1;
         }
 
         public static int GetWaitTime(bool phase2) => phase2 ? 150 : 200;
 
-        public override void SendExtraAI(BinaryWriter writer) => writer.Write(projectile.timeLeft);
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write(Projectile.timeLeft);
 
-        public override void ReceiveExtraAI(BinaryReader reader) => projectile.timeLeft = reader.ReadInt32();
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.timeLeft = reader.ReadInt32();
 
         public override void AI()
         {
             // Die if the main boss is not present.
             if (!Main.npc.IndexInRange(MainCultistIndex) || !Main.npc[MainCultistIndex].active)
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
 
             int waitTime = GetWaitTime(Main.npc[MainCultistIndex].ai[2] >= 2f);
-            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.timeLeft > waitTime)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft > waitTime)
             {
-                projectile.timeLeft = waitTime;
-                projectile.netUpdate = true;
+                Projectile.timeLeft = waitTime;
+                Projectile.netUpdate = true;
             }
 
             // Fade in and release some light dust inward.
-            projectile.Opacity = Utils.InverseLerp(0f, 22f, Time, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
-            if (projectile.Opacity >= 1f)
+            Projectile.Opacity = Utils.GetLerpValue(0f, 22f, Time, true) * Utils.GetLerpValue(0f, 25f, Projectile.timeLeft, true);
+            if (Projectile.Opacity >= 1f)
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Dust magic = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2CircularEdge(102f, 102f), 264);
+                    Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2CircularEdge(102f, 102f), 264);
                     magic.color = Color.Yellow;
-                    magic.velocity = (projectile.Center - magic.position) * 0.05f;
+                    magic.velocity = (Projectile.Center - magic.position) * 0.05f;
                     magic.noGravity = true;
                     magic.noLight = true;
                 }
             }
-            projectile.scale = projectile.Opacity;
-            projectile.rotation += 0.018f;
+            Projectile.scale = Projectile.Opacity;
+            Projectile.rotation += 0.018f;
 
             // Play initial sounds.
-            if (projectile.localAI[0] == 0f)
+            if (Projectile.localAI[0] == 0f)
             {
-                projectile.localAI[0] = 1f;
-                Main.PlaySound(SoundID.Item123, projectile.position);
+                Projectile.localAI[0] = 1f;
+                SoundEngine.PlaySound(SoundID.Item123, Projectile.position);
             }
             Time++;
         }
@@ -76,18 +77,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             spriteBatch.SetBlendState(BlendState.Additive);
-            Vector2 drawPosition = projectile.Center - Main.screenPosition;
-            Texture2D outerRingTexture = Main.projectileTexture[projectile.type];
-            Texture2D innerRingTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cultist/RitualInnerRing");
-            Texture2D auraTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cultist/LightBurst");
-            float pulse = Main.GlobalTime * 0.67f % 1f;
-            float auraScale = projectile.scale * MathHelper.SmoothStep(0.85f, 1.2f, 1f - pulse);
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Texture2D outerRingTexture = Main.projectileTexture[Projectile.type];
+            Texture2D innerRingTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/RitualInnerRing").Value;
+            Texture2D auraTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/LightBurst").Value;
+            float pulse = Main.GlobalTimeWrappedHourly * 0.67f % 1f;
+            float auraScale = Projectile.scale * MathHelper.SmoothStep(0.85f, 1.2f, 1f - pulse);
             Color auraColor = Color.White * 0.25f;
             auraColor *= pulse;
 
-            spriteBatch.Draw(auraTexture, drawPosition, null, auraColor, projectile.rotation, auraTexture.Size() * 0.5f, auraScale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(outerRingTexture, drawPosition, null, RitualColor, projectile.rotation, outerRingTexture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(innerRingTexture, drawPosition, null, RitualColor, -projectile.rotation, innerRingTexture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(auraTexture, drawPosition, null, auraColor, Projectile.rotation, auraTexture.Size() * 0.5f, auraScale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(outerRingTexture, drawPosition, null, RitualColor, Projectile.rotation, outerRingTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(innerRingTexture, drawPosition, null, RitualColor, -Projectile.rotation, innerRingTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
 
             spriteBatch.ResetBlendState();
             return false;

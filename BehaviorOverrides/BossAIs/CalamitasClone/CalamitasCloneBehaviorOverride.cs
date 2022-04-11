@@ -13,8 +13,10 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 using CalamitasCloneNPC = CalamityMod.NPCs.Calamitas.CalamitasRun3;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
@@ -200,7 +202,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
             if (finalPhaseFireTimer % 170f == 169f)
             {
-                Main.PlaySound(SoundID.Item74, target.Center);
+                SoundEngine.PlaySound(SoundID.Item74, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 6; i++)
@@ -340,7 +342,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 if (attackTimer % flameReleaseRate == flameReleaseRate - 1f && attackTimer % 90f > 35f)
                 {
-                    Main.PlaySound(SoundID.Item73, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -405,7 +407,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Create an explosion sound and decide the meteor angle right before the meteors fall.
             if (attackTimer == attackDelay - 25f)
             {
-                Main.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
                 meteorAngle = Main.rand.NextFloatDirection() * MathHelper.Pi / 9f;
                 npc.netUpdate = true;
             }
@@ -416,7 +418,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             if (Main.netMode != NetmodeID.MultiplayerClient && canFire && attackTimer % meteorShootRate == meteorShootRate - 1f)
             {
                 int meteorDamage = shouldBeBuffed ? 325 : 160;
-                float horizontalOffsetMax = MathHelper.Lerp(450f, 1050f, Utils.InverseLerp(0f, 8f, target.velocity.Length(), true));
+                float horizontalOffsetMax = MathHelper.Lerp(450f, 1050f, Utils.GetLerpValue(0f, 8f, target.velocity.Length(), true));
                 Vector2 meteorSpawnPosition = target.Center + new Vector2(Main.rand.NextFloat(-horizontalOffsetMax, horizontalOffsetMax), -780f);
                 Vector2 shootDirection = Vector2.UnitY.RotatedBy(meteorAngle);
                 Vector2 shootVelocity = shootDirection * meteorShootSpeed;
@@ -464,7 +466,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Create an flame burst sound and before the lava comes up.
             if (attackTimer == attackDelay - 25f)
             {
-                Main.PlaySound(SoundID.DD2_FlameburstTowerShot, target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, target.Center);
                 npc.netUpdate = true;
             }
 
@@ -526,7 +528,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             // Create a thunder sound and before the lightning comes down.
             if (attackTimer == attackDelay - 25f)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/LightningStrike"), target.Center);
                 npc.netUpdate = true;
             }
 
@@ -617,7 +619,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f)
                 {
-                    Main.PlaySound(SoundID.Item73, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -685,7 +687,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 120f) && attackTimer > 50f))
                     {
-                        Main.PlaySound(SoundID.Roar, npc.Center, 0);
+                        SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 15f, -Vector2.UnitY) * chargeSpeed;
                         attackTimer = 0f;
                         attackState = 1f;
@@ -764,7 +766,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f && attackTimer % 180f < 60f)
                 {
-                    Main.PlaySound(SoundID.Item73, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -829,7 +831,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.position.Y += npc.SafeDirectionTo(target.Center - Vector2.UnitY * 400f).Y * 7f;
                 if (attackTimer % 30f == 29f)
                 {
-                    Main.PlaySound(SoundID.Item73, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -849,7 +851,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         public static void SelectNewAttack(NPC npc)
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            List<CloneAttackType> possibleAttacks = new List<CloneAttackType>
+            List<CloneAttackType> possibleAttacks = new()
             {
                 CloneAttackType.HorizontalDartRelease,
                 CloneAttackType.BrimstoneMeteors,
@@ -906,7 +908,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
             int afterimageCount = 7;
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 origin = npc.frame.Size() * 0.5f;
 
             if (CalamityConfig.Instance.Afterimages)
@@ -922,7 +924,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             Vector2 drawPosition = npc.position + origin - Main.screenPosition;
             spriteBatch.Draw(texture, drawPosition, npc.frame, lightColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/Calamitas/CalamitasRun3Glow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Calamitas/CalamitasRun3Glow").Value;
             Color afterimageBaseColor = Color.Lerp(Color.White, Color.Red, 0.5f);
 
             if (CalamityConfig.Instance.Afterimages)

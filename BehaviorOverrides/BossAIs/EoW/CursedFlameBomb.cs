@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 {
@@ -12,62 +13,62 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cursed Flame Bomb");
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 6;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 14;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 150;
-            projectile.Opacity = 0f;
+            Projectile.width = Projectile.height = 14;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 150;
+            Projectile.Opacity = 0f;
         }
 
         public override void AI()
         {
-            projectile.tileCollide = projectile.timeLeft < 120;
-            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.05f, 0f, 1f);
-            projectile.rotation += (projectile.velocity.X > 0f).ToDirectionInt() * 0.3f;
+            Projectile.tileCollide = Projectile.timeLeft < 120;
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.05f, 0f, 1f);
+            Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt() * 0.3f;
 
-            Lighting.AddLight(projectile.Center, Vector3.One * 0.7f);
+            Lighting.AddLight(Projectile.Center, Vector3.One * 0.7f);
         }
 
         // Explode into smaller flames on death.
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item74, projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
             int burstCount = NPC.CountNPCS(NPCID.EaterofWorldsHead) >= 4 ? 4 : 5;
-            float burstSpeed = projectile.velocity.Length();
+            float burstSpeed = Projectile.velocity.Length();
             float initialAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
             for (int i = 0; i < burstCount; i++)
             {
                 Vector2 shootVelocity = (initialAngleOffset + MathHelper.TwoPi * i / burstCount).ToRotationVector2() * burstSpeed;
-                Utilities.NewProjectileBetter(projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<CursedBullet>(), 80, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center + shootVelocity, shootVelocity, ModContent.ProjectileType<CursedBullet>(), 80, 0f);
             }
         }
 
-        public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.White, Color.MediumPurple, Utils.InverseLerp(45f, 0f, projectile.timeLeft, true)) * projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.Lerp(Color.White, Color.MediumPurple, Utils.GetLerpValue(45f, 0f, Projectile.timeLeft, true)) * Projectile.Opacity;
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, Color.White, ProjectileID.Sets.TrailingMode[projectile.type], 3);
+            Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 3);
             return false;
         }
 
-        public override bool CanDamage() => projectile.Opacity >= 1f;
+        public override bool CanDamage() => Projectile.Opacity >= 1f;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
             target.AddBuff(BuffID.CursedInferno, 120);
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

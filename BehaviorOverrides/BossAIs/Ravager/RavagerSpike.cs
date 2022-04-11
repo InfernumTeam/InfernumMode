@@ -14,21 +14,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 6;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 600;
+            Projectile.width = Projectile.height = 6;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 600;
         }
 
         public override void AI()
         {
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            projectile.tileCollide = projectile.velocity.Y > 0f;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.tileCollide = Projectile.velocity.Y > 0f;
 
-            if (projectile.velocity.Y < 7f)
-                projectile.velocity.Y += projectile.velocity.Y > 0f ? FallingGravity : FlyingGravity;
+            if (Projectile.velocity.Y < 7f)
+                Projectile.velocity.Y += Projectile.velocity.Y > 0f ? FallingGravity : FlyingGravity;
         }
     }
 }

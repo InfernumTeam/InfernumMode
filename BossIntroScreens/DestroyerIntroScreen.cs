@@ -25,7 +25,7 @@ namespace InfernumMode.BossIntroScreens
         public override void PrepareShader(Effect shader)
         {
             shader.Parameters["uColor"].SetValue(new Vector3(0.02f, 0.54f, 0.91f));
-            shader.GraphicsDevice.Textures[1] = ModContent.GetTexture("InfernumMode/ExtraTextures/DiagonalGleam");
+            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/DiagonalGleam").Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.TheDestroyer);
@@ -38,7 +38,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override float LetterDisplayCompletionRatio(int animationTimer)
         {
-            float completionRatio = Utils.InverseLerp(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
+            float completionRatio = Utils.GetLerpValue(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
 
             // If the completion ratio exceeds the point where the name is displayed, display all letters.
             int startOfLargeTextIndex = TextToDisplay.IndexOf('\n');

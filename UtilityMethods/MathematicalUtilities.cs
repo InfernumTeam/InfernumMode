@@ -148,7 +148,7 @@ namespace InfernumMode
         /// <param name="matrix">The function input.</param>
         public static GeneralMatrix ApproximateDerivative(Func<double, double> fx, GeneralMatrix matrix)
         {
-            GeneralMatrix result = new GeneralMatrix(matrix.TotalRows, matrix.TotalColumns);
+            GeneralMatrix result = new(matrix.TotalRows, matrix.TotalColumns);
             for (int i = 0; i < result.TotalRows; i++)
             {
                 for (int j = 0; j < result.TotalColumns; j++)
@@ -182,7 +182,7 @@ namespace InfernumMode
         /// <param name="m2">The second function input.</param>
         public static GeneralMatrix ApproximatePartialDerivative(Func<double, double, double> fx, GeneralMatrix m1, GeneralMatrix m2, int term)
         {
-            GeneralMatrix result = new GeneralMatrix(m1.TotalRows, m1.TotalColumns);
+            GeneralMatrix result = new(m1.TotalRows, m1.TotalColumns);
             for (int i = 0; i < result.TotalRows; i++)
             {
                 for (int j = 0; j < result.TotalColumns; j++)
@@ -209,7 +209,7 @@ namespace InfernumMode
         /// <param name="max">The upper bound for randomness.</param>
         public static GeneralMatrix GenerateRandomMatrix(this UnifiedRandom rng, int width, int height, double min, double max)
         {
-            GeneralMatrix result = new GeneralMatrix(width, height);
+            GeneralMatrix result = new(width, height);
 
             for (int i = 0; i < width; i++)
             {
@@ -227,7 +227,7 @@ namespace InfernumMode
         /// <param name="function">The function.</param>
         public static GeneralMatrix ApplyFunctionToMatrix(GeneralMatrix matrix, Func<double, double> function)
         {
-            GeneralMatrix result = new GeneralMatrix(matrix.TotalRows, matrix.TotalColumns);
+            GeneralMatrix result = new(matrix.TotalRows, matrix.TotalColumns);
             for (int i = 0; i < result.TotalRows; i++)
             {
                 for (int j = 0; j < result.TotalColumns; j++)

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -40,7 +41,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Explode if few seekers remain, to prevent dragging out the fight.
                     if (NPC.CountNPCS(npc.type) <= 4)
                     {
-                        Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
                         Utilities.CreateGenericDustExplosion(npc.Center, (int)CalamityDusts.Brimstone, 25, 8f, 1.45f);
                         npc.active = false;
                     }
@@ -121,7 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Explode if other seekers are gone.
                     if (NPC.CountNPCS(npc.type) <= 2)
                     {
-                        Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
                         Utilities.CreateGenericDustExplosion(npc.Center, (int)CalamityDusts.Brimstone, 25, 8f, 1.45f);
                         npc.active = false;
                     }

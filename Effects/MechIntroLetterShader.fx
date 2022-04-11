@@ -10,7 +10,7 @@ float2 uImageSize1;
 float2 uImageSize2;
 float uLetterCompletionRatio;
 
-float InverseLerp(float from, float to, float x)
+float GetLerpValue(float from, float to, float x)
 {
     return saturate((x - from) / (to - from));
 }

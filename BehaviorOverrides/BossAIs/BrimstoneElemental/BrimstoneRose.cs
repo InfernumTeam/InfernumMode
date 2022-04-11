@@ -9,50 +9,51 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {
     public class BrimstoneRose : ModProjectile
     {
         public Vector2 StartingVelocity;
-        public ref float Time => ref projectile.ai[0];
-        public bool SpawnedWhileAngry => projectile.ai[1] == 1f;
+        public ref float Time => ref Projectile.ai[0];
+        public bool SpawnedWhileAngry => Projectile.ai[1] == 1f;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Rose");
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 2;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 28;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 60;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 28;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 60;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.scale = Utils.InverseLerp(0f, 25f, Time, true);
-            projectile.Opacity = (float)Math.Sqrt(projectile.scale) * Utils.InverseLerp(0f, 18f, projectile.timeLeft, true);
+            Projectile.scale = Utils.GetLerpValue(0f, 25f, Time, true);
+            Projectile.Opacity = (float)Math.Sqrt(Projectile.scale) * Utils.GetLerpValue(0f, 18f, Projectile.timeLeft, true);
 
             // Initialize rotation.
-            if (projectile.rotation == 0f)
-                projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+            if (Projectile.rotation == 0f)
+                Projectile.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
 
-            Lighting.AddLight(projectile.Center, projectile.Opacity * 0.9f, 0f, 0f);
+            Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.9f, 0f, 0f);
 
             Time++;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            lightColor.R = (byte)(255 * projectile.Opacity);
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
+            lightColor.R = (byte)(255 * Projectile.Opacity);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;
         }
 
@@ -66,10 +67,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 
         public override void Kill(int timeLeft)
         {
-            Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 20);
+            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+            SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 20);
             for (int dust = 0; dust < 5; dust++)
-                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, (int)CalamityDusts.Brimstone, 0f, 0f);
+                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, (int)CalamityDusts.Brimstone, 0f, 0f);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -89,15 +90,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
                 }
                 for (int i = 0; i < petalCount; i++)
                 {
-                    Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.68f, 0.68f, i / (float)petalCount)) * petalShootSpeed;
-                    Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<BrimstonePetal>(), petalDamage, 0f);
+                    Vector2 shootVelocity = Projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.68f, 0.68f, i / (float)petalCount)) * petalShootSpeed;
+                    Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<BrimstonePetal>(), petalDamage, 0f);
                 }
             }
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

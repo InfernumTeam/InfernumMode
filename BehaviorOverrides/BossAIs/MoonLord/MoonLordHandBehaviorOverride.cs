@@ -7,6 +7,8 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -115,7 +117,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 sphereSlamSpeed += 7f;
             }
 
-            float handCloseInterpolant = Utils.InverseLerp(0f, 16f, attackTimer - waveTime, true);
+            float handCloseInterpolant = Utils.GetLerpValue(0f, 16f, attackTimer - waveTime, true);
 
             Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -125f);
             Vector2 endingIdealPosition = core.Center + new Vector2(handSide * 750f, -70f);
@@ -156,7 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             if (canShootPhantasmalSpheres)
             {
-                float attackCompletion = Utils.InverseLerp(0f, waveTime, attackTimer, true);
+                float attackCompletion = Utils.GetLerpValue(0f, waveTime, attackTimer, true);
                 float maximumAngularDisparity = MathHelper.TwoPi;
                 float angularShootOffset = MathHelper.SmoothStep(0f, maximumAngularDisparity, attackCompletion) * -handSide;
                 Vector2 sphereShootVelocity = -Vector2.UnitY.RotatedBy(angularShootOffset) * sphereShootSpeed;
@@ -164,7 +166,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 if (attackTimer % sphereShootRate == sphereShootRate - 1f)
                 {
-                    Main.PlaySound(SoundID.Item122, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item122, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -186,7 +188,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    var sound = Main.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
+                    var sound = SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
                     if (sound != null)
                     {
                         sound.Volume = MathHelper.Clamp(sound.Volume * 1.85f, 0f, 1f);
@@ -226,7 +228,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0f, 0.1f);
             pupilScale = MathHelper.Lerp(pupilScale, 0.35f, 0.1f);
 
-            float handCloseInterpolant = Utils.InverseLerp(0f, flareReleaseDelay, attackTimer - flareTelegraphTime, true);
+            float handCloseInterpolant = Utils.GetLerpValue(0f, flareReleaseDelay, attackTimer - flareTelegraphTime, true);
             Vector2 startingIdealPosition = core.Center + new Vector2(handSide * 300f, -100f);
             Vector2 endingIdealPosition = core.Center + new Vector2(handSide * 750f, -150f);
             Vector2 idealPosition = Vector2.SmoothStep(startingIdealPosition, endingIdealPosition, MathHelper.Clamp(attackTimer / flareTelegraphTime - handCloseInterpolant, 0f, 1f));
@@ -238,7 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Create flare telegraphs.
             if (attackTimer < flareTelegraphTime && attackTimer % flareCreationRate == flareCreationRate - 1f && (handSide == 1 || MoonLordCoreBehaviorOverride.CurrentActiveArms == 1))
             {
-                Main.PlaySound(SoundID.Item72, target.Center);
+                SoundEngine.PlaySound(SoundID.Item72, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -283,7 +285,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Create charge dust and close hands before the attack begins.
             if (wrappedAttackTimer < initialAnimationTime - 12f)
             {
-                float chargePowerup = Utils.InverseLerp(0f, 0.5f, animationCompletionRatio, true);
+                float chargePowerup = Utils.GetLerpValue(0f, 0.5f, animationCompletionRatio, true);
                 int chargeDustCount = (int)Math.Round(MathHelper.Lerp(1f, 3f, chargePowerup));
                 float chargeDustOffset = MathHelper.Lerp(30f, 75f, chargePowerup);
 
@@ -321,7 +323,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 wrappedAttackTimer < initialAnimationTime + starCreationTime && 
                 (wrappedAttackTimer - initialAnimationTime) % starCreationRate == 0f)
             {
-                float patternCompletion = Utils.InverseLerp(initialAnimationTime, initialAnimationTime + starCreationTime, wrappedAttackTimer, true);
+                float patternCompletion = Utils.GetLerpValue(initialAnimationTime, initialAnimationTime + starCreationTime, wrappedAttackTimer, true);
                 Vector2 currentPoint;
                 switch ((int)constellationPatternType)
                 {
@@ -348,7 +350,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         break;
                 }
 
-                Main.PlaySound(SoundID.Item72, currentPoint);
+                SoundEngine.PlaySound(SoundID.Item72, currentPoint);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int star = Utilities.NewProjectileBetter(currentPoint, Vector2.Zero, ModContent.ProjectileType<StardustConstellation>(), 0, 0f);
@@ -373,31 +375,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Main.npcTexture[npc.type];
-            Vector2 shoulderOffset = new Vector2(220f, -60f);
-            Texture2D armTexture = Main.extraTexture[15];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Vector2 shoulderOffset = new(220f, -60f);
+            Texture2D armTexture = TextureAssets.Extra[15].Value;
             Vector2 coreCenter = Main.npc[(int)npc.ai[3]].Center;
             Point centerTileCoords = npc.Center.ToTileCoordinates();
             Color color = npc.GetAlpha(Color.Lerp(Lighting.GetColor(centerTileCoords.X, centerTileCoords.Y), Color.White, 0.3f));
             bool isLeftHand = npc.ai[2] == 0f;
-            Vector2 directionThing = new Vector2((!isLeftHand).ToDirectionInt(), 1f);
-            Vector2 handOrigin = new Vector2(120f, 180f);
+            Vector2 directionThing = new((!isLeftHand).ToDirectionInt(), 1f);
+            Vector2 handOrigin = new(120f, 180f);
             if (!isLeftHand)
                 handOrigin.X = texture.Width - handOrigin.X;
 
-            Texture2D scleraTexture = Main.extraTexture[17];
-            Texture2D pupilTexture = Main.extraTexture[19];
-            Vector2 scleraFrame = new Vector2(26f, 42f);
+            Texture2D scleraTexture = TextureAssets.Extra[17].Value;
+            Texture2D pupilTexture = TextureAssets.Extra[19].Value;
+            Vector2 scleraFrame = new(26f, 42f);
             if (!isLeftHand)
                 scleraFrame.X = scleraTexture.Width - scleraFrame.X;
 
-            Texture2D exposedEyeTexture = Main.extraTexture[26];
+            Texture2D exposedEyeTexture = TextureAssets.Extra[26].Value;
             Rectangle exposedEyeFrame = exposedEyeTexture.Frame(1, 1, 0, 0);
             exposedEyeFrame.Height /= 4;
             Vector2 shoulderCenter = coreCenter + shoulderOffset * directionThing;
             Vector2 handBottom = npc.Center + new Vector2(0f, 76f);
             Vector2 v = (shoulderCenter - handBottom) * 0.5f;
-            Vector2 armOrigin = new Vector2(60f, 30f);
+            Vector2 armOrigin = new(60f, 30f);
             SpriteEffects direction = npc.ai[2] != 1f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             if (!isLeftHand)
                 armOrigin.X = armTexture.Width - armOrigin.X;
@@ -407,7 +409,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             spriteBatch.Draw(armTexture, handBottom - Main.screenPosition, null, color, armRotation, armOrigin, 1f, direction, 0f);
             if (npc.ai[0] == -2f)
             {
-                int frame = (int)(Main.GlobalTime * 9.3f) % 4;
+                int frame = (int)(Main.GlobalTimeWrappedHourly * 9.3f) % 4;
                 exposedEyeFrame.Y += exposedEyeFrame.Height * frame;
                 Vector2 exposedEyeDrawPosition = npc.Center - Main.screenPosition;
                 spriteBatch.Draw(exposedEyeTexture, exposedEyeDrawPosition, exposedEyeFrame, color, 0f, scleraFrame - new Vector2(4f, 4f), 1f, direction, 0f);

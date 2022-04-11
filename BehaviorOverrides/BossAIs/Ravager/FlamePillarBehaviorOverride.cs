@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {
@@ -78,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             // Release bursts of dark flames.
             if (attackTimer > 25f && attackTimer % 70f == 69f)
             {
-                Main.PlaySound(SoundID.Item100, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item100, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

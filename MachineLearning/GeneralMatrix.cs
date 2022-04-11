@@ -50,7 +50,7 @@ namespace InfernumMode.MachineLearning
 
         public static GeneralMatrix operator -(GeneralMatrix GeneralMatrix)
         {
-            GeneralMatrix result = new GeneralMatrix(GeneralMatrix.TotalRows, GeneralMatrix.TotalColumns);
+            GeneralMatrix result = new(GeneralMatrix.TotalRows, GeneralMatrix.TotalColumns);
             for (int i = 0; i < GeneralMatrix.TotalRows; i++)
             {
                 for (int j = 0; j < GeneralMatrix.TotalColumns; j++)
@@ -62,7 +62,7 @@ namespace InfernumMode.MachineLearning
 
         public static GeneralMatrix operator +(double scalar, GeneralMatrix GeneralMatrix)
         {
-            GeneralMatrix result = new GeneralMatrix(GeneralMatrix.TotalRows, GeneralMatrix.TotalColumns);
+            GeneralMatrix result = new(GeneralMatrix.TotalRows, GeneralMatrix.TotalColumns);
             for (int i = 0; i < result.TotalRows; i++)
             {
                 for (int j = 0; j < result.TotalColumns; j++)
@@ -79,7 +79,7 @@ namespace InfernumMode.MachineLearning
             if (m1.TotalRows != m2.TotalRows || m1.TotalColumns != m2.TotalColumns)
                 throw new InvalidOperationException("Two matrices may only be added if they have equal sizes.");
 
-            GeneralMatrix result = new GeneralMatrix(m1.TotalRows, m1.TotalColumns);
+            GeneralMatrix result = new(m1.TotalRows, m1.TotalColumns);
             for (int i = 0; i < result.TotalRows; i++)
             {
                 for (int j = 0; j < result.TotalColumns; j++)
@@ -94,7 +94,7 @@ namespace InfernumMode.MachineLearning
             if (m1.TotalRows != m2.TotalRows || m1.TotalColumns != m2.TotalColumns)
                 throw new InvalidOperationException("Two matrices may only be added if they have equal sizes.");
 
-            GeneralMatrix result = new GeneralMatrix(m1.TotalRows, m1.TotalColumns);
+            GeneralMatrix result = new(m1.TotalRows, m1.TotalColumns);
             for (int i = 0; i < result.TotalRows; i++)
             {
                 for (int j = 0; j < result.TotalColumns; j++)
@@ -114,7 +114,7 @@ namespace InfernumMode.MachineLearning
             if (m2.TotalRows != m1Cols)
                 throw new InvalidOperationException("Non-matching GeneralMatrix dimensions.");
 
-            GeneralMatrix result = new GeneralMatrix(m1Rows, m2Cols);
+            GeneralMatrix result = new(m1Rows, m2Cols);
             for (int i = 0; i < m1Rows; i++)
             {
                 for (int j = 0; j < m2Cols; j++)
@@ -132,7 +132,7 @@ namespace InfernumMode.MachineLearning
 
         public static GeneralMatrix operator *(double scalar, GeneralMatrix GeneralMatrix)
         {
-            GeneralMatrix result = new GeneralMatrix(GeneralMatrix.TotalRows, GeneralMatrix.TotalColumns);
+            GeneralMatrix result = new(GeneralMatrix.TotalRows, GeneralMatrix.TotalColumns);
             for (int i = 0; i < result.TotalRows; i++)
             {
                 for (int j = 0; j < result.TotalColumns; j++)
@@ -146,7 +146,7 @@ namespace InfernumMode.MachineLearning
 
         public GeneralMatrix Transpose()
         {
-            GeneralMatrix result = new GeneralMatrix(TotalColumns, TotalRows);
+            GeneralMatrix result = new(TotalColumns, TotalRows);
             for (int i = 0; i < TotalRows; i++)
             {
                 for (int j = 0; j < TotalColumns; j++)
@@ -162,7 +162,7 @@ namespace InfernumMode.MachineLearning
             if (TotalRows != otherGeneralMatrix.TotalRows || TotalColumns != otherGeneralMatrix.TotalColumns)
                 throw new InvalidOperationException("Two matrices may only be multiplied element-wise if they have equal sizes.");
 
-            GeneralMatrix result = new GeneralMatrix(TotalRows, TotalColumns);
+            GeneralMatrix result = new(TotalRows, TotalColumns);
             for (int i = 0; i < TotalRows; i++)
             {
                 for (int j = 0; j < TotalColumns; j++)

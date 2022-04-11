@@ -21,7 +21,7 @@ namespace InfernumMode.ILEditingStuff
 
         internal static void NPCPreAIChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.EmitDelegate(new Func<NPC, bool>(npc =>
             {
@@ -40,14 +40,14 @@ namespace InfernumMode.ILEditingStuff
                         return false;
                     }
                 }
-                return npc.modNPC == null || npc.modNPC.PreAI();
+                return npc.ModNPC == null || npc.ModNPC.PreAI();
             }));
             cursor.Emit(OpCodes.Ret);
         }
 
         internal static void NPCSetDefaultsChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate(new Action<NPC, bool>((npc, createModNPC) =>
@@ -65,7 +65,7 @@ namespace InfernumMode.ILEditingStuff
                     }
                 }
                 typeof(NPC).GetField("globalNPCs", Utilities.UniversalBindingFlags).SetValue(npc, (from g in instancedGlobals.ToList() select g.NewInstance(npc)).ToArray());
-                npc.modNPC?.SetDefaults();
+                npc.ModNPC?.SetDefaults();
                 object instance = typeof(NPCLoader).GetField("HookSetDefaults", Utilities.UniversalBindingFlags).GetValue(null);
                 GlobalNPC[] arr = hookListArrayField.GetValue(instance) as GlobalNPC[];
                 for (int i = 0; i < arr.Length; i++)
@@ -84,7 +84,7 @@ namespace InfernumMode.ILEditingStuff
 
         internal static void NPCPreDrawChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.Emit(OpCodes.Ldarg_2);
@@ -102,23 +102,23 @@ namespace InfernumMode.ILEditingStuff
                     if (!globalNPC.Instance(npc).PreDraw(npc, spriteBatch, drawColor))
                         return false;
                 }
-                return npc.modNPC == null || npc.modNPC.PreDraw(spriteBatch, drawColor);
+                return npc.ModNPC == null || npc.ModNPC.PreDraw(spriteBatch, drawColor);
             }));
             cursor.Emit(OpCodes.Ret);
         }
 
         internal static void NPCFindFrameChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
 
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate(new Action<NPC, int>((npc, frameHeight) =>
             {
                 int type = npc.type;
-                if (npc.modNPC != null && npc.modNPC.animationType > 0)
+                if (npc.ModNPC != null && npc.ModNPC.animationType > 0)
                 {
-                    npc.type = npc.modNPC.animationType;
+                    npc.type = npc.ModNPC.animationType;
                 }
                 if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(type) && InfernumMode.CanUseCustomAIs)
                 {
@@ -127,7 +127,7 @@ namespace InfernumMode.ILEditingStuff
                 }
                 npc.VanillaFindFrame(frameHeight);
                 npc.type = type;
-                npc.modNPC?.FindFrame(frameHeight);
+                npc.ModNPC?.FindFrame(frameHeight);
                 object instance = typeof(NPCLoader).GetField("HookFindFrame", Utilities.UniversalBindingFlags).GetValue(null);
                 GlobalNPC[] arr = hookListArrayField.GetValue(instance) as GlobalNPC[];
                 for (int i = 0; i < arr.Length; i++)
@@ -141,15 +141,15 @@ namespace InfernumMode.ILEditingStuff
 
         internal static void NPCCheckDeadChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
 
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.EmitDelegate(new Func<NPC, bool>(npc =>
             {
                 bool result = true;
-                if (npc.modNPC != null)
+                if (npc.ModNPC != null)
                 {
-                    result = npc.modNPC.CheckDead();
+                    result = npc.ModNPC.CheckDead();
                 }
                 object instance = typeof(NPCLoader).GetField("HookCheckDead", Utilities.UniversalBindingFlags).GetValue(null);
                 GlobalNPC[] arr = hookListArrayField.GetValue(instance) as GlobalNPC[];
@@ -166,7 +166,7 @@ namespace InfernumMode.ILEditingStuff
 
         internal static void ProjectilePreAIChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.EmitDelegate(new Func<Projectile, bool>(projectile =>
             {
@@ -193,7 +193,7 @@ namespace InfernumMode.ILEditingStuff
 
         internal static void ProjectilePreDrawChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.Emit(OpCodes.Ldarg_2);

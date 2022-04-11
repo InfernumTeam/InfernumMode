@@ -7,39 +7,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
     public class Light : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Light");
 
         public override void SetDefaults()
         {
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.alpha = 0;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 40;
-            projectile.penetrate = -1;
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.alpha = 0;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 40;
+            Projectile.penetrate = -1;
         }
 
         public override void AI() => Time++;
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color _)
         {
-            Vector2 origin = new Vector2(66f, 86f);
-            Vector2 drawPosition = new Vector2(Main.screenWidth * 0.5f, Main.screenHeight + 10f);
-            Vector2 scale = new Vector2(1.4f, 1.6f);
-            Color lightColor = new Color(205, 10, 205, 0);
-            Color coloredLight = new Color(255, 180, 255, 0);
+            Vector2 origin = new(66f, 86f);
+            Vector2 drawPosition = new(Main.screenWidth * 0.5f, Main.screenHeight + 10f);
+            Vector2 scale = new(1.4f, 1.6f);
+            Color lightColor = new(205, 10, 205, 0);
+            Color coloredLight = new(255, 180, 255, 0);
             float completion = 0f;
             if (Time < 30f)
-                completion = Utils.InverseLerp(0f, 30f, Time, true);
+                completion = Utils.GetLerpValue(0f, 30f, Time, true);
             else if (Time < 40f)
-                completion = 1f + Utils.InverseLerp(30f, 40f, Time, true);
+                completion = 1f + Utils.GetLerpValue(30f, 40f, Time, true);
 
-            Vector2 scaleFactor1 = new Vector2(1f, 1f);
-            Vector2 scaleFactor2 = new Vector2(0.8f, 2f);
+            Vector2 scaleFactor1 = new(1f, 1f);
+            Vector2 scaleFactor2 = new(0.8f, 2f);
             if (completion < 1f)
                 scaleFactor1.X *= completion;
 
@@ -51,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
             if (completion > 1.5f)
             {
-                float fade = Utils.InverseLerp(2f, 1.5f, completion, true);
+                float fade = Utils.GetLerpValue(2f, 1.5f, completion, true);
                 lightColor *= fade;
                 coloredLight *= fade;
             }

@@ -3,6 +3,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
@@ -73,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                 npc.knockBackResist = 0f;
                 if (Collision.SolidCollision(npc.position, npc.width, npc.height) && !Main.dedServ)
                 {
-                    Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
                     for (int i = 0; i < 36; i++)
                     {
                         Dust energy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 182);

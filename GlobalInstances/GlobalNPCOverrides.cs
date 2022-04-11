@@ -37,6 +37,7 @@ using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
+using Terraria.Audio;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -251,7 +252,7 @@ namespace InfernumMode.GlobalInstances
                     {
                         npc.Infernum().ExtraAI[10] = 1f;
                         if (BossRushEvent.BossRushActive)
-                            typeof(BossRushEvent).GetMethod("OnBossKill", Utilities.UniversalBindingFlags).Invoke(null, new object[] { npc, mod });
+                            typeof(BossRushEvent).GetMethod("OnBossKill", Utilities.UniversalBindingFlags).Invoke(null, new object[] { npc, Mod });
                         else
                             npc.NPCLoot();
                     }
@@ -300,7 +301,7 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == ModContent.NPCType<GreatSandShark>())
                 DropHelper.DropItem(npc, ModContent.ItemType<GrandScale>(), 3);
 
-            if (npc.type == InfernumMode.CalamityMod.NPCType("DevourerofGodsHead"))
+            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsHead").Type)
             {
                 // Skip the sentinel phase entirely
                 CalamityWorld.DoGSecondStageCountdown = 600;
@@ -319,7 +320,7 @@ namespace InfernumMode.GlobalInstances
         {
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
             {
-                cooldownSlot = 0;
+                CooldownSlot = 0;
                 return npc.alpha == 0;
             }
             return base.CanHitPlayer(npc, target, ref cooldownSlot);
@@ -330,7 +331,7 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.StrikeNPC(npc, ref damage, defense, ref knockback, hitDirection, ref crit);
 
-            if (npc.type == InfernumMode.CalamityMod.NPCType("Yharon"))
+            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("Yharon").Type)
             {
                 if (npc.life - (int)Math.Ceiling(damage) <= 0)
                 {
@@ -356,14 +357,14 @@ namespace InfernumMode.GlobalInstances
                 npc.dontTakeDamage = true;
                 if (npc.Infernum().ExtraAI[32] == 0f)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DevourerSpawn"), npc.Center);
                     npc.Infernum().ExtraAI[32] = 1f;
                 }
                 return false;
             }
 
             // Register damage from the tail to the shield when it's vulnerable.
-            if (npc.type == InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"))
+            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type)
             {
                 Main.npc[npc.realLife].Infernum().ExtraAI[0] += (float)(damage * (crit ? 2D : 1f));
                 Main.npc[npc.realLife].netUpdate = true;
@@ -427,7 +428,7 @@ namespace InfernumMode.GlobalInstances
                 npc.dontTakeDamage = true;
                 if (npc.Infernum().ExtraAI[20] == 0f)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), npc.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DevourerSpawn"), npc.Center);
                     npc.Infernum().ExtraAI[20] = 1f;
                 }
                 npc.active = true;
@@ -524,7 +525,7 @@ namespace InfernumMode.GlobalInstances
                 npc.dontTakeDamage = true;
                 npc.life = 1;
 
-                Main.PlaySound(SoundID.NPCDeath59, npc.Center);
+                SoundEngine.PlaySound(SoundID.NPCDeath59, npc.Center);
 
                 return false;
             }

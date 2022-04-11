@@ -3,6 +3,7 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
@@ -21,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Make a roar sound on summoning.
             if (npc.localAI[3] == 0f)
             {
-                Main.PlaySound(SoundID.Item119, npc.position);
+                SoundEngine.PlaySound(SoundID.Item119, npc.position);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     CreatePhantasmDragonSegments(npc, 40);
 

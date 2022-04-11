@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
             float baseShakePower = MathHelper.Lerp(1f, 4f, (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio));
-            return baseShakePower * Utils.InverseLerp(2200f, 1050f, distanceFromPlayer, true);
+            return baseShakePower * Utils.GetLerpValue(2200f, 1050f, distanceFromPlayer, true);
         }
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)

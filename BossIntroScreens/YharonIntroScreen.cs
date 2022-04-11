@@ -33,7 +33,7 @@ namespace InfernumMode.BossIntroScreens
         {
             shader.Parameters["uColor"].SetValue(Color.Orange.ToVector3());
             shader.Parameters["uSecondaryColor"].SetValue(Color.Yellow.ToVector3());
-            shader.GraphicsDevice.Textures[1] = ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap");
+            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap").Value;
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Yharon>());
@@ -46,7 +46,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override float LetterDisplayCompletionRatio(int animationTimer)
         {
-            float completionRatio = Utils.InverseLerp(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
+            float completionRatio = Utils.GetLerpValue(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
 
             // If the completion ratio exceeds the point where the name is displayed, display all letters.
             int startOfLargeTextIndex = TextToDisplay.IndexOf('\n');

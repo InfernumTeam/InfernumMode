@@ -6,55 +6,56 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 {
     public class RedirectingWeakDarkMagicFlame : ModProjectile
     {
         public PrimitiveTrailCopy TrailDrawer = null;
-        public ref float Time => ref projectile.ai[0];
-        public bool FromBuffedDarkMage => projectile.ai[1] == 1f;
+        public ref float Time => ref Projectile.ai[0];
+        public bool FromBuffedDarkMage => Projectile.ai[1] == 1f;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Flame");
-            Main.projFrames[projectile.type] = 6;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 12;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            Main.projFrames[Projectile.type] = 6;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 12;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 12;
-            projectile.scale = 0.6f;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.alpha = 255;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 210;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 12;
+            Projectile.scale = 0.6f;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.alpha = 255;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 210;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            projectile.Opacity = Utils.InverseLerp(0f, 20f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 20f, Time, true);
+            Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+            Projectile.Opacity = Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Time, true);
 
             if (Time < 20f)
-                projectile.velocity *= 1.01f;
+                Projectile.velocity *= 1.01f;
             else if (Time < 40f)
-                projectile.velocity *= 0.97f;
+                Projectile.velocity *= 0.97f;
             else
             {
-                if (!projectile.WithinRange(closestPlayer.Center, 220f))
+                if (!Projectile.WithinRange(closestPlayer.Center, 220f))
                 {
                     float acceleration = FromBuffedDarkMage ? 1.032f : 1.02f;
-                    projectile.velocity = projectile.velocity.MoveTowards(projectile.SafeDirectionTo(closestPlayer.Center) * projectile.velocity.Length(), 0.45f) * acceleration;
+                    Projectile.velocity = Projectile.velocity.MoveTowards(Projectile.SafeDirectionTo(closestPlayer.Center) * Projectile.velocity.Length(), 0.45f) * acceleration;
                 }
             }
 
             if (Time == 50f)
-                Main.PlaySound(SoundID.Item74, projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item74, Projectile.Center);
 
             if (Time > 100f)
             {
@@ -68,12 +69,12 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                     acceleration *= 1.3f;
                 }
 
-                float angularOffset = (float)Math.Cos((projectile.Center * new Vector2(1.4f, 1f)).Length() / 275f + projectile.identity * 0.89f) * 0.01f;
-                projectile.velocity = projectile.velocity.RotatedBy(angularOffset);
-                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(projectile.velocity.Length() * acceleration, minSpeed, maxSpeed);
+                float angularOffset = (float)Math.Cos((Projectile.Center * new Vector2(1.4f, 1f)).Length() / 275f + Projectile.identity * 0.89f) * 0.01f;
+                Projectile.velocity = Projectile.velocity.RotatedBy(angularOffset);
+                Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Clamp(Projectile.velocity.Length() * acceleration, minSpeed, maxSpeed);
             }
 
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             Time++;
         }
@@ -81,18 +82,18 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
 
         public float FlameTrailWidthFunction(float completionRatio)
         {
-            return MathHelper.SmoothStep(20f, 5f, completionRatio) * projectile.Opacity;
+            return MathHelper.SmoothStep(20f, 5f, completionRatio) * Projectile.Opacity;
         }
 
         public Color FlameTrailColorFunction(float completionRatio)
         {
-            float trailOpacity = Utils.InverseLerp(0.75f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * 0.9f;
+            float trailOpacity = Utils.GetLerpValue(0.75f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true) * 0.9f;
             Color startingColor = Color.Lerp(Color.White, Color.IndianRed, 0.25f);
             Color middleColor = Color.Lerp(Color.Pink, Color.Red, 0.4f);
             Color endColor = Color.Lerp(Color.Purple, Color.Black, 0.35f);
             Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * trailOpacity;
             color.A = (byte)(trailOpacity * 255);
-            return color * projectile.Opacity;
+            return color * Projectile.Opacity;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -101,16 +102,16 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 TrailDrawer = new PrimitiveTrailCopy(FlameTrailWidthFunction, FlameTrailColorFunction, null, true, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
             // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak").Value);
 
-            Texture2D texture = Main.projectileTexture[projectile.type];
-            Vector2 drawPosition = projectile.Center - Main.screenPosition;
-            Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
+            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
-            Color color = projectile.GetAlpha(Color.Lerp(Color.Violet, new Color(1f, 1f, 1f, 1f), projectile.identity / 5f * 0.6f));
+            Color color = Projectile.GetAlpha(Color.Lerp(Color.Violet, new Color(1f, 1f, 1f, 1f), Projectile.identity / 5f * 0.6f));
 
-            TrailDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 30);
-            spriteBatch.Draw(texture, drawPosition, frame, color, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
+            TrailDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 30);
+            spriteBatch.Draw(texture, drawPosition, frame, color, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

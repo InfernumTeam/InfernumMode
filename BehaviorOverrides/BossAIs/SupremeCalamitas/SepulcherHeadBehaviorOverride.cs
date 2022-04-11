@@ -11,6 +11,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using SCalBoss = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -25,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             BrimstoneFlameBurst
         }
 
-        public static List<SepulcherAttackState> AttackCycle => new List<SepulcherAttackState>()
+        public static List<SepulcherAttackState> AttackCycle => new()
         {
             SepulcherAttackState.SnapCharges,
             SepulcherAttackState.SoulCast,
@@ -48,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             npc.width = npc.height = 64;
             npc.defense = 0;
             npc.lifeMax = 166400;
-            npc.aiStyle = npc.modNPC.aiType = -1;
+            npc.aiStyle = npc.ModNPC.aiType = -1;
             npc.knockBackResist = 0f;
             npc.scale = 1.3f;
             npc.alpha = 255;
@@ -144,7 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Periodically summon hearts.
             if (lifeRatio < 1f - (heartState + 1f) / 6f)
             {
-                Main.PlaySound(SoundID.DD2_SkyDragonsFuryShot, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFuryShot, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BrimstoneHeart>());
 
@@ -194,11 +195,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public static void DoBehavior_SnapCharges(NPC npc, Player target, float enrageFactor, float lifeRatio, ref float attackTimer)
         {
             float idealRotation = npc.AngleTo(target.Center);
-            float movementSpeed = MathHelper.Lerp(24.5f, 29f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
-            movementSpeed *= Utils.InverseLerp(-5f, 60f, attackTimer, true);
+            float movementSpeed = MathHelper.Lerp(24.5f, 29f, Utils.GetLerpValue(1f, 0.15f, lifeRatio, true));
+            movementSpeed *= Utils.GetLerpValue(-5f, 60f, attackTimer, true);
 
             float acceleration = movementSpeed / 550f;
-            acceleration *= Utils.InverseLerp(240f, 150f, npc.Distance(target.Center), true) + 1f;
+            acceleration *= Utils.GetLerpValue(240f, 150f, npc.Distance(target.Center), true) + 1f;
 
             // Move faster if enraged.
             if (enrageFactor > 0f)
@@ -226,7 +227,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             float movementSpeed = 14f;
             float acceleration = movementSpeed / 400f;
             float soulShootSpeed = MathHelper.Lerp(17f, 27f, enrageFactor);
-            acceleration *= Utils.InverseLerp(240f, 150f, npc.Distance(target.Center), true) * 1.25f + 1f;
+            acceleration *= Utils.GetLerpValue(240f, 150f, npc.Distance(target.Center), true) * 1.25f + 1f;
 
             if (!npc.WithinRange(target.Center, 160f))
             {
@@ -309,7 +310,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Move into the charge.
             if (attackTimer > hoverRedirectTime && attackTimer <= hoverRedirectTime + chargeRedirectTime)
             {
-                Vector2 idealChargeVelocity = new Vector2(idealChargeVelocityX, idealChargeVelocityY);
+                Vector2 idealChargeVelocity = new(idealChargeVelocityX, idealChargeVelocityY);
                 npc.velocity = npc.velocity.RotateTowards(idealChargeVelocity.ToRotation(), 0.08f, true) * MathHelper.Lerp(npc.velocity.Length(), idealChargeVelocity.Length(), 0.15f);
                 npc.velocity = npc.velocity.MoveTowards(idealChargeVelocity, 4f);
             }
@@ -317,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Release hellblasts charge has begun.
             if (attackTimer == hoverRedirectTime + chargeRedirectTime / 3)
             {
-                Main.PlaySound(SoundID.DD2_FlameburstTowerShot, target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 27; i++)

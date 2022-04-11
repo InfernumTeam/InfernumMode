@@ -3,37 +3,38 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
     public class LunarFlareTelegraph : ModProjectile
     {
-        public ref float Countdown => ref projectile.ai[0];
-        public Player Target => Main.player[projectile.owner];
+        public ref float Countdown => ref Projectile.ai[0];
+        public Player Target => Main.player[Projectile.owner];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Telegraph");
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 2;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = true;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 300;
-            projectile.scale = 0.01f;
+            Projectile.width = Projectile.height = 2;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 300;
+            Projectile.scale = 0.01f;
         }
 
         public override void AI()
         {
-            if (projectile.localAI[0] == 0f)
+            if (Projectile.localAI[0] == 0f)
             {
-                projectile.localAI[0] = 1f;
-                projectile.netUpdate = true;
+                Projectile.localAI[0] = 1f;
+                Projectile.netUpdate = true;
             }
 
             if (MoonLordCoreBehaviorOverride.CurrentActiveArms <= 0)
             {
-                projectile.active = false;
+                Projectile.active = false;
                 return;
             }
 
@@ -41,16 +42,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 Countdown--;
             else
             {
-                if (projectile.ai[1] == 1f)
-                    Main.PlaySound(SoundID.Item92, Target.Center);
+                if (Projectile.ai[1] == 1f)
+                    SoundEngine.PlaySound(SoundID.Item92, Target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 flareSpawnPosition = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation) * 1000f;
+                    Vector2 flareSpawnPosition = Projectile.Center - Vector2.UnitY.RotatedBy(Projectile.rotation) * 1000f;
                     if (flareSpawnPosition.Y < 100f)
                         flareSpawnPosition.Y = 100f;
 
-                    Vector2 flareVelocity = Vector2.UnitY.RotatedBy(projectile.rotation) * Main.rand.NextFloat(11f, 13f);
+                    Vector2 flareVelocity = Vector2.UnitY.RotatedBy(Projectile.rotation) * Main.rand.NextFloat(11f, 13f);
                     int flare = Utilities.NewProjectileBetter(flareSpawnPosition, flareVelocity, ProjectileID.PhantasmalBolt, 205, 0f);
                     if (Main.projectile.IndexInRange(flare))
                     {
@@ -59,18 +60,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     }
                 }
 
-                projectile.Kill();
+                Projectile.Kill();
             }
 
-            projectile.scale = MathHelper.Clamp(projectile.scale + 0.08f, 0f, 1f);
+            Projectile.scale = MathHelper.Clamp(Projectile.scale + 0.08f, 0f, 1f);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Vector2 start = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation) * 4350f;
-            Vector2 end = projectile.Center + Vector2.UnitY.RotatedBy(projectile.rotation) * 4350f;
-            Color lineColor = new Color(50, 255, 156);
-            Utilities.DrawLineBetter(spriteBatch, start, end, lineColor * projectile.scale, projectile.scale * 3f);
+            Vector2 start = Projectile.Center - Vector2.UnitY.RotatedBy(Projectile.rotation) * 4350f;
+            Vector2 end = Projectile.Center + Vector2.UnitY.RotatedBy(Projectile.rotation) * 4350f;
+            Color lineColor = new(50, 255, 156);
+            Utilities.DrawLineBetter(spriteBatch, start, end, lineColor * Projectile.scale, Projectile.scale * 3f);
             return false;
         }
     }

@@ -8,7 +8,9 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 {
@@ -119,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             if (npc.life < npc.lifeMax * Phase2LifeRatio && hasSummonedJewelFlag == 0f && npc.scale >= 0.8f)
             {
                 Vector2 jewelSpawnPosition = target.Center - Vector2.UnitY * 350f;
-                Main.PlaySound(SoundID.Item67, target.Center);
+                SoundEngine.PlaySound(SoundID.Item67, target.Center);
                 Dust.QuickDustLine(npc.Top + Vector2.UnitY * 60f, jewelSpawnPosition, 150f, Color.Red);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -176,7 +178,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 if (attackTimer == 25f && npc.collideY)
                 {
                     target = Main.player[npc.target];
-                    float jumpSpeed = MathHelper.Lerp(8.25f, 11.6f, Utils.InverseLerp(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                    float jumpSpeed = MathHelper.Lerp(8.25f, 11.6f, Utils.GetLerpValue(40f, 700f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                     jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
                     npc.velocity = new Vector2(npc.direction * 8.5f, -jumpSpeed);
@@ -204,7 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 if (attackTimer == 35f)
                 {
                     target = Main.player[npc.target];
-                    float jumpSpeed = MathHelper.Lerp(10f, 23f, Utils.InverseLerp(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
+                    float jumpSpeed = MathHelper.Lerp(10f, 23f, Utils.GetLerpValue(40f, 360f, Math.Abs(target.Center.Y - npc.Center.Y), true));
                     jumpSpeed *= Main.rand.NextFloat(1f, 1.15f);
 
                     npc.velocity = new Vector2(npc.direction * 10.25f, -jumpSpeed);
@@ -235,7 +237,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     npc.velocity.X = 0f;
 
                 npc.scale = MathHelper.Lerp(idealScale, 0.2f, MathHelper.Clamp((float)Math.Pow(attackTimer / digTime, 3D), 0f, 1f));
-                npc.Opacity = Utils.InverseLerp(0.7f, 1f, npc.scale, true) * 0.7f;
+                npc.Opacity = Utils.GetLerpValue(0.7f, 1f, npc.scale, true) * 0.7f;
                 npc.dontTakeDamage = true;
                 npc.damage = 0;
 
@@ -276,7 +278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             if (attackTimer > digTime && attackTimer <= digTime + reappearTime)
             {
-                npc.scale = MathHelper.Lerp(0.2f, idealScale, Utils.InverseLerp(digTime, digTime + reappearTime, attackTimer, true));
+                npc.scale = MathHelper.Lerp(0.2f, idealScale, Utils.GetLerpValue(digTime, digTime + reappearTime, attackTimer, true));
                 npc.Opacity = 0.7f;
                 npc.dontTakeDamage = true;
                 npc.damage = 0;
@@ -314,7 +316,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D kingSlimeTexture = Main.npcTexture[npc.type];
+            Texture2D kingSlimeTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 kingSlimeDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
 
             // Draw the ninja, if it's still stuck.
@@ -332,13 +334,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     drawOffset.Y -= 6f;
 
                 Vector2 ninjaDrawPosition = npc.Center - Main.screenPosition + drawOffset;
-                spriteBatch.Draw(Main.ninjaTexture, ninjaDrawPosition, null, lightColor, ninjaRotation, Main.ninjaTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(TextureAssets.Ninja, ninjaDrawPosition, null, lightColor, ninjaRotation, TextureAssets.Ninja.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
 
             spriteBatch.Draw(kingSlimeTexture, kingSlimeDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
 
             float verticalCrownOffset = 0f;
-            switch (npc.frame.Y / (Main.npcTexture[npc.type].Height / Main.npcFrameCount[npc.type]))
+            switch (npc.frame.Y / (TextureAssets.Npc[npc.type].Value.Height / Main.npcFrameCount[npc.type]))
             {
                 case 0:
                     verticalCrownOffset = 2f;
@@ -359,7 +361,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     verticalCrownOffset = 0f;
                     break;
             }
-            Texture2D crownTexture = Main.extraTexture[39];
+            Texture2D crownTexture = TextureAssets.Extra[39].Value;
             Vector2 crownDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * (npc.gfxOffY - (56f - verticalCrownOffset) * npc.scale);
             spriteBatch.Draw(crownTexture, crownDrawPosition, null, lightColor, 0f, crownTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             return false;

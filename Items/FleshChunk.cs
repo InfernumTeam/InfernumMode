@@ -16,37 +16,24 @@ namespace InfernumMode.Items
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.rare = ItemRarityID.Orange;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.consumable = false;
+            Item.width = 18;
+            Item.height = 18;
+            Item.rare = ItemRarityID.Orange;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.consumable = false;
         }
 
         public override bool CanUseItem(Player player) => player.ZoneUnderworldHeight;
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.GuideVoodooDoll);
-            recipe.AddIngredient(ModContent.ItemType<BloodOrb>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DemonicBoneAsh>(), 5);
-            recipe.AddIngredient(ItemID.ShadowScale, 10);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-
-            recipe = new ModRecipe(mod);
-            recipe.AddIngredient(ItemID.GuideVoodooDoll);
-            recipe.AddIngredient(ModContent.ItemType<BloodOrb>(), 5);
-            recipe.AddIngredient(ModContent.ItemType<DemonicBoneAsh>(), 5);
-            recipe.AddIngredient(ItemID.TissueSample, 10);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe(1).AddIngredient(ItemID.GuideVoodooDoll).AddIngredient(ModContent.ItemType<BloodOrb>(), 5).AddIngredient(ModContent.ItemType<DemonicBoneAsh>(), 5).AddIngredient(ItemID.ShadowScale, 10).Register();
+            CreateRecipe(1).AddIngredient(ItemID.GuideVoodooDoll).AddIngredient(ModContent.ItemType<BloodOrb>(), 5).AddIngredient(ModContent.ItemType<DemonicBoneAsh>(), 5).AddIngredient(ItemID.TissueSample, 10).Register();
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
                 NPC.SpawnWOF(player.Center);

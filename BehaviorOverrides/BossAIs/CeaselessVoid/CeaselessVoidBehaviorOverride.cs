@@ -11,6 +11,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using CeaselessVoidBoss = CalamityMod.NPCs.CeaselessVoid.CeaselessVoid;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
@@ -43,19 +44,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.lifeMax = 363000;
             Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
             if (calamityModMusic != null)
-                npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/ScourgeofTheUniverse");
+                npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/ScourgeofTheUniverse");
             else
-                npc.modNPC.music = MusicID.Boss3;
+                npc.ModNPC.music = MusicID.Boss3;
             if (CalamityWorld.DoGSecondStageCountdown <= 0)
             {
                 npc.value = Item.buyPrice(0, 35, 0, 0);
                 if (calamityModMusic != null)
-                    npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/Void");
+                    npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/Void");
                 else
-                    npc.modNPC.music = MusicID.Boss3;
+                    npc.ModNPC.music = MusicID.Boss3;
             }
             npc.aiStyle = -1;
-            npc.modNPC.aiType = -1;
+            npc.ModNPC.aiType = -1;
             npc.knockBackResist = 0f;
             for (int k = 0; k < npc.buffImmune.Length; k++)
                 npc.buffImmune[k] = true;
@@ -185,7 +186,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create rifts around the void.
             if (attackTimer % riftCreationRate == riftCreationRate - 1f && attackTimer < 300f)
             {
-                Main.PlaySound(SoundID.Item8, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item8, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -278,7 +279,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     npc.velocity *= 0.92f;
                     if (attackTimer == 60f)
                     {
-                        Main.PlaySound(SoundID.Item43, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item43, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             for (int i = 0; i < projectilesPerBurst; i++)
@@ -309,7 +310,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int crackCount = 12 + phase * 8;
 
             // Hover into position.
-            float moveSpeedFactor = Utils.InverseLerp(60f, 120f, attackTimer, true) * Utils.InverseLerp(240f, 180f, attackTimer, true);
+            float moveSpeedFactor = Utils.GetLerpValue(60f, 120f, attackTimer, true) * Utils.GetLerpValue(240f, 180f, attackTimer, true);
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 370f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * moveSpeedFactor * 25f, moveSpeedFactor * 0.8f);
             npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, moveSpeedFactor);
@@ -318,7 +319,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create cracks and release a spread of dark energy.
             if (attackTimer == 150f)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), npc.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), npc.Center);
                 for (int i = 0; i < crackCount; i++)
                 {
                     Vector2 crackSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(50f, 990f);
@@ -360,7 +361,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                     return;
                 }
 
-                Main.PlaySound(SoundID.Item103, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item103, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < projectilesPerBurst; i++)
@@ -395,7 +396,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             // Make a pulse sound before firing.
             if (attackTimer == 45f)
-                Main.PlaySound(SoundID.DD2_WitherBeastAuraPulse, target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse, target.Center);
 
             // Don't fire near the start/end of the attack.
             if (attackTimer < 90f || attackTimer > BulletHellTime - 120f)
@@ -404,7 +405,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create bursts.
             if (attackTimer % burstFireRate == burstFireRate - 1f)
             {
-                Main.PlaySound(SoundID.Item103, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item103, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float burstAngleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -432,7 +433,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create circles of energy.
             if (attackTimer % circleFireRate == circleFireRate - 1f)
             {
-                Main.PlaySound(SoundID.Item103, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item103, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -451,7 +452,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.TargetClosest();
 
             int phase = (int)npc.ai[3];
-            List<CeaselessVoidAttackType> possibleAttacks = new List<CeaselessVoidAttackType>
+            List<CeaselessVoidAttackType> possibleAttacks = new()
             {
                 CeaselessVoidAttackType.ReleaseRealityTearPortals,
                 CeaselessVoidAttackType.DarkMagicCharge,

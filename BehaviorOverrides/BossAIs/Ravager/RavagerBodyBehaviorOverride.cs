@@ -11,7 +11,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {
@@ -214,7 +215,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             // Periodically release bursts of dark magic fireballs.
             if (!shouldNotAttack && darkMagicFireballShootTimer >= darkMagicFireballShootRate && jumpState == 0f)
             {
-                Main.PlaySound(SoundID.Item100, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item100, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -269,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 // Make stomp sounds and dusts when hitting the ground again.
                 if (npc.velocity.Y == 0f)
                 {
-                    Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 14, 1.25f, -0.25f);
+                    SoundEngine.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 14, 1.25f, -0.25f);
                     for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)
                     {
                         for (int i = 0; i < 6; i++)
@@ -371,8 +372,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         for (int i = -8; i < 8; i++)
                         {
                             Tile ground = CalamityUtils.ParanoidTileRetrieval(teleportPosition.X + i, teleportPosition.Y + 1);
-                            bool notAFuckingTree = ground.type != TileID.Trees && ground.type != TileID.PineTree && ground.type != TileID.PalmTree;
-                            if (ground.nactive() && notAFuckingTree && (Main.tileSolid[ground.type] || Main.tileSolidTop[ground.type]))
+                            bool notAFuckingTree = ground.TileType != TileID.Trees && ground.TileType != TileID.PineTree && ground.TileType != TileID.PalmTree;
+                            if (ground.HasUnactuatedTile && notAFuckingTree && (Main.tileSolid[ground.TileType] || Main.tileSolidTop[ground.TileType]))
                             {
                                 solidGround = true;
                                 break;
@@ -439,7 +440,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             attackTimer = 0f;
                             npc.netUpdate = true;
 
-                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<RavagerScreamBoom>(), 0, 0f);
 
@@ -571,7 +572,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, 2f);
 
                         // Stay away from the target directly, to prevent cheap hits.
-                        npc.Center -= npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * Utils.InverseLerp(270f, 165f, npc.Distance(target.Center), true) * 28f;
+                        npc.Center -= npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * Utils.GetLerpValue(270f, 165f, npc.Distance(target.Center), true) * 28f;
                     }
 
                     // Prepare to slow down after enough time has passed.
@@ -618,7 +619,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     // Make stomp sounds and dusts when hitting the ground again.
                     if (npc.velocity.Y == 0f && attackTimer > 15f)
                     {
-                        Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 14, 1.25f, -0.25f);
+                        SoundEngine.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 14, 1.25f, -0.25f);
                         for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)
                         {
                             for (int i = 0; i < 6; i++)
@@ -705,7 +706,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     // Negate gravity.
                     gravity = 0f;
 
-                    Vector2 hoverDestination = new Vector2(horizontalArenaCenterX, target.Center.Y - 640f);
+                    Vector2 hoverDestination = new(horizontalArenaCenterX, target.Center.Y - 640f);
                     Vector2 idealHoverVelocity = npc.SafeDirectionTo(hoverDestination) * idealHoverSpeed;
                     npc.velocity.X = MathHelper.Lerp(npc.velocity.X, idealHoverVelocity.X, 0.0725f);
                     npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, idealHoverVelocity.Y, 0.12f);
@@ -736,7 +737,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     // Make stomp sounds and dusts when hitting the ground again.
                     if (npc.velocity.Y == 0f && attackTimer > 15f)
                     {
-                        Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 14, 1.25f, -0.25f);
+                        SoundEngine.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 14, 1.25f, -0.25f);
                         for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)
                         {
                             for (int i = 0; i < 6; i++)
@@ -760,7 +761,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     bool canShoot = attackTimer > spikeShootDelay && attackTimer < spikeShootDelay + spikeShootTime;
                     if (canShoot && attackTimer % spikeShootRate == spikeShootRate - 1f)
                     {
-                        Main.PlaySound(SoundID.Item39, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item39, npc.Center);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
@@ -816,7 +817,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             float horizontalArenaCenterX = npc.Infernum().ExtraAI[6];
-            Texture2D borderTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Ravager/RockBorder");
+            Texture2D borderTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Ravager/RockBorder").Value;
 
             // Draw obstructive pillars if an arena center is defined.
             if (horizontalArenaCenterX != 0f)
@@ -827,7 +828,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
                     for (int direction = -1; direction <= 1; direction += 2)
                     {
-                        Vector2 drawPosition = new Vector2(horizontalArenaCenterX - ArenaBorderOffset * direction, Main.LocalPlayer.Center.Y + verticalOffset);
+                        Vector2 drawPosition = new(horizontalArenaCenterX - ArenaBorderOffset * direction, Main.LocalPlayer.Center.Y + verticalOffset);
                         drawPosition.Y -= drawPosition.Y % borderTexture.Height;
                         drawPosition -= Main.screenPosition;
                         spriteBatch.Draw(borderTexture, drawPosition, null, Color.White, 0f, borderTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);

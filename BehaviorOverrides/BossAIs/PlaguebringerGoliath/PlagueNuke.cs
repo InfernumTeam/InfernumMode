@@ -5,41 +5,43 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
     public class PlagueNuke : ModNPC
     {
-        public Player Target => Main.player[npc.target];
+        public Player Target => Main.player[NPC.target];
         public bool Unfinished
         {
-            get => npc.ai[1] == 1f;
-            set => npc.ai[1] = value.ToInt();
+            get => NPC.ai[1] == 1f;
+            set => NPC.ai[1] = value.ToInt();
         }
-        public ref float ExistTimer => ref npc.ai[0];
-        public ref float DisappearTimer => ref npc.ai[2];
+        public ref float ExistTimer => ref NPC.ai[0];
+        public ref float DisappearTimer => ref NPC.ai[2];
         public const int BuildTime = 660;
         public const int ExplodeDelay = 150;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Plague Nuke");
-            Main.npcFrameCount[npc.type] = 7;
+            Main.npcFrameCount[NPC.type] = 7;
         }
 
         public override void SetDefaults()
         {
-            npc.damage = 100;
-            npc.npcSlots = 0f;
-            npc.width = npc.height = 54;
-            npc.defense = 15;
-            npc.lifeMax = 10000;
-            npc.aiStyle = aiType = -1;
-            npc.knockBackResist = 0f;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.dontTakeDamage = true;
-            npc.HitSound = SoundID.NPCHit4;
-            npc.DeathSound = SoundID.NPCDeath14;
+            NPC.damage = 100;
+            NPC.npcSlots = 0f;
+            NPC.width = NPC.height = 54;
+            NPC.defense = 15;
+            NPC.lifeMax = 10000;
+            NPC.aiStyle = aiType = -1;
+            NPC.knockBackResist = 0f;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.dontTakeDamage = true;
+            NPC.HitSound = SoundID.NPCHit4;
+            NPC.DeathSound = SoundID.NPCDeath14;
         }
 
         public override void AI()
@@ -48,21 +50,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (Unfinished)
             {
                 DisappearTimer++;
-                npc.velocity.X *= 0.95f;
-                npc.Opacity = Utils.InverseLerp(460f, 310f, DisappearTimer, true);
-                npc.noTileCollide = false;
-                npc.noGravity = false;
+                NPC.velocity.X *= 0.95f;
+                NPC.Opacity = Utils.GetLerpValue(460f, 310f, DisappearTimer, true);
+                NPC.noTileCollide = false;
+                NPC.noGravity = false;
 
-                if (DisappearTimer > 360f || npc.collideX || npc.collideY)
+                if (DisappearTimer > 360f || NPC.collideX || NPC.collideY)
                 {
-                    if (npc.collideX || npc.collideY)
+                    if (NPC.collideX || NPC.collideY)
                     {
                         for (int i = 1; i <= 5; i++)
-                            Gore.NewGore(npc.Center, Main.rand.NextVector2Circular(2f, 2f), mod.GetGoreSlot($"Gores/PlagueNuke{i}"));
+                            Gore.NewGore(NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Mod.GetGoreSlot($"Gores/PlagueNuke{i}"));
                     }
-                    npc.active = false;
+                    NPC.active = false;
                 }
-                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                NPC.rotation = NPC.velocity.ToRotation() - MathHelper.PiOver2;
                 return;
             }
 
@@ -77,22 +79,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }).ToList();
             if (moving)
             {
-                npc.velocity = (npc.velocity * 39f + npc.SafeDirectionTo(Target.Center) * 14f) / 40f;
-                if (npc.velocity.Length() < 7f)
-                    npc.velocity = npc.velocity.SafeNormalize(-Vector2.UnitY) * 7f;
+                NPC.velocity = (NPC.velocity * 39f + NPC.SafeDirectionTo(Target.Center) * 14f) / 40f;
+                if (NPC.velocity.Length() < 7f)
+                    NPC.velocity = NPC.velocity.SafeNormalize(-Vector2.UnitY) * 7f;
 
                 // Explode and die after the explosion delay is passed.
                 if (ExistTimer > BuildTime + ExplodeDelay)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeMechGaussRifle"), npc.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LargeMechGaussRifle"), NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<PlagueNuclearExplosion>(), 750, 0f);
+                        Utilities.NewProjectileBetter(NPC.Center, Vector2.Zero, ModContent.ProjectileType<PlagueNuclearExplosion>(), 750, 0f);
 
-                    npc.life = 0;
-                    npc.checkDead();
-                    npc.active = false;
+                    NPC.life = 0;
+                    NPC.checkDead();
+                    NPC.active = false;
                 }
-                npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
+                NPC.rotation = NPC.velocity.ToRotation() - MathHelper.PiOver2;
                 return;
             }
             else
@@ -101,7 +103,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (builders.Count == 0)
                 {
                     Unfinished = true;
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                     return;
                 }
 
@@ -111,51 +113,51 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 averageBuilderPosition /= builders.Count;
 
                 // Attempt to move to the average position between all the builders.
-                npc.Center = Vector2.Lerp(npc.Center, averageBuilderPosition, 0.0145f);
+                NPC.Center = Vector2.Lerp(NPC.Center, averageBuilderPosition, 0.0145f);
 
-                float distanceToAveragePosition = npc.Distance(averageBuilderPosition);
+                float distanceToAveragePosition = NPC.Distance(averageBuilderPosition);
 
-                Vector2 idealVelocity = npc.SafeDirectionTo(averageBuilderPosition) * MathHelper.Min(distanceToAveragePosition, 16f);
-                npc.velocity = (npc.velocity * 3f + idealVelocity) / 4f;
-                npc.velocity = npc.velocity.MoveTowards(idealVelocity, 1.5f);
+                Vector2 idealVelocity = NPC.SafeDirectionTo(averageBuilderPosition) * MathHelper.Min(distanceToAveragePosition, 16f);
+                NPC.velocity = (NPC.velocity * 3f + idealVelocity) / 4f;
+                NPC.velocity = NPC.velocity.MoveTowards(idealVelocity, 1.5f);
 
                 // Rotate towards the player.
-                float idealRotation = npc.AngleTo(Target.Center + Target.velocity * 25f) - MathHelper.PiOver2;
-                npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.025f);
+                float idealRotation = NPC.AngleTo(Target.Center + Target.velocity * 25f) - MathHelper.PiOver2;
+                NPC.rotation = NPC.rotation.AngleLerp(idealRotation, 0.05f).AngleTowards(idealRotation, 0.025f);
             }
 
-            npc.TargetClosest();
+            NPC.TargetClosest();
         }
 
         public override bool PreNPCLoot() => false;
 
         public override bool CheckDead()
         {
-            Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.position);
+            SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, NPC.position);
 
-            npc.position = npc.Center;
-            npc.width = npc.height = 84;
-            npc.Center = npc.position;
+            NPC.position = NPC.Center;
+            NPC.width = NPC.height = 84;
+            NPC.Center = NPC.position;
             return true;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            Texture2D texture = Main.npcTexture[npc.type];
-            Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNukeGlowmask");
-            Vector2 origin = npc.frame.Size() * 0.5f;
-            Vector2 drawPosition = npc.Center - Main.screenPosition;
-            Color color = npc.GetAlpha(drawColor);
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNukeGlowmask").Value;
+            Vector2 origin = NPC.frame.Size() * 0.5f;
+            Vector2 drawPosition = NPC.Center - Main.screenPosition;
+            Color color = NPC.GetAlpha(drawColor);
 
-            spriteBatch.Draw(texture, drawPosition, npc.frame, color, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPosition, NPC.frame, color, NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);
             return false;
         }
 
         public override void FindFrame(int frameHeight)
         {
             float buildCompletion = MathHelper.Clamp(ExistTimer / BuildTime, 0f, 1f);
-            npc.frame.Y = (int)MathHelper.Lerp(0f, Main.npcFrameCount[npc.type] - 1f, buildCompletion) * frameHeight;
+            NPC.frame.Y = (int)MathHelper.Lerp(0f, Main.npcFrameCount[NPC.type] - 1f, buildCompletion) * frameHeight;
         }
     }
 }

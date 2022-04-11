@@ -10,6 +10,8 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
@@ -39,34 +41,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public ref float AttackTimer => ref Athena.ai[1];
 
-        public ref float AttackState => ref npc.ai[0];
+        public ref float AttackState => ref NPC.ai[0];
 
-        public ref float IndividualAttackTimer => ref npc.ai[1];
+        public ref float IndividualAttackTimer => ref NPC.ai[1];
 
         public ref float MinionRedCrystalGlow => ref Athena.localAI[1];
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("XM-04 Exowl");
-            Main.npcFrameCount[npc.type] = 3;
+            Main.npcFrameCount[NPC.type] = 3;
         }
 
         public override void SetDefaults()
         {
-            npc.aiStyle = aiType = -1;
-            npc.damage = 5;
-            npc.width = 44;
-            npc.height = 46;
-            npc.defense = 40;
-            npc.lifeMax = 20000;
-            npc.knockBackResist = 0f;
-            npc.lavaImmune = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.canGhostHeal = false;
-            npc.HitSound = SoundID.NPCHit4;
-            npc.DeathSound = SoundID.NPCDeath14;
-            npc.netAlways = true;
+            NPC.aiStyle = aiType = -1;
+            NPC.damage = 5;
+            NPC.width = 44;
+            NPC.height = 46;
+            NPC.defense = 40;
+            NPC.lifeMax = 20000;
+            NPC.knockBackResist = 0f;
+            NPC.lavaImmune = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.canGhostHeal = false;
+            NPC.HitSound = SoundID.NPCHit4;
+            NPC.DeathSound = SoundID.NPCDeath14;
+            NPC.netAlways = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -85,19 +87,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override void AI()
         {
-            npc.damage = 0;
-            npc.timeLeft = 3600;
+            NPC.damage = 0;
+            NPC.timeLeft = 3600;
             if (!Main.npc.IndexInRange(GlobalNPCOverrides.Athena))
             {
-                npc.active = false;
+                NPC.active = false;
                 return;
             }
 
             // Circle in place if variables for such behavior are used.
             if (CircleCenter != Vector2.Zero)
             {
-                npc.Center = CircleCenter + CircleOffsetAngle.ToRotationVector2() * CircleRadius;
-                npc.rotation = npc.AngleTo(CircleCenter) + MathHelper.PiOver2;
+                NPC.Center = CircleCenter + CircleOffsetAngle.ToRotationVector2() * CircleRadius;
+                NPC.rotation = NPC.AngleTo(CircleCenter) + MathHelper.PiOver2;
                 CircleOffsetAngle += MathHelper.ToRadians(0.67f);
             }
 
@@ -110,64 +112,64 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         {
             // Use contact damage as necessary.
             if (!IsIllusion)
-                npc.damage = 500;
+                NPC.damage = 500;
             else
-                npc.dontTakeDamage = true;
+                NPC.dontTakeDamage = true;
 
             switch ((int)AttackState)
             {
                 // Rise upward.
                 case 0:
-                    float horizontalOffset = MathHelper.Lerp(350f, 560f, npc.whoAmI % 7f / 7f);
-                    Vector2 flyDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * horizontalOffset, -240f);
-                    Vector2 idealVelocity = npc.SafeDirectionTo(flyDestination) * 30f;
-                    npc.velocity = (npc.velocity * 29f + idealVelocity) / 29f;
-                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 1.5f);
+                    float horizontalOffset = MathHelper.Lerp(350f, 560f, NPC.whoAmI % 7f / 7f);
+                    Vector2 flyDestination = Target.Center + new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * horizontalOffset, -240f);
+                    Vector2 idealVelocity = NPC.SafeDirectionTo(flyDestination) * 30f;
+                    NPC.velocity = (NPC.velocity * 29f + idealVelocity) / 29f;
+                    NPC.velocity = NPC.velocity.MoveTowards(idealVelocity, 1.5f);
 
-                    if (npc.WithinRange(flyDestination, 40f) || IndividualAttackTimer > 150f)
+                    if (NPC.WithinRange(flyDestination, 40f) || IndividualAttackTimer > 150f)
                     {
                         AttackState = 1f;
-                        npc.velocity *= 0.65f;
-                        npc.netUpdate = true;
+                        NPC.velocity *= 0.65f;
+                        NPC.netUpdate = true;
                     }
                     break;
 
                 // Slow down and look at the target.
                 case 1:
-                    npc.spriteDirection = (Target.Center.X > npc.Center.X).ToDirectionInt();
-                    npc.velocity *= 0.96f;
-                    npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.7f);
+                    NPC.spriteDirection = (Target.Center.X > NPC.Center.X).ToDirectionInt();
+                    NPC.velocity *= 0.96f;
+                    NPC.velocity = NPC.velocity.MoveTowards(Vector2.Zero, 0.7f);
 
                     // Charge once sufficiently slowed down.
                     float chargeSpeed = 40f;
-                    if (npc.velocity.Length() < 1.25f)
+                    if (NPC.velocity.Length() < 1.25f)
                     {
-                        Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
-                        Main.PlaySound(SoundID.Zombie, npc.Center, 68);
+                        SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, NPC.Center);
+                        SoundEngine.PlaySound(SoundID.Zombie, NPC.Center, 68);
                         AttackState = 2f;
                         IndividualAttackTimer = 0f;
-                        npc.velocity = npc.SafeDirectionTo(Target.Center) * chargeSpeed;
-                        npc.netUpdate = true;
+                        NPC.velocity = NPC.SafeDirectionTo(Target.Center) * chargeSpeed;
+                        NPC.netUpdate = true;
                     }
                     break;
 
                 // Charge and swoop.
                 case 2:
                     float angularTurnSpeed = MathHelper.Pi / 300f;
-                    idealVelocity = npc.SafeDirectionTo(Target.Center);
-                    Vector2 leftVelocity = npc.velocity.RotatedBy(-angularTurnSpeed);
-                    Vector2 rightVelocity = npc.velocity.RotatedBy(angularTurnSpeed);
+                    idealVelocity = NPC.SafeDirectionTo(Target.Center);
+                    Vector2 leftVelocity = NPC.velocity.RotatedBy(-angularTurnSpeed);
+                    Vector2 rightVelocity = NPC.velocity.RotatedBy(angularTurnSpeed);
                     if (leftVelocity.AngleBetween(idealVelocity) < rightVelocity.AngleBetween(idealVelocity))
-                        npc.velocity = leftVelocity;
+                        NPC.velocity = leftVelocity;
                     else
-                        npc.velocity = rightVelocity;
+                        NPC.velocity = rightVelocity;
 
                     if (IndividualAttackTimer > 25f)
                     {
                         AttackState = 0f;
                         IndividualAttackTimer = 0f;
-                        npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 12.5f, 0.14f);
-                        npc.netUpdate = true;
+                        NPC.velocity = Vector2.Lerp(NPC.velocity, -Vector2.UnitY * 12.5f, 0.14f);
+                        NPC.netUpdate = true;
                     }
                     break;
             }
@@ -176,13 +178,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override void FindFrame(int frameHeight)
         {
-            npc.frameCounter++;
-            npc.frame.Y = (int)(npc.frameCounter / 7 % Main.npcFrameCount[npc.type]) * frameHeight;
+            NPC.frameCounter++;
+            NPC.frame.Y = (int)(NPC.frameCounter / 7 % Main.npcFrameCount[NPC.type]) * frameHeight;
         }
 
         public override bool CheckActive() => false;
 
-        public float FlameTrailPulse => (float)Math.Sin(Main.GlobalTime * 6f + npc.whoAmI * 111.5856f) * 0.5f + 0.5f;
+        public float FlameTrailPulse => (float)Math.Sin(Main.GlobalTimeWrappedHourly * 6f + NPC.whoAmI * 111.5856f) * 0.5f + 0.5f;
 
         public float FlameTrailWidthFunction(float completionRatio)
         {
@@ -192,7 +194,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public Color FlameTrailColorFunction(float completionRatio)
         {
-            float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true);
+            float trailOpacity = Utils.GetLerpValue(0.8f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true);
             trailOpacity *= MathHelper.Lerp(1f, 0.5f, 1f - FlameTrailPulse);
             Color startingColor = Color.Lerp(Color.White, Color.Cyan, 0.27f);
             Color middleColor = Color.Lerp(Color.Orange, Color.Blue, 0.74f);
@@ -204,16 +206,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public float LightningWidthFunction(float completionRatio)
         {
-            return MathHelper.Lerp(0.5f, 1.3f, (float)Math.Sin(MathHelper.Pi * completionRatio)) * npc.scale;
+            return MathHelper.Lerp(0.5f, 1.3f, (float)Math.Sin(MathHelper.Pi * completionRatio)) * NPC.scale;
         }
 
         public Color LightningColorFunction(float completionRatio)
         {
-            float fadeToWhite = MathHelper.Lerp(0f, 0.65f, (float)Math.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTime * 4f) * 0.5f + 0.5f);
+            float fadeToWhite = MathHelper.Lerp(0f, 0.65f, (float)Math.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
             Color baseColor = Color.Lerp(Color.Cyan, Color.White, fadeToWhite);
-            Color color = Color.Lerp(baseColor, Color.Cyan, ((float)Math.Sin(MathHelper.Pi * completionRatio + Main.GlobalTime * 4f) * 0.5f + 0.5f) * 0.8f) * 0.65f;
+            Color color = Color.Lerp(baseColor, Color.Cyan, ((float)Math.Sin(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f) * 0.65f;
             color.A = 40;
-            if (npc.Opacity <= 0f)
+            if (NPC.Opacity <= 0f)
                 return Color.Transparent;
             return color;
         }
@@ -223,15 +225,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public Color LightningBackgroundColorFunction(float _)
         {
             Color backgroundColor = Color.CornflowerBlue;
-            Color color = backgroundColor * npc.Opacity * 0.4f;
+            Color color = backgroundColor * NPC.Opacity * 0.4f;
             return color;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            Texture2D texture = Main.npcTexture[npc.type];
-            Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/Exowl_Glowmask");
-            Vector2 origin = npc.frame.Size() * 0.5f;
+            Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/Exowl_Glowmask").Value;
+            Vector2 origin = NPC.frame.Size() * 0.5f;
 
             void drawInstance(Vector2 drawPosition, bool drawThrusters, Color? colorOverride = null)
             {
@@ -250,7 +252,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 {
                     NPC npcToAttachTo = Main.npc[NPCToAttachTo];
                     Vector2 end = npcToAttachTo.Center + npcToAttachTo.rotation.ToRotationVector2() * 30f;
-                    List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(npc.Center, end, 250290787);
+                    List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(NPC.Center, end, 250290787);
                     LightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 40);
                     LightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 40);
                 }
@@ -259,17 +261,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (drawThrusters)
                 {
                     // Prepare the flame trail shader with its map texture.
-                    GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+                    GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak").Value);
 
                     // Draw a flame trail on the thrusters.
                     for (int direction = -1; direction <= 1; direction += 2)
                     {
-                        Vector2 baseDrawOffset = new Vector2(0f, -10f).RotatedBy(npc.rotation);
-                        baseDrawOffset += new Vector2(direction * 18f, 0f).RotatedBy(npc.rotation);
+                        Vector2 baseDrawOffset = new Vector2(0f, -10f).RotatedBy(NPC.rotation);
+                        baseDrawOffset += new Vector2(direction * 18f, 0f).RotatedBy(NPC.rotation);
 
                         float backFlameLength = 70f;
-                        Vector2 drawStart = npc.Center + baseDrawOffset;
-                        Vector2 drawEnd = drawStart - (npc.rotation - MathHelper.PiOver2 - MathHelper.PiOver4 * direction).ToRotationVector2() * backFlameLength;
+                        Vector2 drawStart = NPC.Center + baseDrawOffset;
+                        Vector2 drawEnd = drawStart - (NPC.rotation - MathHelper.PiOver2 - MathHelper.PiOver4 * direction).ToRotationVector2() * backFlameLength;
                         Vector2[] drawPositions = new Vector2[]
                         {
                             drawStart,
@@ -288,14 +290,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 // Draw the glowmask and regular texture.
                 // This is influenced by the crystal glow at the end.
                 Color glowmaskColor = Color.Lerp(Color.White, new Color(1f, 0f, 0f, 0.3f), MinionRedCrystalGlow);
-                spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(colorOverride ?? drawColor), npc.rotation, origin, npc.scale, 0, 0f);
+                spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? drawColor), NPC.rotation, origin, NPC.scale, 0, 0f);
 
                 for (int i = 0; i < 2; i++)
-                    spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(colorOverride ?? glowmaskColor), npc.rotation, origin, npc.scale, 0, 0f);
+                    spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? glowmaskColor), NPC.rotation, origin, NPC.scale, 0, 0f);
                 if (MinionRedCrystalGlow > 0f)
                 {
                     float backimageOpacity = MathHelper.Lerp(0f, 0.1f, MinionRedCrystalGlow);
-                    spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(colorOverride ?? Color.White) * backimageOpacity, npc.rotation, origin, npc.scale, 0, 0f);
+                    spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(colorOverride ?? Color.White) * backimageOpacity, NPC.rotation, origin, NPC.scale, 0, 0f);
                 }
             }
 
@@ -314,18 +316,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     hologramColor.A = 51;
                     float drawOffsetFactor = 20f;
                     Vector3 offsetInformation = Vector3.Transform(Vector3.Forward,
-                        Matrix.CreateRotationX((Main.GlobalTime - 0.3f + i * 0.1f) * 0.7f * MathHelper.TwoPi) *
-                        Matrix.CreateRotationY((Main.GlobalTime - 0.8f + i * 0.3f) * 0.7f * MathHelper.TwoPi) *
-                        Matrix.CreateRotationZ((Main.GlobalTime + 0.1f + i * 0.5f) * 0.1f * MathHelper.TwoPi));
-                    drawOffsetFactor += Utils.InverseLerp(-1f, 1f, offsetInformation.Z, true) * 12f;
+                        Matrix.CreateRotationX((Main.GlobalTimeWrappedHourly - 0.3f + i * 0.1f) * 0.7f * MathHelper.TwoPi) *
+                        Matrix.CreateRotationY((Main.GlobalTimeWrappedHourly - 0.8f + i * 0.3f) * 0.7f * MathHelper.TwoPi) *
+                        Matrix.CreateRotationZ((Main.GlobalTimeWrappedHourly + 0.1f + i * 0.5f) * 0.1f * MathHelper.TwoPi));
+                    drawOffsetFactor += Utils.GetLerpValue(-1f, 1f, offsetInformation.Z, true) * 12f;
                     Vector2 drawOffset = new Vector2(offsetInformation.X, offsetInformation.Y) * drawOffsetFactor;
                     if (!IsIllusion)
                         drawOffset *= 0.4f;
 
-                    drawInstance(npc.Center - Main.screenPosition + drawOffset, false, Color.Lerp(color.Value, hologramColor, 0.36f) * 0.27f);
+                    drawInstance(NPC.Center - Main.screenPosition + drawOffset, false, Color.Lerp(color.Value, hologramColor, 0.36f) * 0.27f);
                 }
             }
-            drawInstance(npc.Center - Main.screenPosition, true, color);
+            drawInstance(NPC.Center - Main.screenPosition, true, color);
 
             return false;
         }

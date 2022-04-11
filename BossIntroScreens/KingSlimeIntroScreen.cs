@@ -10,7 +10,7 @@ namespace InfernumMode.BossIntroScreens
 {
     public class KingSlimeIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        public override TextColorData TextColor => new(completionRatio =>
         {
             float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.Pi * 4f + completionRatio * MathHelper.Pi * 12f) * 0.5f + 0.5f;
             return Color.Lerp(Color.MediumSlateBlue, Color.DarkCyan, colorFadeInterpolant);

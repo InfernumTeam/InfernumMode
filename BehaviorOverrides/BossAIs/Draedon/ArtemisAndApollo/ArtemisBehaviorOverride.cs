@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -191,14 +192,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public static float RibbonTrailWidthFunction(float completionRatio)
         {
-            float baseWidth = Utils.InverseLerp(1f, 0.54f, completionRatio, true) * 5f;
-            float endTipWidth = CalamityUtils.Convert01To010(Utils.InverseLerp(0.96f, 0.89f, completionRatio, true)) * 2.4f;
+            float baseWidth = Utils.GetLerpValue(1f, 0.54f, completionRatio, true) * 5f;
+            float endTipWidth = CalamityUtils.Convert01To010(Utils.GetLerpValue(0.96f, 0.89f, completionRatio, true)) * 2.4f;
             return baseWidth + endTipWidth;
         }
 
         public static Color FlameTrailColorFunction(NPC npc, float completionRatio)
         {
-            float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true);
+            float trailOpacity = Utils.GetLerpValue(0.8f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true);
             Color startingColor = Color.Lerp(Color.White, Color.Cyan, 0.27f);
             Color middleColor = Color.Lerp(Color.Orange, Color.Yellow, 0.31f);
             Color endColor = Color.OrangeRed;
@@ -207,7 +208,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
         {
-            float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * 0.56f;
+            float trailOpacity = Utils.GetLerpValue(0.8f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true) * 0.56f;
             Color startingColor = Color.Lerp(Color.White, Color.Cyan, 0.25f);
             Color middleColor = Color.Lerp(Color.Blue, Color.White, 0.35f);
             Color endColor = Color.Lerp(Color.DarkBlue, Color.White, 0.47f);
@@ -218,8 +219,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public static Color RibbonTrailColorFunction(NPC npc, float completionRatio)
         {
-            Color startingColor = new Color(34, 40, 48);
-            Color endColor = new Color(219, 82, 28);
+            Color startingColor = new(34, 40, 48);
+            Color endColor = new(219, 82, 28);
             return Color.Lerp(startingColor, endColor, (float)Math.Pow(completionRatio, 1.5D)) * npc.Opacity;
         }
 
@@ -236,10 +237,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.ModNPC<Artemis>().RibbonTrail = new PrimitiveTrail(RibbonTrailWidthFunction, c => RibbonTrailColorFunction(npc, c));
 
             // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak").Value);
 
             int numAfterimages = npc.ModNPC<Artemis>().ChargeFlash > 0f ? 0 : 5;
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             Vector2 origin = npc.Size * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
@@ -271,7 +272,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 ribbonOffset += Vector2.UnitX.RotatedBy(npc.rotation) * direction * 26f;
 
                 float currentSegmentRotation = npc.rotation;
-                List<Vector2> ribbonDrawPositions = new List<Vector2>();
+                List<Vector2> ribbonDrawPositions = new();
                 for (int i = 0; i < 12; i++)
                 {
                     float ribbonCompletionRatio = i / 12f;
@@ -280,9 +281,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                     // Add a sinusoidal offset that goes based on time and completion ratio to create a waving-flag-like effect.
                     // This is dampened for the first few points to prevent weird offsets. It is also dampened by high velocity.
-                    float sinusoidalRotationOffset = (float)Math.Sin(ribbonCompletionRatio * 2.22f + Main.GlobalTime * 3.4f) * 1.36f;
-                    float sinusoidalRotationOffsetFactor = Utils.InverseLerp(0f, 0.37f, ribbonCompletionRatio, true) * direction * 24f;
-                    sinusoidalRotationOffsetFactor *= Utils.InverseLerp(24f, 16f, npc.velocity.Length(), true);
+                    float sinusoidalRotationOffset = (float)Math.Sin(ribbonCompletionRatio * 2.22f + Main.GlobalTimeWrappedHourly * 3.4f) * 1.36f;
+                    float sinusoidalRotationOffsetFactor = Utils.GetLerpValue(0f, 0.37f, ribbonCompletionRatio, true) * direction * 24f;
+                    sinusoidalRotationOffsetFactor *= Utils.GetLerpValue(24f, 16f, npc.velocity.Length(), true);
 
                     Vector2 sinusoidalOffset = Vector2.UnitY.RotatedBy(npc.rotation + sinusoidalRotationOffset) * sinusoidalRotationOffsetFactor;
                     Vector2 ribbonSegmentOffset = Vector2.UnitY.RotatedBy(currentSegmentRotation) * ribbonCompletionRatio * 540f + sinusoidalOffset;
@@ -308,12 +309,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 float backAfterimageOffset = MathHelper.SmoothStep(0f, 2f, npc.ModNPC<Artemis>().ChargeFlash);
                 for (int i = 0; i < instanceCount; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / instanceCount + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / instanceCount + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     drawInstance(drawOffset, baseInstanceColor);
                 }
             }
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Artemis/ArtemisGlow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Artemis/ArtemisGlow").Value;
             if (CalamityConfig.Instance.Afterimages)
             {
                 for (int i = 1; i < numAfterimages; i += 2)

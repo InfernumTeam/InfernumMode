@@ -5,7 +5,7 @@ namespace InfernumMode.Buffs
 {
     public class DarkFlames : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Flames");
             Description.SetDefault("Your body is consumed by a forsaken inferno. Your defense is lowered");

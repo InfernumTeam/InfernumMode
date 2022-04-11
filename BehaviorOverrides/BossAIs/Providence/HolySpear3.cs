@@ -14,25 +14,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Holy Spear");
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 2;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 30;
-            projectile.height = 30;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 360;
-            cooldownSlot = 1;
+            Projectile.width = 30;
+            Projectile.height = 30;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 360;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.ai[1] += 1f;
+            Projectile.ai[1] += 1f;
 
             float slowGateValue = 90f;
             float fastGateValue = 30f;
@@ -41,35 +41,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             float deceleration = 0.95f;
             float acceleration = 1.2f;
 
-            if (projectile.ai[1] <= slowGateValue)
+            if (Projectile.ai[1] <= slowGateValue)
             {
-                if (projectile.velocity.Length() > minVelocity)
-                    projectile.velocity *= deceleration;
+                if (Projectile.velocity.Length() > minVelocity)
+                    Projectile.velocity *= deceleration;
             }
-            else if (projectile.ai[1] < slowGateValue + fastGateValue)
+            else if (Projectile.ai[1] < slowGateValue + fastGateValue)
             {
-                if (projectile.velocity.Length() < maxVelocity)
-                    projectile.velocity *= acceleration;
+                if (Projectile.velocity.Length() < maxVelocity)
+                    Projectile.velocity *= acceleration;
             }
             else
-                projectile.ai[1] = 0f;
+                Projectile.ai[1] = 0f;
 
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D spearTexture = Main.projectileTexture[projectile.type];
+            Texture2D spearTexture = Main.projectileTexture[Projectile.type];
             Color baseColor = Color.OrangeRed;
             if (!Main.dayTime)
-                baseColor = CalamityUtils.MulticolorLerp(projectile.identity / 6f % 0.65f, ProvidenceBehaviorOverride.NightPalette);
+                baseColor = CalamityUtils.MulticolorLerp(Projectile.identity / 6f % 0.65f, ProvidenceBehaviorOverride.NightPalette);
 
             baseColor.A = 128;
 
-            float fadeFactor = Utils.InverseLerp(15f, 30f, projectile.timeLeft, true) * Utils.InverseLerp(360f, 340f, projectile.timeLeft, true) * (1f + 0.2f * (float)Math.Cos(Main.GlobalTime % 80f / 0.5f * MathHelper.TwoPi * 3f)) * 0.8f;
+            float fadeFactor = Utils.GetLerpValue(15f, 30f, Projectile.timeLeft, true) * Utils.GetLerpValue(360f, 340f, Projectile.timeLeft, true) * (1f + 0.2f * (float)Math.Cos(Main.GlobalTimeWrappedHourly % 80f / 0.5f * MathHelper.TwoPi * 3f)) * 0.8f;
             Color fadedBrightColor = baseColor * 0.5f;
             fadedBrightColor.A = 0;
-            Vector2 drawPosition = projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY);
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
             Vector2 origin5 = spearTexture.Size() / 2f;
             Color brightColor = fadedBrightColor * fadeFactor * 1.2f;
             Color dimColor = fadedBrightColor * fadeFactor * 0.6f;
@@ -77,28 +77,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Vector2 smallScale = new Vector2(0.5f, 1f) * fadeFactor;
 
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if (projectile.spriteDirection == -1)
+            if (Projectile.spriteDirection == -1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
             if (CalamityConfig.Instance.Afterimages)
             {
-                for (int i = 0; i < projectile.oldPos.Length; i++)
+                for (int i = 0; i < Projectile.oldPos.Length; i++)
                 {
-                    Vector2 drawPos = projectile.oldPos[i] + drawPosition;
-                    Color color = projectile.GetAlpha(brightColor) * ((projectile.oldPos.Length - i) / projectile.oldPos.Length);
-                    spriteBatch.Draw(spearTexture, drawPos, null, color, projectile.rotation, origin5, largeScale, spriteEffects, 0f);
-                    spriteBatch.Draw(spearTexture, drawPos, null, color, projectile.rotation, origin5, smallScale, spriteEffects, 0f);
+                    Vector2 drawPos = Projectile.oldPos[i] + drawPosition;
+                    Color color = Projectile.GetAlpha(brightColor) * ((Projectile.oldPos.Length - i) / Projectile.oldPos.Length);
+                    spriteBatch.Draw(spearTexture, drawPos, null, color, Projectile.rotation, origin5, largeScale, spriteEffects, 0f);
+                    spriteBatch.Draw(spearTexture, drawPos, null, color, Projectile.rotation, origin5, smallScale, spriteEffects, 0f);
 
-                    color = projectile.GetAlpha(dimColor) * ((projectile.oldPos.Length - i) / projectile.oldPos.Length);
-                    spriteBatch.Draw(spearTexture, drawPos, null, color, projectile.rotation, origin5, largeScale * 0.6f, spriteEffects, 0f);
-                    spriteBatch.Draw(spearTexture, drawPos, null, color, projectile.rotation, origin5, smallScale * 0.6f, spriteEffects, 0f);
+                    color = Projectile.GetAlpha(dimColor) * ((Projectile.oldPos.Length - i) / Projectile.oldPos.Length);
+                    spriteBatch.Draw(spearTexture, drawPos, null, color, Projectile.rotation, origin5, largeScale * 0.6f, spriteEffects, 0f);
+                    spriteBatch.Draw(spearTexture, drawPos, null, color, Projectile.rotation, origin5, smallScale * 0.6f, spriteEffects, 0f);
                 }
             }
 
-            spriteBatch.Draw(spearTexture, drawPosition, null, brightColor, projectile.rotation, origin5, largeScale, spriteEffects, 0);
-            spriteBatch.Draw(spearTexture, drawPosition, null, brightColor, projectile.rotation, origin5, smallScale, spriteEffects, 0);
-            spriteBatch.Draw(spearTexture, drawPosition, null, dimColor, projectile.rotation, origin5, largeScale * 0.6f, spriteEffects, 0);
-            spriteBatch.Draw(spearTexture, drawPosition, null, dimColor, projectile.rotation, origin5, smallScale * 0.6f, spriteEffects, 0);
+            spriteBatch.Draw(spearTexture, drawPosition, null, brightColor, Projectile.rotation, origin5, largeScale, spriteEffects, 0);
+            spriteBatch.Draw(spearTexture, drawPosition, null, brightColor, Projectile.rotation, origin5, smallScale, spriteEffects, 0);
+            spriteBatch.Draw(spearTexture, drawPosition, null, dimColor, Projectile.rotation, origin5, largeScale * 0.6f, spriteEffects, 0);
+            spriteBatch.Draw(spearTexture, drawPosition, null, dimColor, Projectile.rotation, origin5, smallScale * 0.6f, spriteEffects, 0);
 
             return false;
         }
@@ -111,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

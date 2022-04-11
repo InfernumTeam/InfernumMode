@@ -32,9 +32,9 @@ namespace InfernumMode
             {
                 foreach (TooltipLine line2 in tooltips)
                 {
-                    if (line2.mod == "Terraria" && line2.Name == "Tooltip0")
+                    if (line2.Mod == "Terraria" && line2.Name == "Tooltip0")
                     {
-                        line2.text = "Summons the Moon Lord immediately\n" +
+                        line2.Text = "Summons the Moon Lord immediately\n" +
                                      "Creates an arena at the player's position\n" +
                                      "Not consumable.";
                     }
@@ -45,8 +45,8 @@ namespace InfernumMode
             {
                 foreach (TooltipLine line2 in tooltips)
                 {
-                    if (line2.mod == "Terraria" && line2.Name == "Tooltip0")
-                        line2.text += "\nCreates a rectangular arena around the altar. If the altar is inside of the temple solid tiles within the arena are broken";
+                    if (line2.Mod == "Terraria" && line2.Name == "Tooltip0")
+                        line2.Text += "\nCreates a rectangular arena around the altar. If the altar is inside of the temple solid tiles within the arena are broken";
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace InfernumMode
             }
             return base.CanUseItem(item, player);
         }
-        public override bool UseItem(Item item, Player player)
+        public override bool? UseItem(Item item, Player player)
         {
             if (item.type == ItemID.CelestialSigil && !NPC.AnyNPCs(NPCID.MoonLordCore))
             {

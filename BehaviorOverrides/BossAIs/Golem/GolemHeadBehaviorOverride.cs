@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        public static Dictionary<GolemAttackState, Color> AttackEyeColorPairs => new Dictionary<GolemAttackState, Color>
+        public static Dictionary<GolemAttackState, Color> AttackEyeColorPairs => new()
         {
             [GolemAttackState.SummonDelay] = Color.Transparent,
             [GolemAttackState.BIGSHOT] = Color.Transparent,
@@ -56,9 +56,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (npc.Opacity == 0f && Main.npc[(int)npc.ai[0]].ai[0] > 242)
                 return false;
 
-            Texture2D texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/AttachedHead");
-            Texture2D glowMask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/AttachedHeadGlow");
-            Rectangle rect = new Rectangle(0, 0, texture.Width, texture.Height);
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Golem/AttachedHead").Value;
+            Texture2D glowMask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Golem/AttachedHeadGlow").Value;
+            Rectangle rect = new(0, 0, texture.Width, texture.Height);
             spriteBatch.Draw(texture, npc.Center - Main.screenPosition, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             spriteBatch.Draw(glowMask, npc.Center - Main.screenPosition, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             DoEyeDrawing(npc);
@@ -67,8 +67,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public static void DoEyeDrawing(NPC npc)
         {
-            Texture2D texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/GolemEyeGlow");
-            Rectangle rect = new Rectangle(0, 0, texture.Width, texture.Height);
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Golem/GolemEyeGlow").Value;
+            Rectangle rect = new(0, 0, texture.Width, texture.Height);
             float rotation = MathHelper.Lerp(0f, MathHelper.TwoPi, npc.ai[1] / 240f);
             float rotation2 = MathHelper.Lerp(MathHelper.TwoPi, 0f, npc.ai[1] / 240f);
             Color nextColor = Color.Transparent;
@@ -76,7 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 nextColor = fuckYou;
             nextColor.A = 0;
             Vector2 drawPos = npc.type == NPCID.GolemHead ? new Vector2(npc.Center.X - 15f, npc.Bottom.Y - 33f) : new Vector2(npc.Center.X - 15f, npc.Bottom.Y - 57f);
-            Vector2 drawPos2 = new Vector2(drawPos.X + 30f, drawPos.Y);
+            Vector2 drawPos2 = new(drawPos.X + 30f, drawPos.Y);
 
             NPC body = Main.npc[(int)npc.ai[0]];
             float laserRayTelegraphInterpolant = body.Infernum().ExtraAI[10];
@@ -109,9 +109,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 else
                     colorRatio = 0f;
 
-                Texture2D black = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/BlackPixel");
+                Texture2D black = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Golem/BlackPixel").Value;
                 float blackScale = Math.Max(Main.screenWidth, Main.screenHeight);
-                Vector2 blackPos = new Vector2(Main.screenWidth / 2f, Main.screenHeight / 2f);
+                Vector2 blackPos = new(Main.screenWidth / 2f, Main.screenHeight / 2f);
                 Main.spriteBatch.Draw(black, blackPos, new Rectangle(0, 0, 1, 1), Color.White * DarknessRatio, 0f, new Vector2(.5f, .5f), blackScale, SpriteEffects.None, 0f);
 
                 for (float i = 4; i > 0; i--)
@@ -144,10 +144,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
                 Color outlineColor = Color.Lerp(Color.OrangeRed, Color.White, laserRayTelegraphInterpolant);
-                Vector2 origin = new Vector2(line.Width / 2f, line.Height);
-                Vector2 beamScale = new Vector2(laserRayTelegraphInterpolant * 0.5f, 2.4f);
+                Vector2 origin = new(line.Width / 2f, line.Height);
+                Vector2 beamScale = new(laserRayTelegraphInterpolant * 0.5f, 2.4f);
 
                 Vector2 drawPosition = drawPos - Main.screenPosition;
                 Vector2 beamDirection = -Vector2.UnitX;

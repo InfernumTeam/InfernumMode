@@ -55,6 +55,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.Events.BossRushEvent;
+using Terraria.Audio;
 
 namespace InfernumMode.BossRush
 {
@@ -130,7 +131,7 @@ namespace InfernumMode.BossRush
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
 
-                    Main.PlaySound(SoundID.Roar, player.position, 2);
+                    SoundEngine.PlaySound(SoundID.Roar, player.position, 2);
                     int ravager = NPC.NewNPC((int)(player.position.X + Main.rand.Next(-100, 101)), (int)(player.position.Y - 400f), type, 1);
                     Main.npc[ravager].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(ravager);
@@ -187,7 +188,7 @@ namespace InfernumMode.BossRush
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
 
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AstrumDeusSpawn"), player.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AstrumDeusSpawn"), player.Center);
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
                 }, usesSpecialSound: true, permittedNPCs: new int[] { ModContent.NPCType<AstrumDeusBodySpectral>(), ModContent.NPCType<AstrumDeusTailSpectral>() }),
 
@@ -220,7 +221,7 @@ namespace InfernumMode.BossRush
                 {
                     Player player = Main.player[ClosestPlayerToWorldCenter];
 
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceSpawn"), player.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceSpawn"), player.Center);
                     int prov = NPC.NewNPC((int)(player.position.X + Main.rand.Next(-500, 501)), (int)(player.position.Y - 250f), type, 1);
                     Main.npc[prov].timeLeft *= 20;
                     CalamityUtils.BossAwakenMessage(prov);
@@ -240,7 +241,7 @@ namespace InfernumMode.BossRush
                         }
                     }
 
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), player.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DevourerSpawn"), player.Center);
                     NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
                 }, usesSpecialSound: true, permittedNPCs: new int[] { ModContent.NPCType<DevourerofGodsBody>(), ModContent.NPCType<DevourerofGodsTail>() }),
 
@@ -256,7 +257,7 @@ namespace InfernumMode.BossRush
 
                 new Boss(ModContent.NPCType<SupremeCalamitas>(), spawnContext: type =>
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SupremeCalamitasSpawn"), Main.player[ClosestPlayerToWorldCenter].Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SupremeCalamitasSpawn"), Main.player[ClosestPlayerToWorldCenter].Center);
                     CalamityUtils.SpawnBossBetter(Main.player[ClosestPlayerToWorldCenter].Top - new Vector2(42f, 84f), type);
                 }, dimnessFactor: 0.6f, permittedNPCs: new int[] { ModContent.NPCType<SCalWormArm>(), ModContent.NPCType<SCalWormHead>(), ModContent.NPCType<SCalWormBody>(),
                     ModContent.NPCType<SCalWormBodyWeak>(), ModContent.NPCType<SCalWormTail>(),

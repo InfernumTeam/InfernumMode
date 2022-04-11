@@ -43,7 +43,7 @@ namespace InfernumMode
 
     public static class NetcodeHandler
     {
-        public static List<InfernumNPCSyncInformation> PendingSyncs = new List<InfernumNPCSyncInformation>();
+        public static List<InfernumNPCSyncInformation> PendingSyncs = new();
         public static void ReceivePacket(Mod mod, BinaryReader reader, int whoAmI)
         {
             InfernumPacketType packetType = (InfernumPacketType)reader.ReadInt16();
@@ -55,14 +55,14 @@ namespace InfernumMode
                     int totalUniqueAIIndicesUsed = reader.ReadInt32();
                     int[] indicesUsed = new int[totalUniqueAIIndicesUsed];
                     float[] aiValues = new float[totalUniqueAIIndicesUsed];
-                    Rectangle arenaRectangle = new Rectangle(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
+                    Rectangle arenaRectangle = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
 
                     for (int i = 0; i < totalUniqueAIIndicesUsed; i++)
                     {
                         indicesUsed[i] = reader.ReadInt32();
                         aiValues[i] = reader.ReadSingle();
                     }
-                    InfernumNPCSyncInformation syncInformation = new InfernumNPCSyncInformation()
+                    InfernumNPCSyncInformation syncInformation = new()
                     {
                         NPCIndex = npcIndex,
                         CachedRealLife = realLife,

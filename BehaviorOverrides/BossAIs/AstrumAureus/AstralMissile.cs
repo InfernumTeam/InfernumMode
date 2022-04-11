@@ -5,48 +5,49 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
     public class AstralMissile : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Astral Missile");
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 2;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 24;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = 1;
-            projectile.timeLeft = 360;
+            Projectile.width = Projectile.height = 24;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = 1;
+            Projectile.timeLeft = 360;
         }
 
         public override void AI()
         {
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            Lighting.AddLight(projectile.Center, 0.5f, 0.5f, 0.5f);
+            Lighting.AddLight(Projectile.Center, 0.5f, 0.5f, 0.5f);
 
-            Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+            Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 
             // Fly towards the closest player.
-            if (Time < 45f && !projectile.WithinRange(closestPlayer.Center, 75f))
-                projectile.velocity = projectile.velocity.RotateTowards(projectile.AngleTo(closestPlayer.Center), 0.02f);
+            if (Time < 45f && !Projectile.WithinRange(closestPlayer.Center, 75f))
+                Projectile.velocity = Projectile.velocity.RotateTowards(Projectile.AngleTo(closestPlayer.Center), 0.02f);
 
-            if (projectile.WithinRange(closestPlayer.Center, 30f))
-                projectile.Kill();
+            if (Projectile.WithinRange(closestPlayer.Center, 30f))
+                Projectile.Kill();
 
-            if (Time >= 45f && projectile.velocity.Length() < 35f)
-                projectile.velocity *= 1.03f;
+            if (Time >= 45f && Projectile.velocity.Length() < 35f)
+                Projectile.velocity *= 1.03f;
 
-            Vector2 backOfMissile = projectile.Center - (projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 20f;
+            Vector2 backOfMissile = Projectile.Center - (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 20f;
             Dust.NewDustDirect(backOfMissile, 5, 5, ModContent.DustType<AstralOrange>());
 
             Time++;
@@ -54,9 +55,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/AstrumAureus/AstralMissileGlowmask");
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
-            Utilities.DrawAfterimagesCentered(projectile, Color.White, ProjectileID.Sets.TrailingMode[projectile.type], 1, glowmask);
+            Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/AstrumAureus/AstralMissileGlowmask").Value;
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
+            Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1, glowmask);
             return false;
         }
 
@@ -64,22 +65,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Zombie, (int)projectile.position.X, (int)projectile.position.Y, 103, 1f, 0f);
+            SoundEngine.PlaySound(SoundID.Zombie, (int)Projectile.position.X, (int)Projectile.position.Y, 103, 1f, 0f);
 
-            projectile.position = projectile.Center;
-            projectile.width = projectile.height = 96;
-            projectile.position -= projectile.Size * 0.5f;
+            Projectile.position = Projectile.Center;
+            Projectile.width = Projectile.height = 96;
+            Projectile.position -= Projectile.Size * 0.5f;
 
             for (int i = 0; i < 2; i++)
-                Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, ModContent.DustType<AstralBlue>(), 0f, 0f, 50, default, 1f);
+                Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<AstralBlue>(), 0f, 0f, 50, default, 1f);
 
             for (int i = 0; i < 20; i++)
             {
-                Dust fire = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, ModContent.DustType<AstralOrange>(), 0f, 0f, 0, default, 1.5f);
+                Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<AstralOrange>(), 0f, 0f, 0, default, 1.5f);
                 fire.noGravity = true;
                 fire.velocity *= 3f;
             }
-            projectile.Damage();
+            Projectile.Damage();
         }
     }
 }

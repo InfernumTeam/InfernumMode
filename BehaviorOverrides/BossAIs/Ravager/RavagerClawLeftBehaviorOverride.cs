@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -310,8 +311,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public static bool DrawClaw(NPC npc, SpriteBatch spriteBatch, Color lightColor, bool leftclaw)
         {
             NPC ravagerBody = Main.npc[CalamityGlobalNPC.scavenger];
-            Texture2D chainTexture = ModContent.GetTexture("CalamityMod/NPCs/Ravager/RavagerChain");
-            Texture2D npcTexture = Main.npcTexture[npc.type];
+            Texture2D chainTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Ravager/RavagerChain").Value;
+            Texture2D npcTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawStart = ravagerBody.Center + new Vector2(-92f * leftclaw.ToDirectionInt(), 46f);
             Vector2 drawPosition = drawStart;
             float chainRotation = npc.AngleFrom(drawStart) - MathHelper.PiOver2;

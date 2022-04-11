@@ -14,13 +14,13 @@ namespace InfernumMode.BaseEntities
     {
         public float Radius
         {
-            get => projectile.ai[0];
-            set => projectile.ai[0] = value;
+            get => Projectile.ai[0];
+            set => Projectile.ai[0] = value;
         }
 
         public virtual float MinScale { get; } = 1.2f;
         public virtual float MaxScale { get; } = 5f;
-        public virtual Texture2D ExplosionNoiseTexture => ModContent.GetTexture("Terraria/Misc/Perlin");
+        public virtual Texture2D ExplosionNoiseTexture => ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value;
         public abstract int Lifetime { get; }
         public abstract float MaxRadius { get; }
         public abstract float RadiusExpandRateInterpolant { get; }
@@ -32,44 +32,44 @@ namespace InfernumMode.BaseEntities
 
         public override void SetDefaults()
         {
-            projectile.width = 72;
-            projectile.height = 72;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = Lifetime;
-            projectile.scale = 0.001f;
+            Projectile.width = 72;
+            Projectile.height = 72;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = Lifetime;
+            Projectile.scale = 0.001f;
         }
 
         public override void AI()
         {
             // Do screen shake effects.
-            float distanceFromPlayer = projectile.Distance(Main.LocalPlayer.Center);
-            Main.LocalPlayer.Calamity().GeneralScreenShakePower = DetermineScreenShakePower(1f - projectile.timeLeft / (float)Lifetime, distanceFromPlayer);
+            float distanceFromPlayer = Projectile.Distance(Main.LocalPlayer.Center);
+            Main.LocalPlayer.Calamity().GeneralScreenShakePower = DetermineScreenShakePower(1f - Projectile.timeLeft / (float)Lifetime, distanceFromPlayer);
 
             // Cause the wave to expand outward, along with its hitbox.
             Radius = MathHelper.Lerp(Radius, MaxRadius, RadiusExpandRateInterpolant);
-            projectile.scale = MathHelper.Lerp(MinScale, MaxScale, Utils.InverseLerp(Lifetime, 0f, projectile.timeLeft, true));
-            CalamityGlobalProjectile.ExpandHitboxBy(projectile, (int)(Radius * projectile.scale), (int)(Radius * projectile.scale));
+            Projectile.scale = MathHelper.Lerp(MinScale, MaxScale, Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true));
+            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, (int)(Radius * Projectile.scale), (int)(Radius * Projectile.scale));
         }
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             spriteBatch.EnterShaderRegion();
 
-            Vector2 scale = new Vector2(1.5f, 1f);
-            Vector2 drawPosition = projectile.Center - Main.screenPosition + projectile.Size * scale * 0.5f;
-            DrawData explosionDrawData = new DrawData(
+            Vector2 scale = new(1.5f, 1f);
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f;
+            DrawData explosionDrawData = new(
                 ExplosionNoiseTexture,
                 drawPosition,
-                new Rectangle(0, 0, projectile.width, projectile.height),
-                new Color(new Vector4(1f - (float)Math.Sqrt(1f - projectile.timeLeft / (float)Lifetime))) * 0.7f * projectile.Opacity,
-                projectile.rotation,
-                projectile.Size,
+                new Rectangle(0, 0, Projectile.width, Projectile.height),
+                new Color(new Vector4(1f - (float)Math.Sqrt(1f - Projectile.timeLeft / (float)Lifetime))) * 0.7f * Projectile.Opacity,
+                Projectile.rotation,
+                Projectile.Size,
                 scale,
                 SpriteEffects.None,
                 0);
 
-            GameShaders.Misc["ForceField"].UseColor(DetermineExplosionColor(1f - projectile.timeLeft / (float)Lifetime));
+            GameShaders.Misc["ForceField"].UseColor(DetermineExplosionColor(1f - Projectile.timeLeft / (float)Lifetime));
             GameShaders.Misc["ForceField"].Apply(explosionDrawData);
             explosionDrawData.Draw(spriteBatch);
 
@@ -77,6 +77,6 @@ namespace InfernumMode.BaseEntities
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
     }
 }

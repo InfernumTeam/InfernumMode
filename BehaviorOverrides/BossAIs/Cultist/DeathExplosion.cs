@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
         {
-            switch ((int)projectile.localAI[1])
+            switch ((int)Projectile.localAI[1])
             {
                 // Vortex.
                 case 0:
@@ -32,8 +32,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             return Color.White;
         }
 
-        public override void SendExtraAI(BinaryWriter writer) => writer.Write((int)projectile.localAI[1]);
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write((int)Projectile.localAI[1]);
 
-        public override void ReceiveExtraAI(BinaryReader reader) => projectile.localAI[1] = reader.ReadInt32();
+        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.localAI[1] = reader.ReadInt32();
     }
 }

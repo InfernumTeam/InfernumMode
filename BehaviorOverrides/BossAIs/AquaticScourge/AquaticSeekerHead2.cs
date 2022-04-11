@@ -19,46 +19,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override void SetDefaults()
         {
-            npc.damage = 95;
-            npc.width = 22;
-            npc.height = 28;
-            npc.defense = 5;
-            npc.lifeMax = TotalLife;
-            npc.aiStyle = aiType = -1;
-            npc.knockBackResist = 0f;
-            npc.value = 0;
-            npc.behindTiles = true;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.HitSound = SoundID.NPCHit1;
-            npc.DeathSound = SoundID.NPCDeath1;
-            npc.Calamity().canBreakPlayerDefense = true;
-            npc.netAlways = true;
+            NPC.damage = 95;
+            NPC.width = 22;
+            NPC.height = 28;
+            NPC.defense = 5;
+            NPC.lifeMax = TotalLife;
+            NPC.aiStyle = aiType = -1;
+            NPC.knockBackResist = 0f;
+            NPC.value = 0;
+            NPC.behindTiles = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            NPC.Calamity().canBreakPlayerDefense = true;
+            NPC.netAlways = true;
         }
 
         public override void AI()
         {
-            if (npc.ai[2] > 0f)
-                npc.realLife = (int)npc.ai[2];
+            if (NPC.ai[2] > 0f)
+                NPC.realLife = (int)NPC.ai[2];
 
-            if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead)
-                npc.TargetClosest(true);
+            if (NPC.target < 0 || NPC.target == 255 || Main.player[NPC.target].dead)
+                NPC.TargetClosest(true);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (!TailSpawned && npc.ai[0] == 0f)
+                if (!TailSpawned && NPC.ai[0] == 0f)
                 {
-                    int Previous = npc.whoAmI;
+                    int Previous = NPC.whoAmI;
                     for (int i = 0; i < MaxLength; i++)
                     {
                         int lol;
                         if (i >= 0 && i < MinLength)
-                            lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AquaticSeekerBody2>(), npc.whoAmI);
+                            lol = NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AquaticSeekerBody2>(), NPC.whoAmI);
                         else
-                            lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AquaticSeekerTail2>(), npc.whoAmI);
+                            lol = NPC.NewNPC((int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AquaticSeekerTail2>(), NPC.whoAmI);
 
-                        Main.npc[lol].realLife = npc.whoAmI;
-                        Main.npc[lol].ai[2] = npc.whoAmI;
+                        Main.npc[lol].realLife = NPC.whoAmI;
+                        Main.npc[lol].ai[2] = NPC.whoAmI;
                         Main.npc[lol].ai[1] = Previous;
                         Main.npc[Previous].ai[0] = lol;
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, lol, 0f, 0f, 0f, 0);
@@ -68,52 +68,52 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 }
             }
 
-            npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
-            if (Main.player[npc.target].dead)
-                npc.TargetClosest(false);
+            NPC.spriteDirection = (NPC.velocity.X < 0f).ToDirectionInt();
+            if (Main.player[NPC.target].dead)
+                NPC.TargetClosest(false);
 
-            npc.alpha = Utils.Clamp(npc.alpha - 20, 0, 255);
+            NPC.alpha = Utils.Clamp(NPC.alpha - 20, 0, 255);
 
-            if (!npc.WithinRange(Main.player[npc.target].Center, 5600f) || !NPC.AnyNPCs(ModContent.NPCType<AquaticSeekerTail2>()))
+            if (!NPC.WithinRange(Main.player[NPC.target].Center, 5600f) || !NPC.AnyNPCs(ModContent.NPCType<AquaticSeekerTail2>()))
             {
-                npc.active = false;
-                npc.netUpdate = true;
+                NPC.active = false;
+                NPC.netUpdate = true;
             }
 
             float flySpeed = BossRushEvent.BossRushActive ? 20f : 12f;
-            if (npc.WithinRange(Main.player[npc.target].Center, 280f))
+            if (NPC.WithinRange(Main.player[NPC.target].Center, 280f))
             {
-                if (npc.velocity.Length() < 18f)
-                    npc.velocity *= 1.024f;
+                if (NPC.velocity.Length() < 18f)
+                    NPC.velocity *= 1.024f;
             }
             else
-                npc.velocity = (npc.velocity * 31f + npc.SafeDirectionTo(Main.player[npc.target].Center) * flySpeed) / 32f;
+                NPC.velocity = (NPC.velocity * 31f + NPC.SafeDirectionTo(Main.player[NPC.target].Center) * flySpeed) / 32f;
 
-            npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+            NPC.rotation = NPC.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => npc.lifeMax = TotalLife;
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => NPC.lifeMax = TotalLife;
 
         public override void HitEffect(int hitDirection, double damage)
         {
             for (int k = 0; k < 3; k++)
             {
-                Dust.NewDust(npc.position, npc.width, npc.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
             }
-            if (npc.life <= 0)
+            if (NPC.life <= 0)
             {
                 for (int k = 0; k < 10; k++)
-                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
 
-                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/AquaticScourgeGores/AquaticSeekerHead"), 1f);
+                Gore.NewGore(NPC.position, NPC.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/AquaticScourgeGores/AquaticSeekerHead"), 1f);
             }
         }
 
         public override bool CheckActive()
         {
-            if (npc.timeLeft <= 0 && Main.netMode != NetmodeID.MultiplayerClient)
+            if (NPC.timeLeft <= 0 && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                for (int k = (int)npc.ai[0]; k > 0; k = (int)Main.npc[k].ai[0])
+                for (int k = (int)NPC.ai[0]; k > 0; k = (int)Main.npc[k].ai[0])
                 {
                     if (Main.npc[k].active)
                     {

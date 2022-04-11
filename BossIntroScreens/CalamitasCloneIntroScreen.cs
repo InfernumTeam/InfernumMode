@@ -31,7 +31,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override float LetterDisplayCompletionRatio(int animationTimer)
         {
-            float completionRatio = Utils.InverseLerp(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
+            float completionRatio = Utils.GetLerpValue(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
 
             // If the completion ratio exceeds the point where the name is displayed, display all letters.
             int startOfLargeTextIndex = TextToDisplay.IndexOf('\n');

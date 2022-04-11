@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using EbonianSlimeGod = CalamityMod.NPCs.SlimeGod.SlimeGod;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
@@ -224,7 +225,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                     }
                 }
 
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodPossession"), npc.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SlimeGodPossession"), npc.Center);
                 for (int k = 0; k < 50; k++)
                     Dust.NewDust(npc.position, npc.width, npc.height, 4, Main.rand.NextFloatDirection() * 3f, -1f, 0, default, 1f);
             }

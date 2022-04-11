@@ -5,6 +5,7 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
@@ -23,43 +24,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         internal int OtherGuardianIndex = -1;
         private AttackState State
         {
-            get => (AttackState)(int)projectile.ai[1];
-            set => projectile.ai[1] = (int)value;
+            get => (AttackState)(int)Projectile.ai[1];
+            set => Projectile.ai[1] = (int)value;
         }
-        private ref float AttackTimer => ref projectile.ai[0];
-        private ref float DirectionBias => ref projectile.localAI[1];
-        private Player Target => Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+        private ref float AttackTimer => ref Projectile.ai[0];
+        private ref float DirectionBias => ref Projectile.localAI[1];
+        private Player Target => Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Attacker Guardian");
-            Main.projFrames[projectile.type] = 6;
+            Main.projFrames[Projectile.type] = 6;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 112;
-            projectile.hostile = true;
-            projectile.alpha = 255;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = ProvidenceBehaviorOverride.GuardianApparationTime;
-            projectile.Calamity().canBreakPlayerDefense = true;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 112;
+            Projectile.hostile = true;
+            Projectile.alpha = 255;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = ProvidenceBehaviorOverride.GuardianApparationTime;
+            Projectile.Calamity().canBreakPlayerDefense = true;
+            CooldownSlot = 1;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(Time);
-            writer.Write(projectile.localAI[0]);
-            writer.Write(projectile.localAI[1]);
+            writer.Write(Projectile.localAI[0]);
+            writer.Write(Projectile.localAI[1]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             Time = reader.ReadSingle();
-            projectile.localAI[0] = reader.ReadSingle();
-            projectile.localAI[1] = reader.ReadSingle();
+            Projectile.localAI[0] = reader.ReadSingle();
+            Projectile.localAI[1] = reader.ReadSingle();
         }
 
         internal void DecideValuesForNextAI()
@@ -67,47 +68,47 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             switch (State)
             {
                 case AttackState.TopLeftCharge:
-                    projectile.velocity = projectile.SafeDirectionTo(Target.Center) * 22.5f;
-                    projectile.spriteDirection = (projectile.velocity.X < 0).ToDirectionInt();
+                    Projectile.velocity = Projectile.SafeDirectionTo(Target.Center) * 22.5f;
+                    Projectile.spriteDirection = (Projectile.velocity.X < 0).ToDirectionInt();
                     if (!Main.dayTime)
-                        projectile.velocity *= 1.4f;
+                        Projectile.velocity *= 1.4f;
                     break;
                 case AttackState.HorizontalCharge:
-                    projectile.rotation = 0f;
-                    projectile.velocity = Vector2.UnitX * -DirectionBias * 28f;
+                    Projectile.rotation = 0f;
+                    Projectile.velocity = Vector2.UnitX * -DirectionBias * 28f;
                     if (!Main.dayTime)
-                        projectile.velocity *= 1.4f;
+                        Projectile.velocity *= 1.4f;
 
-                    projectile.spriteDirection = (projectile.velocity.X < 0).ToDirectionInt();
+                    Projectile.spriteDirection = (Projectile.velocity.X < 0).ToDirectionInt();
 
                     // Fire a spear and a lot of fire.
-                    if (Main.myPlayer == projectile.owner && projectile.alpha == 0)
+                    if (Main.myPlayer == Projectile.owner && Projectile.alpha == 0)
                     {
-                        Vector2 spawnPosition = projectile.Center - Vector2.UnitX * projectile.spriteDirection * 40f;
-                        Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitX * projectile.spriteDirection * 45f, ModContent.ProjectileType<ProfanedSpear2>(), 290, 0f);
+                        Vector2 spawnPosition = Projectile.Center - Vector2.UnitX * Projectile.spriteDirection * 40f;
+                        Utilities.NewProjectileBetter(spawnPosition, -Vector2.UnitX * Projectile.spriteDirection * 45f, ModContent.ProjectileType<ProfanedSpear2>(), 290, 0f);
 
                         for (int i = 0; i < 25; i++)
                         {
                             Vector2 shootVelocity = (MathHelper.TwoPi * i / 25f).ToRotationVector2() * 10f;
-                            Utilities.NewProjectileBetter(projectile.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<HolyFireSpark>(), 270, 0f);
+                            Utilities.NewProjectileBetter(Projectile.Center + shootVelocity * 3f, shootVelocity, ModContent.ProjectileType<HolyFireSpark>(), 270, 0f);
                         }
                     }
 
-                    Main.PlaySound(SoundID.Item109, Target.Center);
+                    SoundEngine.PlaySound(SoundID.Item109, Target.Center);
                     break;
                 case AttackState.TopLeftRedirect:
-                    if (Main.myPlayer == projectile.owner && projectile.alpha == 0)
+                    if (Main.myPlayer == Projectile.owner && Projectile.alpha == 0)
                     {
-                        Vector2 baseShootDirection = projectile.SafeDirectionTo(Target.Center);
+                        Vector2 baseShootDirection = Projectile.SafeDirectionTo(Target.Center);
                         for (int i = 0; i < 13; i++)
                         {
-                            Vector2 spawnPosition = projectile.Center;
+                            Vector2 spawnPosition = Projectile.Center;
                             Vector2 shootVelocity = baseShootDirection.RotatedBy(MathHelper.TwoPi * i / 13f) * 18f;
                             Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<ProfanedSpear2>(), 300, 0f);
                         }
                     }
 
-                    Main.PlaySound(SoundID.Item109, Target.Center);
+                    SoundEngine.PlaySound(SoundID.Item109, Target.Center);
                     break;
             }
         }
@@ -118,54 +119,54 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             {
                 if (OtherGuardianIndex != -1)
                 {
-                    int otherGuardianUUID = Projectile.GetByUUID(projectile.owner, OtherGuardianIndex);
+                    int otherGuardianUUID = Projectile.GetByUUID(Projectile.owner, OtherGuardianIndex);
                     if (otherGuardianUUID == -1)
                         return;
 
                     if (AttackTimer == 0f)
                         Main.projectile[otherGuardianUUID].ai[0] = AttackTimer;
-                    Main.projectile[otherGuardianUUID].ai[1] = projectile.ai[1];
+                    Main.projectile[otherGuardianUUID].ai[1] = Projectile.ai[1];
                     (Main.projectile[otherGuardianUUID].modProjectile as AttackerApparation).DecideValuesForNextAI();
                     Main.projectile[otherGuardianUUID].netUpdate = true;
                 }
             }
 
             if (Time < 90)
-                projectile.alpha = Utils.Clamp(projectile.alpha - 16, 0, 255);
-            if (projectile.timeLeft < 45)
-                projectile.alpha = Utils.Clamp(projectile.alpha + 16, 0, 255);
+                Projectile.alpha = Utils.Clamp(Projectile.alpha - 16, 0, 255);
+            if (Projectile.timeLeft < 45)
+                Projectile.alpha = Utils.Clamp(Projectile.alpha + 16, 0, 255);
 
             // Reset the direction bias if it's uninitialized for some reason.
             if (DirectionBias == 0f)
             {
                 DirectionBias = Main.rand.NextBool(2).ToDirectionInt();
-                projectile.netUpdate = true;
+                Projectile.netUpdate = true;
             }
 
-            projectile.frameCounter++;
-            projectile.frame = projectile.frameCounter / 7 % Main.projFrames[projectile.type];
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 7 % Main.projFrames[Projectile.type];
 
             switch (State)
             {
                 case AttackState.TopLeftRedirect:
-                    ref float yOffset = ref projectile.localAI[0];
+                    ref float yOffset = ref Projectile.localAI[0];
                     if (yOffset == 0f)
                     {
                         yOffset = Math.Abs(Target.velocity.Y) < 0.1f ? -1 : Math.Sign(Target.velocity.Y);
                         yOffset *= 385f;
 
-                        projectile.netUpdate = true;
+                        Projectile.netUpdate = true;
                     }
 
                     Vector2 destination = Target.Center + new Vector2(DirectionBias * 500f, yOffset);
-                    projectile.spriteDirection = (projectile.velocity.X < 0).ToDirectionInt();
-                    projectile.rotation *= 0.9f;
+                    Projectile.spriteDirection = (Projectile.velocity.X < 0).ToDirectionInt();
+                    Projectile.rotation *= 0.9f;
 
                     // Redirect towards the destination.
-                    if ((projectile.Distance(destination) >= 38f + Target.velocity.Length() && AttackTimer < 75f) || Time <= 90f)
+                    if ((Projectile.Distance(destination) >= 38f + Target.velocity.Length() && AttackTimer < 75f) || Time <= 90f)
                     {
-                        projectile.velocity *= 0.3f;
-                        projectile.velocity += (destination - projectile.Center) * 0.065f;
+                        Projectile.velocity *= 0.3f;
+                        Projectile.velocity += (destination - Projectile.Center) * 0.065f;
                     }
                     else
                     {
@@ -175,7 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         yOffset = 0f;
                         AttackTimer = 0f;
                         DecideValuesForNextAI();
-                        projectile.netUpdate = true;
+                        Projectile.netUpdate = true;
 
                         updateMyOthersState();
                     }
@@ -186,41 +187,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     // The magnitude is reset after directional charges are completed.
                     if (AttackTimer < 45f)
                     {
-                        float initialSpeed = projectile.velocity.Length();
-                        projectile.velocity += projectile.SafeDirectionTo(Target.Center).RotatedBy((float)Math.Cos(projectile.timeLeft / 30f) * 0.14f);
-                        projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * initialSpeed;
+                        float initialSpeed = Projectile.velocity.Length();
+                        Projectile.velocity += Projectile.SafeDirectionTo(Target.Center).RotatedBy((float)Math.Cos(Projectile.timeLeft / 30f) * 0.14f);
+                        Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * initialSpeed;
                     }
 
-                    projectile.rotation = projectile.velocity.ToRotation();
-                    if (projectile.spriteDirection == 1)
-                        projectile.rotation += MathHelper.Pi;
+                    Projectile.rotation = Projectile.velocity.ToRotation();
+                    if (Projectile.spriteDirection == 1)
+                        Projectile.rotation += MathHelper.Pi;
                     if (AttackTimer >= 75f)
                     {
                         AttackTimer = 0f;
                         State = AttackState.HorizontalRedirect;
-                        projectile.netUpdate = true;
+                        Projectile.netUpdate = true;
 
                         updateMyOthersState();
                     }
                     break;
 
                 case AttackState.HorizontalRedirect:
-                    ref float xOffset = ref projectile.localAI[0];
+                    ref float xOffset = ref Projectile.localAI[0];
                     if (xOffset == 0f)
                     {
                         xOffset = DirectionBias * 530f;
-                        projectile.netUpdate = true;
+                        Projectile.netUpdate = true;
                     }
 
                     destination = Target.Center + Vector2.UnitX * xOffset;
-                    projectile.spriteDirection = (projectile.velocity.X < 0).ToDirectionInt();
-                    projectile.rotation *= 0.7f;
+                    Projectile.spriteDirection = (Projectile.velocity.X < 0).ToDirectionInt();
+                    Projectile.rotation *= 0.7f;
 
                     // Redirect towards the destination.
-                    if (projectile.Distance(destination) >= 38f + Target.velocity.Length() && AttackTimer < 75f)
+                    if (Projectile.Distance(destination) >= 38f + Target.velocity.Length() && AttackTimer < 75f)
                     {
-                        projectile.velocity *= 0.3f;
-                        projectile.velocity += (destination - projectile.Center) * 0.14f;
+                        Projectile.velocity *= 0.3f;
+                        Projectile.velocity += (destination - Projectile.Center) * 0.14f;
                     }
                     else if (AttackTimer >= 40f)
                     {
@@ -230,18 +231,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         xOffset = 0f;
                         AttackTimer = 0f;
                         DecideValuesForNextAI();
-                        projectile.netUpdate = true;
+                        Projectile.netUpdate = true;
 
                         updateMyOthersState();
                     }
                     break;
                 case AttackState.HorizontalCharge:
-                    projectile.velocity.X *= 1.005f;
+                    Projectile.velocity.X *= 1.005f;
                     if (!Main.dayTime)
-                        projectile.velocity *= 1.003f;
+                        Projectile.velocity *= 1.003f;
 
                     if (AttackTimer >= 45f)
-                        projectile.velocity.X *= 0.9f;
+                        Projectile.velocity.X *= 0.9f;
 
                     if (AttackTimer >= 70f)
                     {
@@ -249,7 +250,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                         AttackTimer = 0f;
                         DecideValuesForNextAI();
-                        projectile.netUpdate = true;
+                        Projectile.netUpdate = true;
 
                         updateMyOthersState();
                     }
@@ -260,11 +261,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Time++;
         }
 
-        public override bool CanDamage() => projectile.alpha <= 40 && State != AttackState.HorizontalRedirect && State != AttackState.TopLeftRedirect;
+        public override bool CanDamage() => Projectile.alpha <= 40 && State != AttackState.HorizontalRedirect && State != AttackState.TopLeftRedirect;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

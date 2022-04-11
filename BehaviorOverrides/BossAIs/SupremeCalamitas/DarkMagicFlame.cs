@@ -8,49 +8,49 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class DarkMagicFlame : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Flame");
-            Main.projFrames[projectile.type] = 4;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            Main.projFrames[Projectile.type] = 4;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 16;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 360;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 16;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 360;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.frameCounter++;
-            if (projectile.frameCounter % 5 == 4)
-                projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
-            projectile.Opacity = Utils.InverseLerp(0f, 24f, Time, true);
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter % 5 == 4)
+                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+            Projectile.Opacity = Utils.GetLerpValue(0f, 24f, Time, true);
 
             // Attempt to hover above the target.
-            Vector2 destination = Main.player[Player.FindClosest(projectile.Center, 1, 1)].Center;
+            Vector2 destination = Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center;
             if (Time < 15f)
             {
                 float flySpeed = MathHelper.Lerp(8f, 20f, Time / 15f);
-                projectile.velocity = (projectile.velocity * 29f + projectile.SafeDirectionTo(destination) * flySpeed) / 30f;
+                Projectile.velocity = (Projectile.velocity * 29f + Projectile.SafeDirectionTo(destination) * flySpeed) / 30f;
             }
-            else if (projectile.velocity.Length() < 43f)
+            else if (Projectile.velocity.Length() < 43f)
             {
-                projectile.velocity *= 1.035f;
+                Projectile.velocity *= 1.035f;
                 if (Time < 45f)
-                    projectile.velocity = projectile.velocity.RotateTowards(projectile.AngleTo(destination), 0.04f);
+                    Projectile.velocity = Projectile.velocity.RotateTowards(Projectile.AngleTo(destination), 0.04f);
             }
-            projectile.tileCollide = Time > 60f;
+            Projectile.tileCollide = Time > 60f;
 
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             Time++;
         }
@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             for (int i = 0; i < 5; i++)
             {
-                Dust fire = Dust.NewDustDirect(projectile.Center - Vector2.One * 12f, 6, 6, 267);
+                Dust fire = Dust.NewDustDirect(Projectile.Center - Vector2.One * 12f, 6, 6, 267);
                 fire.color = Color.Red;
                 fire.noGravity = true;
             }
@@ -67,7 +67,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1, Main.projectileTexture[projectile.type], false);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, Main.projectileTexture[Projectile.type], false);
             return false;
         }
     }

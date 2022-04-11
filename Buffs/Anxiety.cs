@@ -7,7 +7,7 @@ namespace InfernumMode.Buffs
 {
     public class Anxiety : ModBuff
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Anxiety");
             Description.SetDefault("You cannot use Rage or Adrenaline");

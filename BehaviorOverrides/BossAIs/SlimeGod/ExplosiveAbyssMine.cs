@@ -4,6 +4,7 @@ using CalamityMod.Projectiles;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
@@ -15,35 +16,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 26;
-            projectile.hostile = true;
-            projectile.alpha = 60;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 640;
+            Projectile.width = Projectile.height = 26;
+            Projectile.hostile = true;
+            Projectile.alpha = 60;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 640;
         }
 
         public override void AI()
         {
-            projectile.velocity *= 0.96f;
-            if (projectile.ai[1] == 0f)
+            Projectile.velocity *= 0.96f;
+            if (Projectile.ai[1] == 0f)
             {
-                projectile.ai[1] = 1f;
-                Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 33);
+                Projectile.ai[1] = 1f;
+                SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 33);
             }
 
             if (Main.rand.NextBool(4))
-                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f);
+                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f);
         }
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14);
-            CalamityGlobalProjectile.ExpandHitboxBy(projectile, 50);
+            SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 14);
+            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, 50);
 
             for (int i = 0; i < 30; i++)
             {
-                Dust purpleSlime = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f, 100, default, 1.2f);
+                Dust purpleSlime = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f, 100, default, 1.2f);
                 purpleSlime.velocity *= 3f;
                 if (Main.rand.NextBool(2))
                 {
@@ -53,10 +54,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             }
             for (int i = 0; i < 60; i++)
             {
-                Dust purpleSlime = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f, 100, default, 1.7f);
+                Dust purpleSlime = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f, 100, default, 1.7f);
                 purpleSlime.velocity *= 5f;
 
-                purpleSlime = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f, 100, default, 1f);
+                purpleSlime = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, (int)CalamityDusts.PurpleCosmilite, 0f, 0f, 100, default, 1f);
                 purpleSlime.velocity *= 2f;
             }
         }
@@ -64,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(ModContent.BuffType<Shadowflame>(), 180);
-            projectile.Kill();
+            Projectile.Kill();
         }
     }
 }

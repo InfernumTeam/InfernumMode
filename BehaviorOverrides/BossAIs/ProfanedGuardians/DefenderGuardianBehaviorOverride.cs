@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -41,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             float wrappedAttackTimer = attackTimer % 360f;
             if (wrappedAttackTimer > 330f && wrappedAttackTimer % 5f == 4f && !npc.WithinRange(Main.player[npc.target].Center, 250f))
             {
-                Main.PlaySound(SoundID.Item89, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item89, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Utilities.NewProjectileBetter(npc.Center, -Vector2.UnitY * 6f, ModContent.ProjectileType<MagicProfanedRock>(), 235, 0f);
@@ -54,8 +55,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (npc.velocity.Length() < 2f)
                 npc.velocity = Vector2.UnitY * -2.4f;
 
-            float flySpeed = MathHelper.Lerp(9f, 23f, Utils.InverseLerp(50f, 270f, npc.Distance(hoverDestination), true));
-            flySpeed *= Utils.InverseLerp(0f, 50f, npc.Distance(hoverDestination), true);
+            float flySpeed = MathHelper.Lerp(9f, 23f, Utils.GetLerpValue(50f, 270f, npc.Distance(hoverDestination), true));
+            flySpeed *= Utils.GetLerpValue(0f, 50f, npc.Distance(hoverDestination), true);
             npc.velocity = npc.velocity * 0.85f + npc.SafeDirectionTo(hoverDestination) * flySpeed * 0.15f;
             npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(hoverDestination) * flySpeed, 4f);
 

@@ -8,7 +8,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
     public class ShadeFireColumn : ModProjectile
     {
-        public ref float Time => ref projectile.ai[1];
+        public ref float Time => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fire");
@@ -16,28 +16,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public override void SetDefaults()
         {
-            projectile.width = 6;
-            projectile.height = 6;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 250;
-            projectile.tileCollide = false;
-            projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.width = 6;
+            Projectile.height = 6;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 250;
+            Projectile.tileCollide = false;
+            Projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center, projectile.Opacity * 0.15f, 0f, projectile.Opacity * 0.2f);
+            Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.15f, 0f, Projectile.Opacity * 0.2f);
 
             if (Time > 7f)
             {
                 if (Time >= 67f)
                 {
-                    if (projectile.extraUpdates != 4)
-                        projectile.extraUpdates = 4;
+                    if (Projectile.extraUpdates != 4)
+                        Projectile.extraUpdates = 4;
 
-                    projectile.velocity = Vector2.UnitY * -4.45f;
+                    Projectile.velocity = Vector2.UnitY * -4.45f;
                 }
                 float scale = 1f;
                 if (Time == 8f)
@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                         for (float yOffset = 0f; yOffset < (Time > 69f ? 100f : 1f); yOffset += 15f)
                         {
                             int dustType = i % 2 == 0 ? 157 : 14;
-                            Dust fire = Dust.NewDustDirect(projectile.position + Vector2.UnitY * yOffset, projectile.width, projectile.height, dustType, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default, 1f);
+                            Dust fire = Dust.NewDustDirect(Projectile.position + Vector2.UnitY * yOffset, Projectile.width, Projectile.height, dustType, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1f);
                             if (Main.rand.NextBool(3))
                             {
                                 fire.noGravity = true;
@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
                             fire.velocity *= 1.2f;
                             fire.scale *= scale;
-                            fire.velocity += projectile.velocity;
+                            fire.velocity += Projectile.velocity;
                             if (!fire.noGravity)
                                 fire.velocity *= 0.5f;
                         }
@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         {
             target.AddBuff(BuffID.CursedInferno, 240);
             target.AddBuff(ModContent.BuffType<Shadowflame>(), 140);
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
 
         public override bool CanDamage() => Time >= 67f;

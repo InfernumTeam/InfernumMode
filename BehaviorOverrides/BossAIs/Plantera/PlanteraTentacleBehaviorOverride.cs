@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 {
@@ -39,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 attachOffset = MathHelper.Lerp(attachOffset, 3900f, 0.021f);
 
             if (time == 30f)
-                Main.PlaySound(SoundID.Item74, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item74, npc.Center);
 
             if (time > 70f)
             {

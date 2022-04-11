@@ -9,8 +9,9 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 using CrabulonNPC = CalamityMod.NPCs.Crabulon.CrabulonIdle;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
@@ -130,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             Dust spore = Dust.NewDustDirect(npc.position, npc.width, npc.height, 56);
             spore.velocity = -Vector2.UnitY * Main.rand.NextFloat(0.4f, 2.7f);
             spore.noGravity = true;
-            spore.scale = MathHelper.Lerp(0.75f, 1.45f, Utils.InverseLerp(npc.Top.Y, npc.Bottom.Y, spore.position.Y));
+            spore.scale = MathHelper.Lerp(0.75f, 1.45f, Utils.GetLerpValue(npc.Top.Y, npc.Bottom.Y, spore.position.Y));
 
             if (attackTimer >= 210f || npc.justHit)
                 SelectNextAttack(npc);
@@ -150,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float jumpSpeed = MathHelper.Lerp(13.5f, 18.75f, 1f - lifeRatio);
             float extraGravity = MathHelper.Lerp(0f, 0.45f, 1f - lifeRatio);
-            float jumpAngularImprecision = MathHelper.Lerp(0.1f, 0f, Utils.InverseLerp(0f, 0.7f, 1f - lifeRatio));
+            float jumpAngularImprecision = MathHelper.Lerp(0.1f, 0f, Utils.GetLerpValue(0f, 0.7f, 1f - lifeRatio));
 
             jumpSpeed += MathHelper.Clamp((npc.Top.Y - target.Top.Y) * 0.02f, 0f, 12f);
             if (BossRushEvent.BossRushActive)
@@ -208,7 +209,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                     // Make some visual and auditory effects when hitting the ground.
                     if (hasHitGroundFlag == 0f)
                     {
-                        Main.PlaySound(SoundID.Item14, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item14, npc.Center);
                         for (int i = 0; i < 36; i++)
                         {
                             Vector2 dustSpawnPosition = Vector2.Lerp(npc.BottomLeft, npc.BottomRight, i / 36f);
@@ -286,7 +287,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             {
                 bool canShoot = attackTimer % 120f >= 80f && attackTimer % 8f == 7f;
                 shouldSlowDown = attackTimer % 120f >= 60f;
-                float shootPower = MathHelper.Lerp(5f, 10f, Utils.InverseLerp(80f, 120f, attackTimer % 120f, true));
+                float shootPower = MathHelper.Lerp(5f, 10f, Utils.GetLerpValue(80f, 120f, attackTimer % 120f, true));
                 if (Main.netMode != NetmodeID.MultiplayerClient && canShoot)
                 {
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * shootPower;
@@ -311,7 +312,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             // Check if tile collision ignoral is necessary.
             int horizontalCheckArea = 80;
             int verticalCheckArea = 20;
-            Vector2 checkPosition = new Vector2(npc.Center.X - horizontalCheckArea * 0.5f, npc.Bottom.Y - verticalCheckArea);
+            Vector2 checkPosition = new(npc.Center.X - horizontalCheckArea * 0.5f, npc.Bottom.Y - verticalCheckArea);
             if (Collision.SolidCollision(checkPosition, horizontalCheckArea, verticalCheckArea))
             {
                 if (npc.velocity.Y > 0f)

@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
@@ -15,15 +16,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             Charge
         }
 
-        public Player Target => Main.player[npc.target];
+        public Player Target => Main.player[NPC.target];
         public SuperchargedProbeAttackState AttackState
         {
-            get => (SuperchargedProbeAttackState)(int)npc.ai[0];
-            set => npc.ai[0] = (int)value;
+            get => (SuperchargedProbeAttackState)(int)NPC.ai[0];
+            set => NPC.ai[0] = (int)value;
         }
-        public ref float AttackTimer => ref npc.ai[1];
-        public ref float GeneralTimer => ref npc.ai[2];
-        public bool SoundCreator => npc.ai[3] == 1f;
+        public ref float AttackTimer => ref NPC.ai[1];
+        public ref float GeneralTimer => ref NPC.ai[2];
+        public bool SoundCreator => NPC.ai[3] == 1f;
         public const int Lifetime = 480;
         public override void SetStaticDefaults()
         {
@@ -32,52 +33,52 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public override void SetDefaults()
         {
-            npc.damage = 120;
-            npc.npcSlots = 0f;
-            npc.width = npc.height = 34;
-            npc.defense = 15;
-            npc.lifeMax = 1113;
-            npc.aiStyle = aiType = -1;
-            npc.knockBackResist = 0f;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.canGhostHeal = false;
-            npc.HitSound = SoundID.NPCHit4;
-            npc.DeathSound = SoundID.NPCDeath14;
+            NPC.damage = 120;
+            NPC.npcSlots = 0f;
+            NPC.width = NPC.height = 34;
+            NPC.defense = 15;
+            NPC.lifeMax = 1113;
+            NPC.aiStyle = aiType = -1;
+            NPC.knockBackResist = 0f;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.canGhostHeal = false;
+            NPC.HitSound = SoundID.NPCHit4;
+            NPC.DeathSound = SoundID.NPCDeath14;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(npc.Center, 0.07f, 0.4f, 0.07f);
+            Lighting.AddLight(NPC.Center, 0.07f, 0.4f, 0.07f);
 
             // Handle despawn stuff.
             if (!Target.active || Target.dead)
             {
-                npc.TargetClosest(false);
+                NPC.TargetClosest(false);
                 if (!Target.active || Target.dead)
                 {
-                    if (npc.timeLeft > 10)
-                        npc.timeLeft = 10;
+                    if (NPC.timeLeft > 10)
+                        NPC.timeLeft = 10;
                     return;
                 }
             }
-            else if (npc.timeLeft > 600)
-                npc.timeLeft = 600;
+            else if (NPC.timeLeft > 600)
+                NPC.timeLeft = 600;
 
             // Explode if enough time has passed.
             GeneralTimer++;
 
             // Have a brief moment of no damage.
-            npc.damage = GeneralTimer > 60f ? npc.defDamage : 0;
+            NPC.damage = GeneralTimer > 60f ? NPC.defDamage : 0;
 
             if (GeneralTimer > Lifetime)
             {
-                npc.life = 0;
-                npc.checkDead();
-                npc.active = false;
+                NPC.life = 0;
+                NPC.checkDead();
+                NPC.active = false;
             }
 
-            npc.Calamity().canBreakPlayerDefense = false;
+            NPC.Calamity().canBreakPlayerDefense = false;
             switch (AttackState)
             {
                 case SuperchargedProbeAttackState.ChargePreparation:
@@ -85,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     break;
                 case SuperchargedProbeAttackState.Charge:
                     DoBehavior_Charge();
-                    npc.Calamity().canBreakPlayerDefense = true;
+                    NPC.Calamity().canBreakPlayerDefense = true;
                     break;
             }
 
@@ -95,22 +96,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         public void DoBehavior_ChargePreparation()
         {
             // Negate damage.
-            npc.damage = 0;
+            NPC.damage = 0;
 
-            ref float horizontalHoverOffset = ref npc.Infernum().ExtraAI[0];
+            ref float horizontalHoverOffset = ref NPC.Infernum().ExtraAI[0];
 
             // Hover near the target.
             if (horizontalHoverOffset == 0f)
-                horizontalHoverOffset = Math.Sign(Target.Center.X - npc.Center.X) * 500f;
-            Vector2 hoverDestination = Target.Center + new Vector2(horizontalHoverOffset, -350f) + (npc.whoAmI * MathHelper.TwoPi / 4f).ToRotationVector2() * 100f - npc.velocity;
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 22f, 1.05f);
+                horizontalHoverOffset = Math.Sign(Target.Center.X - NPC.Center.X) * 500f;
+            Vector2 hoverDestination = Target.Center + new Vector2(horizontalHoverOffset, -350f) + (NPC.whoAmI * MathHelper.TwoPi / 4f).ToRotationVector2() * 100f - NPC.velocity;
+            NPC.SimpleFlyMovement(NPC.SafeDirectionTo(hoverDestination) * 22f, 1.05f);
 
             // Look at the target.
-            npc.spriteDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
-            npc.rotation = npc.AngleTo(Target.Center + Target.velocity * 30f);
+            NPC.spriteDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
+            NPC.rotation = NPC.AngleTo(Target.Center + Target.velocity * 30f);
 
-            if (npc.spriteDirection == 1)
-                npc.rotation += MathHelper.Pi;
+            if (NPC.spriteDirection == 1)
+                NPC.rotation += MathHelper.Pi;
 
             if (AttackTimer > 40f)
             {
@@ -122,40 +123,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public void DoBehavior_Charge()
         {
-            npc.damage = npc.defDamage;
+            NPC.damage = NPC.defDamage;
 
             // Do the charge on the first frame.
             if (AttackTimer == 1f)
             {
                 if (SoundCreator)
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/ELRFire"), NPC.Center);
 
-                int chargeDirection = (Target.Center.X < npc.Center.X).ToDirectionInt();
+                int chargeDirection = (Target.Center.X < NPC.Center.X).ToDirectionInt();
                 float chargeSpeed = 16.5f;
-                npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 35f) * chargeSpeed;
-                npc.spriteDirection = chargeDirection;
+                NPC.velocity = NPC.SafeDirectionTo(Target.Center + Target.velocity * 35f) * chargeSpeed;
+                NPC.spriteDirection = chargeDirection;
 
-                npc.rotation = npc.velocity.ToRotation();
-                if (npc.spriteDirection == 1)
-                    npc.rotation += MathHelper.Pi;
-                npc.netUpdate = true;
+                NPC.rotation = NPC.velocity.ToRotation();
+                if (NPC.spriteDirection == 1)
+                    NPC.rotation += MathHelper.Pi;
+                NPC.netUpdate = true;
 
                 return;
             }
 
             // Otherwise accelerate and emit laser dust.
-            npc.velocity *= 1.01f;
+            NPC.velocity *= 1.01f;
 
             // Spawn laser dust.
             int dustCount = 3;
             for (int i = 0; i < dustCount; i++)
             {
-                Vector2 dustSpawnPosition = npc.Center + (Vector2.Normalize(npc.velocity) * new Vector2((npc.width + 10) / 2f, npc.height) * 0.3f).RotatedBy(MathHelper.TwoPi * i / dustCount);
+                Vector2 dustSpawnPosition = NPC.Center + (Vector2.Normalize(NPC.velocity) * new Vector2((NPC.width + 10) / 2f, NPC.height) * 0.3f).RotatedBy(MathHelper.TwoPi * i / dustCount);
                 Vector2 dustVelocity = (Main.rand.NextFloatDirection() * MathHelper.PiOver2).ToRotationVector2() * Main.rand.NextFloat(3f, 8f);
                 Dust laser = Dust.NewDustPerfect(dustSpawnPosition + dustVelocity, 245, dustVelocity);
                 laser.scale *= 1.2f;
                 laser.velocity *= 0.25f;
-                laser.velocity -= npc.velocity;
+                laser.velocity -= NPC.velocity;
                 laser.color = Color.Green;
                 laser.noGravity = true;
             }
@@ -171,15 +172,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public override bool CheckDead()
         {
-            Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.position);
+            SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, NPC.position);
 
-            npc.position = npc.Center;
-            npc.width = npc.height = 84;
-            npc.Center = npc.position;
+            NPC.position = NPC.Center;
+            NPC.width = NPC.height = 84;
+            NPC.Center = NPC.position;
 
             for (int i = 0; i < 15; i++)
             {
-                Dust laserDust = Dust.NewDustDirect(npc.position, npc.width, npc.height, 245, 0f, 0f, 100, default, 1.4f);
+                Dust laserDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 245, 0f, 0f, 100, default, 1.4f);
                 if (Main.rand.NextBool(2))
                 {
                     laserDust.scale = 0.5f;
@@ -191,11 +192,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             for (int i = 0; i < 30; i++)
             {
-                Dust laserDust = Dust.NewDustDirect(npc.position, npc.width, npc.height, 245, 0f, 0f, 100, default, 1.85f);
+                Dust laserDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 245, 0f, 0f, 100, default, 1.85f);
                 laserDust.noGravity = true;
                 laserDust.velocity *= 5f;
 
-                laserDust = Dust.NewDustDirect(npc.position, npc.width, npc.height, 245, 0f, 0f, 100, default, 2f);
+                laserDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 245, 0f, 0f, 100, default, 2f);
                 laserDust.velocity *= 2f;
                 laserDust.noGravity = true;
             }

@@ -12,6 +12,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -165,8 +166,8 @@ namespace InfernumMode.GlobalInstances
                         Vector2 vector8;
                         vector8.X = (float)(num78 * 16);
                         vector8.Y = (float)(num79 * 16);
-                        if ((adjustedCenter.X + 10f > vector8.X && adjustedCenter.X < vector8.X + 16f && adjustedCenter.Y + 10f > vector8.Y && adjustedCenter.Y < vector8.Y + 16f && Main.tile[num78, num79].nactive() && 
-                            (Main.tileSolid[(int)Main.tile[num78, num79].type] || Main.tile[num78, num79].type == 314) && (projectile.type != 403 || Main.tile[num78, num79].type == 314)) || platformRequirement)
+                        if ((adjustedCenter.X + 10f > vector8.X && adjustedCenter.X < vector8.X + 16f && adjustedCenter.Y + 10f > vector8.Y && adjustedCenter.Y < vector8.Y + 16f && Main.tile[num78, num79].HasUnactuatedTile && 
+                            (Main.tileSolid[(int)Main.tile[num78, num79].TileType] || Main.tile[num78, num79].TileType == 314) && (projectile.type != 403 || Main.tile[num78, num79].TileType == 314)) || platformRequirement)
                         {
                             if (Main.player[projectile.owner].grapCount < 10)
                             {
@@ -237,7 +238,7 @@ namespace InfernumMode.GlobalInstances
                                 }
                             }
                             WorldGen.KillTile(num78, num79, true, true, false);
-                            Main.PlaySound(0, num78 * 16, num79 * 16, 1, 1f, 0f);
+                            SoundEngine.PlaySound(0, num78 * 16, num79 * 16, 1, 1f, 0f);
                             projectile.velocity.X = 0f;
                             projectile.velocity.Y = 0f;
                             projectile.ai[0] = 2f;
@@ -364,7 +365,7 @@ namespace InfernumMode.GlobalInstances
                         Vector2 vector9;
                         vector9.X = (float)(num91 * 16);
                         vector9.Y = (float)(num92 * 16);
-                        if (projectile.position.X + (float)(projectile.width / 2) > vector9.X && projectile.position.X + (float)(projectile.width / 2) < vector9.X + 16f && projectile.position.Y + (float)(projectile.height / 2) > vector9.Y && projectile.position.Y + (float)(projectile.height / 2) < vector9.Y + 16f && Main.tile[num91, num92].nactive() && (Main.tileSolid[(int)Main.tile[num91, num92].type] || Main.tile[num91, num92].type == 314 || Main.tile[num91, num92].type == 5))
+                        if (projectile.position.X + (float)(projectile.width / 2) > vector9.X && projectile.position.X + (float)(projectile.width / 2) < vector9.X + 16f && projectile.position.Y + (float)(projectile.height / 2) > vector9.Y && projectile.position.Y + (float)(projectile.height / 2) < vector9.Y + 16f && Main.tile[num91, num92].HasUnactuatedTile && (Main.tileSolid[(int)Main.tile[num91, num92].TileType] || Main.tile[num91, num92].TileType == 314 || Main.tile[num91, num92].TileType == 5))
                         {
                             flag2 = false;
                         }
@@ -415,7 +416,7 @@ namespace InfernumMode.GlobalInstances
             if (InfernumMode.CanUseCustomAIs && projectile.type == ModContent.ProjectileType<HolyAura>())
             {
                 Texture2D texture = Main.projectileTexture[projectile.type];
-                float clampedTime = Main.GlobalTime % 5f / 5f;
+                float clampedTime = Main.GlobalTimeWrappedHourly % 5f / 5f;
                 Vector2 origin = texture.Size() / 2f;
                 Vector2 baseDrawPosition = projectile.Center - Main.screenPosition;
                 int totalAurasToDraw = 32;
@@ -427,7 +428,7 @@ namespace InfernumMode.GlobalInstances
                 float sizeScalar = (1f - sizeScale) / totalAurasToDraw;
                 float yPosOffset = 60f;
                 float xPosOffset = 400f;
-                Vector2 scale = new Vector2(8f, 6f);
+                Vector2 scale = new(8f, 6f);
 
                 for (int i = 0; i < totalAurasToDraw; i++)
                 {
@@ -456,7 +457,7 @@ namespace InfernumMode.GlobalInstances
 
                         color.A = (byte)MathHelper.Lerp(0, color.A, fadeCompletion);
                     }
-                    color *= Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
+                    color *= Utils.GetLerpValue(0f, 25f, projectile.timeLeft, true);
 
                     float rotation = MathHelper.PiOver2 + oscillatingTime * MathHelper.PiOver4 * -0.3f + MathHelper.Pi * i;
 
@@ -478,7 +479,7 @@ namespace InfernumMode.GlobalInstances
             {
                 if (projectile.owner == Main.myPlayer)
                 {
-                    Vector2 shootFromVector = new Vector2(projectile.Center.X, projectile.Center.Y);
+                    Vector2 shootFromVector = new(projectile.Center.X, projectile.Center.Y);
                     float spread = MathHelper.PiOver2;
                     float startAngle = projectile.velocity.ToRotation() - spread / 2;
                     float deltaAngle = spread / 4f;
@@ -490,7 +491,7 @@ namespace InfernumMode.GlobalInstances
                         Projectile.NewProjectile(shootFromVector, offsetAngle.ToRotationVector2() * -5f, ModContent.ProjectileType<HolyFire2>(), projectile.damage, 0f, Main.myPlayer);
                     }
                 }
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
                 int dustType = (int)CalamityDusts.ProfanedFire;
 
                 for (int i = 0; i < 6; i++)

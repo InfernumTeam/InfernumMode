@@ -12,38 +12,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
     {
         public const int Lifetime = 600;
         public const int AuraCount = 4;
-        public ref float Timer => ref projectile.ai[0];
+        public ref float Timer => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Vortex of Flame");
         }
         public override void SetDefaults()
         {
-            projectile.width = 408;
-            projectile.height = 408;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.alpha = 255;
-            projectile.timeLeft = Lifetime;
-            projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.width = 408;
+            Projectile.height = 408;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.alpha = 255;
+            Projectile.timeLeft = Lifetime;
+            Projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            projectile.rotation += MathHelper.ToRadians(14f);
-            projectile.Opacity = Utils.InverseLerp(0f, 40f, Timer, true) * Utils.InverseLerp(0f, 40f, projectile.timeLeft, true);
-            if (projectile.owner == Main.myPlayer)
+            Projectile.rotation += MathHelper.ToRadians(14f);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 40f, Timer, true) * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true);
+            if (Projectile.owner == Main.myPlayer)
             {
-                Player player = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+                Player player = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 
-                int shootRate = projectile.timeLeft < 250 ? 80 : 125;
-                if (Timer > 150f && Timer % shootRate == shootRate - 1f && projectile.timeLeft > 60f)
+                int shootRate = Projectile.timeLeft < 250 ? 80 : 125;
+                if (Timer > 150f && Timer % shootRate == shootRate - 1f && Projectile.timeLeft > 60f)
                 {
                     for (int i = 0; i < 4; i++)
                     {
                         float offsetAngle = MathHelper.TwoPi * i / 4f;
-                        Utilities.NewProjectileBetter(projectile.Center, projectile.SafeDirectionTo(player.Center).RotatedBy(offsetAngle) * 7f, ProjectileID.CultistBossFireBall, 560, 0f, Main.myPlayer);
+                        Utilities.NewProjectileBetter(Projectile.Center, Projectile.SafeDirectionTo(player.Center).RotatedBy(offsetAngle) * 7f, ProjectileID.CultistBossFireBall, 560, 0f, Main.myPlayer);
                     }
                 }
             }
@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 for (int i = 0; i < 200; i++)
                 {
-                    Dust dust = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(200f, 200f), DustID.Fire);
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(200f, 200f), DustID.Fire);
                     dust.velocity = Main.rand.NextVector2Circular(15f, 15f);
                     dust.fadeIn = 1.4f;
                     dust.scale = 1.6f;
@@ -71,20 +71,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 600);
         }
 
-        public override bool CanDamage() => Timer > 60f && projectile.timeLeft > 60f;
+        public override bool CanDamage() => Timer > 60f && Projectile.timeLeft > 60f;
 
         public override bool PreDrawExtras(SpriteBatch spriteBatch)
         {
             spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D texture = ModContent.GetTexture(Texture);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             for (int j = 0; j < 16f; j++)
             {
                 float angle = MathHelper.TwoPi / j * 16f;
                 Vector2 offset = angle.ToRotationVector2() * 32f;
-                Color drawColor = Color.White * projectile.Opacity * 0.08f;
+                Color drawColor = Color.White * Projectile.Opacity * 0.08f;
                 drawColor.A = 127;
-                spriteBatch.Draw(texture, projectile.Center + offset - Main.screenPosition, null, drawColor, projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, Projectile.Center + offset - Main.screenPosition, null, drawColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             }
 
             spriteBatch.ResetBlendState();

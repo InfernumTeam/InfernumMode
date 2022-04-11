@@ -24,7 +24,7 @@ namespace InfernumMode.ILEditingStuff
     {
         public static void MakeGolemRoomInvariable(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(106)))
                 return;
@@ -47,7 +47,7 @@ namespace InfernumMode.ILEditingStuff
     {
         public static void ChangeExoMechIsActiveDefinition(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             cursor.EmitDelegate<Func<bool>>(() =>
             {
@@ -75,11 +75,11 @@ namespace InfernumMode.ILEditingStuff
 
     public class DrawBlackEffectHook : IHookEdit
     {
-        public static List<int> DrawCacheProjsOverSignusBlackening = new List<int>(Main.maxProjectiles);
-        public static List<int> DrawCacheAdditiveLighting = new List<int>(Main.maxProjectiles);
+        public static List<int> DrawCacheProjsOverSignusBlackening = new(Main.maxProjectiles);
+        public static List<int> DrawCacheAdditiveLighting = new(Main.maxProjectiles);
         internal static void DrawBlackout(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<MoonlordDeathDrama>("DrawWhite")))
                 return;
@@ -208,9 +208,9 @@ namespace InfernumMode.ILEditingStuff
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uZoomMatrix"].SetValue(zoomMatrix);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseColor(Color.Gray);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseSecondaryColor(Color.Turquoise);
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"));
+                GameShaders.Misc["Infernum:MoonLordBGDistortion"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap").Value);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Apply();
-                Vector2 hell = new Vector2(Main.screenWidth * (Main.GameViewMatrix.Zoom.X - 1f), Main.screenHeight * (Main.GameViewMatrix.Zoom.Y - 1f));
+                Vector2 hell = new(Main.screenWidth * (Main.GameViewMatrix.Zoom.X - 1f), Main.screenHeight * (Main.GameViewMatrix.Zoom.Y - 1f));
                 Main.spriteBatch.Draw(Main.magicPixel, hell * -0.5f, null, Color.White, 0f, Vector2.Zero, scale, 0, 0f);
 
                 Main.spriteBatch.End();

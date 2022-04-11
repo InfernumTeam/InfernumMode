@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
@@ -214,8 +215,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (lifeRatio < Phase2LifeRatioThreshold && phase2Timer < Phase2TransitionTime)
             {
                 phase2Timer++;
-                phase2TransitionSpin = Utils.InverseLerp(0f, Phase2TransitionTime / 2f, phase2Timer, true);
-                phase2TransitionSpin *= Utils.InverseLerp(Phase2TransitionTime, Phase2TransitionTime / 2f, phase2Timer, true);
+                phase2TransitionSpin = Utils.GetLerpValue(0f, Phase2TransitionTime / 2f, phase2Timer, true);
+                phase2TransitionSpin *= Utils.GetLerpValue(Phase2TransitionTime, Phase2TransitionTime / 2f, phase2Timer, true);
                 phase2TransitionSpin *= 0.4f;
 
                 CurrentAttackState = TwinsAttackState.ChargeRedirect;
@@ -227,7 +228,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 // Go to phase 2 and explode into metal, blood, and gore.
                 if (phase2Timer == (int)(Phase2TransitionTime / 2))
                 {
-                    Main.PlaySound(SoundID.NPCHit1, (int)npc.position.X, (int)npc.position.Y);
+                    SoundEngine.PlaySound(SoundID.NPCHit1, (int)npc.position.X, (int)npc.position.Y);
 
                     for (int i = 0; i < 2; i++)
                     {
@@ -239,7 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     for (int i = 0; i < 20; i++)
                         Dust.NewDust(npc.position, npc.width, npc.height, 5, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 0, default, 1f);
 
-                    Main.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
+                    SoundEngine.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
                 }
 
                 chargeFlameTimer = 0f;
@@ -450,7 +451,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 npc.velocity = npc.SafeDirectionTo(Target.Center) * chargeSpeed;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
-                Main.PlaySound(SoundID.Roar, npc.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
             }
             if (UniversalAttackTimer > chargeDelay)
                 npc.velocity *= 1.007f;
@@ -507,7 +508,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                     npc.netUpdate = true;
 
-                    Main.PlaySound(SoundID.Roar, npc.Center, 0);
+                    SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
                 }
             }
             else if (willCharge)
@@ -521,7 +522,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             int spinSlowdownTime = 35;
             int reelbackTime = 30;
             int chargeTime = 55;
-            float spinSlowdownInterpolant = Utils.InverseLerp(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, UniversalAttackTimer, true);
+            float spinSlowdownInterpolant = Utils.GetLerpValue(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, UniversalAttackTimer, true);
             float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.5f), MathHelper.ToRadians(3f), 1f - CombinedLifeRatio);
             ref float spinRotation = ref npc.ai[0];
             ref float spinDirection = ref npc.ai[1];
@@ -599,7 +600,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                 npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * 6f) * chargeSpeed;
                 npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
-                Main.PlaySound(SoundID.Roar, npc.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
             }
 
             if (UniversalAttackTimer >= redirectTime + spinTime + reelbackTime && UniversalAttackTimer < redirectTime + spinTime + reelbackTime + chargeTime)
@@ -671,7 +672,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     npc.noTileCollide = false;
 
                     if (chargingTime == 0f)
-                        Main.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
+                        SoundEngine.PlaySound(SoundID.ForceRoar, (int)npc.Center.X, (int)npc.Center.Y, -1, 1f, 0f);
                     chargingTime++;
                 }
                 else if (chargingTime == 0f)
@@ -690,7 +691,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     npc.damage += 35;
 
                     Tile tile = CalamityUtils.ParanoidTileRetrieval((int)npc.Center.X / 16, (int)npc.Center.Y / 16);
-                    bool platformFuck = (TileID.Sets.Platforms[tile.type] || Main.tileSolidTop[tile.type]) && tile.nactive() && npc.Center.Y > Target.Center.Y;
+                    bool platformFuck = (TileID.Sets.Platforms[tile.TileType] || Main.tileSolidTop[tile.TileType]) && tile.HasUnactuatedTile && npc.Center.Y > Target.Center.Y;
                     if (platformFuck || Collision.SolidCollision(npc.position, npc.width, npc.height) || npc.Center.Y > Target.Center.Y + 800f)
                     {
                         chargingTime = 0f;
@@ -766,7 +767,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             ref float lightningAttackTimer = ref npc.Infernum().ExtraAI[12];
             ref float burstCounter = ref npc.Infernum().ExtraAI[13];
 
-            int lightningShootRate = (int)MathHelper.Lerp(300, 150, Utils.InverseLerp(0.5f, 0.1f, lifeRatio));
+            int lightningShootRate = (int)MathHelper.Lerp(300, 150, Utils.GetLerpValue(0.5f, 0.1f, lifeRatio));
             if (Main.netMode != NetmodeID.MultiplayerClient && lightningAttackTimer >= lightningShootRate)
             {
                 Utilities.NewProjectileBetter(Target.Center + new Vector2(Main.rand.NextFloat(600f, 960f) * Math.Sign(Target.velocity.X), -1400f), Vector2.UnitY, ModContent.ProjectileType<LightningTelegraph>(), 0, 0f);
@@ -778,7 +779,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             switch ((RetinazerAttackState)(int)attackState)
             {
                 case RetinazerAttackState.LaserBurstHover:
-                    List<Vector2> potentialDestinations = new List<Vector2>()
+                    List<Vector2> potentialDestinations = new()
                     {
                         Target.Center + Vector2.UnitX * -600f,
                         Target.Center + Vector2.UnitX * 600f,
@@ -882,7 +883,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     if (attackTimer >= 240f && attackTimer <= 270f)
                     {
-                        npc.Opacity = Utils.InverseLerp(240f, 270f, attackTimer, true);
+                        npc.Opacity = Utils.GetLerpValue(240f, 270f, attackTimer, true);
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                     }
                     if (attackTimer == 270f)
@@ -898,7 +899,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         chargingFlag = 1f;
                         if (attackTimer < 400f && attackTimer % 20f == 19f && npc.velocity.Length() > 13f)
                         {
-                            Main.PlaySound(SoundID.Item33, npc.Center);
+                            SoundEngine.PlaySound(SoundID.Item33, npc.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                                 Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY * -9f, ModContent.ProjectileType<ScavengerLaser>(), 145, 0f);
                         }
@@ -935,7 +936,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             ref float fireballShootTimer = ref npc.Infernum().ExtraAI[12];
             ref float orbResummonTimer = ref npc.Infernum().ExtraAI[16];
 
-            int fireballShootRate = (int)MathHelper.Lerp(300, 120, Utils.InverseLerp(0.5f, 0.1f, lifeRatio));
+            int fireballShootRate = (int)MathHelper.Lerp(300, 120, Utils.GetLerpValue(0.5f, 0.1f, lifeRatio));
             if (Main.netMode != NetmodeID.MultiplayerClient && fireballShootTimer >= fireballShootRate)
             {
                 Utilities.NewProjectileBetter(Target.Center - Vector2.UnitX * 1300f, Vector2.UnitX * 11f, ModContent.ProjectileType<CursedFlameBurstTelegraph>(), 0, 0f);
@@ -1002,7 +1003,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     // Charge.
                     if (attackTimer == hoverTime + chargeDelayTime)
                     {
-                        Vector2 chargeDestination = new Vector2(chargeDestinationX, chargeDestinationY);
+                        Vector2 chargeDestination = new(chargeDestinationX, chargeDestinationY);
                         npc.velocity = npc.SafeDirectionTo(chargeDestination);
                         npc.velocity *= 18f + npc.Distance(Target.Center) * 0.01f;
                         if (BossRushEvent.BossRushActive)
@@ -1012,7 +1013,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         npc.netUpdate = true;
 
                         // Roar.
-                        Main.PlaySound(SoundID.Roar, (int)Target.Center.X, (int)Target.Center.Y, 0);
+                        SoundEngine.PlaySound(SoundID.Roar, (int)Target.Center.X, (int)Target.Center.Y, 0);
                     }
 
                     // And slow down.
@@ -1032,8 +1033,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                 }
                             }
 
-                            Main.PlaySound(SoundID.Roar, (int)Target.Center.X, (int)Target.Center.Y, 0);
-                            Main.PlaySound(SoundID.DD2_FlameburstTowerShot, Target.Center);
+                            SoundEngine.PlaySound(SoundID.Roar, (int)Target.Center.X, (int)Target.Center.Y, 0);
+                            SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, Target.Center);
                         }
 
                         npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(Target.Center) - MathHelper.PiOver2, 0.15f);
@@ -1121,7 +1122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                                     }
                                 }
 
-                                Main.PlaySound(SoundID.DD2_BetsyFireballShot, Target.Center);
+                                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Target.Center);
                             }
                         }
                     }
@@ -1174,7 +1175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                         // Roar and begin carpet bombing.
-                        Main.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
+                        SoundEngine.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
                     }
 
                     if (attackTimer > redirectTime)
@@ -1188,7 +1189,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             Vector2 shootVelocity = npc.velocity.SafeNormalize((npc.rotation + MathHelper.PiOver2).ToRotationVector2()) * carpetBombSpeed;
                             Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<CursedBomb>(), 145, 0f);
                         }
-                        Main.PlaySound(SoundID.DD2_BetsyFireballShot, Target.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Target.Center);
                     }
 
                     if (attackTimer > redirectTime + carpetBombTime)

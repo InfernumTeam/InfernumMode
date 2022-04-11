@@ -11,6 +11,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using GreatSandSharkNPC = CalamityMod.NPCs.GreatSandShark.GreatSandShark;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
@@ -50,8 +52,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.LifeMaxNERB(141466, 141466);
             npc.lifeMax /= 2;
             npc.aiStyle = -1;
-            npc.modNPC.aiType = -1;
-            npc.modNPC.music = MusicID.Boss5;
+            npc.ModNPC.aiType = -1;
+            npc.ModNPC.music = MusicID.Boss5;
             npc.knockBackResist = 0f;
             npc.value = Item.buyPrice(0, 40, 0, 0);
             for (int k = 0; k < npc.buffImmune.Length; k++)
@@ -82,8 +84,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.timeLeft = NPC.activeTime * 30;
-            npc.modNPC.banner = npc.type;
-            npc.modNPC.bannerItem = ModContent.ItemType<GreatSandSharkBanner>();
+            npc.ModNPC.banner = npc.type;
+            npc.ModNPC.bannerItem = ModContent.ItemType<GreatSandSharkBanner>();
             npc.Calamity().canBreakPlayerDefense = true;
         }
 
@@ -249,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     }
 
                     // Roar.
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GreatSandSharkRoar"), npc.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/GreatSandSharkRoar"), npc.Center);
 
                     npc.netUpdate = true;
                 }
@@ -373,7 +375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                 if (attackTimer >= hoverTime)
                 {
                     // Roar.
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GreatSandSharkRoar"), npc.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/GreatSandSharkRoar"), npc.Center);
 
                     attackTimer = 0f;
                     chargeState = 1f;
@@ -480,7 +482,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             DefaultJumpMovement(npc, ref target, swimAcceleration, swimAcceleration * 30f, ref verticalSwimDirection);
 
             if (attackTimer == 25f)
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DesertScourgeRoar"), target.Center);
 
             // Summon sand sharks.
             if (attackTimer % sharkSummonRate == sharkSummonRate - 1f && attackTimer < 320f)
@@ -525,7 +527,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 
                 Point aheadTilePosition = (npc.Center + npc.velocity.SafeNormalize(Vector2.Zero) * npc.Size.Length() * 0.5f + npc.velocity).ToTileCoordinates();
                 Tile aheadTile = CalamityUtils.ParanoidTileRetrieval(aheadTilePosition.X, aheadTilePosition.Y);
-                bool aheadTileIsSolid = aheadTile.nactive();
+                bool aheadTileIsSolid = aheadTile.HasUnactuatedTile;
 
                 // Charge at the target if doing so would lead to exiting tiles and it'd be in the same direction as the current velocity.
                 if (!aheadTileIsSolid && Math.Sign(npc.velocity.X) == npc.direction)
@@ -636,13 +638,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             if (npc.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Color topLeftLight = Lighting.GetColor((int)npc.TopLeft.X / 16, (int)npc.TopLeft.Y / 16);
             Color topRightLight = Lighting.GetColor((int)npc.TopRight.X / 16, (int)npc.TopRight.Y / 16);
             Color bottomLeftLight = Lighting.GetColor((int)npc.BottomLeft.X / 16, (int)npc.BottomLeft.Y / 16);
             Color bottomRightLight = Lighting.GetColor((int)npc.BottomRight.X / 16, (int)npc.BottomRight.Y / 16);
             Vector4 averageLight = (topLeftLight.ToVector4() + topRightLight.ToVector4() + bottomLeftLight.ToVector4() + bottomRightLight.ToVector4()) * 0.25f;
-            Color averageColor = new Color(averageLight);
+            Color averageColor = new(averageLight);
             Vector2 origin = npc.frame.Size() * 0.5f;
 
             if (CalamityConfig.Instance.Afterimages)

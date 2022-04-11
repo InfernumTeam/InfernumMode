@@ -8,7 +8,7 @@ using Terraria.GameContent.Generation;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 
 using ModInstance = InfernumMode.InfernumMode;
 
@@ -65,7 +65,7 @@ namespace InfernumMode
         #region NetSend
         public override void NetSend(BinaryWriter writer)
         {
-            BitsByte flags = new BitsByte();
+            BitsByte flags = new();
             flags[0] = InfernumMode;
             writer.Write(flags);
             writer.Write(DraedonAttempts);

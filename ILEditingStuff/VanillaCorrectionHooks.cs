@@ -10,6 +10,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
+using Terraria.Audio;
 
 namespace InfernumMode.ILEditingStuff
 {
@@ -59,7 +60,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void AdjustFishronScreenDistanceRequirement(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.GotoNext(i => i.MatchLdcR4(3000f));
             cursor.Remove();
             cursor.Emit(OpCodes.Ldc_R4, 6000f);
@@ -87,7 +88,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void EarlyReturn(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ret);
         }
 
@@ -110,11 +111,11 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void GetRidOfDesertNuisances(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate<Action<Player>>(player =>
             {
-                Main.PlaySound(SoundID.Roar, player.position, 0);
+                SoundEngine.PlaySound(SoundID.Roar, player.position, 0);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DesertScourgeHead>());
                 else
@@ -133,7 +134,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void LetAresHitPlayer(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);
         }

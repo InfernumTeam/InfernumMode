@@ -6,32 +6,32 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 {
     public class DraconicBurst : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Draconic Burst");
 
         public override void SetDefaults()
         {
-            projectile.width = 16;
-            projectile.height = 42;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 300;
+            Projectile.width = 16;
+            Projectile.height = 42;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 300;
         }
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(0f, 12f, Time, true) * Utils.InverseLerp(0f, 12f, projectile.timeLeft);
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Time, true) * Utils.GetLerpValue(0f, 12f, Projectile.timeLeft);
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Time++;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size());
+            return Projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size());
         }
 
-        public override bool CanDamage() => projectile.Opacity >= 0.4f;
+        public override bool CanDamage() => Projectile.Opacity >= 0.4f;
     }
 }

@@ -68,12 +68,12 @@ namespace InfernumMode.Skies
             spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < 135; i++)
             {
-                Texture2D gasTexture = ModContent.GetTexture($"InfernumMode/ExtraTextures/NebulaGas{(i % 2 == 0 ? "1" : "2")}");
+                Texture2D gasTexture = ModContent.Request<Texture2D>($"InfernumMode/ExtraTextures/NebulaGas{(i % 2 == 0 ? "1" : "2").Value}");
                 Vector2 drawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
-                float drawOutwardness = Utils.InverseLerp(0.45f, 1.1f, i % 18f / 18f) * Utils.InverseLerp(0f, 180f, nebulaTimer, true);
+                float drawOutwardness = Utils.GetLerpValue(0.45f, 1.1f, i % 18f / 18f) * Utils.GetLerpValue(0f, 180f, nebulaTimer, true);
                 drawPosition += (MathHelper.TwoPi * 7f * i / 75f).ToRotationVector2() * MathHelper.Max(Main.screenWidth, Main.screenHeight) * drawOutwardness;
                 float rotation = MathHelper.TwoPi * (drawOutwardness + i % 18f / 18f);
-                float scale = Utils.InverseLerp(0.8f, 1.15f, i % 15f / 15f) * Utils.InverseLerp(-40f, 130f, nebulaTimer, true);
+                float scale = Utils.GetLerpValue(0.8f, 1.15f, i % 15f / 15f) * Utils.GetLerpValue(-40f, 130f, nebulaTimer, true);
                 Color drawColor = CalamityUtils.MulticolorLerp(i / 29f % 0.999f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * nebulaIntensity * 0.28f;
 
                 spriteBatch.Draw(gasTexture, drawPosition, null, drawColor, rotation, gasTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
@@ -97,8 +97,8 @@ namespace InfernumMode.Skies
                 return;
 
             Vector2 drawOffset = Main.screenPosition + new Vector2(Main.screenWidth >> 1, Main.screenHeight >> 1);
-            Rectangle rectangle = new Rectangle(-1000, -1000, 4000, 4000);
-            Texture2D starTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/Gleam");
+            Rectangle rectangle = new(-1000, -1000, 4000, 4000);
+            Texture2D starTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Gleam").Value;
             for (int j = startingDrawIndex; j < endingDrawIndex; j++)
             {
                 // Draw less stars if the background is disabled, to prevent too much visual distraction.
@@ -110,8 +110,8 @@ namespace InfernumMode.Skies
                 if (rectangle.Contains((int)drawPosition.X, (int)drawPosition.Y))
                 {
                     // Handle alpha pulsing. This is what allows the stars to appear, disappear, and reappear.
-                    float opacity = (float)Math.Sin((Stars[j].AlphaFrequency * Main.GlobalTime + Stars[j].AlphaPhaseShift) * Stars[j].AlphaAmplitude + Stars[j].AlphaAmplitude);
-                    float minorFade = (float)Math.Sin(Stars[j].AlphaFrequency * Main.GlobalTime * 5f + Stars[j].AlphaPhaseShift) * 0.1f - 0.1f;
+                    float opacity = (float)Math.Sin((Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly + Stars[j].AlphaPhaseShift) * Stars[j].AlphaAmplitude + Stars[j].AlphaAmplitude);
+                    float minorFade = (float)Math.Sin(Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly * 5f + Stars[j].AlphaPhaseShift) * 0.1f - 0.1f;
                     minorFade = MathHelper.Clamp(minorFade, 0f, 1f);
                     opacity = MathHelper.Clamp(opacity, 0f, 1f);
 

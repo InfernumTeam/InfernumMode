@@ -11,6 +11,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
@@ -238,7 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             if (newAttackState == DragonfollyAttackType.OrdinaryCharge)
             {
-                int chargeOverrideRate = (int)Math.Round(MathHelper.Lerp(8, 3, Utils.InverseLerp(0.25f, 0.05f, npc.life / (float)npc.lifeMax)));
+                int chargeOverrideRate = (int)Math.Round(MathHelper.Lerp(8, 3, Utils.GetLerpValue(0.25f, 0.05f, npc.life / (float)npc.lifeMax)));
                 chargeCounter++;
                 if (npc.life < npc.lifeMax * 0.25f && chargeCounter > chargeOverrideRate)
                 {
@@ -276,7 +278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             if (attackTimer <= 45f)
             {
-                npc.Opacity = Utils.InverseLerp(25f, 45f, attackTimer, true);
+                npc.Opacity = Utils.GetLerpValue(25f, 45f, attackTimer, true);
                 npc.Center = Vector2.SmoothStep(npc.Center, target.Center - Vector2.UnitY * 1350f, (float)Math.Pow(attackTimer / 45f, 3D));
                 npc.spriteDirection = (npc.Center.X - target.Center.X < 0).ToDirectionInt();
                 flapRate = 7;
@@ -430,7 +432,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     npc.netUpdate = true;
 
                     // Make a diving sound.
-                    Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
 
                     // Release some feathers into the air.
                     for (int i = 0; i < Main.rand.Next(4, 8 + 1); i++)
@@ -445,7 +447,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     // If in phase 2 and doing a lightning attack, release an aura from the mouth that goes towards the player.
                     if (chargeType == DragonfollyAttackType.ThunderCharge && phase2)
                     {
-                        SoundEffectInstance sound = Main.PlaySound(SoundID.DD2_BetsyScream, npc.Center);
+                        SoundEffectInstance sound = SoundEngine.PlaySound(SoundID.DD2_BetsyScream, npc.Center);
                         if (sound != null)
                             sound.Pitch = 0.25f;
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -505,7 +507,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     if (npc.alpha < 255)
                     {
                         // Turn red as a telegraph for a short moment.
-                        fadeToRed = (float)Math.Sin(Utils.InverseLerp(0f, 10f, attackTimer, true) * MathHelper.Pi);
+                        fadeToRed = (float)Math.Sin(Utils.GetLerpValue(0f, 10f, attackTimer, true) * MathHelper.Pi);
 
                         npc.alpha = Utils.Clamp(npc.alpha + 14, 0, 255);
                         if (npc.Hitbox.Intersects(target.Hitbox))
@@ -643,7 +645,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             if (attackTimer == shootDelay)
             {
-                Main.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -748,7 +750,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     npc.netUpdate = true;
 
                     // Make a diving sound.
-                    Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
                 }
             }
         }
@@ -865,7 +867,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     npc.netUpdate = true;
 
                     // Make a diving sound.
-                    Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
                 }
             }
 
@@ -896,7 +898,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
                 if (attackTimer >= 120f)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
                     SelectNextAttack(npc);
                 }
             }
@@ -945,7 +947,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         npc.frame.Y = frameHeight * 5;
                         if (scremTimer == ScreamSoundDelay)
                         {
-                            SoundEffectInstance sound = Main.PlaySound(SoundID.DD2_BetsyScream, npc.Center);
+                            SoundEffectInstance sound = SoundEngine.PlaySound(SoundID.DD2_BetsyScream, npc.Center);
                             if (sound != null)
                                 sound.Pitch = 0.25f;
                         }
@@ -958,7 +960,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         {
             float fadeToRed = npc.localAI[2];
             float phaseTransitionCountdown = npc.Infernum().ExtraAI[6];
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             int drawInstances = (int)MathHelper.Lerp(1f, 4f, fadeToRed);
             Color drawColor = Color.Lerp(lightColor, Color.Red * 0.9f, fadeToRed);
             drawColor *= MathHelper.Lerp(1f, 0.4f, fadeToRed);
@@ -994,7 +996,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     Vector2 drawPosition = baseDrawPosition - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
                     if (fadeToRed > 0.4f)
-                        drawPosition += (MathHelper.TwoPi * i / drawInstances + Main.GlobalTime * 5f).ToRotationVector2() * 5f;
+                        drawPosition += (MathHelper.TwoPi * i / drawInstances + Main.GlobalTimeWrappedHourly * 5f).ToRotationVector2() * 5f;
                     spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(drawColor) * opacity, npc.rotation, origin, scale, spriteEffects, 0f);
                 }
             }

@@ -5,6 +5,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
@@ -91,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     // Fire the laser. This doesn't happen if extremely close to players, to prevent cheap hits.
                     if (wallAttackTimer % laserShootRate == laserShootRate - 1f && !npc.WithinRange(target.Center, 115f) && npc.WithinRange(hoverDestination, 105f))
                     {
-                        Main.PlaySound(SoundID.Item12, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item12, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int laser = Utilities.NewProjectileBetter(laserShootPosition, laserShootVelocity, ProjectileID.ScutlixLaser, 105, 0f);
@@ -107,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 {
                     if (wallAttackTimer % 28f == 27f && npc.WithinRange(hoverDestination, 80f) && wallAttackTimer % 1200f > 680f)
                     {
-                        Main.PlaySound(SoundID.Item12, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item12, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float laserShootSpeed = 8.5f;
@@ -164,20 +166,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             // Don't draw any chains once free.
             if (npc.Infernum().ExtraAI[2] == 1f)
             {
-                Texture2D texture = Main.npcTexture[npc.type];
+                Texture2D texture = TextureAssets.Npc[npc.type].Value;
                 Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
                 Vector2 origin = npc.frame.Size() * 0.5f;
                 spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, 0, 0f);
                 return false;
             }
 
-            if (Main.wof == -1)
+            if (Main.wofNPCIndex == -1)
                 return false;
 
-            float yStart = MathHelper.Lerp(Main.wofB, Main.wofT, verticalOffsetFactor);
-            Vector2 start = new Vector2(Main.npc[Main.wof].Center.X, yStart);
+            float yStart = MathHelper.Lerp(Main.wofDrawAreaBottom, Main.wofDrawAreaTop, verticalOffsetFactor);
+            Vector2 start = new(Main.npc[Main.wofNPCIndex].Center.X, yStart);
 
-            Texture2D fleshRopeTexture = Main.chain12Texture;
+            Texture2D fleshRopeTexture = TextureAssets.Chain12.Value;
             void drawChainFrom(Vector2 startingPosition)
             {
                 Vector2 drawPosition = startingPosition;

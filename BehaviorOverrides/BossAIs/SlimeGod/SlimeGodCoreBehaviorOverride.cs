@@ -292,7 +292,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 Vector2 destination = target.Center + spinAngleOffset.ToRotationVector2() * 360f;
                 npc.Center = npc.Center.MoveTowards(destination, 32f);
 
-                spinAngleOffset += MathHelper.TwoPi * Utils.InverseLerp(170f, 150f, attackTimer, true) / 90f;
+                spinAngleOffset += MathHelper.TwoPi * Utils.GetLerpValue(170f, 150f, attackTimer, true) / 90f;
                 npc.rotation += spinAngleOffset * 0.3f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 16f == 15f)
@@ -339,7 +339,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 Vector2 destination = target.Center + spinAngleOffset.ToRotationVector2() * 480f;
                 npc.Center = npc.Center.MoveTowards(destination, 32f);
 
-                spinAngleOffset += MathHelper.TwoPi * Utils.InverseLerp(170f, 150f, attackTimer, true) / 90f;
+                spinAngleOffset += MathHelper.TwoPi * Utils.GetLerpValue(170f, 150f, attackTimer, true) / 90f;
                 npc.rotation += spinAngleOffset * 0.3f;
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 15f == 14f)
@@ -564,7 +564,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             float oldLocalState = npc.ai[0];
             bool anyBigBois = NPC.AnyNPCs(ModContent.NPCType<CrimulanSGBig>()) || NPC.AnyNPCs(ModContent.NPCType<CrimulanSGSmall>()) || NPC.AnyNPCs(ModContent.NPCType<EbonianSGBig>()) || NPC.AnyNPCs(ModContent.NPCType<EbonianSGSmall>());
 
-            WeightedRandom<float> newStatePicker = new WeightedRandom<float>(Main.rand);
+            WeightedRandom<float> newStatePicker = new(Main.rand);
             newStatePicker.Add(anyBigBois ? (int)SlimeGodCoreAttackType.HoverAndFireAbyssBalls : (int)SlimeGodCoreAttackType.FastHover, 1f);
             newStatePicker.Add(anyBigBois ? (int)SlimeGodCoreAttackType.SlowVerticalCharge : (int)SlimeGodCoreAttackType.FastVerticalCharge, 1f);
             newStatePicker.Add(anyBigBois ? (int)SlimeGodCoreAttackType.SlowHorizontalCharge : (int)SlimeGodCoreAttackType.FastHorizontalCharge, 1f);

@@ -6,6 +6,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -72,8 +73,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             int currentFrame = 0;
             float frameUpdateSpeed = npc.ai[0] == (int)SupremeCatastropheAttackState.SliceTarget ? 260f : 130f;
-            float slashCounter = Main.GlobalTime * frameUpdateSpeed % 120f;
-            float slashInterpolant = Utils.InverseLerp(0f, 120f, slashCounter, true);
+            float slashCounter = Main.GlobalTimeWrappedHourly * frameUpdateSpeed % 120f;
+            float slashInterpolant = Utils.GetLerpValue(0f, 120f, slashCounter, true);
             if (npc.localAI[0] < 120f)
             {
                 npc.frameCounter += 0.15f;
@@ -136,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Charge at the target after slowing down.
                     if (attackTimer >= 85f)
                     {
-                        Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor, -Vector2.UnitY) * chargeSpeed;
                         npc.rotation = npc.velocity.X * 0.01f;
                         npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
@@ -236,7 +237,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 if (burstAdjustedTime == 1f)
                 {
                     // Play a firing sound.
-                    Main.PlaySound(SoundID.DD2_FlameburstTowerShot, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_FlameburstTowerShot, npc.Center);
 
                     // And shoot the projectile serverside.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -311,7 +312,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (attackTimer % shootRate == shootRate - 1f)
             {
-                Main.PlaySound(SoundID.Item73, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item73, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 shootVelocity = Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * 16f;

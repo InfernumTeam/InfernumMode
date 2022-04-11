@@ -12,7 +12,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 {
@@ -108,9 +109,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
                 if (calamityModMusic != null)
-                    npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/AquaticScourge");
+                    npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/AquaticScourge");
                 else
-                    npc.modNPC.music = MusicID.Boss2;
+                    npc.ModNPC.music = MusicID.Boss2;
                 float wrappedTime = generalTimer % 1040f;
                 if (wrappedTime < 360f)
                 {
@@ -186,8 +187,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (!npc.WithinRange(target.Center, 380f) && attackTimer % shootRate == shootRate - 1f)
             {
-                Main.PlaySound(SoundID.DD2_SkyDragonsFuryShot, npc.Center);
-                Main.PlaySound(SoundID.NPCDeath13, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFuryShot, npc.Center);
+                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 11; i++)
@@ -216,7 +217,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (!npc.WithinRange(target.Center, 250f) && attackTimer % shootRate == shootRate - 1f)
             {
-                Main.PlaySound(SoundID.NPCDeath13, npc.Center);
+                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 3; i++)
@@ -248,7 +249,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
             if (!npc.WithinRange(target.Center, 345f) && attackTimer % shootRate == shootRate - 1f)
             {
-                Main.PlaySound(SoundID.NPCDeath13, npc.Center);
+                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 24; i++)
@@ -274,10 +275,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static void DoAttack_BelchParasites(NPC npc, float attackTimer, ref float speedFactor)
         {
-            speedFactor *= MathHelper.Lerp(1f, 0.25f, Utils.InverseLerp(10f, 90f, attackTimer, true));
+            speedFactor *= MathHelper.Lerp(1f, 0.25f, Utils.GetLerpValue(10f, 90f, attackTimer, true));
             if (attackTimer == 135f)
             {
-                Main.PlaySound(SoundID.NPCDeath13, npc.Center);
+                SoundEngine.PlaySound(SoundID.NPCDeath13, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 4; i++)
@@ -299,13 +300,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public static void DoAttack_BubbleSummon(NPC npc, Player target, float attackTimer, float enrageFactor, ref float speedFactor)
         {
-            speedFactor *= MathHelper.Lerp(1f, 0.667f, Utils.InverseLerp(10f, 70f, attackTimer, true));
+            speedFactor *= MathHelper.Lerp(1f, 0.667f, Utils.GetLerpValue(10f, 70f, attackTimer, true));
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 8f == 7f)
             {
-                List<Vector2> potentialSpawnPoints = new List<Vector2>();
+                List<Vector2> potentialSpawnPoints = new();
                 for (int i = -120; i < 120; i++)
                 {
-                    Point waterPosition = new Point((int)(target.Center.X / 16 + i), (int)target.Center.Y / 16 - 50);
+                    Point waterPosition = new((int)(target.Center.X / 16 + i), (int)target.Center.Y / 16 - 50);
                     if (WorldUtils.Find(waterPosition, Searches.Chain(new Searches.Down(8000), new CustomTileConditions.IsWater()), out Point updatedWaterPosition))
                         potentialSpawnPoints.Add(updatedWaterPosition.ToWorldCoordinates());
                 }
@@ -326,17 +327,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             int summonRate = 90;
             int summonCount = 3;
 
-            speedFactor *= MathHelper.Lerp(1f, 0.5f, Utils.InverseLerp(10f, 50f, attackTimer, true));
+            speedFactor *= MathHelper.Lerp(1f, 0.5f, Utils.GetLerpValue(10f, 50f, attackTimer, true));
 
             if (attackTimer == 75f)
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/MaulerRoar"), npc.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/MaulerRoar"), npc.Center);
 
             if (attackTimer % summonRate == summonRate - 1f)
             {
-                List<Vector2> potentialSpawnPoints = new List<Vector2>();
+                List<Vector2> potentialSpawnPoints = new();
                 for (int i = -120; i < 120; i++)
                 {
-                    Point waterPosition = new Point((int)(target.Center.X / 16 + i), (int)target.Center.Y / 16);
+                    Point waterPosition = new((int)(target.Center.X / 16 + i), (int)target.Center.Y / 16);
                     if (WorldUtils.Find(waterPosition, Searches.Chain(new Searches.Down(8000), new CustomTileConditions.IsWater()), out Point updatedWaterPosition))
                         potentialSpawnPoints.Add(updatedWaterPosition.ToWorldCoordinates(8f, 36f));
                 }
@@ -378,7 +379,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                     flyDestination.Y = worldCoordinatesResult.Y + 25f;
             }
 
-            float movementSpeed = MathHelper.Lerp(5f, 8.5f, Utils.InverseLerp(300f, 750f, npc.Distance(flyDestination), true));
+            float movementSpeed = MathHelper.Lerp(5f, 8.5f, Utils.GetLerpValue(300f, 750f, npc.Distance(flyDestination), true));
             npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(flyDestination), movementSpeed / 300f, true) * movementSpeed;
         }
 
@@ -386,10 +387,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealRotation = npc.AngleTo(target.Center);
-            float acceleration = MathHelper.Lerp(0.023f, 0.0285f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
-            float movementSpeed = MathHelper.Lerp(10.5f, 14f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
-            movementSpeed += MathHelper.Lerp(0f, 15f, Utils.InverseLerp(420f, 3000f, npc.Distance(target.Center), true));
-            idealRotation += (float)Math.Sin(generalTimer / 43f) * Utils.InverseLerp(360f, 425f, npc.Distance(target.Center), true) * 0.74f;
+            float acceleration = MathHelper.Lerp(0.023f, 0.0285f, Utils.GetLerpValue(1f, 0.15f, lifeRatio, true));
+            float movementSpeed = MathHelper.Lerp(10.5f, 14f, Utils.GetLerpValue(1f, 0.15f, lifeRatio, true));
+            movementSpeed += MathHelper.Lerp(0f, 15f, Utils.GetLerpValue(420f, 3000f, npc.Distance(target.Center), true));
+            idealRotation += (float)Math.Sin(generalTimer / 43f) * Utils.GetLerpValue(360f, 425f, npc.Distance(target.Center), true) * 0.74f;
             movementSpeed *= speedFactor;
 
             ref float roarSoundCountdown = ref npc.localAI[0];
@@ -408,7 +409,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             {
                 if (roarSoundCountdown <= 0f)
                 {
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), npc.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DesertScourgeRoar"), npc.Center);
                     roarSoundCountdown = 45f;
                 }
                 npc.velocity *= 1.031f;
@@ -420,9 +421,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             AquaticScourgeAttackType attackType = (AquaticScourgeAttackType)(int)npc.ai[2];
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float idealRotation = npc.AngleTo(target.Center);
-            float acceleration = MathHelper.Lerp(0.019f, 0.0265f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
-            float movementSpeed = MathHelper.Lerp(12.25f, 14.25f, Utils.InverseLerp(1f, 0.15f, lifeRatio, true));
-            movementSpeed += MathHelper.Lerp(0f, 15f, Utils.InverseLerp(420f, 3000f, npc.Distance(target.Center), true));
+            float acceleration = MathHelper.Lerp(0.019f, 0.0265f, Utils.GetLerpValue(1f, 0.15f, lifeRatio, true));
+            float movementSpeed = MathHelper.Lerp(12.25f, 14.25f, Utils.GetLerpValue(1f, 0.15f, lifeRatio, true));
+            movementSpeed += MathHelper.Lerp(0f, 15f, Utils.GetLerpValue(420f, 3000f, npc.Distance(target.Center), true));
             movementSpeed *= speedFactor * (BossRushEvent.BossRushActive ? 2.1f : 1f);
             acceleration *= BossRushEvent.BossRushActive ? 2f : 1f;
 
@@ -470,7 +471,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             AquaticScourgeAttackType currentAttack = (AquaticScourgeAttackType)(int)npc.ai[2];
             AquaticScourgeAttackType nextAttack;
 
-            WeightedRandom<AquaticScourgeAttackType> attackSelector = new WeightedRandom<AquaticScourgeAttackType>();
+            WeightedRandom<AquaticScourgeAttackType> attackSelector = new();
 
             if (lifeRatio > 0.15f)
             {

@@ -9,29 +9,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class FanTelegraphLine : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Telegraph");
-            Main.projFrames[projectile.type] = 3;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            Main.projFrames[Projectile.type] = 3;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 2;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 25;
+            Projectile.width = Projectile.height = 2;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 25;
         }
 
         public override void AI()
         {
-            projectile.Opacity = CalamityUtils.Convert01To010(projectile.timeLeft / 25f) * 0.7f;
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.Opacity = CalamityUtils.Convert01To010(Projectile.timeLeft / 25f) * 0.7f;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             Time++;
         }
 
@@ -39,8 +39,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Vector2 end = projectile.Center + projectile.velocity.SafeNormalize(Vector2.UnitY) * 2700f;
-            spriteBatch.DrawLineBetter(projectile.Center, end, Color.Red * projectile.Opacity, projectile.Opacity * 6f);
+            Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 2700f;
+            spriteBatch.DrawLineBetter(Projectile.Center, end, Color.Red * Projectile.Opacity, Projectile.Opacity * 6f);
             return false;
         }
     }

@@ -74,9 +74,9 @@ namespace InfernumMode
             start -= Main.screenPosition;
             end -= Main.screenPosition;
 
-            Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/Line");
+            Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Line").Value;
             float rotation = (end - start).ToRotation();
-            Vector2 scale = new Vector2(Vector2.Distance(start, end) / line.Width, width);
+            Vector2 scale = new(Vector2.Distance(start, end) / line.Width, width);
 
             spriteBatch.Draw(line, start, null, color, rotation, line.Size() * Vector2.UnitY * 0.5f, scale, SpriteEffects.None, 0f);
         }
@@ -127,7 +127,7 @@ namespace InfernumMode
             float scale = proj.scale;
             float rotation = proj.rotation;
 
-            Rectangle rectangle = new Rectangle(0, frameY, texture.Width, frameHeight);
+            Rectangle rectangle = new(0, frameY, texture.Width, frameHeight);
             Vector2 origin = rectangle.Size() / 2f;
 
             SpriteEffects spriteEffects = SpriteEffects.None;

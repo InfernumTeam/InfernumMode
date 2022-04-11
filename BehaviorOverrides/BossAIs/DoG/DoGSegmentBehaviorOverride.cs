@@ -55,16 +55,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     npc.width = 120;
                     npc.height = 120;
                     npc.frame = new Rectangle(0, 0, 142, 126);
-                    bodyPhase2StartedField?.SetValue(npc.modNPC, true);
-                    bodyPhase2StartedField2?.SetValue(npc.modNPC, true);
+                    bodyPhase2StartedField?.SetValue(npc.ModNPC, true);
+                    bodyPhase2StartedField2?.SetValue(npc.ModNPC, true);
                 }
                 else
                 {
                     npc.width = 100;
                     npc.height = 100;
                     npc.frame = new Rectangle(0, 0, 106, 200);
-                    tailPhase2StartedField?.SetValue(npc.modNPC, true);
-                    tailPhase2StartedField2?.SetValue(npc.modNPC, true);
+                    tailPhase2StartedField?.SetValue(npc.ModNPC, true);
+                    tailPhase2StartedField2?.SetValue(npc.ModNPC, true);
                 }
             }
             npc.Infernum().ExtraAI[33] = head.Infernum().ExtraAI[33];
@@ -133,7 +133,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Reset the invicibility time variable used in the vanilla AI.
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
-                invincibilityTimeField.SetValue(npc.modNPC, 0);
+                invincibilityTimeField.SetValue(npc.ModNPC, 0);
 
             // Decide segment size stuff.
             Vector2 size = npc.Size;
@@ -188,8 +188,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (InPhase2)
             {
                 npc.scale = 1f;
-                Texture2D bodyTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Body");
-                Texture2D glowmaskTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlow");
+                Texture2D bodyTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Body").Value;
+                Texture2D glowmaskTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlow").Value;
                 Vector2 drawPosition2 = npc.Center - Main.screenPosition;
                 Vector2 origin2 = bodyTexture2.Size() * 0.5f;
 
@@ -218,8 +218,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return false;
             }
 
-            Texture2D bodyTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Body");
-            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1BodyGlowmask");
+            Texture2D bodyTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Body").Value;
+            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1BodyGlowmask").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = bodyTexture.Size() * 0.5f;
 
@@ -265,8 +265,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (InPhase2)
             {
                 npc.scale = 1f;
-                Texture2D tailTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Tail");
-                Texture2D glowmaskTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlow");
+                Texture2D tailTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Tail").Value;
+                Texture2D glowmaskTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlow").Value;
                 Vector2 drawPosition2 = npc.Center - Main.screenPosition;
                 Vector2 origin2 = tailTexture2.Size() * 0.5f;
 
@@ -295,8 +295,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return false;
             }
 
-            Texture2D tailTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Tail");
-            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1TailGlowmask");
+            Texture2D tailTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Tail").Value;
+            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1TailGlowmask").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = tailTexture.Size() * 0.5f;
 

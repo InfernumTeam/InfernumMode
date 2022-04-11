@@ -12,14 +12,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     {
         public int Lifetime;
         public NPC Thanatos => Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
-        public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread).ToRotationVector2() * projectile.Opacity * 275f;
+        public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread).ToRotationVector2() * Projectile.Opacity * 275f;
 
         public Color RayColor => CalamityUtils.MulticolorLerp(RayHue, CalamityUtils.ExoPalette);
         public Color HueDownscaledRayColor => RayColor * 0.66f;
-        public ref float RayHue => ref projectile.ai[0];
-        public ref float MaximumSpread => ref projectile.ai[1];
-        public ref float CurrentSpread => ref projectile.localAI[0];
-        public ref float Time => ref projectile.localAI[1];
+        public ref float RayHue => ref Projectile.ai[0];
+        public ref float MaximumSpread => ref Projectile.ai[1];
+        public ref float CurrentSpread => ref Projectile.localAI[0];
+        public ref float Time => ref Projectile.localAI[1];
         public override string Texture => "CalamityMod/Projectiles/StarProj";
 
         public override void SetStaticDefaults()
@@ -29,66 +29,66 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 14;
-            projectile.alpha = 255;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 900;
+            Projectile.width = Projectile.height = 14;
+            Projectile.alpha = 255;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 900;
         }
 
         public override void AI()
         {
             if (CalamityGlobalNPC.draedonExoMechWorm == -1)
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
 
             DelegateMethods.v3_1 = RayColor.ToVector3() * 0.5f;
-            Utils.PlotTileLine(StartingPosition, projectile.Center, 8f, DelegateMethods.CastLight);
+            Utils.PlotTileLine(StartingPosition, Projectile.Center, 8f, DelegateMethods.CastLight);
 
-            projectile.alpha = Utils.Clamp(projectile.alpha - 18, 0, 255);
-            projectile.velocity = Vector2.Zero;
+            Projectile.alpha = Utils.Clamp(Projectile.alpha - 18, 0, 255);
+            Projectile.velocity = Vector2.Zero;
 
             // Fade in, grow, and spread out.
-            float fadeInInterpolant = Utils.InverseLerp(0f, Lifetime * 0.45f, Time, true) * Utils.InverseLerp(Lifetime, Lifetime - 12f, Time, true);
+            float fadeInInterpolant = Utils.GetLerpValue(0f, Lifetime * 0.45f, Time, true) * Utils.GetLerpValue(Lifetime, Lifetime - 12f, Time, true);
             float lightOffset = MathHelper.Lerp(20f, (float)Math.Sin(Time / 7f) * 75f + 1850f, fadeInInterpolant);
             float offsetAngleFactor = MathHelper.Lerp(0.7f, 1f, (float)Math.Cos(Time / 23f) * 0.5f + 0.5f);
             CurrentSpread = MathHelper.Lerp(CurrentSpread, MaximumSpread, 0.015f);
-            projectile.Opacity = fadeInInterpolant;
-            projectile.Center = StartingPosition + (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread * offsetAngleFactor).ToRotationVector2() * lightOffset;
+            Projectile.Opacity = fadeInInterpolant;
+            Projectile.Center = StartingPosition + (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread * offsetAngleFactor).ToRotationVector2() * lightOffset;
 
             Time++;
             if (Time >= Lifetime)
-                projectile.Kill();
+                Projectile.Kill();
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), StartingPosition, projectile.Center, projectile.scale * 22f, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), StartingPosition, Projectile.Center, Projectile.scale * 22f, ref _);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Vector2 baseDrawPosition = projectile.Center + Vector2.UnitY * projectile.gfxOffY - Main.screenPosition;
-            Texture2D texture = Main.projectileTexture[projectile.type];
-            Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
+            Vector2 baseDrawPosition = Projectile.Center + Vector2.UnitY * Projectile.gfxOffY - Main.screenPosition;
+            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 origin = frame.Size() / 2f;
-            Color fadedRayColor = projectile.GetAlpha(lightColor);
-            Color fullbrightRayColor = HueDownscaledRayColor.MultiplyRGBA(new Color(255, 255, 255, 0)) * projectile.Opacity;
+            Color fadedRayColor = Projectile.GetAlpha(lightColor);
+            Color fullbrightRayColor = HueDownscaledRayColor.MultiplyRGBA(new Color(255, 255, 255, 0)) * Projectile.Opacity;
 
             // Draw the shimmering ray.
-            if (projectile.Opacity > 0.3f)
+            if (Projectile.Opacity > 0.3f)
             {
-                Vector2 drawOffset = (StartingPosition - projectile.Center) * 0.5f;
-                Vector2 scale = new Vector2(1.2f, drawOffset.Length() * 2f / texture.Height);
+                Vector2 drawOffset = (StartingPosition - Projectile.Center) * 0.5f;
+                Vector2 scale = new(1.2f, drawOffset.Length() * 2f / texture.Height);
                 float rotation = drawOffset.ToRotation() + MathHelper.PiOver2;
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 drawPosition = baseDrawPosition;
-                    drawPosition += (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 3f).ToRotationVector2() * projectile.Opacity * 1.5f;
+                    drawPosition += (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2() * Projectile.Opacity * 1.5f;
                     drawPosition += drawOffset;
 
                     spriteBatch.Draw(texture, drawPosition, frame, fullbrightRayColor, rotation, origin, scale, SpriteEffects.None, 0f);
@@ -103,19 +103,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             CreateKillExplosionBurstDust(Main.rand.Next(7, 13));
 
             // Adjust values and do damage before dying.
-            if (Main.myPlayer != projectile.owner)
+            if (Main.myPlayer != Projectile.owner)
                 return;
 
-            Vector2 oldSize = projectile.Size;
-            projectile.position = projectile.Center;
-            projectile.width = projectile.height = 60;
-            projectile.Center = projectile.position;
-            projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 10;
-            projectile.Damage();
-            projectile.position = projectile.Center;
-            projectile.Size = oldSize;
-            projectile.Center = projectile.position;
+            Vector2 oldSize = Projectile.Size;
+            Projectile.position = Projectile.Center;
+            Projectile.width = Projectile.height = 60;
+            Projectile.Center = Projectile.position;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
+            Projectile.Damage();
+            Projectile.position = Projectile.Center;
+            Projectile.Size = oldSize;
+            Projectile.Center = Projectile.position;
         }
 
         public void CreateKillExplosionBurstDust(int dustCount)
@@ -124,14 +124,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 return;
 
             Vector2 baseExplosionDirection = -Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * 3f;
-            Vector2 outwardFireSpeedFactor = new Vector2(2.1f, 2f);
+            Vector2 outwardFireSpeedFactor = new(2.1f, 2f);
             Color brightenedRayColor = RayColor;
             brightenedRayColor.A = 255;
 
             for (float i = 0f; i < dustCount; i++)
             {
-                Dust explosionDust = Dust.NewDustDirect(projectile.Center, 0, 0, 267, 0f, 0f, 0, brightenedRayColor, 1f);
-                explosionDust.position = projectile.Center;
+                Dust explosionDust = Dust.NewDustDirect(Projectile.Center, 0, 0, 267, 0f, 0f, 0, brightenedRayColor, 1f);
+                explosionDust.position = Projectile.Center;
                 explosionDust.velocity = baseExplosionDirection.RotatedBy(MathHelper.TwoPi * i / dustCount) * outwardFireSpeedFactor * Main.rand.NextFloat(0.8f, 1.2f);
                 explosionDust.noGravity = true;
                 explosionDust.scale = 1.1f;
@@ -144,8 +144,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
             for (float i = 0f; i < dustCount; i++)
             {
-                Dust explosionDust = Dust.NewDustDirect(projectile.Center, 0, 0, 267, 0f, 0f, 0, brightenedRayColor, 1f);
-                explosionDust.position = projectile.Center;
+                Dust explosionDust = Dust.NewDustDirect(Projectile.Center, 0, 0, 267, 0f, 0f, 0, brightenedRayColor, 1f);
+                explosionDust.position = Projectile.Center;
                 explosionDust.velocity = baseExplosionDirection.RotatedBy(MathHelper.TwoPi * i / dustCount) * outwardFireSpeedFactor * Main.rand.NextFloat(0.8f, 1.2f);
                 explosionDust.velocity *= Main.rand.NextFloat() * 0.8f;
                 explosionDust.noGravity = true;
@@ -159,6 +159,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
         }
 
-        public override Color? GetAlpha(Color lightColor) => new Color(projectile.Opacity, projectile.Opacity, projectile.Opacity, 0);
+        public override Color? GetAlpha(Color lightColor) => new Color(Projectile.Opacity, Projectile.Opacity, Projectile.Opacity, 0);
     }
 }

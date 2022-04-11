@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
@@ -129,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 80f) && attackTimer > 45f))
                     {
-                        Main.PlaySound(SoundID.Roar, npc.Center, 0);
+                        SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
                         npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
                         attackTimer = 0f;
                         attackState = 1f;
@@ -226,7 +227,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f)
                 {
-                    Main.PlaySound(SoundID.Item73, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -256,7 +257,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static void SelectNewAttack(NPC npc)
         {
-            List<CataclysmAttackType> possibleAttacks = new List<CataclysmAttackType>
+            List<CataclysmAttackType> possibleAttacks = new()
             {
                 CataclysmAttackType.BrimstoneFireBurst,
                 CataclysmAttackType.HorizontalCharges

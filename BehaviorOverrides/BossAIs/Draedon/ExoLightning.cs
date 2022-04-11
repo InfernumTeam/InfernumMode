@@ -15,8 +15,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Exocharge Lightning");
-            ProjectileID.Sets.TrailingMode[projectile.type] = 1;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = TrailPointCount;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = TrailPointCount;
         }
 
         public override int Lifetime => 60;
@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            List<Vector2> checkPoints = projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToList();
+            List<Vector2> checkPoints = Projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToList();
             if (checkPoints.Count <= 2)
                 return false;
 
@@ -40,16 +40,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override float PrimitiveWidthFunction(float completionRatio)
         {
-            projectile.hostile = true;
-            projectile.Calamity().canBreakPlayerDefense = true;
-            cooldownSlot = 1;
-            float baseWidth = MathHelper.Lerp(0.25f, 3f, (float)Math.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * projectile.scale;
+            Projectile.hostile = true;
+            Projectile.Calamity().canBreakPlayerDefense = true;
+            CooldownSlot = 1;
+            float baseWidth = MathHelper.Lerp(0.25f, 3f, (float)Math.Sin(MathHelper.Pi * 4f * completionRatio) * 0.5f + 0.5f) * Projectile.scale;
             return baseWidth * (float)Math.Sin(MathHelper.Pi * completionRatio) + 1f;
         }
 
         public override Color PrimitiveColorFunction(float completionRatio)
         {
-            Color color = CalamityUtils.MulticolorLerp(projectile.identity % 11f / 11f, CalamityUtils.ExoPalette);
+            Color color = CalamityUtils.MulticolorLerp(Projectile.identity % 11f / 11f, CalamityUtils.ExoPalette);
             return color;
         }
 
@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false);
 
-            LightningDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 40);
+            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 40);
             return false;
         }
     }

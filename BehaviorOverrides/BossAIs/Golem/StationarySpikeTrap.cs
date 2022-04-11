@@ -11,22 +11,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
     {
         public bool SpikesShouldExtendOutward;
 
-        public ref float SpikeReach => ref projectile.ai[0];
+        public ref float SpikeReach => ref Projectile.ai[0];
 
-        public ref float SpikeDirection => ref projectile.ai[1];
+        public ref float SpikeDirection => ref Projectile.ai[1];
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Spike Trap");
 
         public override void SetDefaults()
         {
-            projectile.width = 16;
-            projectile.height = 16;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.hostile = true;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 900000;
-            projectile.netImportant = true;
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 900000;
+            Projectile.netImportant = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         {
             if (NPC.golemBoss == -1)
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
 
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 if (Main.rand.NextBool(4))
                 {
-                    Dust fire = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(6f, 6f), 6);
+                    Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(6f, 6f), 6);
                     fire.velocity = Vector2.UnitY.RotatedByRandom(0.64f) * Main.rand.NextFloat(2f, 6f) * SpikeDirection;
                     fire.noGravity = true;
                     fire.scale *= 1.1f;
@@ -72,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 return false;
 
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), projectile.Center, projectile.Center + Vector2.UnitY * SpikeDirection * SpikeReach, 4f, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Vector2.UnitY * SpikeDirection * SpikeReach, 4f, ref _);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -80,23 +80,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Draw the spike.
             Main.instance.LoadProjectile(ProjectileID.SpearTrap);
             Texture2D spikeTipTexture = Main.projectileTexture[ProjectileID.SpearTrap];
-            Vector2 spikeTip = projectile.Center + Vector2.UnitY * SpikeDirection * SpikeReach;
-            float frameHeight = Vector2.Distance(projectile.Center, spikeTip) - projectile.velocity.Length();
+            Vector2 spikeTip = Projectile.Center + Vector2.UnitY * SpikeDirection * SpikeReach;
+            float frameHeight = Vector2.Distance(Projectile.Center, spikeTip) - Projectile.velocity.Length();
             float frameTop = Main.chain17Texture.Height - frameHeight;
             if (frameHeight > 0f)
             {
                 float spikeRotation = SpikeDirection == -1f ? 0f : MathHelper.Pi;
-                Rectangle spikeFrame = new Rectangle(0, (int)frameTop, Main.chain17Texture.Width, (int)frameHeight);
+                Rectangle spikeFrame = new(0, (int)frameTop, Main.chain17Texture.Width, (int)frameHeight);
                 spriteBatch.Draw(Main.chain17Texture, spikeTip - Main.screenPosition, spikeFrame, Color.White, spikeRotation, new Vector2(Main.chain17Texture.Width / 2f, 0f), 1f, 0, 0f);
                 spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.White, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
             }
 
-            Texture2D texture = Main.projectileTexture[projectile.type];
-            Rectangle rectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            Texture2D texture = Main.projectileTexture[Projectile.type];
+            Rectangle rectangle = new(0, 0, texture.Width, texture.Height);
             Vector2 origin = rectangle.Size() * 0.5f;
-            Color drawColor = projectile.GetAlpha(lightColor);
+            Color drawColor = Projectile.GetAlpha(lightColor);
 
-            spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, rectangle, drawColor, projectile.rotation, origin, projectile.scale, 0, 0f);
+            spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, rectangle, drawColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             return false;
         }
     }

@@ -39,7 +39,7 @@ namespace InfernumMode.Particles
 
         public override void CustomDraw(SpriteBatch spriteBatch)
         {
-            Texture2D texture = GeneralParticleHandler.GetTexture(Type);
+            Texture2D texture = GeneralParticleHandler.Assets.Request<Texture2D>(Type).Value;
             Vector2 scale = Vector2.One * Scale * 11f / texture.Size() * 0.5f;
             Vector2 origin = texture.Size() * 0.5f;
 
@@ -47,7 +47,7 @@ namespace InfernumMode.Particles
             int trailCount = TrailPositions.Length;
             if (timeLeft < trailCount)
                 trailCount = timeLeft;
-            float opacity = Utils.InverseLerp(0f, 16f, timeLeft, true);
+            float opacity = Utils.GetLerpValue(0f, 16f, timeLeft, true);
             for (int i = 1; i < trailCount; i++)
             {
                 Vector2 position = TrailPositions[i];

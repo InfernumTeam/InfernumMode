@@ -45,7 +45,7 @@ namespace InfernumMode.Skies
 
         private bool UpdatePIndex()
         {
-            int ProvType = InfernumMode.CalamityMod.NPCType("HiveMindP2");
+            int ProvType = InfernumMode.CalamityMod.Find<ModNPC>("HiveMindP2").Type;
             if (ProvIndex >= 0 && Main.npc[ProvIndex].active && Main.npc[ProvIndex].type == ProvType)
             {
                 return true;

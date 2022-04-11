@@ -19,6 +19,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using SCalBoss = CalamityMod.NPCs.SupremeCalamitas.SupremeCalamitas;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -54,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame;
 
-        public static readonly Vector2 SepulcherSpawnOffset = new Vector2(0f, -350f);
+        public static readonly Vector2 SepulcherSpawnOffset = new(0f, -350f);
 
         #region Pattern Lists
 
@@ -134,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             SCalAttackType.FinalPhase
         };
 
-        public static readonly Dictionary<SCalAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<SCalAttackType[], Func<NPC, bool>>()
+        public static readonly Dictionary<SCalAttackType[], Func<NPC, bool>> SubphaseTable = new()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax >= Phase2LifeRatio,
             [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio,
@@ -183,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Reset things.
             npc.damage = npc.defDamage;
             npc.dontTakeDamage = false;
-            typeof(SCalBoss).GetField("shieldOpacity", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(npc.modNPC, 0f);
+            typeof(SCalBoss).GetField("shieldOpacity", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(npc.ModNPC, 0f);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool sepulcherIsPresent = NPC.AnyNPCs(ModContent.NPCType<SCalWormHead>());
@@ -204,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (npc.localAI[0] == 0f)
             {
                 // Define the arena.
-                Vector2 arenaArea = new Vector2(140f, 140f);
+                Vector2 arenaArea = new(140f, 140f);
                 npc.Infernum().arenaRectangle = Utils.CenteredRectangle(npc.Center, arenaArea * 16f);
                 int left = (int)(npc.Infernum().arenaRectangle.Center().X / 16 - arenaArea.X * 0.5f);
                 int right = (int)(npc.Infernum().arenaRectangle.Center().X / 16 + arenaArea.X * 0.5f);
@@ -220,10 +221,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             continue;
 
                         // Create arena tiles.
-                        if ((i == left || i == right || j == top || j == bottom) && !Main.tile[i, j].active())
+                        if ((i == left || i == right || j == top || j == bottom) && !Main.tile[i, j].HasTile)
                         {
-                            Main.tile[i, j].type = (ushort)arenaTileType;
-                            Main.tile[i, j].active(true);
+                            Main.tile[i, j].TileType = (ushort)arenaTileType;
+                            Main.tile[i, j].HasTile;
                             if (Main.netMode == NetmodeID.Server)
                                 NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
                             else
@@ -239,7 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 attackTextDelay = 180f;
 
-                typeof(SCalBoss).GetField("initialRitualPosition", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.modNPC, npc.Center + Vector2.UnitY * 24f);
+                typeof(SCalBoss).GetField("initialRitualPosition", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.ModNPC, npc.Center + Vector2.UnitY * 24f);
                 npc.localAI[0] = 1f;
             }
 
@@ -477,12 +478,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     if (attackTextDelay == 75f)
                     {
                         Vector2 demonSpawnPosition = npc.Center + Main.rand.NextVector2Circular(150f, 75f);
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/BrimstoneMonsterSpawn"), demonSpawnPosition);
+                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/BrimstoneMonsterSpawn"), demonSpawnPosition);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                             NPC.NewNPC((int)demonSpawnPosition.X, (int)demonSpawnPosition.Y, ModContent.NPCType<ShadowDemon>(), npc.whoAmI);
                     }
 
-                    InfernumMode.BlackFade = Utils.InverseLerp(300f, 125f, attackTextDelay, true) * 0.6f;
+                    InfernumMode.BlackFade = Utils.GetLerpValue(300f, 125f, attackTextDelay, true) * 0.6f;
                     break;
 
                 // After Phase 2; Brothers Summoning.
@@ -509,7 +510,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             Vector2 castDustPosition = Vector2.CatmullRom(npc.Center + Vector2.UnitY * 800f,
                                 npc.Center, brotherSpawnPositions[i],
                                 brotherSpawnPositions[i] + Vector2.UnitY * 800f,
-                                Utils.InverseLerp(150f, 75f, attackTextDelay, true));
+                                Utils.GetLerpValue(150f, 75f, attackTextDelay, true));
                             Dust fire = Dust.NewDustPerfect(castDustPosition, 267);
                             fire.color = Color.Orange;
                             fire.scale = 1.35f;
@@ -537,9 +538,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         // Transition to the Lament section of the track.
                         Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
                         if (calamityModMusic != null)
-                            npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCL");
+                            npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCL");
                         else
-                            npc.modNPC.music = MusicID.Boss3;
+                            npc.ModNPC.music = MusicID.Boss3;
                     }
                     break;
 
@@ -553,16 +554,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         // Transition to the Epiphany section of the track.
                         Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
                         if (calamityModMusic != null)
-                            npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCE");
+                            npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCE");
                         else
-                            npc.modNPC.music = MusicID.LunarBoss;
+                            npc.ModNPC.music = MusicID.LunarBoss;
 
                         // Summon seekers.
                         Utilities.CreateGenericDustExplosion(npc.Center, (int)CalamityDusts.Brimstone, 30, 10f, 1.45f);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             // The four arena huggers.
-                            Vector2 seekerPosition = new Vector2(npc.Infernum().arenaRectangle.Left, npc.Infernum().arenaRectangle.Center.Y);
+                            Vector2 seekerPosition = new(npc.Infernum().arenaRectangle.Left, npc.Infernum().arenaRectangle.Center.Y);
                             NPC.NewNPC((int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 1f);
                             int fuck = NPC.NewNPC((int)seekerPosition.X, (int)seekerPosition.Y, ModContent.NPCType<SoulSeekerSupreme>(), npc.whoAmI, 0f, 0f, 3f);
                             Main.npc[fuck].velocity = Vector2.UnitY;
@@ -681,7 +682,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // They transform into sepulcher after a certain amount of time has passed.
             if (initialChargeupTime % 9f == 8f && initialChargeupTime >= 45f)
             {
-                Main.PlaySound(SoundID.NPCHit36, target.Center);
+                SoundEngine.PlaySound(SoundID.NPCHit36, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 soulSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 800f, 1000f);
@@ -765,7 +766,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/SCalDash"), npc.Center);
+                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SCalSounds/SCalDash"), npc.Center);
                     }
                     break;
 
@@ -881,7 +882,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 frameType = (int)SCalFrameType.BlastCast;
                 frameChangeSpeed = 0.25f;
 
-                float shootRotationalOffset = MathHelper.Lerp(-angularVariance, angularVariance, Utils.InverseLerp(attackDelay, attackDelay + shootTime, wrappedAttackTimer, true));
+                float shootRotationalOffset = MathHelper.Lerp(-angularVariance, angularVariance, Utils.GetLerpValue(attackDelay, attackDelay + shootTime, wrappedAttackTimer, true));
                 Vector2 shootVelocity = (shootRotationalOffset + npc.AngleTo(target.Center)).ToRotationVector2() * shootSpeed;
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -889,7 +890,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     Utilities.NewProjectileBetter(npc.Center + shootVelocity * 2f, shootVelocity, ModContent.ProjectileType<AcceleratingDarkMagicBurst>(), 500, 0f);
                 }
 
-                Main.PlaySound(SoundID.Item73, target.Center);
+                SoundEngine.PlaySound(SoundID.Item73, target.Center);
             }
 
             // Switch to the next position after an attack cycle.
@@ -1011,7 +1012,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Release flames upwards. They will redirect and accelerate towards targets after a short period of time.
             if (wrappedAttackTimer >= attackDelay && wrappedAttackTimer < attackDelay + shootTime && wrappedAttackTimer % shootRate == shootRate - 1f)
             {
-                Main.PlaySound(SoundID.Item73, target.Center);
+                SoundEngine.PlaySound(SoundID.Item73, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 flameShootVelocity = npc.SafeDirectionTo(target.Center);
@@ -1056,7 +1057,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             // Hover to the top left/right of the target.
-            float offsetInterpolant = Utils.InverseLerp(0f, attackCycleCount * (attackDelay + telegraphTime + afterShootDelay), attackTimer, true);
+            float offsetInterpolant = Utils.GetLerpValue(0f, attackCycleCount * (attackDelay + telegraphTime + afterShootDelay), attackTimer, true);
             offsetInterpolant = MathHelper.Lerp(1f, 0.6f, offsetInterpolant);
             Vector2 hoverDestination = target.Center - Vector2.UnitY * offsetInterpolant * 385f;
             hoverDestination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * offsetInterpolant * 540f;
@@ -1073,7 +1074,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Create telegraphs that turn into lightning.
             if (wrappedAttackTimer == attackDelay)
             {
-                Main.PlaySound(SoundID.Item8, target.Center);
+                SoundEngine.PlaySound(SoundID.Item8, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1091,7 +1092,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             if (wrappedAttackTimer == attackDelay + telegraphTime)
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
 
             if (attackTimer >= attackCycleCount * (attackDelay + telegraphTime + afterShootDelay))
                 SelectNewAttack(npc);
@@ -1232,7 +1233,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Charge at the target after slowing down and release a burst of dark magic blasts that accelerate.
                     if (attackTimer >= 85f)
                     {
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/SCalDash"), npc.Center);
+                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SCalSounds/SCalDash"), npc.Center);
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor, -Vector2.UnitY) * chargeSpeed;
                         npc.spriteDirection = (npc.velocity.X < 0f).ToDirectionInt();
                         attackSubstate = 1f;
@@ -1322,7 +1323,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             npc.velocity *= 0.925f;
                         else
                         {
-                            float shootAngle = Utils.InverseLerp(darkFlameShootDelay, darkFlameShootDelay + darkFlameReleaseTime, wrappedAttackTimer, true) * MathHelper.TwoPi;
+                            float shootAngle = Utils.GetLerpValue(darkFlameShootDelay, darkFlameShootDelay + darkFlameReleaseTime, wrappedAttackTimer, true) * MathHelper.TwoPi;
                             if (Main.netMode != NetmodeID.MultiplayerClient && wrappedAttackTimer % 2f == 1f)
                             {
                                 Vector2 flameShootVelocity = shootAngle.ToRotationVector2() * 16f;
@@ -1351,7 +1352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         npc.Center = teleportPosition;
                         npc.netUpdate = true;
 
-                        Main.PlaySound(SoundID.Item72, target.Center);
+                        SoundEngine.PlaySound(SoundID.Item72, target.Center);
                     }
 
                     if (wrappedAttackTimer == (int)(teleportShootDelay / 2))
@@ -1466,9 +1467,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Transition to the Acceptance section of the track.
                     Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
                     if (calamityModMusic != null)
-                        npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCA");
+                        npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCA");
                     else
-                        npc.modNPC.music = MusicID.Boss3;
+                        npc.ModNPC.music = MusicID.Boss3;
 
                     // Descend downward and look at the target.
                     npc.noGravity = false;

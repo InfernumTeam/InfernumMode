@@ -9,12 +9,12 @@ namespace InfernumMode.BossIntroScreens
 {
     public class RavagerIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        public override TextColorData TextColor => new(completionRatio =>
         {
-            Color redFireColor = new Color(255, 85, 0);
-            Color blueFireColor = new Color(111, 89, 255);
+            Color redFireColor = new(255, 85, 0);
+            Color blueFireColor = new(111, 89, 255);
 
-            float colorSpan = (float)Math.Abs(Math.Tan(MathHelper.Pi * completionRatio + Main.GlobalTime * 3f));
+            float colorSpan = (float)Math.Abs(Math.Tan(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 3f));
 
             // Perform special checks to prevent potential exceptions causing problems with draw-logic or precision errors.
             if (float.IsInfinity(colorSpan) || float.IsNaN(colorSpan))
@@ -22,7 +22,7 @@ namespace InfernumMode.BossIntroScreens
             if (colorSpan > 1000f)
                 colorSpan = 1000f;
 
-            float colorInterpolant = Utils.InverseLerp(0f, 0.5f, colorSpan, true);
+            float colorInterpolant = Utils.GetLerpValue(0f, 0.5f, colorSpan, true);
             return Color.Lerp(redFireColor, blueFireColor, colorInterpolant);
         });
 

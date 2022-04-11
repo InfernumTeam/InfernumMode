@@ -8,6 +8,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
@@ -30,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 totalAttachedEyes++;
             }
 
-            npc.Calamity().DR = MathHelper.Lerp(0.225f, 0.725f, Utils.InverseLerp(0f, 3f, totalAttachedEyes, true));
+            npc.Calamity().DR = MathHelper.Lerp(0.225f, 0.725f, Utils.GetLerpValue(0f, 3f, totalAttachedEyes, true));
 
             ref float initialized01Flag = ref npc.localAI[0];
             ref float attackTimer = ref npc.ai[3];
@@ -221,7 +222,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 Main.npc[hungry].ai[0] = i * 0.2f - 0.05f;
             }
 
-            List<float> offsetFactors = new List<float>();
+            List<float> offsetFactors = new();
             for (int i = 0; i < 4; i++)
             {
                 float potentialOffsetFactor = Main.rand.NextFloat();
@@ -242,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             ref float enrageAttackCountdown = ref npc.ai[2];
             ref float roarTimer = ref npc.localAI[1];
 
-            float idealAngerStrength = MathHelper.Lerp(0f, 0.8f, Utils.InverseLerp(1150f, 2300f, Math.Abs(target.Center.X - npc.Center.X), true));
+            float idealAngerStrength = MathHelper.Lerp(0f, 0.8f, Utils.GetLerpValue(1150f, 2300f, Math.Abs(target.Center.X - npc.Center.X), true));
 
             // Check if the player is running in one direction.
             if (Math.Abs(Vector2.Dot(target.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)) > 0.74f && Math.Abs(target.Center.X - npc.Center.X) > 500f)
@@ -254,7 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 roarTimer--;
 
             timeSpentRunning = MathHelper.Clamp(timeSpentRunning, 0f, 1200f);
-            idealAngerStrength += MathHelper.Lerp(0f, 0.2f, Utils.InverseLerp(240f, 420f, timeSpentRunning, true));
+            idealAngerStrength += MathHelper.Lerp(0f, 0.2f, Utils.GetLerpValue(240f, 420f, timeSpentRunning, true));
             idealAngerStrength = MathHelper.Clamp(idealAngerStrength, 0f, 1f);
             angerStrength = MathHelper.Lerp(angerStrength, idealAngerStrength, 0.03f);
 
@@ -273,10 +274,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                         Tile aboveTile = CalamityUtils.ParanoidTileRetrieval((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16 - 2);
                         Tile belowTile = CalamityUtils.ParanoidTileRetrieval((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16 + 2);
 
-                        bool aboveTileInvalid = aboveTile.active() && Main.tileSolid[aboveTile.type];
-                        bool bottomTileInvalid = belowTile.active() && Main.tileSolid[belowTile.type];
+                        bool aboveTileInvalid = aboveTile.HasTile && Main.tileSolid[aboveTile.TileType];
+                        bool bottomTileInvalid = belowTile.HasTile && Main.tileSolid[belowTile.TileType];
 
-                        if (spawnTile.nactive() && Main.tileSolid[spawnTile.type] && !aboveTileInvalid && !bottomTileInvalid)
+                        if (spawnTile.HasUnactuatedTile && Main.tileSolid[spawnTile.TileType] && !aboveTileInvalid && !bottomTileInvalid)
                         {
                             spawnPosition = potentialSpawnPosition;
                             break;
@@ -300,10 +301,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     if (Main.LocalPlayer.Center.Y > (Main.maxTilesY - 300f) * 16f)
                     {
                         // Scream.
-                        Main.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 1, 1f, 0.3f);
+                        SoundEngine.PlaySound(SoundID.Roar, (int)target.Center.X, (int)target.Center.Y, 1, 1f, 0.3f);
 
                         // Roar.
-                        Main.PlaySound(SoundID.NPCKilled, (int)target.Center.X, (int)target.Center.Y, 10, 1.2f, 0.3f);
+                        SoundEngine.PlaySound(SoundID.NPCKilled, (int)target.Center.X, (int)target.Center.Y, 10, 1.2f, 0.3f);
                     }
                 }
 

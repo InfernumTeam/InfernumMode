@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -17,9 +18,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override float Lifetime => 120f;
         public override Color LaserOverlayColor => Color.Lerp(Color.IndianRed, Color.OrangeRed, 0.6f) * 1.2f;
         public override Color LightCastColor => LaserOverlayColor;
-        public override Texture2D LaserBeginTexture => ModContent.GetTexture("CalamityMod/ExtraTextures/Lasers/UltimaRayStart");
-        public override Texture2D LaserMiddleTexture => ModContent.GetTexture("CalamityMod/ExtraTextures/Lasers/UltimaRayMid");
-        public override Texture2D LaserEndTexture => ModContent.GetTexture("CalamityMod/ExtraTextures/Lasers/UltimaRayEnd");
+        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/UltimaRayStart").Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/UltimaRayMid").Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/UltimaRayEnd").Value;
 
         // To allow easy, static access from different locations.
         public override void SetStaticDefaults()
@@ -29,11 +30,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 28;
-            projectile.hostile = true;
-            projectile.penetrate = -1;
-            projectile.alpha = 255;
-            projectile.tileCollide = false;
+            Projectile.width = Projectile.height = 28;
+            Projectile.hostile = true;
+            Projectile.penetrate = -1;
+            Projectile.alpha = 255;
+            Projectile.tileCollide = false;
         }
 
         public override bool ShouldUpdatePosition() => false;
@@ -42,15 +43,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
+            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
-            Vector2 lightningDirection = projectile.velocity.RotateTowards(projectile.AngleTo(target.Center + target.velocity * 10f), MathHelper.Pi / 32f);
+            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+            Vector2 lightningDirection = Projectile.velocity.RotateTowards(Projectile.AngleTo(target.Center + target.velocity * 10f), MathHelper.Pi / 32f);
             lightningDirection = lightningDirection.RotatedByRandom(0.05f);
 
-            int lightning = Utilities.NewProjectileBetter(projectile.Center, lightningDirection * 7f, ModContent.ProjectileType<RedLightning>(), 120, 0f);
+            int lightning = Utilities.NewProjectileBetter(Projectile.Center, lightningDirection * 7f, ModContent.ProjectileType<RedLightning>(), 120, 0f);
             Main.projectile[lightning].ai[0] = lightningDirection.ToRotation();
             Main.projectile[lightning].ai[1] = Main.rand.Next(100);
         }

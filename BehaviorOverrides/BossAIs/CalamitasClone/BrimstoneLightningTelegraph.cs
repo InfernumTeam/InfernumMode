@@ -6,6 +6,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
@@ -19,34 +20,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 64;
-            projectile.hostile = false;
-            projectile.friendly = false;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 45;
+            Projectile.width = Projectile.height = 64;
+            Projectile.hostile = false;
+            Projectile.friendly = false;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 45;
         }
 
         public override void AI()
         {
-            projectile.scale = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 45f);
+            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / 45f);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            spriteBatch.DrawLineBetter(projectile.Center - Vector2.UnitY * 4000f, projectile.Center + Vector2.UnitY * 4000f, Color.Red, projectile.scale * 4f);
+            spriteBatch.DrawLineBetter(Projectile.Center - Vector2.UnitY * 4000f, Projectile.Center + Vector2.UnitY * 4000f, Color.Red, Projectile.scale * 4f);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
+            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
             for (int i = 0; i < 2; i++)
             {
-                Vector2 spawnPosition = projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-10f, 10f);
+                Vector2 spawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-10f, 10f);
                 spawnPosition.Y -= 1600f;
 
                 bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;

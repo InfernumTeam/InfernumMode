@@ -12,6 +12,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 {
@@ -293,7 +295,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             // Play a roar sound before swooping.
             if (attackTimer == 90f)
             {
-                Main.PlaySound(SoundID.Roar, target.Center, 0);
+                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
                 npc.velocity = npc.SafeDirectionTo(target.Center) * new Vector2(8f, 24f);
                 if (anyWorms)
                     npc.velocity *= 0.8f;
@@ -347,10 +349,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 270f;
                 float distanceFromDestination = npc.Distance(destination);
-                float movementInterpolant = MathHelper.Lerp(0.055f, 0.1f, Utils.InverseLerp(100f, 30f, distanceFromDestination, true));
+                float movementInterpolant = MathHelper.Lerp(0.055f, 0.1f, Utils.GetLerpValue(100f, 30f, distanceFromDestination, true));
                 float idealMovementSpeed = BossRushEvent.BossRushActive ? 28f : 15f;
                 npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(destination) * MathHelper.Min(distanceFromDestination, idealMovementSpeed), movementInterpolant);
-                npc.velocity -= npc.SafeDirectionTo(target.Center) * Utils.InverseLerp(235f, 115f, npc.Distance(target.Center), true) * 12f;
+                npc.velocity -= npc.SafeDirectionTo(target.Center) * Utils.GetLerpValue(235f, 115f, npc.Distance(target.Center), true) * 12f;
             }
 
             if (attackTimer >= 360f)
@@ -414,7 +416,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 shootRate -= 20;
             if (enraged)
                 shootRate = 30;
-            Vector2 blobSpawnPosition = new Vector2(npc.Center.X + Main.rand.NextFloat(-12f, 12f), npc.Center.Y + 30f);
+            Vector2 blobSpawnPosition = new(npc.Center.X + Main.rand.NextFloat(-12f, 12f), npc.Center.Y + 30f);
 
             // Release blood teeth balls upward occasionally.
             if (finalWormDead && Main.netMode != NetmodeID.MultiplayerClient && attackTimer % (shootRate * 3f) == shootRate * 3f - 1f)
@@ -433,7 +435,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 float blobSpeed = anyWorms ? 6f : 8f;
                 if (finalWormDead)
                     blobSpeed += 0.25f;
-                Vector2 currentBlobVelocity = new Vector2(4f + Main.rand.NextFloat(-0.1f, 0.1f) + target.velocity.X * 0.12f, blobSpeed * -0.65f);
+                Vector2 currentBlobVelocity = new(4f + Main.rand.NextFloat(-0.1f, 0.1f) + target.velocity.X * 0.12f, blobSpeed * -0.65f);
 
                 npc.TargetClosest();
 
@@ -442,7 +444,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     Utilities.NewProjectileBetter(blobSpawnPosition, currentBlobVelocity, ModContent.ProjectileType<IchorShot>(), finalWormDead ? 110 : 95, 0f, Main.myPlayer, 0f, 0f);
                     currentBlobVelocity.X += blobSpeed / totalProjectiles * -1.54f + Main.rand.NextFloatDirection() * 0.08f;
                 }
-                Main.PlaySound(SoundID.NPCHit20, npc.position);
+                SoundEngine.PlaySound(SoundID.NPCHit20, npc.position);
             }
 
             if (attackTimer >= shootRate * (totalBursts + 0.9f))
@@ -502,10 +504,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             // Play a telegraph sound prior to dashing into the ground.
             if (attackTimer == 45f)
-                Main.PlaySound(SoundID.NPCDeath18, target.Center);
+                SoundEngine.PlaySound(SoundID.NPCDeath18, target.Center);
 
             if (attackTimer == 90f)
-                Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
 
             if (attackTimer > 90f && attackTimer < 300f)
             {
@@ -515,14 +517,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
                 if (Collision.SolidCollision(npc.position, npc.width, npc.height) && attackTimer > 105f)
                 {
-                    Main.PlaySound(SoundID.Item89, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item89, npc.Center);
 
                     float speedOffset = Main.rand.NextFloat(-3f, 3f);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (float i = -16; i < 16; i += enraged ? 0.95f : 1.6f)
                         {
-                            Vector2 shootVelocity = new Vector2(i + speedOffset, 13f);
+                            Vector2 shootVelocity = new(i + speedOffset, 13f);
                             Utilities.NewProjectileBetter(npc.Bottom, shootVelocity, ModContent.ProjectileType<BloodGlob>(), 95, 0f);
                         }
                     }
@@ -545,8 +547,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Main.npcTexture[npc.type];
-            Color glowColor = Color.Lerp(Color.Transparent, Color.Yellow, Utils.InverseLerp(200f, 160f, npc.ai[2], true) * Utils.InverseLerp(0f, 40f, npc.ai[2], true)) * 0.4f;
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Color glowColor = Color.Lerp(Color.Transparent, Color.Yellow, Utils.GetLerpValue(200f, 160f, npc.ai[2], true) * Utils.GetLerpValue(0f, 40f, npc.ai[2], true)) * 0.4f;
             glowColor.A = 0;
 
             float glowOutwardness = 4f;

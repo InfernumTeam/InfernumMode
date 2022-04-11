@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
             else if (npc.ai[1] == 1f)
             {
                 fadeOutTimer++;
-                npc.scale = MathHelper.Lerp(1f, 0.05f, Utils.InverseLerp(500f, 600f, fadeOutTimer, true));
+                npc.scale = MathHelper.Lerp(1f, 0.05f, Utils.GetLerpValue(500f, 600f, fadeOutTimer, true));
 
                 // Reset the idle play sound if it didn't get activated before for some reason.
                 if (Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId)) == null)

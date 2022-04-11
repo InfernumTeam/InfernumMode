@@ -7,18 +7,19 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
     public class RainbowCrystal2 : ModProjectile
     {
         public float ProvidenceLifeRatio => Main.npc[CalamityGlobalNPC.holyBoss].life / (float)Main.npc[CalamityGlobalNPC.holyBoss].lifeMax;
-        public ref float CrystalHue => ref projectile.ai[0];
-        public bool ProvidenceInPhase2 => projectile.ai[1] == 1f;
+        public ref float CrystalHue => ref Projectile.ai[0];
+        public bool ProvidenceInPhase2 => Projectile.ai[1] == 1f;
         public bool HasStartedFall
         {
-            get => projectile.localAI[0] == 1f;
-            set => projectile.localAI[0] = value.ToInt();
+            get => Projectile.localAI[0] == 1f;
+            set => Projectile.localAI[0] = value.ToInt();
         }
         public Color CrystalColor => Main.hslToRgb(CrystalHue, 0.95f, 0.5f);
         public override void SetStaticDefaults()
@@ -28,14 +29,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 34;
-            projectile.hostile = true;
-            projectile.alpha = 255;
-            projectile.penetrate = 1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 600;
-            projectile.extraUpdates = 1;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 34;
+            Projectile.hostile = true;
+            Projectile.alpha = 255;
+            Projectile.penetrate = 1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 600;
+            Projectile.extraUpdates = 1;
+            CooldownSlot = 1;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -53,19 +54,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Don't do anything at all if Providence isn't alive. Calculations are done based on her life ratio.
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.holyBoss) || !Main.npc[CalamityGlobalNPC.holyBoss].active)
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
 
-            if (projectile.timeLeft < 300)
-                projectile.tileCollide = true;
+            if (Projectile.timeLeft < 300)
+                Projectile.tileCollide = true;
 
-            projectile.alpha = Utils.Clamp(projectile.alpha - 8, 0, 255);
-            if (projectile.alpha == 0)
-                Lighting.AddLight(projectile.Center, CrystalColor.ToVector3() * 0.7f);
+            Projectile.alpha = Utils.Clamp(Projectile.alpha - 8, 0, 255);
+            if (Projectile.alpha == 0)
+                Lighting.AddLight(Projectile.Center, CrystalColor.ToVector3() * 0.7f);
 
-            projectile.velocity *= 1.003f;
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Projectile.velocity *= 1.003f;
+            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             EmitIdleDust();
         }
@@ -80,19 +81,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             {
                 if (Main.rand.NextBool(40))
                 {
-                    Vector2 dustVelocity = Vector2.UnitY.RotatedBy(i * MathHelper.Pi).RotatedBy(projectile.rotation) * 2.5f;
-                    Dust rainbowDust = Dust.NewDustDirect(projectile.Center, 0, 0, 267, 0f, 0f, 225, CrystalColor, 1.5f);
+                    Vector2 dustVelocity = Vector2.UnitY.RotatedBy(i * MathHelper.Pi).RotatedBy(Projectile.rotation) * 2.5f;
+                    Dust rainbowDust = Dust.NewDustDirect(Projectile.Center, 0, 0, 267, 0f, 0f, 225, CrystalColor, 1.5f);
                     rainbowDust.noGravity = true;
                     rainbowDust.noLight = true;
-                    rainbowDust.scale = projectile.Opacity;
-                    rainbowDust.position = projectile.Center;
+                    rainbowDust.scale = Projectile.Opacity;
+                    rainbowDust.position = Projectile.Center;
                     rainbowDust.velocity = dustVelocity;
                 }
             }
             if (Main.rand.NextBool(40))
             {
                 Vector2 dustSpawnOffset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(20f, 120f);
-                Vector2 dustSpawnPosition = projectile.Center + dustSpawnOffset;
+                Vector2 dustSpawnPosition = Projectile.Center + dustSpawnOffset;
                 Point dustSpawnPositionTileCoords = dustSpawnPosition.ToTileCoordinates();
 
                 // Dust should not be spawned out of the world or inside of tiles.
@@ -116,15 +117,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item27, projectile.position);
+            SoundEngine.PlaySound(SoundID.Item27, Projectile.position);
             Vector2 spinningpoint = new Vector2(0f, -3f).RotatedByRandom(3.1415927410125732);
             float dustCount = Main.rand.Next(7, 13);
-            Color newColor = Main.hslToRgb(projectile.ai[0], 1f, 0.5f);
+            Color newColor = Main.hslToRgb(Projectile.ai[0], 1f, 0.5f);
             newColor.A = 255;
             for (float i = 0f; i < dustCount; i++)
             {
-                Dust crystalDust = Dust.NewDustDirect(projectile.Center, 0, 0, 267, 0f, 0f, 0, newColor, 1f);
-                crystalDust.position = projectile.Center;
+                Dust crystalDust = Dust.NewDustDirect(Projectile.Center, 0, 0, 267, 0f, 0f, 0, newColor, 1f);
+                crystalDust.position = Projectile.Center;
                 crystalDust.velocity = spinningpoint.RotatedBy(MathHelper.TwoPi * i / dustCount) * new Vector2(2.1f, 2f) * (0.8f + Main.rand.NextFloat() * 0.4f);
                 crystalDust.noGravity = true;
                 crystalDust.scale = 2f;
@@ -137,18 +138,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             spriteBatch.EnterShaderRegion();
 
             MiscShaderData gradientShader = GameShaders.Misc["Infernum:GradientWingShader"];
-            gradientShader.UseImage("Images/Misc/Noise");
+            gradientShader.UseImage1("Images/Misc/Noise");
             gradientShader.UseOpacity(1.2f);
-            gradientShader.SetShaderTexture(ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTexture"));
+            gradientShader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTexture").Value);
 
             gradientShader.Apply();
-            gradientShader.Shader.Parameters["uTime"].SetValue(Main.GlobalTime + CrystalHue * MathHelper.TwoPi);
+            gradientShader.Shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly + CrystalHue * MathHelper.TwoPi);
             gradientShader.Shader.CurrentTechnique.Passes[0].Apply();
 
-            Texture2D crystalTexture = ModContent.GetTexture(Texture);
+            Texture2D crystalTexture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 crystalOrigin = crystalTexture.Size() * 0.5f;
-            Vector2 crystalDrawPosition = projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(crystalTexture, crystalDrawPosition, null, Color.White, projectile.rotation, crystalOrigin, projectile.scale, SpriteEffects.None, 0f);
+            Vector2 crystalDrawPosition = Projectile.Center - Main.screenPosition;
+            spriteBatch.Draw(crystalTexture, crystalDrawPosition, null, Color.White, Projectile.rotation, crystalOrigin, Projectile.scale, SpriteEffects.None, 0f);
 
             spriteBatch.ExitShaderRegion();
             return false;
@@ -156,7 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

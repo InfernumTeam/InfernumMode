@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -12,61 +13,61 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Plasma Bomb");
-            Main.projFrames[projectile.type] = 5;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            Main.projFrames[Projectile.type] = 5;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 36;
-            projectile.height = 36;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.Opacity = 0f;
-            projectile.timeLeft = 270;
-            projectile.Calamity().canBreakPlayerDefense = true;
-            cooldownSlot = 1;
+            Projectile.width = 36;
+            Projectile.height = 36;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.Opacity = 0f;
+            Projectile.timeLeft = 270;
+            Projectile.Calamity().canBreakPlayerDefense = true;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(270f, 265f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 35f, projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(270f, 265f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
 
             // Emit light.
-            Lighting.AddLight(projectile.Center, 0.1f * projectile.Opacity, 0.25f * projectile.Opacity, 0.25f * projectile.Opacity);
+            Lighting.AddLight(Projectile.Center, 0.1f * Projectile.Opacity, 0.25f * Projectile.Opacity, 0.25f * Projectile.Opacity);
 
             // Handle frames.
-            projectile.frameCounter++;
-            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
             // Create a burst of dust on the first frame.
-            if (projectile.localAI[0] == 0f)
+            if (Projectile.localAI[0] == 0f)
             {
                 for (int i = 0; i < 60; i++)
                 {
-                    Dust plasma = Dust.NewDustPerfect(projectile.Center, Main.rand.NextBool() ? 110 : 107);
+                    Dust plasma = Dust.NewDustPerfect(Projectile.Center, Main.rand.NextBool() ? 110 : 107);
                     plasma.position += Main.rand.NextVector2Circular(20f, 20f);
-                    plasma.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.3f) * Main.rand.NextFloat(2f, 16f);
+                    plasma.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.3f) * Main.rand.NextFloat(2f, 16f);
                     plasma.fadeIn = 1f;
                     plasma.color = Color.Lime * 0.6f;
                     plasma.scale *= Main.rand.NextFloat(1.5f, 2f);
                     plasma.noGravity = true;
                 }
-                projectile.localAI[0] = 1f;
+                Projectile.localAI[0] = 1f;
             }
 
             // Slow down over time.
-            projectile.velocity *= 0.96f;
+            Projectile.velocity *= 0.96f;
         }
 
-        public override bool CanHitPlayer(Player target) => projectile.Opacity == 1f;
+        public override bool CanHitPlayer(Player target) => Projectile.Opacity == 1f;
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (projectile.Opacity != 1f)
+            if (Projectile.Opacity != 1f)
                 return;
 
             target.AddBuff(BuffID.CursedInferno, 300);
@@ -74,13 +75,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], Color.White * projectile.Opacity, 1);
+            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], Color.White * Projectile.Opacity, 1);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item93, projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -89,13 +90,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             for (int i = 0; i < 7; i++)
             {
                 Vector2 sparkVelocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 6f;
-                Utilities.NewProjectileBetter(projectile.Center, sparkVelocity, ModContent.ProjectileType<TypicalPlasmaSpark>(), 500, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<TypicalPlasmaSpark>(), 500, 0f);
             }
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

@@ -483,7 +483,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 for (int i = 0; i < Main.maxProjectiles; i++)
                 {
                     if ((Main.projectile[i].type == ModContent.ProjectileType<AresDeathBeamTelegraph>() || Main.projectile[i].type == ModContent.ProjectileType<AresDeathBeam>()) && Main.projectile[i].active)
-                        Main.projectile[i].Kill();
+                        Main.projectile[i].timeLeft = 30;
                 }
                 SelectNextAttack(npc);
             }

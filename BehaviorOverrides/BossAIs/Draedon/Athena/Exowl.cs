@@ -261,7 +261,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (drawThrusters)
                 {
                     // Prepare the flame trail shader with its map texture.
-                    GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak").Value);
+                    GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak"));
 
                     // Draw a flame trail on the thrusters.
                     for (int direction = -1; direction <= 1; direction += 2)

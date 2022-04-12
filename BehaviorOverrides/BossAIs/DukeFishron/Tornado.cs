@@ -88,7 +88,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (TornadoDrawer is null)
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
 
-            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value);
+            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
             Vector2 upwardAscent = Vector2.UnitY * TornadoHeight;
             Vector2 top = Projectile.Bottom - upwardAscent;
             List<Vector2> drawPoints = new()

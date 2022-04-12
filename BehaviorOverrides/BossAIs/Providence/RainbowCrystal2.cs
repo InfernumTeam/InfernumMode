@@ -138,9 +138,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Main.spriteBatch.EnterShaderRegion();
 
             MiscShaderData gradientShader = GameShaders.Misc["Infernum:GradientWingShader"];
-            gradientShader.UseImage1("Images/Misc/Noise");
+            gradientShader.UseImage1("Images/Misc/noise");
             gradientShader.UseOpacity(1.2f);
-            gradientShader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTexture").Value);
+            gradientShader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTexture"));
 
             gradientShader.Apply();
             gradientShader.Shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly + CrystalHue * MathHelper.TwoPi);

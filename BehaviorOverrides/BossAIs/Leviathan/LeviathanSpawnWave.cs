@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (TornadoDrawer is null)
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, OffsetFunction, false, GameShaders.Misc["Infernum:DukeTornado"]);
 
-            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value);
+            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
             for (int i = 0; i < 3; i++)
                 TornadoDrawer.Draw(Projectile.oldPos, Vector2.UnitY * WaveHeight * 0.5f - Main.screenPosition, 35, 0f);

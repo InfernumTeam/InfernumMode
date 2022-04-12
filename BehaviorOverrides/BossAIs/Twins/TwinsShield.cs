@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             Main.spriteBatch.EnterShaderRegion();
 
             Vector2 scale = new(1.5f, 1f);
-            DrawData drawData = new(ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value,
+            DrawData drawData = new(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value,
                 Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
                 new Color(new Vector4(1f)) * 0.7f * Projectile.Opacity,

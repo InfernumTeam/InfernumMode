@@ -17,7 +17,7 @@ namespace InfernumMode.Systems
         public override void LoadWorldData(TagCompound tag)
         {
             var downed = tag.GetList<string>("downed");
-            PoDWorld.InfernumMode = downed.Contains("fuckYouMode");
+            PoDWorld.InfernumMode = downed.Contains("InfernumModeActive");
         }
     }
 }

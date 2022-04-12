@@ -106,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 FireDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.7f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap").Value);
+            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
             FireDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 34);
             return false;
         }

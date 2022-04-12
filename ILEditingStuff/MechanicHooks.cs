@@ -215,7 +215,7 @@ namespace InfernumMode.ILEditingStuff
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uZoomMatrix"].SetValue(zoomMatrix);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseColor(Color.Gray);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseSecondaryColor(Color.Turquoise);
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap").Value);
+                GameShaders.Misc["Infernum:MoonLordBGDistortion"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Apply();
                 Vector2 hell = new(Main.screenWidth * (Main.GameViewMatrix.Zoom.X - 1f), Main.screenHeight * (Main.GameViewMatrix.Zoom.Y - 1f));
                 Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, hell * -0.5f, null, Color.White, 0f, Vector2.Zero, scale, 0, 0f);

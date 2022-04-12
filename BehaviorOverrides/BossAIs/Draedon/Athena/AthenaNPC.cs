@@ -543,7 +543,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             GameShaders.Misc["Infernum:Hologram"].UseOpacity(hologramInterpolant);
             GameShaders.Misc["Infernum:Hologram"].UseColor(Color.Cyan);
             GameShaders.Misc["Infernum:Hologram"].UseSecondaryColor(Color.Gold);
-            GameShaders.Misc["Infernum:Hologram"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/HologramTexture").Value);
+            GameShaders.Misc["Infernum:Hologram"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/HologramTexture"));
             GameShaders.Misc["Infernum:Hologram"].Apply(fuckYou);
             fuckYou.Draw(Main.spriteBatch);
         }
@@ -566,7 +566,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 FlameTrail = new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
             // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak").Value);
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak"));
 
             // Draw a flame trail on the thrusters.
             for (int direction = -1; direction <= 1; direction++)

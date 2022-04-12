@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["CalamityMod:Bordernado"]);
 
             GameShaders.Misc["CalamityMod:Bordernado"].UseSaturation(1.4f);
-            GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/VoronoiShapes").Value);
+            GameShaders.Misc["CalamityMod:Bordernado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/VoronoiShapes"));
 
             List<float> originalRotations = new();
             List<Vector2> points = new();

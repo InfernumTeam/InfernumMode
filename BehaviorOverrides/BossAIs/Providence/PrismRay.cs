@@ -3,6 +3,7 @@ using CalamityMod.NPCs;
 using CalamityMod.Projectiles.BaseProjectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -65,12 +66,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Main.spriteBatch.EnterShaderRegion();
 
             // Apply a super special shader to the laser.
-            Texture2D laserTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTextureTransparent").Value;
+            Asset<Texture2D> laserTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTextureTransparent");
             if (!Main.dayTime)
-                laserTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTextureTransparentNight").Value;
+                laserTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTextureTransparentNight");
 
             MiscShaderData gradientShader = GameShaders.Misc["Infernum:GradientWingShader"];
-            gradientShader.UseImage1("Images/Misc/Noise");
+            gradientShader.UseImage1("Images/Misc/noise");
             gradientShader.UseOpacity(0.7f);
             gradientShader.SetShaderTexture(laserTexture);
 

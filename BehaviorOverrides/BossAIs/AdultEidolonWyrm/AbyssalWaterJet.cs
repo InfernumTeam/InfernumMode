@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             if (TornadoDrawer is null)
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
 
-            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value);
+            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
             TornadoDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 85);
             return false;
         }

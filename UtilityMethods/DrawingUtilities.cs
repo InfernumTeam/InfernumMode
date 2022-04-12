@@ -1,6 +1,7 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.Reflection;
 using Terraria;
@@ -19,7 +20,7 @@ namespace InfernumMode
 
         // Use reflection to set the image. Its underlying data is private and the only way to change it publicly
         // is via a method that only accepts paths to vanilla textures.
-        public static void SetShaderTexture(this MiscShaderData shader, Texture2D texture) => shaderTextureField.SetValue(shader, new Ref<Texture2D>(texture));
+        public static void SetShaderTexture(this MiscShaderData shader, Asset<Texture2D> texture) => shaderTextureField.SetValue(shader, texture);
 
         /// <summary>
         /// Prepares a <see cref="SpriteBatch"/> for shader-based drawing.

@@ -11,6 +11,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using CeaselessVoidBoss = CalamityMod.NPCs.CeaselessVoid.CeaselessVoid;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
@@ -41,21 +42,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.height = 100;
             npc.defense = 0;
             npc.lifeMax = 363000;
-            Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
-            if (calamityModMusic != null)
-                npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/ScourgeofTheUniverse");
+            if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
+                npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/ScourgeofTheUniverse");
             else
-                npc.modNPC.music = MusicID.Boss3;
+                npc.ModNPC.Music = MusicID.Boss3;
             if (CalamityWorld.DoGSecondStageCountdown <= 0)
             {
                 npc.value = Item.buyPrice(0, 35, 0, 0);
-                if (calamityModMusic != null)
-                    npc.modNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/Void");
+                if (ModLoader.TryGetMod("CalamityModMusic", out calamityModMusic))
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/Void");
                 else
-                    npc.modNPC.music = MusicID.Boss3;
+                    npc.ModNPC.Music = MusicID.Boss3;
             }
             npc.aiStyle = -1;
-            npc.modNPC.aiType = -1;
+            npc.ModNPC.AIType = -1;
             npc.knockBackResist = 0f;
             for (int k = 0; k < npc.buffImmune.Length; k++)
                 npc.buffImmune[k] = true;
@@ -108,7 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.Calamity().CurrentlyEnraged = npc.dontTakeDamage;
 
             // Do bullet hells.
-            if (bulletHellTimer > 0f && bulletHellTimer < BulletHellTime)
+            if (bulletHellTimer is > 0f and < BulletHellTime)
             {
                 DoBehavior_DarkEnergyBulletHell(npc, target, lifeRatio, ref bulletHellTimer);
 
@@ -309,7 +309,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             int crackCount = 12 + phase * 8;
 
             // Hover into position.
-            float moveSpeedFactor = Utils.InverseLerp(60f, 120f, attackTimer, true) * Utils.InverseLerp(240f, 180f, attackTimer, true);
+            float moveSpeedFactor = Utils.GetLerpValue(60f, 120f, attackTimer, true) * Utils.GetLerpValue(240f, 180f, attackTimer, true);
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 370f;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * moveSpeedFactor * 25f, moveSpeedFactor * 0.8f);
             npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, moveSpeedFactor);
@@ -318,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             // Create cracks and release a spread of dark energy.
             if (attackTimer == 150f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), npc.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), npc.Center);
                 for (int i = 0; i < crackCount; i++)
                 {
                     Vector2 crackSpawnPosition = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(50f, 990f);
@@ -398,7 +398,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
                 SoundEngine.PlaySound(SoundID.DD2_WitherBeastAuraPulse, target.Center);
 
             // Don't fire near the start/end of the attack.
-            if (attackTimer < 90f || attackTimer > BulletHellTime - 120f)
+            if (attackTimer is < 90f or > (BulletHellTime - 120f))
                 return;
 
             // Create bursts.
@@ -452,7 +452,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
             int phase = (int)npc.ai[3];
             List<CeaselessVoidAttackType> possibleAttacks = new()
-			{
+            {
                 CeaselessVoidAttackType.ReleaseRealityTearPortals,
                 CeaselessVoidAttackType.DarkMagicCharge,
                 CeaselessVoidAttackType.DarkEnergyBolts

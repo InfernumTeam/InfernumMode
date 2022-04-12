@@ -384,7 +384,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             continue;
 
                         // Do the teleport if a suitable position is found.
-                        npc.Bottom = teleportPosition.ToWorldCoordinates(8f, -4f);
+                        npc.Bottom = teleportPosition.ToWorldCoordinates();
 
                         // And spawn a bunch of flame pillars.
                         if (Main.netMode != NetmodeID.MultiplayerClient)

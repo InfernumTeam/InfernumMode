@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
@@ -214,8 +215,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (lifeRatio < Phase2LifeRatioThreshold && phase2Timer < Phase2TransitionTime)
             {
                 phase2Timer++;
-                phase2TransitionSpin = Utils.InverseLerp(0f, Phase2TransitionTime / 2f, phase2Timer, true);
-                phase2TransitionSpin *= Utils.InverseLerp(Phase2TransitionTime, Phase2TransitionTime / 2f, phase2Timer, true);
+                phase2TransitionSpin = Utils.GetLerpValue(0f, Phase2TransitionTime / 2f, phase2Timer, true);
+                phase2TransitionSpin *= Utils.GetLerpValue(Phase2TransitionTime, Phase2TransitionTime / 2f, phase2Timer, true);
                 phase2TransitionSpin *= 0.4f;
 
                 CurrentAttackState = TwinsAttackState.ChargeRedirect;
@@ -272,7 +273,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 if (!Main.npc[i].active)
                     continue;
-                if (Main.npc[i].type != NPCID.Retinazer && Main.npc[i].type != NPCID.Spazmatism)
+                if (Main.npc[i].type is not NPCID.Retinazer and not NPCID.Spazmatism)
                     continue;
                 if (Main.npc[i].type == npc.type)
                     continue;
@@ -290,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int shield = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, 255);
+                    int shield = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsShield>(), 0, 0f, 255);
                     Main.projectile[shield].ai[0] = npc.whoAmI;
                 }
                 Utilities.DisplayText($"{(npc.type == NPCID.Spazmatism ? "SPA-MK1" : "RET-MK1")}: DEFENSES PENETRATED. INITIATING PROCEDURE SHLD-17ECF9.", npc.type == NPCID.Spazmatism ? Color.LimeGreen : Color.IndianRed);
@@ -328,16 +329,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     {
                         if (Main.netMode != NetmodeID.MultiplayerClient && overdriveTimer == 105f)
                         {
-                            int explosion = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+                            int explosion = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
                             Main.projectile[explosion].ai[0] = npc.type;
 
                             if (npc.type == NPCID.Retinazer)
                             {
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyOrb>(), 0, npc.whoAmI, 1f);
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyOrb>(), 0, npc.whoAmI, -1f);
+                                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyOrb>(), 0, npc.whoAmI, 1f);
+                                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyOrb>(), 0, npc.whoAmI, -1f);
                             }
                             else if (npc.type == NPCID.Spazmatism)
-                                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CursedOrb>(), 0, npc.whoAmI);
+                                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CursedOrb>(), 0, npc.whoAmI);
                         }
 
                         overdriveTimer++;
@@ -521,7 +522,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             int spinSlowdownTime = 35;
             int reelbackTime = 30;
             int chargeTime = 55;
-            float spinSlowdownInterpolant = Utils.InverseLerp(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, UniversalAttackTimer, true);
+            float spinSlowdownInterpolant = Utils.GetLerpValue(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, UniversalAttackTimer, true);
             float spinAngularVelocity = MathHelper.Lerp(MathHelper.ToRadians(1.5f), MathHelper.ToRadians(3f), 1f - CombinedLifeRatio);
             ref float spinRotation = ref npc.ai[0];
             ref float spinDirection = ref npc.ai[1];
@@ -690,7 +691,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                     npc.damage += 35;
 
                     Tile tile = CalamityUtils.ParanoidTileRetrieval((int)npc.Center.X / 16, (int)npc.Center.Y / 16);
-                    bool platformFuck = (TileID.Sets.Platforms[tile.type] || Main.tileSolidTop[tile.type]) && tile.nactive() && npc.Center.Y > Target.Center.Y;
+                    bool platformFuck = (TileID.Sets.Platforms[tile.TileType] || Main.tileSolidTop[tile.TileType]) && tile.HasUnactuatedTile && npc.Center.Y > Target.Center.Y;
                     if (platformFuck || Collision.SolidCollision(npc.position, npc.width, npc.height) || npc.Center.Y > Target.Center.Y + 800f)
                     {
                         chargingTime = 0f;
@@ -766,7 +767,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             ref float lightningAttackTimer = ref npc.Infernum().ExtraAI[12];
             ref float burstCounter = ref npc.Infernum().ExtraAI[13];
 
-            int lightningShootRate = (int)MathHelper.Lerp(300, 150, Utils.InverseLerp(0.5f, 0.1f, lifeRatio));
+            int lightningShootRate = (int)MathHelper.Lerp(300, 150, Utils.GetLerpValue(0.5f, 0.1f, lifeRatio));
             if (Main.netMode != NetmodeID.MultiplayerClient && lightningAttackTimer >= lightningShootRate)
             {
                 Utilities.NewProjectileBetter(Target.Center + new Vector2(Main.rand.NextFloat(600f, 960f) * Math.Sign(Target.velocity.X), -1400f), Vector2.UnitY, ModContent.ProjectileType<LightningTelegraph>(), 0, 0f);
@@ -877,12 +878,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                         npc.Opacity = 1f - attackTimer / 60f;
                     }
 
-                    if (attackTimer > 60f && attackTimer < 240f)
+                    if (attackTimer is > 60f and < 240f)
                         npc.velocity *= 0.97f;
 
-                    if (attackTimer >= 240f && attackTimer <= 270f)
+                    if (attackTimer is >= 240f and <= 270f)
                     {
-                        npc.Opacity = Utils.InverseLerp(240f, 270f, attackTimer, true);
+                        npc.Opacity = Utils.GetLerpValue(240f, 270f, attackTimer, true);
                         npc.rotation = npc.AngleTo(Target.Center) - MathHelper.PiOver2;
                     }
                     if (attackTimer == 270f)
@@ -935,7 +936,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             ref float fireballShootTimer = ref npc.Infernum().ExtraAI[12];
             ref float orbResummonTimer = ref npc.Infernum().ExtraAI[16];
 
-            int fireballShootRate = (int)MathHelper.Lerp(300, 120, Utils.InverseLerp(0.5f, 0.1f, lifeRatio));
+            int fireballShootRate = (int)MathHelper.Lerp(300, 120, Utils.GetLerpValue(0.5f, 0.1f, lifeRatio));
             if (Main.netMode != NetmodeID.MultiplayerClient && fireballShootTimer >= fireballShootRate)
             {
                 Utilities.NewProjectileBetter(Target.Center - Vector2.UnitX * 1300f, Vector2.UnitX * 11f, ModContent.ProjectileType<CursedFlameBurstTelegraph>(), 0, 0f);
@@ -950,7 +951,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             if (Main.netMode != NetmodeID.MultiplayerClient && orbResummonTimer > 900f)
             {
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CursedOrb>(), 0, npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<CursedOrb>(), 0, npc.whoAmI);
                 orbResummonTimer = 0f;
             }
 

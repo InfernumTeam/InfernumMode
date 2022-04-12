@@ -11,6 +11,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
@@ -59,14 +60,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             List<Projectile> beacons = Utilities.AllProjectilesByID(ModContent.ProjectileType<DeusRitualDrama>()).ToList();
             if (beacons.Count == 0)
             {
-                Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DeusRitualDrama>(), 0, 0f);
+                Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<DeusRitualDrama>(), 0, 0f);
                 beacons = Utilities.AllProjectilesByID(ModContent.ProjectileType<DeusRitualDrama>()).ToList();
             }
 
             Player target = Main.player[npc.target];
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float beaconAngerFactor = Utils.InverseLerp(3600f, 5600f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
+            float beaconAngerFactor = Utils.GetLerpValue(3600f, 5600f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float hasCreatedSegments = ref npc.localAI[0];
@@ -240,7 +241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 }
 
                 if (wrappedTime == crashRiseTime + 8f)
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AstrumDeusSplit"), target.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AstrumDeusSplit"), target.Center);
             }
 
             // Adjust rotation.
@@ -346,7 +347,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 {
                     Vector2 teleportOffsetDirection = -target.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.456f);
 
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AstrumDeusSplit"), target.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AstrumDeusSplit"), target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         npc.Center = target.Center + teleportOffsetDirection * teleportOutwardness;
@@ -628,7 +629,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             // Create plasma particles near the mouth to indicate that something is happening.
             if (attackTimer < fireDelay)
             {
-                int particleCount = (int)MathHelper.SmoothStep(2f, 6f, Utils.InverseLerp(15f, fireDelay - 45f, attackTimer, true));
+                int particleCount = (int)MathHelper.SmoothStep(2f, 6f, Utils.GetLerpValue(15f, fireDelay - 45f, attackTimer, true));
                 Vector2 mouthPosition = npc.Center + (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 30f;
                 for (int i = 0; i < particleCount; i++)
                 {
@@ -642,16 +643,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             }
 
             // Cause the screen to shake prior to firing in anticipatiom.
-            target.Infernum().CurrentScreenShakePower = Utils.InverseLerp(fireDelay - 105f, fireDelay - 15f, attackTimer, true) * Utils.InverseLerp(fireDelay + 12f, fireDelay, attackTimer, true) * 4f;
+            target.Infernum().CurrentScreenShakePower = Utils.GetLerpValue(fireDelay - 105f, fireDelay - 15f, attackTimer, true) * Utils.GetLerpValue(fireDelay + 12f, fireDelay, attackTimer, true) * 4f;
 
             // Play an acoustic indicator prior to firing as a charge.
             if (attackTimer == fireDelay - 120f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/CrystylCharge"), target.Center);
 
             // Release a plasma beam periodically.
             if (!cannotFireAnymore && attackTimer >= fireDelay && (attackTimer - fireDelay) % (AstralPlasmaBeam.Lifetime + 40f) == 0)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaGrenadeExplosion"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int plasmaBeam = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY, ModContent.ProjectileType<AstralPlasmaBeam>(), 270, 0f);
@@ -733,9 +734,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             {
                 int nextIndex;
                 if (i < wormLength - 1)
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
                 Main.npc[nextIndex].realLife = npc.whoAmI;
                 Main.npc[nextIndex].ai[2] = i;

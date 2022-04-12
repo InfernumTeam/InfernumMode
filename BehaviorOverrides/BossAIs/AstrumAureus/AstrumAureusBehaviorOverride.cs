@@ -16,6 +16,8 @@ using Terraria.ModLoader;
 using Terraria.Utilities;
 
 using AureusBoss = CalamityMod.NPCs.AstrumAureus.AstrumAureus;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
@@ -343,7 +345,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                             // Play a sound as an indicator if doing a meteor slam.
                             if (meteorSlam)
-                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
 
                             npc.noTileCollide = true;
 
@@ -364,7 +366,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     if (npc.velocity.Y == 0f && attackTimer > 30f)
                     {
                         // Play a stomp sound.
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LegStomp"), npc.Center);
+                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/LegStomp"), npc.Center);
 
                         // Reset the jump intensity.
                         jumpIntensity = 0f;
@@ -526,7 +528,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             rocketShootTimer++;
             if (rocketShootTimer >= rocketReleaseRate && attackTimer > 75f && attackTimer < 240f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaBlast"), npc.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaBlast"), npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -567,7 +569,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             walkSpeed *= npc.SafeDirectionTo(target.Center).X;
 
             if (npc.WithinRange(target.Center, 920f))
-                walkSpeed *= Utils.InverseLerp(laserShootDelay - 90f, 210f, attackTimer, true);
+                walkSpeed *= Utils.GetLerpValue(laserShootDelay - 90f, 210f, attackTimer, true);
             if (BossRushEvent.BossRushActive)
                 laserSpeed *= 2.5f;
             laserSpeed += npc.Distance(target.Center) * 0.01f;
@@ -575,7 +577,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Enrage if the player moves too far away.
             if (!npc.WithinRange(target.Center, 1250f) && enrageCountdown <= 0f && attackTimer > laserShootDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
                 enrageCountdown = 360f;
                 npc.netUpdate = true;
             }
@@ -655,7 +657,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 float ringIrregularity = Main.rand.NextFloat(0.5f);
 
                 if (NPC.CountNPCS(ModContent.NPCType<AureusSpawn>()) < 7)
-                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AureusSpawn>(), npc.whoAmI, ringAngle, ringRadius, ringIrregularity);
+                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AureusSpawn>(), npc.whoAmI, ringAngle, ringRadius, ringIrregularity);
                 npc.netUpdate = true;
             }
 
@@ -700,7 +702,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Make an explosion prior to the comets being released.
             if (attackTimer == 120f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
                 Utilities.CreateGenericDustExplosion(npc.Center, ModContent.DustType<AstralOrange>(), 60, 11f, 1.8f);
             }
 
@@ -741,7 +743,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             int laserShootDelay = 210;
             float walkSpeed = MathHelper.Lerp(8.5f, 13f, 1f - lifeRatio);
             walkSpeed += horizontalDistanceFromTarget * 0.0075f;
-            walkSpeed *= Utils.InverseLerp(laserShootDelay * 0.76f, laserShootDelay * 0.5f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
+            walkSpeed *= Utils.GetLerpValue(laserShootDelay * 0.76f, laserShootDelay * 0.5f, attackTimer, true) * npc.SafeDirectionTo(target.Center).X;
             if (BossRushEvent.BossRushActive)
                 walkSpeed *= 2.64f;
 
@@ -760,7 +762,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
             // Play a charge sound as a telegraph prior to firing.
             if (attackTimer == laserShootDelay - 155f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/CrystylCharge"), target.Center);
 
             // Adjust frames.
             frameType = Math.Abs(walkSpeed) > 0f ? (int)AureusFrameType.Walk : (int)AureusFrameType.Idle;
@@ -811,7 +813,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float laserLifetimeCompletion = Utils.InverseLerp(laserShootDelay, laserShootDelay + OrangeLaserbeam.LaserLifetime, attackTimer, true);
+                    float laserLifetimeCompletion = Utils.GetLerpValue(laserShootDelay, laserShootDelay + OrangeLaserbeam.LaserLifetime, attackTimer, true);
 
                     for (int i = 0; i < 1 + laserLifetimeCompletion * 2f; i++)
                     {
@@ -886,7 +888,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             npc.ai[2]++;
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            double jumpWeight = 1D + Utils.InverseLerp(640f, 1860f, npc.Center.Y - target.Center.Y, true) * 4f;
+            double jumpWeight = 1D + Utils.GetLerpValue(640f, 1860f, npc.Center.Y - target.Center.Y, true) * 4f;
             if (jumpWeight < 1D)
                 jumpWeight = 1D;
 
@@ -907,7 +909,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             if (lifeRatio < Phase2LifeRatio)
             {
                 attackSelector.Add(AureusAttackType.CreateAureusSpawnRing, 0.85);
-                if (oldAttackState != AureusAttackType.LeapAtTarget && oldAttackState != AureusAttackType.MeteorSlam)
+                if (oldAttackState is not AureusAttackType.LeapAtTarget and not AureusAttackType.MeteorSlam)
                     attackSelector.Add(AureusAttackType.CelestialRain);
             }
 
@@ -1002,30 +1004,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Main.npcTexture[npc.type];
-            Texture2D glowmaskTexture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D glowmaskTexture = TextureAssets.Npc[npc.type].Value;
             SpriteEffects spriteEffects = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             AureusFrameType frameType = (AureusFrameType)(int)npc.localAI[0];
 
             switch (frameType)
             {
                 case AureusFrameType.Idle:
-                    glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusGlow");
+                    glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusGlow").Value;
                     break;
                 case AureusFrameType.SitAndRecharge:
-                    texture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusRecharge");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusRecharge").Value;
                     break;
                 case AureusFrameType.Walk:
-                    texture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusWalk");
-                    glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusWalkGlow");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusWalk").Value;
+                    glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusWalkGlow").Value;
                     break;
                 case AureusFrameType.Jump:
-                    texture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusJump");
-                    glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusJumpGlow");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusJump").Value;
+                    glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusJumpGlow").Value;
                     break;
                 case AureusFrameType.Stomp:
-                    texture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusStomp");
-                    glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusStompGlow");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusStomp").Value;
+                    glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusStompGlow").Value;
                     break;
             }
 
@@ -1041,31 +1043,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
                     Vector2 afterimageDrawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-                    spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, rotation, origin, scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageDrawPosition, npc.frame, afterimageColor, rotation, origin, scale, spriteEffects, 0f);
                 }
             }
 
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
 
             // Draw the second phase back afterimage if applicable.
-            float backAfterimageInterpolant = Utils.InverseLerp(0f, 180f, npc.localAI[1], true) * npc.Opacity;
+            float backAfterimageInterpolant = Utils.GetLerpValue(0f, 180f, npc.localAI[1], true) * npc.Opacity;
             if (backAfterimageInterpolant > 0f)
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    float colorInterpolant = (float)Math.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTime * 10f) * 0.5f + 0.5f;
+                    float colorInterpolant = (float)Math.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTimeWrappedHourly * 10f) * 0.5f + 0.5f;
                     Color backAfterimageColor = Color.Lerp(new Color(109, 242, 196, 0), new Color(255, 119, 102, 0), colorInterpolant);
                     backAfterimageColor *= backAfterimageInterpolant;
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
-                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backAfterimageColor, rotation, origin, scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, backAfterimageColor, rotation, origin, scale, spriteEffects, 0f);
                 }
             }
 
             // Draw the normal texture.
-            spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), rotation, origin, scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), rotation, origin, scale, spriteEffects, 0f);
 
             // And draw glowmasks (and their afterimages) if not recharging.
-            if ((AureusAttackType)(int)npc.ai[0] != AureusAttackType.Recharge && glowmaskTexture != Main.npcTexture[npc.type])
+            if ((AureusAttackType)(int)npc.ai[0] != AureusAttackType.Recharge && glowmaskTexture != TextureAssets.Npc[npc.type].Value)
             {
                 Color glowmaskColor = Color.White;
 
@@ -1075,11 +1077,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     {
                         Color afterimageColor = npc.GetAlpha(Color.Lerp(glowmaskColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
                         Vector2 afterimageDrawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-                        spriteBatch.Draw(glowmaskTexture, afterimageDrawPosition, npc.frame, afterimageColor, rotation, origin, scale, spriteEffects, 0f);
+                        Main.spriteBatch.Draw(glowmaskTexture, afterimageDrawPosition, npc.frame, afterimageColor, rotation, origin, scale, spriteEffects, 0f);
                     }
                 }
 
-                spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, glowmaskColor, rotation, origin, scale, spriteEffects, 0f);
+                Main.spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, glowmaskColor, rotation, origin, scale, spriteEffects, 0f);
             }
 
             return false;

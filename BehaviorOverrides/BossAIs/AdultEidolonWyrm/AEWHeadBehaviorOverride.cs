@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -44,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public const int ShieldHP = 102000;
         public const float Phase2LifeRatio = 0.8f;
 
-        public override int NPCOverrideType => InfernumMode.CalamityMod.NPCType("EidolonWyrmHeadHuge");
+        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmHeadHuge").Type;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
@@ -58,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override bool PreAI(NPC npc)
         {
             // Use the default AI if SCal and Draedon are not both dead.
-            if (!CalamityWorld.downedExoMechs || !CalamityWorld.downedSCal)
+            if (!DownedBossSystem.downedExoMechs || !DownedBossSystem.downedSCal)
                 return true;
 
             npc.TargetClosest();
@@ -99,15 +101,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 for (int i = 0; i < 41; i++)
                 {
                     int lol;
-                    if (i >= 0 && i < 40)
+                    if (i is >= 0 and < 40)
                     {
                         if (i % 2 == 0)
-                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("EidolonWyrmBodyHuge"), npc.whoAmI + 1);
+                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyHuge").Type, npc.whoAmI + 1);
                         else
-                            lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("EidolonWyrmBodyAltHuge"), npc.whoAmI + 1);
+                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyAltHuge").Type, npc.whoAmI + 1);
                     }
                     else
-                        lol = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"), npc.whoAmI + 1);
+                        lol = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type, npc.whoAmI + 1);
 
                     Main.npc[lol].realLife = npc.whoAmI;
                     Main.npc[lol].ai[2] = npc.whoAmI;
@@ -219,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Decide the etherealness factor.
-            etherealnessFactor = Utils.InverseLerp(0f, 60f, attackTimer, true) * Utils.InverseLerp(attackTime, attackTime - attackChangeDelay, attackTimer, true);
+            etherealnessFactor = Utils.GetLerpValue(0f, 60f, attackTimer, true) * Utils.GetLerpValue(attackTime, attackTime - attackChangeDelay, attackTimer, true);
 
             if (attackTimer > attackTime)
                 SelectNextAttack(npc);
@@ -239,7 +241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     for (int i = 0; i < 10; i++)
                     {
                         Vector2 blastShootVelocity = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 15f;
-                        Projectile.NewProjectile(npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
+                        Projectile.NewProjectile(new InfernumSource(), npc.Center, blastShootVelocity, ModContent.ProjectileType<PsionicRay>(), blastDamage, 0f);
                     }
                 }
             }
@@ -279,7 +281,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Decide the etherealness factor.
-            etherealnessFactor = Utils.InverseLerp(0f, 60f, attackTimer, true) * Utils.InverseLerp(attackTime, attackTime - attackChangeDelay, attackTimer, true);
+            etherealnessFactor = Utils.GetLerpValue(0f, 60f, attackTimer, true) * Utils.GetLerpValue(attackTime, attackTime - attackChangeDelay, attackTimer, true);
 
             if (attackTimer > attackTime)
                 SelectNextAttack(npc);
@@ -322,7 +324,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     npc.velocity = npc.velocity.RotateTowards(idealHoverVelocity.ToRotation(), 0.045f).MoveTowards(idealHoverVelocity, 4f);
 
                     // Fade out.
-                    npc.Opacity = Utils.InverseLerp(redirectTime * 0.5f, redirectTime * 0.5f - 12f, attackTimer, true);
+                    npc.Opacity = Utils.GetLerpValue(redirectTime * 0.5f, redirectTime * 0.5f - 12f, attackTimer, true);
 
                     // Disable conct damage.
                     npc.damage = 0;
@@ -440,7 +442,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Charge.
             if (attackTimer == teleportFadeTime + telegraphTime)
             {
-                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/WyrmElectricCharge"), target.Center);
                 npc.velocity = aimDirection.ToRotationVector2() * chargeSpeed;
                 npc.Opacity = 1f;
                 npc.netUpdate = true;
@@ -488,7 +490,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             int pissedOffChargeDelay = 20;
             int shieldExplosionDelay = 54;
             int pissedOffChargeTime = 50;
-            NPC tail = Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"))];
+            NPC tail = Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type)];
 
             float pissedOffChargeSpeed = MathHelper.Lerp(54f, 66f, 1f - lifeRatio);
             ref float totalShieldDamage = ref npc.Infernum().ExtraAI[0];
@@ -518,7 +520,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
             else
             {
-                etherealnessFactor = Utils.InverseLerp(0f, pissedOffChargeDelay, attackTimer - timeNeededToDestroyShield, true);
+                etherealnessFactor = Utils.GetLerpValue(0f, pissedOffChargeDelay, attackTimer - timeNeededToDestroyShield, true);
                 if (attackTimer < timeNeededToDestroyShield + pissedOffChargeDelay)
                 {
                     Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * 27f;
@@ -545,7 +547,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     npc.netUpdate = true;
 
                     int explosionDamage = (int)(generalDamageFactor * 900f);
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeMechGaussRifle"), tail.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LargeMechGaussRifle"), tail.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(tail.Center, Vector2.Zero, ModContent.ProjectileType<EidolicExplosion>(), explosionDamage, 0f);
                 }
@@ -561,7 +563,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 if (hasRoaredYet == 0f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmScream"), target.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/WyrmScream"), target.Center);
                     hasRoaredYet = 1f;
                     pissedOff = 1f;
                     npc.netUpdate = true;
@@ -573,7 +575,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             {
                 if (hasRoaredYet == 0f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmScream"), target.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/WyrmScream"), target.Center);
 
                     // Take damage after the shield is destroyed.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -619,7 +621,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             // Create energy fields.
             if (attackTimer == fieldCreationDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EidolonWyrmRoarClose"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/EidolonWyrmRoarClose"), target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -628,7 +630,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     List<int> drones = new();
                     for (int i = 0; i < droneSummonCount; i++)
                     {
-                        int drone = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyFieldLaserProjector>());
+                        int drone = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EnergyFieldLaserProjector>());
                         Main.npc[drone].target = npc.target;
                         drones.Add(drone);
                     }
@@ -654,7 +656,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 npc.velocity = Vector2.Lerp(npc.velocity, chargeVelocity, 0.05f).MoveTowards(chargeVelocity, 2f);
                 if (attackTimer == spinTime + chargePreparationTime - 1f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmScream"), target.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/WyrmScream"), target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         // Release sparks at the target.
@@ -763,14 +765,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public static void DrawSegment(SpriteBatch spriteBatch, Color lightColor, NPC npc)
         {
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
             float etherealnessFactor = npc.localAI[1];
             if (npc.realLife >= 0)
                 etherealnessFactor = Main.npc[npc.realLife].localAI[1];
             float opacity = MathHelper.Lerp(1f, 0.75f, etherealnessFactor) * npc.Opacity;
-            Color color = Color.Lerp(lightColor, Main.hslToRgb(Main.GlobalTime * 0.7f % 1f, 1f, 0.74f), etherealnessFactor * 0.85f);
+            Color color = Color.Lerp(lightColor, Main.hslToRgb(Main.GlobalTimeWrappedHourly * 0.7f % 1f, 1f, 0.74f), etherealnessFactor * 0.85f);
             color.A = (byte)(int)(255 - etherealnessFactor * 84f);
 
             if (etherealnessFactor > 0f)
@@ -779,48 +781,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                 for (int i = 0; i < 32; i++)
                 {
-                    Color baseColor = Main.hslToRgb((Main.GlobalTime * 1.7f + i / 32f) % 1f, 1f, 0.8f);
+                    Color baseColor = Main.hslToRgb((Main.GlobalTimeWrappedHourly * 1.7f + i / 32f) % 1f, 1f, 0.8f);
                     Color etherealAfterimageColor = Color.Lerp(lightColor, baseColor, etherealnessFactor * 0.85f) * 0.24f;
                     etherealAfterimageColor.A = (byte)(int)(255 - etherealnessFactor * 255f);
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 32f).ToRotationVector2() * etherealOffsetPulse;
-                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, etherealAfterimageColor * opacity, npc.rotation, origin, npc.scale, 0, 0f);
+                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, etherealAfterimageColor * opacity, npc.rotation, origin, npc.scale, 0, 0f);
                 }
             }
 
             for (int i = 0; i < (int)Math.Round(1f + etherealnessFactor); i++)
-                spriteBatch.Draw(texture, drawPosition, npc.frame, color * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition, npc.frame, color * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
             // Create the shield for the tail in the Impact Tail attack.
-            if (npc.type == InfernumMode.CalamityMod.NPCType("EidolonWyrmTailHuge"))
+            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type)
             {
                 NPC head = Main.npc[npc.realLife];
                 if (head.ai[0] == (int)AEWAttackType.ImpactTail && head.Infernum().ExtraAI[1] == 0f)
                 {
-                    spriteBatch.SetBlendState(BlendState.Additive);
+                    Main.spriteBatch.SetBlendState(BlendState.Additive);
                     Vector2 shieldDrawPosition = npc.Center - Main.screenPosition;
 
                     for (int i = 0; i < 50; i++)
                     {
                         float fadeToWhite = 0f;
-                        Texture2D shieldTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/AEWTailShield");
+                        Texture2D shieldTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/AEWTailShield").Value;
                         if (i < 8)
                         {
-                            shieldTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNuclearExplosion");
+                            shieldTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNuclearExplosion").Value;
                             fadeToWhite = 1f - i / 7f;
                         }
 
-                        float rotation = (float)Math.Cos(Main.GlobalTime * 3f + i) * MathHelper.Pi * (1f - i / 50f);
-                        float hpBasedShieldOpacity = 1f - (float)Math.Pow(Utils.InverseLerp(0f, ShieldHP, head.Infernum().ExtraAI[0], true), 2D);
-                        float shieldScaleFactor = Utils.InverseLerp(0f, 45f, head.ai[1], true);
-                        shieldScaleFactor += (float)Math.Cos(Main.GlobalTime * -1.9f + i * 2f) * 0.8f;
+                        float rotation = (float)Math.Cos(Main.GlobalTimeWrappedHourly * 3f + i) * MathHelper.Pi * (1f - i / 50f);
+                        float hpBasedShieldOpacity = 1f - (float)Math.Pow(Utils.GetLerpValue(0f, ShieldHP, head.Infernum().ExtraAI[0], true), 2D);
+                        float shieldScaleFactor = Utils.GetLerpValue(0f, 45f, head.ai[1], true);
+                        shieldScaleFactor += (float)Math.Cos(Main.GlobalTimeWrappedHourly * -1.9f + i * 2f) * 0.8f;
 
                         Vector2 shieldScale = Vector2.One / shieldTexture.Size() * MathHelper.Max(npc.frame.Width, npc.frame.Height) * shieldScaleFactor * 0.8f;
                         shieldScale.Y *= 1.2f;
 
                         Color shieldColor = Color.Lerp(Color.Cyan, Color.White * 0.5f, fadeToWhite) * shieldScaleFactor * (1f - (i + 1f) / 33f) * hpBasedShieldOpacity;
-                        spriteBatch.Draw(shieldTexture, shieldDrawPosition, null, shieldColor, rotation, shieldTexture.Size() * 0.5f, shieldScale, 0, 0f);
+                        Main.spriteBatch.Draw(shieldTexture, shieldDrawPosition, null, shieldColor, rotation, shieldTexture.Size() * 0.5f, shieldScale, 0, 0f);
                     }
-                    spriteBatch.ExitShaderRegion();
+                    Main.spriteBatch.ExitShaderRegion();
                 }
             }
         }
@@ -828,7 +830,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             DrawSegment(spriteBatch, lightColor, npc);
-            Texture2D eyeTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/AdultEidolonWyrm/EidolonWyrmEyes");
+            Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/AdultEidolonWyrm/EidolonWyrmEyes").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * 1.5f;
             Vector2 origin = eyeTexture.Size() * 0.5f;
             Color eyeColor = npc.GetAlpha(CalculateEyeColor(npc));
@@ -836,10 +838,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             for (int i = 0; i < 10; i++)
             {
                 Vector2 eyeOffset = (MathHelper.TwoPi * i / 10f).ToRotationVector2() * 4f;
-                spriteBatch.Draw(eyeTexture, drawPosition + eyeOffset, npc.frame, eyeColor * 0.5f, npc.rotation, origin, npc.scale, 0, 0f);
+                Main.spriteBatch.Draw(eyeTexture, drawPosition + eyeOffset, npc.frame, eyeColor * 0.5f, npc.rotation, origin, npc.scale, 0, 0f);
             }
 
-            spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, 0, 0f);
+            Main.spriteBatch.Draw(eyeTexture, drawPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, 0, 0f);
             return false;
         }
     }

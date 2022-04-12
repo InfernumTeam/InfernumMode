@@ -8,6 +8,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
@@ -30,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 totalAttachedEyes++;
             }
 
-            npc.Calamity().DR = MathHelper.Lerp(0.225f, 0.725f, Utils.InverseLerp(0f, 3f, totalAttachedEyes, true));
+            npc.Calamity().DR = MathHelper.Lerp(0.225f, 0.725f, Utils.GetLerpValue(0f, 3f, totalAttachedEyes, true));
 
             ref float initialized01Flag = ref npc.localAI[0];
             ref float attackTimer = ref npc.ai[3];
@@ -65,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     npc.active = false;
             }
 
-            Main.wof = npc.whoAmI;
+            Main.wofNPCIndex = npc.whoAmI;
 
             if (npc.Center.X <= 160f || npc.Center.X >= Main.maxTilesX * 16f - 160f)
             {
@@ -75,8 +76,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             if (initialized01Flag == 0f)
             {
-                Main.wofB = -1;
-                Main.wofT = -1;
+                Main.wofDrawAreaBottom = -1;
+                Main.wofDrawAreaTop = -1;
 
                 SetEyePositions(npc);
                 SummonEyes(npc);
@@ -101,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             int miscEnemyCount = NPC.CountNPCS(NPCID.LeechHead) + NPC.CountNPCS(NPCID.TheHungryII);
             if (Main.netMode != NetmodeID.MultiplayerClient && miscEnemyCount < 3 && totalAttachedEyes <= 0 && attackTimer % 180f == 179f)
             {
-                int leech = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, Main.rand.NextBool() ? NPCID.LeechHead : NPCID.TheHungryII);
+                int leech = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, Main.rand.NextBool() ? NPCID.LeechHead : NPCID.TheHungryII);
                 if (Main.npc.IndexInRange(leech))
                     Main.npc[leech].velocity = npc.velocity * 1.25f;
             }
@@ -122,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 {
                     try
                     {
-                        if (WorldGen.SolidTile(x, y) || Main.tile[x, y].liquid > 0)
+                        if (WorldGen.SolidTile(x, y) || Main.tile[x, y].LiquidAmount > 0)
                             tries++;
                     }
                     catch
@@ -132,19 +133,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 }
             }
             y += 4;
-            if (Main.wofB == -1)
-                Main.wofB = y * 16;
-            else if (Main.wofB > y * 16)
+            if (Main.wofDrawAreaBottom == -1)
+                Main.wofDrawAreaBottom = y * 16;
+            else if (Main.wofDrawAreaBottom > y * 16)
             {
-                Main.wofB--;
-                if (Main.wofB < y * 16)
-                    Main.wofB = y * 16;
+                Main.wofDrawAreaBottom--;
+                if (Main.wofDrawAreaBottom < y * 16)
+                    Main.wofDrawAreaBottom = y * 16;
             }
-            else if (Main.wofB < y * 16)
+            else if (Main.wofDrawAreaBottom < y * 16)
             {
-                Main.wofB++;
-                if (Main.wofB > y * 16)
-                    Main.wofB = y * 16;
+                Main.wofDrawAreaBottom++;
+                if (Main.wofDrawAreaBottom > y * 16)
+                    Main.wofDrawAreaBottom = y * 16;
             }
 
             tries = 0;
@@ -156,7 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 {
                     try
                     {
-                        if (WorldGen.SolidTile(x, y) || Main.tile[x, y].liquid > 0)
+                        if (WorldGen.SolidTile(x, y) || Main.tile[x, y].LiquidAmount > 0)
                             tries++;
                     }
                     catch
@@ -167,25 +168,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             }
             y -= 4;
 
-            if (Main.wofT == -1)
-                Main.wofT = y * 16;
-            else if (Main.wofT > y * 16)
+            if (Main.wofDrawAreaTop == -1)
+                Main.wofDrawAreaTop = y * 16;
+            else if (Main.wofDrawAreaTop > y * 16)
             {
-                Main.wofT--;
-                if (Main.wofT < y * 16)
-                    Main.wofT = y * 16;
+                Main.wofDrawAreaTop--;
+                if (Main.wofDrawAreaTop < y * 16)
+                    Main.wofDrawAreaTop = y * 16;
             }
-            else if (Main.wofT < y * 16)
+            else if (Main.wofDrawAreaTop < y * 16)
             {
-                Main.wofT++;
-                if (Main.wofT > y * 16)
-                    Main.wofT = y * 16;
+                Main.wofDrawAreaTop++;
+                if (Main.wofDrawAreaTop > y * 16)
+                    Main.wofDrawAreaTop = y * 16;
             }
         }
 
         internal static void PerformMouthMotion(NPC npc, float lifeRatio)
         {
-            float verticalDestination = (Main.wofB + Main.wofT) / 2 - npc.height / 2;
+            float verticalDestination = (Main.wofDrawAreaBottom + Main.wofDrawAreaTop) / 2 - npc.height / 2;
             float horizontalSpeed = MathHelper.Lerp(4.35f, 7.4f, 1f - lifeRatio);
             if (verticalDestination < (Main.maxTilesY - 180) * 16f)
                 verticalDestination = (Main.maxTilesY - 180) * 16f;
@@ -217,7 +218,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             for (int i = 0; i < 5; i++)
             {
-                int hungry = NPC.NewNPC((int)npc.position.X, (int)npc.Center.Y, NPCID.TheHungry, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
+                int hungry = NPC.NewNPC(new InfernumSource(), (int)npc.position.X, (int)npc.Center.Y, NPCID.TheHungry, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
                 Main.npc[hungry].ai[0] = i * 0.2f - 0.05f;
             }
 
@@ -231,7 +232,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                     continue;
                 }
 
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.WallofFleshEye, ai0: potentialOffsetFactor);
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.WallofFleshEye, ai0: potentialOffsetFactor);
             }
         }
 
@@ -242,7 +243,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             ref float enrageAttackCountdown = ref npc.ai[2];
             ref float roarTimer = ref npc.localAI[1];
 
-            float idealAngerStrength = MathHelper.Lerp(0f, 0.8f, Utils.InverseLerp(1150f, 2300f, Math.Abs(target.Center.X - npc.Center.X), true));
+            float idealAngerStrength = MathHelper.Lerp(0f, 0.8f, Utils.GetLerpValue(1150f, 2300f, Math.Abs(target.Center.X - npc.Center.X), true));
 
             // Check if the player is running in one direction.
             if (Math.Abs(Vector2.Dot(target.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)) > 0.74f && Math.Abs(target.Center.X - npc.Center.X) > 500f)
@@ -254,7 +255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 roarTimer--;
 
             timeSpentRunning = MathHelper.Clamp(timeSpentRunning, 0f, 1200f);
-            idealAngerStrength += MathHelper.Lerp(0f, 0.2f, Utils.InverseLerp(240f, 420f, timeSpentRunning, true));
+            idealAngerStrength += MathHelper.Lerp(0f, 0.2f, Utils.GetLerpValue(240f, 420f, timeSpentRunning, true));
             idealAngerStrength = MathHelper.Clamp(idealAngerStrength, 0f, 1f);
             angerStrength = MathHelper.Lerp(angerStrength, idealAngerStrength, 0.03f);
 
@@ -273,10 +274,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                         Tile aboveTile = CalamityUtils.ParanoidTileRetrieval((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16 - 2);
                         Tile belowTile = CalamityUtils.ParanoidTileRetrieval((int)potentialSpawnPosition.X / 16, (int)potentialSpawnPosition.Y / 16 + 2);
 
-                        bool aboveTileInvalid = aboveTile.active() && Main.tileSolid[aboveTile.type];
-                        bool bottomTileInvalid = belowTile.active() && Main.tileSolid[belowTile.type];
+                        bool aboveTileInvalid = aboveTile.HasTile && Main.tileSolid[aboveTile.TileType];
+                        bool bottomTileInvalid = belowTile.HasTile && Main.tileSolid[belowTile.TileType];
 
-                        if (spawnTile.nactive() && Main.tileSolid[spawnTile.type] && !aboveTileInvalid && !bottomTileInvalid)
+                        if (spawnTile.HasUnactuatedTile && Main.tileSolid[spawnTile.TileType] && !aboveTileInvalid && !bottomTileInvalid)
                         {
                             spawnPosition = potentialSpawnPosition;
                             break;

@@ -9,8 +9,9 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 using CrabulonNPC = CalamityMod.NPCs.Crabulon.CrabulonIdle;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
@@ -71,14 +72,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedClumpFlag == 0f && lifeRatio < Phase2LifeRatio)
             {
                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(25f, 25f);
-                NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
                 hasSummonedClumpFlag = 1f;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && hasSummonedClumpFlag == 1f && lifeRatio < Phase3LifeRatio)
             {
                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(25f, 25f);
-                NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
+                NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<FungalClump>(), ai0: npc.whoAmI);
                 hasSummonedClumpFlag = 2f;
             }
 
@@ -130,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             Dust spore = Dust.NewDustDirect(npc.position, npc.width, npc.height, 56);
             spore.velocity = -Vector2.UnitY * Main.rand.NextFloat(0.4f, 2.7f);
             spore.noGravity = true;
-            spore.scale = MathHelper.Lerp(0.75f, 1.45f, Utils.InverseLerp(npc.Top.Y, npc.Bottom.Y, spore.position.Y));
+            spore.scale = MathHelper.Lerp(0.75f, 1.45f, Utils.GetLerpValue(npc.Top.Y, npc.Bottom.Y, spore.position.Y));
 
             if (attackTimer >= 210f || npc.justHit)
                 SelectNextAttack(npc);
@@ -150,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float jumpSpeed = MathHelper.Lerp(13.5f, 18.75f, 1f - lifeRatio);
             float extraGravity = MathHelper.Lerp(0f, 0.45f, 1f - lifeRatio);
-            float jumpAngularImprecision = MathHelper.Lerp(0.1f, 0f, Utils.InverseLerp(0f, 0.7f, 1f - lifeRatio));
+            float jumpAngularImprecision = MathHelper.Lerp(0.1f, 0f, Utils.GetLerpValue(0f, 0.7f, 1f - lifeRatio));
 
             jumpSpeed += MathHelper.Clamp((npc.Top.Y - target.Top.Y) * 0.02f, 0f, 12f);
             if (BossRushEvent.BossRushActive)
@@ -229,7 +230,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                                     break;
 
                                 Vector2 spawnPosition = npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height) * 0.5f;
-                                int shroom = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<CrabShroom>());
+                                int shroom = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<CrabShroom>());
                                 if (Main.npc.IndexInRange(shroom))
                                 {
                                     Main.npc[shroom].velocity = -Vector2.UnitY.RotatedByRandom(0.36f) * Main.rand.NextFloat(3f, 6f);
@@ -286,7 +287,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             {
                 bool canShoot = attackTimer % 120f >= 80f && attackTimer % 8f == 7f;
                 shouldSlowDown = attackTimer % 120f >= 60f;
-                float shootPower = MathHelper.Lerp(5f, 10f, Utils.InverseLerp(80f, 120f, attackTimer % 120f, true));
+                float shootPower = MathHelper.Lerp(5f, 10f, Utils.GetLerpValue(80f, 120f, attackTimer % 120f, true));
                 if (Main.netMode != NetmodeID.MultiplayerClient && canShoot)
                 {
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * shootPower;
@@ -377,7 +378,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 {
                     int x = (int)(npc.position.X + Main.rand.Next(npc.width - 32));
                     int y = (int)(npc.position.Y + Main.rand.Next(npc.height - 32));
-                    int fuck = NPC.NewNPC(x, y, ModContent.NPCType<CrabShroom>());
+                    int fuck = NPC.NewNPC(new InfernumSource(), x, y, ModContent.NPCType<CrabShroom>());
                     Main.npc[fuck].SetDefaults(ModContent.NPCType<CrabShroom>());
                     Main.npc[fuck].velocity.X = Main.rand.NextFloat(-5f, 5f);
                     Main.npc[fuck].velocity.Y = Main.rand.NextFloat(-9f, -6f);

@@ -3,12 +3,11 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
-
-using TMLSoundType = Terraria.ModLoader.SoundType;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BossIntroScreens
 {
-    public class KingSlimeIntroScreen : BaseIntroScreen
+	public class KingSlimeIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
@@ -24,6 +23,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.KingSlime);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/SlimeGodPossession");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SlimeGodPossession");
     }
 }

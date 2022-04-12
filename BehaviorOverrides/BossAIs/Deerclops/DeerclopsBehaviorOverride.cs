@@ -12,6 +12,7 @@ using Terraria.WorldBuilding;
 using Terraria.Audio;
 using Terraria.GameContent;
 using CalamityMod.Particles;
+using System.Linq;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 {
@@ -56,6 +57,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         public static void DoBehavior_GroundLaser(NPC npc, Player target, ref bool shouldUseShadowFade, ref float frame, ref float attackTimer)
         {
             int laserChargeupTime = 84;
+            int laserShootTime = DeerclopsEyeLaserbeam.LaserLifetime;
+            int attackTransitionDelay = 40;
             ref float laserRayInterpolant = ref npc.Infernum().ExtraAI[0];
             ref float laserRayDirection = ref npc.Infernum().ExtraAI[1];
 
@@ -65,11 +68,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
             // Look at the target.
             if (attackTimer < laserChargeupTime - 30)
-			{
-                npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
+            {
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                 laserRayInterpolant = Utils.GetLerpValue(0f, 32f, attackTimer, true);
-                laserRayDirection = -MathHelper.PiOver2 + npc.spriteDirection * 0.32f;
-			}
+                laserRayDirection = MathHelper.PiOver2 - npc.spriteDirection * 0.45f;
+            }
 
             // Create charge particles.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer < laserChargeupTime)
@@ -87,16 +90,68 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 }
             }
 
+            // Create the funny laser.
+            if (attackTimer == laserChargeupTime)
+            {
+                SoundEngine.PlaySound(SoundID.DeerclopsScream, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    laserRayInterpolant = 0f;
+                    int laser = Utilities.NewProjectileBetter(GetEyePosition(npc), Vector2.UnitY, ModContent.ProjectileType<DeerclopsEyeLaserbeam>(), 160, 0f);
+                    if (Main.projectile.IndexInRange(laser))
+                        Main.projectile[laser].ai[0] = npc.whoAmI;
+                    npc.netUpdate = true;
+                }
+            }
+
+            // Create burst particles and move the laser.
+            if (attackTimer > laserChargeupTime)
+            {
+                laserRayDirection += npc.spriteDirection * -0.0172f;
+                float particleScale = Main.rand.NextFloat(0.55f, 0.8f);
+                Vector2 particleSpawnPosition = GetEyePosition(npc) + Main.rand.NextVector2Circular(15f, 15f);
+                Vector2 particleVelocity = laserRayDirection.ToRotationVector2().RotatedByRandom(0.45f) * Main.rand.NextFloat(2f, 8f);
+                GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(particleSpawnPosition, particleVelocity, particleScale, Color.Red, 40));
+            }
+
             // Decide frames.
             if (attackTimer < laserChargeupTime / 2)
                 frame = Utils.Remap(attackTimer % 60f, 0f, 60f, 0f, 11f);
             else
                 frame = Utils.Remap(attackTimer - laserChargeupTime / 2f, 0f, 32f, 12f, 14f);
+
+            if (attackTimer >= laserChargeupTime + laserShootTime + attackTransitionDelay)
+                attackTimer = 0f;
         }
 
         public static Vector2 GetEyePosition(NPC npc)
         {
-            return npc.Center + new Vector2(npc.spriteDirection * 26f, -72f);
+            Vector2 offset = new(npc.spriteDirection * 46f, -72f);
+            switch (npc.frame.Y)
+            {
+                case 4:
+                    offset.X += npc.spriteDirection * 4f;
+                    offset.Y += 26f;
+                    break;
+                case 6:
+                    offset.Y += 10f;
+                    break;
+                case 12:
+                    offset.X -= npc.spriteDirection * 14f;
+                    offset.Y += 14f;
+                    break;
+                case 13:
+                    offset.X -= npc.spriteDirection * 28f;
+                    offset.Y -= 6f;
+                    break;
+                case 14:
+                    offset.X -= npc.spriteDirection * 28f;
+                    offset.Y -= 6f;
+                    break;
+            }
+
+            return npc.Center + offset;
         }
 
         public static void DefaultMovement(NPC npc, Player target, float walkSpeed, bool haltMovement)
@@ -203,6 +258,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 {
                     Vector2 afterimagePos = drawPos + Vector2.UnitY.RotatedBy(j * MathHelper.TwoPi / backShadowAfterimageCount + Main.GlobalTimeWrappedHourly * 10f) * 2f;
                     spriteBatch.Draw(shadowTexture, afterimagePos, frame, color4, npc.rotation, origin, npc.scale, direction, 0f);
+                }
+            }
+
+            // Draw a laser telegraph from the eye when preparing the laser.
+            if (npc.ai[0] == (int)DeerclopsAttackType.GroundLaser)
+            {
+                float laserRayInterpolant = npc.Infernum().ExtraAI[0];
+                float laserRayDirection = npc.Infernum().ExtraAI[1];
+
+                if (laserRayInterpolant > 0f)
+                {
+                    float[] samples = new float[8];
+                    Vector2 start = GetEyePosition(npc);
+                    Collision.LaserScan(start, laserRayDirection.ToRotationVector2(), 8f, DeerclopsEyeLaserbeam.MaxLaserLength, samples);
+
+                    Vector2 end = start + laserRayDirection.ToRotationVector2() * samples.Average();
+                    spriteBatch.DrawLineBetter(start, end, Color.Red * (float)Math.Pow(laserRayInterpolant, 0.36f) * 0.6f, 3f);
                 }
             }
             return false;

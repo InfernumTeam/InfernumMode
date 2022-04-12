@@ -16,6 +16,7 @@ float2 uTopLeftFreeArea;
 float2 uBottomRightFreeArea;
 float2x2 uZoomMatrix;
 bool uVerticalInversion;
+float4 uShaderSpecificData;
 
 float GetLerpValue(float from, float to, float x)
 {

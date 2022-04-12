@@ -7,73 +7,74 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresTeslaOrb : ModProjectile
     {
-        public ref float Identity => ref projectile.ai[0];
+        public ref float Identity => ref Projectile.ai[0];
         public PrimitiveTrail LightningDrawer;
         public PrimitiveTrail LightningBackgroundDrawer;
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Tesla Sphere");
-            Main.projFrames[projectile.type] = 4;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            Main.projFrames[Projectile.type] = 4;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 32;
-            projectile.height = 32;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.Opacity = 0f;
-            projectile.timeLeft = 125;
-            projectile.Calamity().canBreakPlayerDefense = true;
-            cooldownSlot = 1;
+            Projectile.width = 32;
+            Projectile.height = 32;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.Opacity = 0f;
+            Projectile.timeLeft = 125;
+            Projectile.Calamity().canBreakPlayerDefense = true;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            if (projectile.velocity.Length() < 26f)
-                projectile.velocity *= 1.01f;
+            if (Projectile.velocity.Length() < 26f)
+                Projectile.velocity *= 1.01f;
 
-            projectile.Opacity = Utils.InverseLerp(125f, 120f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 15f, projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(125f, 120f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 15f, Projectile.timeLeft, true);
 
             // Emit light.
-            Lighting.AddLight(projectile.Center, 0.1f * projectile.Opacity, 0.25f * projectile.Opacity, 0.25f * projectile.Opacity);
+            Lighting.AddLight(Projectile.Center, 0.1f * Projectile.Opacity, 0.25f * Projectile.Opacity, 0.25f * Projectile.Opacity);
 
             // Handle frames.
-            projectile.frameCounter++;
-            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
             // Create a burst of dust on the first frame.
-            if (projectile.localAI[0] == 0f)
+            if (Projectile.localAI[0] == 0f)
             {
                 for (int i = 0; i < 60; i++)
                 {
-                    Dust electricity = Dust.NewDustPerfect(projectile.Center, Main.rand.NextBool() ? 206 : 229);
+                    Dust electricity = Dust.NewDustPerfect(Projectile.Center, Main.rand.NextBool() ? 206 : 229);
                     electricity.position += Main.rand.NextVector2Circular(20f, 20f);
-                    electricity.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.3f) * Main.rand.NextFloat(2f, 16f);
+                    electricity.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.3f) * Main.rand.NextFloat(2f, 16f);
                     electricity.fadeIn = 1f;
                     electricity.color = Color.Cyan * 0.6f;
                     electricity.scale *= Main.rand.NextFloat(1.5f, 2f);
                     electricity.noGravity = true;
                 }
-                projectile.localAI[0] = 1f;
+                Projectile.localAI[0] = 1f;
             }
         }
 
-        public override bool CanHitPlayer(Player target) => projectile.Opacity == 1f;
+        public override bool CanHitPlayer(Player target) => Projectile.Opacity == 1f;
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (projectile.Opacity != 1f)
+            if (Projectile.Opacity != 1f)
                 return;
 
             target.AddBuff(BuffID.Electrified, 240);
@@ -87,10 +88,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             float detachDistance = 1420f;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[i].type != projectile.type || Main.projectile[i].ai[0] != Identity + 1f || !Main.projectile[i].active)
+                if (Main.projectile[i].type != Projectile.type || Main.projectile[i].ai[0] != Identity + 1f || !Main.projectile[i].active)
                     continue;
 
-                if (Vector2.Distance(projectile.Center, Main.projectile[i].Center) > detachDistance)
+                if (Vector2.Distance(Projectile.Center, Main.projectile[i].Center) > detachDistance)
                     continue;
 
                 return Main.projectile[i];
@@ -101,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static List<Vector2> DetermineElectricArcPoints(Vector2 start, Vector2 end, int seed)
         {
-            List<Vector2> points = new List<Vector2>();
+            List<Vector2> points = new();
 
             // Determine the base points based on a linear path from the start the end end point.
             for (int i = 0; i <= 75; i++)
@@ -113,10 +114,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 float completionRatio = i / (float)points.Count;
 
                 // Noise offsets should taper off at the ends of the line.
-                float offsetMuffleFactor = Utils.InverseLerp(0.12f, 0.25f, completionRatio, true) * Utils.InverseLerp(0.88f, 0.75f, completionRatio, true);
+                float offsetMuffleFactor = Utils.GetLerpValue(0.12f, 0.25f, completionRatio, true) * Utils.GetLerpValue(0.88f, 0.75f, completionRatio, true);
 
                 // Give a sense of time for the noise on the vertical axis. This is achieved via a 0-1 constricted sinusoid.
-                float noiseY = (float)Math.Cos(completionRatio * 17.2f + Main.GlobalTime * 10.7f) * 0.5f + 0.5f;
+                float noiseY = (float)Math.Cos(completionRatio * 17.2f + Main.GlobalTimeWrappedHourly * 10.7f) * 0.5f + 0.5f;
 
                 float noise = CalamityUtils.PerlinNoise2D(completionRatio, noiseY, 2, seed);
 
@@ -135,25 +136,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         internal float WidthFunction(float completionRatio)
         {
-            return MathHelper.Lerp(0.75f, 1.85f, (float)Math.Sin(MathHelper.Pi * completionRatio)) * projectile.scale;
+            return MathHelper.Lerp(0.75f, 1.85f, (float)Math.Sin(MathHelper.Pi * completionRatio)) * Projectile.scale;
         }
 
         internal Color ColorFunction(float completionRatio)
         {
-            float fadeToWhite = MathHelper.Lerp(0f, 0.65f, (float)Math.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTime * 4f) * 0.5f + 0.5f);
+            float fadeToWhite = MathHelper.Lerp(0f, 0.65f, (float)Math.Sin(MathHelper.TwoPi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f);
             Color baseColor = Color.Lerp(Color.Cyan, Color.White, fadeToWhite);
-            return Color.Lerp(baseColor, Color.LightBlue, ((float)Math.Sin(MathHelper.Pi * completionRatio + Main.GlobalTime * 4f) * 0.5f + 0.5f) * 0.8f) * projectile.Opacity;
+            return Color.Lerp(baseColor, Color.LightBlue, ((float)Math.Sin(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 4f) * 0.5f + 0.5f) * 0.8f) * Projectile.Opacity;
         }
 
         internal float BackgroundWidthFunction(float completionRatio) => WidthFunction(completionRatio) * 4f;
 
         internal Color BackgroundColorFunction(float completionRatio)
         {
-            Color color = Color.CornflowerBlue * projectile.Opacity * 0.4f;
+            Color color = Color.CornflowerBlue * Projectile.Opacity * 0.4f;
             return color;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrail(WidthFunction, ColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
@@ -163,15 +164,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Projectile orbToAttachTo = GetOrbToAttachTo();
             if (orbToAttachTo != null)
             {
-                List<Vector2> arcPoints = DetermineElectricArcPoints(projectile.Center, orbToAttachTo.Center, 117);
+                List<Vector2> arcPoints = DetermineElectricArcPoints(Projectile.Center, orbToAttachTo.Center, 117);
                 LightningBackgroundDrawer.Draw(arcPoints, -Main.screenPosition, 90);
                 LightningDrawer.Draw(arcPoints, -Main.screenPosition, 90);
             }
 
-            lightColor.R = (byte)(255 * projectile.Opacity);
-            lightColor.G = (byte)(255 * projectile.Opacity);
-            lightColor.B = (byte)(255 * projectile.Opacity);
-            CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], lightColor, 1);
+            lightColor.R = (byte)(255 * Projectile.Opacity);
+            lightColor.G = (byte)(255 * Projectile.Opacity);
+            lightColor.B = (byte)(255 * Projectile.Opacity);
+            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1);
             return false;
         }
 
@@ -182,7 +183,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             float _ = 0f;
             Projectile orbToAttachTo = GetOrbToAttachTo();
-            if (orbToAttachTo != null && Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), projectile.Center, orbToAttachTo.Center, 8f, ref _))
+            if (orbToAttachTo != null && Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, orbToAttachTo.Center, 8f, ref _))
                 return true;
 
             return false;
@@ -190,7 +191,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item93, projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -199,13 +200,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             for (int i = 0; i < 4; i++)
             {
                 Vector2 sparkVelocity = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * 5.6f;
-                Utilities.NewProjectileBetter(projectile.Center, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), 500, 0f);
+                Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<TeslaSpark>(), 500, 0f);
             }
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

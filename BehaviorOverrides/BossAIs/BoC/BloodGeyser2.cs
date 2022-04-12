@@ -14,30 +14,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 12;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.timeLeft = 420;
-            projectile.penetrate = 1;
+            Projectile.width = Projectile.height = 12;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 420;
+            Projectile.penetrate = 1;
         }
 
         public override void AI()
         {
-            projectile.tileCollide = projectile.timeLeft < 220;
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.tileCollide = Projectile.timeLeft < 220;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Release blood idly.
-            Dust blood = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Blood, 0f, 0f, 100, default, 0.5f);
+            Dust blood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Blood, 0f, 0f, 100, default, 0.5f);
             blood.velocity = Vector2.Zero;
             blood.noGravity = true;
 
-            projectile.velocity.Y += Gravity;
+            Projectile.velocity.Y += Gravity;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<BurningBlood>(), 120);
 
-        public override Color? GetAlpha(Color lightColor) => new Color(246, 195, 80, projectile.alpha);
+        public override Color? GetAlpha(Color lightColor) => new Color(246, 195, 80, Projectile.alpha);
     }
 }

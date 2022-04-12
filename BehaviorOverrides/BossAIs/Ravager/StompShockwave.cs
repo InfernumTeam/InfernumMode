@@ -14,29 +14,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override void SetDefaults()
         {
-            projectile.width = 36;
-            projectile.height = 36;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 240;
-            projectile.scale = 0.15f;
-            projectile.extraUpdates = 3;
-            projectile.hide = true;
-            projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.width = 36;
+            Projectile.height = 36;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 240;
+            Projectile.scale = 0.15f;
+            Projectile.extraUpdates = 3;
+            Projectile.hide = true;
+            Projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(240f, 225f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 50f, projectile.timeLeft, true);
-            if (projectile.Opacity > 1f)
-                projectile.Opacity = 1f;
-            projectile.Opacity *= 0.75f;
+            Projectile.Opacity = Utils.GetLerpValue(240f, 225f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 50f, Projectile.timeLeft, true);
+            if (Projectile.Opacity > 1f)
+                Projectile.Opacity = 1f;
+            Projectile.Opacity *= 0.75f;
 
-            projectile.scale = projectile.scale * 1.018f + 0.055f;
+            Projectile.scale = Projectile.scale * 1.018f + 0.055f;
         }
 
-        public override bool CanDamage() => projectile.Opacity > 0.75f;
+        public override bool? CanDamage() => Projectile.Opacity > 0.75f ? null : false;
 
         public override void Kill(int timeLeft)
         {
@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             for (int i = 0; i < 30; i++)
             {
-                Dust dust = Dust.NewDustPerfect(projectile.Center, ModContent.DustType<RavagerMagicDust>());
+                Dust dust = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<RavagerMagicDust>());
                 dust.velocity = Main.rand.NextVector2Circular(8f, 8f);
                 dust.noGravity = true;
             }
@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         {
             get
             {
-                Vector2 scale = new Vector2(projectile.scale, projectile.scale * 0.3f);
+                Vector2 scale = new(Projectile.scale, Projectile.scale * 0.3f);
                 if (scale.Y > 4f)
                     scale.Y = 4f;
                 scale *= 0.1f;
@@ -63,25 +63,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
-            Texture2D texture = Main.projectileTexture[projectile.type];
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
 
-            Vector2 drawPosition = projectile.Center - Main.screenPosition;
-            spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(Color.White), 0f, texture.Size() * 0.5f, Scale, SpriteEffects.None, 0f);
-            spriteBatch.ResetBlendState();
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(Color.White), 0f, texture.Size() * 0.5f, Scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return Utils.CenteredRectangle(projectile.Center, Scale * new Vector2(670f, 440f)).Intersects(targetHitbox);
+            return Utils.CenteredRectangle(Projectile.Center, Scale * new Vector2(670f, 440f)).Intersects(targetHitbox);
         }
 
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            drawCacheProjsBehindNPCsAndTiles.Add(index);
+            behindNPCsAndTiles.Add(index);
         }
     }
 }

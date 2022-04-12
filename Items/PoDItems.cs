@@ -32,9 +32,9 @@ namespace InfernumMode
             {
                 foreach (TooltipLine line2 in tooltips)
                 {
-                    if (line2.mod == "Terraria" && line2.Name == "Tooltip0")
+                    if (line2.Mod == "Terraria" && line2.Name == "Tooltip0")
                     {
-                        line2.text = "Summons the Moon Lord immediately\n" +
+                        line2.Text = "Summons the Moon Lord immediately\n" +
                                      "Creates an arena at the player's position\n" +
                                      "Not consumable.";
                     }
@@ -45,8 +45,8 @@ namespace InfernumMode
             {
                 foreach (TooltipLine line2 in tooltips)
                 {
-                    if (line2.mod == "Terraria" && line2.Name == "Tooltip0")
-                        line2.text += "\nCreates a rectangular arena around the altar. If the altar is inside of the temple solid tiles within the arena are broken";
+                    if (line2.Mod == "Terraria" && line2.Name == "Tooltip0")
+                        line2.Text += "\nCreates a rectangular arena around the altar. If the altar is inside of the temple solid tiles within the arena are broken";
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace InfernumMode
             if (!player.chaosState)
             {
                 player.AddBuff(BuffID.ChaosState, CalamityPlayer.chaosStateDurationBoss, true);
-                Projectile.NewProjectile(Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
+                Projectile.NewProjectile(new InfernumSource(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
 
                 string[] possibleEdgyShitToSay = new string[]
                 {
@@ -80,11 +80,11 @@ namespace InfernumMode
             }
             return base.CanUseItem(item, player);
         }
-        public override bool UseItem(Item item, Player player)
+        public override bool? UseItem(Item item, Player player)
         {
             if (item.type == ItemID.CelestialSigil && !NPC.AnyNPCs(NPCID.MoonLordCore))
             {
-                NPC.NewNPC((int)player.Center.X, (int)player.Center.Y, NPCID.MoonLordCore);
+                NPC.NewNPC(new InfernumSource(), (int)player.Center.X, (int)player.Center.Y, NPCID.MoonLordCore);
             }
             return base.UseItem(item, player);
         }
@@ -92,7 +92,7 @@ namespace InfernumMode
         public override void RightClick(Item item, Player player)
         {
             if (item.type == ModContent.ItemType<StarterBag>())
-                DropHelper.DropItemCondition(player, ModContent.ItemType<Death2>(), Main.expertMode);
+                DropHelper.DropItemCondition(new InfernumSource(), player, ModContent.ItemType<Death2>(), Main.expertMode);
         }
 
         public override void OpenVanillaBag(string context, Player player, int arg)
@@ -104,16 +104,16 @@ namespace InfernumMode
             if (arg == ItemID.EaterOfWorldsBossBag)
             {
                 int itemCount = Main.rand.Next(30, 60);
-                player.QuickSpawnItem(ItemID.DemoniteOre, itemCount);
+                player.QuickSpawnItem(new InfernumSource(), ItemID.DemoniteOre, itemCount);
                 itemCount = Main.rand.Next(10, 20);
-                player.QuickSpawnItem(ItemID.ShadowScale, itemCount);
+                player.QuickSpawnItem(new InfernumSource(), ItemID.ShadowScale, itemCount);
             }
             if (arg == ItemID.BrainOfCthulhuBossBag)
             {
                 int itemCount = Main.rand.Next(30, 60);
-                player.QuickSpawnItem(ItemID.CrimtaneOre, itemCount);
+                player.QuickSpawnItem(new InfernumSource(), ItemID.CrimtaneOre, itemCount);
                 itemCount = Main.rand.Next(10, 20);
-                player.QuickSpawnItem(ItemID.TissueSample, itemCount);
+                player.QuickSpawnItem(new InfernumSource(), ItemID.TissueSample, itemCount);
             }
         }
 

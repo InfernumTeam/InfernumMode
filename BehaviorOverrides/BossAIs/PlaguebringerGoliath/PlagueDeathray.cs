@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
@@ -13,60 +14,60 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
     public class PlagueDeathray : BaseLaserbeamProjectile
     {
         public int LocalLifetime = 250;
-        public int OwnerIndex => (int)projectile.ai[1];
+        public int OwnerIndex => (int)Projectile.ai[1];
         public override float Lifetime => LocalLifetime;
-        public override Color LaserOverlayColor => new Color(79, 150, 21, 50);
+        public override Color LaserOverlayColor => new(79, 150, 21, 50);
         public override Color LightCastColor => Color.Green;
-        public override Texture2D LaserBeginTexture => Main.projectileTexture[projectile.type];
-        public override Texture2D LaserMiddleTexture => Main.extraTexture[21];
-        public override Texture2D LaserEndTexture => Main.extraTexture[22];
+        public override Texture2D LaserBeginTexture => Utilities.ProjTexture(Projectile.type);
+        public override Texture2D LaserMiddleTexture => TextureAssets.Extra[21].Value;
+        public override Texture2D LaserEndTexture => TextureAssets.Extra[22].Value;
         public override float MaxLaserLength => 20f;
         public override float MaxScale => 0.2f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Plague Ray");
 
         public override void SetDefaults()
         {
-            projectile.width = 48;
-            projectile.height = 48;
-            projectile.hostile = true;
-            projectile.alpha = 255;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.timeLeft = (int)Lifetime;
-            projectile.hide = true;
-            projectile.Calamity().canBreakPlayerDefense = true;
-            cooldownSlot = 1;
+            Projectile.width = 48;
+            Projectile.height = 48;
+            Projectile.hostile = true;
+            Projectile.alpha = 255;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = (int)Lifetime;
+            Projectile.hide = true;
+            Projectile.Calamity().canBreakPlayerDefense = true;
+            CooldownSlot = 1;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(projectile.localAI[0]);
-            writer.Write(projectile.localAI[1]);
+            writer.Write(Projectile.localAI[0]);
+            writer.Write(Projectile.localAI[1]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            projectile.localAI[0] = reader.ReadSingle();
-            projectile.localAI[1] = reader.ReadSingle();
+            Projectile.localAI[0] = reader.ReadSingle();
+            Projectile.localAI[1] = reader.ReadSingle();
         }
         public override void AttachToSomething()
         {
             if (!Main.npc.IndexInRange(OwnerIndex) || !Main.npc.IndexInRange((int)Main.npc[OwnerIndex].ai[1]))
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
 
             if (!Main.npc[OwnerIndex].active || !Main.npc[(int)Main.npc[OwnerIndex].ai[1]].active)
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
 
-            projectile.Center = Main.npc[OwnerIndex].Center;
-            projectile.velocity = (Main.npc[(int)Main.npc[OwnerIndex].ai[1]].Center - Main.npc[OwnerIndex].Center).SafeNormalize(Vector2.UnitY);
+            Projectile.Center = Main.npc[OwnerIndex].Center;
+            Projectile.velocity = (Main.npc[(int)Main.npc[OwnerIndex].ai[1]].Center - Main.npc[OwnerIndex].Center).SafeNormalize(Vector2.UnitY);
 
-            projectile.timeLeft = 900;
+            Projectile.timeLeft = 900;
             if (Time > 300f)
                 Time = 300f;
         }
@@ -77,16 +78,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             return fuck;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
             target.AddBuff(ModContent.BuffType<Plague>(), 300);
         }
 
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            drawCacheProjsBehindNPCs.Add(index);
+            behindNPCs.Add(index);
         }
     }
 }

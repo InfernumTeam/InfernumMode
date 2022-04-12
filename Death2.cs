@@ -19,33 +19,30 @@ namespace InfernumMode
                                "Revengeance Mode must be active to use this item\n" +
                                "Malice Mode is disabled while this is active\n" +
                                "Infernum");
-            Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(6, 8));
+            Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(6, 8));
         }
 
         public override void SetDefaults()
         {
-            item.rare = ItemRarityID.Red;
-            item.width = 50;
-            item.height = 96;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.channel = true;
-            item.noUseGraphic = true;
-            item.shoot = ModContent.ProjectileType<InfernalChaliceHoldout>();
-            item.useStyle = ItemUseStyleID.HoldingUp;
-            item.consumable = false;
+            Item.rare = ItemRarityID.Red;
+            Item.width = 50;
+            Item.height = 96;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.channel = true;
+            Item.noUseGraphic = true;
+            Item.shoot = ModContent.ProjectileType<InfernalChaliceHoldout>();
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.consumable = false;
         }
 
         public override bool CanUseItem(Player player) => CalamityWorld.revenge && !BossRushEvent.BossRushActive;
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips) => tooltips.FirstOrDefault(x => x.Name == "Tooltip3" && x.mod == "Terraria").overrideColor = Color.DarkRed;
+        public override void ModifyTooltips(List<TooltipLine> tooltips) => tooltips.FirstOrDefault(x => x.Name == "Tooltip3" && x.Mod == "Terraria").OverrideColor = Color.DarkRed;
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddTile(TileID.DemonAltar);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe(1).AddTile(TileID.DemonAltar).Register();
         }
     }
 }

@@ -1,15 +1,27 @@
 using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs.AstrumDeus;
 using InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
+    public class DeusSkyScene : ModSceneEffect
+    {
+        public override bool IsSceneEffectActive(Player player) => NPC.AnyNPCs(ModContent.NPCType<AstrumDeusHeadSpectral>()) && !BossRushEvent.BossRushActive;
+
+        public override void SpecialVisuals(Player player)
+        {
+            player.ManageSpecialBiomeVisuals("InfernumMode:Deus", IsSceneEffectActive(player));
+        }
+    }
+
     public class DeusSky : CustomSky
     {
         private struct AstralStar
@@ -46,6 +58,9 @@ namespace InfernumMode.Skies
             else if (!isActive && intensity > 0f)
                 nebulaIntensity -= 0.01f;
 
+            if (deus == -1)
+                Deactivate(Array.Empty<object>());
+
             intensity = MathHelper.Clamp(intensity, 0f, 1f);
             nebulaIntensity = MathHelper.Clamp(nebulaIntensity, 0f, 1f);
 
@@ -62,23 +77,23 @@ namespace InfernumMode.Skies
             if (maxDepth < float.MaxValue || minDepth > float.MaxValue)
                 return;
 
-            spriteBatch.Draw(Main.blackTileTexture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.Black * GetIntensity());
+            Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth * 2, Main.screenHeight * 2), Color.Black * GetIntensity());
 
             // Draw nebulous gas behind everything if Deus is below a certain life threshold.
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
             for (int i = 0; i < 135; i++)
             {
-                Texture2D gasTexture = ModContent.GetTexture($"InfernumMode/ExtraTextures/NebulaGas{(i % 2 == 0 ? "1" : "2")}");
+                Texture2D gasTexture = ModContent.Request<Texture2D>($"InfernumMode/ExtraTextures/NebulaGas{(i % 2 == 0 ? "1" : "2")}").Value;
                 Vector2 drawPosition = new Vector2(Main.screenWidth, Main.screenHeight) * 0.5f;
-                float drawOutwardness = Utils.InverseLerp(0.45f, 1.1f, i % 18f / 18f) * Utils.InverseLerp(0f, 180f, nebulaTimer, true);
+                float drawOutwardness = Utils.GetLerpValue(0.45f, 1.1f, i % 18f / 18f) * Utils.GetLerpValue(0f, 180f, nebulaTimer, true);
                 drawPosition += (MathHelper.TwoPi * 7f * i / 75f).ToRotationVector2() * MathHelper.Max(Main.screenWidth, Main.screenHeight) * drawOutwardness;
                 float rotation = MathHelper.TwoPi * (drawOutwardness + i % 18f / 18f);
-                float scale = Utils.InverseLerp(0.8f, 1.15f, i % 15f / 15f) * Utils.InverseLerp(-40f, 130f, nebulaTimer, true);
+                float scale = Utils.GetLerpValue(0.8f, 1.15f, i % 15f / 15f) * Utils.GetLerpValue(-40f, 130f, nebulaTimer, true);
                 Color drawColor = CalamityUtils.MulticolorLerp(i / 29f % 0.999f, new Color(109, 242, 196), new Color(234, 119, 93), Color.MediumPurple) * nebulaIntensity * 0.28f;
 
-                spriteBatch.Draw(gasTexture, drawPosition, null, drawColor, rotation, gasTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(gasTexture, drawPosition, null, drawColor, rotation, gasTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
 
             int startingDrawIndex = -1;
             int endingDrawIndex = 0;
@@ -97,8 +112,8 @@ namespace InfernumMode.Skies
                 return;
 
             Vector2 drawOffset = Main.screenPosition + new Vector2(Main.screenWidth >> 1, Main.screenHeight >> 1);
-            Rectangle rectangle = new Rectangle(-1000, -1000, 4000, 4000);
-            Texture2D starTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/Gleam");
+            Rectangle rectangle = new(-1000, -1000, 4000, 4000);
+            Texture2D starTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Gleam").Value;
             for (int j = startingDrawIndex; j < endingDrawIndex; j++)
             {
                 // Draw less stars if the background is disabled, to prevent too much visual distraction.
@@ -110,8 +125,8 @@ namespace InfernumMode.Skies
                 if (rectangle.Contains((int)drawPosition.X, (int)drawPosition.Y))
                 {
                     // Handle alpha pulsing. This is what allows the stars to appear, disappear, and reappear.
-                    float opacity = (float)Math.Sin((Stars[j].AlphaFrequency * Main.GlobalTime + Stars[j].AlphaPhaseShift) * Stars[j].AlphaAmplitude + Stars[j].AlphaAmplitude);
-                    float minorFade = (float)Math.Sin(Stars[j].AlphaFrequency * Main.GlobalTime * 5f + Stars[j].AlphaPhaseShift) * 0.1f - 0.1f;
+                    float opacity = (float)Math.Sin((Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly + Stars[j].AlphaPhaseShift) * Stars[j].AlphaAmplitude + Stars[j].AlphaAmplitude);
+                    float minorFade = (float)Math.Sin(Stars[j].AlphaFrequency * Main.GlobalTimeWrappedHourly * 5f + Stars[j].AlphaPhaseShift) * 0.1f - 0.1f;
                     minorFade = MathHelper.Clamp(minorFade, 0f, 1f);
                     opacity = MathHelper.Clamp(opacity, 0f, 1f);
 
@@ -136,10 +151,10 @@ namespace InfernumMode.Skies
                         largeScale.Y *= 1.35f;
                     }
 
-                    spriteBatch.Draw(starTexture, drawPosition, null, drawColor, MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale, SpriteEffects.None, 0);
-                    spriteBatch.Draw(starTexture, drawPosition, null, drawColor, 0f, starTexture.Size() * 0.5f, smallScale, SpriteEffects.None, 0);
-                    spriteBatch.Draw(starTexture, drawPosition, null, drawColor, MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale * 0.6f, SpriteEffects.None, 0);
-                    spriteBatch.Draw(starTexture, drawPosition, null, drawColor, 0f, starTexture.Size() * 0.5f, smallScale * 0.6f, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, drawPosition, null, drawColor, MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, drawPosition, null, drawColor, 0f, starTexture.Size() * 0.5f, smallScale, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, drawPosition, null, drawColor, MathHelper.PiOver2, starTexture.Size() * 0.5f, largeScale * 0.6f, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(starTexture, drawPosition, null, drawColor, 0f, starTexture.Size() * 0.5f, smallScale * 0.6f, SpriteEffects.None, 0);
                 }
             }
         }

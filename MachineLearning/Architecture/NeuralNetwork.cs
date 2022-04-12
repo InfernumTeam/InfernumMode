@@ -12,7 +12,7 @@ namespace InfernumMode.MachineLearning.Architecture
     {
         internal int InputCount;
         internal Func<double, double, double> CostFunction;
-        internal List<Layer> Layers = new List<Layer>();
+        internal List<Layer> Layers = new();
 
         public double LearningRate;
         public GeneralMatrix Outputs => Layers.Last().Outputs;
@@ -90,7 +90,7 @@ namespace InfernumMode.MachineLearning.Architecture
         {
             // Get the uncompressed data by serializing this network via binary formatting.
             byte[] uncompressedData;
-            using (MemoryStream stream = new MemoryStream())
+            using (MemoryStream stream = new())
             {
                 new BinaryFormatter().Serialize(stream, this);
                 uncompressedData = stream.ToArray();
@@ -99,9 +99,9 @@ namespace InfernumMode.MachineLearning.Architecture
             // Create an intermediate compression and output stream.
             // The compression stream will take the uncompressed data from the formatter, compress it optimally, and
             // then give it to the output stream. Once the output stream has the result, it returns the compressed bytes.
-            using (MemoryStream outputStream = new MemoryStream(uncompressedData.Length))
+            using (MemoryStream outputStream = new(uncompressedData.Length))
             {
-                using (GZipStream compressionStream = new GZipStream(outputStream, CompressionLevel.Optimal))
+                using (GZipStream compressionStream = new(outputStream, CompressionLevel.Optimal))
                     compressionStream.Write(uncompressedData, 0, uncompressedData.Length);
 
                 return outputStream.ToArray();
@@ -115,12 +115,12 @@ namespace InfernumMode.MachineLearning.Architecture
         public static NeuralNetwork Load(byte[] compressedBytes)
         {
             // Create an inputted stream with the compressed bytes and an output stream that would hold the decompressed data.
-            using (MemoryStream inputStream = new MemoryStream(compressedBytes))
-            using (MemoryStream outputStream = new MemoryStream())
+            using (MemoryStream inputStream = new(compressedBytes))
+            using (MemoryStream outputStream = new())
             {
                 // And create an intermediate stream that will read the input stream and decompress it.
                 // Once down it out move the results to the output stream, where it will be read.
-                using (GZipStream compressionStream = new GZipStream(inputStream, CompressionMode.Decompress))
+                using (GZipStream compressionStream = new(inputStream, CompressionMode.Decompress))
                     compressionStream.CopyTo(outputStream);
 
                 // Go back to the start of the output stream and read the original network from it.

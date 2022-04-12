@@ -5,6 +5,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
 {
@@ -107,13 +108,13 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
                 currentFrame = MathHelper.Lerp(4f, 10f, attackTimer / animationChangeTime);
             if (attackTimer >= animationChangeTime)
             {
-                float castInterpolant = Utils.InverseLerp(0f, castTime, attackTimer - animationChangeTime, true);
+                float castInterpolant = Utils.GetLerpValue(0f, castTime, attackTimer - animationChangeTime, true);
                 int frameIncrement = (int)Math.Round(MathHelper.Lerp(0f, 3f, castInterpolant));
 
                 // Create sandnadoes.
                 if (attackTimer == animationChangeTime + castTime / 2)
                 {
-                    Main.PlaySound(SoundID.Item100, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item100, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = -1; i <= 1; i += 2)
@@ -129,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
                 // Make sandnadoes slam into each-other.
                 if (attackTimer >= animationChangeTime + castTime / 2 + 5f && attackTimer <= animationChangeTime + castTime)
                 {
-                    float sandnadoSpeedInterpolant = Utils.InverseLerp(castTime / 2 + 5f, animationChangeTime + castTime, attackTimer, true);
+                    float sandnadoSpeedInterpolant = Utils.GetLerpValue(castTime / 2 + 5f, animationChangeTime + castTime, attackTimer, true);
                     float sandnadoSpeed = MathHelper.Lerp(0f, 16f, (float)Math.Pow(sandnadoSpeedInterpolant, 4D));
                     foreach (Projectile sandnado in Utilities.AllProjectilesByID(ModContent.ProjectileType<Sandnado2>()))
                         sandnado.velocity = Vector2.UnitX * sandnado.ai[1] * sandnadoSpeed;

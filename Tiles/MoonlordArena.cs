@@ -6,7 +6,7 @@ namespace InfernumMode.Tiles
 {
     public class MoonlordArena : ModTile
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
             Main.tileSolid[Type] = true;
             Main.tileMergeDirt[Type] = true;
@@ -33,7 +33,7 @@ namespace InfernumMode.Tiles
                 if (!NPC.AnyNPCs(NPCID.MoonLordCore))
                 {
                     WorldGen.KillTile(i, j, false, false, false);
-                    if (!Main.tile[i, j].active() && Main.netMode != NetmodeID.SinglePlayer)
+                    if (!Main.tile[i, j].HasTile && Main.netMode != NetmodeID.SinglePlayer)
                     {
                         NetMessage.SendData(MessageID.TileChange, -1, -1, null, 0, i, j, 0f, 0, 0, 0);
                     }

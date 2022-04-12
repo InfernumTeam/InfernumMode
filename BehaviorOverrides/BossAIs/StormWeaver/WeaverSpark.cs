@@ -11,47 +11,47 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 18;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
-            projectile.hostile = true;
-            projectile.timeLeft = 300;
-            projectile.Opacity = 0f;
+            Projectile.width = Projectile.height = 18;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.hostile = true;
+            Projectile.timeLeft = 300;
+            Projectile.Opacity = 0f;
         }
 
         public override void AI()
         {
-            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.1f, 0f, 1f);
+            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
 
-            if (projectile.velocity.Length() < 29f)
-                projectile.velocity *= 1.022f;
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            if (Projectile.velocity.Length() < 29f)
+                Projectile.velocity *= 1.022f;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return new Color(255, 255, 255, 56) * projectile.Opacity;
+            return new Color(255, 255, 255, 56) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[projectile.type];
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Vector2 origin = texture.Size() * 0.5f;
 
             for (int i = 0; i < 7; i++)
             {
-                Vector2 drawOffset = -projectile.velocity.SafeNormalize(Vector2.Zero) * i * 7f;
-                Vector2 afterimageDrawPosition = projectile.Center + drawOffset - Main.screenPosition;
-                Color backAfterimageColor = projectile.GetAlpha(lightColor) * ((7f - i) / 7f);
-                spriteBatch.Draw(texture, afterimageDrawPosition, null, backAfterimageColor, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
+                Vector2 drawOffset = -Projectile.velocity.SafeNormalize(Vector2.Zero) * i * 7f;
+                Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
+                Color backAfterimageColor = Projectile.GetAlpha(lightColor) * ((7f - i) / 7f);
+                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
 
-            Color frontAfterimageColor = projectile.GetAlpha(lightColor) * 0.15f;
+            Color frontAfterimageColor = Projectile.GetAlpha(lightColor) * 0.15f;
             for (int i = 0; i < 8; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 4f;
-                Vector2 afterimageDrawPosition = projectile.Center + drawOffset - Main.screenPosition;
-                spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 4f;
+                Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
+                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             }
             return false;
         }

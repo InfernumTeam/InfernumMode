@@ -9,8 +9,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class RedLightningTelegraph : ModProjectile
     {
-        public ref float Lifetime => ref projectile.ai[0];
-        public ref float Time => ref projectile.ai[1];
+        public ref float Lifetime => ref Projectile.ai[0];
+        public ref float Time => ref Projectile.ai[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
         {
@@ -19,27 +19,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 2;
-            projectile.hostile = false;
-            projectile.friendly = false;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 90;
+            Projectile.width = Projectile.height = 2;
+            Projectile.hostile = false;
+            Projectile.friendly = false;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 90;
         }
 
         public override void AI()
         {
-            projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / Lifetime);
+            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / Lifetime);
             if (Time > Lifetime)
-                projectile.Kill();
+                Projectile.Kill();
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Vector2 start = projectile.Center;
-            Vector2 end = projectile.Center + projectile.velocity * 7000f;
-            spriteBatch.DrawLineBetter(start, end, Color.Red, projectile.scale * 4f);
+            Vector2 start = Projectile.Center;
+            Vector2 end = Projectile.Center + Projectile.velocity * 7000f;
+            Main.spriteBatch.DrawLineBetter(start, end, Color.Red, Projectile.scale * 4f);
             return false;
         }
 
@@ -48,10 +48,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int lightning = Utilities.NewProjectileBetter(projectile.Center, projectile.velocity * 10f, ModContent.ProjectileType<RedLightning2>(), 520, 0f);
+            int lightning = Utilities.NewProjectileBetter(Projectile.Center, Projectile.velocity * 10f, ModContent.ProjectileType<RedLightning2>(), 520, 0f);
             if (Main.projectile.IndexInRange(lightning))
             {
-                Main.projectile[lightning].Center -= projectile.velocity * 400f;
+                Main.projectile[lightning].Center -= Projectile.velocity * 400f;
                 Main.projectile[lightning].ai[0] = Main.projectile[lightning].velocity.ToRotation();
                 Main.projectile[lightning].ai[1] = Main.rand.Next(100);
             }

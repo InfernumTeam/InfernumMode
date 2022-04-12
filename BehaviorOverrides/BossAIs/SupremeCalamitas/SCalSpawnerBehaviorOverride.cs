@@ -27,9 +27,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // If SCal is already present, this does not happen.
             if (!NPC.AnyNPCs(ModContent.NPCType<SCalBoss>()))
             {
-                SCalSky.OverridingIntensity = Utils.InverseLerp(90f, SCalRitualDrama.TotalRitualTime - 25f, time, true);
-                Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.InverseLerp(90f, SCalRitualDrama.TotalRitualTime - 25f, time, true);
-                Main.LocalPlayer.Calamity().GeneralScreenShakePower *= Utils.InverseLerp(3400f, 1560f, Main.LocalPlayer.Distance(projectile.Center), true) * 4f;
+                SCalSky.OverridingIntensity = Utils.GetLerpValue(90f, SCalRitualDrama.TotalRitualTime - 25f, time, true);
+                Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(90f, SCalRitualDrama.TotalRitualTime - 25f, time, true);
+                Main.LocalPlayer.Calamity().GeneralScreenShakePower *= Utils.GetLerpValue(3400f, 1560f, Main.LocalPlayer.Distance(projectile.Center), true) * 4f;
             }
 
             // Summon SCal right before the ritual effect ends.
@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 CalamityUtils.SpawnBossBetter(projectile.Center - new Vector2(60f), ModContent.NPCType<SCalBoss>());
 
             // Make a sudden screen shake.
-            Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.InverseLerp(3400f, 1560f, Main.LocalPlayer.Distance(projectile.Center), true) * 16f;
+            Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(3400f, 1560f, Main.LocalPlayer.Distance(projectile.Center), true) * 16f;
 
             // Generate a dust explosion at the ritual's position.
             float burstDirectionVariance = 3;

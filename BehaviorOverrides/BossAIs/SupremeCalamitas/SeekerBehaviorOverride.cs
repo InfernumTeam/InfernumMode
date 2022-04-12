@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -40,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Explode if few seekers remain, to prevent dragging out the fight.
                     if (NPC.CountNPCS(npc.type) <= 4)
                     {
-                        Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
                         Utilities.CreateGenericDustExplosion(npc.Center, (int)CalamityDusts.Brimstone, 25, 8f, 1.45f);
                         npc.active = false;
                     }
@@ -121,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     // Explode if other seekers are gone.
                     if (NPC.CountNPCS(npc.type) <= 2)
                     {
-                        Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
                         Utilities.CreateGenericDustExplosion(npc.Center, (int)CalamityDusts.Brimstone, 25, 8f, 1.45f);
                         npc.active = false;
                     }
@@ -142,13 +144,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (npc.ai[0] != 2f)
                 return true;
 
-            Texture2D pulseTexture = Main.glowMaskTexture[239];
+            Texture2D pulseTexture = TextureAssets.GlowMask[239].Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = pulseTexture.Size() * 0.5f;
 
-            spriteBatch.SetBlendState(BlendState.Additive);
-            spriteBatch.Draw(pulseTexture, drawPosition, null, Color.MediumPurple, 0f, origin, npc.scale * 1.8f, SpriteEffects.None, 0f);
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.Draw(pulseTexture, drawPosition, null, Color.MediumPurple, 0f, origin, npc.scale * 1.8f, SpriteEffects.None, 0f);
+            Main.spriteBatch.ResetBlendState();
             return true;
         }
     }

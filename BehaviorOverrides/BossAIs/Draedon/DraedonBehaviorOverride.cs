@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static CalamityMod.NPCs.ExoMechs.Draedon;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 {
@@ -36,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 npc.TargetClosest(false);
                 playerToFollow = Main.player[npc.target];
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonTeleport"), playerToFollow.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DraedonTeleport"), playerToFollow.Center);
             }
 
             // Pick someone else to pay attention to if the old target is gone.
@@ -74,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (talkTimer <= HologramFadeinTime)
             {
                 hologramEffectTimer = talkTimer;
-                npc.Opacity = Utils.InverseLerp(0f, 8f, talkTimer, true);
+                npc.Opacity = Utils.GetLerpValue(0f, 8f, talkTimer, true);
             }
 
             // Play the stand up animation after teleportation.
@@ -145,10 +146,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             // Make the screen rumble and summon the exo mechs.
-            if (talkTimer > ExoMechChooseDelay + 8f && talkTimer < ExoMechPhaseDialogueTime)
+            if (talkTimer is > (ExoMechChooseDelay + 8f) and < ExoMechPhaseDialogueTime)
             {
-                Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.InverseLerp(4200f, 1400f, Main.LocalPlayer.Distance(playerToFollow.Center), true) * 18f;
-                Main.LocalPlayer.Calamity().GeneralScreenShakePower *= Utils.InverseLerp(ExoMechChooseDelay + 5f, ExoMechPhaseDialogueTime, talkTimer, true);
+                Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(4200f, 1400f, Main.LocalPlayer.Distance(playerToFollow.Center), true) * 18f;
+                Main.LocalPlayer.Calamity().GeneralScreenShakePower *= Utils.GetLerpValue(ExoMechChooseDelay + 5f, ExoMechPhaseDialogueTime, talkTimer, true);
             }
 
             // Summon the selected exo mech.
@@ -159,7 +160,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    var sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), playerToFollow.Center);
+                    var sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), playerToFollow.Center);
 
                     if (sound != null)
                         sound.Volume = MathHelper.Clamp(sound.Volume * 1.55f, 0f, 1f);
@@ -195,7 +196,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
                     {
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonLaugh"), playerToFollow.Center);
+                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DraedonLaugh"), playerToFollow.Center);
                         Utilities.DisplayText("Go on. Continue feeding information to my machines.", TextColorEdgy);
                     }
 
@@ -233,7 +234,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine * 2f)
                     {
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonLaugh"), playerToFollow.Center);
+                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DraedonLaugh"), playerToFollow.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase6Text3", TextColor);
@@ -255,9 +256,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             if (!ExoMechIsPresent && npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
-                npc.modNPC.music = InfernumMode.CalamityMod.GetSoundSlot(SoundType.Music, "Sounds/Music/DraedonAmbience");
+                npc.ModNPC.Music = SoundLoader.GetSoundSlot(InfernumMode.CalamityMod, "Sounds/Music/DraedonAmbience");
             if (ExoMechIsPresent)
-                npc.modNPC.music = InfernumMode.Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/ExoMechBosses");
+                npc.ModNPC.Music = SoundLoader.GetSoundSlot(InfernumMode.Instance, "Sounds/Music/ExoMechBosses");
 
             talkTimer++;
             return false;

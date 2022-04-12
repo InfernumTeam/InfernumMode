@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 {
@@ -172,7 +173,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     if (attackTimer < 30f)
                         acceleration = MathHelper.Lerp(-0.72f, 0f, attackTimer / 30f);
                     else if (attackTimer < 70f)
-                        acceleration = MathHelper.Lerp(0f, 0.38f, Utils.InverseLerp(30f, 70f, attackTimer, true));
+                        acceleration = MathHelper.Lerp(0f, 0.38f, Utils.GetLerpValue(30f, 70f, attackTimer, true));
                     npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + acceleration, -10f, 16f);
 
                     // Try to stay close to the target horizontally.
@@ -189,7 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     for (int i = 0; i < inGroundDepthDefinition; i++)
                     {
                         Tile tile = CalamityUtils.ParanoidTileRetrieval((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f) - i);
-                        if (!tile.active())
+                        if (!tile.HasTile)
                         {
                             inGround = false;
                             break;
@@ -321,7 +322,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
 
                     // Roar as a telegraph.
                     if (attackTimer == 85f)
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DesertScourgeRoar"), target.Center);
+                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DesertScourgeRoar"), target.Center);
 
                     // Slam downward.
                     if (attackTimer > 110f)
@@ -423,7 +424,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         break;
 
                     Vector2 vultureSpawnPosition = target.Center + new Vector2(MathHelper.Lerp(-600f, 600f, i / 2f), -500f);
-                    NPC.NewNPC((int)vultureSpawnPosition.X, (int)vultureSpawnPosition.Y, NPCID.Vulture);
+                    NPC.NewNPC(new InfernumSource(), (int)vultureSpawnPosition.X, (int)vultureSpawnPosition.Y, NPCID.Vulture);
                 }
             }
 
@@ -438,7 +439,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             DesertScourgeAttackType oldAttack = (DesertScourgeAttackType)(int)npc.ai[0];
-            List<DesertScourgeAttackType> potentialAttacks = new List<DesertScourgeAttackType>()
+            List<DesertScourgeAttackType> potentialAttacks = new()
             {
                 DesertScourgeAttackType.SandSpit,
                 DesertScourgeAttackType.SandRushCharge,
@@ -486,9 +487,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             {
                 int nextIndex;
                 if (i < wormLength - 1)
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
-                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
                 Main.npc[nextIndex].realLife = npc.whoAmI;
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;

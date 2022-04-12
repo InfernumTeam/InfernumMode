@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -25,7 +26,7 @@ namespace InfernumMode.GlobalInstances
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
             // Give a dark tint to the moon lord.
-            if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead || npc.type == NPCID.MoonLordCore)
+            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordCore)
             {
                 if (InfernumMode.CanUseCustomAIs)
                     return MoonLordCoreBehaviorOverride.OverallTint;
@@ -81,9 +82,9 @@ namespace InfernumMode.GlobalInstances
         #endregion
 
         #region Manual Drawing
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (InfernumMode.CanUseCustomAIs)
+            if (InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
             {
                 bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
                 if (isDoG && npc.alpha >= 252)
@@ -110,25 +111,18 @@ namespace InfernumMode.GlobalInstances
                             float horizontalOffset = Math.Abs(npc.Center.X - Main.LocalPlayer.Center.X);
                             float verticalOffset = Math.Abs(npc.Center.Y - Main.LocalPlayer.Center.Y);
 
-                            if (i == 0 || i == 2)
-                                drawPosition.X = Main.LocalPlayer.Center.X + horizontalOffset;
-                            else
-                                drawPosition.X = Main.LocalPlayer.Center.X - horizontalOffset;
-
-                            if (i == 0 || i == 1)
-                                drawPosition.Y = Main.LocalPlayer.Center.Y + verticalOffset;
-                            else
-                                drawPosition.Y = Main.LocalPlayer.Center.Y - verticalOffset;
+                            drawPosition.X = i is 0 or 2 ? Main.LocalPlayer.Center.X + horizontalOffset : Main.LocalPlayer.Center.X - horizontalOffset;
+                            drawPosition.Y = i is 0 or 1 ? Main.LocalPlayer.Center.Y + verticalOffset : Main.LocalPlayer.Center.Y - verticalOffset;
                             drawPosition.Y += npc.gfxOffY;
-                            drawPosition -= Main.screenPosition;
+                            drawPosition -= screenPos;
 
-                            spriteBatch.Draw(Main.npcTexture[npc.type], drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
+                            Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
                         }
                     }
                     return OverridingListManager.InfernumPreDrawOverrideList[npc.type].Invoke(npc, spriteBatch, drawColor);
                 }
             }
-            return base.PreDraw(npc, spriteBatch, drawColor);
+            return base.PreDraw(npc, spriteBatch, screenPos, drawColor);
         }
         #endregion
 
@@ -138,7 +132,7 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
 
-            if (npc.type == NPCID.CultistBoss || npc.type == NPCID.CultistBossClone)
+            if (npc.type is NPCID.CultistBoss or NPCID.CultistBossClone)
                 scale = 1f;
 
             bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();

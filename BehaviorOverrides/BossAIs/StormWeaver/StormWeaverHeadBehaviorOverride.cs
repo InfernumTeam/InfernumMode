@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {
@@ -43,10 +44,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 {
                     CalamityUtils.StartRain(true);
                     Main.cloudBGActive = 1f;
-                    Main.numCloudsTemp = Main.cloudLimit;
+                    Main.numCloudsTemp = Main.maxClouds;
                     Main.numClouds = Main.numCloudsTemp;
-                    Main.windSpeedTemp = 1.56f;
-                    Main.windSpeedSet = Main.windSpeedTemp;
+                    Main.windSpeedCurrent = 1.56f;
+                    Main.windSpeedTarget = Main.windSpeedCurrent;
                     Main.maxRaining = 0.9f;
                 }
 
@@ -132,7 +133,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     electricity.noGravity = true;
                 }
 
-                Main.PlaySound(SoundID.Item94, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item94, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float shootSpeed = MathHelper.Lerp(8f, 12.5f, 1f - lifeRatio);
@@ -197,7 +198,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Move into the charge.
             if (attackTimer > hoverRedirectTime && attackTimer <= hoverRedirectTime + chargeRedirectTime)
             {
-                Vector2 idealChargeVelocity = new Vector2(idealChargeVelocityX, idealChargeVelocityY);
+                Vector2 idealChargeVelocity = new(idealChargeVelocityX, idealChargeVelocityY);
                 npc.velocity = npc.velocity.RotateTowards(idealChargeVelocity.ToRotation(), 0.08f, true) * MathHelper.Lerp(npc.velocity.Length(), idealChargeVelocity.Length(), 0.15f);
                 npc.velocity = npc.velocity.MoveTowards(idealChargeVelocity, 5f);
             }
@@ -205,7 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             // Release lightning from behind the worm once the charge has begun.
             if (attackTimer == hoverRedirectTime + chargeRedirectTime / 2)
             {
-                Main.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 5; i++)
@@ -228,8 +229,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 npc.velocity *= 0.8f;
 
             // Calculate fade to blue.
-            fadeToBlue = Utils.InverseLerp(hoverRedirectTime, hoverRedirectTime + chargeRedirectTime, attackTimer, true) *
-                Utils.InverseLerp(hoverRedirectTime + chargeRedirectTime + chargeTime + chargeSlowdownTime, hoverRedirectTime + chargeRedirectTime + chargeTime, attackTimer, true);
+            fadeToBlue = Utils.GetLerpValue(hoverRedirectTime, hoverRedirectTime + chargeRedirectTime, attackTimer, true) *
+                Utils.GetLerpValue(hoverRedirectTime + chargeRedirectTime + chargeTime + chargeSlowdownTime, hoverRedirectTime + chargeRedirectTime + chargeTime, attackTimer, true);
 
             // Prepare the next charge. If all charges are done, go to the next attack.
             if (attackTimer > hoverRedirectTime + chargeRedirectTime + chargeTime + chargeSlowdownTime)
@@ -264,8 +265,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             float angularSpinVelocity = MathHelper.TwoPi * totalSpins / spinTime;
 
             // Determine fade to blue.
-            fadeToBlue = Utils.InverseLerp(spinDelay, spinDelay + initialAttackWaitDelay, attackTimer, true) *
-                Utils.InverseLerp(spinDelay + initialAttackWaitDelay + spinTime, spinDelay + initialAttackWaitDelay + spinTime - 30f, attackTimer, true);
+            fadeToBlue = Utils.GetLerpValue(spinDelay, spinDelay + initialAttackWaitDelay, attackTimer, true) *
+                Utils.GetLerpValue(spinDelay + initialAttackWaitDelay + spinTime, spinDelay + initialAttackWaitDelay + spinTime - 30f, attackTimer, true);
 
             // Attempt to move towards the target if far away from them.
             if (!npc.WithinRange(target.Center, attackStartDistanceThreshold) && attackTimer < initialAttackWaitDelay)
@@ -296,14 +297,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 // Frequently release sparks.
                 if (attackTimer % sparkShootRate == sparkShootRate - 1f)
                 {
-                    Main.PlaySound(SoundID.DD2_LightningAuraZap, spinCenter);
+                    SoundEngine.PlaySound(SoundID.DD2_LightningAuraZap, spinCenter);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int projectileCount = attackTimer % 24f == 23f ? 9 : 1;
 
                         for (int i = 0; i < projectileCount; i++)
                         {
-                            float angularImprecision = Utils.InverseLerp(720f, 350f, npc.Distance(target.Center), true);
+                            float angularImprecision = Utils.GetLerpValue(720f, 350f, npc.Distance(target.Center), true);
                             float predictivenessFactor = (float)Math.Pow(1f - angularImprecision, 2D);
                             float angularOffset = 0f;
                             if (projectileCount > 1)
@@ -345,7 +346,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             int hoverRedirectTime = 240;
             int chargeTime = 150;
             float cloudCoverArea = 4600f;
-            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * cloudCoverArea * 0.5f, -1350f);
+            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * cloudCoverArea * 0.5f, -1350f);
             Vector2 hoverDestination = target.Center + hoverOffset;
             if (hoverDestination.Y < 300f)
                 hoverDestination.Y = 300f;
@@ -399,7 +400,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             ref float attackState = ref npc.ai[1];
             float oldAttackState = npc.ai[1];
-            WeightedRandom<float> newStatePicker = new WeightedRandom<float>(Main.rand);
+            WeightedRandom<float> newStatePicker = new(Main.rand);
             newStatePicker.Add((int)StormWeaverAttackType.NormalMove, 1.5);
             newStatePicker.Add((int)StormWeaverAttackType.LightningCharge);
             newStatePicker.Add((int)StormWeaverAttackType.StaticChargeup);

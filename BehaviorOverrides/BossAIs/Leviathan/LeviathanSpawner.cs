@@ -6,14 +6,15 @@ using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
 using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
     public class LeviathanSpawner : ModProjectile
     {
-        internal ref float Time => ref projectile.ai[0];
+        internal ref float Time => ref Projectile.ai[0];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
         {
@@ -22,37 +23,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 20;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.netImportant = true;
-            projectile.timeLeft = 450;
+            Projectile.width = Projectile.height = 20;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.netImportant = true;
+            Projectile.timeLeft = 450;
         }
 
         public override void AI()
         {
-            projectile.Opacity = (float)Math.Sin(projectile.timeLeft / 120f * MathHelper.Pi) * 4f;
-            if (projectile.Opacity > 1f)
-                projectile.Opacity = 1f;
+            Projectile.Opacity = (float)Math.Sin(Projectile.timeLeft / 120f * MathHelper.Pi) * 4f;
+            if (Projectile.Opacity > 1f)
+                Projectile.Opacity = 1f;
 
-            if (projectile.timeLeft == 340)
+            if (Projectile.timeLeft == 340)
             {
-                var sound = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanSummonBase"), projectile.Center);
+                var sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/LeviathanSummonBase"), Projectile.Center);
                 if (sound != null)
                     sound.Volume = MathHelper.Clamp(sound.Volume * 1.5f, 0f, 1f);
             }
 
-            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Pow(Utils.InverseLerp(180f, 290f, Time, true), 0.3D) * 20f;
-            Main.LocalPlayer.Infernum().CurrentScreenShakePower += (float)Math.Sin(MathHelper.Pi * Math.Pow(Utils.InverseLerp(300f, 440f, Time, true), 0.5D)) * 35f;
+            Main.LocalPlayer.Infernum().CurrentScreenShakePower = (float)Math.Pow(Utils.GetLerpValue(180f, 290f, Time, true), 0.3D) * 20f;
+            Main.LocalPlayer.Infernum().CurrentScreenShakePower += (float)Math.Sin(MathHelper.Pi * Math.Pow(Utils.GetLerpValue(300f, 440f, Time, true), 0.5D)) * 35f;
 
-            if (projectile.timeLeft == 45)
+            if (Projectile.timeLeft == 45)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LeviathanRoarCharge"), projectile.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/LeviathanRoarCharge"), Projectile.Center);
                 if (Main.netMode != NetmodeID.Server)
                 {
                     WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
-                    Vector2 ripplePos = projectile.Center;
+                    Vector2 ripplePos = Projectile.Center;
 
                     for (int i = 0; i < 7; i++)
                         ripple.QueueRipple(ripplePos, Color.White, Vector2.One * 4000f, RippleShape.Square, Main.rand.NextFloat(MathHelper.TwoPi));
@@ -62,11 +63,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
                 for (int i = -1; i <= 1; i += 2)
                 {
-                    int wave = Utilities.NewProjectileBetter(projectile.Center, Vector2.UnitX * 15f * i, ModContent.ProjectileType<LeviathanSpawnWave>(), 0, 0f);
-                    Main.projectile[wave].Bottom = projectile.Center + Vector2.UnitY * 700f;
+                    int wave = Utilities.NewProjectileBetter(Projectile.Center, Vector2.UnitX * 15f * i, ModContent.ProjectileType<LeviathanSpawnWave>(), 0, 0f);
+                    Main.projectile[wave].Bottom = Projectile.Center + Vector2.UnitY * 700f;
                 }
 
-                int leviathan = NPC.NewNPC((int)projectile.Center.X, (int)projectile.Center.Y, ModContent.NPCType<LeviathanNPC>());
+                int leviathan = NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y, ModContent.NPCType<LeviathanNPC>());
                 if (Main.npc.IndexInRange(leviathan))
                     Main.npc[leviathan].velocity = Vector2.UnitY * -7f;
             }
@@ -80,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (Main.netMode == NetmodeID.Server)
                 return;
 
-            WorldUtils.Find((projectile.Center - Vector2.UnitY * 1200f).ToTileCoordinates(), Searches.Chain(new Searches.Down(150), new CustomTileConditions.IsWater()), out Point waterTop);
+            WorldUtils.Find((Projectile.Center - Vector2.UnitY * 1200f).ToTileCoordinates(), Searches.Chain(new Searches.Down(150), new CustomTileConditions.IsWater()), out Point waterTop);
 
             // Making bubbling water as an indicator.
             if (Time % 4f == 3f && Time > 90f)
@@ -96,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 for (float x = -xArea; x <= xArea; x += 110f)
                 {
                     // As well as liquid disruption.
-                    float ripplePower = MathHelper.Lerp(60f, 90f, (float)Math.Sin(Main.GlobalTime + x / xArea * MathHelper.TwoPi) * 0.5f + 0.5f);
+                    float ripplePower = MathHelper.Lerp(60f, 90f, (float)Math.Sin(Main.GlobalTimeWrappedHourly + x / xArea * MathHelper.TwoPi) * 0.5f + 0.5f);
                     ripplePower *= MathHelper.Lerp(0.5f, 1f, Time / 300f);
 
                     WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();

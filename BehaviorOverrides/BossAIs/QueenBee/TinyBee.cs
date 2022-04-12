@@ -3,41 +3,42 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 {
     public class TinyBee : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bee");
-            Main.projFrames[projectile.type] = 3;
+            Main.projFrames[Projectile.type] = 3;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 40;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 240;
-            projectile.scale = 1f;
-            projectile.alpha = 255;
-            projectile.tileCollide = false;
-            projectile.friendly = false;
-            projectile.hostile = true;
-            projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.width = Projectile.height = 40;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 240;
+            Projectile.scale = 1f;
+            Projectile.alpha = 255;
+            Projectile.tileCollide = false;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            projectile.alpha = Utils.Clamp(projectile.alpha - 50, 0, 255);
-            projectile.rotation = MathHelper.Clamp(projectile.velocity.X * 0.15f, -0.7f, 0.7f);
-            projectile.spriteDirection = (projectile.velocity.X < 0f).ToDirectionInt();
+            Projectile.alpha = Utils.Clamp(Projectile.alpha - 50, 0, 255);
+            Projectile.rotation = MathHelper.Clamp(Projectile.velocity.X * 0.15f, -0.7f, 0.7f);
+            Projectile.spriteDirection = (Projectile.velocity.X < 0f).ToDirectionInt();
 
             if (Time < 80f)
-                projectile.velocity = Vector2.Lerp(projectile.velocity, Vector2.UnitX * (projectile.velocity.X > 0f).ToDirectionInt() * 10f, 0.02f);
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.UnitX * (Projectile.velocity.X > 0f).ToDirectionInt() * 10f, 0.02f);
 
-            projectile.frame = projectile.timeLeft / 4 % Main.projFrames[projectile.type];
+            Projectile.frame = Projectile.timeLeft / 4 % Main.projFrames[Projectile.type];
 
             Time++;
         }
@@ -46,10 +47,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.NPCDeath1, projectile.Center);
+            SoundEngine.PlaySound(SoundID.NPCDeath1, Projectile.Center);
             for (int i = 0; i < 12; i++)
             {
-                Dust honey = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 147, 0f, 0f, 0, default, 0.8f);
+                Dust honey = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 147, 0f, 0f, 0, default, 0.8f);
                 if (Main.rand.NextBool(2))
                     honey.scale *= 1.4f;
             }

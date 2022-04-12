@@ -8,6 +8,7 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
@@ -71,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 // This does not happen if the target is noticably close.
                 if (!npc.WithinRange(target.Center, 200f) && Main.rand.NextBool(laserShootChance))
                 {
-                    Main.PlaySound(SoundID.Item12, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item12, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float shootSpeed = npc.Distance(target.Center) / 135f + 18.5f;

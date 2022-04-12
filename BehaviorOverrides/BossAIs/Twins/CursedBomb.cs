@@ -11,43 +11,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cursed Flame Bomb");
-            Main.projFrames[projectile.type] = 6;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
+            Main.projFrames[Projectile.type] = 6;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 28;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 240;
-            projectile.Opacity = 0f;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 28;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 240;
+            Projectile.Opacity = 0f;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.Opacity += 0.05f;
-            if (projectile.Opacity > 1f)
-                projectile.Opacity = 1f;
+            Projectile.Opacity += 0.05f;
+            if (Projectile.Opacity > 1f)
+                Projectile.Opacity = 1f;
 
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            Lighting.AddLight(projectile.Center, Color.Green.ToVector3() * 1.45f);
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Lighting.AddLight(Projectile.Center, Color.Green.ToVector3() * 1.45f);
 
-            projectile.frameCounter++;
-            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
-            if (projectile.velocity.Y < 20f)
-                projectile.velocity.Y += 1f;
-            projectile.velocity.X *= 0.98f;
+            if (Projectile.velocity.Y < 20f)
+                Projectile.velocity.Y += 1f;
+            Projectile.velocity.X *= 0.98f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, 0);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, 0);
             return false;
         }
     }

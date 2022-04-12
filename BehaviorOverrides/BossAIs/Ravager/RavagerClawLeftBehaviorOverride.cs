@@ -1,4 +1,5 @@
-﻿using CalamityMod.Events;
+﻿using CalamityMod;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using CalamityMod.World;
@@ -8,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -288,7 +290,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         }
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            int cinderDamage = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive ? 335 : 205;
+                            int cinderDamage = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive ? 335 : 205;
 
                             for (int i = 0; i < 3; i++)
                             {
@@ -310,8 +312,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public static bool DrawClaw(NPC npc, SpriteBatch spriteBatch, Color lightColor, bool leftclaw)
         {
             NPC ravagerBody = Main.npc[CalamityGlobalNPC.scavenger];
-            Texture2D chainTexture = ModContent.GetTexture("CalamityMod/NPCs/Ravager/RavagerChain");
-            Texture2D npcTexture = Main.npcTexture[npc.type];
+            Texture2D chainTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Ravager/RavagerChain").Value;
+            Texture2D npcTexture = TextureAssets.Npc[npc.type].Value;
             Vector2 drawStart = ravagerBody.Center + new Vector2(-92f * leftclaw.ToDirectionInt(), 46f);
             Vector2 drawPosition = drawStart;
             float chainRotation = npc.AngleFrom(drawStart) - MathHelper.PiOver2;
@@ -323,12 +325,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 drawPosition += (npc.Center - drawStart).SafeNormalize(Vector2.Zero) * 14f;
                 Color color = npc.GetAlpha(Lighting.GetColor((int)drawPosition.X / 16, (int)(drawPosition.Y / 16f)));
                 Vector2 screenDrawPosition = drawPosition - Main.screenPosition;
-                spriteBatch.Draw(chainTexture, screenDrawPosition, null, color, chainRotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(chainTexture, screenDrawPosition, null, color, chainRotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
 
             Vector2 clawDrawPosition = npc.Center - Main.screenPosition;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            spriteBatch.Draw(npcTexture, clawDrawPosition, null, npc.GetAlpha(lightColor), npc.rotation, npcTexture.Size() * 0.5f, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(npcTexture, clawDrawPosition, null, npc.GetAlpha(lightColor), npc.rotation, npcTexture.Size() * 0.5f, npc.scale, direction, 0f);
             return false;
         }
     }

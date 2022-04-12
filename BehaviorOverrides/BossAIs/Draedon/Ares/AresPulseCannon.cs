@@ -8,6 +8,8 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 using CalamityModClass = CalamityMod.CalamityMod;
 
@@ -15,53 +17,53 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresPulseCannon : ModNPC
     {
-        public AresCannonChargeParticleSet EnergyDrawer = new AresCannonChargeParticleSet(-1, 15, 40f, Color.Fuchsia);
+        public AresCannonChargeParticleSet EnergyDrawer = new(-1, 15, 40f, Color.Fuchsia);
 
-        public ref float AttackTimer => ref npc.ai[0];
-        public ref float ChargeDelay => ref npc.ai[1];
-        public Vector2 CoreSpritePosition => npc.Center + npc.spriteDirection * npc.rotation.ToRotationVector2() * 35f + (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * 5f;
+        public ref float AttackTimer => ref NPC.ai[0];
+        public ref float ChargeDelay => ref NPC.ai[1];
+        public Vector2 CoreSpritePosition => NPC.Center + NPC.spriteDirection * NPC.rotation.ToRotationVector2() * 35f + (NPC.rotation + MathHelper.PiOver2).ToRotationVector2() * 5f;
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("XF-09 Ares Pulse Cannon");
-            Main.npcFrameCount[npc.type] = 12;
-            NPCID.Sets.TrailingMode[npc.type] = 3;
-            NPCID.Sets.TrailCacheLength[npc.type] = npc.oldPos.Length;
+            Main.npcFrameCount[NPC.type] = 12;
+            NPCID.Sets.TrailingMode[NPC.type] = 3;
+            NPCID.Sets.TrailCacheLength[NPC.type] = NPC.oldPos.Length;
         }
 
         public override void SetDefaults()
         {
-            npc.npcSlots = 5f;
-            npc.damage = 0;
-            npc.width = 170;
-            npc.height = 120;
-            npc.defense = 80;
-            npc.DR_NERD(0.35f);
-            npc.LifeMaxNERB(1250000, 1495000, 500000);
+            NPC.npcSlots = 5f;
+            NPC.damage = 0;
+            NPC.width = 170;
+            NPC.height = 120;
+            NPC.defense = 80;
+            NPC.DR_NERD(0.35f);
+            NPC.LifeMaxNERB(1250000, 1495000, 500000);
             double HPBoost = CalamityConfig.Instance.BossHealthBoost * 0.01;
-            npc.lifeMax += (int)(npc.lifeMax * HPBoost);
-            npc.aiStyle = -1;
-            aiType = -1;
-            npc.Opacity = 0f;
-            npc.knockBackResist = 0f;
-            npc.canGhostHeal = false;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.HitSound = SoundID.NPCHit4;
-            npc.DeathSound = SoundID.NPCDeath14;
-            npc.netAlways = true;
-            npc.boss = true;
-            npc.hide = true;
-            music = (InfernumMode.CalamityMod as CalamityModClass).GetMusicFromMusicMod("ExoMechs") ?? MusicID.Boss3;
+            NPC.lifeMax += (int)(NPC.lifeMax * HPBoost);
+            NPC.aiStyle = -1;
+            AIType = -1;
+            NPC.Opacity = 0f;
+            NPC.knockBackResist = 0f;
+            NPC.canGhostHeal = false;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.HitSound = SoundID.NPCHit4;
+            NPC.DeathSound = SoundID.NPCDeath14;
+            NPC.netAlways = true;
+            NPC.boss = true;
+            NPC.hide = true;
+            Music = (InfernumMode.CalamityMod as CalamityModClass).GetMusicFromMusicMod("ExoMechs") ?? MusicID.Boss3;
         }
         
         public override void AI()
         {
             if (CalamityGlobalNPC.draedonExoMechPrime < 0)
             {
-                npc.life = 0;
-                npc.HitEffect();
-                npc.active = false;
+                NPC.life = 0;
+                NPC.HitEffect();
+                NPC.active = false;
                 return;
             }
 
@@ -70,20 +72,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(npc);
+            ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(NPC);
 
-            Player target = Main.player[npc.target];
+            Player target = Main.player[NPC.target];
 
             // Disable HP bars.
-            npc.Calamity().ShouldCloseHPBar = true;
+            NPC.Calamity().ShouldCloseHPBar = true;
 
             // Define attack variables.
-            bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(npc);
+            bool currentlyDisabled = AresBodyBehaviorOverride.ArmIsDisabled(NPC);
             int shootTime = 180;
             int totalPulseBlastsPerBurst = 3;
             float blastShootSpeed = 7.5f;
             float aimPredictiveness = 27f;
-            ref float shouldPrepareToFire = ref npc.Infernum().ExtraAI[1];
+            ref float shouldPrepareToFire = ref NPC.Infernum().ExtraAI[1];
 
             // Nerf things while Ares' complement mech is present.
             if (ExoMechManagement.CurrentAresPhase == 4)
@@ -97,7 +99,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
-                shootTime -= 16;
+                shootTime -= 30;
                 totalPulseBlastsPerBurst++;
             }
 
@@ -117,34 +119,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 AttackTimer = 1f;
             
             // Become more resistant to damage as necessary.
-            npc.takenDamageMultiplier = 1f;
-            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
-                npc.takenDamageMultiplier *= 0.5f;
+            NPC.takenDamageMultiplier = 1f;
+            if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(NPC))
+                NPC.takenDamageMultiplier *= 0.5f;
 
             // Hover near Ares.
             bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge;
             float horizontalOffset = doingHoverCharge ? 380f : 575f;
             float verticalOffset = doingHoverCharge ? 150f : 0f;
             Vector2 hoverDestination = aresBody.Center + new Vector2((aresBody.Infernum().ExtraAI[15] == 1f ? -1f : 1f) * horizontalOffset, verticalOffset);
-            ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 65f, 115f);
-            npc.Infernum().ExtraAI[0] = MathHelper.Clamp(npc.Infernum().ExtraAI[0] + doingHoverCharge.ToDirectionInt(), 0f, 15f);
+            ExoMechAIUtilities.DoSnapHoverMovement(NPC, hoverDestination, 65f, 115f);
+            NPC.Infernum().ExtraAI[0] = MathHelper.Clamp(NPC.Infernum().ExtraAI[0] + doingHoverCharge.ToDirectionInt(), 0f, 15f);
 
             // Check to see if this arm should be used for special things in a combo attack.
             float _ = 0f;
-            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
+            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(NPC))
             {
-                ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref aresBody.ai[1], ref _);
-                ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, 1f, ref aresBody.ai[1], ref _);
+                ExoMechComboAttackContent.UseThanatosAresComboAttack(NPC, ref aresBody.ai[1], ref _);
+                ExoMechComboAttackContent.UseTwinsAresComboAttack(NPC, 1f, ref aresBody.ai[1], ref _);
                 return;
             }
 
             // Calculate the direction and rotation this arm should use.
-            Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
-            ExoMechAIUtilities.PerformAresArmDirectioning(npc, aresBody, target, aimDirection, currentlyDisabled, doingHoverCharge, ref _);
-            float rotationToEndOfCannon = npc.rotation;
+            Vector2 aimDirection = NPC.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
+            ExoMechAIUtilities.PerformAresArmDirectioning(NPC, aresBody, target, aimDirection, currentlyDisabled, doingHoverCharge, ref _);
+            float rotationToEndOfCannon = NPC.rotation;
             if (rotationToEndOfCannon < 0f)
                 rotationToEndOfCannon += MathHelper.Pi;
-            Vector2 endOfCannon = npc.Center + rotationToEndOfCannon.ToRotationVector2() * 66f + Vector2.UnitY * 16f;
+            Vector2 endOfCannon = NPC.Center + rotationToEndOfCannon.ToRotationVector2() * 66f + Vector2.UnitY * 16f;
 
             // Create a dust telegraph before firing.
             if (AttackTimer > ChargeDelay * 0.7f && AttackTimer < ChargeDelay)
@@ -174,7 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire a pulse blast.
             if (AttackTimer >= ChargeDelay && AttackTimer % shootRate == shootRate - 1f)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PulseRifleFire"), npc.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PulseRifleFire"), NPC.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -183,7 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     Vector2 blastSpawnPosition = endOfCannon + blastShootVelocity * 8.4f;
                     Utilities.NewProjectileBetter(blastSpawnPosition, blastShootVelocity, ModContent.ProjectileType<AresPulseBlast>(), blastDamage, 0f);
 
-                    npc.netUpdate = true;
+                    NPC.netUpdate = true;
                 }
             }
 
@@ -191,7 +193,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (AttackTimer >= ChargeDelay + shootTime)
             {
                 AttackTimer = 0f;
-                npc.netUpdate = true;
+                NPC.netUpdate = true;
             }
             AttackTimer++;
         }
@@ -203,77 +205,77 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override void FindFrame(int frameHeight)
         {
-            int currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / npc.ai[1]));
+            int currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, NPC.ai[0] / NPC.ai[1]));
 
-            if (npc.ai[0] > npc.ai[1])
+            if (NPC.ai[0] > NPC.ai[1])
             {
-                npc.frameCounter++;
-                if (npc.frameCounter >= 66f)
-                    npc.frameCounter = 0D;
-                currentFrame = (int)Math.Round(MathHelper.Lerp(36f, 47f, (float)npc.frameCounter / 66f));
+                NPC.frameCounter++;
+                if (NPC.frameCounter >= 66f)
+                    NPC.frameCounter = 0D;
+                currentFrame = (int)Math.Round(MathHelper.Lerp(36f, 47f, (float)NPC.frameCounter / 66f));
             }
             else
-                npc.frameCounter = 0D;
+                NPC.frameCounter = 0D;
 
-            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(npc))
-                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] % 72f / 72f));
+            if (ExoMechComboAttackContent.ArmCurrentlyBeingUsed(NPC))
+                currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, NPC.ai[0] % 72f / 72f));
 
-            npc.frame = new Rectangle(currentFrame / 12 * 150, currentFrame % 12 * 148, 150, 148);
+            NPC.frame = new Rectangle(currentFrame / 12 * 150, currentFrame % 12 * 148, 150, 148);
         }
 
         public override void HitEffect(int hitDirection, double damage)
         {
             for (int k = 0; k < 3; k++)
-                Dust.NewDust(npc.position, npc.width, npc.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1f);
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1f);
 
-            if (npc.life <= 0)
+            if (NPC.life <= 0)
             {
                 for (int i = 0; i < 2; i++)
-                    Dust.NewDust(npc.position, npc.width, npc.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
+                    Dust.NewDust(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
 
                 for (int i = 0; i < 20; i++)
                 {
-                    Dust exoEnergy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 107, 0f, 0f, 0, new Color(0, 255, 255), 2.5f);
+                    Dust exoEnergy = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 0, new Color(0, 255, 255), 2.5f);
                     exoEnergy.noGravity = true;
                     exoEnergy.velocity *= 3f;
 
-                    exoEnergy = Dust.NewDustDirect(npc.position, npc.width, npc.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
+                    exoEnergy = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 107, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
                     exoEnergy.velocity *= 2f;
                     exoEnergy.noGravity = true;
                 }
 
-                Gore.NewGore(npc.position, npc.velocity, mod.GetGoreSlot("Gores/AresPulseCannon1"), npc.scale);
-                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase1"), npc.scale);
-                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase2"), npc.scale);
-                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/Ares/AresHandBase3"), npc.scale);
+                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresPulseCannon1"), NPC.scale);
+                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase1", InfernumMode.CalamityMod), NPC.scale);
+                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase2", InfernumMode.CalamityMod), NPC.scale);
+                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase3", InfernumMode.CalamityMod), NPC.scale);
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            if (npc.Infernum().OptionalPrimitiveDrawer is null)
+            if (NPC.Infernum().OptionalPrimitiveDrawer is null)
             {
-                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => AresBodyBehaviorOverride.FlameTrailWidthFunctionBig(npc, completionRatio),
-                    completionRatio => AresBodyBehaviorOverride.FlameTrailColorFunctionBig(npc, completionRatio),
+                NPC.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => AresBodyBehaviorOverride.FlameTrailWidthFunctionBig(NPC, completionRatio),
+                    completionRatio => AresBodyBehaviorOverride.FlameTrailColorFunctionBig(NPC, completionRatio),
                     null, true, GameShaders.Misc["Infernum:TwinsFlameTrail"]);
             }
 
             for (int i = 0; i < 2; i++)
             {
-                if (npc.Infernum().ExtraAI[0] > 0f)
-                    npc.Infernum().OptionalPrimitiveDrawer.Draw(npc.oldPos, npc.Size * 0.5f - Main.screenPosition, 54);
+                if (NPC.Infernum().ExtraAI[0] > 0f)
+                    NPC.Infernum().OptionalPrimitiveDrawer.Draw(NPC.oldPos, NPC.Size * 0.5f - Main.screenPosition, 54);
             }
 
             SpriteEffects spriteEffects = SpriteEffects.None;
-            if (npc.spriteDirection == 1)
+            if (NPC.spriteDirection == 1)
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            Texture2D texture = Main.npcTexture[npc.type];
-            Rectangle frame = npc.frame;
-            Vector2 origin = npc.Center - npc.position;
-            Vector2 center = npc.Center - Main.screenPosition;
+            Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+            Rectangle frame = NPC.frame;
+            Vector2 origin = NPC.Center - NPC.position;
+            Vector2 center = NPC.Center - Main.screenPosition;
             Color afterimageBaseColor = aresBody.Infernum().ExtraAI[13] == 1f ? Color.Red : Color.White;
             int numAfterimages = 5;
 
@@ -281,38 +283,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 for (int i = 1; i < numAfterimages; i += 2)
                 {
-                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
-                    Vector2 afterimageCenter = npc.oldPos[i] + origin - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
+                    Color afterimageColor = NPC.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
+                    Vector2 afterimageCenter = NPC.oldPos[i] + origin - Main.screenPosition;
+                    Main.spriteBatch.Draw(texture, afterimageCenter, NPC.frame, afterimageColor, NPC.oldRot[i], origin, NPC.scale, spriteEffects, 0f);
                 }
             }
 
-            ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
-            ExoMechAIUtilities.DrawAresArmTelegraphEffect(spriteBatch, npc, Color.Violet, texture, center, frame, origin);
-            spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            ExoMechAIUtilities.DrawFinalPhaseGlow(Main.spriteBatch, NPC, texture, center, frame, origin);
+            ExoMechAIUtilities.DrawAresArmTelegraphEffect(Main.spriteBatch, NPC, Color.Violet, texture, center, frame, origin);
+            Main.spriteBatch.Draw(texture, center, frame, NPC.GetAlpha(lightColor), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/AresPulseCannonGlow");
+            texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/AresPulseCannonGlow").Value;
 
             if (CalamityConfig.Instance.Afterimages)
             {
                 for (int i = 1; i < numAfterimages; i += 2)
                 {
-                    Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
-                    Vector2 afterimageCenter = npc.oldPos[i] + origin - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
+                    Color afterimageColor = NPC.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
+                    Vector2 afterimageCenter = NPC.oldPos[i] + origin - Main.screenPosition;
+                    Main.spriteBatch.Draw(texture, afterimageCenter, NPC.frame, afterimageColor, NPC.oldRot[i], origin, NPC.scale, spriteEffects, 0f);
                 }
             }
 
-            spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * NPC.Opacity, NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
 
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            if (npc.Infernum().ExtraAI[1] == 1f)
+            if (NPC.Infernum().ExtraAI[1] == 1f)
                 EnergyDrawer.DrawBloom(CoreSpritePosition);
             EnergyDrawer.DrawPulses(CoreSpritePosition);
             EnergyDrawer.DrawSet(CoreSpritePosition);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return false;
         }
 

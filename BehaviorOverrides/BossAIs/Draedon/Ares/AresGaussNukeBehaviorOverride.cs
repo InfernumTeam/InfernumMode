@@ -9,6 +9,8 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 // NOTE: This AI is currently unused. For posterity, however, it remains here.
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
@@ -123,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire the nuke.
             if (attackTimer == (int)chargeDelay)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), npc.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LargeWeaponFire"), npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -153,9 +155,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (npc.ai[0] < npc.ai[1] - 30f)
                 currentFrame = (int)Math.Round(MathHelper.Lerp(0f, 35f, npc.ai[0] / (npc.ai[1] - 30f)));
             else if (npc.ai[0] <= npc.ai[1] + 30f)
-                currentFrame = (int)Math.Round(MathHelper.Lerp(35f, 47f, Utils.InverseLerp(npc.ai[1] - 30f, npc.ai[1] + 30f, npc.ai[0], true)));
+                currentFrame = (int)Math.Round(MathHelper.Lerp(35f, 47f, Utils.GetLerpValue(npc.ai[1] - 30f, npc.ai[1] + 30f, npc.ai[0], true)));
             else
-                currentFrame = (int)Math.Round(MathHelper.Lerp(49f, 107f, Utils.InverseLerp(npc.ai[1] + 30f, npc.ai[1] + npc.ai[2], npc.ai[0], true)));
+                currentFrame = (int)Math.Round(MathHelper.Lerp(49f, 107f, Utils.GetLerpValue(npc.ai[1] + 30f, npc.ai[1] + npc.ai[2], npc.ai[0], true)));
 
             npc.frame = new Rectangle(npc.width * (currentFrame / 12), npc.height * (currentFrame % 12), npc.width, npc.height);
         }
@@ -168,7 +170,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
@@ -181,14 +183,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
                     Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
-            spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresGaussNukeGlow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresGaussNukeGlow").Value;
 
             if (CalamityConfig.Instance.Afterimages)
             {
@@ -196,11 +198,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
                     Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
-            spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             return false;
         }
         #endregion Frames and Drawcode

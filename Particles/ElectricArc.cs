@@ -3,6 +3,7 @@ using CalamityMod.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace InfernumMode.Particles
 {
@@ -39,7 +40,7 @@ namespace InfernumMode.Particles
 
         public override void CustomDraw(SpriteBatch spriteBatch)
         {
-            Texture2D texture = GeneralParticleHandler.GetTexture(Type);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 scale = Vector2.One * Scale * 11f / texture.Size() * 0.5f;
             Vector2 origin = texture.Size() * 0.5f;
 
@@ -47,7 +48,7 @@ namespace InfernumMode.Particles
             int trailCount = TrailPositions.Length;
             if (timeLeft < trailCount)
                 trailCount = timeLeft;
-            float opacity = Utils.InverseLerp(0f, 16f, timeLeft, true);
+            float opacity = Utils.GetLerpValue(0f, 16f, timeLeft, true);
             for (int i = 1; i < trailCount; i++)
             {
                 Vector2 position = TrailPositions[i];
@@ -55,8 +56,8 @@ namespace InfernumMode.Particles
                 float rotation = (TrailPositions[i - 1] - position).ToRotation();
 
                 position -= Main.screenPosition;
-                spriteBatch.Draw(texture, position, null, Color.White * opacity, rotation, origin, scale * new Vector2(4f, 0.5f), 0, 0f);
-                spriteBatch.Draw(texture, position, null, Color * opacity, rotation, origin, scale * new Vector2(4f, 1f), 0, 0f);
+                Main.spriteBatch.Draw(texture, position, null, Color.White * opacity, rotation, origin, scale * new Vector2(4f, 0.5f), 0, 0f);
+                Main.spriteBatch.Draw(texture, position, null, Color * opacity, rotation, origin, scale * new Vector2(4f, 1f), 0, 0f);
             }
         }
     }

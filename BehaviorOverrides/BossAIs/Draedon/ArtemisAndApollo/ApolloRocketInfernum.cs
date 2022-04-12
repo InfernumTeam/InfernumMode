@@ -6,6 +6,7 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
@@ -14,50 +15,50 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("High Explosive Plasma Rocket");
-            Main.projFrames[projectile.type] = 5;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            Main.projFrames[Projectile.type] = 5;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 28;
-            projectile.height = 28;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            cooldownSlot = 1;
-            projectile.timeLeft = 600;
-            projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.width = 28;
+            Projectile.height = 28;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            CooldownSlot = 1;
+            Projectile.timeLeft = 600;
+            Projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(projectile.localAI[0]);
+            writer.Write(Projectile.localAI[0]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            projectile.localAI[0] = reader.ReadSingle();
+            Projectile.localAI[0] = reader.ReadSingle();
         }
 
         public override void AI()
         {
-            if (projectile.position.Y > projectile.ai[1])
-                projectile.tileCollide = true;
+            if (Projectile.position.Y > Projectile.ai[1])
+                Projectile.tileCollide = true;
 
             // Animation.
-            projectile.frameCounter++;
-            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
             // Rotation.
-            projectile.rotation = (float)Math.Atan2(projectile.velocity.Y, projectile.velocity.X) + MathHelper.PiOver2;
+            Projectile.rotation = (float)Math.Atan2(Projectile.velocity.Y, Projectile.velocity.X) + MathHelper.PiOver2;
 
             // Spawn effects.
-            if (projectile.localAI[0] == 0f)
+            if (Projectile.localAI[0] == 0f)
             {
-                projectile.localAI[0] = 1f;
+                Projectile.localAI[0] = 1f;
 
                 float minDustSpeed = 1.8f;
                 float maxDustSpeed = 2.8f;
@@ -66,18 +67,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 for (int i = 0; i < 20; i++)
                 {
                     float dustSpeed = Main.rand.NextFloat(minDustSpeed, maxDustSpeed);
-                    Vector2 dustVel = new Vector2(dustSpeed, 0.0f).RotatedBy(projectile.velocity.ToRotation());
+                    Vector2 dustVel = new Vector2(dustSpeed, 0.0f).RotatedBy(Projectile.velocity.ToRotation());
                     dustVel = dustVel.RotatedBy(-angularVariance);
                     dustVel = dustVel.RotatedByRandom(2.0f * angularVariance);
                     int randomDustType = Main.rand.NextBool(2) ? 107 : 110;
 
-                    Dust plasma = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, randomDustType, dustVel.X, dustVel.Y, 200, default, 1.7f);
-                    plasma.position = projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * (float)Main.rand.NextDouble() * projectile.width / 2f;
+                    Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVel.X, dustVel.Y, 200, default, 1.7f);
+                    plasma.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
                     plasma.noGravity = true;
                     plasma.velocity *= 3f;
 
-                    plasma = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, randomDustType, dustVel.X, dustVel.Y, 100, default, 0.8f);
-                    plasma.position = projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * (float)Main.rand.NextDouble() * projectile.width / 2f;
+                    plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVel.X, dustVel.Y, 100, default, 0.8f);
+                    plasma.position = Projectile.Center + Vector2.UnitY.RotatedByRandom(MathHelper.Pi) * (float)Main.rand.NextDouble() * Projectile.width / 2f;
                     plasma.velocity *= 2f;
                     plasma.fadeIn = 1f;
                     plasma.color = Color.Green * 0.5f;
@@ -86,43 +87,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 for (int i = 0; i < 10; i++)
                 {
                     float dustSpeed = Main.rand.NextFloat(minDustSpeed, maxDustSpeed);
-                    Vector2 dustVel = new Vector2(dustSpeed, 0.0f).RotatedBy(projectile.velocity.ToRotation());
+                    Vector2 dustVel = new Vector2(dustSpeed, 0.0f).RotatedBy(Projectile.velocity.ToRotation());
                     dustVel = dustVel.RotatedBy(-angularVariance);
                     dustVel = dustVel.RotatedByRandom(2.0f * angularVariance);
                     int randomDustType = Main.rand.NextBool(2) ? 107 : 110;
 
-                    Dust plasma = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, randomDustType, dustVel.X, dustVel.Y, 0, default, 2f);
-                    plasma.position = projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(projectile.velocity.ToRotation()) * projectile.width / 3f;
+                    Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, dustVel.X, dustVel.Y, 0, default, 2f);
+                    plasma.position = Projectile.Center + Vector2.UnitX.RotatedByRandom(MathHelper.Pi).RotatedBy(Projectile.velocity.ToRotation()) * Projectile.width / 3f;
                     plasma.noGravity = true;
                     plasma.velocity *= 0.5f;
                 }
             }
 
             // Emit light.
-            Lighting.AddLight(projectile.Center, 0f, 0.6f, 0f);
+            Lighting.AddLight(Projectile.Center, 0f, 0.6f, 0f);
 
             // Get a target and calculate distance from it
-            int target = Player.FindClosest(projectile.Center, 1, 1);
-            Vector2 distanceFromTarget = Main.player[target].Center - projectile.Center;
+            int target = Player.FindClosest(Projectile.Center, 1, 1);
+            Vector2 distanceFromTarget = Main.player[target].Center - Projectile.Center;
 
             // Set AI to stop homing, start accelerating
             float stopHomingDistance = 120f;
-            if (distanceFromTarget.Length() < stopHomingDistance || projectile.ai[0] == 1f || projectile.timeLeft < 480)
+            if (distanceFromTarget.Length() < stopHomingDistance || Projectile.ai[0] == 1f || Projectile.timeLeft < 480)
             {
-                projectile.ai[0] = 1f;
+                Projectile.ai[0] = 1f;
 
-                if (projectile.velocity.Length() < 24f)
-                    projectile.velocity *= 1.05f;
+                if (Projectile.velocity.Length() < 24f)
+                    Projectile.velocity *= 1.05f;
 
                 return;
             }
 
             // Home in on target
-            float oldSpeed = projectile.velocity.Length();
+            float oldSpeed = Projectile.velocity.Length();
             float inertia = 6f;
-            projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * oldSpeed;
-            projectile.velocity = (projectile.velocity * inertia + distanceFromTarget) / (inertia + 1f);
-            projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * oldSpeed;
+            Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * oldSpeed;
+            Projectile.velocity = (Projectile.velocity * inertia + distanceFromTarget) / (inertia + 1f);
+            Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * oldSpeed;
 
             // Fly away from other rockets
             float pushForce = 0.07f;
@@ -132,23 +133,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 Projectile otherProj = Main.projectile[k];
 
                 // Short circuits to make the loop as fast as possible.
-                if (!otherProj.active || k == projectile.whoAmI)
+                if (!otherProj.active || k == Projectile.whoAmI)
                     continue;
 
                 // If the other projectile is indeed the same owned by the same player and they're too close, nudge them away.
-                bool sameProjType = otherProj.type == projectile.type;
-                float taxicabDist = Vector2.Distance(projectile.Center, otherProj.Center);
+                bool sameProjType = otherProj.type == Projectile.type;
+                float taxicabDist = Vector2.Distance(Projectile.Center, otherProj.Center);
                 if (sameProjType && taxicabDist < pushDistance)
                 {
-                    if (projectile.position.X < otherProj.position.X)
-                        projectile.velocity.X -= pushForce;
+                    if (Projectile.position.X < otherProj.position.X)
+                        Projectile.velocity.X -= pushForce;
                     else
-                        projectile.velocity.X += pushForce;
+                        Projectile.velocity.X += pushForce;
 
-                    if (projectile.position.Y < otherProj.position.Y)
-                        projectile.velocity.Y -= pushForce;
+                    if (Projectile.position.Y < otherProj.position.Y)
+                        Projectile.velocity.Y -= pushForce;
                     else
-                        projectile.velocity.Y += pushForce;
+                        Projectile.velocity.Y += pushForce;
                 }
             }
         }
@@ -159,40 +160,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             target.AddBuff(BuffID.CursedInferno, 180);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             lightColor = Color.Lerp(lightColor, Color.Lime, 0.75f);
             lightColor.A = 0;
-            CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], lightColor, 1);
+            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1);
             return false;
         }
 
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override void PostDraw(Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[projectile.type];
-            Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
             SpriteEffects direction = SpriteEffects.None;
-            if (projectile.spriteDirection == -1)
+            if (Projectile.spriteDirection == -1)
                 direction = SpriteEffects.FlipHorizontally;
-            spriteBatch.Draw(Main.projectileTexture[projectile.type], projectile.Center - Main.screenPosition, frame, Color.White, projectile.rotation, origin, projectile.scale, direction, 0f);
+            Main.spriteBatch.Draw(Utilities.ProjTexture(Projectile.type), Projectile.Center - Main.screenPosition, frame, Color.White, Projectile.rotation, origin, Projectile.scale, direction, 0f);
         }
 
         public override void Kill(int timeLeft)
         {
             // Rocket explosion.
             int height = 90;
-            projectile.position = projectile.Center;
-            projectile.width = projectile.height = height;
-            projectile.Center = projectile.position;
-            projectile.Damage();
+            Projectile.position = Projectile.Center;
+            Projectile.width = Projectile.height = height;
+            Projectile.Center = Projectile.position;
+            Projectile.Damage();
 
-            Main.PlaySound(SoundID.Item14, projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
 
             for (int i = 0; i < 12; i++)
             {
                 int randomDustType = Main.rand.NextBool(2) ? 107 : 110;
-                Dust plasma = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, randomDustType, 0f, 0f, 100, default, 2f);
+                Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, 0f, 0f, 100, default, 2f);
                 plasma.velocity *= 3f;
                 if (Main.rand.NextBool(2))
                 {
@@ -203,19 +204,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             for (int i = 0; i < 15; i++)
             {
                 int randomDustType = Main.rand.NextBool(2) ? 107 : 110;
-                Dust plasma = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, randomDustType, 0f, 0f, 100, default, 3f);
+                Dust plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, 0f, 0f, 100, default, 3f);
                 plasma.noGravity = true;
                 plasma.velocity *= 5f;
 
-                plasma = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, randomDustType, 0f, 0f, 100, default, 2f);
+                plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, 0f, 0f, 100, default, 2f);
                 plasma.velocity *= 2f;
             }
-            CalamityUtils.ExplosionGores(projectile.Center, 3);
+            CalamityUtils.ExplosionGores(Projectile.Center, 3);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

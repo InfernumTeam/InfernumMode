@@ -8,10 +8,10 @@ namespace InfernumMode.BossIntroScreens
 {
     public class SkeletronIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        public override TextColorData TextColor => new(completionRatio =>
         {
-            Color shadowflameColor = new Color(200, 113, 255);
-            Color boneColor = new Color(198, 187, 157);
+            Color shadowflameColor = new(200, 113, 255);
+            Color boneColor = new(198, 187, 157);
             return Color.Lerp(shadowflameColor, boneColor, (float)Math.Sin(completionRatio * MathHelper.Pi * 4f + AnimationCompletion * MathHelper.Pi / 3f) * 0.5f + 0.5f);
         });
 

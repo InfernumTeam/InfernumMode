@@ -17,40 +17,29 @@ namespace InfernumMode.Items
 
         public override void SetDefaults()
         {
-            item.width = 18;
-            item.height = 18;
-            item.rare = ItemRarityID.Green;
-            item.useAnimation = 45;
-            item.useTime = 45;
-            item.useStyle = ItemUseStyleID.EatingUsing;
-            item.consumable = false;
+            Item.width = 18;
+            Item.height = 18;
+            Item.rare = ItemRarityID.Green;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
+            Item.useStyle = ItemUseStyleID.EatFood;
+            Item.consumable = false;
         }
 
         public override bool CanUseItem(Player player) => !NPC.AnyNPCs(NPCID.SkeletronHead) && !Main.dayTime;
 
         public override void AddRecipes()
         {
-            ModRecipe recipe = new ModRecipe(mod);
-            recipe.AddRecipeGroup("Wood", 25);
-            recipe.AddIngredient(ItemID.RottenChunk, 5);
-            recipe.AddIngredient(ItemID.ShadowScale, 20);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
-
-            recipe = new ModRecipe(mod);
-            recipe.AddRecipeGroup("Wood", 25);
-            recipe.AddIngredient(ItemID.Vertebrae, 5);
-            recipe.AddIngredient(ItemID.TissueSample, 20);
-            recipe.SetResult(this);
-            recipe.AddRecipe();
+            CreateRecipe(1).AddRecipeGroup("Wood", 25).AddIngredient(ItemID.RottenChunk, 5).AddIngredient(ItemID.ShadowScale, 20).Register();
+            CreateRecipe(1).AddRecipeGroup("Wood", 25).AddIngredient(ItemID.Vertebrae, 5).AddIngredient(ItemID.TissueSample, 20).Register();
         }
 
-        public override bool UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 spawnPosition = player.Center - Vector2.UnitY * 800f;
-                NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, NPCID.SkeletronHead);
+                NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, NPCID.SkeletronHead);
             }
             return true;
         }

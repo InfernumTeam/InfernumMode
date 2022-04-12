@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -140,7 +142,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             }
 
             // Calculate pupil variables.
-            float pupilDilationInterpolant = Utils.InverseLerp(0f, 0.7f, attackTimer, true) * 0.5f + Utils.InverseLerp(0.7f, 1f, attackTimer, true) * 0.5f;
+            float pupilDilationInterpolant = Utils.GetLerpValue(0f, 0.7f, attackTimer, true) * 0.5f + Utils.GetLerpValue(0.7f, 1f, attackTimer, true) * 0.5f;
             pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.1f);
             pupilScale = MathHelper.Lerp(0.4f, 1f, pupilDilationInterpolant);
             pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.65f, 0.1f);
@@ -202,7 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 if (wrappedAttackTimer == 25f)
                 {
-                    var sound = Main.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
+                    var sound = SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
                     if (sound != null)
                     {
                         sound.Volume = MathHelper.Clamp(sound.Volume * 1.85f, 0f, 1f);
@@ -210,15 +212,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     }
                 }
 
-                telegraphInterpolant = Utils.InverseLerp(0f, deathrayTelegraphTime, wrappedAttackTimer, true);
+                telegraphInterpolant = Utils.GetLerpValue(0f, deathrayTelegraphTime, wrappedAttackTimer, true);
                 angularOffset += CalamityUtils.Convert01To010(telegraphInterpolant) * MathHelper.TwoPi / 300f;
             }
             else
                 core.velocity *= 0.9f;
 
             // Calculate pupil variables.
-            pupilScale = MathHelper.Lerp(0.35f, 1f, Utils.InverseLerp(0f, deathrayTelegraphTime, wrappedAttackTimer, true));
-            pupilRotation = npc.AngleTo(target.Center).AngleLerp(angularOffset, Utils.InverseLerp(35f, deathrayTelegraphTime * 0.3f, wrappedAttackTimer, true));
+            pupilScale = MathHelper.Lerp(0.35f, 1f, Utils.GetLerpValue(0f, deathrayTelegraphTime, wrappedAttackTimer, true));
+            pupilRotation = npc.AngleTo(target.Center).AngleLerp(angularOffset, Utils.GetLerpValue(35f, deathrayTelegraphTime * 0.3f, wrappedAttackTimer, true));
             pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.4f, 0.1f);
             Vector2 pupilPosition = npc.Center + Utils.Vector2FromElipse(pupilRotation.ToRotationVector2(), new Vector2(27f, 59f) * pupilOutwardness);
 
@@ -226,10 +228,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (wrappedAttackTimer == deathrayTelegraphTime)
             {
                 // Make some strong sounds.
-                var sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), target.Center);
+                var sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), target.Center);
                 if (sound != null)
                     sound.Volume = MathHelper.Clamp(sound.Volume * 1.61f, -1f, 1f);
-                sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
+                sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/TeslaCannonFire"), target.Center);
                 if (sound != null)
                     sound.Pitch = -0.21f;
 
@@ -269,22 +271,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D headTexture = Main.npcTexture[npc.type];
-            Texture2D headGlowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/MoonLordHeadGlowmask");
-            Vector2 headOrigin = new Vector2(191f, 130f);
-            Texture2D eyeScleraTexture = Main.extraTexture[18];
-            Texture2D pupilTexture = Main.extraTexture[19];
-            Vector2 mouthOrigin = new Vector2(19f, 34f);
-            Texture2D mouthTexture = Main.extraTexture[25];
+            Texture2D headTexture = TextureAssets.Npc[npc.type].Value;
+            Texture2D headGlowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/MoonLordHeadGlowmask").Value;
+            Vector2 headOrigin = new(191f, 130f);
+            Texture2D eyeScleraTexture = TextureAssets.Extra[18].Value;
+            Texture2D pupilTexture = TextureAssets.Extra[19].Value;
+            Vector2 mouthOrigin = new(19f, 34f);
+            Texture2D mouthTexture = TextureAssets.Extra[25].Value;
             Vector2 mouthOffset = new Vector2(0f, 214f).RotatedBy(npc.rotation);
             Rectangle mouthFrame = mouthTexture.Frame(1, 1, 0, 0);
             mouthFrame.Height /= 3;
-            Texture2D eyeTexture = Main.extraTexture[29];
+            Texture2D eyeTexture = TextureAssets.Extra[29].Value;
             Vector2 eyeOffset = new Vector2(0f, 4f).RotatedBy(npc.rotation);
             Rectangle eyeFrame = eyeTexture.Frame(1, 1, 0, 0);
             eyeFrame.Height /= 4;
             eyeFrame.Y += eyeFrame.Height * (int)(npc.localAI[3] / 5f);
-            Texture2D mouthOutlineTexture = Main.extraTexture[26];
+            Texture2D mouthOutlineTexture = TextureAssets.Extra[26].Value;
             Rectangle mouthOuterFrame = mouthOutlineTexture.Frame(1, 1, 0, 0);
             mouthOuterFrame.Height /= 4;
             Point centerTileCoords = npc.Center.ToTileCoordinates();
@@ -296,18 +298,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             if (npc.ai[0] < 0f)
             {
-                mouthOuterFrame.Y += mouthOuterFrame.Height * (int)(Main.GlobalTime * 9.3f % 4);
-                spriteBatch.Draw(mouthOutlineTexture, npc.Center - Main.screenPosition, mouthOuterFrame, color, npc.rotation, mouthOrigin + new Vector2(4f, 4f), 1f, 0, 0f);
+                mouthOuterFrame.Y += mouthOuterFrame.Height * (int)(Main.GlobalTimeWrappedHourly * 9.3f % 4);
+                Main.spriteBatch.Draw(mouthOutlineTexture, npc.Center - Main.screenPosition, mouthOuterFrame, color, npc.rotation, mouthOrigin + new Vector2(4f, 4f), 1f, 0, 0f);
             }
             else
             {
-                spriteBatch.Draw(eyeScleraTexture, npc.Center - Main.screenPosition, null, Color.White * npc.Opacity * 0.6f, npc.rotation, mouthOrigin, 1f, 0, 0f);
-                spriteBatch.Draw(pupilTexture, npc.Center - Main.screenPosition + pupilOffset, null, Color.White * npc.Opacity * 0.6f, npc.rotation, pupilTexture.Size() * 0.5f, npc.localAI[2], SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(eyeScleraTexture, npc.Center - Main.screenPosition, null, Color.White * npc.Opacity * 0.6f, npc.rotation, mouthOrigin, 1f, 0, 0f);
+                Main.spriteBatch.Draw(pupilTexture, npc.Center - Main.screenPosition + pupilOffset, null, Color.White * npc.Opacity * 0.6f, npc.rotation, pupilTexture.Size() * 0.5f, npc.localAI[2], SpriteEffects.None, 0f);
             }
-            spriteBatch.Draw(headTexture, npc.Center - Main.screenPosition, npc.frame, color, npc.rotation, headOrigin, 1f, 0, 0f);
-            spriteBatch.Draw(headGlowmask, npc.Center - Main.screenPosition, npc.frame, Color.White * npc.Opacity * 0.6f, npc.rotation, headOrigin, 1f, 0, 0f);
-            spriteBatch.Draw(eyeTexture, (npc.Center - Main.screenPosition + eyeOffset).Floor(), eyeFrame, color, npc.rotation, eyeFrame.Size() / 2f, 1f, 0, 0f);
-            spriteBatch.Draw(mouthTexture, (npc.Center - Main.screenPosition + mouthOffset).Floor(), mouthFrame, color, npc.rotation, mouthFrame.Size() / 2f, 1f, 0, 0f);
+            Main.spriteBatch.Draw(headTexture, npc.Center - Main.screenPosition, npc.frame, color, npc.rotation, headOrigin, 1f, 0, 0f);
+            Main.spriteBatch.Draw(headGlowmask, npc.Center - Main.screenPosition, npc.frame, Color.White * npc.Opacity * 0.6f, npc.rotation, headOrigin, 1f, 0, 0f);
+            Main.spriteBatch.Draw(eyeTexture, (npc.Center - Main.screenPosition + eyeOffset).Floor(), eyeFrame, color, npc.rotation, eyeFrame.Size() / 2f, 1f, 0, 0f);
+            Main.spriteBatch.Draw(mouthTexture, (npc.Center - Main.screenPosition + mouthOffset).Floor(), mouthFrame, color, npc.rotation, mouthFrame.Size() / 2f, 1f, 0, 0f);
 
             // Draw line telegraphs as necessary.
             NPC core = Main.npc[(int)npc.ai[3]];
@@ -317,22 +319,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 if (lineTelegraphInterpolant > 0f)
                 {
-                    spriteBatch.SetBlendState(BlendState.Additive);
+                    Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                    Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLineSmall");
+                    Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
 
                     float angularOffset = npc.Infernum().ExtraAI[1];
                     Color outlineColor = Color.Lerp(Color.Turquoise, Color.White, lineTelegraphInterpolant);
-                    Vector2 origin = new Vector2(line.Width / 2f, line.Height);
-                    Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 0.5f, 2.4f);
+                    Vector2 origin = new(line.Width / 2f, line.Height);
+                    Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);
                     for (int i = 0; i < 10; i++)
                     {
                         Vector2 drawPosition = npc.Center + pupilOffset - Main.screenPosition;
                         Vector2 beamDirection = (MathHelper.TwoPi * i / 10f + angularOffset).ToRotationVector2();
                         float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
-                        spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                        Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
                     }
-                    spriteBatch.ResetBlendState();
+                    Main.spriteBatch.ResetBlendState();
                 }
             }
 

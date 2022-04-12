@@ -1,5 +1,7 @@
 using CalamityMod.NPCs.Bumblebirb;
+using System;
 using Terraria;
+using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
@@ -34,6 +36,8 @@ namespace InfernumMode.Skies
             UpdatePIndex();
             if (BirdbrainIndex != -1)
                 UseTargetPosition(Main.npc[BirdbrainIndex].Center);
+            else
+                Filters.Scene["InfernumMode:Dragonfolly"].Deactivate(Array.Empty<object>());
             base.Apply();
         }
     }

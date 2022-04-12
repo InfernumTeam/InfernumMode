@@ -12,6 +12,7 @@ using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -24,7 +25,7 @@ namespace InfernumMode.ILEditingStuff
     {
         public static void MakeGolemRoomInvariable(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(106)))
                 return;
@@ -47,7 +48,7 @@ namespace InfernumMode.ILEditingStuff
     {
         public static void ChangeExoMechIsActiveDefinition(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             cursor.EmitDelegate<Func<bool>>(() =>
             {
@@ -75,11 +76,11 @@ namespace InfernumMode.ILEditingStuff
 
     public class DrawBlackEffectHook : IHookEdit
     {
-        public static List<int> DrawCacheProjsOverSignusBlackening = new List<int>(Main.maxProjectiles);
-        public static List<int> DrawCacheAdditiveLighting = new List<int>(Main.maxProjectiles);
+        public static List<int> DrawCacheProjsOverSignusBlackening = new(Main.maxProjectiles);
+        public static List<int> DrawCacheAdditiveLighting = new(Main.maxProjectiles);
         internal static void DrawBlackout(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<MoonlordDeathDrama>("DrawWhite")))
                 return;
@@ -95,11 +96,11 @@ namespace InfernumMode.ILEditingStuff
                 if (fadeToBlack > 0f)
                 {
                     Color color = Color.Black * fadeToBlack;
-                    Main.spriteBatch.Draw(Main.magicPixel, new Rectangle(-2, -2, Main.screenWidth + 4, Main.screenHeight + 4), new Rectangle(0, 0, 1, 1), color);
+                    Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(-2, -2, Main.screenWidth + 4, Main.screenHeight + 4), new Rectangle(0, 0, 1, 1), color);
                 }
 
                 Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.instance.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
                 for (int i = 0; i < DrawCacheProjsOverSignusBlackening.Count; i++)
                 {
                     try
@@ -128,7 +129,7 @@ namespace InfernumMode.ILEditingStuff
                     }
                 }
                 Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.instance.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
                 DrawCacheAdditiveLighting.Clear();
             });
         }
@@ -190,28 +191,34 @@ namespace InfernumMode.ILEditingStuff
         {
             int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
             bool useShader = InfernumMode.CanUseCustomAIs && moonLordIndex >= 0 && moonLordIndex < Main.maxNPCs && !Main.gameMenu;
-            orig(self);
+
+            // Why the fuck is this shit not working normally?
+            try
+            {
+                orig(self);
+            }
+			catch { }
 
             if (useShader)
             {
                 Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.instance.Rasterizer, null, Matrix.Identity);
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, Main.Rasterizer, null, Matrix.Identity);
 
                 Rectangle arena = Main.npc[moonLordIndex].Infernum().arenaRectangle;
                 Vector2 topLeft = (arena.TopLeft() + Vector2.One * 8f - Main.screenPosition) / new Vector2(Main.screenWidth, Main.screenHeight) / Main.GameViewMatrix.Zoom;
                 Vector2 bottomRight = (arena.BottomRight() + Vector2.One * 16f - Main.screenPosition) / new Vector2(Main.screenWidth, Main.screenHeight) / Main.GameViewMatrix.Zoom;
                 Matrix zoomMatrix = Main.GameViewMatrix.TransformationMatrix;
 
-                Vector2 scale = new Vector2(Main.screenWidth, Main.screenHeight) / Main.magicPixel.Size() * Main.GameViewMatrix.Zoom;
+                Vector2 scale = new Vector2(Main.screenWidth, Main.screenHeight) / TextureAssets.MagicPixel.Value.Size() * Main.GameViewMatrix.Zoom;
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uTopLeftFreeArea"].SetValue(topLeft);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uBottomRightFreeArea"].SetValue(bottomRight);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uZoomMatrix"].SetValue(zoomMatrix);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseColor(Color.Gray);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseSecondaryColor(Color.Turquoise);
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"));
+                GameShaders.Misc["Infernum:MoonLordBGDistortion"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Apply();
-                Vector2 hell = new Vector2(Main.screenWidth * (Main.GameViewMatrix.Zoom.X - 1f), Main.screenHeight * (Main.GameViewMatrix.Zoom.Y - 1f));
-                Main.spriteBatch.Draw(Main.magicPixel, hell * -0.5f, null, Color.White, 0f, Vector2.Zero, scale, 0, 0f);
+                Vector2 hell = new(Main.screenWidth * (Main.GameViewMatrix.Zoom.X - 1f), Main.screenHeight * (Main.GameViewMatrix.Zoom.Y - 1f));
+                Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, hell * -0.5f, null, Color.White, 0f, Vector2.Zero, scale, 0, 0f);
 
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin();

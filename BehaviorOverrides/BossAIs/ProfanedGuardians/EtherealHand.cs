@@ -7,19 +7,21 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class EtherealHand : ModNPC
     {
-        public Player Target => Main.player[npc.target];
-        public ref float HandSide => ref npc.ai[0];
-        public ref float FingerOutwardness => ref npc.localAI[0];
-        public ref float FingerSpacingOffset => ref npc.localAI[1];
+        public Player Target => Main.player[NPC.target];
+        public ref float HandSide => ref NPC.ai[0];
+        public ref float FingerOutwardness => ref NPC.localAI[0];
+        public ref float FingerSpacingOffset => ref NPC.localAI[1];
         public bool UsingPointerFinger
         {
-            get => npc.localAI[2] != 0f;
-            set => npc.localAI[2] = value.ToInt();
+            get => NPC.localAI[2] != 0f;
+            set => NPC.localAI[2] = value.ToInt();
         }
 
         public NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
@@ -27,49 +29,50 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         public float AttackTime => AttackerGuardian.ai[1];
         public AttackerGuardianBehaviorOverride.AttackGuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.AttackGuardianAttackState)(int)AttackerGuardian.ai[0];
         public bool PunchingTarget => AttackerState == AttackerGuardianBehaviorOverride.AttackGuardianAttackState.ThrowingHands && AttackTime > 45f && AttackerGuardian.WithinRange(Target.Center, 250f);
-        public Vector2 PointerFingerPosition => npc.Center + (npc.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
+        public Vector2 PointerFingerPosition => NPC.Center + (NPC.rotation + FingerSpacingOffset * -5f).ToRotationVector2() * FingerOutwardness;
 
         public const float HandSize = 56f;
 
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Ethereal Hand");
-            NPCID.Sets.TrailingMode[npc.type] = 2;
-            NPCID.Sets.TrailCacheLength[npc.type] = 15;
+            NPCID.Sets.TrailingMode[NPC.type] = 2;
+            NPCID.Sets.TrailCacheLength[NPC.type] = 15;
         }
 
         public override void SetDefaults()
         {
-            npc.npcSlots = 1f;
-            npc.aiStyle = aiType = -1;
-            npc.damage = 160;
-            npc.width = npc.height = 50;
-            npc.dontTakeDamage = true;
-            npc.lifeMax = 10000;
-            npc.knockBackResist = 0f;
-            npc.noGravity = true;
-            npc.noTileCollide = true;
-            npc.hide = true;
-            npc.alpha = 255;
+            NPC.npcSlots = 1f;
+            NPC.aiStyle = AIType = -1;
+            NPC.damage = 160;
+            NPC.width = NPC.height = 50;
+            NPC.dontTakeDamage = true;
+            NPC.lifeMax = 10000;
+            NPC.knockBackResist = 0f;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.hide = true;
+            NPC.alpha = 255;
         }
 
         public override void AI()
         {
             if (CalamityGlobalNPC.doughnutBoss < 0 || !Main.npc[CalamityGlobalNPC.doughnutBoss].active)
             {
-                npc.active = false;
-                npc.netUpdate = true;
+                NPC.active = false;
+                NPC.netUpdate = true;
                 return;
             }
 
             // Fade in and out as necessary.
-            npc.alpha = Utils.Clamp(npc.alpha + (ShouldBeInvisible ? 40 : -12), 0, 255);
+            NPC.alpha = Utils.Clamp(NPC.alpha + (ShouldBeInvisible ? 40 : -12), 0, 255);
 
             // Inherit the current target from the attacker guardian.
-            npc.target = AttackerGuardian.target;
+            NPC.target = AttackerGuardian.target;
 
             // Point away from the attacker guardian.
-            npc.rotation = AttackerGuardian.AngleTo(npc.Center);
+            NPC.rotation = AttackerGuardian.AngleTo(NPC.Center);
 
             // Reset hand attributes and the hover destination.
             UsingPointerFinger = false;
@@ -90,17 +93,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                     // Have the pointer finger point ahead of the target.
                     if (UsingPointerFinger)
-                        npc.rotation = (Target.Center - PointerFingerPosition + Target.velocity * 20f).ToRotation() + FingerSpacingOffset * 5f;
+                        NPC.rotation = (Target.Center - PointerFingerPosition + Target.velocity * 20f).ToRotation() + FingerSpacingOffset * 5f;
 
                     // Release magic bursts periodically.
                     if (AttackTime % 24f == 23f && UsingPointerFinger && AttackTime > 90f)
                     {
-                        Main.PlaySound(SoundID.DD2_KoboldIgnite, npc.Center);
+                        SoundEngine.PlaySound(SoundID.DD2_KoboldIgnite, NPC.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 magicShootVelocity = (Target.Center - PointerFingerPosition + Target.velocity * 20f).SafeNormalize(Vector2.UnitX * HandSide) * 20f;
                             magicShootVelocity = magicShootVelocity.RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, AttackTime / 90f % 1f));
-                            Utilities.NewProjectileBetter(npc.Center + magicShootVelocity, magicShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 230, 0f);
+                            Utilities.NewProjectileBetter(NPC.Center + magicShootVelocity, magicShootVelocity, ModContent.ProjectileType<MagicCrystalShot>(), 230, 0f);
                         }
                     }
                     break;
@@ -119,7 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 // Create punch sounds.
                 if (AttackTime % 15f == 14f)
-                    Main.PlaySound(SoundID.Item74, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
             }
 
             // Make the finger outwardness interpolant towards its traditional value when not punching.
@@ -128,14 +131,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
             // Close in on the attacker guardian's center when the hands should be invisible.
             if (ShouldBeInvisible)
-                destination = AttackerGuardian.Center + AttackerGuardian.SafeDirectionTo(npc.Center);
+                destination = AttackerGuardian.Center + AttackerGuardian.SafeDirectionTo(NPC.Center);
 
-            float hoverSpeed = MathHelper.Min((AttackerGuardian.position - AttackerGuardian.oldPos[1]).Length() * 1.25f + 8f, npc.Distance(destination));
-            npc.velocity = npc.SafeDirectionTo(destination) * hoverSpeed;
+            float hoverSpeed = MathHelper.Min((AttackerGuardian.position - AttackerGuardian.oldPos[1]).Length() * 1.25f + 8f, NPC.Distance(destination));
+            NPC.velocity = NPC.SafeDirectionTo(destination) * hoverSpeed;
 
             // Perform NaN safety.
-            if (npc.velocity.HasNaNs())
-                npc.velocity = Vector2.UnitY;
+            if (NPC.velocity.HasNaNs())
+                NPC.velocity = Vector2.UnitY;
         }
 
         public override void DrawBehind(int index)
@@ -143,48 +146,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             Main.instance.DrawCacheNPCsBehindNonSolidTiles.Add(index);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            Texture2D texture = ModContent.GetTexture("CalamityMod/Projectiles/StarProj");
+            Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
             Vector2 handScale = new Vector2(HandSize) / texture.Size() * 1.6f;
             SpriteEffects direction = HandSide == 1f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             Color handColor = Color.Lerp(Color.Orange, Color.Yellow, 0.5f);
             handColor = Color.Lerp(handColor, Color.LightGoldenrodYellow, 0.5f);
-            handColor *= npc.Opacity * AttackerGuardian.Opacity;
+            handColor *= NPC.Opacity * AttackerGuardian.Opacity;
             handColor.A = 0;
 
-            float distanceFromAttacker = npc.Distance(AttackerGuardian.Center);
+            float distanceFromAttacker = NPC.Distance(AttackerGuardian.Center);
             int totalPoints = 20 + (int)(distanceFromAttacker / 40f);
 
-            Vector2 sagLocation = Vector2.Lerp(AttackerGuardian.Center, npc.Center, 0.5f);
+            Vector2 sagLocation = Vector2.Lerp(AttackerGuardian.Center, NPC.Center, 0.5f);
             if (AttackerState != AttackerGuardianBehaviorOverride.AttackGuardianAttackState.ThrowingHands)
             {
                 sagLocation.Y += AttackerGuardian.velocity.ClampMagnitude(0f, 18f).Y * -10f;
-                sagLocation.Y += MathHelper.Lerp(0f, 60f, Utils.InverseLerp(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y), true));
+                sagLocation.Y += MathHelper.Lerp(0f, 60f, Utils.GetLerpValue(4f, 1f, Math.Abs(AttackerGuardian.velocity.Y), true));
             }
 
-            Vector2[] drawPoints = new BezierCurve(AttackerGuardian.Center, sagLocation, npc.Center).GetPoints(totalPoints).ToArray();
+            Vector2[] drawPoints = new BezierCurve(AttackerGuardian.Center, sagLocation, NPC.Center).GetPoints(totalPoints).ToArray();
 
             for (int i = 0; i < 5; i++)
             {
-                float fingerAngle = npc.rotation + MathHelper.Lerp(-5f, 5f, i / 5f) * FingerSpacingOffset;
+                float fingerAngle = NPC.rotation + MathHelper.Lerp(-5f, 5f, i / 5f) * FingerSpacingOffset;
                 float universalScaleFactor = i != 0 && UsingPointerFinger ? 0f : 1f;
                 float currentFingerOutwardness = FingerOutwardness * universalScaleFactor;
                 Vector2 fingerScale = new Vector2(currentFingerOutwardness / 3f) / texture.Size() * new Vector2(4f, 3f) * universalScaleFactor;
 
                 for (int j = 0; j < 3; j++)
                 {
-                    Vector2 fingerDrawPosition = npc.Center + fingerAngle.ToRotationVector2() * HandSize * 0.5f - Main.screenPosition;
+                    Vector2 fingerDrawPosition = NPC.Center + fingerAngle.ToRotationVector2() * HandSize * 0.5f - Main.screenPosition;
                     fingerDrawPosition += fingerAngle.ToRotationVector2() * currentFingerOutwardness * j / 3f;
-                    spriteBatch.Draw(texture, fingerDrawPosition, null, handColor, fingerAngle + MathHelper.PiOver2, texture.Size() * new Vector2(0.5f, 0f), fingerScale, direction, 0f);
+                    Main.spriteBatch.Draw(texture, fingerDrawPosition, null, handColor, fingerAngle + MathHelper.PiOver2, texture.Size() * new Vector2(0.5f, 0f), fingerScale, direction, 0f);
                 }
             }
 
             for (int i = 0; i < 30; i++)
             {
-                float handRotation = npc.rotation + MathHelper.PiOver2 + MathHelper.TwoPi * i / 30f;
-                spriteBatch.Draw(texture, npc.Center - Main.screenPosition, null, handColor * 0.08f, handRotation, texture.Size() * 0.5f, handScale, direction, 0f);
+                float handRotation = NPC.rotation + MathHelper.PiOver2 + MathHelper.TwoPi * i / 30f;
+                Main.spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, null, handColor * 0.08f, handRotation, texture.Size() * 0.5f, handScale, direction, 0f);
             }
 
             for (int i = 0; i < drawPoints.Length - 1; i++)
@@ -195,20 +198,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 Vector2 nextPoint = drawPoints[i + 1];
                 Vector2 midPoint = Vector2.Lerp(currentPoint, nextPoint, 0.5f);
 
-                if (i > 8 && Main.rand.NextBool(50) && npc.Opacity * AttackerGuardian.Opacity == 1f && !ShouldBeInvisible)
+                if (i > 8 && Main.rand.NextBool(50) && NPC.Opacity * AttackerGuardian.Opacity == 1f && !ShouldBeInvisible)
                 {
                     Dust fire = Dust.NewDustPerfect(currentPoint, 244);
                     fire.color = Color.Yellow;
                     fire.velocity = Vector2.UnitY * -Main.rand.NextFloat(1f, 1.2f);
-                    fire.velocity += npc.velocity * new Vector2(1f, 0.3f);
+                    fire.velocity += NPC.velocity * new Vector2(1f, 0.3f);
                     fire.scale = 0.8f;
                 }
 
                 float rotation = (nextPoint - currentPoint).ToRotation() + MathHelper.PiOver2;
-                Vector2 segmentScale = handScale * MathHelper.Lerp(0.6f, 1f, Utils.InverseLerp(0.36f, 0f, completionRatio, true));
+                Vector2 segmentScale = handScale * MathHelper.Lerp(0.6f, 1f, Utils.GetLerpValue(0.36f, 0f, completionRatio, true));
 
-                spriteBatch.Draw(texture, currentPoint - Main.screenPosition, null, handColor * 0.5f, rotation, texture.Size() * 0.5f, segmentScale, direction, 0f);
-                spriteBatch.Draw(texture, midPoint - Main.screenPosition, null, handColor * 0.5f, rotation, texture.Size() * 0.5f, segmentScale, direction, 0f);
+                Main.spriteBatch.Draw(texture, currentPoint - Main.screenPosition, null, handColor * 0.5f, rotation, texture.Size() * 0.5f, segmentScale, direction, 0f);
+                Main.spriteBatch.Draw(texture, midPoint - Main.screenPosition, null, handColor * 0.5f, rotation, texture.Size() * 0.5f, segmentScale, direction, 0f);
             }
 
             return false;

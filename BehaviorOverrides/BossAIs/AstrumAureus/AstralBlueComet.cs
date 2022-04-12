@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
@@ -13,83 +14,83 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Astral Comet");
-            Main.projFrames[projectile.type] = 4;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            Main.projFrames[Projectile.type] = 4;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 50;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.alpha = 100;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 420;
+            Projectile.width = Projectile.height = 50;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.alpha = 100;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 420;
         }
 
         public override void AI()
         {
-            projectile.frameCounter++;
-            if (projectile.frameCounter >= 5)
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter >= 5)
             {
-                projectile.frame++;
-                if (projectile.frame >= Main.projFrames[projectile.type])
-                    projectile.frame = 0;
+                Projectile.frame++;
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                    Projectile.frame = 0;
 
-                projectile.frameCounter = 0;
+                Projectile.frameCounter = 0;
             }
 
-            projectile.spriteDirection = (projectile.velocity.X > 0f).ToDirectionInt();
-            projectile.rotation = projectile.velocity.ToRotation();
-            if (projectile.spriteDirection == -1)
-                projectile.rotation += MathHelper.Pi;
+            Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            if (Projectile.spriteDirection == -1)
+                Projectile.rotation += MathHelper.Pi;
 
             // Emit light.
-            Lighting.AddLight(projectile.Center, 0.3f, 0.5f, 0.1f);
+            Lighting.AddLight(Projectile.Center, 0.3f, 0.5f, 0.1f);
 
             // Emit astral flame dusts.
-            projectile.ai[0]++;
-            if (projectile.ai[0] > 15f)
+            Projectile.ai[0]++;
+            if (Projectile.ai[0] > 15f)
             {
-                Dust astralFire = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, ModContent.DustType<AstralOrange>(), 0f, 0f, 100, default, 0.8f);
+                Dust astralFire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<AstralOrange>(), 0f, 0f, 100, default, 0.8f);
                 astralFire.noGravity = true;
                 astralFire.velocity *= 0f;
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             return false;
         }
 
-        public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, projectile.alpha);
+        public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, Projectile.alpha);
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<AstralInfectionDebuff>(), 180);
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Zombie, (int)projectile.position.X, (int)projectile.position.Y, 103, 1f, 0f);
-            projectile.position = projectile.Center;
-            projectile.width = projectile.height = 96;
-            projectile.position.X = projectile.position.X - (float)(projectile.width / 2);
-            projectile.position.Y = projectile.position.Y - (float)(projectile.height / 2);
+            SoundEngine.PlaySound(SoundID.Zombie, (int)Projectile.position.X, (int)Projectile.position.Y, 103, 1f, 0f);
+            Projectile.position = Projectile.Center;
+            Projectile.width = Projectile.height = 96;
+            Projectile.position.X = Projectile.position.X - (float)(Projectile.width / 2);
+            Projectile.position.Y = Projectile.position.Y - (float)(Projectile.height / 2);
             for (int i = 0; i < 2; i++)
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, ModContent.DustType<AstralOrange>(), 0f, 0f, 50, default, 1f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<AstralOrange>(), 0f, 0f, 50, default, 1f);
 
             for (int i = 0; i < 20; i++)
             {
-                Dust astralFire = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, ModContent.DustType<AstralOrange>(), 0f, 0f, 0, default, 1.5f);
+                Dust astralFire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<AstralOrange>(), 0f, 0f, 0, default, 1.5f);
                 astralFire.noGravity = true;
                 astralFire.velocity *= 3f;
 
-                astralFire = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 173, 0f, 0f, 50, default, 1f);
+                astralFire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 173, 0f, 0f, 50, default, 1f);
                 astralFire.velocity *= 2f;
                 astralFire.noGravity = true;
             }
-            projectile.Damage();
+            Projectile.Damage();
         }
     }
 }

@@ -13,6 +13,7 @@ float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
 matrix uWorldViewProjection;
+float4 uShaderSpecificData;
 
 struct VertexShaderInput
 {
@@ -28,7 +29,7 @@ struct VertexShaderOutput
     float2 TextureCoordinates : TEXCOORD0;
 };
 
-float inverseLerp(float x, float min, float max)
+float GetLerpValue(float x, float min, float max)
 {
     return saturate((x - min) / (max - min));
 }
@@ -58,9 +59,9 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     color *= lerp(0.8, 1.2, tex2D(uImage1, noiseCoords));
     float distanceRatio = distance(input.TextureCoordinates.xy, float2(0.5, 0.5)) * 1.414;
     
-    float opacity = color.a * pow((1 - (inverseLerp(distanceRatio, 0.15, 0.965))), 0.4);
-    opacity *= lerp(1, 1.9, inverseLerp(distanceRatio, 0.67, 0.6));
-    opacity *= pow(uOpacity, 0.45) * inverseLerp(distanceRatio, 0.85, 0.6);
+    float opacity = color.a * pow((1 - (GetLerpValue(distanceRatio, 0.15, 0.965))), 0.4);
+    opacity *= lerp(1, 1.9, GetLerpValue(distanceRatio, 0.67, 0.6));
+    opacity *= pow(uOpacity, 0.45) * GetLerpValue(distanceRatio, 0.85, 0.6);
     float4 endColor = color * opacity;
     return endColor * lerp(0.9, 1.4, pow(endColor.r, 4));
 }

@@ -16,6 +16,7 @@ using InfernumMode.OverridingSystem;
 using InfernumMode.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -23,13 +24,11 @@ using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.UI;
 
 namespace InfernumMode
 {
-    public class InfernumMode : Mod
+	public class InfernumMode : Mod
     {
         internal static InfernumMode Instance = null;
         internal static Mod CalamityMod = null;
@@ -37,7 +36,7 @@ namespace InfernumMode
 
         internal static bool BossRushApplies => true;
 
-        internal static readonly Color HiveMindSkyColor = new Color(53, 42, 81);
+        internal static readonly Color HiveMindSkyColor = new(53, 42, 81);
 
         public static float BlackFade = 0f;
 
@@ -77,79 +76,73 @@ namespace InfernumMode
             {
                 CryogenBehaviorOverride.SetupCustomBossIcon();
 
-                Ref<Effect> portalShader = new Ref<Effect>(GetEffect("Effects/DoGPortalShader"));
+                Ref<Effect> portalShader = new(Assets.Request<Effect>("Effects/DoGPortalShader", AssetRequestMode.ImmediateLoad).Value);
                 Filters.Scene["Infernum:DoGPortal"] = new Filter(new ScreenShaderData(portalShader, "ScreenPass"), EffectPriority.High);
                 Filters.Scene["Infernum:DoGPortal"].Load();
 
-                Ref<Effect> aewPsychicEnergyShader = new Ref<Effect>(GetEffect("Effects/AEWPsychicDistortionShader"));
+                Ref<Effect> aewPsychicEnergyShader = new(Assets.Request<Effect>("Effects/AEWPsychicDistortionShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:AEWPsychicEnergy"] = new MiscShaderData(aewPsychicEnergyShader, "DistortionPass");
 
-                Ref<Effect> gradientShader = new Ref<Effect>(GetEffect("Effects/GradientWingShader"));
+                Ref<Effect> gradientShader = new(Assets.Request<Effect>("Effects/GradientWingShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:GradientWingShader"] = new MiscShaderData(gradientShader, "GradientPass");
 
-                Ref<Effect> cyclicHueShader = new Ref<Effect>(GetEffect("Effects/CyclicHueShader"));
+                Ref<Effect> cyclicHueShader = new(Assets.Request<Effect>("Effects/CyclicHueShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:CyclicHueShader"] = new MiscShaderData(cyclicHueShader, "OutlineShader");
 
-                Ref<Effect> pristineArmorShader = new Ref<Effect>(GetEffect("Effects/PristineArmorShader"));
+                Ref<Effect> pristineArmorShader = new(Assets.Request<Effect>("Effects/PristineArmorShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:PristineArmorShader"] = new MiscShaderData(pristineArmorShader, "PristinePass");
 
-                Ref<Effect> dukeTornadoShader = new Ref<Effect>(GetEffect("Effects/DukeTornado"));
+                Ref<Effect> dukeTornadoShader = new(Assets.Request<Effect>("Effects/DukeTornado", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:DukeTornado"] = new MiscShaderData(dukeTornadoShader, "TrailPass");
 
-                Ref<Effect> tentacleFleshShader = new Ref<Effect>(GetEffect("Effects/TentacleTexture"));
+                Ref<Effect> tentacleFleshShader = new(Assets.Request<Effect>("Effects/TentacleTexture", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:WoFTentacleTexture"] = new MiscShaderData(tentacleFleshShader, "TrailPass");
 
-                Ref<Effect> bloodGeyserShader = new Ref<Effect>(GetEffect("Effects/BloodGeyser"));
+                Ref<Effect> bloodGeyserShader = new(Assets.Request<Effect>("Effects/BloodGeyser", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:WoFGeyserTexture"] = new MiscShaderData(bloodGeyserShader, "TrailPass");
 
-                Ref<Effect> shadowflameShader = new Ref<Effect>(GetEffect("Effects/Shadowflame"));
+                Ref<Effect> shadowflameShader = new(Assets.Request<Effect>("Effects/Shadowflame", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:Fire"] = new MiscShaderData(shadowflameShader, "TrailPass");
 
-                Ref<Effect> brainPsychicShader = new Ref<Effect>(GetEffect("Effects/BrainPsychicShader"));
+                Ref<Effect> brainPsychicShader = new(Assets.Request<Effect>("Effects/BrainPsychicShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:BrainPsychic"] = new MiscShaderData(brainPsychicShader, "TrailPass");
 
-                Ref<Effect> cultistDeathAnimationShader = new Ref<Effect>(GetEffect("Effects/CultistDeathAnimation"));
+                Ref<Effect> cultistDeathAnimationShader = new(Assets.Request<Effect>("Effects/CultistDeathAnimation", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:CultistDeath"] = new MiscShaderData(cultistDeathAnimationShader, "DeathPass");
 
-                Ref<Effect> flameTrailShader = new Ref<Effect>(GetEffect("Effects/TwinsFlameTail"));
+                Ref<Effect> flameTrailShader = new(Assets.Request<Effect>("Effects/TwinsFlameTail", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:TwinsFlameTrail"] = new MiscShaderData(flameTrailShader, "TrailPass");
 
-                Ref<Effect> aresLightningArcShader = new Ref<Effect>(GetEffect("Effects/AresLightningArcShader"));
+                Ref<Effect> aresLightningArcShader = new(Assets.Request<Effect>("Effects/AresLightningArcShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:AresLightningArc"] = new MiscShaderData(aresLightningArcShader, "TrailPass");
 
-                Ref<Effect> ghostlyShader = new Ref<Effect>(GetEffect("Effects/EidolicWailRingShader"));
+                Ref<Effect> ghostlyShader = new(Assets.Request<Effect>("Effects/EidolicWailRingShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:PolterghastEctoplasm"] = new MiscShaderData(ghostlyShader, "BurstPass");
 
-                ghostlyShader = new Ref<Effect>(GetEffect("Effects/NecroplasmicRoarShader"));
+                ghostlyShader = new Ref<Effect>(Assets.Request<Effect>("Effects/NecroplasmicRoarShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:NecroplasmicRoar"] = new MiscShaderData(ghostlyShader, "BurstPass");
 
-                Ref<Effect> backgroundShader = new Ref<Effect>(GetEffect("Effects/MoonLordBGDistortionShader"));
+                Ref<Effect> backgroundShader = new(Assets.Request<Effect>("Effects/MoonLordBGDistortionShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"] = new MiscShaderData(backgroundShader, "DistortionPass");
 
-                Ref<Effect> introShader = new Ref<Effect>(GetEffect("Effects/MechIntroLetterShader"));
+                Ref<Effect> introShader = new(Assets.Request<Effect>("Effects/MechIntroLetterShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:MechsIntro"] = new MiscShaderData(introShader, "LetterPass");
 
-                introShader = new Ref<Effect>(GetEffect("Effects/SCalIntroLetterShader"));
+                introShader = new Ref<Effect>(Assets.Request<Effect>("Effects/SCalIntroLetterShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:SCalIntro"] = new MiscShaderData(introShader, "LetterPass");
 
-                Ref<Effect> rayShader = new Ref<Effect>(GetEffect("Effects/PrismaticRayShader"));
+                Ref<Effect> rayShader = new(Assets.Request<Effect>("Effects/PrismaticRayShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:PrismaticRay"] = new MiscShaderData(rayShader, "TrailPass");
 
-                Ref<Effect> queenSlimeShader = new Ref<Effect>(GetEffect("Effects/QueenSlimeShader"));
-                GameShaders.Misc["Infernum:QueenSlime"] = new MiscShaderData(queenSlimeShader, "SlimePass");
-
-                Ref<Effect> wingsShader = new Ref<Effect>(GetEffect("Effects/EmpressOfLightWingsShader"));
-                GameShaders.Misc["Infernum:EmpressOfLightWings"] = new MiscShaderData(wingsShader, "SlimePass");
-
-                Effect screenShader = GetEffect("Effects/EmpressOfLightScreenShader");
+                Effect screenShader = Assets.Request<Effect>("Effects/EmpressOfLightScreenShader", AssetRequestMode.ImmediateLoad).Value;
                 Filters.Scene["InfernumMode:EmpressOfLight"] = new Filter(new EmpressOfLightScreenShaderData(screenShader, "ScreenPass"), EffectPriority.VeryHigh);
                 SkyManager.Instance["InfernumMode:EmpressOfLight"] = new EmpressOfLightSky();
 
-                Ref<Effect> hologramShader = new Ref<Effect>(GetEffect("Effects/HologramShader"));
+                Ref<Effect> hologramShader = new(Assets.Request<Effect>("Effects/HologramShader", AssetRequestMode.ImmediateLoad).Value);
                 GameShaders.Misc["Infernum:Hologram"] = new MiscShaderData(hologramShader, "HologramPass");
 
-                OverrideMusicBox(ItemID.MusicBoxBoss3, GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
-                OverrideMusicBox(ItemID.MusicBoxLunarBoss, GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
+                OverrideMusicBox(ItemID.MusicBoxBoss3, MusicLoader.GetMusicSlot(this, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
+                OverrideMusicBox(ItemID.MusicBoxLunarBoss, MusicLoader.GetMusicSlot(this, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
             }
 
             if (BossRushApplies)
@@ -159,9 +152,9 @@ namespace InfernumMode
                 GeneralParticleHandler.LoadModParticleInstances(this);
         }
 
-        internal static IDictionary<int, int> SoundLoaderMusicToItem => (IDictionary<int, int>)typeof(SoundLoader).GetField("musicToItem", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-        internal static IDictionary<int, int> SoundLoaderItemToMusic => (IDictionary<int, int>)typeof(SoundLoader).GetField("itemToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-        internal static IDictionary<int, IDictionary<int, int>> SoundLoaderTileToMusic => (IDictionary<int, IDictionary<int, int>>)typeof(SoundLoader).GetField("tileToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+        internal static IDictionary<int, int> SoundLoaderMusicToItem => (Dictionary<int, int>)typeof(MusicLoader).GetField("musicToItem", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+        internal static IDictionary<int, int> SoundLoaderItemToMusic => (Dictionary<int, int>)typeof(MusicLoader).GetField("itemToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+        internal static Dictionary<int, Dictionary<int, int>> SoundLoaderTileToMusic => (Dictionary<int, Dictionary<int, int>>)typeof(MusicLoader).GetField("tileToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
 
         public static void OverrideMusicBox(int itemType, int musicSlot, int tileType, int tileFrameY)
         {
@@ -173,107 +166,9 @@ namespace InfernumMode
             SoundLoaderTileToMusic[tileType][tileFrameY] = musicSlot;
         }
 
-        public override void UpdateMusic(ref int music, ref MusicPriority priority)
-        {
-            if (NPC.AnyNPCs(NPCID.EyeofCthulhu))
-            {
-                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/EyeOfCthulhu");
-                priority = MusicPriority.BossLow;
-            }
-
-            if (NPC.AnyNPCs(NPCID.SkeletronHead))
-            {
-                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3");
-                priority = MusicPriority.BossLow;
-            }
-
-            if (NPC.AnyNPCs(NPCID.SkeletronPrime) || NPC.AnyNPCs(NPCID.Retinazer) || NPC.AnyNPCs(NPCID.Spazmatism) || NPC.AnyNPCs(NPCID.TheDestroyer))
-            {
-                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/MechBosses");
-                priority = MusicPriority.BossLow;
-            }
-
-            if (NPC.AnyNPCs(NPCID.DukeFishron))
-            {
-                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/DukeFishron");
-                priority = MusicPriority.BossMedium;
-            }
-
-            if (NPC.AnyNPCs(NPCID.CultistBoss))
-            {
-                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/LunaticCultist");
-                priority = MusicPriority.BossMedium;
-            }
-
-            int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
-            if (moonLordIndex != -1)
-            {
-                NPC moonLord = Main.npc[moonLordIndex];
-
-                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord");
-                if (moonLord.Infernum().ExtraAI[10] < MoonLordCoreBehaviorOverride.IntroSoundLength)
-                    music = 0;
-                Main.musicFade[Main.curMusic] = 1f;
-                priority = MusicPriority.BossHigh;
-            }
-
-            bool areExoMechsAround = NPC.AnyNPCs(ModContent.NPCType<AresBody>()) ||
-                NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()) ||
-                NPC.AnyNPCs(ModContent.NPCType<Apollo>()) ||
-                NPC.AnyNPCs(ModContent.NPCType<AthenaNPC>());
-
-            if (areExoMechsAround)
-            {
-                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/ExoMechBosses");
-                priority = MusicPriority.BossHigh;
-            }
-        }
-
         public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);
 
-        public override bool HijackSendData(int whoAmI, int msgType, int remoteClient, int ignoreClient, NetworkText text, int number, float number2, float number3, float number4, int number5, int number6, int number7)
-        {
-            if (msgType == MessageID.SyncNPC)
-            {
-                NPC npc = Main.npc[number];
-                if (!npc.active)
-                    return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
-
-                ModPacket packet = GetPacket();
-                packet.Write((short)InfernumPacketType.SendExtraNPCData);
-                packet.Write(npc.whoAmI);
-                packet.Write(npc.realLife);
-                packet.Write(npc.Infernum().TotalAISlotsInUse);
-                packet.Write(npc.Infernum().arenaRectangle.X);
-                packet.Write(npc.Infernum().arenaRectangle.Y);
-                packet.Write(npc.Infernum().arenaRectangle.Width);
-                packet.Write(npc.Infernum().arenaRectangle.Height);
-                for (int i = 0; i < npc.Infernum().ExtraAI.Length; i++)
-                {
-                    if (!npc.Infernum().HasAssociatedAIBeenUsed[i])
-                        continue;
-                    packet.Write(i);
-                    packet.Write(npc.Infernum().ExtraAI[i]);
-                }
-                packet.Send();
-            }
-            return base.HijackSendData(whoAmI, msgType, remoteClient, ignoreClient, text, number, number2, number3, number4, number5, number6, number7);
-        }
-
         public override void AddRecipes() => RecipeUpdates.Update();
-
-        public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
-        {
-            int mouseIndex = layers.FindIndex(layer => layer.Name == "Vanilla: Mouse Text");
-            if (mouseIndex != -1)
-            {
-                layers.Insert(mouseIndex, new LegacyGameInterfaceLayer("Boss Introduction Screens", () =>
-                {
-                    IntroScreenManager.Draw();
-                    return true;
-                }, InterfaceScaleType.None));
-            }
-        }
 
         public override object Call(params object[] args)
         {
@@ -288,14 +183,6 @@ namespace InfernumMode
             HookManager.Unload();
             Instance = null;
             CalamityMod = null;
-        }
-
-        public override void PreUpdateEntities()
-        {
-            BlackFade = MathHelper.Clamp(BlackFade - 0.025f, 0f, 1f);
-            NetcodeHandler.Update();
-            TwinsAttackSynchronizer.DoUniversalUpdate();
-            TwinsAttackSynchronizer.PostUpdateEffects();
         }
     }
 }

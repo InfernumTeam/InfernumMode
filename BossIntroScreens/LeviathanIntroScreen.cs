@@ -5,17 +5,15 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
 
-using TMLSoundType = Terraria.ModLoader.SoundType;
-
 namespace InfernumMode.BossIntroScreens
 {
-    public class LeviathanIntroScreen : BaseIntroScreen
+	public class LeviathanIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        public override TextColorData TextColor => new(completionRatio =>
         {
             float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.TwoPi + completionRatio * MathHelper.Pi * 64f) * 0.5f + 0.5f;
-            Color lightSkinColor = new Color(80, 211, 174);
-            Color darkSkinColor = new Color(0, 149, 159);
+            Color lightSkinColor = new(80, 211, 174);
+            Color darkSkinColor = new(0, 149, 159);
             return Color.Lerp(lightSkinColor, darkSkinColor, colorFadeInterpolant);
         });
 
@@ -27,6 +25,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Leviathan>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/LeviathanRoarCharge");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/LeviathanRoarCharge");
     }
 }

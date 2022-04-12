@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -48,14 +50,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             float wrappedAttackTimer = attackTimer % 360f;
 
             if (Main.netMode != NetmodeID.Server && wrappedAttackTimer == 100f)
-                Main.PlaySound(SoundID.DD2_DarkMageCastHeal.WithVolume(1.6f), target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal.WithVolume(1.6f), target.Center);
 
             if (wrappedAttackTimer == 145f)
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    Main.PlaySound(SoundID.DD2_PhantomPhoenixShot.WithVolume(1.6f), target.Center);
-                    Main.PlaySound(SoundID.DD2_DarkMageHealImpact.WithVolume(1.6f), target.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot.WithVolume(1.6f), target.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact.WithVolume(1.6f), target.Center);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -76,27 +78,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             float wrappedAttackTimer = npc.Infernum().ExtraAI[0] % 360f;
-            float gleamInterpolant = Utils.InverseLerp(100f, 145f, wrappedAttackTimer, true) * Utils.InverseLerp(165f, 145f, wrappedAttackTimer, true);
-            Texture2D texture = Main.npcTexture[npc.type];
-            Texture2D glowmask = ModContent.GetTexture("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow");
-            Texture2D glowmask2 = ModContent.GetTexture("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow2");
+            float gleamInterpolant = Utils.GetLerpValue(100f, 145f, wrappedAttackTimer, true) * Utils.GetLerpValue(165f, 145f, wrappedAttackTimer, true);
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow").Value;
+            Texture2D glowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow2").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), 0f, origin, npc.scale, direction, 0f);
-            spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), 0f, origin, npc.scale, direction, 0f);
-            spriteBatch.Draw(glowmask2, drawPosition, npc.frame, npc.GetAlpha(Color.White), 0f, origin, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), 0f, origin, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), 0f, origin, npc.scale, direction, 0f);
+            Main.spriteBatch.Draw(glowmask2, drawPosition, npc.frame, npc.GetAlpha(Color.White), 0f, origin, npc.scale, direction, 0f);
             if (gleamInterpolant > 0f)
             {
-                Texture2D gleamTexture = ModContent.GetTexture("CalamityMod/Projectiles/StarProj");
+                Texture2D gleamTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
                 Vector2 gleamOrigin = gleamTexture.Size() * 0.5f;
                 Vector2 gleamDrawPosition = drawPosition + new Vector2(npc.spriteDirection * -32f, 12f);
                 Color gleamColor = Color.Lerp(Color.Transparent, new Color(0.95f, 0.95f, 0.25f, 0f), gleamInterpolant);
                 Vector2 gleamScale = new Vector2(1f, 2f) * npc.scale * gleamInterpolant;
-                float gleamRotation = MathHelper.Pi * Utils.InverseLerp(100f, 165f, wrappedAttackTimer, true) * 3f;
-                spriteBatch.Draw(gleamTexture, gleamDrawPosition, null, gleamColor, gleamRotation, gleamOrigin, gleamScale, 0, 0f);
-                spriteBatch.Draw(gleamTexture, gleamDrawPosition, null, gleamColor, -gleamRotation, gleamOrigin, gleamScale, 0, 0f);
+                float gleamRotation = MathHelper.Pi * Utils.GetLerpValue(100f, 165f, wrappedAttackTimer, true) * 3f;
+                Main.spriteBatch.Draw(gleamTexture, gleamDrawPosition, null, gleamColor, gleamRotation, gleamOrigin, gleamScale, 0, 0f);
+                Main.spriteBatch.Draw(gleamTexture, gleamDrawPosition, null, gleamColor, -gleamRotation, gleamOrigin, gleamScale, 0, 0f);
             }
 
             return false;

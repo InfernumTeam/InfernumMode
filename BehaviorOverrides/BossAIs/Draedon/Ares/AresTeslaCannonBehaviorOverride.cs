@@ -11,6 +11,8 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -50,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
 
             // Shoot slower if pointing downward.
-            orbShootSpeed *= MathHelper.Lerp(1f, 0.8f, Utils.InverseLerp(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
+            orbShootSpeed *= MathHelper.Lerp(1f, 0.8f, Utils.GetLerpValue(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
 
             if (ExoMechManagement.CurrentAresPhase >= 2)
             {
@@ -65,13 +67,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase >= 5)
             {
                 shootTime += 40;
-                totalOrbsPerBurst = 6;
-                orbShootSpeed *= 1.1f;
+                totalOrbsPerBurst = 7;
+                orbShootSpeed *= 1.33f;
             }
             if (ExoMechManagement.CurrentAresPhase >= 6)
             {
                 shootTime += 40;
-                totalOrbsPerBurst = 8;
+                totalOrbsPerBurst = 9;
             }
 
             // Get very pissed off if Ares is enraged.
@@ -156,7 +158,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire orbs.
             if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaBolt"), npc.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaBolt"), npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -252,7 +254,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
@@ -265,15 +267,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
                     Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, frame, origin);
             ExoMechAIUtilities.DrawAresArmTelegraphEffect(spriteBatch, npc, Color.Cyan, texture, center, frame, origin);
-            spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresTeslaCannonGlow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresTeslaCannonGlow").Value;
 
             if (CalamityConfig.Instance.Afterimages)
             {
@@ -281,20 +283,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, afterimageBaseColor, 0.5f)) * ((numAfterimages - i) / 15f);
                     Vector2 afterimageCenter = npc.oldPos[i] + npc.frame.Size() * 0.5f - Main.screenPosition;
-                    spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, afterimageCenter, npc.frame, afterimageColor, npc.oldRot[i], origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
-            spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
             if (npc.ai[3] == 1f)
                 npc.ModNPC<AresTeslaCannon>().EnergyDrawer.DrawBloom(npc.ModNPC<AresTeslaCannon>().CoreSpritePosition);
             npc.ModNPC<AresTeslaCannon>().EnergyDrawer.DrawPulses(npc.ModNPC<AresTeslaCannon>().CoreSpritePosition);
             npc.ModNPC<AresTeslaCannon>().EnergyDrawer.DrawSet(npc.ModNPC<AresTeslaCannon>().CoreSpritePosition);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
 
             return false;
         }

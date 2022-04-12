@@ -13,10 +13,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static void DoSnapHoverMovement(NPC npc, Vector2 destination, float flySpeed, float hyperSpeedCap)
         {
             float distanceFromDestination = npc.Distance(destination);
-            float hyperSpeedInterpolant = Utils.InverseLerp(50f, 2400f, distanceFromDestination, true);
+            float hyperSpeedInterpolant = Utils.GetLerpValue(50f, 2400f, distanceFromDestination, true);
 
             // Scale up velocity over time if too far from destination.
-            float speedUpFactor = Utils.InverseLerp(50f, 1600f, npc.Distance(destination), true) * 1.76f;
+            float speedUpFactor = Utils.GetLerpValue(50f, 1600f, npc.Distance(destination), true) * 1.76f;
             flySpeed *= 1f + speedUpFactor;
 
             // Reduce speed when very close to the destination, to prevent swerving movement.
@@ -96,18 +96,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (telegraphGlowInterpolant > 0f)
             {
-                float whiteFade = (float)Math.Sin(Main.GlobalTime * 20f) * 0.5f + 0.5f;
+                float whiteFade = (float)Math.Sin(Main.GlobalTimeWrappedHourly * 20f) * 0.5f + 0.5f;
                 telegraphColor = Color.Lerp(telegraphColor, Color.White, whiteFade);
-                telegraphColor *= Utils.InverseLerp(0f, 0.65f, telegraphGlowInterpolant, true) * (float)Math.Pow(Utils.InverseLerp(1f, 0.85f, telegraphGlowInterpolant, true), 2D);
+                telegraphColor *= Utils.GetLerpValue(0f, 0.65f, telegraphGlowInterpolant, true) * (float)Math.Pow(Utils.GetLerpValue(1f, 0.85f, telegraphGlowInterpolant, true), 2D);
 
                 float backAfterimageOffset = telegraphGlowInterpolant * 10f;
-                backAfterimageOffset += Utils.InverseLerp(0.85f, 1f, telegraphGlowInterpolant, true) * 20f;
+                backAfterimageOffset += Utils.GetLerpValue(0.85f, 1f, telegraphGlowInterpolant, true) * 20f;
                 for (int i = 0; i < 13; i++)
                 {
                     Color color = telegraphColor * 0.6f;
                     color.A = 0;
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 13f).ToRotationVector2() * backAfterimageOffset;
-                    spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
         }
@@ -127,20 +127,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     float telegraphGlowInterpolant = npc.ai[0] / npc.ai[1];
                     if (telegraphGlowInterpolant >= 1f)
                         telegraphGlowInterpolant = 0f;
-                    finalPhaseGlowTimer *= 1f - Utils.InverseLerp(0f, 0.85f, telegraphGlowInterpolant, true) * Utils.InverseLerp(1f, 0.85f, telegraphGlowInterpolant, true);
+                    finalPhaseGlowTimer *= 1f - Utils.GetLerpValue(0f, 0.85f, telegraphGlowInterpolant, true) * Utils.GetLerpValue(1f, 0.85f, telegraphGlowInterpolant, true);
                 }
             }
 
-            float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, finalPhaseGlowTimer, true);
+            float finalPhaseGlowInterpolant = Utils.GetLerpValue(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, finalPhaseGlowTimer, true);
             if (finalPhaseGlowInterpolant > 0f)
             {
                 float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
                 for (int i = 0; i < 6; i++)
                 {
-                    Color color = Main.hslToRgb((i / 12f + Main.GlobalTime * 0.6f + npc.whoAmI * 0.54f) % 1f, 1f, 0.56f);
+                    Color color = Main.hslToRgb((i / 12f + Main.GlobalTimeWrappedHourly * 0.6f + npc.whoAmI * 0.54f) % 1f, 1f, 0.56f);
                     color.A = 0;
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
-                    spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Main.spriteBatch.Draw(texture, drawCenter + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
         }

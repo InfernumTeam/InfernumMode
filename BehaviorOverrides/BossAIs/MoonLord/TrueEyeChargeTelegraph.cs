@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public Vector2[] ChargePositions = new Vector2[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
-        public NPC ThingToAttachTo => Main.npc.IndexInRange((int)projectile.ai[1]) ? Main.npc[(int)projectile.ai[1]] : null;
+        public NPC ThingToAttachTo => Main.npc.IndexInRange((int)Projectile.ai[1]) ? Main.npc[(int)Projectile.ai[1]] : null;
 
         public PrimitiveTrail TelegraphDrawer = null;
         public const float TelegraphFadeTime = 15f;
@@ -25,13 +25,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override void SetDefaults()
         {
-            projectile.width = 10;
-            projectile.height = 10;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.alpha = 255;
-            projectile.penetrate = -1;
-            projectile.timeLeft = PressurePhantasmalDeathray.LifetimeConstant;
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.alpha = 255;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = PressurePhantasmalDeathray.LifetimeConstant;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -51,34 +51,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override void AI()
         {
             // Determine the relative opacities for each player based on their distance.
-            if (projectile.localAI[0] == 0f)
+            if (Projectile.localAI[0] == 0f)
             {
-                projectile.localAI[0] = 1f;
-                projectile.netUpdate = true;
+                Projectile.localAI[0] = 1f;
+                Projectile.netUpdate = true;
             }
 
             // Die if the thing to attach to disappears.
             if (ThingToAttachTo is null || !ThingToAttachTo.active)
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
 
             // Determine opacity.
             int lifetime = PressurePhantasmalDeathray.LifetimeConstant;
-            projectile.Opacity = Utils.InverseLerp(0f, 6f, projectile.timeLeft, true) * Utils.InverseLerp(lifetime, lifetime - 6f, projectile.timeLeft, true);
+            Projectile.Opacity = Utils.GetLerpValue(0f, 6f, Projectile.timeLeft, true) * Utils.GetLerpValue(lifetime, lifetime - 6f, Projectile.timeLeft, true);
         }
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return new Color(255, 255, 255, projectile.alpha);
+            return new Color(255, 255, 255, Projectile.alpha);
         }
 
         public Color TelegraphPrimitiveColor(float completionRatio)
         {
-            float opacity = MathHelper.Lerp(0.38f, 1.2f, projectile.Opacity);
+            float opacity = MathHelper.Lerp(0.38f, 1.2f, Projectile.Opacity);
             opacity *= CalamityUtils.Convert01To010(completionRatio);
-            opacity *= MathHelper.Lerp(0.9f, 0.2f, projectile.ai[0] / (ChargePositions.Length - 1f));
+            opacity *= MathHelper.Lerp(0.9f, 0.2f, Projectile.ai[0] / (ChargePositions.Length - 1f));
             if (completionRatio > 0.95f)
                 opacity = 0.0000001f;
             return Color.Cyan * opacity;
@@ -86,15 +86,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public float TelegraphPrimitiveWidth(float completionRatio)
         {
-            return projectile.Opacity * 15f;
+            return Projectile.Opacity * 15f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (TelegraphDrawer is null)
                 TelegraphDrawer = new PrimitiveTrail(TelegraphPrimitiveWidth, TelegraphPrimitiveColor, PrimitiveTrail.RigidPointRetreivalFunction, GameShaders.Misc["CalamityMod:Flame"]);
 
-            GameShaders.Misc["CalamityMod:Flame"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["CalamityMod:Flame"].UseImage1("Images/Misc/Perlin");
             GameShaders.Misc["CalamityMod:Flame"].UseSaturation(0.41f);
 
             for (int i = ChargePositions.Length - 2; i >= 0; i--)
@@ -107,9 +107,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 // Stand-in variable used to differentiate between the beams.
                 // It is not used anywhere else.
-                projectile.ai[0] = i;
+                Projectile.ai[0] = i;
 
-                TelegraphDrawer.Draw(positions, projectile.Size * 0.5f - Main.screenPosition, 55);
+                TelegraphDrawer.Draw(positions, Projectile.Size * 0.5f - Main.screenPosition, 55);
             }
             return false;
         }

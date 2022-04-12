@@ -13,25 +13,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
     {
         internal PrimitiveTrailCopy TornadoDrawer;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-        public ref float Time => ref projectile.ai[0];
-        public ref float WaveHeight => ref projectile.ai[1];
+        public ref float Time => ref Projectile.ai[0];
+        public ref float WaveHeight => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Wave");
-            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 150;
+            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 150;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 40;
-            projectile.height = 1020;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.penetrate = -1;
-            projectile.alpha = 255;
-            projectile.timeLeft = 360;
+            Projectile.width = 40;
+            Projectile.height = 1020;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
+            Projectile.alpha = 255;
+            Projectile.timeLeft = 360;
         }
 
         public override void AI()
@@ -41,15 +41,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (WaveHeight < 60f)
                 WaveHeight = 60f;
             WaveHeight = MathHelper.Lerp(WaveHeight, 300f, 0.04f);
-            projectile.Opacity = (float)Math.Sin(projectile.timeLeft / 360f * MathHelper.Pi) * 3f;
-            if (projectile.Opacity > 1f)
-                projectile.Opacity = 1f;
+            Projectile.Opacity = (float)Math.Sin(Projectile.timeLeft / 360f * MathHelper.Pi) * 3f;
+            if (Projectile.Opacity > 1f)
+                Projectile.Opacity = 1f;
         }
 
         internal Color ColorFunction(float completionRatio)
         {
-            float opacity = (float)Math.Sin(completionRatio * MathHelper.Pi) * projectile.Opacity;
-            return Color.Lerp(Color.DeepSkyBlue, Color.Blue, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime)) * 0.5f) * opacity;
+            float opacity = (float)Math.Sin(completionRatio * MathHelper.Pi) * Projectile.Opacity;
+            return Color.Lerp(Color.DeepSkyBlue, Color.Blue, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f) * opacity;
         }
 
         internal float WidthFunction(float completionRatio) => WaveHeight * (float)Math.Sin(completionRatio * MathHelper.Pi);
@@ -58,33 +58,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            for (int i = 0; i < projectile.oldPos.Length; i++)
+            for (int i = 0; i < Projectile.oldPos.Length; i++)
             {
                 float _ = 0f;
-                float completionRatio = i / (float)projectile.oldPos.Length;
-                Vector2 top = projectile.oldPos[i] + OffsetFunction(completionRatio);
-                Vector2 bottom = projectile.oldPos[i] + Vector2.UnitY * WidthFunction(completionRatio) + OffsetFunction(completionRatio);
-                if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), top, bottom, (int)projectile.velocity.X, ref _))
+                float completionRatio = i / (float)Projectile.oldPos.Length;
+                Vector2 top = Projectile.oldPos[i] + OffsetFunction(completionRatio);
+                Vector2 bottom = Projectile.oldPos[i] + Vector2.UnitY * WidthFunction(completionRatio) + OffsetFunction(completionRatio);
+                if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), top, bottom, (int)Projectile.velocity.X, ref _))
                     return true;
             }
             return false;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (TornadoDrawer is null)
                 TornadoDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, OffsetFunction, false, GameShaders.Misc["Infernum:DukeTornado"]);
 
-            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.GetTexture("Terraria/Misc/Perlin"));
+            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin"));
 
             for (int i = 0; i < 3; i++)
-                TornadoDrawer.Draw(projectile.oldPos, Vector2.UnitY * WaveHeight * 0.5f - Main.screenPosition, 35, 0f);
+                TornadoDrawer.Draw(Projectile.oldPos, Vector2.UnitY * WaveHeight * 0.5f - Main.screenPosition, 35, 0f);
             return false;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

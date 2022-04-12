@@ -69,8 +69,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         {
             int currentFrame = 0;
             float frameUpdateSpeed = npc.ai[0] == (int)SupremeCatastropheBehaviorOverride.SupremeCatastropheAttackState.SliceTarget ? 260f : 130f;
-            float punchCounter = Main.GlobalTime * frameUpdateSpeed % 120f;
-            float punchInterpolant = Utils.InverseLerp(0f, 120f, punchCounter, true);
+            float punchCounter = Main.GlobalTimeWrappedHourly * frameUpdateSpeed % 120f;
+            float punchInterpolant = Utils.GetLerpValue(0f, 120f, punchCounter, true);
             if (npc.localAI[0] < 120f)
             {
                 npc.frameCounter += 0.15f;

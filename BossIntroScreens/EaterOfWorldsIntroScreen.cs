@@ -8,10 +8,10 @@ namespace InfernumMode.BossIntroScreens
 {
     public class EaterOfWorldsIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        public override TextColorData TextColor => new(completionRatio =>
         {
-            Color cursedFlameColor = new Color(0, 145, 45);
-            Color corruptFleshColor = new Color(130, 97, 124);
+            Color cursedFlameColor = new(0, 145, 45);
+            Color corruptFleshColor = new(130, 97, 124);
             return Color.Lerp(cursedFlameColor, corruptFleshColor, (float)Math.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.PiOver2));
         });
 

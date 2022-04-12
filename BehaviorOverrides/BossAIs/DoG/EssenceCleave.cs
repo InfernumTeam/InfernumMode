@@ -9,7 +9,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
     public class EssenceCleave : ModProjectile
     {
         public float LineWidth = 0f;
-        public ref float Time => ref projectile.ai[1];
+        public ref float Time => ref Projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Chain");
@@ -17,28 +17,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override void SetDefaults()
         {
-            projectile.width = 90;
-            projectile.height = 90;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.alpha = 255;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 90;
-            projectile.MaxUpdates = 2;
+            Projectile.width = 90;
+            Projectile.height = 90;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.alpha = 255;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 90;
+            Projectile.MaxUpdates = 2;
         }
 
         public override void AI()
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.timeLeft == 40f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft == 40f)
             {
-                Vector2 sliceSpawnPosition = projectile.Center - projectile.ai[0].ToRotationVector2() * 3900f;
-                Utilities.NewProjectileBetter(sliceSpawnPosition, projectile.ai[0].ToRotationVector2() * 6f, ModContent.ProjectileType<EssenceSlice>(), 450, 0f);
+                Vector2 sliceSpawnPosition = Projectile.Center - Projectile.ai[0].ToRotationVector2() * 3900f;
+                Utilities.NewProjectileBetter(sliceSpawnPosition, Projectile.ai[0].ToRotationVector2() * 6f, ModContent.ProjectileType<EssenceSlice>(), 450, 0f);
 
-                sliceSpawnPosition = projectile.Center + projectile.ai[0].ToRotationVector2() * 3900f;
-                Utilities.NewProjectileBetter(sliceSpawnPosition, projectile.ai[0].ToRotationVector2() * -6f, ModContent.ProjectileType<EssenceSlice>(), 450, 0f);
+                sliceSpawnPosition = Projectile.Center + Projectile.ai[0].ToRotationVector2() * 3900f;
+                Utilities.NewProjectileBetter(sliceSpawnPosition, Projectile.ai[0].ToRotationVector2() * -6f, ModContent.ProjectileType<EssenceSlice>(), 450, 0f);
             }
 
-            if (projectile.timeLeft < 40f)
+            if (Projectile.timeLeft < 40f)
                 LineWidth -= 0.1f;
             else if (LineWidth < 5f)
                 LineWidth += 0.3f;
@@ -46,15 +46,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
+            Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-            Vector2 offset = projectile.ai[0].ToRotationVector2() * 4000f;
-            spriteBatch.DrawLineBetter(projectile.Center - offset, projectile.Center + offset, Color.Purple, LineWidth);
-            spriteBatch.DrawLineBetter(projectile.Center - offset, projectile.Center + offset, Color.Magenta * 0.6f, LineWidth * 0.5f);
+            Vector2 offset = Projectile.ai[0].ToRotationVector2() * 4000f;
+            Main.spriteBatch.DrawLineBetter(Projectile.Center - offset, Projectile.Center + offset, Color.Purple, LineWidth);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center - offset, Projectile.Center + offset, Color.Magenta * 0.6f, LineWidth * 0.5f);
 
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
             return true;
         }
     }

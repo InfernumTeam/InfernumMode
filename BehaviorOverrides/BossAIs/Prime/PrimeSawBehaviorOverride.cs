@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
@@ -61,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 if (wrappedTime > chargeCycleTime - 45f)
                 {
                     if (wrappedTime % 5f == 4f)
-                        Main.PlaySound(SoundID.Item22, npc.Center);
+                        SoundEngine.PlaySound(SoundID.Item22, npc.Center);
 
                     if (wrappedTime == chargeCycleTime - 44f)
                     {

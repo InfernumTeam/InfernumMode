@@ -5,6 +5,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
@@ -67,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             if (attackTimer >= shootRate)
             {
-                Main.PlaySound(SoundID.Item33, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item33, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float shootSpeed = BossRushEvent.BossRushActive ? 20.5f : 13.5f;
@@ -98,9 +100,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Vector2 drawPosition = npc.Center - Main.screenPosition;
-            spriteBatch.Draw(Main.npcTexture[npc.type], drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             if (npc.ai[3] == 0f)
-                spriteBatch.Draw(Main.BoneLaserTexture, drawPosition, npc.frame, new Color(200, 200, 200, 0), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(TextureAssets.BoneLaser.Value, drawPosition, npc.frame, new Color(200, 200, 200, 0), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
         #endregion Drawing

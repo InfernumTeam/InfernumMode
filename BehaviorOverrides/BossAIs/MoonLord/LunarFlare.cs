@@ -3,13 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
     public class LunarFlare : ModProjectile
     {
-        public ref float Countdown => ref projectile.ai[0];
-        public Player Target => Main.player[projectile.owner];
+        public ref float Countdown => ref Projectile.ai[0];
+        public Player Target => Main.player[Projectile.owner];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Phantasmal Flare");
@@ -17,58 +18,58 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override void SetDefaults()
         {
-            projectile.width = 4;
-            projectile.height = 4;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.extraUpdates = 5;
-            projectile.penetrate = -1;
+            Projectile.width = 4;
+            Projectile.height = 4;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.extraUpdates = 5;
+            Projectile.penetrate = -1;
         }
 
         public override void AI()
         {
-            if (projectile.ai[1] != -1f && projectile.position.Y > projectile.ai[1])
-                projectile.tileCollide = true;
+            if (Projectile.ai[1] != -1f && Projectile.position.Y > Projectile.ai[1])
+                Projectile.tileCollide = true;
 
-            if (projectile.position.HasNaNs())
+            if (Projectile.position.HasNaNs())
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
-            Dust electrivity = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 229, 0f, 0f, 0, default, 1f);
-            electrivity.position = projectile.Center;
+            Dust electrivity = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 229, 0f, 0f, 0, default, 1f);
+            electrivity.position = Projectile.Center;
             electrivity.velocity = Vector2.Zero;
             electrivity.noGravity = true;
-            if (WorldGen.SolidTile(Framing.GetTileSafely((int)projectile.position.X / 16, (int)projectile.position.Y / 16)))
+            if (WorldGen.SolidTile(Framing.GetTileSafely((int)Projectile.position.X / 16, (int)Projectile.position.Y / 16)))
                 electrivity.noLight = true;
 
-            if (projectile.ai[1] == -1f)
+            if (Projectile.ai[1] == -1f)
             {
-                projectile.ai[0]++;
+                Projectile.ai[0]++;
 
-                if (projectile.ai[0] == 2f)
-                    Main.PlaySound(SoundID.Item122, projectile.Center);
+                if (Projectile.ai[0] == 2f)
+                    SoundEngine.PlaySound(SoundID.Item122, Projectile.Center);
 
-                projectile.velocity = Vector2.Zero;
-                projectile.tileCollide = false;
-                projectile.penetrate = -1;
-                projectile.alpha = Utils.Clamp(projectile.alpha - 10, 0, 255);
+                Projectile.velocity = Vector2.Zero;
+                Projectile.tileCollide = false;
+                Projectile.penetrate = -1;
+                Projectile.alpha = Utils.Clamp(Projectile.alpha - 10, 0, 255);
 
-                projectile.frameCounter++;
-                if (projectile.frameCounter >= projectile.MaxUpdates * 3)
+                Projectile.frameCounter++;
+                if (Projectile.frameCounter >= Projectile.MaxUpdates * 3)
                 {
-                    projectile.frameCounter = 0;
-                    projectile.frame++;
+                    Projectile.frameCounter = 0;
+                    Projectile.frame++;
                 }
-                if (projectile.ai[0] >= Main.projFrames[projectile.type] * projectile.MaxUpdates * 3)
+                if (Projectile.ai[0] >= Main.projFrames[Projectile.type] * Projectile.MaxUpdates * 3)
                 {
-                    projectile.Kill();
+                    Projectile.Kill();
                 }
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             return false;
         }

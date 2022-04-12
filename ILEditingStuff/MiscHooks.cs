@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -22,7 +21,7 @@ namespace InfernumMode.ILEditingStuff
 
             bool renderingText = false;
             Rectangle mouseRectangle = Utils.CenteredRectangle(Main.MouseScreen, Vector2.One * 2f);
-            Texture2D iconTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumIcon");
+            Texture2D iconTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/InfernumIcon").Value;
 
             Rectangle areaFrame = iconTexture.Frame();
             Vector2 drawCenter = new Vector2(Main.screenWidth - 400f, 72f) + areaFrame.Size() * 0.5f;
@@ -33,7 +32,7 @@ namespace InfernumMode.ILEditingStuff
                 drawColor.A = 0;
                 for (int i = 0; i < 12; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTime * 4f).ToRotationVector2() * 4f;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 4f).ToRotationVector2() * 4f;
                     Main.spriteBatch.Draw(iconTexture, drawCenter + drawOffset, areaFrame, drawColor, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 }
             }
@@ -54,7 +53,7 @@ namespace InfernumMode.ILEditingStuff
 
         internal static void DrawInfernumIcon(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             // Go to the last Ret and leave a marker to return to so that manual
             // drawing can be done.
@@ -83,7 +82,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void PermitODRain(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchStsfld<Main>("raining")))
                 return;
@@ -108,7 +107,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void NerfShellfishStaff(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
 
             for (int j = 0; j < 2; j++)
             {
@@ -129,24 +128,6 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => CalamityNPCLifeRegen += NerfShellfishStaff;
 
         public void Unload() => CalamityNPCLifeRegen -= NerfShellfishStaff;
-    }
-
-    public class RemoveProjectileOnHitLagHook : IHookEdit
-    {
-        internal static void RemoveProjectileOnHitLag(ILContext il)
-        {
-            ILCursor cursor = new ILCursor(il);
-            cursor.GotoNext(MoveType.Before, c => c.MatchLdcI4(267));
-            cursor.GotoPrev(MoveType.After, c => c.MatchStloc(5));
-            cursor.Emit(OpCodes.Ldc_I4_1);
-            cursor.Emit(OpCodes.Stloc, 4);
-            cursor.Emit(OpCodes.Ldc_I4_1);
-            cursor.Emit(OpCodes.Stloc, 5);
-        }
-
-        public void Load() => CalamityPlayerModifyHitByProjectile += RemoveProjectileOnHitLag;
-
-        public void Unload() => CalamityPlayerModifyHitByProjectile -= RemoveProjectileOnHitLag;
     }
 
     /*

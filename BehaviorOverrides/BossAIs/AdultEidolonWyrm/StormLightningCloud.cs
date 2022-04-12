@@ -4,6 +4,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
@@ -17,19 +18,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 64;
-            projectile.hostile = false;
-            projectile.friendly = false;
-            projectile.tileCollide = true;
-            projectile.timeLeft = 20;
+            Projectile.width = Projectile.height = 64;
+            Projectile.hostile = false;
+            Projectile.friendly = false;
+            Projectile.tileCollide = true;
+            Projectile.timeLeft = 20;
         }
 
         public override void AI()
         {
-            projectile.scale = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 20f);
+            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / 20f);
             for (int i = 0; i < 4; i++)
             {
-                Dust redLightning = Dust.NewDustPerfect(projectile.Center, 267, Main.rand.NextVector2Circular(3f, 3f));
+                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, 267, Main.rand.NextVector2Circular(3f, 3f));
                 redLightning.velocity *= Main.rand.NextFloat(1f, 1.9f);
                 redLightning.scale *= Main.rand.NextFloat(1.85f, 2.25f);
                 redLightning.color = Color.Lerp(Color.White, Color.Cyan, Main.rand.NextFloat(0.2f, 1f));
@@ -38,21 +39,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.DrawLineBetter(projectile.Center - Vector2.UnitY * 4000f, projectile.Center + Vector2.UnitY * 4000f, Color.DeepSkyBlue, projectile.scale * 4f);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center - Vector2.UnitY * 4000f, Projectile.Center + Vector2.UnitY * 4000f, Color.DeepSkyBlue, Projectile.scale * 4f);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
+            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
             for (int i = 0; i < Main.rand.Next(2, 4 + 1); i++)
             {
-                Vector2 spawnPosition = projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-10f, 10f);
+                Vector2 spawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloat(-10f, 10f);
                 float direction = spawnPosition.Y < 3300f ? 1f : -1f;
                 spawnPosition.Y += direction * 3200f;
 

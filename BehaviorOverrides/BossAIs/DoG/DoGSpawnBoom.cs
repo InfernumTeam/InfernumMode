@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
             float baseShakePower = MathHelper.Lerp(3f, 16f, (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio));
-            return baseShakePower * Utils.InverseLerp(2200f, 1050f, distanceFromPlayer, true);
+            return baseShakePower * Utils.GetLerpValue(2200f, 1050f, distanceFromPlayer, true);
         }
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)

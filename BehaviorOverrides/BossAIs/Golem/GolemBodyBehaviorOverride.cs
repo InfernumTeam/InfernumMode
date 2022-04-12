@@ -11,7 +11,8 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.World.Generation;
+using Terraria.WorldBuilding;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
@@ -53,9 +54,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public static NPC GetFreeHead(NPC npc) => Main.npc[(int)npc.Infernum().ExtraAI[3]];
 
-        public static Vector2 GetLeftFistAttachmentPosition(NPC npc) => new Vector2(npc.Left.X - 24f, npc.Left.Y - 6f);
+        public static Vector2 GetLeftFistAttachmentPosition(NPC npc) => new(npc.Left.X - 24f, npc.Left.Y - 6f);
 
-        public static Vector2 GetRightFistAttachmentPosition(NPC npc) => new Vector2(npc.Right.X + 24f, npc.Right.Y - 6f);
+        public static Vector2 GetRightFistAttachmentPosition(NPC npc) => new(npc.Right.X + 24f, npc.Right.Y - 6f);
 
         public override bool PreAI(NPC npc)
         {
@@ -91,7 +92,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
             bool headIsFree = HeadState == 1;
 
-            Vector2 attachedHeadCenterPos = new Vector2(npc.Center.X, npc.Top.Y);
+            Vector2 attachedHeadCenterPos = new(npc.Center.X, npc.Top.Y);
             Vector2 leftHandCenterPos = GetLeftFistAttachmentPosition(npc);
             Vector2 rightHandCenterPos = GetRightFistAttachmentPosition(npc);
 
@@ -113,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
 
                 // Otherwise prepare the fight
-                int maxHP = 164000;
+                int maxHP = 156000;
                 GlobalNPCOverrides.AdjustMaxHP(ref maxHP);
                 npc.life = npc.lifeMax = maxHP;
                 npc.noGravity = true;
@@ -126,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 attachedHeadCenterPos = new Vector2(npc.Center.X, npc.Top.Y);
                 npc.netUpdate = true;
 
-                int freeHeadInt = NPC.NewNPC((int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHeadFree);
+                int freeHeadInt = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHeadFree);
                 Main.npc[freeHeadInt].Center = attachedHeadCenterPos;
                 Main.npc[freeHeadInt].dontTakeDamage = true;
                 Main.npc[freeHeadInt].noGravity = true;
@@ -136,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Main.npc[freeHeadInt].netUpdate = true;
                 FreeHeadNPC = freeHeadInt;
 
-                int attachedHeadInt = NPC.NewNPC((int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHead);
+                int attachedHeadInt = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 55, (int)npc.Top.Y, NPCID.GolemHead);
                 Main.npc[attachedHeadInt].Center = attachedHeadCenterPos;
                 Main.npc[attachedHeadInt].lifeMax = Main.npc[attachedHeadInt].life = npc.lifeMax;
                 Main.npc[attachedHeadInt].noGravity = true;
@@ -145,12 +146,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 Main.npc[attachedHeadInt].netUpdate = true;
                 AttachedHeadNPC = attachedHeadInt;
 
-                int leftHand = NPC.NewNPC((int)leftHandCenterPos.X, (int)leftHandCenterPos.Y, ModContent.NPCType<GolemFistLeft>());
+                int leftHand = NPC.NewNPC(new InfernumSource(), (int)leftHandCenterPos.X, (int)leftHandCenterPos.Y, ModContent.NPCType<GolemFistLeft>());
                 Main.npc[leftHand].ai[0] = npc.whoAmI;
                 Main.npc[leftHand].netUpdate = true;
                 LeftFistNPC = leftHand;
 
-                int rightHand = NPC.NewNPC((int)rightHandCenterPos.X, (int)rightHandCenterPos.Y, ModContent.NPCType<GolemFistRight>());
+                int rightHand = NPC.NewNPC(new InfernumSource(), (int)rightHandCenterPos.X, (int)rightHandCenterPos.Y, ModContent.NPCType<GolemFistRight>());
                 Main.npc[rightHand].ai[0] = npc.whoAmI;
                 Main.npc[rightHand].netUpdate = true;
                 RightFistNPC = rightHand;
@@ -351,9 +352,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 if (Timer == 120f)
                 {
                     if (AttackState == (float)GolemAttackState.BadTime)
-                        Main.PlaySound(SoundLoader.customSoundType, -1, -1, InfernumMode.Instance.GetSoundSlot(SoundType.Custom, "Sounds/Custom/BadTime"));
+                        SoundEngine.PlaySound(SoundLoader.CustomSoundType, -1, -1, SoundLoader.GetSoundSlot(InfernumMode.Instance, "Sounds/Custom/BadTime"));
                     else
-                        Main.PlaySound(SoundLoader.customSoundType, -1, -1, InfernumMode.Instance.GetSoundSlot(SoundType.Custom, "Sounds/Custom/[BIG SHOT]"));
+                        SoundEngine.PlaySound(SoundLoader.CustomSoundType, -1, -1, SoundLoader.GetSoundSlot(InfernumMode.Instance, "Sounds/Custom/[BIG SHOT]"));
                 }
 
                 AITimer++;
@@ -604,7 +605,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     npc.velocity.X *= 0.8f;
                     if (jumpState == 1f)
                     {
-                        Main.PlaySound(SoundID.Item14, npc.position);
+                        SoundEngine.PlaySound(SoundID.Item14, npc.position);
                         for (int i = (int)npc.position.X - 20; i < (int)npc.position.X + npc.width + 40; i += 20)
                         {
                             for (int j = 0; j < 4; j++)
@@ -686,7 +687,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create platforms below the target in the third phase.
             if (attackTimer % platformReleaseRate == 0f && inPhase3)
             {
-                Vector2 platformSpawnPosition = new Vector2(target.Center.X, npc.Infernum().arenaRectangle.Bottom - 16f);
+                Vector2 platformSpawnPosition = new(target.Center.X, npc.Infernum().arenaRectangle.Bottom - 16f);
                 CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 1.5f);
             }
 
@@ -756,7 +757,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create platforms below the target in the second phase.
             if (attackTimer % platformReleaseRate == 0f && inPhase2)
             {
-                Vector2 platformSpawnPosition = new Vector2(target.Center.X, npc.Infernum().arenaRectangle.Bottom - 16f);
+                Vector2 platformSpawnPosition = new(target.Center.X, npc.Infernum().arenaRectangle.Bottom - 16f);
                 CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 1.5f);
             }
 
@@ -791,11 +792,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 // Create impact effects.
                 if (attackTimer == fistSlamTime - 1f)
                 {
-                    Vector2 leftImpactPoint = new Vector2(npc.Infernum().arenaRectangle.Left, leftFist.Center.Y);
-                    Vector2 rightImpactPoint = new Vector2(npc.Infernum().arenaRectangle.Right, leftFist.Center.Y);
+                    Vector2 leftImpactPoint = new(npc.Infernum().arenaRectangle.Left, leftFist.Center.Y);
+                    Vector2 rightImpactPoint = new(npc.Infernum().arenaRectangle.Right, leftFist.Center.Y);
 
-                    Main.PlaySound(SoundID.DD2_KoboldExplosion, leftImpactPoint);
-                    Main.PlaySound(SoundID.DD2_KoboldExplosion, rightImpactPoint);
+                    SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, leftImpactPoint);
+                    SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, rightImpactPoint);
                     Utils.PoofOfSmoke(leftImpactPoint);
                     Utils.PoofOfSmoke(rightImpactPoint);
                     Collision.HitTiles(leftImpactPoint, -Vector2.UnitX, 40, 40);
@@ -860,7 +861,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create platforms in the middle section of the arena.
             if (attackTimer >= fistSlamTime && attackTimer % platformReleaseRate == platformReleaseRate - 1f && inPhase2)
             {
-                Vector2 platformSpawnPosition = new Vector2(npc.Infernum().arenaRectangle.Left + 12f, npc.Infernum().arenaRectangle.Center.Y - 40f);
+                Vector2 platformSpawnPosition = new(npc.Infernum().arenaRectangle.Left + 12f, npc.Infernum().arenaRectangle.Center.Y - 40f);
                 CreatePlatform(platformSpawnPosition, Vector2.UnitX * 3f);
 
                 platformSpawnPosition = new Vector2(npc.Infernum().arenaRectangle.Right - 12f, npc.Infernum().arenaRectangle.Center.Y + 40f);
@@ -917,21 +918,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attackTimer < hoverTelegraphTime)
             {
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f - freeHead.velocity * 4f;
-                float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.InverseLerp(hoverTelegraphTime / 2, hoverTelegraphTime - 5f, attackTimer, true));
+                float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.GetLerpValue(hoverTelegraphTime / 2, hoverTelegraphTime - 5f, attackTimer, true));
                 freeHead.velocity = (freeHead.velocity * 7f + freeHead.SafeDirectionTo(hoverDestination) * MathHelper.Min(freeHead.Distance(hoverDestination), movementSpeed)) / 8f;
 
                 // Calculate the telegraph interpolant.
-                eyeLaserRayInterpolant = Utils.InverseLerp(0f, hoverTelegraphTime - 20f, attackTimer, true);
+                eyeLaserRayInterpolant = Utils.GetLerpValue(0f, hoverTelegraphTime - 20f, attackTimer, true);
 
                 // Play a telegraph sound prior to firing.
                 if (attackTimer == 5f)
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/CrystylCharge"), target.Center);
             }
 
             // Release the lasers from eyes.
             if (attackTimer == hoverTelegraphTime)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LaserCannon"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     freeHead.velocity *= 0.2f;
@@ -956,14 +957,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create platforms below the target in the second phase.
             if (attackTimer % platformReleaseRate == 0f && inPhase2)
             {
-                Vector2 platformSpawnPosition = new Vector2(target.Center.X, npc.Infernum().arenaRectangle.Bottom - 16f);
+                Vector2 platformSpawnPosition = new(target.Center.X, npc.Infernum().arenaRectangle.Bottom - 16f);
                 CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 1.5f);
             }
 
             // Release bursts of fire after firing.
             if (attackTimer >= hoverTelegraphTime && attackTimer % fireReleaseRate == fireReleaseRate - 1f && attackTimer < hoverTelegraphTime + 120f)
             {
-                Main.PlaySound(SoundID.Item12, freeHead.Center);
+                SoundEngine.PlaySound(SoundID.Item12, freeHead.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1002,12 +1003,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
             // Play a telegraph sound prior to firing.
             if (attackTimer == 5f)
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/CrystylCharge"), target.Center);
 
             // Create a laser ray telegraph.
             if (attackTimer <= laserTelegraphTime)
             {
-                coreLaserRayInterpolant = Utils.InverseLerp(0f, laserTelegraphTime - 32f, attackTimer, true);
+                coreLaserRayInterpolant = Utils.GetLerpValue(0f, laserTelegraphTime - 32f, attackTimer, true);
                 if (coreLaserRayInterpolant < 1f)
                     coreLaserRayDirection = npc.AngleTo(target.Center).AngleLerp(-MathHelper.PiOver2, 0.84f);
             }
@@ -1016,7 +1017,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attackTimer % platformReleaseRate == 0f)
             {
                 float platformVerticalInterpolant = attackTimer / platformReleaseRate % 3f / 3f;
-                Vector2 platformSpawnOffset = new Vector2(0f, npc.Infernum().arenaRectangle.Height * MathHelper.Lerp(0.2f, 0.8f, platformVerticalInterpolant));
+                Vector2 platformSpawnOffset = new(0f, npc.Infernum().arenaRectangle.Height * MathHelper.Lerp(0.2f, 0.8f, platformVerticalInterpolant));
                 CreatePlatform(npc.Infernum().arenaRectangle.TopLeft() + platformSpawnOffset, Vector2.UnitX * 3f);
 
                 platformSpawnOffset = new Vector2(0f, npc.Infernum().arenaRectangle.Height * MathHelper.Lerp(0.2f, 0.8f, 1f - platformVerticalInterpolant));
@@ -1026,7 +1027,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Cast the laser from the core.
             if (attackTimer == laserTelegraphTime)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LaserCannon"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int laser = Utilities.NewProjectileBetter(npc.Center, coreLaserRayDirection.ToRotationVector2(), ModContent.ProjectileType<ThermalDeathray>(), 320, 0f);
@@ -1043,7 +1044,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create lasers from the core after firing.
             if (attackTimer > laserTelegraphTime && attackTimer % coreLaserFireRate == coreLaserFireRate - 1f)
             {
-                Main.PlaySound(SoundID.Item12, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item12, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 8f;
@@ -1093,22 +1094,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Determine the initial slingshot rotation.
             if (attackTimer == 1f)
             {
-                slingshotArmToCharge = Main.rand.NextBool().ToDirectionInt();
-
-                int emergencyIncrementThing = 0;
-                float oldSlingshotRotation = slingshotRotation;
-                do
-                {
-                    emergencyIncrementThing++;
-                    slingshotRotation = -Vector2.UnitY.RotatedByRandom(Main.rand.NextFloat(-0.83f, 0.83f)).ToRotation();
-                    if (Collision.SolidCollision(npc.position, npc.width, npc.height))
-                        npc.Center = npc.Center.MoveTowards(npc.Infernum().arenaRectangle.Center(), 20f);
-
-                    if (emergencyIncrementThing >= 1000)
-                        break;
-                }
-                while ((Math.Abs(MathHelper.WrapAngle(slingshotRotation - oldSlingshotRotation)) < 0.4f && oldSlingshotRotation != 0f) ||
-                       !Collision.CanHit(npc.position, npc.width, npc.height, npc.position + slingshotRotation.ToRotationVector2() * 420f, npc.width, npc.height));
+                slingshotRotation = (-Vector2.UnitY).ToRotation();
                 npc.netUpdate = true;
             }
 
@@ -1122,10 +1108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
             float[] samples = new float[24];
             Vector2 fistStart = fistToChargeWith.whoAmI == leftFist.whoAmI ? leftFistAttachmentPosition : rightFistAttachmentPosition;
-            Vector2 offsetDirection = slingshotRotation.ToRotationVector2();
-            if (offsetDirection.Y > -0.3f)
-                offsetDirection.Y = -0.3f;
-
+            Vector2 offsetDirection = -Vector2.UnitY;
             Collision.LaserScan(fistStart, offsetDirection, 30f, 10000f, samples);
             Vector2 fistEnd = fistStart + offsetDirection * samples.Average();
 
@@ -1140,7 +1123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             else
             {
                 if (fistSlamDestinationX == 0f || fistSlamDestinationY == 0f)
-				{
+                {
                     fistSlamDestinationX = fistStart.X;
                     fistSlamDestinationY = fistStart.Y;
                 }
@@ -1160,7 +1143,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (attackTimer % platformReleaseRate == 0f && inPhase2)
             {
                 float platformVerticalInterpolant = attackTimer / platformReleaseRate % 3f / 3f;
-                Vector2 platformSpawnOffset = new Vector2(0f, npc.Infernum().arenaRectangle.Height * MathHelper.Lerp(0.2f, 0.8f, platformVerticalInterpolant));
+                Vector2 platformSpawnOffset = new(0f, npc.Infernum().arenaRectangle.Height * MathHelper.Lerp(0.2f, 0.8f, platformVerticalInterpolant));
                 CreatePlatform(npc.Infernum().arenaRectangle.TopLeft() + platformSpawnOffset, Vector2.UnitX * 3f);
 
                 platformSpawnOffset = new Vector2(0f, npc.Infernum().arenaRectangle.Height * MathHelper.Lerp(0.2f, 0.8f, 1f - platformVerticalInterpolant));
@@ -1181,14 +1164,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Make arms do a slam effect.
             else if (attackTimer <= dustTelegraphTime + fistSlamTime)
             {
-                armSlamInterpolant = (float)Math.Pow(Utils.InverseLerp(0f, fistSlamTime, attackTimer - dustTelegraphTime, true), 2D);
+                armSlamInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, fistSlamTime, attackTimer - dustTelegraphTime, true), 2D);
 
                 if (attackTimer == dustTelegraphTime + fistSlamTime)
                 {
                     // Create impact effects.
                     if (attackTimer == fistSlamTime - 1f)
                     {
-                        Main.PlaySound(SoundID.DD2_KoboldExplosion, fistEnd);
+                        SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, fistEnd);
                         Utils.PoofOfSmoke(fistEnd);
                         Collision.HitTiles(fistEnd, offsetDirection, 40, 40);
                     }
@@ -1199,11 +1182,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             else if (attackTimer <= dustTelegraphTime + fistSlamTime + bodyReelTime)
             {
                 armSlamInterpolant = 1f;
-                bodySlamInterpolant = (float)Math.Pow(Utils.InverseLerp(0f, bodyReelTime, attackTimer - dustTelegraphTime - fistSlamTime, true), 2D);
+                bodySlamInterpolant = (float)Math.Pow(Utils.GetLerpValue(0f, bodyReelTime, attackTimer - dustTelegraphTime - fistSlamTime, true), 2D);
 
                 // Play a launch sound.
                 if (attackTimer == dustTelegraphTime + fistSlamTime + 4f)
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ScorchedEarthShot3"), npc.Center);
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/ScorchedEarthShot3"), npc.Center);
 
                 otherFist.Center = otherFist.whoAmI == leftFist.whoAmI ? leftFistAttachmentPosition : rightFistAttachmentPosition;
             }
@@ -1237,7 +1220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 // Release bursts of fire after firing.
                 if (attackTimer % 35f == 34f)
                 {
-                    Main.PlaySound(SoundID.Item12, freeHead.Center);
+                    SoundEngine.PlaySound(SoundID.Item12, freeHead.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -1256,7 +1239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 npc.noGravity = false;
                 fistSlamDestinationX = fistSlamDestinationY = 0f;
-                armSlamInterpolant = Utils.InverseLerp(15f, 0f, attackTimer - (dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime), true);
+                armSlamInterpolant = Utils.GetLerpValue(15f, 0f, attackTimer - (dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime), true);
                 bodySlamInterpolant = 0f;
                 leftFist.rotation = 0f;
                 rightFist.rotation = 0f;
@@ -1272,7 +1255,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 }
 
                 if (attackTimer == dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime + 30f)
-                    npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, npc.Infernum().arenaRectangle.Center.ToVector2(), 0.3f, 21f, out _);
+                    npc.velocity.X = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, npc.Infernum().arenaRectangle.Center.ToVector2(), 0.3f, 21f, out _).X;
 
                 if (attackTimer >= dustTelegraphTime + fistSlamTime + bodyReelTime + shootTime + 180f)
                 {
@@ -1329,9 +1312,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Create lasers from the sides of the arena.
             if (attackTimer >= 25f && attackTimer % laserReleaseRate == laserReleaseRate - 1f)
             {
-                Vector2 laserSpawnOffsetFactors = new Vector2(Main.rand.NextBool().ToDirectionInt() * 0.95f, Main.rand.NextFloat(-0.85f, 0.85f));
+                Vector2 laserSpawnOffsetFactors = new(Main.rand.NextBool().ToDirectionInt() * 0.95f, Main.rand.NextFloat(-0.85f, 0.85f));
                 Vector2 laserSpawnPosition = npc.Infernum().arenaRectangle.Center.ToVector2() + npc.Infernum().arenaRectangle.Size() * laserSpawnOffsetFactors * 0.5f;
-                Main.PlaySound(SoundID.Item12, laserSpawnPosition);
+                SoundEngine.PlaySound(SoundID.Item12, laserSpawnPosition);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1362,7 +1345,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int platform = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GolemArenaPlatform>());
+            int platform = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GolemArenaPlatform>());
             if (Main.npc.IndexInRange(platform))
             {
                 Main.npc[platform].velocity = velocity;
@@ -1437,7 +1420,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // Make all spike traps release their spears.
             if (phase2TransitionTimer == 75f)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/MeatySlash"));
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/MeatySlash"));
                 foreach (Projectile spear in Utilities.AllProjectilesByID(ModContent.ProjectileType<StationarySpikeTrap>()))
                 {
                     spear.ModProjectile<StationarySpikeTrap>().SpikesShouldExtendOutward = true;
@@ -1449,7 +1432,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             // forcing them to dodge the burst while utilizing them.
             if (phase2TransitionTimer == 120f)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"));
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"));
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float shootOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -1516,7 +1499,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 for (int j = y - 10; j < y + 10; j++)
                 {
-                    if (!inRealTemple && Main.tile[i, j].wall == WallID.LihzahrdBrickUnsafe)
+                    if (!inRealTemple && Main.tile[i, j].WallType == WallID.LihzahrdBrickUnsafe)
                     {
                         inRealTemple = true;
                         goto LeaveLoop;
@@ -1525,7 +1508,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
             LeaveLoop:
 
-            List<GolemAttackState> possibleAttacks = new List<GolemAttackState>()
+            List<GolemAttackState> possibleAttacks = new()
             {
                 GolemAttackState.FloorFire,
                 GolemAttackState.SpikeTrapWaves,
@@ -1572,29 +1555,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/GolemBody");
-            Texture2D glowMask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Golem/BodyGlow");
-            Rectangle rect = new Rectangle(0, 0, texture.Width, texture.Height);
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Golem/GolemBody").Value;
+            Texture2D glowMask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Golem/BodyGlow").Value;
+            Rectangle rect = new(0, 0, texture.Width, texture.Height);
             Vector2 drawPos = npc.Center - Main.screenPosition;
             drawPos += new Vector2(4, -12);
 
             // Draw the second phase back afterimage if applicable.
-            float backAfterimageInterpolant = Utils.InverseLerp(0f, 90f, npc.Infernum().ExtraAI[21], true) * npc.Opacity;
+            float backAfterimageInterpolant = Utils.GetLerpValue(0f, 90f, npc.Infernum().ExtraAI[21], true) * npc.Opacity;
             if (backAfterimageInterpolant > 0f)
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    float colorInterpolant = (float)Math.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTime * 10f) * 0.5f + 0.5f;
+                    float colorInterpolant = (float)Math.Cos(MathHelper.SmoothStep(0f, MathHelper.TwoPi, i / 6f) + Main.GlobalTimeWrappedHourly * 10f) * 0.5f + 0.5f;
                     Color backAfterimageColor = Color.Lerp(Color.Yellow, Color.Orange, colorInterpolant);
                     backAfterimageColor *= backAfterimageInterpolant;
                     backAfterimageColor.A /= 8;
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * backAfterimageInterpolant * 8f;
-                    spriteBatch.Draw(texture, drawPos + drawOffset, npc.frame, backAfterimageColor, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(texture, drawPos + drawOffset, npc.frame, backAfterimageColor, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 }
             }
 
-            spriteBatch.Draw(texture, drawPos, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(glowMask, drawPos, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texture, drawPos, rect, lightColor * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowMask, drawPos, rect, Color.White * npc.Opacity, npc.rotation, rect.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
             // Draw laser ray telegraphs.
             float laserRayTelegraphInterpolant = npc.Infernum().ExtraAI[17];
@@ -1602,10 +1585,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
+                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
                 Color outlineColor = Color.Lerp(Color.OrangeRed, Color.White, laserRayTelegraphInterpolant);
-                Vector2 origin = new Vector2(line.Width / 2f, line.Height);
-                Vector2 beamScale = new Vector2(laserRayTelegraphInterpolant * 0.5f, 2.4f);
+                Vector2 origin = new(line.Width / 2f, line.Height);
+                Vector2 beamScale = new(laserRayTelegraphInterpolant * 0.5f, 2.4f);
 
                 Vector2 drawPosition = drawPos + Vector2.UnitY * 20f;
                 Vector2 beamDirection = -npc.Infernum().ExtraAI[18].ToRotationVector2();
@@ -1637,9 +1620,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 for (int j = num2 - 20; j < num2 + 20; j++)
                 {
                     if (!inRealTemple)
-                        inRealTemple = Main.tile[i, j].wall == WallID.LihzahrdBrickUnsafe;
+                        inRealTemple = Main.tile[i, j].WallType == WallID.LihzahrdBrickUnsafe;
 
-                    if (Main.tile[i, j].active() && Main.tile[i, j].type == TileID.LihzahrdAltar)
+                    if (Main.tile[i, j].HasTile && Main.tile[i, j].TileType == TileID.LihzahrdAltar)
                     {
                         altarX = i;
                         altarY = j;
@@ -1653,8 +1636,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             }
 
             int arenaBottom = altarY + 15;
-            Vector2 arenaCenter = new Vector2(altarX, arenaBottom - (ArenaHeight / 2) - 5);
-            Vector2 arenaArea = new Vector2(ArenaWidth, ArenaHeight);
+            Vector2 arenaCenter = new(altarX, arenaBottom - (ArenaHeight / 2) - 5);
+            Vector2 arenaArea = new(ArenaWidth, ArenaHeight);
             npc.Infernum().arenaRectangle = Utils.CenteredRectangle(arenaCenter * 16f, arenaArea * 16f);
             npc.Center = npc.Infernum().arenaRectangle.Center.ToVector2();
 
@@ -1678,18 +1661,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     if (inRealTemple)
                     {
                         Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
-                        if (tile.active() && (Main.tileSolid[tile.type] || Main.tileSolidTop[tile.type]))
+                        if (tile.HasTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]))
                         {
-                            if (tile.type != TileID.LihzahrdBrick && tile.type != TileID.LihzahrdAltar && tile.type != TileID.Traps && tile.type != TileID.WoodenSpikes && tile.type != arenaTileType)
+                            if (tile.TileType != TileID.LihzahrdBrick && tile.TileType != TileID.LihzahrdAltar && tile.TileType != TileID.Traps && tile.TileType != TileID.WoodenSpikes && tile.TileType != arenaTileType)
                                 WorldGen.KillTile(i, j);
                         }
                     }
 
                     // Create arena tiles.
-                    if ((i == left || i == right || j == top || j == bottom) && !Main.tile[i, j].active())
+                    if ((i == left || i == right || j == top || j == bottom) && !Main.tile[i, j].HasTile)
                     {
-                        Main.tile[i, j].type = (ushort)arenaTileType;
-                        Main.tile[i, j].active(true);
+                        Main.tile[i, j].TileType = (ushort)arenaTileType;
+                        Main.tile[i, j].Get<TileWallWireStateData>().HasTile = true;
                         if (Main.netMode == NetmodeID.Server)
                             NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
                         else
@@ -1697,8 +1680,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     }
 
                     // Erase old arena tiles.
-                    else if (Framing.GetTileSafely(i, j).type == arenaTileType)
-                        Main.tile[i, j].active(false);
+                    else if (Framing.GetTileSafely(i, j).TileType == arenaTileType)
+                        Main.tile[i, j].Get<TileWallWireStateData>().HasTile = false;
                 }
             }
 
@@ -1713,9 +1696,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 {
                     if (Main.tile[i, j] != null)
                     {
-                        if (Main.tile[i, j].type == ModContent.TileType<Tiles.GolemArena>())
+                        if (Main.tile[i, j].TileType == ModContent.TileType<Tiles.GolemArena>())
                         {
-                            Main.tile[i, j] = new Tile();
+                            Main.tile[i, j].ClearEverything();
                             if (Main.netMode == NetmodeID.Server)
                             {
                                 NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);

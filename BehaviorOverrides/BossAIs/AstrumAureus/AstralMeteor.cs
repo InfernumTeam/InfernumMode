@@ -7,6 +7,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
@@ -15,55 +16,55 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Astral Meteor");
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = 180;
-            projectile.height = 180;
-            projectile.hostile = true;
-            projectile.penetrate = 1;
-            projectile.timeLeft = 85;
-            cooldownSlot = 1;
+            Projectile.width = 180;
+            Projectile.height = 180;
+            Projectile.hostile = true;
+            Projectile.penetrate = 1;
+            Projectile.timeLeft = 85;
+            CooldownSlot = 1;
 
-            projectile.Calamity().canBreakPlayerDefense = true;
+            Projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            projectile.tileCollide = projectile.timeLeft < 40;
-            projectile.frameCounter++;
-            projectile.frame = projectile.frameCounter / 7 % Main.projFrames[projectile.type];
+            Projectile.tileCollide = Projectile.timeLeft < 40;
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 7 % Main.projFrames[Projectile.type];
 
-            if (Math.Abs(projectile.velocity.X) > 0.2)
-                projectile.spriteDirection = -projectile.direction;
+            if (Math.Abs(Projectile.velocity.X) > 0.2)
+                Projectile.spriteDirection = -Projectile.direction;
 
-            projectile.rotation = projectile.velocity.ToRotation();
+            Projectile.rotation = Projectile.velocity.ToRotation();
         }
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return new Color(184, 184, 184, projectile.alpha);
+            return new Color(184, 184, 184, Projectile.alpha);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tex = Main.projectileTexture[projectile.type];
-            int height = Main.projectileTexture[projectile.type].Height / Main.projFrames[projectile.type];
-            int y = height * projectile.frame;
-            Main.spriteBatch.Draw(tex, projectile.Center - Main.screenPosition + new Vector2(0f, projectile.gfxOffY), new Rectangle(0, y, tex.Width, height), projectile.GetAlpha(lightColor), projectile.rotation, new Vector2(tex.Width / 2f, height / 2f), projectile.scale, SpriteEffects.None, 0f);
+            Texture2D tex = Utilities.ProjTexture(Projectile.type);
+            int height = Utilities.ProjTexture(Projectile.type).Height / Main.projFrames[Projectile.type];
+            int y = height * Projectile.frame;
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY), new Rectangle(0, y, tex.Width, height), Projectile.GetAlpha(lightColor), Projectile.rotation, new Vector2(tex.Width / 2f, height / 2f), Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
+            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), Projectile.Center);
 
             int dustType = Main.rand.NextBool(6) ? ModContent.DustType<AstralBlue>() : ModContent.DustType<AstralOrange>();
             for (int i = 0; i < 35; i++)
             {
-                Dust astralFire = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, dustType, 0f, 0f, 100, default, 2f);
+                Dust astralFire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustType, 0f, 0f, 100, default, 2f);
                 astralFire.velocity *= 3f;
                 if (Main.rand.NextBool(2))
                 {
@@ -78,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 shootVelocity = (MathHelper.TwoPi * (i + offsetIncrement) / 12f).ToRotationVector2() * 13f;
-                    Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<AstralBlueComet>(), 180, 0f);
+                    Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<AstralBlueComet>(), 180, 0f);
                 }
             }
         }
@@ -90,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

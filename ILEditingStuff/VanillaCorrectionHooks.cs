@@ -1,19 +1,18 @@
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
-using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
+using Terraria.Audio;
 
 namespace InfernumMode.ILEditingStuff
 {
-    public class ReplaceGoresHook : IHookEdit
+	public class ReplaceGoresHook : IHookEdit
     {
         internal static int AlterGores(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
@@ -21,13 +20,13 @@ namespace InfernumMode.ILEditingStuff
                 return Main.maxDust;
 
             if (InfernumMode.CanUseCustomAIs && Type == 573)
-                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore1");
+                Type = Utilities.GetGoreID("DukeFishronGore1");
             if (InfernumMode.CanUseCustomAIs && Type == 574)
-                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore3");
+                Type = Utilities.GetGoreID("DukeFishronGore3");
             if (InfernumMode.CanUseCustomAIs && Type == 575)
-                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore2");
+                Type = Utilities.GetGoreID("DukeFishronGore2");
             if (InfernumMode.CanUseCustomAIs && Type == 576)
-                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore4");
+                Type = Utilities.GetGoreID("DukeFishronGore4");
 
             return orig(Position, Velocity, Type, Scale);
         }
@@ -59,7 +58,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void AdjustFishronScreenDistanceRequirement(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.GotoNext(i => i.MatchLdcR4(3000f));
             cursor.Remove();
             cursor.Emit(OpCodes.Ldc_R4, 6000f);
@@ -75,7 +74,7 @@ namespace InfernumMode.ILEditingStuff
         internal static void MakeDesertRequirementsMoreLenient(On.Terraria.Player.orig_UpdateBiomes orig, Player self)
         {
             orig(self);
-            self.ZoneDesert = Main.sandTiles > 300;
+            self.ZoneDesert = Main.SceneMetrics.SandTileCount > 300;
         }
 
         public void Load() => On.Terraria.Player.UpdateBiomes += MakeDesertRequirementsMoreLenient;
@@ -87,7 +86,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void EarlyReturn(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ret);
         }
 
@@ -110,11 +109,11 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void GetRidOfDesertNuisances(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate<Action<Player>>(player =>
             {
-                Main.PlaySound(SoundID.Roar, player.position, 0);
+                SoundEngine.PlaySound(SoundID.Roar, player.position, 0);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<DesertScourgeHead>());
                 else
@@ -133,7 +132,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static void LetAresHitPlayer(ILContext il)
         {
-            ILCursor cursor = new ILCursor(il);
+            ILCursor cursor = new(il);
             cursor.Emit(OpCodes.Ldc_I4_1);
             cursor.Emit(OpCodes.Ret);
         }

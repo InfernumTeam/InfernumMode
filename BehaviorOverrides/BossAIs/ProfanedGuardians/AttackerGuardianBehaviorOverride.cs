@@ -8,6 +8,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -44,8 +45,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Summon the defender and healer guardian.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[1] == 0f)
             {
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianBoss3>());
-                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianBoss2>());
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianBoss3>());
+                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianBoss2>());
                 npc.localAI[1] = 1f;
             }
 
@@ -131,12 +132,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
                 float distanceFromDestination = npc.Distance(destination);
                 Vector2 linearVelocityToDestination = npc.SafeDirectionTo(destination) * MathHelper.Min(15f + target.velocity.Length() * 0.5f, distanceFromDestination);
-                npc.velocity = Vector2.Lerp(linearVelocityToDestination, (destination - npc.Center) / 15f, Utils.InverseLerp(180f, 420f, distanceFromDestination, true));
+                npc.velocity = Vector2.Lerp(linearVelocityToDestination, (destination - npc.Center) / 15f, Utils.GetLerpValue(180f, 420f, distanceFromDestination, true));
 
                 // Prepare to charge.
                 if (npc.WithinRange(destination, 12f + target.velocity.Length() * 0.5f))
                 {
-                    Main.PlaySound(SoundID.Item45, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item45, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 3.5f) * chargeSpeed;
@@ -195,8 +196,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == phase2TransitionTime - 45)
                 {
-                    NPC.NewNPC((int)npc.Center.X - 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, -1);
-                    NPC.NewNPC((int)npc.Center.X + 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, 1);
+                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, -1);
+                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X + 160, (int)npc.Center.Y, ModContent.NPCType<EtherealHand>(), 0, 1);
                 }
                 return;
             }
@@ -231,9 +232,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             // Move back and re-appear.
-            if (attackTimer > 30f && attackTimer < 75f)
+            if (attackTimer is > 30f and < 75f)
             {
-                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(1f, 6f, Utils.InverseLerp(30f, 75, attackTimer, true));
+                npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(1f, 6f, Utils.GetLerpValue(30f, 75, attackTimer, true));
                 npc.alpha = Utils.Clamp(npc.alpha - 15, 0, 255);
             }
 
@@ -256,7 +257,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             }
 
             // Arc around a bit.
-            if (attackTimer >= 75f && attackTimer < 150f)
+            if (attackTimer is >= 75f and < 150f)
             {
                 npc.velocity = npc.velocity.RotatedBy(arcDirection * MathHelper.TwoPi / 75f);
 
@@ -282,7 +283,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
                 // Release crystal lights when spinning.
                 if (attackTimer % lightReleaseTime == 0)
                 {
-                    Main.PlaySound(SoundID.DD2_KoboldIgnite, npc.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_KoboldIgnite, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 shootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(MathHelper.PiOver2 * Main.rand.NextFloatDirection()) * 9f;
@@ -338,7 +339,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             int totalCharges = 4;
             float spearBurstSpread = MathHelper.ToRadians(25f);
             float spearBurstSpeed = 14f;
-            float chargeSpeed = MathHelper.Lerp(19f, 23f, Utils.InverseLerp(ImmortalUntilPhase2LifeRatio, 0f, lifeRatio, true));
+            float chargeSpeed = MathHelper.Lerp(19f, 23f, Utils.GetLerpValue(ImmortalUntilPhase2LifeRatio, 0f, lifeRatio, true));
             float chargeAcceleration = 1.018f;
 
             if (lifeRatio < Subphase2LifeRatio)
@@ -370,8 +371,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (attackTimer == teleportDelay)
             {
                 // Play the fire sound.
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SilvaDispel"), target.Center);
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SilvaDispel"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
 
                 // And create the fire dust visuals.
                 for (int i = 0; i < 75; i++)
@@ -401,15 +402,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Reel back in anticipation of a charge.
             if (attackTimer > teleportDelay && attackTimer < teleportDelay + reelbackTime)
             {
-                float reelbackInterpolant = Utils.InverseLerp(teleportDelay, teleportDelay + reelbackTime, attackTimer, true);
-                float reelbackSpeed = Utils.InverseLerp(0f, 0.75f, reelbackInterpolant, true) * Utils.InverseLerp(1f, 0.75f, reelbackInterpolant, true) * 12f;
+                float reelbackInterpolant = Utils.GetLerpValue(teleportDelay, teleportDelay + reelbackTime, attackTimer, true);
+                float reelbackSpeed = Utils.GetLerpValue(0f, 0.75f, reelbackInterpolant, true) * Utils.GetLerpValue(1f, 0.75f, reelbackInterpolant, true) * 12f;
                 npc.velocity = Vector2.UnitX * npc.direction * reelbackSpeed;
             }
 
             // Charge and release spears.
             if (attackTimer == teleportDelay + reelbackTime)
             {
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -433,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             bool readyToShootSpearBurst = charging && attackTimer % spearBurstShootRate == spearBurstShootRate - 1f;
             if (readyToShootSpearBurst && !npc.WithinRange(target.Center, 300f))
             {
-                Main.PlaySound(SoundID.Item73, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item73, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -529,8 +530,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         {
             Vector2 hoverDestination = target.Center + new Vector2(npc.spriteDirection * -125f, -10f);
             Vector2 offsetToTarget = hoverDestination - npc.Center;
-            float idealMoveSpeed = MathHelper.Lerp(8f, 21f, Utils.InverseLerp(50f, 400f, offsetToTarget.Length(), true));
-            idealMoveSpeed *= Utils.InverseLerp(0f, 45f, attackTimer, true);
+            float idealMoveSpeed = MathHelper.Lerp(8f, 21f, Utils.GetLerpValue(50f, 400f, offsetToTarget.Length(), true));
+            idealMoveSpeed *= Utils.GetLerpValue(0f, 45f, attackTimer, true);
 
             Vector2 idealVelocity = Vector2.Zero.MoveTowards(offsetToTarget, idealMoveSpeed);
 
@@ -542,7 +543,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Release magic periodically.
             if (attackTimer % 75f == 74f)
             {
-                Main.PlaySound(SoundID.DD2_KoboldIgnite, npc.Center);
+                SoundEngine.PlaySound(SoundID.DD2_KoboldIgnite, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * -13f;

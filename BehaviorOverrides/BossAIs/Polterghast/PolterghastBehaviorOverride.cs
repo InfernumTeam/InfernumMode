@@ -13,6 +13,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using PolterghastBoss = CalamityMod.NPCs.Polterghast.Polterghast;
+using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
@@ -49,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[3] == 0f)
             {
                 for (int i = 0; i < 4; i++)
-                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EerieLimb>(), 0, i);
+                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<EerieLimb>(), 0, i);
                 npc.localAI[3] = 1f;
             }
 
@@ -88,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (dyingTimer > 0f)
             {
                 npc.dontTakeDamage = true;
-                npc.DeathSound = InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PolterghastDeath");
+                npc.DeathSound = SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/PolterghastDeath");
 
                 // Clear away any clones and legs.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -111,7 +113,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                 dyingTimer++;
 
-                float turnSpeed = Utils.InverseLerp(240f, 45f, dyingTimer, true);
+                float turnSpeed = Utils.GetLerpValue(240f, 45f, dyingTimer, true);
                 if (turnSpeed > 0f)
                     npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center) + MathHelper.PiOver2, turnSpeed);
 
@@ -119,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 if (dyingTimer > 210f && dyingTimer % 2f == 0f && totalReleasedSouls < 60f)
                 {
                     if (dyingTimer % 8f == 0f)
-                        Main.PlaySound(SoundID.NPCHit36, target.Center);
+                        SoundEngine.PlaySound(SoundID.NPCHit36, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -141,19 +143,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2700f))
                     {
                         Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                        Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(270f, 290f, dyingTimer, true);
-                        Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(370f, 362f, dyingTimer, true);
+                        Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(270f, 290f, dyingTimer, true);
+                        Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(370f, 362f, dyingTimer, true);
                     }
 
-                    Vector2 jitter = Main.rand.NextVector2Unit() * MathHelper.SmoothStep(1f, 3.25f, Utils.InverseLerp(270f, 350f, dyingTimer, true));
-                    Main.LocalPlayer.Infernum().CurrentScreenShakePower = jitter.Length() * Utils.InverseLerp(1950f, 1100f, Main.LocalPlayer.Distance(npc.Center), true) * 4f;
+                    Vector2 jitter = Main.rand.NextVector2Unit() * MathHelper.SmoothStep(1f, 3.25f, Utils.GetLerpValue(270f, 350f, dyingTimer, true));
+                    Main.LocalPlayer.Infernum().CurrentScreenShakePower = jitter.Length() * Utils.GetLerpValue(1950f, 1100f, Main.LocalPlayer.Distance(npc.Center), true) * 4f;
 
                     if (initialDeathPositionX != 0f && initialDeathPositionY != 0f)
                         npc.Center = new Vector2(initialDeathPositionX, initialDeathPositionY) + jitter;
 
                     // Make a flame-like sound effect right before dying.
                     if (dyingTimer == 368f)
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), target.Center);
+                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/FlareSound"), target.Center);
                     else
                     {
                         initialDeathPositionX = npc.Center.X;
@@ -374,7 +376,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     }
 
                     if (attackTimer % 16f == 15f)
-                        Main.PlaySound(SoundID.NPCHit36, target.Center);
+                        SoundEngine.PlaySound(SoundID.NPCHit36, target.Center);
                 }
 
                 // Slow down significantly.
@@ -419,7 +421,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Roar right before impaling.
             if (attackTimer % impaleTime == 90f)
             {
-                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
+                var roar = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
                 if (roar != null)
                 {
                     roar.Pitch = -0.425f;
@@ -477,9 +479,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             // Do fade effect.
             if (attackTimer < 360f)
-                npc.Opacity = Utils.InverseLerp(110f, 60f, attackTimer, true);
+                npc.Opacity = Utils.GetLerpValue(110f, 60f, attackTimer, true);
             else
-                npc.Opacity = Utils.InverseLerp(360f, 400f, attackTimer, true);
+                npc.Opacity = Utils.GetLerpValue(360f, 400f, attackTimer, true);
             npc.hide = npc.Opacity < 0.25f;
             npc.dontTakeDamage = npc.hide;
 
@@ -488,7 +490,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 Vector2 spawnOffsetDirection = Main.rand.NextVector2Unit();
 
                 Dust ectoplasm = Dust.NewDustPerfect(npc.Center + spawnOffsetDirection * Main.rand.NextFloat(120f) * npc.scale, 264);
-                ectoplasm.velocity = -Vector2.UnitY * MathHelper.Lerp(1f, 2.4f, Utils.InverseLerp(0f, 100f, npc.Distance(ectoplasm.position), true));
+                ectoplasm.velocity = -Vector2.UnitY * MathHelper.Lerp(1f, 2.4f, Utils.GetLerpValue(0f, 100f, npc.Distance(ectoplasm.position), true));
                 ectoplasm.color = Color.Lerp(Color.Cyan, Color.Red, Main.rand.NextFloat(0.6f));
                 ectoplasm.scale = 1.45f;
                 ectoplasm.noLight = true;
@@ -496,7 +498,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             if (attackTimer % 14f == 13f && attackTimer > 60f && attackTimer < 300f)
-                Main.PlaySound(SoundID.NPCHit36, target.Center);
+                SoundEngine.PlaySound(SoundID.NPCHit36, target.Center);
 
             if (attackTimer >= 440f && totalReleasedSouls <= 15f)
                 SelectNextAttack(npc);
@@ -520,7 +522,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // Slow down.
-            if (attackTimer > 80f && attackTimer < 105f)
+            if (attackTimer is > 80f and < 105f)
             {
                 npc.velocity *= 0.94f;
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
@@ -531,7 +533,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             {
                 npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
 
-                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
+                var roar = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
                 if (roar != null)
                 {
                     roar.Pitch = -0.525f;
@@ -545,7 +547,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             // And release accelerating stones.
-            if (attackTimer >= 105f && attackTimer < 160f)
+            if (attackTimer is >= 105f and < 160f)
             {
                 npc.velocity *= 1.005f;
 
@@ -611,7 +613,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Roar, shoot spirits, and release a cluster of souls in the form of a roar thing idk lol.
             if (shootCounter >= shootRate)
             {
-                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
+                var roar = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
                 if (roar != null)
                 {
                     roar.Pitch = -0.525f;
@@ -652,7 +654,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (attackTimer > 60f)
                 npc.velocity *= 0.965f;
 
-            if (attackTimer <= 145f || attackTimer > 285f)
+            if (attackTimer is <= 145f or > 285f)
                 npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.15f);
             else
                 npc.rotation = npc.rotation.SimpleAngleTowards(npc.AngleTo(target.Center) + MathHelper.PiOver2, 0.0085f);
@@ -660,7 +662,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             // Roar.
             if (attackTimer == 145f)
             {
-                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
+                var roar = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
                 if (roar != null)
                 {
                     roar.Pitch = -0.525f;
@@ -675,7 +677,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             if (attackTimer >= 155f && attackTimer < 285f && attackTimer % 3f == 2f)
             {
                 if (attackTimer % 12f == 8f)
-                    Main.PlaySound(SoundID.NPCHit36, target.Center);
+                    SoundEngine.PlaySound(SoundID.NPCHit36, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -703,12 +705,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
             if (attackTimer <= 310f)
             {
-                npc.scale = MathHelper.Lerp(npc.scale, 0.25f, Utils.InverseLerp(155f, 300f, attackTimer, true));
-                npc.Opacity = Utils.InverseLerp(0.78f, 0.95f, npc.scale, true);
+                npc.scale = MathHelper.Lerp(npc.scale, 0.25f, Utils.GetLerpValue(155f, 300f, attackTimer, true));
+                npc.Opacity = Utils.GetLerpValue(0.78f, 0.95f, npc.scale, true);
             }
             else
             {
-                npc.Opacity = Utils.InverseLerp(0.78f, 0.95f, npc.scale, true);
+                npc.Opacity = Utils.GetLerpValue(0.78f, 0.95f, npc.scale, true);
                 if (totalReleasedSouls <= 0f || attackTimer > 540f)
                     SelectNextAttack(npc);
             }
@@ -723,7 +725,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
                     Dust ectoplasm = Dust.NewDustPerfect(npc.Center + spawnOffsetDirection * Main.rand.NextFloat(110f) * npc.scale, 264);
                     ectoplasm.velocity = spawnOffsetDirection.RotatedBy(MathHelper.PiOver2 * Main.rand.NextBool(2).ToDirectionInt());
-                    ectoplasm.velocity *= MathHelper.Lerp(1f, 2.4f, Utils.InverseLerp(0f, 100f, npc.Distance(ectoplasm.position), true));
+                    ectoplasm.velocity *= MathHelper.Lerp(1f, 2.4f, Utils.GetLerpValue(0f, 100f, npc.Distance(ectoplasm.position), true));
                     ectoplasm.color = Color.Lerp(Color.Cyan, Color.Red, Main.rand.NextFloat(0.6f));
                     ectoplasm.scale = 1.45f;
                     ectoplasm.noLight = true;
@@ -758,7 +760,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 {
                     for (int i = 0; i < 3; i++)
                     {
-                        int clone = NPC.NewNPC((int)npc.Center.X - 1, (int)npc.Center.Y, cloneType);
+                        int clone = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X - 1, (int)npc.Center.Y, cloneType);
 
                         // An NPC must update once for it to recieve a whoAmI variable.
                         // Without this, the below IEnumerable collection would not incorporate this NPC.
@@ -785,7 +787,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
                     }
                 }
-                var roar = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
+                var roar = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/OmegaBlueAbility"), target.Center);
                 if (roar != null)
                 {
                     roar.Pitch = -0.525f;
@@ -793,7 +795,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                 }
             }
 
-            if (adjustedTimer > 50f && adjustedTimer < 105f)
+            if (adjustedTimer is > 50f and < 105f)
             {
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 npc.velocity *= 1.01f;
@@ -829,38 +831,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             bool inPhase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
             bool enraged = npc.ai[3] == 1f;
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
-            Texture2D polterTexture = Main.npcTexture[npc.type];
-            Texture2D polterGlowmaskEctoplasm = ModContent.GetTexture("CalamityMod/NPCs/Polterghast/PolterghastGlow");
-            Texture2D polterGlowmaskHeart = ModContent.GetTexture("CalamityMod/NPCs/Polterghast/PolterghastGlow2");
+            Texture2D polterTexture = TextureAssets.Npc[npc.type].Value;
+            Texture2D polterGlowmaskEctoplasm = ModContent.Request<Texture2D>("CalamityMod/NPCs/Polterghast/PolterghastGlow").Value;
+            Texture2D polterGlowmaskHeart = ModContent.Request<Texture2D>("CalamityMod/NPCs/Polterghast/PolterghastGlow2").Value;
 
             void drawInstance(Vector2 position, Color color)
             {
-                spriteBatch.Draw(polterTexture, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(polterGlowmaskHeart, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(polterGlowmaskEctoplasm, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(polterTexture, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(polterGlowmaskHeart, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(polterGlowmaskEctoplasm, position, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
 
             if (inPhase3 || enraged)
             {
-                spriteBatch.SetBlendState(BlendState.Additive);
+                Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 Color baseColor = Color.White;
-                float drawOffsetFactor = MathHelper.Lerp(6.5f, 8.5f, (float)Math.Cos(Main.GlobalTime * 2.7f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
+                float drawOffsetFactor = MathHelper.Lerp(6.5f, 8.5f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2.7f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
                 float fadeFactor = 0.225f;
                 if (enraged)
                 {
-                    drawOffsetFactor = MathHelper.Lerp(7f, 9.75f, (float)Math.Cos(Main.GlobalTime * 4.3f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
+                    drawOffsetFactor = MathHelper.Lerp(7f, 9.75f, (float)Math.Cos(Main.GlobalTimeWrappedHourly * 4.3f) * 0.5f + 0.5f) * npc.scale * npc.Opacity;
                     baseColor = Color.Red;
                     fadeFactor = 0.3f;
                 }
 
                 for (int i = 0; i < 12; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTime * 1.9f).ToRotationVector2() * drawOffsetFactor;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTimeWrappedHourly * 1.9f).ToRotationVector2() * drawOffsetFactor;
                     drawInstance(baseDrawPosition + drawOffset, npc.GetAlpha(baseColor) * fadeFactor);
                 }
             }
-            spriteBatch.ResetBlendState();
+            Main.spriteBatch.ResetBlendState();
 
             drawInstance(baseDrawPosition, npc.GetAlpha(Color.White));
             return false;

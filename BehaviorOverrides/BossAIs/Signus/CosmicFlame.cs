@@ -9,38 +9,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 {
     public class CosmicFlame : ModProjectile
     {
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cosmic Flame");
-            Main.projFrames[projectile.type] = 6;
+            Main.projFrames[Projectile.type] = 6;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 36;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 210;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 36;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 210;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(0f, 10f, Time, true) * Utils.InverseLerp(0f, 15f, projectile.timeLeft, true);
-            projectile.frameCounter++;
-            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.Opacity = Utils.GetLerpValue(0f, 10f, Time, true) * Utils.GetLerpValue(0f, 15f, Projectile.timeLeft, true);
+            Projectile.frameCounter++;
+            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             if (Time > 35f)
             {
-                Vector2 idealVelocity = projectile.SafeDirectionTo(target.Center) * 13f;
-                projectile.velocity = (projectile.velocity * 39f + idealVelocity) / 40f;
+                Vector2 idealVelocity = Projectile.SafeDirectionTo(target.Center) * 13f;
+                Projectile.velocity = (Projectile.velocity * 39f + idealVelocity) / 40f;
             }
 
-            Lighting.AddLight(projectile.Center, Vector3.One * projectile.Opacity * 0.4f);
+            Lighting.AddLight(Projectile.Center, Vector3.One * Projectile.Opacity * 0.4f);
             Time++;
         }
 
@@ -51,24 +51,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return Color.Lerp(new Color(198, 118, 204, 0), lightColor, Utils.InverseLerp(0f, 12f, Time, true)) * projectile.Opacity;
+            return Color.Lerp(new Color(198, 118, 204, 0), lightColor, Utils.GetLerpValue(0f, 12f, Time, true)) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[projectile.type];
-            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
-            Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
-            spriteBatch.Draw(texture, drawPosition, frame, projectile.GetAlpha(lightColor), projectile.rotation, frame.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
+            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+            Main.spriteBatch.Draw(texture, drawPosition, frame, Projectile.GetAlpha(lightColor), Projectile.rotation, frame.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 
-        public override bool CanDamage() => projectile.alpha < 20;
+        public override bool? CanDamage() => Projectile.alpha < 20 ? null : false;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = projectile;
+            target.Calamity().lastProjectileHit = Projectile;
         }
     }
 }

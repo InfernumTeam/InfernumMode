@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
@@ -10,93 +11,93 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
     {
         public bool SoulOfNight
         {
-            get => projectile.ai[0] == 1f;
-            set => projectile.ai[0] = value.ToInt();
+            get => Projectile.ai[0] == 1f;
+            set => Projectile.ai[0] = value.ToInt();
         }
-        public bool ShouldFloatUpward => projectile.localAI[1] == 1f;
+        public bool ShouldFloatUpward => Projectile.localAI[1] == 1f;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul");
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[Projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 26;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 240;
+            Projectile.width = Projectile.height = 26;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 240;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(projectile.Center, Color.WhiteSmoke.ToVector3());
-            Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+            Lighting.AddLight(Projectile.Center, Color.WhiteSmoke.ToVector3());
+            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 
-            projectile.frameCounter++;
-            projectile.frame = (projectile.frameCounter / 4) % Main.projFrames[projectile.type];
+            Projectile.frameCounter++;
+            Projectile.frame = (Projectile.frameCounter / 4) % Main.projFrames[Projectile.type];
 
-            if (projectile.ai[1] == 0f)
+            if (Projectile.ai[1] == 0f)
             {
-                projectile.spriteDirection = Main.rand.NextBool(2).ToDirectionInt();
+                Projectile.spriteDirection = Main.rand.NextBool(2).ToDirectionInt();
                 SoulOfNight = Main.rand.NextBool(2);
-                projectile.ai[1] = 1f;
-                projectile.netUpdate = true;
+                Projectile.ai[1] = 1f;
+                Projectile.netUpdate = true;
             }
 
             if (ShouldFloatUpward)
             {
-                projectile.velocity.X *= MathHelper.Lerp(0.982f, 0.974f, projectile.identity % 8f / 8f);
-                if (projectile.velocity.Y > -20f)
-                    projectile.velocity.Y -= 0.24f;
+                Projectile.velocity.X *= MathHelper.Lerp(0.982f, 0.974f, Projectile.identity % 8f / 8f);
+                if (Projectile.velocity.Y > -20f)
+                    Projectile.velocity.Y -= 0.24f;
             }
             else
             {
-                if (projectile.timeLeft > 190f)
+                if (Projectile.timeLeft > 190f)
                 {
-                    projectile.velocity = Vector2.Lerp(projectile.velocity, -Vector2.UnitY * 8f, 0.05f);
-                    projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, -Vector2.UnitY * 8f, 0.05f);
+                    Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
                 }
-                else if (projectile.timeLeft > 160f)
+                else if (Projectile.timeLeft > 160f)
                 {
-                    projectile.velocity = Vector2.Lerp(projectile.velocity, Vector2.Zero, 0.05f).MoveTowards(Vector2.Zero, 0.1f);
-                    projectile.rotation = projectile.rotation.AngleLerp(projectile.AngleTo(target.Center) - MathHelper.PiOver2, 0.12f);
+                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero, 0.05f).MoveTowards(Vector2.Zero, 0.1f);
+                    Projectile.rotation = Projectile.rotation.AngleLerp(Projectile.AngleTo(target.Center) - MathHelper.PiOver2, 0.12f);
                 }
 
                 float maxSpeed = SoulOfNight ? 14.25f : 12f;
                 float acceleration = SoulOfNight ? 1.025f : 1.03f;
-                if (projectile.timeLeft == 160f)
-                    projectile.velocity = projectile.SafeDirectionTo(target.Center) * 3f;
-                if (projectile.timeLeft < 160f && projectile.velocity.Length() < maxSpeed)
-                    projectile.velocity *= acceleration;
+                if (Projectile.timeLeft == 160f)
+                    Projectile.velocity = Projectile.SafeDirectionTo(target.Center) * 3f;
+                if (Projectile.timeLeft < 160f && Projectile.velocity.Length() < maxSpeed)
+                    Projectile.velocity *= acceleration;
             }
 
-            if (projectile.timeLeft < 25)
-                projectile.alpha = Utils.Clamp(projectile.alpha + 13, 0, 255);
+            if (Projectile.timeLeft < 25)
+                Projectile.alpha = Utils.Clamp(Projectile.alpha + 13, 0, 255);
             else
-                projectile.alpha = Utils.Clamp(projectile.alpha - 9, 0, 255);
+                Projectile.alpha = Utils.Clamp(Projectile.alpha - 9, 0, 255);
         }
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return (SoulOfNight ? Color.Lerp(Color.MediumPurple, Color.Black, 0.6f) : Color.Wheat) * projectile.Opacity;
+            return (SoulOfNight ? Color.Lerp(Color.MediumPurple, Color.Black, 0.6f) : Color.Wheat) * Projectile.Opacity;
         }
 
         public override void Kill(int timeLeft)
         {
-            CalamityGlobalProjectile.ExpandHitboxBy(projectile, 60);
-            projectile.alpha = 0;
-            projectile.Damage();
+            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, 60);
+            Projectile.alpha = 0;
+            Projectile.Damage();
 
-            Main.PlaySound(SoundID.NPCDeath39, projectile.position);
+            SoundEngine.PlaySound(SoundID.NPCDeath39, Projectile.position);
             for (int i = 0; i < 36; i++)
             {
-                Dust ectoplasm = Dust.NewDustPerfect(projectile.Center, 267);
+                Dust ectoplasm = Dust.NewDustPerfect(Projectile.Center, 267);
                 ectoplasm.velocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 8f;
                 ectoplasm.scale = 1.5f;
                 ectoplasm.noGravity = true;
-                ectoplasm.color = projectile.GetAlpha(Color.White);
+                ectoplasm.color = Projectile.GetAlpha(Color.White);
             }
         }
     }

@@ -11,50 +11,50 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
     public class DyingSun : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
-        public ref float Time => ref projectile.ai[0];
-        public ref float Radius => ref projectile.ai[1];
+        public ref float Time => ref Projectile.ai[0];
+        public ref float Radius => ref Projectile.ai[1];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Dying Sun");
 
         public override void SetDefaults()
         {
-            projectile.width = 164;
-            projectile.height = 164;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 100;
-            projectile.usesLocalNPCImmunity = true;
-            projectile.localNPCHitCooldown = 10;
-            projectile.extraUpdates = 1;
-            projectile.scale = 1f;
+            Projectile.width = 164;
+            Projectile.height = 164;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 100;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 10;
+            Projectile.extraUpdates = 1;
+            Projectile.scale = 1f;
         }
 
         public override void AI()
         {
-            projectile.scale += 0.08f;
-            Radius = projectile.scale * 42f;
-            projectile.Opacity = Utils.InverseLerp(8f, 42f, projectile.timeLeft, true);
+            Projectile.scale += 0.08f;
+            Radius = Projectile.scale * 42f;
+            Projectile.Opacity = Utils.GetLerpValue(8f, 42f, Projectile.timeLeft, true);
 
             Time++;
         }
 
-        public float SunWidthFunction(float completionRatio) => Radius * projectile.scale * (float)Math.Sin(MathHelper.Pi * completionRatio);
+        public float SunWidthFunction(float completionRatio) => Radius * Projectile.scale * (float)Math.Sin(MathHelper.Pi * completionRatio);
 
         public Color SunColorFunction(float completionRatio)
         {
             Color sunColor = Main.dayTime ? Color.Yellow : Color.Cyan;
-            return Color.Lerp(sunColor, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * projectile.Opacity;
+            return Color.Lerp(sunColor, Color.White, (float)Math.Sin(MathHelper.Pi * completionRatio) * 0.5f + 0.3f) * Projectile.Opacity;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (FireDrawer is null)
                 FireDrawer = new PrimitiveTrailCopy(SunWidthFunction, SunColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.45f);
-            GameShaders.Misc["Infernum:Fire"].UseImage("Images/Misc/Perlin");
+            GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
 
-            List<float> rotationPoints = new List<float>();
-            List<Vector2> drawPoints = new List<Vector2>();
+            List<float> rotationPoints = new();
+            List<Vector2> drawPoints = new();
 
             for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 80f)
             {
@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 for (int i = 0; i < 16; i++)
                 {
                     rotationPoints.Add(adjustedAngle);
-                    drawPoints.Add(Vector2.Lerp(projectile.Center - offsetDirection * Radius / 2f, projectile.Center + offsetDirection * Radius / 2f, i / 16f));
+                    drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * Radius / 2f, Projectile.Center + offsetDirection * Radius / 2f, i / 16f));
                 }
 
                 FireDrawer.Draw(drawPoints, -Main.screenPosition, 24);

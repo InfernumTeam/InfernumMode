@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using GiantClamNPC = CalamityMod.NPCs.SunkenSea.GiantClam;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 {
@@ -50,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             {
                 if (npc.Infernum().ExtraAI[5] == 0f)
                 {
-                    typeof(GiantClamNPC).GetField("hasBeenHit", Utilities.UniversalBindingFlags).SetValue(npc.modNPC, true);
+                    typeof(GiantClamNPC).GetField("hasBeenHit", Utilities.UniversalBindingFlags).SetValue(npc.ModNPC, true);
                     npc.Infernum().ExtraAI[5] = 1f;
                     npc.netUpdate = true;
                 }
@@ -83,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                     if (attackTimer > 180)
                         hidingInShell = 1f;
 
-                    if (attackTimer == 0 || attackTimer == 180)
+                    if (attackTimer is 0 or 180)
                     {
                         int projectileType = ModContent.ProjectileType<PearlSwirl>();
                         for (float angle = 0; angle <= MathHelper.TwoPi; angle += MathHelper.PiOver2)
@@ -108,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 case GiantClamAttackState.PearlRain:
                     if (attackTimer == 0f)
                     {
-                        Main.PlaySound(SoundID.Item67, npc.position);
+                        SoundEngine.PlaySound(SoundID.Item67, npc.position);
                         for (float offset = -750f; offset < 750f; offset += 150f)
                         {
                             Vector2 spawnPosition = target.Center + new Vector2(offset, -750f);
@@ -191,7 +192,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
 
                             if (npc.velocity.Y == 0f)
                             {
-                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ClamImpact"), (int)npc.position.X, (int)npc.position.Y);
+                                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/ClamImpact"), (int)npc.position.X, (int)npc.position.Y);
                                 slamCount++;
 
                                 if (slamCount < (hardmode ? 6f : 3f))
@@ -299,8 +300,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
             SpriteEffects spriteEffects = SpriteEffects.None;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;
-            Texture2D npcTexture = ModContent.GetTexture("CalamityMod/NPCs/SunkenSea/GiantClam");
-            Texture2D glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/SunkenSea/GiantClamGlow");
+            Texture2D npcTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SunkenSea/GiantClam").Value;
+            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SunkenSea/GiantClamGlow").Value;
 
             if ((GiantClamAttackState)(int)npc.Infernum().ExtraAI[0] == GiantClamAttackState.TeleportSlam && npc.velocity.Length() > 1f && CalamityConfig.Instance.Afterimages)
             {
@@ -308,12 +309,12 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.GiantClam
                 {
                     Color afterimageColor = npc.GetAlpha(Color.Lerp(lightColor, Color.Transparent, (i + 1f) / 4f));
                     Vector2 drawOffset = -npc.velocity * i * 0.6f;
-                    spriteBatch.Draw(npcTexture, drawPosition + drawOffset, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    Main.spriteBatch.Draw(npcTexture, drawPosition + drawOffset, npc.frame, afterimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
-            spriteBatch.Draw(npcTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
-            spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.LightBlue, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(npcTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            Main.spriteBatch.Draw(glowmaskTexture, drawPosition, npc.frame, Color.LightBlue, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             return false;
         }
     }

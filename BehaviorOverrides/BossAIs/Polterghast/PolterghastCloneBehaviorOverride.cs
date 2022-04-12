@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
@@ -56,9 +57,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
 
             if (attackTimer > 100f)
-                npc.Opacity = MathHelper.Lerp(1f, 0.35f, Utils.InverseLerp(120f, 100f, attackTimer, true));
+                npc.Opacity = MathHelper.Lerp(1f, 0.35f, Utils.GetLerpValue(120f, 100f, attackTimer, true));
             else
-                npc.Opacity = MathHelper.Lerp(1f, 0.05f, Utils.InverseLerp(45f, 30f, attackTimer, true));
+                npc.Opacity = MathHelper.Lerp(1f, 0.05f, Utils.GetLerpValue(45f, 30f, attackTimer, true));
 
             if (attackTimer == 120f || Main.npc[CalamityGlobalNPC.ghostBoss].Infernum().ExtraAI[6] > 0f)
             {
@@ -75,7 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     npc.active = false;
                     npc.netUpdate = true;
                 }
-                Main.PlaySound(SoundID.NPCHit36, npc.Center);
+                SoundEngine.PlaySound(SoundID.NPCHit36, npc.Center);
                 return false;
             }
 

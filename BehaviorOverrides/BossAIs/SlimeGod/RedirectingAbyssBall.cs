@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
@@ -13,46 +14,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 24;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.timeLeft = 360;
-            projectile.penetrate = -1;
-            projectile.tileCollide = false;
+            Projectile.width = Projectile.height = 24;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 360;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
         }
 
         public override void AI()
         {
-            if (projectile.localAI[0] == 0f)
+            if (Projectile.localAI[0] == 0f)
             {
-                Main.PlaySound(SoundID.Item33, projectile.Center);
-                projectile.localAI[0] = 1f;
+                SoundEngine.PlaySound(SoundID.Item33, Projectile.Center);
+                Projectile.localAI[0] = 1f;
             }
 
-            Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
 
-            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            projectile.Opacity = Utils.InverseLerp(360f, 340f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 20f, projectile.timeLeft, true) * 0.8f;
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            Projectile.Opacity = Utils.GetLerpValue(360f, 340f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 20f, Projectile.timeLeft, true) * 0.8f;
 
-            if (projectile.timeLeft < 270 && projectile.timeLeft > 225)
-                projectile.velocity = projectile.velocity.MoveTowards(projectile.SafeDirectionTo(target.Center) * 11f, 0.55f);
+            if (Projectile.timeLeft is < 270 and > 225)
+                Projectile.velocity = Projectile.velocity.MoveTowards(Projectile.SafeDirectionTo(target.Center) * 11f, 0.55f);
 
-            if (projectile.timeLeft < 35)
-                projectile.velocity *= 0.98f;
+            if (Projectile.timeLeft < 35)
+                Projectile.velocity *= 0.98f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            if (projectile.timeLeft > 355)
+            if (Projectile.timeLeft > 355)
                 return false;
 
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 2);
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 2);
             return false;
         }
 
         public override Color? GetAlpha(Color lightColor)
         {
-            Color color = Color.Pink * projectile.Opacity;
+            Color color = Color.Pink * Projectile.Opacity;
             color.A = 0;
             return color;
         }
@@ -60,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
         public override void Kill(int timeLeft)
         {
             for (int k = 0; k < 3; k++)
-                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, 4, projectile.oldVelocity.X * 0.5f, projectile.oldVelocity.Y * 0.5f);
+                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, 4, Projectile.oldVelocity.X * 0.5f, Projectile.oldVelocity.Y * 0.5f);
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

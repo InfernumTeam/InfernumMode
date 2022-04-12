@@ -15,11 +15,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         internal PrimitiveTrailCopy BeamDrawer;
         public int OwnerIndex;
 
-        public ref float Time => ref projectile.ai[0];
+        public ref float Time => ref Projectile.ai[0];
 
-        public ref float Lifetime => ref projectile.ai[1];
+        public ref float Lifetime => ref Projectile.ai[1];
 
-        public ref float AngularVelocity => ref projectile.localAI[0];
+        public ref float AngularVelocity => ref Projectile.localAI[0];
 
         public const float LaserLength = 4000f;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
@@ -27,41 +27,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override void SetDefaults()
         {
-            projectile.width = projectile.height = 54;
-            projectile.hostile = true;
-            projectile.ignoreWater = true;
-            projectile.tileCollide = false;
-            projectile.netImportant = true;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 9000;
-            projectile.alpha = 255;
-            projectile.Calamity().canBreakPlayerDefense = true;
-            cooldownSlot = 1;
+            Projectile.width = Projectile.height = 54;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+            Projectile.netImportant = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 9000;
+            Projectile.alpha = 255;
+            Projectile.Calamity().canBreakPlayerDefense = true;
+            CooldownSlot = 1;
         }
 
         public override void AI()
         {
             if (OwnerIndex <= 0 || !Main.npc[OwnerIndex - 1].active)
             {
-                projectile.Kill();
+                Projectile.Kill();
                 return;
             }
 
             NPC head = Main.npc[OwnerIndex - 1];
-            projectile.Center = head.Center + Vector2.UnitY * 20f;
+            Projectile.Center = head.Center + Vector2.UnitY * 20f;
 
             // Fade in.
-            projectile.alpha = Utils.Clamp(projectile.alpha - 25, 0, 255);
+            Projectile.alpha = Utils.Clamp(Projectile.alpha - 25, 0, 255);
 
-            projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / Lifetime) * 4f;
-            if (projectile.scale > 1f)
-                projectile.scale = 1f;
-            projectile.velocity = projectile.velocity.RotatedBy(Utils.InverseLerp(0f, 45f, Time, true) * AngularVelocity);
+            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Time / Lifetime) * 4f;
+            if (Projectile.scale > 1f)
+                Projectile.scale = 1f;
+            Projectile.velocity = Projectile.velocity.RotatedBy(Utils.GetLerpValue(0f, 45f, Time, true) * AngularVelocity);
             if (Time >= Lifetime)
-                projectile.Kill();
+                Projectile.Kill();
 
             // And create bright light.
-            Lighting.AddLight(projectile.Center, Color.Purple.ToVector3() * 1.4f);
+            Lighting.AddLight(Projectile.Center, Color.Purple.ToVector3() * 1.4f);
 
             Time++;
         }
@@ -69,27 +69,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            float width = projectile.width * 0.8f;
-            Vector2 start = projectile.Center;
-            Vector2 end = start + projectile.velocity * (LaserLength - 80f);
+            float width = Projectile.width * 0.8f;
+            Vector2 start = Projectile.Center;
+            Vector2 end = start + Projectile.velocity * (LaserLength - 80f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
 
         public float WidthFunction(float completionRatio)
         {
-            float squeezeInterpolant = Utils.InverseLerp(1f, 0.92f, completionRatio, true);
-            return MathHelper.SmoothStep(2f, projectile.width, squeezeInterpolant) * MathHelper.Clamp(projectile.scale, 0.04f, 1f);
+            float squeezeInterpolant = Utils.GetLerpValue(1f, 0.92f, completionRatio, true);
+            return MathHelper.SmoothStep(2f, Projectile.width, squeezeInterpolant) * MathHelper.Clamp(Projectile.scale, 0.04f, 1f);
         }
 
         public Color ColorFunction(float completionRatio)
         {
             Color color = Color.Lerp(Color.Yellow, Color.Orange, (float)Math.Pow(completionRatio, 2D));
-            return color * projectile.Opacity * 1.15f;
+            return color * Projectile.Opacity * 1.15f;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             if (BeamDrawer is null)
                 BeamDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:Fire"]);
@@ -97,18 +97,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             var oldBlendState = Main.instance.GraphicsDevice.BlendState;
             Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
             GameShaders.Misc["Infernum:Fire"].UseSaturation(1.4f);
-            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"));
+            GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
 
-            List<float> originalRotations = new List<float>();
-            List<Vector2> points = new List<Vector2>();
+            List<float> originalRotations = new();
+            List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)
             {
-                points.Add(Vector2.Lerp(projectile.Center, projectile.Center + projectile.velocity * LaserLength, i / 8f));
+                points.Add(Vector2.Lerp(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, i / 8f));
                 originalRotations.Add(MathHelper.PiOver2);
             }
 
             if (Time >= 2f)
-                BeamDrawer.Draw(points, projectile.Size * 0.5f - Main.screenPosition, 47);
+                BeamDrawer.Draw(points, Projectile.Size * 0.5f - Main.screenPosition, 47);
             Main.instance.GraphicsDevice.BlendState = oldBlendState;
             return false;
         }

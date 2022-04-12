@@ -1,4 +1,6 @@
+using CalamityMod;
 using CalamityMod.NPCs;
+using CalamityMod.Projectiles;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -9,71 +11,51 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Core;
 using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.ILEditingStuff
 {
     public class OverrideSystemHooks : IHookEdit
     {
-        private static readonly object hookPreAI = typeof(NPCLoader).GetField("HookPreAI", Utilities.UniversalBindingFlags).GetValue(null);
-        private static readonly FieldInfo hookListArrayField = typeof(NPCLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags);
-
         internal static void NPCPreAIChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.EmitDelegate(new Func<NPC, bool>(npc =>
             {
-                GlobalNPC[] arr = hookListArrayField.GetValue(hookPreAI) as GlobalNPC[];
-                for (int i = 0; i < arr.Length; i++)
+                var globalNPCs = (Instanced<GlobalNPC>[])typeof(NPC).GetField("globalNPCs", Utilities.UniversalBindingFlags).GetValue(npc);
+                HookList<GlobalNPC> list = (HookList<GlobalNPC>)typeof(NPCLoader).GetField("HookPreAI", Utilities.UniversalBindingFlags).GetValue(null);
+
+                bool result = true;
+                foreach (GlobalNPC g in list.Enumerate(globalNPCs))
                 {
-                    GlobalNPC globalNPC = arr[i];
-                    if (globalNPC != null &&
-                        globalNPC is CalamityGlobalNPC &&
-                        OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
+                    if (g != null && g is CalamityGlobalNPC && OverridingListManager.InfernumNPCPreAIOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
                     {
                         continue;
                     }
-                    if (!globalNPC.Instance(npc).PreAI(npc))
-                    {
-                        return false;
-                    }
+                    result &= g.PreAI(npc);
                 }
-                return npc.modNPC == null || npc.modNPC.PreAI();
+                if (result && npc.ModNPC != null)
+                {
+                    return npc.ModNPC.PreAI();
+                }
+                return result;
             }));
             cursor.Emit(OpCodes.Ret);
         }
 
         internal static void NPCSetDefaultsChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
+            cursor.GotoFinalRet();
+            cursor.Remove();
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate(new Action<NPC, bool>((npc, createModNPC) =>
             {
-                GlobalNPC[] instancedGlobals = typeof(NPCLoader).GetField("InstancedGlobals", Utilities.UniversalBindingFlags).GetValue(null) as GlobalNPC[];
-                if (npc.type >= 580)
-                {
-                    if (createModNPC)
-                    {
-                        typeof(NPC).GetProperty("modNPC", Utilities.UniversalBindingFlags).SetValue(npc, NPCLoader.GetNPC(npc.type).NewInstance(npc));
-                    }
-                    else
-                    {
-                        Array.Resize(ref npc.buffImmune, BuffLoader.BuffCount);
-                    }
-                }
-                typeof(NPC).GetField("globalNPCs", Utilities.UniversalBindingFlags).SetValue(npc, (from g in instancedGlobals.ToList() select g.NewInstance(npc)).ToArray());
-                npc.modNPC?.SetDefaults();
-                object instance = typeof(NPCLoader).GetField("HookSetDefaults", Utilities.UniversalBindingFlags).GetValue(null);
-                GlobalNPC[] arr = hookListArrayField.GetValue(instance) as GlobalNPC[];
-                for (int i = 0; i < arr.Length; i++)
-                {
-                    GlobalNPC globalNPC = arr[i];
-                    globalNPC.Instance(npc).SetDefaults(npc);
-                }
-                int oldLifeMax = npc.lifeMax;
                 if (OverridingListManager.InfernumSetDefaultsOverrideList.ContainsKey(npc.type))
                 {
                     npc.GetGlobalNPC<GlobalNPCDrawEffects>().SetDefaults(npc);
@@ -84,41 +66,43 @@ namespace InfernumMode.ILEditingStuff
 
         internal static void NPCPreDrawChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.Emit(OpCodes.Ldarg_2);
-            cursor.EmitDelegate(new Func<NPC, SpriteBatch, Color, bool>((npc, spriteBatch, drawColor) =>
+            cursor.Emit(OpCodes.Ldarg_3);
+            cursor.EmitDelegate(new Func<NPC, SpriteBatch, Vector2, Color, bool>((npc, spriteBatch, screenPosition, drawColor) =>
             {
-                object instance = typeof(NPCLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
-                GlobalNPC[] arr = hookListArrayField.GetValue(instance) as GlobalNPC[];
-
+                var globalNPCs = (Instanced<GlobalNPC>[])typeof(NPC).GetField("globalNPCs", Utilities.UniversalBindingFlags).GetValue(npc);
+                HookList<GlobalNPC> list = (HookList<GlobalNPC>)typeof(NPCLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
                 if (OverridingListManager.InfernumPreDrawOverrideList.ContainsKey(npc.type) && InfernumMode.CanUseCustomAIs)
-                    return npc.GetGlobalNPC<GlobalNPCDrawEffects>().PreDraw(npc, spriteBatch, drawColor);
+                    return npc.GetGlobalNPC<GlobalNPCDrawEffects>().PreDraw(npc, spriteBatch, screenPosition, drawColor);
 
-                for (int i = 0; i < arr.Length; i++)
+                foreach (GlobalNPC g in list.Enumerate(globalNPCs))
                 {
-                    GlobalNPC globalNPC = arr[i];
-                    if (!globalNPC.Instance(npc).PreDraw(npc, spriteBatch, drawColor))
+                    if (!g.Instance(npc).PreDraw(npc, spriteBatch, screenPosition, drawColor))
                         return false;
                 }
-                return npc.modNPC == null || npc.modNPC.PreDraw(spriteBatch, drawColor);
+                return npc.ModNPC == null || npc.ModNPC.PreDraw(spriteBatch, screenPosition, drawColor);
             }));
             cursor.Emit(OpCodes.Ret);
         }
 
         internal static void NPCFindFrameChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
 
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
             cursor.EmitDelegate(new Action<NPC, int>((npc, frameHeight) =>
             {
+                var globalNPCs = (Instanced<GlobalNPC>[])typeof(NPC).GetField("globalNPCs", Utilities.UniversalBindingFlags).GetValue(npc);
+                HookList<GlobalNPC> list = (HookList<GlobalNPC>)typeof(NPCLoader).GetField("HookFindFrame", Utilities.UniversalBindingFlags).GetValue(null);
+
                 int type = npc.type;
-                if (npc.modNPC != null && npc.modNPC.animationType > 0)
+                if (npc.ModNPC != null && npc.ModNPC.AnimationType > 0)
                 {
-                    npc.type = npc.modNPC.animationType;
+                    npc.type = npc.ModNPC.AnimationType;
                 }
                 if (OverridingListManager.InfernumFrameOverrideList.ContainsKey(type) && InfernumMode.CanUseCustomAIs)
                 {
@@ -127,33 +111,29 @@ namespace InfernumMode.ILEditingStuff
                 }
                 npc.VanillaFindFrame(frameHeight);
                 npc.type = type;
-                npc.modNPC?.FindFrame(frameHeight);
-                object instance = typeof(NPCLoader).GetField("HookFindFrame", Utilities.UniversalBindingFlags).GetValue(null);
-                GlobalNPC[] arr = hookListArrayField.GetValue(instance) as GlobalNPC[];
-                for (int i = 0; i < arr.Length; i++)
-                {
-                    GlobalNPC globalNPC = arr[i];
-                    globalNPC.Instance(npc).FindFrame(npc, frameHeight);
-                }
+                npc.ModNPC?.FindFrame(frameHeight);
+                foreach (GlobalNPC g in list.Enumerate(globalNPCs))
+                    g.Instance(npc).FindFrame(npc, frameHeight);
             }));
             cursor.Emit(OpCodes.Ret);
         }
 
         internal static void NPCCheckDeadChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
 
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.EmitDelegate(new Func<NPC, bool>(npc =>
             {
+                var globalNPCs = (Instanced<GlobalNPC>[])typeof(NPC).GetField("globalNPCs", Utilities.UniversalBindingFlags).GetValue(npc);
+                HookList<GlobalNPC> list = (HookList<GlobalNPC>)typeof(NPCLoader).GetField("HookCheckDead", Utilities.UniversalBindingFlags).GetValue(null);
+
                 bool result = true;
-                if (npc.modNPC != null)
+                if (npc.ModNPC != null)
                 {
-                    result = npc.modNPC.CheckDead();
+                    result = npc.ModNPC.CheckDead();
                 }
-                object instance = typeof(NPCLoader).GetField("HookCheckDead", Utilities.UniversalBindingFlags).GetValue(null);
-                GlobalNPC[] arr = hookListArrayField.GetValue(instance) as GlobalNPC[];
-                foreach (GlobalNPC g in arr)
+                foreach (GlobalNPC g in list.Enumerate(globalNPCs))
                 {
                     if (g is GlobalNPCOverrides)
                         return g.Instance(npc).CheckDead(npc);
@@ -166,57 +146,54 @@ namespace InfernumMode.ILEditingStuff
 
         internal static void ProjectilePreAIChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.EmitDelegate(new Func<Projectile, bool>(projectile =>
             {
-                object instance = typeof(ProjectileLoader).GetField("HookPreAI", Utilities.UniversalBindingFlags).GetValue(null);
-                GlobalProjectile[] arr = typeof(ProjectileLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags).GetValue(instance) as GlobalProjectile[];
-                for (int i = 0; i < arr.Length; i++)
+                var globalProjectiles = (Instanced<GlobalProjectile>[])typeof(Projectile).GetField("globalProjectiles", Utilities.UniversalBindingFlags).GetValue(projectile);
+                HookList<GlobalProjectile> list = (HookList<GlobalProjectile>)typeof(ProjectileLoader).GetField("HookPreAI", Utilities.UniversalBindingFlags).GetValue(null);
+                
+                bool result = true;
+                foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
                 {
-                    GlobalProjectile globalNPC = arr[i];
-                    if (globalNPC != null &&
-                        globalNPC is CalamityMod.Projectiles.CalamityGlobalProjectile &&
-                        OverridingListManager.InfernumProjectilePreAIOverrideList.ContainsKey(projectile.type))
+                    if (g != null && g is CalamityGlobalProjectile && OverridingListManager.InfernumProjectilePreAIOverrideList.ContainsKey(projectile.type))
                     {
                         continue;
                     }
-                    if (!globalNPC.Instance(projectile).PreAI(projectile))
-                    {
-                        return false;
-                    }
+                    result &= g.PreAI(projectile);
                 }
-                return projectile.modProjectile == null || projectile.modProjectile.PreAI();
+                if (result && projectile.ModProjectile != null)
+                    return projectile.ModProjectile.PreAI();
+                return result;
             }));
             cursor.Emit(OpCodes.Ret);
         }
 
+        internal delegate bool PreDrawDelegate(Projectile projectile, ref Color lightColor);
+
         internal static void ProjectilePreDrawChange(ILContext context)
         {
-            ILCursor cursor = new ILCursor(context);
+            ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
-            cursor.Emit(OpCodes.Ldarg_2);
-            cursor.EmitDelegate(new Func<Projectile, SpriteBatch, Color, bool>((projectile, spriteBatch, lightColor) =>
+            cursor.EmitDelegate(new PreDrawDelegate((Projectile projectile, ref Color lightColor) =>
             {
-                object instance = typeof(ProjectileLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
-                GlobalProjectile[] arr = typeof(ProjectileLoader).GetNestedType("HookList", Utilities.UniversalBindingFlags).GetField("arr", Utilities.UniversalBindingFlags).GetValue(instance) as GlobalProjectile[];
-                if (OverridingListManager.InfernumProjectilePreDrawOverrideList.ContainsKey(projectile.type))
-                    return (bool)OverridingListManager.InfernumProjectilePreDrawOverrideList[projectile.type].DynamicInvoke(projectile, spriteBatch, lightColor);
-                for (int i = 0; i < arr.Length; i++)
+                var globalProjectiles = (Instanced<GlobalProjectile>[])typeof(Projectile).GetField("globalProjectiles", Utilities.UniversalBindingFlags).GetValue(projectile);
+                HookList<GlobalProjectile> list = (HookList<GlobalProjectile>)typeof(ProjectileLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
+
+                bool result = true;
+                foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
                 {
-                    GlobalProjectile globalNPC = arr[i];
-                    if (globalNPC != null &&
-                        globalNPC is CalamityMod.Projectiles.CalamityGlobalProjectile)
-                    {
+                    if (g is not null and CalamityGlobalProjectile)
                         continue;
-                    }
-                    if (!globalNPC.Instance(projectile).PreDraw(projectile, spriteBatch, lightColor))
-                    {
-                        return false;
-                    }
+
+                    result &= g.PreDraw(projectile, ref lightColor);
                 }
-                return projectile.modProjectile == null || projectile.modProjectile.PreDraw(spriteBatch, lightColor);
+                if (result && projectile.ModProjectile != null)
+                {
+                    return projectile.ModProjectile.PreDraw(ref lightColor);
+                }
+                return result;
             }));
             cursor.Emit(OpCodes.Ret);
         }

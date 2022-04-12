@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
@@ -12,61 +13,61 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override void SetDefaults()
         {
-            projectile.width = 40;
-            projectile.height = 40;
-            projectile.ignoreWater = true;
-            projectile.hostile = true;
-            projectile.tileCollide = false;
-            projectile.penetrate = -1;
-            projectile.timeLeft = 300;
+            Projectile.width = 40;
+            Projectile.height = 40;
+            Projectile.ignoreWater = true;
+            Projectile.hostile = true;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 300;
         }
 
         public override bool PreAI()
         {
-            if (!Collision.SolidCollision(projectile.position, projectile.width, projectile.height))
-                Lighting.AddLight(projectile.Center, Vector3.One * projectile.Opacity);
-            if (projectile.Infernum().ExtraAI[0] < 60f)
+            if (!Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
+                Lighting.AddLight(Projectile.Center, Vector3.One * Projectile.Opacity);
+            if (Projectile.Infernum().ExtraAI[0] < 60f)
             {
-                if (Main.player.IndexInRange((int)projectile.Infernum().ExtraAI[2]))
+                if (Main.player.IndexInRange((int)Projectile.Infernum().ExtraAI[2]))
                 {
-                    Player target = Main.player[(int)projectile.Infernum().ExtraAI[2]];
-                    Vector2 shootDirection = projectile.SafeDirectionTo(target.Center + target.velocity * 4f);
-                    float rotation = -(projectile.rotation + MathHelper.Pi - (shootDirection.ToRotation() + MathHelper.Pi));
-                    projectile.rotation = MathHelper.WrapAngle(projectile.rotation + MathHelper.Clamp(rotation, -MathHelper.ToRadians(10), MathHelper.ToRadians(10)));
+                    Player target = Main.player[(int)Projectile.Infernum().ExtraAI[2]];
+                    Vector2 shootDirection = Projectile.SafeDirectionTo(target.Center + target.velocity * 4f);
+                    float rotation = -(Projectile.rotation + MathHelper.Pi - (shootDirection.ToRotation() + MathHelper.Pi));
+                    Projectile.rotation = MathHelper.WrapAngle(Projectile.rotation + MathHelper.Clamp(rotation, -MathHelper.ToRadians(10), MathHelper.ToRadians(10)));
 
                     // Create a line telegraph.
-                    if (Main.netMode != NetmodeID.MultiplayerClient && projectile.localAI[0] == 0f)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.localAI[0] == 0f)
                     {
-                        Utilities.NewProjectileBetter(projectile.Center, shootDirection, ModContent.ProjectileType<FistBulletTelegraph>(), 0, 0f);
-                        projectile.localAI[0] = 1f;
+                        Utilities.NewProjectileBetter(Projectile.Center, shootDirection, ModContent.ProjectileType<FistBulletTelegraph>(), 0, 0f);
+                        Projectile.localAI[0] = 1f;
                     }
                 }
             }
-            else if (projectile.Infernum().ExtraAI[0] == 60f)
+            else if (Projectile.Infernum().ExtraAI[0] == 60f)
             {
-                Main.PlaySound(SoundID.DD2_WyvernDiveDown, projectile.Center);
-                if (Main.player.IndexInRange((int)projectile.Infernum().ExtraAI[2]))
+                SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, Projectile.Center);
+                if (Main.player.IndexInRange((int)Projectile.Infernum().ExtraAI[2]))
                 {
-                    Vector2 target = Main.player[(int)projectile.Infernum().ExtraAI[2]].Center;
-                    projectile.rotation = projectile.SafeDirectionTo(target).ToRotation();
+                    Vector2 target = Main.player[(int)Projectile.Infernum().ExtraAI[2]].Center;
+                    Projectile.rotation = Projectile.SafeDirectionTo(target).ToRotation();
 
-                    projectile.velocity = projectile.rotation.ToRotationVector2() * (projectile.Distance(target) / 40f);
+                    Projectile.velocity = Projectile.rotation.ToRotationVector2() * (Projectile.Distance(target) / 40f);
                 }
             }
 
-            projectile.Infernum().ExtraAI[0]++;
-            projectile.direction = MathHelper.WrapAngle(projectile.rotation + MathHelper.PiOver2) >= 0 ? 1 : -1;
+            Projectile.Infernum().ExtraAI[0]++;
+            Projectile.direction = MathHelper.WrapAngle(Projectile.rotation + MathHelper.PiOver2) >= 0 ? 1 : -1;
             return false;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.projectileTexture[projectile.type];
-            Rectangle rectangle = new Rectangle(0, 0, texture.Width, texture.Height);
+            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Rectangle rectangle = new(0, 0, texture.Width, texture.Height);
             Vector2 origin = rectangle.Size() * .5f;
-            Color drawColor = projectile.GetAlpha(lightColor);
+            Color drawColor = Projectile.GetAlpha(lightColor);
 
-            Main.spriteBatch.Draw(texture, projectile.Center - Main.screenPosition, rectangle, drawColor, projectile.rotation, origin, projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, rectangle, drawColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
             return false;
         }
     }

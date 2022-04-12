@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 
@@ -25,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
         public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
         {
-            float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * 0.9f;
+            float trailOpacity = Utils.GetLerpValue(0.8f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true) * 0.9f;
             Color startingColor = Color.Lerp(Color.White, Color.LightGreen, 0.25f);
             Color middleColor = Color.Lerp(Color.Lime, Color.White, 0.35f);
             Color endColor = Color.Lerp(Color.ForestGreen, Color.White, 0.47f);
@@ -46,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 Vector2 currentChainPosition = npc.Center;
                 bool chainIsTooLong = Vector2.Distance(currentChainPosition, Main.npc[i].Center) > 2000f;
 
-                Texture2D chainTexture = Main.chain12Texture;
+                Texture2D chainTexture = TextureAssets.Chain12.Value;
                 while (!chainIsTooLong)
                 {
                     float distanceFromDestination = Vector2.Distance(currentChainPosition, Main.npc[i].Center);
@@ -55,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     currentChainPosition += (Main.npc[i].Center - currentChainPosition).SafeNormalize(Vector2.Zero) * chainTexture.Height;
                     Color chainColor = npc.GetAlpha(lightColor);
-                    spriteBatch.Draw(chainTexture, currentChainPosition - Main.screenPosition, null, chainColor, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(chainTexture, currentChainPosition - Main.screenPosition, null, chainColor, rotation, chainTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
                 }
             }
 
@@ -67,7 +68,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             }
             else if (npc.Infernum().ExtraAI[6] > 0f)
             {
-                GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage("Images/Misc/Perlin");
+                GameShaders.Misc["Infernum:TwinsFlameTrail"].UseImage1("Images/Misc/Perlin");
 
                 Vector2 drawStart = npc.Center;
                 Vector2 drawEnd = drawStart - (npc.Infernum().ExtraAI[7] + MathHelper.PiOver2).ToRotationVector2() * npc.Infernum().ExtraAI[6] / 15f * 560f;
@@ -83,11 +84,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 npc.Infernum().OptionalPrimitiveDrawer.Draw(drawPositions, -Main.screenPosition, 70);
             }
 
-            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
             void drawInstance(Vector2 drawPosition, Color drawColor, float rotation)
             {
                 Vector2 origin = texture.Size() * 0.5f / new Vector2(1f, Main.npcFrameCount[npc.type]);
-                spriteBatch.Draw(texture, drawPosition - Main.screenPosition, npc.frame, npc.GetAlpha(drawColor), rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(texture, drawPosition - Main.screenPosition, npc.frame, npc.GetAlpha(drawColor), rotation, origin, npc.scale, SpriteEffects.None, 0f);
             }
 
             int totalInstancesToDraw = 1;
@@ -96,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             if (!BossRushEvent.BossRushActive && (TwinsAttackSynchronizer.CurrentAttackState == TwinsAttackSynchronizer.TwinsAttackState.RedirectingLasersAndFlameCharge || overdriveTimer > 0f))
             {
                 color = Color.YellowGreen;
-                float fadeCompletion = Utils.InverseLerp(0f, 60f, TwinsAttackSynchronizer.UniversalAttackTimer, true);
+                float fadeCompletion = Utils.GetLerpValue(0f, 60f, TwinsAttackSynchronizer.UniversalAttackTimer, true);
                 if (overdriveTimer > 0f)
                     fadeCompletion = overdriveTimer / TwinsShield.HealTime;
 
@@ -118,7 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             for (int i = 0; i < totalInstancesToDraw; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / totalInstancesToDraw).ToRotationVector2() * 3f;
-                drawOffset *= MathHelper.Lerp(0.85f, 1.2f, (float)Math.Sin(MathHelper.TwoPi * i / totalInstancesToDraw + Main.GlobalTime * 3f) * 0.5f + 0.5f);
+                drawOffset *= MathHelper.Lerp(0.85f, 1.2f, (float)Math.Sin(MathHelper.TwoPi * i / totalInstancesToDraw + Main.GlobalTimeWrappedHourly * 3f) * 0.5f + 0.5f);
                 drawInstance(npc.Center + drawOffset, color, npc.rotation);
             }
             return false;

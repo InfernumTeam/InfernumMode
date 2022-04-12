@@ -7,6 +7,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using CalamityMod.NPCs.SlimeGod;
 
 namespace InfernumMode
 {
@@ -63,8 +64,11 @@ namespace InfernumMode
             {
                 for (int doom = 0; doom < 200; doom++)
                 {
-                    if (Main.npc[doom].active && (Main.npc[doom].boss || Main.npc[doom].type == NPCID.EaterofWorldsHead || Main.npc[doom].type == NPCID.EaterofWorldsTail || Main.npc[doom].type == Mod.Find<ModNPC>("SlimeGodRun") .Type||
-                        Main.npc[doom].type == Mod.Find<ModNPC>("SlimeGodRunSplit") .Type|| Main.npc[doom].type == Mod.Find<ModNPC>("SlimeGod") .Type|| Main.npc[doom].type == Mod.Find<ModNPC>("SlimeGodSplit").Type))
+                    if (Main.npc[doom].active && (Main.npc[doom].boss || Main.npc[doom].type == NPCID.EaterofWorldsHead || Main.npc[doom].type == NPCID.EaterofWorldsTail || 
+                        Main.npc[doom].type == ModContent.NPCType<SlimeGodRun>() ||
+                        Main.npc[doom].type == ModContent.NPCType<SlimeGodRunSplit>() || 
+                        Main.npc[doom].type == ModContent.NPCType<SlimeGod>() || 
+                        Main.npc[doom].type == ModContent.NPCType<SlimeGodSplit>()))
                     {
                         Owner.KillMe(PlayerDeathReason.ByOther(12), 10000.0, 0, false);
 

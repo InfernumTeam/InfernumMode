@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
             Vector2 aimDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-            Utils.DrawLine(spriteBatch, Projectile.Center, Projectile.Center + aimDirection * FireBeam.LaserLength, Color.Orange, Color.OrangeRed, Projectile.scale);
+            Utils.DrawLine(Main.spriteBatch, Projectile.Center, Projectile.Center + aimDirection * FireBeam.LaserLength, Color.Orange, Color.OrangeRed, Projectile.scale);
             Main.spriteBatch.ResetBlendState();
             return false;
         }

@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatBuffs;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Buffs
@@ -14,8 +15,8 @@ namespace InfernumMode.Buffs
             Main.debuff[Type] = true;
             Main.buffNoSave[Type] = true;
             Main.buffNoTimeDisplay[Type] = true;
-            canBeCleared = false;
-            longerExpertDebuff = false;
+            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
+            BuffID.Sets.LongerExpertDebuff[Type] = false;
         }
 
         public override void Update(Player player, ref int buffIndex)

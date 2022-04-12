@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             Vector2 start = Projectile.Center - Vector2.UnitY.RotatedBy(Projectile.rotation) * 4350f;
             Vector2 end = Projectile.Center + Vector2.UnitY.RotatedBy(Projectile.rotation) * 4350f;
-            Utilities.DrawLineBetter(spriteBatch, start, end, Color.Lime * Projectile.scale, Projectile.scale * 3f);
+            Utilities.DrawLineBetter(Main.spriteBatch, start, end, Color.Lime * Projectile.scale, Projectile.scale * 3f);
             return false;
         }
     }

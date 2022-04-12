@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             NPC.width = NPC.height = 42;
             NPC.defense = 15;
             NPC.lifeMax = 1000;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             }
         }
 
-        public override bool PreNPCLoot() => false;
+        public override bool SpecialOnKill() => true;
 
         public override bool CheckDead()
         {

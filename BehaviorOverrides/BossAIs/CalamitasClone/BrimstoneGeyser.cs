@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 Color telegraphColor = Color.Lerp(Color.Purple, Color.DarkRed, 0.375f) * telegraphFade;
                 Vector2 start = Projectile.Center - Vector2.UnitY * 2000f;
                 Vector2 end = Projectile.Center + Vector2.UnitY * 2000f;
-                Utilities.DrawLineBetter(spriteBatch, start, end, telegraphColor, telegraphWidth);
+                Utilities.DrawLineBetter(Main.spriteBatch, start, end, telegraphColor, telegraphWidth);
             }
 
             if (LavaDrawer is null)

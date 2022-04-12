@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
                     idlePlaySoundId = SlotId.Invalid.ToFloat();
                 }
 
-                if (fadeInTimer > 150f && Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId)) == null)
+                if (fadeInTimer > 150f && SoundEngine.GetActiveSound(SlotId.FromFloat(idlePlaySoundId)) == null)
                     idlePlaySoundId = SoundEngine.PlayTrackedSound(SoundID.DD2_EtherianPortalIdleLoop, npc.Center).ToFloat();
 
                 if (!DD2Event.EnemySpawningIsOnHold)
@@ -84,10 +84,10 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.MiscAIs
                 npc.scale = MathHelper.Lerp(1f, 0.05f, Utils.GetLerpValue(500f, 600f, fadeOutTimer, true));
 
                 // Reset the idle play sound if it didn't get activated before for some reason.
-                if (Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId)) == null)
+                if (SoundEngine.GetActiveSound(SlotId.FromFloat(idlePlaySoundId)) == null)
                     idlePlaySoundId = SoundEngine.PlayTrackedSound(SoundID.DD2_EtherianPortalIdleLoop, npc.Center).ToFloat();
 
-                ActiveSound activeSound = Main.GetActiveSound(SlotId.FromFloat(idlePlaySoundId));
+                ActiveSound activeSound = SoundEngine.GetActiveSound(SlotId.FromFloat(idlePlaySoundId));
                 if (activeSound != null)
                     activeSound.Volume = npc.scale;
 

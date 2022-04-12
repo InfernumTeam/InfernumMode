@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             NPC.height = 28;
             NPC.defense = 5;
             NPC.lifeMax = TotalLife;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.value = 0;
             NPC.behindTiles = true;
@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 for (int k = 0; k < 10; k++)
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
 
-                Gore.NewGore(NPC.position, NPC.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/AquaticScourgeGores/AquaticSeekerHead"), 1f);
+                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AquaticSeekerHead", InfernumMode.CalamityMod), 1f);
             }
         }
 

@@ -20,7 +20,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             NPC.noGravity = true;
             NPC.netAlways = true;
             NPC.dontTakeDamage = true;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.scale = 1f;
             NPC.knockBackResist = 0f;
             NPC.noTileCollide = true;

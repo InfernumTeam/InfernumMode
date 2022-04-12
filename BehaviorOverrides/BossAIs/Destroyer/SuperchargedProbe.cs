@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             NPC.width = NPC.height = 34;
             NPC.defense = 15;
             NPC.lifeMax = 1113;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -168,7 +168,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             }
         }
 
-        public override bool PreNPCLoot() => false;
+        public override bool SpecialOnKill() => true;
 
         public override bool CheckDead()
         {

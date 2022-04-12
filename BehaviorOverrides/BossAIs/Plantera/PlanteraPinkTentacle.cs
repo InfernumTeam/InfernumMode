@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 {
@@ -29,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             NPC.height = 28;
             NPC.defense = 5;
             NPC.lifeMax = 500;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.dontTakeDamage = true;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
@@ -103,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             player.AddBuff(BuffID.Venom, 120, true);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (!Main.npc.IndexInRange(NPC.plantBoss) || Main.npc[NPC.plantBoss].ai[0] != (int)PlanteraBehaviorOverride.PlanteraAttackState.TentacleSnap)
                 return true;
@@ -123,8 +124,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 }
                 drawPosition += plantera.SafeDirectionTo(NPC.Center, Vector2.Zero) * moveDistance;
                 Color color = Lighting.GetColor((int)(drawPosition.X / 16f), (int)(drawPosition.Y / 16f));
-                Rectangle frame = new(0, 0, Main.chain27Texture.Width, moveDistance);
-                Main.spriteBatch.Draw(Main.chain27Texture, drawPosition - Main.screenPosition, frame, color, rotation, Main.chain27Texture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Rectangle frame = new(0, 0, TextureAssets.Chain27.Value.Width, moveDistance);
+                Main.spriteBatch.Draw(TextureAssets.Chain27.Value, drawPosition - screenPos, frame, color, rotation, TextureAssets.Chain27.Value.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
             return true;
         }

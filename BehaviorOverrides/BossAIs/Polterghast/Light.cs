@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
@@ -25,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override void AI() => Time++;
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color _)
+        public override bool PreDraw(ref Color _)
         {
             Vector2 origin = new(66f, 86f);
             Vector2 drawPosition = new(Main.screenWidth * 0.5f, Main.screenHeight + 10f);
@@ -57,13 +58,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             }
             lightColor *= 0.42f;
             coloredLight *= 0.42f;
-            Texture2D texture7 = Main.extraTexture[60];
+            Texture2D texture7 = TextureAssets.Extra[60].Value;
 
             scale.X *= Main.screenWidth / texture7.Width;
             Main.spriteBatch.Draw(texture7, drawPosition, null, lightColor, 0f, origin, scale * scaleFactor1, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(texture7, drawPosition, null, coloredLight, 0f, origin, scale * scaleFactor2, SpriteEffects.None, 0f);
 
-            Texture2D lightTexture = Main.extraTexture[59];
+            Texture2D lightTexture = TextureAssets.Extra[59].Value;
             Main.spriteBatch.Draw(lightTexture, drawPosition, null, lightColor, 0f, origin, scale * scaleFactor1 * new Vector2(1f, 0.3f), SpriteEffects.None, 0f);
 
             return false;

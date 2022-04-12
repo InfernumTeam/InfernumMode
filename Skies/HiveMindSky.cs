@@ -1,6 +1,7 @@
 using CalamityMod.NPCs.HiveMind;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
@@ -8,6 +9,22 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
+    public class HiveMindSkyScene : ModSceneEffect
+    {
+        public override bool IsSceneEffectActive(Player player)
+        {
+            int hiveMindID = InfernumMode.CalamityMod.Find<ModNPC>("HiveMind").Type;
+            int hiveMind = NPC.FindFirstNPC(hiveMindID);
+            NPC hiveMindNPC = hiveMind >= 0 ? Main.npc[hiveMind] : null;
+            return hiveMindNPC != null && (hiveMindNPC.Infernum().ExtraAI[10] == 1f || hiveMindNPC.life < hiveMindNPC.lifeMax * 0.2f);
+        }
+
+        public override void SpecialVisuals(Player player)
+        {
+            player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", IsSceneEffectActive(player));
+        }
+    }
+
     public class HiveMindSky : CustomSky
     {
         private bool isActive = false;
@@ -24,6 +41,9 @@ namespace InfernumMode.Skies
             {
                 intensity -= 0.01f;
             }
+
+            if (NPC.FindFirstNPC(ModContent.NPCType<HiveMind>()) == -1)
+                Deactivate(Array.Empty<object>());
         }
 
         private float GetIntensity()

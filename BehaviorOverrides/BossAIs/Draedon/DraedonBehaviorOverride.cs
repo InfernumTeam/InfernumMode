@@ -256,9 +256,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
 
             if (!ExoMechIsPresent && npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
-                npc.ModNPC.music = InfernumMode.CalamityMod.GetSoundSlot(SoundType.Music, "Sounds/Music/DraedonAmbience");
+                npc.ModNPC.Music = SoundLoader.GetSoundSlot(InfernumMode.CalamityMod, "Sounds/Music/DraedonAmbience");
             if (ExoMechIsPresent)
-                npc.ModNPC.music = InfernumMode.Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/ExoMechBosses");
+                npc.ModNPC.Music = SoundLoader.GetSoundSlot(InfernumMode.Instance, "Sounds/Music/ExoMechBosses");
 
             talkTimer++;
             return false;

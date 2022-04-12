@@ -92,7 +92,7 @@ namespace InfernumMode
         public override void RightClick(Item item, Player player)
         {
             if (item.type == ModContent.ItemType<StarterBag>())
-                DropHelper.DropItemCondition(player, ModContent.ItemType<Death2>(), Main.expertMode);
+                DropHelper.DropItemCondition(new InfernumSource(), player, ModContent.ItemType<Death2>(), Main.expertMode);
         }
 
         public override void OpenVanillaBag(string context, Player player, int arg)
@@ -104,16 +104,16 @@ namespace InfernumMode
             if (arg == ItemID.EaterOfWorldsBossBag)
             {
                 int itemCount = Main.rand.Next(30, 60);
-                player.QuickSpawnItem(ItemID.DemoniteOre, itemCount);
+                player.QuickSpawnItem(new InfernumSource(), ItemID.DemoniteOre, itemCount);
                 itemCount = Main.rand.Next(10, 20);
-                player.QuickSpawnItem(ItemID.ShadowScale, itemCount);
+                player.QuickSpawnItem(new InfernumSource(), ItemID.ShadowScale, itemCount);
             }
             if (arg == ItemID.BrainOfCthulhuBossBag)
             {
                 int itemCount = Main.rand.Next(30, 60);
-                player.QuickSpawnItem(ItemID.CrimtaneOre, itemCount);
+                player.QuickSpawnItem(new InfernumSource(), ItemID.CrimtaneOre, itemCount);
                 itemCount = Main.rand.Next(10, 20);
-                player.QuickSpawnItem(ItemID.TissueSample, itemCount);
+                player.QuickSpawnItem(new InfernumSource(), ItemID.TissueSample, itemCount);
             }
         }
 

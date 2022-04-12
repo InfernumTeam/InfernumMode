@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
         public override bool? CanDamage() => Timer > 60f && Projectile.timeLeft > 60f ? null : false;
 
-        public override bool PreDrawExtras(SpriteBatch spriteBatch)
+		public override bool PreDrawExtras()
         {
             Main.spriteBatch.SetBlendState(BlendState.Additive);
 

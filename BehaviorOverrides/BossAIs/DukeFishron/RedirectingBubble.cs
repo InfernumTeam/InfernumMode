@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public override void SetDefaults()
         {
             NPC.npcSlots = 1f;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.damage = 70;
             NPC.width = NPC.height = 36;
             NPC.lifeMax = 420;
@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
         {
-            CooldownSlot = 1;
+            cooldownSlot = 1;
             return true;
         }
     }

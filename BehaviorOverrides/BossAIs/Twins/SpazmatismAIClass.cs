@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 Vector2 currentChainPosition = npc.Center;
                 bool chainIsTooLong = Vector2.Distance(currentChainPosition, Main.npc[i].Center) > 2000f;
 
-                Texture2D chainTexture = TextureAssets.Chain12;
+                Texture2D chainTexture = TextureAssets.Chain12.Value;
                 while (!chainIsTooLong)
                 {
                     float distanceFromDestination = Vector2.Distance(currentChainPosition, Main.npc[i].Center);

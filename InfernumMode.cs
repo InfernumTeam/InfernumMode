@@ -145,9 +145,9 @@ namespace InfernumMode
                 GeneralParticleHandler.LoadModParticleInstances(this);
         }
 
-        internal static IDictionary<int, int> SoundLoaderMusicToItem => (IDictionary<int, int>)typeof(SoundLoader).GetField("musicToItem", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-        internal static IDictionary<int, int> SoundLoaderItemToMusic => (IDictionary<int, int>)typeof(SoundLoader).GetField("itemToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-        internal static IDictionary<int, IDictionary<int, int>> SoundLoaderTileToMusic => (IDictionary<int, IDictionary<int, int>>)typeof(SoundLoader).GetField("tileToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+        internal static IDictionary<int, int> SoundLoaderMusicToItem => (Dictionary<int, int>)typeof(MusicLoader).GetField("musicToItem", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+        internal static IDictionary<int, int> SoundLoaderItemToMusic => (Dictionary<int, int>)typeof(MusicLoader).GetField("itemToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+        internal static Dictionary<int, Dictionary<int, int>> SoundLoaderTileToMusic => (Dictionary<int, Dictionary<int, int>>)typeof(MusicLoader).GetField("tileToMusic", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
 
         public static void OverrideMusicBox(int itemType, int musicSlot, int tileType, int tileFrameY)
         {
@@ -157,62 +157,6 @@ namespace InfernumMode
                 SoundLoaderTileToMusic[tileType] = new Dictionary<int, int>();
 
             SoundLoaderTileToMusic[tileType][tileFrameY] = musicSlot;
-        }
-
-        public override void UpdateMusic(ref int music, ref MusicPriority priority)
-        {
-            if (NPC.AnyNPCs(NPCID.EyeofCthulhu))
-            {
-                music = MusicLoader.GetMusicSlot(this, "Sounds/Music/EyeOfCthulhu");
-                priority = MusicPriority.BossLow;
-            }
-
-            if (NPC.AnyNPCs(NPCID.SkeletronHead))
-            {
-                music = MusicLoader.GetMusicSlot(this, "Sounds/Music/Boss3");
-                priority = MusicPriority.BossLow;
-            }
-
-            if (NPC.AnyNPCs(NPCID.SkeletronPrime) || NPC.AnyNPCs(NPCID.Retinazer) || NPC.AnyNPCs(NPCID.Spazmatism) || NPC.AnyNPCs(NPCID.TheDestroyer))
-            {
-                music = MusicLoader.GetMusicSlot(this, "Sounds/Music/MechBosses");
-                priority = MusicPriority.BossLow;
-            }
-
-            if (NPC.AnyNPCs(NPCID.DukeFishron))
-            {
-                music = MusicLoader.GetMusicSlot(this, "Sounds/Music/DukeFishron");
-                priority = MusicPriority.BossMedium;
-            }
-
-            if (NPC.AnyNPCs(NPCID.CultistBoss))
-            {
-                music = MusicLoader.GetMusicSlot(this, "Sounds/Music/LunaticCultist");
-                priority = MusicPriority.BossMedium;
-            }
-
-            int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
-            if (moonLordIndex != -1)
-            {
-                NPC moonLord = Main.npc[moonLordIndex];
-
-                music = MusicLoader.GetMusicSlot(this, "Sounds/Music/MoonLord");
-                if (moonLord.Infernum().ExtraAI[10] < MoonLordCoreBehaviorOverride.IntroSoundLength)
-                    music = 0;
-                Main.musicFade[Main.curMusic] = 1f;
-                priority = MusicPriority.BossHigh;
-            }
-
-            bool areExoMechsAround = NPC.AnyNPCs(ModContent.NPCType<AresBody>()) ||
-                NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()) ||
-                NPC.AnyNPCs(ModContent.NPCType<Apollo>()) ||
-                NPC.AnyNPCs(ModContent.NPCType<AthenaNPC>());
-
-            if (areExoMechsAround)
-            {
-                music = MusicLoader.GetMusicSlot(this, "Sounds/Music/ExoMechBosses");
-                priority = MusicPriority.BossHigh;
-            }
         }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI) => NetcodeHandler.ReceivePacket(this, reader, whoAmI);
@@ -232,14 +176,6 @@ namespace InfernumMode
             HookManager.Unload();
             Instance = null;
             CalamityMod = null;
-        }
-
-        public override void PreUpdateEntities()
-        {
-            BlackFade = MathHelper.Clamp(BlackFade - 0.025f, 0f, 1f);
-            NetcodeHandler.Update();
-            TwinsAttackSynchronizer.DoUniversalUpdate();
-            TwinsAttackSynchronizer.PostUpdateEffects();
         }
     }
 }

@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             NPC.width = NPC.height = 54;
             NPC.defense = 15;
             NPC.lifeMax = 10000;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -129,7 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             NPC.TargetClosest();
         }
 
-        public override bool PreNPCLoot() => false;
+        public override bool SpecialOnKill() => true;
 
         public override bool CheckDead()
         {
@@ -141,12 +141,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             return true;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNukeGlowmask").Value;
             Vector2 origin = NPC.frame.Size() * 0.5f;
-            Vector2 drawPosition = NPC.Center - Main.screenPosition;
+            Vector2 drawPosition = NPC.Center - screenPos;
             Color color = NPC.GetAlpha(drawColor);
 
             Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, color, NPC.rotation, origin, NPC.scale, SpriteEffects.None, 0f);

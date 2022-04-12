@@ -804,10 +804,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     for (int i = 0; i < 50; i++)
                     {
                         float fadeToWhite = 0f;
-                        Texture2D shieldTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/AEWTailShield").Value.Value;
+                        Texture2D shieldTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/AEWTailShield").Value;
                         if (i < 8)
                         {
-                            shieldTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNuclearExplosion").Value.Value;
+                            shieldTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNuclearExplosion").Value;
                             fadeToWhite = 1f - i / 7f;
                         }
 
@@ -830,7 +830,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             DrawSegment(spriteBatch, lightColor, npc);
-            Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/AdultEidolonWyrm/EidolonWyrmEyes").Value.Value;
+            Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/AdultEidolonWyrm/EidolonWyrmEyes").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * 1.5f;
             Vector2 origin = eyeTexture.Size() * 0.5f;
             Color eyeColor = npc.GetAlpha(CalculateEyeColor(npc));

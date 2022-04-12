@@ -85,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 new CustomTileConditions.NotPlatform()
             }), out Point newBottom);
 
-            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).halfBrick();
+            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
             Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -114,14 +114,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             float tipBottom = 0f;
             Vector2 scale = new(Projectile.scale, 1f);
 
-            DrawPillar(spriteBatch, scale, aimDirection, ref tipBottom);
+            DrawPillar(scale, aimDirection, ref tipBottom);
 
             Vector2 tipDrawPosition = Projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
             Main.spriteBatch.Draw(tipTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, tipTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }
 
-        public void DrawPillar(SpriteBatch spriteBatch, Vector2 scale, Vector2 aimDirection, ref float tipBottom)
+        public void DrawPillar(Vector2 scale, Vector2 aimDirection, ref float tipBottom)
         {
             Texture2D pillarBodyPiece = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/IcePillarPiece").Value;
 

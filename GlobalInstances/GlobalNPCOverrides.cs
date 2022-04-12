@@ -230,10 +230,10 @@ namespace InfernumMode.GlobalInstances
             return base.PreAI(npc);
         }
 
-        public override bool PreNPCLoot(NPC npc)
+        public override bool SpecialOnKill(NPC npc)
         {
             if (!InfernumMode.CanUseCustomAIs)
-                return base.PreNPCLoot(npc);
+                return false;
 
             if (npc.type == NPCID.EaterofWorldsHead)
             {
@@ -279,11 +279,10 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<OldDukeNPC>())
                 CalamityMod.CalamityMod.StopRain();
-
-            return base.PreNPCLoot(npc);
+            return false;
         }
 
-        public override void NPCLoot(NPC npc)
+        public override void OnKill(NPC npc)
         {
             if (!InfernumMode.CanUseCustomAIs)
                 return;
@@ -296,10 +295,6 @@ namespace InfernumMode.GlobalInstances
                     Main.projectile[soul].localAI[1] = Main.rand.NextBool().ToDirectionInt();
                 }
             }
-
-            // Increase GSS yields.
-            if (npc.type == ModContent.NPCType<GreatSandShark>())
-                DropHelper.DropItem(npc, ModContent.ItemType<GrandScale>(), 3);
 
             if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsHead").Type)
             {
@@ -320,7 +315,7 @@ namespace InfernumMode.GlobalInstances
         {
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
             {
-                CooldownSlot = 0;
+                cooldownSlot = 0;
                 return npc.alpha == 0;
             }
             return base.CanHitPlayer(npc, target, ref cooldownSlot);
@@ -410,8 +405,8 @@ namespace InfernumMode.GlobalInstances
                 {
                     for (int i = 0; i < Main.rand.Next(11, 15 + 1); i++)
                         Utilities.NewProjectileBetter(npc.Center, Main.rand.NextVector2CircularEdge(8f, 8f), ModContent.ProjectileType<CursedSoul>(), 55, 0f);
-                    if (Main.npc.IndexInRange(Main.wof))
-                        Main.npc[Main.wof].StrikeNPC(1550, 0f, 0);
+                    if (Main.npc.IndexInRange(Main.wofNPCIndex))
+                        Main.npc[Main.wofNPCIndex].StrikeNPC(1550, 0f, 0);
                 }
 
                 npc.life = 1;

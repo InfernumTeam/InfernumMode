@@ -19,14 +19,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
         public override void SetDefaults()
         {
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.damage = 67;
             NPC.width = 40;
             NPC.height = 30;
             NPC.defense = 11;
             NPC.lifeMax = 320;
             NPC.knockBackResist = 0f;
-            animationType = 121;
+            AnimationType = 121;
             NPC.alpha = 35;
             NPC.lavaImmune = true;
             NPC.noGravity = false;
@@ -100,7 +100,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             return base.CheckDead();
         }
 
-        public override bool PreNPCLoot() => false;
+
+        public override bool SpecialOnKill() => true;
 
         public override void OnHitPlayer(Player player, int damage, bool crit)
         {

@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
@@ -63,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
             if (projectileToConnectTo != null)
             {
                 float projectileToConnectToScaleFactor = Utils.GetLerpValue(0f, 35f, projectileToConnectTo.ai[0], true);
-                Texture2D lineTexture = Main.extraTexture[47];
+                Texture2D lineTexture = TextureAssets.Extra[47].Value;
                 Vector2 connectionDirection = Projectile.SafeDirectionTo(projectileToConnectTo.Center);
                 Vector2 start = Projectile.Center + connectionDirection * Projectile.scale * 24f;
                 Vector2 end = projectileToConnectTo.Center - connectionDirection * Projectile.scale * projectileToConnectToScaleFactor * 24f;

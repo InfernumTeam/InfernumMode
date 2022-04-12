@@ -9,6 +9,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -143,7 +144,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (npc.ai[0] != 2f)
                 return true;
 
-            Texture2D pulseTexture = Main.glowMaskTexture[239];
+            Texture2D pulseTexture = TextureAssets.GlowMask[239].Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = pulseTexture.Size() * 0.5f;
 

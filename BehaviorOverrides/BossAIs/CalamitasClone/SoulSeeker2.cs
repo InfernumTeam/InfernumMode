@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
@@ -25,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override void SetDefaults()
         {
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.damage = 0;
             NPC.width = 40;
             NPC.height = 30;
@@ -93,6 +94,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             NPC.frame.Y = (int)(NPC.frameCounter / 5D + RingAngle / MathHelper.TwoPi * 50f) % Main.npcFrameCount[NPC.type] * frameHeight;
         }
 
-        public override bool PreNPCLoot() => false;
+        public override bool SpecialOnKill() => true;
     }
 }

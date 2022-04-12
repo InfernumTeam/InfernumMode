@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         if ((Math.Abs(closestTileCoords.X - i) == ArenaWidth / 2 || Math.Abs(closestTileCoords.Y - j) == ArenaHeight / 2) && !Main.tile[i, j].HasTile)
                         {
                             Main.tile[i, j].TileType = (ushort)ModContent.TileType<MoonlordArena>();
-                            Main.tile[i, j].HasTile;
+                            Main.tile[i, j].Get<TileWallWireStateData>().HasTile = true;
                             if (Main.netMode == NetmodeID.Server)
                                 NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
                             else

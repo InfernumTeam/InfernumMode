@@ -15,6 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
         public ref float DeathCountdown => ref NPC.ai[1];
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Unworldly Entity");
             Main.npcFrameCount[NPC.type] = 5;
         }
@@ -29,7 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             if (BossRushEvent.BossRushActive)
                 NPC.lifeMax = 26666;
 
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -129,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
             }
         }
 
-        public override bool PreNPCLoot() => false;
+        public override bool SpecialOnKill() => true;
 
         public override bool CheckDead()
         {

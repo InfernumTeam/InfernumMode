@@ -126,7 +126,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     if (AttackTimer == 0f)
                         Main.projectile[otherGuardianUUID].ai[0] = AttackTimer;
                     Main.projectile[otherGuardianUUID].ai[1] = Projectile.ai[1];
-                    (Main.projectile[otherGuardianUUID].modProjectile as AttackerApparation).DecideValuesForNextAI();
+                    (Main.projectile[otherGuardianUUID].ModProjectile as AttackerApparation).DecideValuesForNextAI();
                     Main.projectile[otherGuardianUUID].netUpdate = true;
                 }
             }

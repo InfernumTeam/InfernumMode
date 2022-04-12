@@ -121,7 +121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                                 thingToSummon = ModContent.NPCType<DankCreeper>();
 
                             int summonedThing = NPC.NewNPC(new InfernumSource(), x, y, thingToSummon, 0, 0f, 0f, 0f, 0f, 255);
-                            Main.npc[summonedThing].SetDefaults(thingToSummon, -1f);
+                            Main.npc[summonedThing].SetDefaults(thingToSummon);
                             Main.npc[summonedThing].velocity = -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * 3f;
                             if (Main.netMode == NetmodeID.Server && summonedThing < Main.maxNPCs)
                                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, summonedThing, 0f, 0f, 0f, 0, 0, 0);
@@ -200,14 +200,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     npc.position.Y = target.position.Y - npc.height;
                     int tilePosX = (int)npc.Center.X / 16;
                     int tilePosY = (int)(npc.position.Y + npc.height) / 16 + 1;
-                    if (Main.tile[tilePosX, tilePosY] == null)
-                        Main.tile[tilePosX, tilePosY] = new Tile();
                     while (!(Main.tile[tilePosX, tilePosY].HasUnactuatedTile && Main.tileSolid[Main.tile[tilePosX, tilePosY].TileType]))
                     {
                         tilePosY++;
                         npc.position.Y += 16;
-                        if (Main.tile[tilePosX, tilePosY] == null)
-                            Main.tile[tilePosX, tilePosY] = new Tile();
                     }
                 }
                 npc.netUpdate = true;

@@ -8,6 +8,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
@@ -34,6 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Ethereal Hand");
             NPCID.Sets.TrailingMode[NPC.type] = 2;
             NPCID.Sets.TrailCacheLength[NPC.type] = 15;
@@ -42,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         public override void SetDefaults()
         {
             NPC.npcSlots = 1f;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.damage = 160;
             NPC.width = NPC.height = 50;
             NPC.dontTakeDamage = true;
@@ -144,7 +146,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             Main.instance.DrawCacheNPCsBehindNonSolidTiles.Add(index);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
             Vector2 handScale = new Vector2(HandSize) / texture.Size() * 1.6f;
@@ -219,7 +221,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
         {
-            CooldownSlot = 1;
+            cooldownSlot = 1;
             return true;
         }
 

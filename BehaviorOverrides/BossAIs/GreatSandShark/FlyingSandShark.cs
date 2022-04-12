@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
-            aiType = -1;
+            AIType = -1;
             NPC.width = 44;
             NPC.height = 44;
             NPC.damage = 140;
@@ -175,11 +175,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             NPC.frame.Y = (int)(NPC.frameCounter / 5) % Main.npcFrameCount[NPC.type] * NPC.frame.Height;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Vector2 origin = NPC.frame.Size() * 0.5f;
-            Vector2 drawPosition = NPC.Center - Main.screenPosition;
+            Vector2 drawPosition = NPC.Center - screenPos;
             SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, direction, 0f);
             return false;

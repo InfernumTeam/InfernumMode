@@ -59,7 +59,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
             return false;
         }
-        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+
+		public override void PostDraw(Color lightColor)
         {
             if (telegraphTimer < 79)
                 Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + Projectile.AngleTo(targetPosition).ToRotationVector2() * 5000f, Color.Cyan, 3f);

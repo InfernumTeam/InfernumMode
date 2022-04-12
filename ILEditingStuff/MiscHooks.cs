@@ -130,24 +130,6 @@ namespace InfernumMode.ILEditingStuff
         public void Unload() => CalamityNPCLifeRegen -= NerfShellfishStaff;
     }
 
-    public class RemoveProjectileOnHitLagHook : IHookEdit
-    {
-        internal static void RemoveProjectileOnHitLag(ILContext il)
-        {
-            ILCursor cursor = new(il);
-            cursor.GotoNext(MoveType.Before, c => c.MatchLdcI4(267));
-            cursor.GotoPrev(MoveType.After, c => c.MatchStloc(5));
-            cursor.Emit(OpCodes.Ldc_I4_1);
-            cursor.Emit(OpCodes.Stloc, 4);
-            cursor.Emit(OpCodes.Ldc_I4_1);
-            cursor.Emit(OpCodes.Stloc, 5);
-        }
-
-        public void Load() => CalamityPlayerModifyHitByProjectile += RemoveProjectileOnHitLag;
-
-        public void Unload() => CalamityPlayerModifyHitByProjectile -= RemoveProjectileOnHitLag;
-    }
-
     /*
     public class UseDeathContactDamageHook : IHookEdit
     {

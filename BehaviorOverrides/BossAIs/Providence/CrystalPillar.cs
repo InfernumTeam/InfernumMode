@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     new CustomTileConditions.ActiveAndNotActuated()
                 }), out Point newBottom);
 
-                bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).halfBrick();
+                bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
                 Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
                 MaxPillarHeight = MathHelper.Max(0f, Projectile.Top.Y - target.Top.Y) + StartingHeight + 180f + Math.Abs(target.velocity.Y * 60f);
@@ -107,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 if (scale > 1f)
                     scale = 1f;
                 scale *= 2f;
-                Utils.DrawLine(spriteBatch, Projectile.Top + Vector2.UnitY * 10f, Projectile.Top + Vector2.UnitY * (-MaxPillarHeight + 240f), Color.LightGoldenrodYellow, Color.LightGoldenrodYellow, scale);
+                Utils.DrawLine(Main.spriteBatch, Projectile.Top + Vector2.UnitY * 10f, Projectile.Top + Vector2.UnitY * (-MaxPillarHeight + 240f), Color.LightGoldenrodYellow, Color.LightGoldenrodYellow, scale);
             }
 
             Texture2D tipTexture = ModContent.Request<Texture2D>(Texture).Value;

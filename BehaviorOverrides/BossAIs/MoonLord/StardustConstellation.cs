@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -70,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             if (projectileToConnectTo != null)
             {
-                Texture2D lineTexture = Main.extraTexture[47];
+                Texture2D lineTexture = TextureAssets.Extra[47].Value;
                 Vector2 connectionDirection = Projectile.SafeDirectionTo(projectileToConnectTo.Center);
                 Vector2 start = Projectile.Center + connectionDirection * Projectile.scale * 24f;
                 Vector2 end = projectileToConnectTo.Center - connectionDirection * Projectile.scale * 24f;
@@ -85,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             return false;
         }
 
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
             DrawBlackEffectHook.DrawCacheAdditiveLighting.Add(index);
         }

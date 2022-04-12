@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
                 return;
             }
 
-            if (Projectile.WithinRange(stars.First().Center, (stars.First().modProjectile as GiantAstralStar).Radius * 0.925f))
+            if (Projectile.WithinRange(stars.First().Center, (stars.First().ModProjectile as GiantAstralStar).Radius * 0.925f))
             {
                 stars.First().scale += 0.085f;
                 stars.First().netUpdate = true;

@@ -46,7 +46,7 @@ namespace InfernumMode.Items
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 spawnPosition = player.Center + Vector2.UnitX * player.direction * 300f;
-                NPC.NewNPC(new InfernumSource(), player.GetItemSource_Misc(0), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GiantClam>());
+                NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<GiantClam>());
             }
             return true;
         }

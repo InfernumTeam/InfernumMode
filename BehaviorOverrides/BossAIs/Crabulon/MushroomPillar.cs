@@ -96,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             if (exploitAttempted)
                 newBottom = Projectile.Bottom.ToTileCoordinates();
 
-            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).halfBrick();
+            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
             Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
@@ -129,14 +129,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             float tipBottom = 0f;
             Vector2 scale = new(Projectile.scale, 1f);
 
-            DrawStalk(spriteBatch, scale, aimDirection, mushroomTexture, ref tipBottom);
+            DrawStalk(scale, aimDirection, mushroomTexture, ref tipBottom);
 
             Vector2 tipDrawPosition = Projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
             Main.spriteBatch.Draw(mushroomTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }
 
-        public void DrawStalk(SpriteBatch spriteBatch, Vector2 scale, Vector2 aimDirection, Texture2D mushroomTexture, ref float tipBottom)
+        public void DrawStalk(Vector2 scale, Vector2 aimDirection, Texture2D mushroomTexture, ref float tipBottom)
         {
             Texture2D pillarTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/MushroomPillarPiece").Value;
 

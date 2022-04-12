@@ -15,7 +15,7 @@ namespace InfernumMode
 {
     public static partial class Utilities
     {
-        private static readonly FieldInfo shaderTextureField = typeof(MiscShaderData).GetField("_uImage", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly FieldInfo shaderTextureField = typeof(MiscShaderData).GetField("_uImage1", BindingFlags.NonPublic | BindingFlags.Instance);
 
         // Use reflection to set the image. Its underlying data is private and the only way to change it publicly
         // is via a method that only accepts paths to vanilla textures.

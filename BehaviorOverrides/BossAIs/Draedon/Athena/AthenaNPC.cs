@@ -111,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             double HPBoost = CalamityConfig.Instance.BossHealthBoost * 0.01;
             NPC.lifeMax += (int)(NPC.lifeMax * HPBoost);
             NPC.aiStyle = -1;
-            aiType = -1;
+            AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.value = Item.buyPrice(3, 33, 0, 0);
             NPC.noGravity = true;
@@ -120,7 +120,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             NPC.DeathSound = SoundID.NPCDeath14;
             NPC.netAlways = true;
             NPC.boss = true;
-            bossBag = ModContent.ItemType<DraedonTreasureBag>();
             NPC.Calamity().VulnerableToSickness = false;
             NPC.Calamity().VulnerableToElectricity = true;
         }
@@ -546,7 +545,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             GameShaders.Misc["Infernum:Hologram"].UseSecondaryColor(Color.Gold);
             GameShaders.Misc["Infernum:Hologram"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/HologramTexture").Value);
             GameShaders.Misc["Infernum:Hologram"].Apply(fuckYou);
-            fuckYou.Draw(spriteBatch);
+            fuckYou.Draw(Main.spriteBatch);
         }
 
         public Vector2 GetHologramPosition(int index, float illusionCount, float hologramSpan, float hologramInterpolant)
@@ -557,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             return NPC.Top + new Vector2(hologramHorizontalOffset, -hologramVerticalOffset);
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             // Drift towards a brighter color.
             drawColor = Color.Lerp(drawColor, Color.White, 0.45f);
@@ -589,13 +588,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 for (int i = 0; i < 6; i++)
                 {
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 6f;
-                    FlameTrail.Draw(drawPositions, drawOffset - Main.screenPosition, 70);
+                    FlameTrail.Draw(drawPositions, drawOffset - screenPos, 70);
                 }
             }
 
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/AthenaNPC_Glowmask").Value;
-            Vector2 drawPosition = NPC.Center - Main.screenPosition;
+            Vector2 drawPosition = NPC.Center - screenPos;
             Vector2 origin = NPC.frame.Size() * 0.5f;
             Main.spriteBatch.Draw(texture, drawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, 0, 0f);
             Main.spriteBatch.Draw(glowmask, drawPosition, NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, origin, NPC.scale, 0, 0f);
@@ -632,7 +631,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
                 for (float offsetAngle = 0f; offsetAngle < 0.2f; offsetAngle += 0.03f)
                 {
-                    Vector2 telegraphStart = MainTurretCenter + (TelegraphRotation + offsetAngle).ToRotationVector2() * 20f - Main.screenPosition;
+                    Vector2 telegraphStart = MainTurretCenter + (TelegraphRotation + offsetAngle).ToRotationVector2() * 20f - screenPos;
                     Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
                     Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
                     Color telegraphColor = new Color(74, 255, 204) * (float)Math.Pow(TelegraphInterpolant, 0.79) * ((0.2f - offsetAngle) / 0.2f) * 1.6f;
@@ -659,7 +658,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 {
                     int illusionFrame = (int)(Main.GlobalTimeWrappedHourly * 6f + i) % 3;
                     float completionRatio = i / (illusionCount - 1f);
-                    Vector2 hologramDrawPosition = GetHologramPosition(i, illusionCount, hologramSpan, hologramInterpolant) - Main.screenPosition;
+                    Vector2 hologramDrawPosition = GetHologramPosition(i, illusionCount, hologramSpan, hologramInterpolant) - screenPos;
                     DrawExowlHologram(spriteBatch, hologramDrawPosition, illusionFrame, hologramInterpolant);
                 }
                 Main.spriteBatch.ExitShaderRegion();

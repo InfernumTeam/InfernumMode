@@ -28,7 +28,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.SkeletronPrime);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.Instance.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/ThanatosTransition");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/ThanatosTransition");
 
         public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.NPCHit4;
 

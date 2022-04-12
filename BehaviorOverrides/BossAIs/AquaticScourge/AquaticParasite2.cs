@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
             NPC.height = 28;
             NPC.defense = 5;
             NPC.lifeMax = 900;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.value = 0;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;

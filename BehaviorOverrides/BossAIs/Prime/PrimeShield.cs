@@ -73,7 +73,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             GameShaders.Misc["ForceField"].UseColor(Color.Lerp(Color.Orange, Color.Red, 0.84f));
             GameShaders.Misc["ForceField"].Apply(drawData);
-            drawData.Draw(spriteBatch);
+            drawData.Draw(Main.spriteBatch);
 
             Main.spriteBatch.ExitShaderRegion();
             return false;

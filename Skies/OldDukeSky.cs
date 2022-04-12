@@ -1,6 +1,7 @@
 using CalamityMod.NPCs.OldDuke;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
@@ -8,6 +9,22 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
+    public class OldDukeSkyScene : ModSceneEffect
+    {
+        public override bool IsSceneEffectActive(Player player)
+        {
+            int oldDukeID = ModContent.NPCType<OldDuke>();
+            int oldDuke = NPC.FindFirstNPC(oldDukeID);
+            NPC oldDukeNPC = oldDuke >= 0 ? Main.npc[oldDuke] : null;
+            return oldDukeNPC != null && oldDukeNPC.Infernum().ExtraAI[6] >= 2f;
+        }
+
+        public override void SpecialVisuals(Player player)
+        {
+            player.ManageSpecialBiomeVisuals("InfernumMode:OldDuke", IsSceneEffectActive(player));
+        }
+    }
+
     public class OldDukeSky : CustomSky
     {
         private bool isActive = false;
@@ -24,6 +41,9 @@ namespace InfernumMode.Skies
             {
                 intensity -= 0.01f;
             }
+
+            if (NPC.FindFirstNPC(ModContent.NPCType<OldDuke>()) == -1)
+                Deactivate(Array.Empty<object>());
         }
 
         private float GetIntensity()

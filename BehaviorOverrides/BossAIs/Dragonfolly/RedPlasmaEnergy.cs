@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         public override void SetDefaults()
         {
             NPC.npcSlots = 1f;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 22;
             NPC.damage = 185;
             NPC.lifeMax = 900;
@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
             Time++;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             drawColor = Color.Red * NPC.Opacity * 0.4f;
             drawColor.A = 0;

@@ -230,7 +230,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.DarkMage
                 if (!shouldMoveOnToNextAttack)
                 {
                     Projectile.NewProjectile(new InfernumSource(), npc.Center + new Vector2(npc.direction * 24f, -40f), Vector2.Zero, ProjectileID.DD2DarkMageRaise, 0, 0f);
-                    DD2Event.RaiseGoblins(npc.Center);
+                    DD2Event.RaiseGoblins(npc, npc.Center);
                 }
             }
 

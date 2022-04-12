@@ -71,7 +71,7 @@ namespace InfernumMode.BaseEntities
 
             GameShaders.Misc["ForceField"].UseColor(DetermineExplosionColor(1f - Projectile.timeLeft / (float)Lifetime));
             GameShaders.Misc["ForceField"].Apply(explosionDrawData);
-            explosionDrawData.Draw(spriteBatch);
+            explosionDrawData.Draw(Main.spriteBatch);
 
             Main.spriteBatch.ExitShaderRegion();
             return false;

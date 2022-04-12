@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
@@ -14,8 +16,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public override Color LaserOverlayColor => new Color(153, 84, 176, 0) * 0.945f;
         public override Color LightCastColor => Color.Fuchsia;
         public override Texture2D LaserBeginTexture => Utilities.ProjTexture(Projectile.type);
-        public override Texture2D LaserMiddleTexture => Main.extraTexture[21];
-        public override Texture2D LaserEndTexture => Main.extraTexture[22];
+        public override Texture2D LaserMiddleTexture => TextureAssets.Extra[21].Value;
+        public override Texture2D LaserEndTexture => TextureAssets.Extra[22].Value;
         public override float MaxLaserLength => 2400f;
         public override float MaxScale => 0.5f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Deathray");

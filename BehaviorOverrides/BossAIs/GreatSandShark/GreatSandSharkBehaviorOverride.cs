@@ -52,8 +52,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.LifeMaxNERB(141466, 141466);
             npc.lifeMax /= 2;
             npc.aiStyle = -1;
-            npc.ModNPC.aiType = -1;
-            npc.ModNPC.music = MusicID.Boss5;
+            npc.ModNPC.AIType = -1;
+            npc.ModNPC.Music = MusicID.Boss5;
             npc.knockBackResist = 0f;
             npc.value = Item.buyPrice(0, 40, 0, 0);
             for (int k = 0; k < npc.buffImmune.Length; k++)
@@ -84,8 +84,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
             npc.HitSound = SoundID.NPCHit1;
             npc.DeathSound = SoundID.NPCDeath1;
             npc.timeLeft = NPC.activeTime * 30;
-            npc.ModNPC.banner = npc.type;
-            npc.ModNPC.bannerItem = ModContent.ItemType<GreatSandSharkBanner>();
+            npc.ModNPC.Banner = npc.type;
+            npc.ModNPC.BannerItem = ModContent.ItemType<GreatSandSharkBanner>();
             npc.Calamity().canBreakPlayerDefense = true;
         }
 
@@ -136,7 +136,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
                     desertTextureVariant = 1;
                 if (target.ZoneCrimson)
                     desertTextureVariant = 2;
-                if (target.ZoneHoly)
+                if (target.ZoneHallow)
                     desertTextureVariant = 3;
                 if (target.Calamity().ZoneAstral)
                     desertTextureVariant = 4;

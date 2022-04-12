@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -82,12 +83,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             Texture2D spikeTipTexture = Utilities.ProjTexture(ProjectileID.SpearTrap);
             Vector2 spikeTip = Projectile.Center + Vector2.UnitY * SpikeDirection * SpikeReach;
             float frameHeight = Vector2.Distance(Projectile.Center, spikeTip) - Projectile.velocity.Length();
-            float frameTop = Main.chain17Texture.Height - frameHeight;
+            float frameTop = TextureAssets.Chain17.Value.Height - frameHeight;
             if (frameHeight > 0f)
             {
                 float spikeRotation = SpikeDirection == -1f ? 0f : MathHelper.Pi;
-                Rectangle spikeFrame = new(0, (int)frameTop, Main.chain17Texture.Width, (int)frameHeight);
-                Main.spriteBatch.Draw(Main.chain17Texture, spikeTip - Main.screenPosition, spikeFrame, Color.White, spikeRotation, new Vector2(Main.chain17Texture.Width / 2f, 0f), 1f, 0, 0f);
+                Rectangle spikeFrame = new(0, (int)frameTop, TextureAssets.Chain17.Value.Width, (int)frameHeight);
+                Main.spriteBatch.Draw(TextureAssets.Chain17.Value, spikeTip - Main.screenPosition, spikeFrame, Color.White, spikeRotation, new Vector2(TextureAssets.Chain17.Value.Width / 2f, 0f), 1f, 0, 0f);
                 Main.spriteBatch.Draw(spikeTipTexture, spikeTip - Main.screenPosition, null, Color.White, spikeRotation + MathHelper.Pi, new Vector2(spikeTipTexture.Width / 2f, 0f), 1f, 0, 0f);
             }
 

@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         public override void SetDefaults()
         {
             NPC.npcSlots = 1f;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 40;
             NPC.damage = 120;
             NPC.lifeMax = 1500000;
@@ -138,7 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Vector2[] baseOldPositions = NPC.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
             if (baseOldPositions.Length <= 2)
@@ -151,8 +151,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             {
                 float completionRatio = i / (float)adjustedOldPositions.Count;
                 float scale = NPC.scale * (float)Math.Pow(MathHelper.Lerp(1f, 0.4f, completionRatio), 2D);
-                Color drawColor = Color.Lerp(Color.Red, Color.Purple, completionRatio) * (1f - completionRatio) * 0.8f;
-                Vector2 drawPosition = adjustedOldPositions[i] + NPC.Size * 0.5f - Main.screenPosition;
+                drawColor = Color.Lerp(Color.Red, Color.Purple, completionRatio) * (1f - completionRatio) * 0.8f;
+                Vector2 drawPosition = adjustedOldPositions[i] + NPC.Size * 0.5f - screenPos;
                 Main.spriteBatch.Draw(npcTexture, drawPosition, NPC.frame, drawColor, NPC.rotation, origin, scale, SpriteEffects.None, 0f);
             }
             return false;

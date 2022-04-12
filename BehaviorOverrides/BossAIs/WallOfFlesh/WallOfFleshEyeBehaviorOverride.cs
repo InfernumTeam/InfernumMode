@@ -23,14 +23,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             ref float attackTimer = ref npc.ai[1];
 
             // Disappear if the WoF body is not present.
-            if (!Main.npc.IndexInRange(Main.wof))
+            if (!Main.npc.IndexInRange(Main.wofNPCIndex))
             {
                 npc.active = false;
                 npc.netUpdate = true;
                 return false;
             }
 
-            Player target = Main.player[Main.npc[Main.wof].target];
+            Player target = Main.player[Main.npc[Main.wofNPCIndex].target];
 
             int circleHoverCount = 0;
             for (int i = 0; i < Main.maxNPCs; i++)
@@ -45,19 +45,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             if (npc.Infernum().ExtraAI[2] == 1f)
             {
                 int laserShootRate = 120;
-                float wallAttackTimer = Main.npc[Main.wof].ai[3];
+                float wallAttackTimer = Main.npc[Main.wofNPCIndex].ai[3];
                 float hoverSpeedFactor = 1f;
-                bool doCircleAttack = wallAttackTimer % 1200f < 600f || Main.npc[Main.wof].life > Main.npc[Main.wof].lifeMax * 0.45f;
+                bool doCircleAttack = wallAttackTimer % 1200f < 600f || Main.npc[Main.wofNPCIndex].life > Main.npc[Main.wofNPCIndex].lifeMax * 0.45f;
                 Vector2 hoverOffset = (MathHelper.TwoPi * (npc.Infernum().ExtraAI[1] + wallAttackTimer / laserShootRate) / 4f).ToRotationVector2() * 360f;
                 Vector2 hoverDestination = target.Center + hoverOffset;
                 if (!doCircleAttack)
                 {
                     hoverSpeedFactor = 1.6f;
-                    hoverDestination = new Vector2(Main.npc[Main.wof].Center.X, target.Center.Y);
+                    hoverDestination = new Vector2(Main.npc[Main.wofNPCIndex].Center.X, target.Center.Y);
                     hoverDestination.Y += (float)Math.Sin(wallAttackTimer / 70f + npc.Infernum().ExtraAI[1] * MathHelper.E) * 350f;
                 }
-                if (!Main.npc[Main.wof].WithinRange(target.Center, 4000f))
-                    hoverDestination = Main.npc[Main.wof].Center;
+                if (!Main.npc[Main.wofNPCIndex].WithinRange(target.Center, 4000f))
+                    hoverDestination = Main.npc[Main.wofNPCIndex].Center;
 
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeedFactor * 18f, hoverSpeedFactor * 0.9f);
                 npc.damage = 0;
@@ -113,7 +113,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             float laserShootSpeed = 8.5f;
-                            int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * Math.Sign(Main.npc[Main.wof].velocity.X) * laserShootSpeed, ProjectileID.DeathLaser, 105, 0f);
+                            int laser = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitX * Math.Sign(Main.npc[Main.wofNPCIndex].velocity.X) * laserShootSpeed, ProjectileID.DeathLaser, 105, 0f);
                             if (Main.projectile.IndexInRange(laser))
                             {
                                 Main.projectile[laser].hostile = true;
@@ -134,14 +134,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             destinationAngularOffset += (float)Math.Sin(attackTimer / 32f + npc.whoAmI % 4f / 4f * MathHelper.Pi) * 0.16f;
 
             // Move in sharp, sudden movements while releasing things at the target.
-            Vector2 destination = Main.npc[Main.wof].Center;
-            destination += Main.npc[Main.wof].velocity.SafeNormalize(Vector2.UnitX).RotatedBy(destinationAngularOffset) * destinationOffset;
+            Vector2 destination = Main.npc[Main.wofNPCIndex].Center;
+            destination += Main.npc[Main.wofNPCIndex].velocity.SafeNormalize(Vector2.UnitX).RotatedBy(destinationAngularOffset) * destinationOffset;
 
             float maxSpeed = Utilities.AnyProjectiles(ModContent.ProjectileType<FireBeamWoF>()) ? 1.5f : 15f;
 
             npc.velocity = (destination - npc.Center).SafeNormalize(Vector2.Zero) * MathHelper.Min(npc.Distance(destination) * 0.5f, maxSpeed);
-            if (!npc.WithinRange(Main.npc[Main.wof].Center, 750f))
-                npc.Center = Main.npc[Main.wof].Center + Main.npc[Main.wof].SafeDirectionTo(npc.Center) * 750f;
+            if (!npc.WithinRange(Main.npc[Main.wofNPCIndex].Center, 750f))
+                npc.Center = Main.npc[Main.wofNPCIndex].Center + Main.npc[Main.wofNPCIndex].SafeDirectionTo(npc.Center) * 750f;
 
             npc.spriteDirection = 1;
             npc.rotation = npc.rotation.AngleTowards(npc.AngleTo(target.Center), MathHelper.Pi * 0.1f);

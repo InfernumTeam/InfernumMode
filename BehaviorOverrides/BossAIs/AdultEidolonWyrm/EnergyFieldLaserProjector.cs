@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             NPC.width = NPC.height = 16;
             NPC.defense = 15;
             NPC.lifeMax = 5000;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -93,7 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             }
         }
 
-        public override bool PreNPCLoot() => false;
+        public override bool SpecialOnKill() => true;
 
         public override bool CheckDead()
         {
@@ -131,10 +131,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             return true;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Main.spriteBatch.EnterShaderRegion();
-            Texture2D noiseTexture = TextureAssets.Npc[npc.type].Value;
+            Texture2D noiseTexture = TextureAssets.Npc[NPC.type].Value;
             Vector2 drawPosition2 = NPC.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             GameShaders.Misc["Infernum:AEWPsychicEnergy"].UseOpacity(NPC.Opacity);

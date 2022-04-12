@@ -21,7 +21,7 @@ using Terraria.ModLoader.IO;
 
 namespace InfernumMode
 {
-	public class PoDPlayer : ModPlayer
+    public class PoDPlayer : ModPlayer
     {
         public bool RedElectrified = false;
         public bool ShadowflameInferno = false;
@@ -68,35 +68,6 @@ namespace InfernumMode
 
         public static bool ApplyEarlySpeedNerfs => InfernumMode.CalamityMod.Version < new Version("1.5.0.004");
 
-        #region Skies
-        internal static readonly FieldInfo EffectsField = typeof(SkyManager).GetField("_effects", BindingFlags.NonPublic | BindingFlags.Instance);
-        public override void UpdateBiomeVisuals()
-        {
-            if (!InfernumMode.CanUseCustomAIs)
-                return;
-
-            bool useFolly = NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("Bumblefuck").Type) && (Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.Find<ModNPC>("Bumblefuck").Type)].Infernum().ExtraAI[8] > 0f);
-            Player.ManageSpecialBiomeVisuals("InfernumMode:Dragonfolly", useFolly);
-
-            if (!BossRushEvent.BossRushActive)
-            {
-                int hiveMindID = InfernumMode.CalamityMod.Find<ModNPC>("HiveMind").Type;
-                int hiveMind = NPC.FindFirstNPC(hiveMindID);
-                NPC hiveMindNPC = hiveMind >= 0 ? Main.npc[hiveMind] : null;
-                bool useHIV = hiveMindNPC != null && (hiveMindNPC.Infernum().ExtraAI[10] == 1f || hiveMindNPC.life < hiveMindNPC.lifeMax * 0.2f);
-                Player.ManageSpecialBiomeVisuals("InfernumMode:HiveMind", useHIV);
-
-                bool useDeus = NPC.AnyNPCs(InfernumMode.CalamityMod.Find<ModNPC>("AstrumDeusHeadSpectral").Type);
-                Player.ManageSpecialBiomeVisuals("InfernumMode:Deus", useDeus);
-
-                int oldDukeID = ModContent.NPCType<OldDuke>();
-                int oldDuke = NPC.FindFirstNPC(oldDukeID);
-                NPC oldDukeNPC = oldDuke >= 0 ? Main.npc[oldDuke] : null;
-                bool useOD = oldDukeNPC != null && oldDukeNPC.Infernum().ExtraAI[6] >= 2f;
-                Player.ManageSpecialBiomeVisuals("InfernumMode:OldDuke", useOD);
-            }
-        }
-        #endregion
         #region Reset Effects
         public override void ResetEffects()
         {

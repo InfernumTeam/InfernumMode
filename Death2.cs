@@ -38,7 +38,7 @@ namespace InfernumMode
 
         public override bool CanUseItem(Player player) => CalamityWorld.revenge && !BossRushEvent.BossRushActive;
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips) => tooltips.FirstOrDefault(x => x.Name == "Tooltip3" && x.Mod == "Terraria").overrideColor = Color.DarkRed;
+        public override void ModifyTooltips(List<TooltipLine> tooltips) => tooltips.FirstOrDefault(x => x.Name == "Tooltip3" && x.Mod == "Terraria").OverrideColor = Color.DarkRed;
 
         public override void AddRecipes()
         {

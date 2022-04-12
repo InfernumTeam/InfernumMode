@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using InfernumMode.InverseKinematics;
 using Microsoft.Xna.Framework;
@@ -25,12 +26,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public float AttackTimer => Polterghast.ai[1];
         public bool Enraged => Polterghast.ai[3] == 1f;
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Limb");
+        public override void SetStaticDefaults()
+        {
+            this.HideFromBestiary();
+            DisplayName.SetDefault("Limb");
+        }
+
 
         public override void SetDefaults()
         {
             NPC.npcSlots = 1f;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 900;
             NPC.damage = 225;
             NPC.lifeMax = 5000;
@@ -217,7 +223,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             return false;
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             NPCID.Sets.MustAlwaysDraw[NPC.type] = true;
             if (LimbDrawer is null)
@@ -258,7 +264,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     for (int k = 0; k < 20; k++)
                         drawPositions.Add(Vector2.Lerp(Limbs.Limbs[i].ConnectPoint, end, k / 19f));
 
-                    LimbDrawer.Draw(drawPositions, -Main.screenPosition, 38);
+                    LimbDrawer.Draw(drawPositions, -screenPos, 38);
                 }
             }
             return false;

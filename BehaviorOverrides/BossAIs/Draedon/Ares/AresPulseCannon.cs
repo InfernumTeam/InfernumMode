@@ -8,10 +8,10 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-
-using CalamityModClass = CalamityMod.CalamityMod;
 using Terraria.Audio;
 using Terraria.GameContent;
+
+using CalamityModClass = CalamityMod.CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -251,7 +251,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
             if (NPC.Infernum().OptionalPrimitiveDrawer is null)
             {

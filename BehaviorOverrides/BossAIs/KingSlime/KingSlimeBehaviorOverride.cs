@@ -334,7 +334,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     drawOffset.Y -= 6f;
 
                 Vector2 ninjaDrawPosition = npc.Center - Main.screenPosition + drawOffset;
-                Main.spriteBatch.Draw(TextureAssets.Ninja, ninjaDrawPosition, null, lightColor, ninjaRotation, TextureAssets.Ninja.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(TextureAssets.Ninja.Value, ninjaDrawPosition, null, lightColor, ninjaRotation, TextureAssets.Ninja.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
             }
 
             Main.spriteBatch.Draw(kingSlimeTexture, kingSlimeDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);

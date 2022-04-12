@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
@@ -16,6 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public float WrappedAttackTimer => AttackTimer % 85f;
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Shadow Demon");
         }
 
@@ -26,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             NPC.scale = 0.7f;
             NPC.lifeMax = 333333;
             NPC.dontTakeDamage = true;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -156,6 +158,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             AttackTimer++;
         }
 
-        public override bool PreNPCLoot() => false;
+        public override bool SpecialOnKill() => true;
     }
 }

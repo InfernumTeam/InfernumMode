@@ -42,21 +42,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
             npc.height = 100;
             npc.defense = 0;
             npc.lifeMax = 363000;
-            Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
-            if (calamityModMusic != null)
-                npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/ScourgeofTheUniverse");
+            if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
+                npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/ScourgeofTheUniverse");
             else
-                npc.ModNPC.music = MusicID.Boss3;
+                npc.ModNPC.Music = MusicID.Boss3;
             if (CalamityWorld.DoGSecondStageCountdown <= 0)
             {
                 npc.value = Item.buyPrice(0, 35, 0, 0);
-                if (calamityModMusic != null)
-                    npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/Void");
+                if (ModLoader.TryGetMod("CalamityModMusic", out calamityModMusic))
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/Void");
                 else
-                    npc.ModNPC.music = MusicID.Boss3;
+                    npc.ModNPC.Music = MusicID.Boss3;
             }
             npc.aiStyle = -1;
-            npc.ModNPC.aiType = -1;
+            npc.ModNPC.AIType = -1;
             npc.knockBackResist = 0f;
             for (int k = 0; k < npc.buffImmune.Length; k++)
                 npc.buffImmune[k] = true;

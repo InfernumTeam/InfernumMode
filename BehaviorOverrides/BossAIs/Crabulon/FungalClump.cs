@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override void SetDefaults()
         {
             NPC.npcSlots = 1f;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 50;
             NPC.damage = 45;
             NPC.lifeMax = 5000;

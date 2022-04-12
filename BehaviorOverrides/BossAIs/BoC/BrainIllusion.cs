@@ -18,6 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Brain of Cthulhu");
             Main.npcFrameCount[NPC.type] = 8;
             NPCID.Sets.TrailingMode[NPC.type] = 0;
@@ -27,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public override void SetDefaults()
         {
             NPC.npcSlots = 1f;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.width = 160;
             NPC.height = 110;
             NPC.damage = 0;

@@ -123,9 +123,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             target.Calamity().lastProjectileHit = Projectile;
         }
 
-        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            drawCacheProjsBehindNPCs.Add(index);
+            behindNPCs.Add(index);
         }
     }
 }

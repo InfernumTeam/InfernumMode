@@ -111,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
                 Color telegraphColor = Color.Crimson * telegraphFade;
                 Vector2 start = Projectile.Center - Vector2.UnitY * 2000f;
                 Vector2 end = Projectile.Center + Vector2.UnitY * 2000f;
-                Utilities.DrawLineBetter(spriteBatch, start, end, telegraphColor, telegraphWidth);
+                Utilities.DrawLineBetter(Main.spriteBatch, start, end, telegraphColor, telegraphWidth);
             }
 
             if (TentacleDrawer is null)

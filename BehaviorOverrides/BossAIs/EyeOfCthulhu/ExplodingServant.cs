@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
             NPC.defense = 2;
             NPC.lifeMax = BossRushEvent.BossRushActive ? 6500 : 24;
             NPC.aiStyle = -1;
-            aiType = -1;
+            AIType = -1;
             NPC.alpha = 255;
             NPC.value = Item.buyPrice(0, 0, 0, 0);
             NPC.HitSound = SoundID.NPCHit1;

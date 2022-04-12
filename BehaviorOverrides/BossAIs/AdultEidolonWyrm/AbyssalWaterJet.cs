@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 for (int i = 0; i < 7; i++)
                 {
                     Vector2 boltShootVelocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 12f;
-                    Projectile.NewProjectile(new InfernumSource(), new InfernumSource(), Projectile.Center, boltShootVelocity, ModContent.ProjectileType<AbyssalWaterBolt>(), (int)(Projectile.damage * 0.8f), 0f);
+                    Projectile.NewProjectile(new InfernumSource(), Projectile.Center, boltShootVelocity, ModContent.ProjectileType<AbyssalWaterBolt>(), (int)(Projectile.damage * 0.8f), 0f);
                 }
             }
 

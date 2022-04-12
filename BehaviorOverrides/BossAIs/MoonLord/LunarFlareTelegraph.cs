@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             Vector2 start = Projectile.Center - Vector2.UnitY.RotatedBy(Projectile.rotation) * 4350f;
             Vector2 end = Projectile.Center + Vector2.UnitY.RotatedBy(Projectile.rotation) * 4350f;
             Color lineColor = new(50, 255, 156);
-            Utilities.DrawLineBetter(spriteBatch, start, end, lineColor * Projectile.scale, Projectile.scale * 3f);
+            Utilities.DrawLineBetter(Main.spriteBatch, start, end, lineColor * Projectile.scale, Projectile.scale * 3f);
             return false;
         }
     }

@@ -224,7 +224,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         if ((i == left || i == right || j == top || j == bottom) && !Main.tile[i, j].HasTile)
                         {
                             Main.tile[i, j].TileType = (ushort)arenaTileType;
-                            Main.tile[i, j].HasTile;
+                            Main.tile[i, j].Get<TileWallWireStateData>().HasTile = false;
                             if (Main.netMode == NetmodeID.Server)
                                 NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
                             else
@@ -536,11 +536,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         }
 
                         // Transition to the Lament section of the track.
-                        Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
-                        if (calamityModMusic != null)
-                            npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCL");
+                        if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
+                            npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/SupremeCalamitas2");
                         else
-                            npc.ModNPC.music = MusicID.Boss3;
+                            npc.ModNPC.Music = MusicID.Boss3;
                     }
                     break;
 
@@ -552,11 +551,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                             Utilities.DisplayText("When the ashes fall, what will all of this have been for?", Color.Orange);
 
                         // Transition to the Epiphany section of the track.
-                        Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
-                        if (calamityModMusic != null)
-                            npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCE");
+                        if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
+                            npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/SupremeCalamitas3");
                         else
-                            npc.ModNPC.music = MusicID.LunarBoss;
+                            npc.ModNPC.Music = MusicID.LunarBoss;
 
                         // Summon seekers.
                         Utilities.CreateGenericDustExplosion(npc.Center, (int)CalamityDusts.Brimstone, 30, 10f, 1.45f);
@@ -1465,11 +1463,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
                     // Transition to the Acceptance section of the track.
-                    Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
-                    if (calamityModMusic != null)
-                        npc.ModNPC.music = calamityModMusic.GetSoundSlot(SoundType.Music, "Sounds/Music/SCA");
+                    if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
+                        npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/SupremeCalamitas4");
                     else
-                        npc.ModNPC.music = MusicID.Boss3;
+                        npc.ModNPC.Music = MusicID.Boss3;
 
                     // Descend downward and look at the target.
                     npc.noGravity = false;

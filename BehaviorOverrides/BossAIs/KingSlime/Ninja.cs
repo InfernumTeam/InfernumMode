@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
         public override void SetDefaults()
         {
             NPC.npcSlots = 1f;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 26;
             NPC.damage = 5;
             NPC.lifeMax = 100;
@@ -365,17 +365,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             }
         }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Texture2D outlineTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/NinjaOutline").Value;
-            Vector2 outlineDrawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY * 6f;
+            Vector2 outlineDrawPosition = NPC.Center - screenPos - Vector2.UnitY * 6f;
             SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             if (KatanaUseTimer > 0f)
             {
                 Texture2D katanaTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/Katana").Value;
-                Vector2 drawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(NPC.rotation) * 5f;
+                Vector2 drawPosition = NPC.Center - screenPos - Vector2.UnitY.RotatedBy(NPC.rotation) * 5f;
                 drawPosition -= NPC.rotation.ToRotationVector2() * NPC.spriteDirection * 22f;
                 float rotation = MathHelper.PiOver4 + NPC.rotation;
                 SpriteEffects katanaDirection = direction | SpriteEffects.FlipHorizontally;

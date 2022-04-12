@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         public override void SetDefaults()
         {
             NPC.npcSlots = 1f;
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 22;
             NPC.damage = 5;
             NPC.lifeMax = BossRushEvent.BossRushActive ? 48500 : 1600;
@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             return color * NPC.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Vector2[] baseOldPositions = NPC.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToArray();
             if (baseOldPositions.Length <= 2)
@@ -115,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.9f);
             GameShaders.Misc["Infernum:Fire"].UseImage1("Images/Misc/Perlin");
-            FireDrawer.Draw(NPC.oldPos, NPC.Size * 0.5f - Main.screenPosition + NPC.velocity * 1.6f, 47);
+            FireDrawer.Draw(NPC.oldPos, NPC.Size * 0.5f - screenPos + NPC.velocity * 1.6f, 47);
 
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Vector2 origin = texture.Size() * 0.5f;
@@ -125,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             for (int i = 0; i < 8; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 3f;
-                Vector2 drawPosition = NPC.Center - Main.screenPosition + drawOffset;
+                Vector2 drawPosition = NPC.Center - screenPos + drawOffset;
                 Main.spriteBatch.Draw(texture, drawPosition, null, afterimageColor, 0f, origin, NPC.scale, SpriteEffects.None, 0f);
             }
 

@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         {
             Color lineColor = Color.Red;
             float lineWidth = MathHelper.Lerp(0.25f, 3f, Utils.GetLerpValue(0f, 22f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 22f, Time, true));
-            Utils.DrawLine(spriteBatch, Projectile.Center - Vector2.UnitY * 1900f, Projectile.Center + Vector2.UnitY * 1900f, lineColor, lineColor, lineWidth);
+            Utils.DrawLine(Main.spriteBatch, Projectile.Center - Vector2.UnitY * 1900f, Projectile.Center + Vector2.UnitY * 1900f, lineColor, lineColor, lineWidth);
             return false;
         }
 

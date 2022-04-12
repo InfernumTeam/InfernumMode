@@ -352,9 +352,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 if (Timer == 120f)
                 {
                     if (AttackState == (float)GolemAttackState.BadTime)
-                        SoundEngine.PlaySound(SoundLoader.customSoundType, -1, -1, InfernumMode.Instance.GetSoundSlot(SoundType.Custom, "Sounds/Custom/BadTime"));
+                        SoundEngine.PlaySound(SoundLoader.CustomSoundType, -1, -1, SoundLoader.GetSoundSlot(InfernumMode.Instance, "Sounds/Custom/BadTime"));
                     else
-                        SoundEngine.PlaySound(SoundLoader.customSoundType, -1, -1, InfernumMode.Instance.GetSoundSlot(SoundType.Custom, "Sounds/Custom/[BIG SHOT]"));
+                        SoundEngine.PlaySound(SoundLoader.CustomSoundType, -1, -1, SoundLoader.GetSoundSlot(InfernumMode.Instance, "Sounds/Custom/[BIG SHOT]"));
                 }
 
                 AITimer++;
@@ -1123,7 +1123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
             else
             {
                 if (fistSlamDestinationX == 0f || fistSlamDestinationY == 0f)
-				{
+                {
                     fistSlamDestinationX = fistStart.X;
                     fistSlamDestinationY = fistStart.Y;
                 }
@@ -1672,7 +1672,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     if ((i == left || i == right || j == top || j == bottom) && !Main.tile[i, j].HasTile)
                     {
                         Main.tile[i, j].TileType = (ushort)arenaTileType;
-                        Main.tile[i, j].HasTile;
+                        Main.tile[i, j].Get<TileWallWireStateData>().HasTile = true;
                         if (Main.netMode == NetmodeID.Server)
                             NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
                         else
@@ -1681,7 +1681,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
                     // Erase old arena tiles.
                     else if (Framing.GetTileSafely(i, j).TileType == arenaTileType)
-                        Main.tile[i, j].HasTile;
+                        Main.tile[i, j].Get<TileWallWireStateData>().HasTile = false;
                 }
             }
 
@@ -1698,7 +1698,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                     {
                         if (Main.tile[i, j].TileType == ModContent.TileType<Tiles.GolemArena>())
                         {
-                            Main.tile[i, j] = new Tile();
+                            Main.tile[i, j].ClearEverything();
                             if (Main.netMode == NetmodeID.Server)
                             {
                                 NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);

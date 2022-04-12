@@ -72,7 +72,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Color pulseColor = Color.Lerp(Color.DarkOrange, Color.Orange, MathHelper.Clamp(pulseCompletionRatio * 1.75f, 0f, 1f));
             GameShaders.Misc["ForceField"].UseColor(pulseColor);
             GameShaders.Misc["ForceField"].Apply(drawData);
-            drawData.Draw(spriteBatch);
+            drawData.Draw(Main.spriteBatch);
 
             Main.spriteBatch.ExitShaderRegion();
             return false;

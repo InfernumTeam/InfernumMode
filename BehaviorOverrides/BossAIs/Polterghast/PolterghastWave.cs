@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             Color pulseColor = Color.Lerp(Color.Cyan, Color.Pink * 0.65f, MathHelper.Clamp(pulseCompletionRatio * 1.75f, 0f, 1f));
             GameShaders.Misc["ForceField"].UseColor(pulseColor);
             GameShaders.Misc["ForceField"].Apply(drawData);
-            drawData.Draw(spriteBatch);
+            drawData.Draw(Main.spriteBatch);
 
             Main.spriteBatch.ExitShaderRegion();
             return false;

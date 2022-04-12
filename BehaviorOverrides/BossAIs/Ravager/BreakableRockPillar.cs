@@ -16,6 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public ref float AttackTimer => ref NPC.ai[0];
         public override void SetStaticDefaults()
         {
+            this.HideFromBestiary();
             DisplayName.SetDefault("Rock Pillar");
         }
 
@@ -33,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             NPC.lifeMax = DownedBossSystem.downedProvidence ? 5600 : 1300;
             NPC.alpha = 255;
             NPC.aiStyle = -1;
-            aiType = -1;
+            AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.HitSound = SoundID.NPCHit41;
             NPC.DeathSound = SoundID.NPCDeath14;
@@ -106,6 +107,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             AttackTimer++;
         }
 
-        public override bool PreNPCLoot() => false;
+        public override bool SpecialOnKill() => true;
     }
 }

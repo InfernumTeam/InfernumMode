@@ -29,7 +29,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (BossRushEvent.BossRushActive)
                 NPC.lifeMax = 11256;
 
-            NPC.aiStyle = aiType = -1;
+            NPC.aiStyle = AIType = -1;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
@@ -113,9 +113,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             GeneralTimer++;
         }
 
-        public override bool PreNPCLoot() => false;
+        public override bool SpecialOnKill() => true;
 
-        public override bool CheckDead()
+		public override bool CheckDead()
         {
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, NPC.position);
 

@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             Color pulseColor = OwnerType == NPCID.Spazmatism ? Color.LimeGreen : Color.Red;
             GameShaders.Misc["ForceField"].UseColor(pulseColor);
             GameShaders.Misc["ForceField"].Apply(drawData);
-            drawData.Draw(spriteBatch);
+            drawData.Draw(Main.spriteBatch);
 
             Main.spriteBatch.ExitShaderRegion();
             return false;

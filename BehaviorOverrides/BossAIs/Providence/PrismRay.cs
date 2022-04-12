@@ -76,9 +76,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             // And draw the laser.
             gradientShader.Apply(null);
-            base.PreDraw(spriteBatch, lightColor);
-
-            Utilities.ExitShaderRegion(spriteBatch);
+            Main.spriteBatch.ExitShaderRegion();
             return false;
         }
 

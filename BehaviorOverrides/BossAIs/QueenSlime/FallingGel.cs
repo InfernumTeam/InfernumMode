@@ -28,7 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(360f, 354f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 12f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.GetLerpValue(360f, 354f, projectile.timeLeft, true) * Utils.GetLerpValue(0f, 12f, projectile.timeLeft, true);
             projectile.velocity.X *= 0.99f;
             if (projectile.velocity.Y < 8f)
                 projectile.velocity.Y += 0.3f;

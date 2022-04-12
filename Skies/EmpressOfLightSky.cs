@@ -6,10 +6,27 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Effects;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
+    public class EmpressOfLightSkyScene : ModSceneEffect
+    {
+        public override bool IsSceneEffectActive(Player player)
+        {
+            int empressID = NPCID.HallowBoss;
+            int empress = NPC.FindFirstNPC(empressID);
+            NPC empressNPC = empress >= 0 ? Main.npc[empress] : null;
+            return empressNPC != null && empressNPC.ModNPC<EmpressOfLightNPC>().ReadyToUseScreenShader;
+        }
+
+        public override void SpecialVisuals(Player player)
+        {
+            player.ManageSpecialBiomeVisuals("InfernumMode:empress", IsSceneEffectActive(player));
+        }
+    }
+
     public class EmpressOfLightSky : CustomSky
     {
         public class Fairy
@@ -30,7 +47,7 @@ namespace InfernumMode.Skies
             public void Update()
             {
                 Hue = (Hue + 0.0004f) % 1f;
-                Opacity = Utils.InverseLerp(0f, 0.025f, LifetimeCompletion, true) * Utils.InverseLerp(1f, 0.92f, LifetimeCompletion, true);
+                Opacity = Utils.GetLerpValue(0f, 0.025f, LifetimeCompletion, true) * Utils.GetLerpValue(1f, 0.92f, LifetimeCompletion, true);
 
                 if (Timer % 350f > 320f)
                     Velocity = Velocity.RotatedBy(MathHelper.Pi / 425f);
@@ -54,7 +71,7 @@ namespace InfernumMode.Skies
 
             public void Update()
             {
-                Opacity = Utils.InverseLerp(0f, 0.1f, LifetimeCompletion, true) * Utils.InverseLerp(1f, 0.9f, LifetimeCompletion, true);
+                Opacity = Utils.GetLerpValue(0f, 0.1f, LifetimeCompletion, true) * Utils.GetLerpValue(1f, 0.9f, LifetimeCompletion, true);
                 Timer++;
             }
         }

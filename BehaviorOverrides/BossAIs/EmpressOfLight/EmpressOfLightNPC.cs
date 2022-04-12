@@ -321,7 +321,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 ScreenShaderStrength = 1f;
                 if (AttackType == EmpressOfLightAttackType.EnterSecondPhase)
-                    ScreenShaderStrength = Utils.InverseLerp(SecondPhaseFadeoutTime, SecondPhaseFadeoutTime + SecondPhaseFadeBackInTime, AttackTimer, true);
+                    ScreenShaderStrength = Utils.GetLerpValue(SecondPhaseFadeoutTime, SecondPhaseFadeoutTime + SecondPhaseFadeBackInTime, AttackTimer, true);
 
                 Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage("Images/Misc/Noise");
                 Filters.Scene["InfernumMode:EmpressOfLight"].GetShader().UseImage(ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/EmpressOfLight/EmpressOfLightWingsTexture"), 1);
@@ -375,7 +375,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    float dustPersistence = MathHelper.Lerp(1.3f, 0.7f, npc.Opacity) * Utils.InverseLerp(0f, spawnAnimationTime - 60f, AttackTimer, true);
+                    float dustPersistence = MathHelper.Lerp(1.3f, 0.7f, npc.Opacity) * Utils.GetLerpValue(0f, spawnAnimationTime - 60f, AttackTimer, true);
                     Color newColor = Main.hslToRgb((AttackTimer / spawnAnimationTime + Main.rand.NextFloat(0.1f)) % 1f, 1f, 0.5f);
                     Dust rainbowMagic = Dust.NewDustDirect(npc.position, npc.width, npc.height, 267, 0f, 0f, 0, newColor, 1f);
                     rainbowMagic.position = npc.Center + Main.rand.NextVector2Circular(npc.width * 12f, npc.height * 12f) + new Vector2(0f, -150f);
@@ -426,7 +426,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Fade out and teleport to the opposite side of the target halfway through the attack.
             if (AttackTimer >= boltReleaseDelay + boltReleaseTime / 2 - 10 && AttackTimer <= boltReleaseDelay + boltReleaseTime / 2)
             {
-                npc.Opacity = Utils.InverseLerp(0f, -10f, AttackTimer - (boltReleaseDelay + boltReleaseTime / 2), true);
+                npc.Opacity = Utils.GetLerpValue(0f, -10f, AttackTimer - (boltReleaseDelay + boltReleaseTime / 2), true);
                 if (npc.Opacity <= 0f)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -454,7 +454,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 LeftArmFrame = 3f;
                 if (Main.netMode != NetmodeID.MultiplayerClient && AttackTimer % boltReleaseRate == 0f)
                 {
-                    float castCompletionInterpolant = Utils.InverseLerp(boltReleaseDelay, boltReleaseDelay + boltReleaseTime, AttackTimer, true);
+                    float castCompletionInterpolant = Utils.GetLerpValue(boltReleaseDelay, boltReleaseDelay + boltReleaseTime, AttackTimer, true);
                     Vector2 boltVelocity = -Vector2.UnitY.RotatedBy(MathHelper.TwoPi * castCompletionInterpolant) * boltSpeed;
                     int bolt = Utilities.NewProjectileBetter(npc.Center + handOffset, boltVelocity, ModContent.ProjectileType<PrismaticBolt>(), PrismaticBoltDamage, 0f);
                     if (Main.projectile.IndexInRange(bolt))
@@ -474,7 +474,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             int shootRate = 75;
             int shootCount = 6;
             float wrappedAttackTimer = AttackTimer % shootRate;
-            float slowdownFactor = Utils.InverseLerp(shootRate - 8f, shootRate - 24f, wrappedAttackTimer, true);
+            float slowdownFactor = Utils.GetLerpValue(shootRate - 8f, shootRate - 24f, wrappedAttackTimer, true);
             float boltShootSpeed = 17f;
             ref float telegraphRotation = ref npc.Infernum().ExtraAI[0];
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[1];
@@ -503,7 +503,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Calculate the telegraph interpolant.
-            telegraphInterpolant = Utils.InverseLerp(24f, shootRate - 18f, wrappedAttackTimer);
+            telegraphInterpolant = Utils.GetLerpValue(24f, shootRate - 18f, wrappedAttackTimer);
 
             // Hover to the top left/right of the target.
             Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * 120f, -300f);
@@ -686,7 +686,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     npc.netUpdate = true;
                 }
 
-                npc.Opacity = Utils.InverseLerp(0f, reappearTime, AttackTimer - SecondPhaseFadeoutTime, true);
+                npc.Opacity = Utils.GetLerpValue(0f, reappearTime, AttackTimer - SecondPhaseFadeoutTime, true);
             }
 
             if (AttackTimer >= SecondPhaseFadeoutTime + SecondPhaseFadeBackInTime)
@@ -791,7 +791,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             else
             {
-                float spinSlowdownFactor = Utils.InverseLerp(spinTime, spinTime - prismCreationRate, AttackTimer - wispFormEnterTime, true);
+                float spinSlowdownFactor = Utils.GetLerpValue(spinTime, spinTime - prismCreationRate, AttackTimer - wispFormEnterTime, true);
                 Vector2 hoverDestination = Target.Center - Vector2.UnitY.RotatedBy(MathHelper.TwoPi / spinTime * 2f * AttackTimer) * spinOffset;
                 npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, spinSlowdownFactor * spinSpeed);
 
@@ -830,9 +830,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             {
                 Vector2 hoverDestination = Target.Center - Vector2.UnitY * 425f;
                 npc.velocity = Vector2.Zero.MoveTowards(hoverDestination - npc.Center, 30f);
-                npc.Opacity = MathHelper.Lerp(0.3f, 1f, Utils.InverseLerp(150f, 240f, npc.Distance(Target.Center), true));
+                npc.Opacity = MathHelper.Lerp(0.3f, 1f, Utils.GetLerpValue(150f, 240f, npc.Distance(Target.Center), true));
 
-                wispColorInterpolant = Utils.InverseLerp(wispFormEnterTime + spinTime + 60f, wispFormEnterTime + spinTime, AttackTimer, true);
+                wispColorInterpolant = Utils.GetLerpValue(wispFormEnterTime + spinTime + 60f, wispFormEnterTime + spinTime, AttackTimer, true);
             }
 
             if (AttackTimer >= wispFormEnterTime + spinTime + attackTransitionDelay)
@@ -1055,7 +1055,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Make the orb grow and cast magic towards it.
             if (AttackTimer >= hoverTime + orbCastDelay + orbGrowDelay)
             {
-                orbSize = MathHelper.SmoothStep(smallOrbSize, bigOrbSize, Utils.InverseLerp(0f, orbGrowTime, AttackTimer - (hoverTime + orbCastDelay + orbGrowDelay), true));
+                orbSize = MathHelper.SmoothStep(smallOrbSize, bigOrbSize, Utils.GetLerpValue(0f, orbGrowTime, AttackTimer - (hoverTime + orbCastDelay + orbGrowDelay), true));
 
                 LeftArmFrame = RightArmFrame = 2f;
 
@@ -1078,7 +1078,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             }
 
             // Eventually make the light orb fade away.
-            fadeAwayInterpolant = Utils.InverseLerp(0f, 60f, AttackTimer - (hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime), true);
+            fadeAwayInterpolant = Utils.GetLerpValue(0f, 60f, AttackTimer - (hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime), true);
 
             if (AttackTimer >= hoverTime + orbCastDelay + orbGrowDelay + orbGrowTime + LightOrb.LaserReleaseDelay + orbAttackTime + 180f)
                 SelectNextAttack();
@@ -1314,9 +1314,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (AttackTimer < telegraphTime)
             {
                 telegraphInterpolant = MathHelper.Clamp(AttackTimer / telegraphTime, 0f, 1f);
-                telegraphRotation = MathHelper.Lerp(MathHelper.PiOver2, maxTelegraphTilt, Utils.InverseLerp(0f, 0.4f, AttackTimer / telegraphTime, true));
+                telegraphRotation = MathHelper.Lerp(MathHelper.PiOver2, maxTelegraphTilt, Utils.GetLerpValue(0f, 0.4f, AttackTimer / telegraphTime, true));
 
-                float slowdownFactor = Utils.InverseLerp(telegraphTime - 24f, telegraphTime - 70f, AttackTimer, true);
+                float slowdownFactor = Utils.GetLerpValue(telegraphTime - 24f, telegraphTime - 70f, AttackTimer, true);
                 Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * 600f, -120f);
                 npc.Center = npc.Center.MoveTowards(hoverDestination, slowdownFactor * 6f);
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * slowdownFactor * 16f, 1f);
@@ -1468,8 +1468,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float initialXPosition = npc.Infernum().ExtraAI[6];
             float left = initialXPosition - BorderWidth * 0.5f;
             float right = initialXPosition + BorderWidth * 0.5f;
-            float leftBorderOpacity = Utils.InverseLerp(left + 850f, left + 300f, Main.LocalPlayer.Center.X, true);
-            float rightBorderOpacity = Utils.InverseLerp(right - 850f, right - 300f, Main.LocalPlayer.Center.X, true);
+            float leftBorderOpacity = Utils.GetLerpValue(left + 850f, left + 300f, Main.LocalPlayer.Center.X, true);
+            float rightBorderOpacity = Utils.GetLerpValue(right - 850f, right - 300f, Main.LocalPlayer.Center.X, true);
             Color startingBorderColor = Color.HotPink;
             Color endingBorderColor = Main.hslToRgb(Main.GlobalTime % 1f, 1f, 0.5f);
             if (Enraged)
@@ -1479,7 +1479,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (leftBorderOpacity > 0f)
             {
                 Vector2 baseDrawPosition = new Vector2(left, Main.LocalPlayer.Center.Y) - Main.screenPosition;
-                float borderOutwardness = Utils.InverseLerp(0f, 0.9f, leftBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTime * 4.4f) * 0.5f + 0.5f);
+                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, leftBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTime * 4.4f) * 0.5f + 0.5f);
                 Color borderColor = Color.Lerp(Color.Transparent, startingBorderColor, leftBorderOpacity);
 
                 for (int i = 0; i < 80; i++)
@@ -1494,7 +1494,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             if (rightBorderOpacity > 0f)
             {
                 Vector2 baseDrawPosition = new Vector2(right, Main.LocalPlayer.Center.Y) - Main.screenPosition;
-                float borderOutwardness = Utils.InverseLerp(0f, 0.9f, rightBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTime * 4.4f) * 0.5f + 0.5f);
+                float borderOutwardness = Utils.GetLerpValue(0f, 0.9f, rightBorderOpacity, true) * MathHelper.Lerp(400f, 455f, (float)Math.Cos(Main.GlobalTime * 4.4f) * 0.5f + 0.5f);
                 Color borderColor = Color.Lerp(Color.Transparent, startingBorderColor, rightBorderOpacity);
 
                 for (int i = 0; i < 80; i++)
@@ -1551,9 +1551,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Define variables for the horizontal charge state.
             if (AttackType == EmpressOfLightAttackType.HorizontalCharge)
             {
-                afterimageOffsetFactor = Utils.InverseLerp(0f, 30f, AttackTimer, true) * Utils.InverseLerp(90f, 30f, AttackTimer, true);
-                opacity = Utils.InverseLerp(0f, 30f, AttackTimer, true) * Utils.InverseLerp(90f, 70f, AttackTimer, true);
-                duplicateFade = Utils.InverseLerp(0f, 15f, AttackTimer, true) * Utils.InverseLerp(45f, 30f, AttackTimer, true);
+                afterimageOffsetFactor = Utils.GetLerpValue(0f, 30f, AttackTimer, true) * Utils.GetLerpValue(90f, 30f, AttackTimer, true);
+                opacity = Utils.GetLerpValue(0f, 30f, AttackTimer, true) * Utils.GetLerpValue(90f, 70f, AttackTimer, true);
+                duplicateFade = Utils.GetLerpValue(0f, 15f, AttackTimer, true) * Utils.GetLerpValue(45f, 30f, AttackTimer, true);
                 baseColor = Color.Lerp(baseColor, Color.White, afterimageOffsetFactor);
                 baseColorOpacity *= 1f - duplicateFade;
                 laggingAfterimageCount = 4;
@@ -1562,12 +1562,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             if (AttackType == EmpressOfLightAttackType.EnterSecondPhase)
             {
-                afterimageOffsetFactor = Utils.InverseLerp(30f, SecondPhaseFadeoutTime, AttackTimer, true) * 
-                    Utils.InverseLerp(SecondPhaseFadeBackInTime, 0f, AttackTimer - SecondPhaseFadeoutTime, true);
-                opacity = Utils.InverseLerp(0f, 60f, AttackTimer, true) * 
-                    Utils.InverseLerp(SecondPhaseFadeBackInTime, SecondPhaseFadeBackInTime - 60f, AttackTimer - SecondPhaseFadeoutTime, true);
-                duplicateFade = Utils.InverseLerp(0f, 60f, AttackTimer, true) * 
-                    Utils.InverseLerp(SecondPhaseFadeBackInTime, SecondPhaseFadeBackInTime - 60f, AttackTimer - SecondPhaseFadeoutTime, true);
+                afterimageOffsetFactor = Utils.GetLerpValue(30f, SecondPhaseFadeoutTime, AttackTimer, true) * 
+                    Utils.GetLerpValue(SecondPhaseFadeBackInTime, 0f, AttackTimer - SecondPhaseFadeoutTime, true);
+                opacity = Utils.GetLerpValue(0f, 60f, AttackTimer, true) * 
+                    Utils.GetLerpValue(SecondPhaseFadeBackInTime, SecondPhaseFadeBackInTime - 60f, AttackTimer - SecondPhaseFadeoutTime, true);
+                duplicateFade = Utils.GetLerpValue(0f, 60f, AttackTimer, true) * 
+                    Utils.GetLerpValue(SecondPhaseFadeBackInTime, SecondPhaseFadeBackInTime - 60f, AttackTimer - SecondPhaseFadeoutTime, true);
                 baseColor = Color.Lerp(baseColor, Color.White, afterimageOffsetFactor);
                 baseColorOpacity *= 1f - duplicateFade;
                 baseDuplicateCount = 4;
@@ -1613,11 +1613,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                             Matrix.CreateRotationX((Main.GlobalTime - 0.3f + i * 0.1f) * 0.7f * MathHelper.TwoPi) * 
                             Matrix.CreateRotationY((Main.GlobalTime - 0.8f + i * 0.3f) * 0.7f * MathHelper.TwoPi) * 
                             Matrix.CreateRotationZ((Main.GlobalTime + i * 0.5f) * 0.1f * MathHelper.TwoPi));
-                        drawOffsetFactor += Utils.InverseLerp(-1f, 1f, offsetInformation.Z, true) * 150f;
+                        drawOffsetFactor += Utils.GetLerpValue(-1f, 1f, offsetInformation.Z, true) * 150f;
                         Vector2 drawOffset = new Vector2(offsetInformation.X, offsetInformation.Y) * drawOffsetFactor * afterimageOffsetFactor;
                         drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * AttackTimer / 180f);
 
-                        float luminanceInterpolant = Utils.InverseLerp(90f, 0f, AttackTimer, true);
+                        float luminanceInterpolant = Utils.GetLerpValue(90f, 0f, AttackTimer, true);
                         duplicateColor = Main.hslToRgb(hue, 1f, MathHelper.Lerp(0.5f, 1f, luminanceInterpolant)) * opacity * 0.8f;
                         duplicateColor.A /= 3;
                         drawPosition += drawOffset;
@@ -1632,7 +1632,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                             Matrix.CreateRotationX((Main.GlobalTime * 1.3f - 0.4f + i * 0.16f) * 0.7f * MathHelper.TwoPi) *
                             Matrix.CreateRotationY((Main.GlobalTime * 1.3f - 0.7f + i * 0.32f) * 0.7f * MathHelper.TwoPi) *
                             Matrix.CreateRotationZ((Main.GlobalTime * 1.3f + 0.3f + i * 0.6f) * 0.1f * MathHelper.TwoPi));
-                        drawOffsetFactor += Utils.InverseLerp(-1f, 1f, offsetInformation.Z, true) * 30f;
+                        drawOffsetFactor += Utils.GetLerpValue(-1f, 1f, offsetInformation.Z, true) * 30f;
                         Vector2 drawOffset = new Vector2(offsetInformation.X, offsetInformation.Y) * drawOffsetFactor * afterimageOffsetFactor;
                         drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * AttackTimer / 180f);
 
@@ -1669,7 +1669,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     // Create lagging afterimages.
                     if (i > baseDuplicateCount)
                     {
-                        float lagBehindFactor = Utils.InverseLerp(30f, 70f, AttackTimer, true);
+                        float lagBehindFactor = Utils.GetLerpValue(30f, 70f, AttackTimer, true);
                         if (lagBehindFactor == 0f)
                             continue;
 

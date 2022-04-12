@@ -14,7 +14,7 @@ float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
 
-float InverseLerp(float x, float from, float to)
+float GetLerpValue(float x, float from, float to)
 {
     return saturate((x - from) / (to - from));
 }

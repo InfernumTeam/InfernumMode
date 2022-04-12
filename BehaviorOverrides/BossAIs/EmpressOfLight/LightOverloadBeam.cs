@@ -67,9 +67,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         internal Color PrimitiveColorFunction(float completionRatio)
         {
-            float opacity = projectile.Opacity * Utils.InverseLerp(0.97f, 0.9f, completionRatio, true) * 
-                Utils.InverseLerp(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
-                (float)Math.Pow(Utils.InverseLerp(60f, 270f, LaserLength, true), 3D);
+            float opacity = projectile.Opacity * Utils.GetLerpValue(0.97f, 0.9f, completionRatio, true) * 
+                Utils.GetLerpValue(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
+                (float)Math.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3D);
             Color c = Main.hslToRgb((completionRatio * 3f + Main.GlobalTime * 0.5f + projectile.identity * 0.3156f) % 1f, 1f, 0.7f) * opacity;
             c.A = 0;
 

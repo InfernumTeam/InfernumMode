@@ -228,7 +228,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Hover into position.
             if (AttackTimer < hoverTime)
             {
-                float hoverSpeed = MathHelper.Lerp(12f, 48f, Utils.InverseLerp(0f, 18f, AttackTimer, true));
+                float hoverSpeed = MathHelper.Lerp(12f, 48f, Utils.GetLerpValue(0f, 18f, AttackTimer, true));
                 Vector2 hoverDestination = Target.Center - Vector2.UnitY * 384f;
                 npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed);
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.1f);
@@ -247,7 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Sit in place before slamming.
             else if (AttackTimer < hoverTime + slamDelay)
             {
-                npc.velocity = -Vector2.UnitY * Utils.InverseLerp(0f, slamDelay - 6f, AttackTimer - hoverTime, true) * 6f;
+                npc.velocity = -Vector2.UnitY * Utils.GetLerpValue(0f, slamDelay - 6f, AttackTimer - hoverTime, true) * 6f;
                 FrameType = QueenSlimeFrameType.SlamDownward;
             }
 
@@ -419,7 +419,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Hover into position.
             if (AttackTimer < hoverTime)
             {
-                float hoverSpeed = MathHelper.Lerp(10f, 48f, Utils.InverseLerp(0f, 18f, AttackTimer, true));
+                float hoverSpeed = MathHelper.Lerp(10f, 48f, Utils.GetLerpValue(0f, 18f, AttackTimer, true));
                 Vector2 hoverDestination = Target.Center - Vector2.UnitY * 384f;
                 npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), hoverSpeed);
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.1f);
@@ -438,7 +438,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Sit in place before slamming.
             else if (AttackTimer < hoverTime + slamDelay)
             {
-                npc.velocity = -Vector2.UnitY * Utils.InverseLerp(0f, slamDelay - 6f, AttackTimer - hoverTime, true) * 6f;
+                npc.velocity = -Vector2.UnitY * Utils.GetLerpValue(0f, slamDelay - 6f, AttackTimer - hoverTime, true) * 6f;
                 FrameType = QueenSlimeFrameType.SlamDownward;
             }
 
@@ -499,7 +499,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             float distanceFromDestination = npc.Distance(hoverDestination);
 
             // Slow down before firing.
-            idealVelocity *= Utils.InverseLerp(0f, 30f, burstReleaseRate - wrappedAttackTimer, true);
+            idealVelocity *= Utils.GetLerpValue(0f, 30f, burstReleaseRate - wrappedAttackTimer, true);
             if (distanceFromDestination < 80f)
                 idealVelocity *= 0.65f;
             if (distanceFromDestination < 40f)

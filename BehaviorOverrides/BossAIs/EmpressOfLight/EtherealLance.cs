@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                     rainbowMagic.scale *= 1.5f;
                 }
             }
-            projectile.alpha = (int)MathHelper.Lerp(255f, 0f, Utils.InverseLerp(0f, 20f, Time, true));
+            projectile.alpha = (int)MathHelper.Lerp(255f, 0f, Utils.GetLerpValue(0f, 20f, Time, true));
             projectile.rotation = projectile.ai[0];
             Time++;
         }
@@ -95,21 +95,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             lanceColor.A = 0;
             telegraphColor.A /= 2;
 
-            Color fadedLanceColor = lanceColor * Utils.InverseLerp(FireDelay, FireDelay - 5f, Time, true) * Utils.InverseLerp(0f, 10f, Time, true);
-            Color outerLanceColor = Color.White * Utils.InverseLerp(0f, 20f, Time, true);
+            Color fadedLanceColor = lanceColor * Utils.GetLerpValue(FireDelay, FireDelay - 5f, Time, true) * Utils.GetLerpValue(0f, 10f, Time, true);
+            Color outerLanceColor = Color.White * Utils.GetLerpValue(0f, 20f, Time, true);
             outerLanceColor.A /= 2;
 
             spriteBatch.Draw(telegraphTex, drawPos, null, fadedLanceColor * 0.65f, projectile.rotation, telegraphOrigin, innerTelegraphScale, 0, 0f);
             spriteBatch.Draw(telegraphTex, drawPos, null, fadedLanceColor * 0.24f, projectile.rotation, telegraphOrigin, outerTelegraphScale, 0, 0f);
 
             Vector2 origin = tex.Size() / 2f;
-            float scale = MathHelper.Lerp(0.7f, 1f, Utils.InverseLerp(FireDelay - 5f, FireDelay, Time, true));
-            float telegraphInterpolant = Utils.InverseLerp(10f, FireDelay, Time, false);
+            float scale = MathHelper.Lerp(0.7f, 1f, Utils.GetLerpValue(FireDelay - 5f, FireDelay, Time, true));
+            float telegraphInterpolant = Utils.GetLerpValue(10f, FireDelay, Time, false);
             if (telegraphInterpolant > 0f)
             {
                 for (float i = 1f; i > 0f; i -= 1f / 16f)
                 {
-                    Vector2 lineOffset = projectile.rotation.ToRotationVector2() * Utils.InverseLerp(0f, 1f, projectile.velocity.Length(), true) * i * -120f;
+                    Vector2 lineOffset = projectile.rotation.ToRotationVector2() * Utils.GetLerpValue(0f, 1f, projectile.velocity.Length(), true) * i * -120f;
                     spriteBatch.Draw(tex, drawPos + lineOffset, null, lanceColor * telegraphInterpolant * (1f - i), projectile.rotation, origin, scale, 0, 0f);
                     spriteBatch.Draw(tex, drawPos + lineOffset, null, new Color(255, 255, 255, 0) * telegraphInterpolant * (1f - i) * 0.15f, projectile.rotation, origin, scale * 0.85f, 0, 0f);
                 }

@@ -41,11 +41,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public override void AI()
         {
             // Grow bigger up to a point.
-            float maxScale = MathHelper.Lerp(0.051f, 1.5f, Utils.InverseLerp(0f, 30f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 16f, Time, true));
+            float maxScale = MathHelper.Lerp(0.051f, 1.5f, Utils.GetLerpValue(0f, 30f, projectile.timeLeft, true) * Utils.GetLerpValue(0f, 16f, Time, true));
             projectile.scale = MathHelper.Clamp(projectile.scale + 0.02f, 0.05f, maxScale);
 
             // Spin the laserbeam.
-            projectile.velocity = projectile.velocity.RotatedBy(AngularVelocity * Utils.InverseLerp(0f, 32f, Time, true));
+            projectile.velocity = projectile.velocity.RotatedBy(AngularVelocity * Utils.GetLerpValue(0f, 32f, Time, true));
 
             // Update the laser length.
             LaserLength = MaxLaserLength;
@@ -60,9 +60,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         internal Color PrimitiveColorFunction(float completionRatio)
         {
-            float opacity = projectile.Opacity * Utils.InverseLerp(0.97f, 0.9f, completionRatio, true) * 
-                Utils.InverseLerp(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
-                (float)Math.Pow(Utils.InverseLerp(60f, 270f, LaserLength, true), 3D);
+            float opacity = projectile.Opacity * Utils.GetLerpValue(0.97f, 0.9f, completionRatio, true) * 
+                Utils.GetLerpValue(0f, MathHelper.Clamp(15f / LaserLength, 0f, 0.5f), completionRatio, true) *
+                (float)Math.Pow(Utils.GetLerpValue(60f, 270f, LaserLength, true), 3D);
             Color c = Main.hslToRgb((completionRatio * 5f + Main.GlobalTime * 0.5f + projectile.identity * 0.3156f) % 1f, 1f, 0.7f) * opacity;
             c.A = 0;
 

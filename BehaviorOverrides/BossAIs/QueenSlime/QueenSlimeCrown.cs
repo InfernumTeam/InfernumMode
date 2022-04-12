@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // Charge.
             else
             {
-                float chargeSpeedInterpolant = Utils.InverseLerp(165f, 172f, Time, true);
+                float chargeSpeedInterpolant = Utils.GetLerpValue(165f, 172f, Time, true);
                 float chargeSpeed = MathHelper.Lerp(8f, 28f, chargeSpeedInterpolant);
                 if (queenSlime.ModNPC<QueenSlimeNPC>().InPhase2)
                     chargeSpeed *= 1.15f;

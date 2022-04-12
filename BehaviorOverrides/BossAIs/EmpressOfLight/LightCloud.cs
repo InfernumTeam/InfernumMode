@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Without this, it may render over the fullblack that the game renders for obscured tiles.
             float lightPowerBelow = Lighting.GetColor((int)projectile.Center.X / 16, (int)projectile.Center.Y / 16 + 6).ToVector3().Length() / (float)Math.Sqrt(3D);
             LightPower = MathHelper.Lerp(LightPower, lightPowerBelow, 0.15f);
-            projectile.Opacity = Utils.InverseLerp(0f, 25f, CloudLifetime - projectile.timeLeft, true) * Utils.InverseLerp(0f, 60f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.GetLerpValue(0f, 25f, CloudLifetime - projectile.timeLeft, true) * Utils.GetLerpValue(0f, 60f, projectile.timeLeft, true);
 
             // Release the laserbeam.
             if (Time == LaserTelegraphTime)
@@ -111,9 +111,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
-            float opacity = Utils.InverseLerp(0f, 0.08f, LightPower, true) * projectile.Opacity * 1.2f;
+            float opacity = Utils.GetLerpValue(0f, 0.08f, LightPower, true) * projectile.Opacity * 1.2f;
             Vector2 scale = projectile.Size / texture.Size() * projectile.scale * 0.9f;
-            float telegraphInterpolant = Utils.InverseLerp(0f, LaserTelegraphTime - 25f, Time, true);
+            float telegraphInterpolant = Utils.GetLerpValue(0f, LaserTelegraphTime - 25f, Time, true);
 
             // Cast a telegraph line.
             if (Time < LaserTelegraphTime)

@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(0f, 30f, Time, true) * Utils.InverseLerp(0f, 12f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.GetLerpValue(0f, 30f, Time, true) * Utils.GetLerpValue(0f, 12f, projectile.timeLeft, true);
 
             // Shatter if colliding with another crystal.
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 }
             }
 
-            float flySpeed = MathHelper.SmoothStep(-3f, 26f, Utils.InverseLerp(15f, 50f, Time, true));
+            float flySpeed = MathHelper.SmoothStep(-3f, 26f, Utils.GetLerpValue(15f, 50f, Time, true));
             Vector2 directionToCenter = -AngularOffset.ToRotationVector2();
             projectile.velocity = directionToCenter * flySpeed;
             projectile.rotation = directionToCenter.ToRotation() + MathHelper.PiOver2;
@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
             Vector2 origin = texture.Size() * 0.5f;
             float drawOffsetFactor = (float)Math.Cos(MathHelper.TwoPi * Time / 30f) * 3f + 8f;
-            drawOffsetFactor *= Utils.InverseLerp(30f, 20f, Time, true);
+            drawOffsetFactor *= Utils.GetLerpValue(30f, 20f, Time, true);
             for (int i = 0; i < 4; i++)
             {
                 double angle = i * MathHelper.PiOver2;

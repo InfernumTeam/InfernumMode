@@ -43,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(240f, 230f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.GetLerpValue(240f, 230f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 

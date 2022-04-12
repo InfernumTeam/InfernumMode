@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Time++;
 
             ColorSpectrumHue = (ColorSpectrumHue + 1f / Lifetime) % 0.999f;
-            projectile.Opacity = Utils.InverseLerp(0f, FadeinTime, Time, true) * Utils.InverseLerp(Lifetime, Lifetime - FadeoutTime, Time, true);
+            projectile.Opacity = Utils.GetLerpValue(0f, FadeinTime, Time, true) * Utils.GetLerpValue(Lifetime, Lifetime - FadeoutTime, Time, true);
             projectile.scale *= 0.95f;
         }
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Texture2D sparkleTexture = ModContent.GetTexture(Texture);
 
             Color sparkleColor = Main.hslToRgb(ColorSpectrumHue % 1f, 1f, 0.64f) * projectile.Opacity * 0.7f;
-            sparkleColor *= MathHelper.Lerp(1f, 1.6f, Utils.InverseLerp(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));
+            sparkleColor *= MathHelper.Lerp(1f, 1.6f, Utils.GetLerpValue(Lifetime * 0.5f - 15f, Lifetime * 0.5f + 15f, Time, true));
             sparkleColor.A = 0;
 
             Color orthogonalsparkleColor = Color.Lerp(sparkleColor, Color.White, 0.5f) * 0.5f;

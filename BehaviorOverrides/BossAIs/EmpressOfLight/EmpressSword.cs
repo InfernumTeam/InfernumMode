@@ -142,7 +142,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public void HoveAboveOwner()
         {
             float idealRotation = -(Owner.Center - HoverDestinationAboveOwner).ToRotation();
-            float hoverSpeed = MathHelper.Lerp(25f, 65f, Utils.InverseLerp(100f, 750f, projectile.Distance(HoverDestinationAboveOwner)));
+            float hoverSpeed = MathHelper.Lerp(25f, 65f, Utils.GetLerpValue(100f, 750f, projectile.Distance(HoverDestinationAboveOwner)));
 
             projectile.velocity = Vector2.Lerp(projectile.velocity, Vector2.Zero.MoveTowards(HoverDestinationAboveOwner - projectile.Center, hoverSpeed), 0.1f);
             projectile.rotation = projectile.rotation.AngleLerp(idealRotation, 0.06f);
@@ -169,7 +169,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 projectile.rotation = projectile.rotation.AngleLerp(idealRotation, 0.15f).AngleTowards(idealRotation, 0.15f);
 
                 // Calculate the telegraph interpolant.
-                TelegraphInterpolant = Utils.InverseLerp(0f, lungeDelay - 6f, wrappedAttackTimer, true);
+                TelegraphInterpolant = Utils.GetLerpValue(0f, lungeDelay - 6f, wrappedAttackTimer, true);
 
                 // Create dust along the telegraph line.
                 for (int i = 0; i < 6; i++)
@@ -231,7 +231,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public Color ColorFunction(float completionRatio)
         {
-            float opacity = Utils.InverseLerp(17.5f, 23f, projectile.velocity.Length(), true) * Utils.InverseLerp(20f, 30f, projectile.timeLeft, true);
+            float opacity = Utils.GetLerpValue(17.5f, 23f, projectile.velocity.Length(), true) * Utils.GetLerpValue(20f, 30f, projectile.timeLeft, true);
             Color rainbow = Main.hslToRgb((completionRatio - Main.GlobalTime * 0.7f) % 1f, 1f, 0.5f);
             Color c = Color.Lerp(MyColor, rainbow, completionRatio) * (1f - completionRatio) * opacity;
             c.A = 0;
@@ -240,7 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public float WidthFunction(float completionRatio)
         {
-            float fade = (1f - completionRatio) * Utils.InverseLerp(-0.03f, 0.1f, completionRatio, true);
+            float fade = (1f - completionRatio) * Utils.GetLerpValue(-0.03f, 0.1f, completionRatio, true);
             return MathHelper.SmoothStep(0f, 1f, fade) * 20f;
         }
 
@@ -280,7 +280,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             TrailDrawer.Draw(projectile.oldPos, afterimageOffset - Main.screenPosition, 67);
             spriteBatch.ExitShaderRegion();
 
-            float opacity = Utils.InverseLerp(0f, 30f, projectile.timeLeft, true);
+            float opacity = Utils.GetLerpValue(0f, 30f, projectile.timeLeft, true);
             for (int i = 0; i < 6; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 6f;

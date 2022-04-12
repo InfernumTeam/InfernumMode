@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Vector2 origin = texture.Size() * 0.5f;
 
             // Draw telegraphs.
-            float telegraphInterpolant = Utils.InverseLerp(-72f, -30f, Time, true);
+            float telegraphInterpolant = Utils.GetLerpValue(-72f, -30f, Time, true);
             if (telegraphInterpolant > 0f && Time < 0f)
             {
                 float maxOffsetAngle = MathHelper.Lerp(0.24f, 0.0012f, telegraphInterpolant);
@@ -80,14 +80,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 }
             }
 
-            float fadeInInterpolant = Utils.InverseLerp(900f, 855f, projectile.timeLeft, true);
+            float fadeInInterpolant = Utils.GetLerpValue(900f, 855f, projectile.timeLeft, true);
             float fadeOffset = MathHelper.Lerp(45f, 6f, fadeInInterpolant);
             for (int i = 0; i < 8; i++)
             {
                 Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.5f) % 1f, 1f, 0.5f) * (float)Math.Sqrt(fadeInInterpolant);
                 if (EmpressOfLightNPC.ShouldBeEnraged)
                     color = Main.OurFavoriteColor;
-                color *= Utils.InverseLerp(0f, 30f, projectile.timeLeft, true);
+                color *= Utils.GetLerpValue(0f, 30f, projectile.timeLeft, true);
                 color.A = 0;
 
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + fadeInInterpolant * MathHelper.TwoPi + Main.GlobalTime * 1.5f).ToRotationVector2() * fadeOffset;

@@ -74,10 +74,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                         idealVelocity *= projectile.localAI[0];
                 }
 
-                float amount = MathHelper.Lerp(0.05f, 0.12f, Utils.InverseLerp(stopMovingTime, 30f, projectile.timeLeft, true));
+                float amount = MathHelper.Lerp(0.05f, 0.12f, Utils.GetLerpValue(stopMovingTime, 30f, projectile.timeLeft, true));
                 projectile.velocity = Vector2.SmoothStep(projectile.velocity, idealVelocity, amount);
             }
-            projectile.Opacity = Utils.InverseLerp(240f, 220f, projectile.timeLeft, true);
+            projectile.Opacity = Utils.GetLerpValue(240f, 220f, projectile.timeLeft, true);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
@@ -148,8 +148,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             spriteBatch.Draw(texture, drawPosition, null, color, projectile.rotation, origin, projectile.scale * 0.9f, 0, 0);
             Color bigGleamColor = color;
             Color smallGleamColor = color * 0.5f;
-            float opacity = Utils.InverseLerp(15f, 30f, projectile.timeLeft, true) * 
-                Utils.InverseLerp(240f, 200f, projectile.timeLeft, true) * 
+            float opacity = Utils.GetLerpValue(15f, 30f, projectile.timeLeft, true) * 
+                Utils.GetLerpValue(240f, 200f, projectile.timeLeft, true) * 
                 (1f + 0.2f * (float)Math.Cos(Main.GlobalTime % 30f / 0.5f * MathHelper.Pi * 6f)) * 0.8f;
             Vector2 bigGleamScale = new Vector2(0.5f, 5f) * opacity;
             Vector2 smallGleamScale = new Vector2(0.5f, 2f) * opacity;

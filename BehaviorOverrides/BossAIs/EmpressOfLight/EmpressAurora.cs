@@ -40,8 +40,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             float[] scales = new float[auroraCount];
             float[] hues = new float[auroraCount];
 
-            float fadeOpacity = Utils.InverseLerp(0f, 60f, projectile.timeLeft, true) * Utils.InverseLerp(Lifetime, Lifetime - 60f, projectile.timeLeft, true);
-            float dissipateOpacity = Utils.InverseLerp(0f, 60f, projectile.timeLeft, true) * Utils.InverseLerp(Lifetime, 90f, projectile.timeLeft, true);
+            float fadeOpacity = Utils.GetLerpValue(0f, 60f, projectile.timeLeft, true) * Utils.GetLerpValue(Lifetime, Lifetime - 60f, projectile.timeLeft, true);
+            float dissipateOpacity = Utils.GetLerpValue(0f, 60f, projectile.timeLeft, true) * Utils.GetLerpValue(Lifetime, 90f, projectile.timeLeft, true);
             dissipateOpacity = MathHelper.Lerp(0.3f, 0.64f, dissipateOpacity);
             float widthFactorMax = 1200f / texture.Width;
             float widthFactorMin = 640f / texture.Width;

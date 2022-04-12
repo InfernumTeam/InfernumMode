@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public int LaserCount => EmpressOfLightNPC.ShouldBeEnraged ? 12 : 9;
 
-        public float TelegraphInterpolant => Utils.InverseLerp(20f, LaserReleaseDelay, Time, true);
+        public float TelegraphInterpolant => Utils.GetLerpValue(20f, LaserReleaseDelay, Time, true);
 
         public float Radius => Owner.Infernum().ExtraAI[0] * (1f - Owner.Infernum().ExtraAI[2]);
 
@@ -80,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             float speedAdditive = distanceFromTarget * 0.017f;
             float speedFactor = speedAdditive / 90f + 0.5f;
-            float aimAtTargetInterpolant = Utils.InverseLerp(1260f, 1800f, distanceFromTarget, true);
+            float aimAtTargetInterpolant = Utils.GetLerpValue(1260f, 1800f, distanceFromTarget, true);
 
             if (BossRushEvent.BossRushActive)
                 speedFactor *= 1.35f;

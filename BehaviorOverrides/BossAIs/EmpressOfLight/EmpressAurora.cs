@@ -45,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             dissipateOpacity = MathHelper.Lerp(0.3f, 0.64f, dissipateOpacity);
             float widthFactorMax = 1200f / texture.Width;
             float widthFactorMin = 640f / texture.Width;
-            Vector2 scaleFactor = new Vector2(3f, 6f);
+            Vector2 scaleFactor = new(3f, 6f);
             for (int i = 0; i < auroraCount; i++)
             {
                 float timePulse = (float)Math.Sin(timeInterpolant * MathHelper.TwoPi + MathHelper.PiOver2 + i / 2f);

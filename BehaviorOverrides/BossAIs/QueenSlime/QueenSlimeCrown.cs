@@ -145,7 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
             if (Time % 90f == 89f)
             {
-                Main.PlaySound(SoundID.Item43, projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item43, projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

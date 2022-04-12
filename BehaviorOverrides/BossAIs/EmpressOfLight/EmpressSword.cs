@@ -190,8 +190,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Lunge at the target.
             if (wrappedAttackTimer == lungeDelay)
             {
-                Main.PlaySound(SoundID.DD2_WyvernDiveDown, projectile.Center);
-                Main.PlaySound(SoundID.Item28, projectile.Center);
+                SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item28, projectile.Center);
                 projectile.oldPos = new Vector2[projectile.oldPos.Length];
                 projectile.velocity = projectile.rotation.ToRotationVector2() * lungeSpeed;
                 projectile.netUpdate = true;
@@ -264,7 +264,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 float telegraphHue = (float)Math.Cos(MathHelper.TwoPi * TelegraphInterpolant) * 0.5f + 0.5f;
                 float telegraphWidth = MathHelper.Lerp(0.2f, 1.2f, TelegraphInterpolant);
                 float telegraphOpacity = (float)Math.Pow(TelegraphInterpolant, 1.7) * 0.7f;
-                Vector2 telegraphScale = new Vector2(telegraphWidth, TelegraphWidth / telegraphTexture.Height);
+                Vector2 telegraphScale = new(telegraphWidth, TelegraphWidth / telegraphTexture.Height);
                 Color telegraphColor = Main.hslToRgb(telegraphHue, 1f, 0.8f) * telegraphOpacity;
                 Vector2 telegraphOrigin = telegraphTexture.Size() * new Vector2(0.5f, 0f);
 

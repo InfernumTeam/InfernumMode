@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
 {
@@ -11,23 +10,23 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
     {
         public const int Lifetime = 300;
         public const float HorizontalCollisionAreaFactor = 0.2f;
-        public ref float Time => ref Projectile.ai[0];
+        public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sand Tornado");
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 60;
-            Projectile.height = 360;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 480;
-            Projectile.ignoreWater = true;
+            projectile.width = 60;
+            projectile.height = 360;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 480;
+            projectile.ignoreWater = true;
         }
 
         public override void AI()
@@ -35,14 +34,14 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
             Time++;
 			if (Time >= Lifetime - 8f)
 			{
-                Projectile.damage = 0;
-                Projectile.Opacity -= 0.1f;
+                projectile.damage = 0;
+                projectile.Opacity -= 0.1f;
 			}
             if (Time >= Lifetime)
-                Projectile.Kill();
+                projectile.Kill();
 
-            Vector2 top = Projectile.Top;
-            Vector2 bottom = Projectile.Bottom;
+            Vector2 top = projectile.Top;
+            Vector2 bottom = projectile.Bottom;
             Vector2 center = Vector2.Lerp(top, bottom, 0.5f);
             Vector2 dustSpawnArea = Vector2.UnitY * (bottom.Y - top.Y);
             dustSpawnArea.X = dustSpawnArea.Y * HorizontalCollisionAreaFactor * 0.3f;
@@ -50,16 +49,16 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
             // Dissipate if touching another sandnado.
             foreach (Projectile sandnado in Utilities.AllProjectilesByID(ModContent.ProjectileType<Sandnado2>()))
 			{
-                if (sandnado.whoAmI == Projectile.whoAmI)
+                if (sandnado.whoAmI == projectile.whoAmI)
                     continue;
 
-                if (Projectile.Hitbox.Intersects(sandnado.Hitbox) && Time < Lifetime - 8f)
+                if (projectile.Hitbox.Intersects(sandnado.Hitbox) && Time < Lifetime - 8f)
 				{
-                    if (Projectile.ai[1] == 1f)
-                        SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, Projectile.Center);
+                    if (projectile.ai[1] == 1f)
+                        SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, projectile.Center);
 
                     Time = Lifetime - 8f;
-                    Projectile.netUpdate = true;
+                    projectile.netUpdate = true;
 				}
 			}
 
@@ -84,33 +83,33 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
 
                     sand.noGravity = true;
                     sand.velocity.Y = Main.rand.NextFloat() * -0.5f - 1.3f;
-                    sand.velocity += Projectile.velocity;
+                    sand.velocity += projectile.velocity;
                     sand.color = Color.Yellow;
                     sand.noLight = true;
                 }
             }
 
-            Vector2 dustSpawnTopLeft = Projectile.Top + new Vector2(-25f, -25f);
+            Vector2 dustSpawnTopLeft = projectile.Top + new Vector2(-25f, -25f);
             for (int k = 0; k < 8; k++)
             {
-                Dust sand = Dust.NewDustDirect(dustSpawnTopLeft, 50, Projectile.height, 268, Projectile.velocity.X, -2f, 100, default, 1f);
+                Dust sand = Dust.NewDustDirect(dustSpawnTopLeft, 50, projectile.height, 268, projectile.velocity.X, -2f, 100, default, 1f);
                 sand.fadeIn = 1.1f;
                 sand.noGravity = true;
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            float generalOpacity = Utils.GetLerpValue(0f, 30f, Time, true) * Utils.GetLerpValue(Lifetime, Lifetime - 60f, Time, true);
-            Vector2 top = Projectile.Top;
-            Vector2 bottom = Projectile.Bottom;
+            float generalOpacity = Utils.InverseLerp(0f, 30f, Time, true) * Utils.InverseLerp(Lifetime, Lifetime - 60f, Time, true);
+            Vector2 top = projectile.Top;
+            Vector2 bottom = projectile.Bottom;
             Vector2 tornadoArea = Vector2.UnitY * (bottom.Y - top.Y);
             tornadoArea.X = tornadoArea.Y * HorizontalCollisionAreaFactor;
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 origin = texture.Size() * 0.5f;
-            float baseRotation = MathHelper.TwoPi / -12f * Time * (Projectile.velocity.X <= 0f).ToDirectionInt();
-            SpriteEffects direction = Projectile.velocity.X > 0f ? SpriteEffects.FlipVertically : SpriteEffects.None;
+            float baseRotation = MathHelper.TwoPi / -12f * Time * (projectile.velocity.X <= 0f).ToDirectionInt();
+            SpriteEffects direction = projectile.velocity.X > 0f ? SpriteEffects.FlipVertically : SpriteEffects.None;
             float currentHeightOfTornado = 0f;
             float heightPerTornadoPiece = 5.01f + Time / 150f * -0.9f;
             if (heightPerTornadoPiece < 4.11f)
@@ -121,16 +120,16 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
             Color baseAfterimageColor = new(255, 170, 85, 127);
             float wrappedTime = Time % 60f;
             if (wrappedTime < 30f)
-                baseAfterimageColor *= Utils.GetLerpValue(22f, 30f, wrappedTime, true);
+                baseAfterimageColor *= Utils.InverseLerp(22f, 30f, wrappedTime, true);
             else
-                baseAfterimageColor *= Utils.GetLerpValue(38f, 30f, wrappedTime, true);
+                baseAfterimageColor *= Utils.InverseLerp(38f, 30f, wrappedTime, true);
 
             for (float y = (int)bottom.Y; y > (int)top.Y; y -= heightPerTornadoPiece)
             {
                 currentHeightOfTornado += heightPerTornadoPiece;
                 float verticalCompletionRatio = currentHeightOfTornado / tornadoArea.Y;
                 float heightBasedRotation = currentHeightOfTornado * MathHelper.TwoPi / -10f;
-                if (Projectile.velocity.X > 0f)
+                if (projectile.velocity.X > 0f)
                     heightBasedRotation *= -1f;
 
                 float scaleAdditive = verticalCompletionRatio - 0.35f;
@@ -149,9 +148,9 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.SandElemental
 
                     afterimageColor.A = (byte)(afterimageColor.A * 0.5f);
                     afterimageColor *= generalOpacity;
-                    Main.spriteBatch.Draw(texture, drawPosition, null, afterimageColor, baseRotation + heightBasedRotation, origin, (1f + scaleAdditive) * 0.8f, direction, 0f);
+                    spriteBatch.Draw(texture, drawPosition, null, afterimageColor, baseRotation + heightBasedRotation, origin, (1f + scaleAdditive) * 0.8f, direction, 0f);
                 }
-                Main.spriteBatch.Draw(texture, drawPosition, null, color, baseRotation + heightBasedRotation, origin, 1f + scaleAdditive, direction, 0f);
+                spriteBatch.Draw(texture, drawPosition, null, color, baseRotation + heightBasedRotation, origin, 1f + scaleAdditive, direction, 0f);
             }
             return false;
         }

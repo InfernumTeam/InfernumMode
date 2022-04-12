@@ -11,7 +11,7 @@ namespace InfernumMode.Sounds.Custom
             soundInstance = sound.CreateInstance();
             soundInstance.Volume = volume;
             soundInstance.Pan = pan;
-            Main.PlaySoundInstance(soundInstance);
+            SoundEngine.PlaySoundInstance(soundInstance);
             return soundInstance;
         }
     }

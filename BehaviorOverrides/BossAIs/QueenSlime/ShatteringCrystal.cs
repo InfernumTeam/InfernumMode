@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(SoundID.Item27, projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item27, projectile.Center);
 
             if (AngularOffset != 0f || Main.netMode == NetmodeID.MultiplayerClient)
                 return;

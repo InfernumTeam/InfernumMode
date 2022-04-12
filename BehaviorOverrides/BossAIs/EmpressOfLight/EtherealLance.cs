@@ -87,8 +87,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
             Vector2 drawPos = projectile.Center - Main.screenPosition;            
             Vector2 telegraphOrigin = telegraphTex.Size() * new Vector2(0f, 0.5f);
-            Vector2 outerTelegraphScale = new Vector2(telegraphSize / (float)telegraphTex.Width, 4f);
-            Vector2 innerTelegraphScale = new Vector2(telegraphSize / (float)telegraphTex.Width * 0.5f, 4f);
+            Vector2 outerTelegraphScale = new(telegraphSize / (float)telegraphTex.Width, 4f);
+            Vector2 innerTelegraphScale = new(telegraphSize / (float)telegraphTex.Width * 0.5f, 4f);
 
             Color lanceColor = MyColor;
             Color telegraphColor = MyColor;

@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
@@ -37,14 +35,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 return false;
             }
 
-            // FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK YOU FUCK
-            if (npc.scale != 1f)
-            {
-                npc.width = 120;
-                npc.height = 120;
-                npc.scale = 1f;
-            }
-
             // Do targeting.
             npc.target = Main.npc[CalamityGlobalNPC.calamitas].target;
             Player target = Main.player[npc.target];
@@ -64,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
+            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
             bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -286,7 +276,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
         public static void SelectNewAttack(NPC npc)
         {
             List<CatastropheAttackType> possibleAttacks = new()
-            {
+			{
                 CatastropheAttackType.BrimstoneCarpetBombing,
                 CatastropheAttackType.VerticalCharges
             };

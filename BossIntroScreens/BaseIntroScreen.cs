@@ -98,9 +98,9 @@ namespace InfernumMode.BossIntroScreens
                 if (isBright)
                     sb.SetBlendState(BlendState.Additive);
 
-                Texture2D greyscaleTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/THanosAura").Value;
-                float coverScaleFactor = Utils.GetLerpValue(0f, 0.5f, AnimationCompletion, true) * 12.5f;
-                coverScaleFactor *= Utils.GetLerpValue(1f, 0.84f, AnimationCompletion, true);
+                Texture2D greyscaleTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/THanosAura");
+                float coverScaleFactor = Utils.InverseLerp(0f, 0.5f, AnimationCompletion, true) * 12.5f;
+                coverScaleFactor *= Utils.InverseLerp(1f, 0.84f, AnimationCompletion, true);
 
                 Vector2 coverCenter = new(Main.screenWidth * 0.5f, Main.screenHeight * 0.32f);
 
@@ -129,7 +129,7 @@ namespace InfernumMode.BossIntroScreens
 
         public virtual void DrawText(SpriteBatch sb)
         {
-            float opacity = Utils.GetLerpValue(TextDelayInterpolant, TextDelayInterpolant + 0.05f, AnimationCompletion, true) * Utils.GetLerpValue(1f, 0.77f, AnimationCompletion, true);
+            float opacity = Utils.InverseLerp(TextDelayInterpolant, TextDelayInterpolant + 0.05f, AnimationCompletion, true) * Utils.InverseLerp(1f, 0.77f, AnimationCompletion, true);
 
             if (CanPlaySound && SoundToPlayWithTextCreation != null)
             {
@@ -174,7 +174,7 @@ namespace InfernumMode.BossIntroScreens
 
                     if (ShaderToApplyToLetters != null)
                     {
-                        ShaderToApplyToLetters.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly);
+                        ShaderToApplyToLetters.Parameters["uTime"].SetValue(Main.GlobalTime);
                         ShaderToApplyToLetters.Parameters["uLetterCompletionRatio"].SetValue(individualLineLetterCompletionRatio);
                         PrepareShader(ShaderToApplyToLetters);
                         ShaderToApplyToLetters.CurrentTechnique.Passes[0].Apply();
@@ -190,7 +190,7 @@ namespace InfernumMode.BossIntroScreens
                     // Draw afterimage instances of the the text.
                     for (int k = 0; k < 4; k++)
                     {
-                        float afterimageOpacityInterpolant = Utils.GetLerpValue(1f, TextDelayInterpolant + 0.05f, AnimationCompletion, true);
+                        float afterimageOpacityInterpolant = Utils.InverseLerp(1f, TextDelayInterpolant + 0.05f, AnimationCompletion, true);
                         float afterimageOpacity = (float)Math.Pow(afterimageOpacityInterpolant, 2D) * 0.3f;
                         Color afterimageColor = textColor * afterimageOpacity;
                         Vector2 drawOffset = (MathHelper.TwoPi * k / 4f).ToRotationVector2() * (1f - afterimageOpacityInterpolant) * 30f;

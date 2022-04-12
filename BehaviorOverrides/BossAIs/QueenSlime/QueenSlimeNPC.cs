@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
         {
             get
             {
-                Vector2 crownPosition = new Vector2(npc.Center.X, npc.Top.Y - 12f);
+                Vector2 crownPosition = new(npc.Center.X, npc.Top.Y - 12f);
                 float crownOffset = 0f;
                 switch (npc.frame.Y / npc.frame.Height)
                 {
@@ -138,7 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
         {
             get
             {
-                Color c1 = new Color(0, 160, 255);
+                Color c1 = new(0, 160, 255);
                 Color c2 = Color.Lerp(new Color(200, 200, 200), new Color(255, 80, 255), Main.rand.NextFloat());
                 return Color.Lerp(c1, c2, Main.rand.NextFloat());
             }
@@ -264,7 +264,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                     if (OnSolidGround && npc.Bottom.Y >= Target.Top.Y)
                     {
                         // Create a shockwave and bursts of gel that accelerate.
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodExit"), npc.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodExit"), npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Utilities.NewProjectileBetter(npc.Bottom, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 135, 0f);
@@ -366,7 +366,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
                 if (crystalCreationCounter < crystalCreationCount)
                 {
-                    Main.PlaySound(SoundID.Item68, Target.Center);
+                    SoundEngine.PlaySound(SoundID.Item68, Target.Center);
                     npc.velocity.X = Math.Sign(npc.SafeDirectionTo(Target.Center).X) * 12f;
                     npc.velocity.Y = -21f;
                 }
@@ -376,7 +376,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                     SelectNextAttack();
                 }
 
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodExit"), npc.Center);
+                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodExit"), npc.Center);
                 npc.netUpdate = true;
             }
 
@@ -455,7 +455,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                     if (OnSolidGround && npc.Bottom.Y >= Target.Top.Y)
                     {
                         slamCounter++;
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodExit"), npc.Center);
+                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodExit"), npc.Center);
                         npc.velocity = Vector2.Zero;
                         AttackTimer = hoverTime + slamDelay + slamTime;
                         npc.netUpdate = true;
@@ -510,7 +510,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             // The spread intentionally has an opening.
             if (wrappedAttackTimer == burstReleaseRate - 1f)
             {
-                Main.PlaySound(SoundID.Item68, npc.Center);
+                SoundEngine.PlaySound(SoundID.Item68, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -572,7 +572,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             {
                 for (float i = -20f; i < 20f; i += Main.rand.NextFloat(2.3f, 2.8f))
                 {
-                    Vector2 gelVelocity = new Vector2(i, Main.rand.NextFloat(-12f, -10f));
+                    Vector2 gelVelocity = new(i, Main.rand.NextFloat(-12f, -10f));
                     Utilities.NewProjectileBetter(npc.Center, gelVelocity, ModContent.ProjectileType<FallingGel>(), 125, 0f);
                 }
             }
@@ -755,7 +755,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
             spriteBatch.EnterShaderRegion();
 
-            DrawData drawData = new DrawData(texture, drawBottom, frameThing, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.FlipHorizontally, 0);
+            DrawData drawData = new(texture, drawBottom, frameThing, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.FlipHorizontally, 0);
             PrepareShader();
             GameShaders.Misc["Infernum:QueenSlime"].Apply(drawData);
             drawData.Draw(spriteBatch);

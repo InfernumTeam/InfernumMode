@@ -5,9 +5,11 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
 
+using TMLSoundType = Terraria.ModLoader.SoundType;
+
 namespace InfernumMode.BossIntroScreens
 {
-	public class AnahitaIntroScreen : BaseIntroScreen
+    public class AnahitaIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
@@ -24,6 +26,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Siren>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AbilitySounds/AngelicAllianceActivation");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/AbilitySounds/AngelicAllianceActivation");
     }
 }

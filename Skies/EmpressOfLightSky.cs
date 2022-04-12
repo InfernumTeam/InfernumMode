@@ -23,7 +23,7 @@ namespace InfernumMode.Skies
 
         public override void SpecialVisuals(Player player)
         {
-            player.ManageSpecialBiomeVisuals("InfernumMode:empress", IsSceneEffectActive(player));
+            player.ManageSpecialBiomeVisuals("InfernumMode:EmpressOfLight", IsSceneEffectActive(player));
         }
     }
 
@@ -78,8 +78,8 @@ namespace InfernumMode.Skies
 
         public bool isActive = false;
         public float Intensity = 0f;
-        public List<Fairy> Fairies = new List<Fairy>();
-        public List<Light> Lights = new List<Light>();
+        public List<Fairy> Fairies = new();
+        public List<Light> Lights = new();
 
         public override void Update(GameTime gameTime)
         {
@@ -112,7 +112,7 @@ namespace InfernumMode.Skies
             int maxFairies = (int)MathHelper.Lerp(90f, 175f, Main.npc[eol].life / (float)Main.npc[eol].lifeMax);
             int maxLights = maxFairies + 65;
             Vector2 screenCenter = Main.screenPosition + new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.5f);
-            Rectangle rectangle = new Rectangle(-1000, -1000, 4000, 4000);
+            Rectangle rectangle = new(-1000, -1000, 4000, 4000);
 
             // Remove all things that should die.
             Fairies.RemoveAll(f => f.Timer >= f.Lifetime);
@@ -144,8 +144,8 @@ namespace InfernumMode.Skies
             }
 
             // Draw all fairies.
-            Texture2D texture = ModContent.GetTexture("InfernumMode/ExtraTextures/Fairy");
-            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/FairyGlowmask");
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Fairy").Value;
+            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/FairyGlowmask").Value;
             for (int i = 0; i < Fairies.Count; i++)
             {
                 Fairies[i].Update();
@@ -169,7 +169,7 @@ namespace InfernumMode.Skies
             }
 
             // Draw all lights.
-            texture = ModContent.GetTexture("InfernumMode/ExtraTextures/EmpressStar");
+            texture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/EmpressStar").Value;
 
             for (int i = 0; i < Lights.Count; i++)
             {

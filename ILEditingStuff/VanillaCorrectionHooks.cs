@@ -1,18 +1,19 @@
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.DesertScourge;
+using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using Microsoft.Xna.Framework;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
-using Terraria.Audio;
 
 namespace InfernumMode.ILEditingStuff
 {
-	public class ReplaceGoresHook : IHookEdit
+    public class ReplaceGoresHook : IHookEdit
     {
         internal static int AlterGores(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
@@ -20,13 +21,13 @@ namespace InfernumMode.ILEditingStuff
                 return Main.maxDust;
 
             if (InfernumMode.CanUseCustomAIs && Type == 573)
-                Type = Utilities.GetGoreID("DukeFishronGore1");
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore1");
             if (InfernumMode.CanUseCustomAIs && Type == 574)
-                Type = Utilities.GetGoreID("DukeFishronGore3");
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore3");
             if (InfernumMode.CanUseCustomAIs && Type == 575)
-                Type = Utilities.GetGoreID("DukeFishronGore2");
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore2");
             if (InfernumMode.CanUseCustomAIs && Type == 576)
-                Type = Utilities.GetGoreID("DukeFishronGore4");
+                Type = InfernumMode.Instance.GetGoreSlot("Gores/DukeFishronGore4");
 
             return orig(Position, Velocity, Type, Scale);
         }
@@ -74,7 +75,7 @@ namespace InfernumMode.ILEditingStuff
         internal static void MakeDesertRequirementsMoreLenient(On.Terraria.Player.orig_UpdateBiomes orig, Player self)
         {
             orig(self);
-            self.ZoneDesert = Main.SceneMetrics.SandTileCount > 300;
+            self.ZoneDesert = Main.sandTiles > 300;
         }
 
         public void Load() => On.Terraria.Player.UpdateBiomes += MakeDesertRequirementsMoreLenient;

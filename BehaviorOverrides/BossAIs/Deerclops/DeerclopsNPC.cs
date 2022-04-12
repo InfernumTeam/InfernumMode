@@ -127,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             }
             int checkAreaX = 40;
             int checkAreaY = 20;
-            Vector2 checkTopLeft = new Vector2(npc.Center.X - checkAreaX / 2, npc.position.Y + npc.height - checkAreaY);
+            Vector2 checkTopLeft = new(npc.Center.X - checkAreaX / 2, npc.position.Y + npc.height - checkAreaY);
             bool acceptTopSurfaces = npc.Bottom.Y >= hitbox.Top;
             bool shouldRise = Utilities.SolidCollision(checkTopLeft, checkAreaX, checkAreaY, acceptTopSurfaces);
             bool fuck = Utilities.SolidCollision(checkTopLeft, checkAreaX, checkAreaY - 4, acceptTopSurfaces);

@@ -5,14 +5,16 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
 
+using TMLSoundType = Terraria.ModLoader.SoundType;
+
 namespace InfernumMode.BossIntroScreens
 {
-	public class GreatSandSharkIntroScreen : BaseIntroScreen
+    public class GreatSandSharkIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => new(completionRatio =>
         {
             Color sandColor = Color.Lerp(new Color(191, 143, 103), new Color(107, 64, 73), (float)Math.Sin(AnimationCompletion * MathHelper.TwoPi + completionRatio * MathHelper.Pi) * 0.5f + 0.5f);
-            float cyanColorInterpolant = Utils.GetLerpValue(0.77f, 1f, (float)Math.Sin(AnimationCompletion * -MathHelper.TwoPi + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f);
+            float cyanColorInterpolant = Utils.InverseLerp(0.77f, 1f, (float)Math.Sin(AnimationCompletion * -MathHelper.TwoPi + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f);
             return Color.Lerp(sandColor, new Color(19, 255, 203), cyanColorInterpolant);
         });
 
@@ -24,6 +26,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<GreatSandShark>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/GreatSandSharkRoar");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/GreatSandSharkRoar");
     }
 }

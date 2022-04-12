@@ -61,8 +61,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Release beams outward once ready.
             if (Time == LaserReleaseDelay)
             {
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), projectile.Center);
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightMagicCast"), projectile.Center);
+                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), projectile.Center);
+                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightMagicCast"), projectile.Center);
 
                 for (int i = 0; i < LaserCount; i++)
                 {
@@ -124,8 +124,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             GameShaders.Misc["Infernum:PrismaticRay"].UseImage("Images/Misc/Perlin");
             Main.instance.GraphicsDevice.Textures[2] = ModContent.GetTexture("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak");
 
-            List<float> rotationPoints = new List<float>();
-            List<Vector2> drawPoints = new List<Vector2>();
+            List<float> rotationPoints = new();
+            List<Vector2> drawPoints = new();
 
             // Draw telegraphs.
             if (TelegraphInterpolant >= 0f && TelegraphInterpolant < 1f)

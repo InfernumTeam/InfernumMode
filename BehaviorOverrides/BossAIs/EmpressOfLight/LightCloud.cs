@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Release the laserbeam.
             if (Time == LaserTelegraphTime)
             {
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightMagicCast"), projectile.Center);
+                SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/EmpressOfLightMagicCast"), projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -79,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Periodically release bursts of light.
             if (Time >= LaserTelegraphTime && Time % 30f == 29f && projectile.timeLeft >= 64)
             {
-                Main.PlaySound(SoundID.Item28, projectile.Center);
+                SoundEngine.PlaySound(SoundID.Item28, projectile.Center);
 
                 for (int i = 0; i < 16; i++)
                 {
@@ -102,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Vector2 screenArea = new Vector2(Main.screenWidth, Main.screenHeight);
+            Vector2 screenArea = new(Main.screenWidth, Main.screenHeight);
             Rectangle screenRectangle = Utils.CenteredRectangle(Main.screenPosition + screenArea * 0.5f, screenArea * 1.33f);
 
             if (!projectile.Hitbox.Intersects(screenRectangle))

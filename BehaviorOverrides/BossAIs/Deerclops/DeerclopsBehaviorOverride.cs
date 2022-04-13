@@ -25,7 +25,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         #region Enumerations
         public enum DeerclopsAttackType
         {
-            GroundLaser
+            ShatteredIceRain,
+            GroundLaser,
         }
         #endregion
 
@@ -36,14 +37,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             npc.TargetClosestIfTargetIsInvalid();
 
             Player target = Main.player[npc.target];
-            bool shouldUseShadowFade = false;
+
+            // Naturally use the shadow effect if the target is too far away.
+            // This may be overridden in specific behaviors below, however.
+            bool shouldUseShadowFade = !target.WithinRange(npc.Center, 450f);
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float frame = ref npc.localAI[0];
             ref float shadowFadeTimer = ref npc.localAI[3];
-
+            
             switch ((DeerclopsAttackType)attackType)
             {
+                case DeerclopsAttackType.ShatteredIceRain:
+                    DoBehavior_ShatteredIceRain(npc, target, ref frame, ref attackTimer);
+                    break;
                 case DeerclopsAttackType.GroundLaser:
                     DoBehavior_GroundLaser(npc, target, ref shouldUseShadowFade, ref frame, ref attackTimer);
                     break;
@@ -52,6 +59,65 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             shadowFadeTimer = Utils.Clamp(shadowFadeTimer + shouldUseShadowFade.ToDirectionInt(), 0f, 36f);
             attackTimer++;
             return false;
+        }
+
+        public static void DoBehavior_ShatteredIceRain(NPC npc, Player target, ref float frame, ref float attackTimer)
+        {
+            int screamTime = 30;
+            int walkDelay = 64;
+            int walkTime = 120;
+            bool shouldWalk = attackTimer >= walkDelay;
+
+            // Scream and release ice crystals into the sky once ready.
+            // The crystals are shot in such a way that they do not fall near Deerclops, encouraging the player to stay near him.
+            if (attackTimer == screamTime)
+            {
+                SoundEngine.PlaySound(SoundID.DeerclopsScream, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    for (float dx = -1100f; dx < 1100f; dx += Main.rand.NextFloat(90f, 110f))
+                    {
+                        if (Math.Abs(dx) < 200f)
+                            continue;
+
+                        Vector2 icicleSpawnPosition = Utilities.GetGroundPositionFrom(new Vector2(npc.Center.X, target.Center.Y) + Vector2.UnitX * dx);
+                        Vector2 icicleVelocity = -Vector2.UnitY.RotatedByRandom(0.11f) * Main.rand.NextFloat(20f, 32f);
+                        Utilities.NewProjectileBetter(icicleSpawnPosition, icicleVelocity, ModContent.ProjectileType<DeerclopsIcicle>(), 95, 0f);
+                    }
+                }
+            }
+
+            // Handle movement.
+            DefaultMovement(npc, target, 7.5f, !shouldWalk);
+
+            // Decide frames.
+            if (shouldWalk)
+            {
+                npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                npc.frameCounter += Math.Abs(npc.velocity.X) * 0.2f + 0.4f;
+                if (npc.frameCounter >= 6f)
+                {
+                    frame++;
+                    npc.frameCounter = 0;
+                }
+
+                if (frame > 11f)
+                {
+                    frame = 0f;
+                    npc.frameCounter = 0;
+                }
+            }
+            else
+            {
+                npc.spriteDirection = 1;
+                if (frame is < 19 or > 24)
+                    npc.frameCounter = 0.0;
+                npc.frameCounter++;
+                frame = ScreamFrames[Math.Min((int)npc.frameCounter / 4, ScreamFrames.Length - 1)];
+            }
+
+            if (attackTimer >= screamTime + walkDelay + walkTime)
+                SelectNextAttack(npc);
         }
 
         public static void DoBehavior_GroundLaser(NPC npc, Player target, ref bool shouldUseShadowFade, ref float frame, ref float attackTimer)
@@ -122,7 +188,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 frame = Utils.Remap(attackTimer - laserChargeupTime / 2f, 0f, 32f, 12f, 14f);
 
             if (attackTimer >= laserChargeupTime + laserShootTime + attackTransitionDelay)
-                attackTimer = 0f;
+                SelectNextAttack(npc);
         }
 
         public static Vector2 GetEyePosition(NPC npc)
@@ -157,7 +223,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         public static void DefaultMovement(NPC npc, Player target, float walkSpeed, bool haltMovement)
         {
             Rectangle hitbox = target.Hitbox;
-            float verticalAcceleration = 0.4f;
+            float verticalAcceleration = 0.32f;
             bool closeToTarget = MathHelper.Distance(npc.Center.X, target.Center.X) < 80f;
             bool shouldSlowdown = closeToTarget || haltMovement;
             if (shouldSlowdown)
@@ -171,6 +237,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             bool acceptTopSurfaces = npc.Bottom.Y >= hitbox.Top;
             bool shouldRiseUpward = Collision.SolidCollision(checkTopLeft, checkWidth, checkHeight, acceptTopSurfaces);
             bool tileAhead = !Collision.SolidCollision(checkTopLeft + Vector2.UnitX * npc.direction * checkWidth, 16, 80, acceptTopSurfaces);
+            bool shouldJump = Collision.CanHit(npc, target) && target.Center.Y - npc.Center.Y < -320f;
+            if (npc.velocity.Y == 0f && shouldJump && !haltMovement)
+            {
+                SoundEngine.PlaySound(SoundID.Item38, npc.Center);
+                npc.velocity.Y = -20f;
+                return;
+            }
             if ((checkTopLeft.X < hitbox.X && checkTopLeft.X + npc.width > hitbox.X + hitbox.Width || closeToTarget) && 
                 checkTopLeft.Y + checkHeight < hitbox.Y + hitbox.Height - 16)
             {
@@ -184,25 +257,56 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             }
             if (shouldRiseUpward)
             {
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - verticalAcceleration, -8f, 0f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - verticalAcceleration, -16f, 0f);
                 return;
             }
-            if (npc.velocity.Y == 0f && tileAhead)
+            if (npc.velocity.Y == 0f && (tileAhead || shouldJump))
             {
                 npc.velocity.Y = -8f;
                 return;
             }
-            npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + verticalAcceleration, -8f, 16f);
+            npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + verticalAcceleration, -16f, 16f);
         }
 
         public static void SelectNextAttack(NPC npc)
         {
-
+            switch ((DeerclopsAttackType)npc.ai[0])
+			{
+                case DeerclopsAttackType.ShatteredIceRain:
+                    npc.ai[0] = (int)DeerclopsAttackType.GroundLaser;
+                    break;
+                case DeerclopsAttackType.GroundLaser:
+                    npc.ai[0] = (int)DeerclopsAttackType.ShatteredIceRain;
+                    break;
+            }
+            npc.ai[1] = 0f;
+            npc.netUpdate = true;
         }
 
         #endregion AI
 
         #region Frames and Drawcode
+
+        public static readonly int[] ScreamFrames = new[]
+        {
+            19,
+            20,
+            21,
+            22,
+            21,
+            22,
+            21,
+            22,
+            23,
+            24,
+            23,
+            24,
+            23,
+            24,
+            20,
+            19
+        };
+
         public override void FindFrame(NPC npc, int frameHeight)
         {
             npc.frame.Width = 180;

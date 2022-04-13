@@ -81,7 +81,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         public void CreateTileHitEffects()
         {
             Vector2 endOfLaser = Projectile.Center + Projectile.velocity * LaserLength;
-            FusableParticleManager.GetParticleSetByType<RancorGroundLavaParticleSet>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(10f, 10f) + Projectile.velocity * 40f, 90f);
+            if (Main.netMode != NetmodeID.Server)
+            {
+                Vector2 particleSpawnPosition = endOfLaser + Main.rand.NextVector2Circular(10f, 10f) + Projectile.velocity * 40f;
+                Vector2 particleVelocity = -Vector2.UnitY.RotatedByRandom(0.73f) * Main.rand.NextFloat(0.4f, 4f);
+                GeneralParticleHandler.SpawnParticle(new SeaFoamParticle(particleSpawnPosition, particleVelocity, Color.Orange, Color.Red, Main.rand.NextFloat(0.8f, 1.2f), 225f));
+            }
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

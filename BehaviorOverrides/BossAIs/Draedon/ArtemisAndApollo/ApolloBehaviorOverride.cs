@@ -83,7 +83,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Reset things.
             npc.damage = 0;
-            npc.defDamage = 560;
+            npc.defDamage = 520;
             npc.dontTakeDamage = false;
             npc.Calamity().newAI[0] = (int)Apollo.Phase.ChargeCombo;
 
@@ -638,7 +638,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         {
             int chargeDelay = 55;
             int chargeTime = 45;
-            int chargeCount = 8;
+            int chargeCount = 5;
             float chargeSpeed = npc.Distance(target.Center) * 0.007f + 32f;
             float chargeFlash = npc.type == ModContent.NPCType<Artemis>() ? npc.ModNPC<Artemis>().ChargeFlash : npc.ModNPC<Apollo>().ChargeComboFlash;
             ref float chargeCounter = ref npc.Infernum().ExtraAI[0];

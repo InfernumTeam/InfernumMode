@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
@@ -23,7 +24,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public const float MaxLaserLength = 4800f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Prismatic Ray");
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Prismatic Ray");
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
+        }
 
         public override void SetDefaults()
         {

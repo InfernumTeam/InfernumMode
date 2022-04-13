@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (Projectile.Opacity != 1f)
                 return;
 
-            target.AddBuff(BuffID.Electrified, 240);
+            target.AddBuff(BuffID.Electrified, 300);
         }
 
         public Projectile GetOrbToAttachTo()

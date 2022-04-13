@@ -27,6 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             DisplayName.SetDefault("Light Bolt");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 20;
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 
         public override void SetDefaults()

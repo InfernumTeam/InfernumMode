@@ -159,7 +159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Body drawing.
             Rectangle screenArea = new((int)(Main.screenPosition.X - 100f), (int)(Main.screenPosition.Y - 100f), Main.screenWidth + 200, Main.screenHeight + 200);
-            if (laserBodyLength > 0f)
+            if (laserBodyLength > 0f && middleFrameArea.Height >= 1f)
             {
                 float laserOffset = middleFrameArea.Height * Projectile.scale;
                 float incrementalBodyLength = 0f;

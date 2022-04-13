@@ -30,7 +30,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public const int LaserReleaseDelay = 125;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Light Orb");
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Light Orb");
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
+        }
 
         public override void SetDefaults()
         {

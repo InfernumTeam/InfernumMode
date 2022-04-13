@@ -1,4 +1,5 @@
 ﻿using CalamityMod;
+using CalamityMod.Particles;
 using CalamityMod.Projectiles.Magic;
 using Microsoft.Xna.Framework;
 using System;
@@ -58,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             // Update the laser length.
             float[] laserLengthSamplePoints = new float[24];
             Collision.LaserScan(Projectile.Center, Projectile.velocity, Projectile.scale * 8f, MaxLaserLength, laserLengthSamplePoints);
-            LaserLength = laserLengthSamplePoints.Average();
+            LaserLength = laserLengthSamplePoints.Average() - 10f;
 
             // Update aim.
             UpdateAim();
@@ -79,10 +80,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 
         public void CreateTileHitEffects()
         {
+            Vector2 endOfLaser = Projectile.Center + Projectile.velocity * LaserLength;
+            FusableParticleManager.GetParticleSetByType<RancorGroundLavaParticleSet>().SpawnParticle(endOfLaser + Main.rand.NextVector2Circular(10f, 10f) + Projectile.velocity * 40f, 90f);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Vector2 endOfLaser = Projectile.Center + Projectile.velocity * LaserLength * 1.06f;
             Projectile.NewProjectile(Projectile.GetProjectileSource_FromThis(), endOfLaser, Main.rand.NextVector2Circular(4f, 8f), ModContent.ProjectileType<RancorFog>(), 0, 0f, Projectile.owner);
 
             if (Main.rand.NextBool(2))

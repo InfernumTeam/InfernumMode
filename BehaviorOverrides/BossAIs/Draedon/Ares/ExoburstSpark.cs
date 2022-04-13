@@ -30,10 +30,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (Projectile.timeLeft > 240f)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                Projectile.velocity = (Projectile.velocity * 24f + Projectile.SafeDirectionTo(target.Center) * 14.5f) / 25f;
+                Projectile.velocity = (Projectile.velocity * 27f + Projectile.SafeDirectionTo(target.Center) * 13f) / 28f;
             }
-            else if (Projectile.velocity.Length() < 36f)
-                Projectile.velocity *= 1.032f;
+            else if (Projectile.velocity.Length() < 31f)
+                Projectile.velocity *= 1.03f;
 
             // Emit dust.
             for (int i = 0; i < 2; i++)

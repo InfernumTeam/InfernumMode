@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             frameType = (int)ThanatosFrameType.Closed;
 
             // Reset damage.
-            npc.defDamage = 800;
+            npc.defDamage = 775;
             npc.damage = npc.defDamage;
 
             // Define attack variables.
@@ -306,7 +306,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Decide frames.
             frameType = (int)ThanatosFrameType.Open;
 
-            int hoverRedirectTime = 240;
+            int hoverRedirectTime = 270;
             float redirectSpeedMultiplier = 1f;
             float initialChargeSpeed = 36f;
             float maxChargeSpeed = 62f;
@@ -373,7 +373,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 }
 
                 // Stop hovering if close to the hover destination and prepare the charge.
-                if (npc.WithinRange(hoverDestination, 130f) && attackTimer > 75f && npc.velocity.AngleBetween(idealVelocity) < 0.44f)
+                if (npc.WithinRange(hoverDestination, 130f) && attackTimer > 115f && npc.velocity.AngleBetween(idealVelocity) < 0.44f)
                 {
                     attackTimer = hoverRedirectTime;
                     idealVelocity = npc.SafeDirectionTo(target.Center + target.velocity * 12f) * initialChargeSpeed;
@@ -594,7 +594,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             int chargePreparationTime = 60;
             int redirectTime = 90;
             int chargeTime = 75;
-            int attackShiftDelay = 120;
+            int attackShiftDelay = 200;
             int lasersPerRotor = 5;
             int rotorReleaseRate = 7;
             int chargeCount = 2;
@@ -1009,7 +1009,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ExoMechManagement.DoPostAttackSelections(npc);
 
             bool wasCharging = oldAttackType is ThanatosHeadAttackType.AggressiveCharge or
-				ThanatosHeadAttackType.MaximumOverdrive;
+                ThanatosHeadAttackType.MaximumOverdrive;
 
             if (wasCharging)
             {

@@ -55,8 +55,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-
-            float offsetAngleFromTarget = Math.Abs(MathHelper.WrapAngle(Projectile.velocity.ToRotation() - Projectile.AngleTo(target.Center)));
             if (Time <= 60f)
                 RotationalSpeed = Time / 60f * InitialRotationalSpeed;
         }

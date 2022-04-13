@@ -68,11 +68,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             ref float slamTelegraphInterpolant = ref npc.localAI[1];
 
             if (npc.ai[3] == 0f)
-			{
+            {
                 crownIsAttached = 1f;
                 npc.ai[3] = 1f;
                 npc.netUpdate = true;
-			}
+            }
 
             npc.damage = npc.defDamage;
             switch ((QueenSlimeAttackType)attackType)
@@ -102,7 +102,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
         {
             int slamCount = 5;
             int hoverTime = 150;
-            int slamDelay = 16;
+            int slamDelay = 20;
             int slamTime = 180;
             int postSlamSitTime = 17;
             int gelSlamCount = 7;
@@ -119,7 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                 npc.damage = 0;
 
                 // Stop in place when close to the hover position.
-                if (npc.WithinRange(hoverDestination, 30f) && attackTimer >= 45f)
+                if (npc.WithinRange(hoverDestination, 30f) && attackTimer >= 54f)
                 {
                     attackTimer = hoverTime;
                     npc.velocity = Vector2.Zero;
@@ -139,7 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             else if (attackTimer < hoverTime + slamDelay + slamTime)
             {
                 npc.velocity.X *= 0.8f;
-                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.9f, 0f, 12.5f);
+                npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.9f, 0f, 10f);
                 for (int i = 0; i < 5; i++)
                 {
                     npc.position += npc.velocity;
@@ -154,7 +154,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
                             Utilities.NewProjectileBetter(npc.Bottom, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 135, 0f);
                             for (int j = 0; j < gelSlamCount; j++)
                             {
-                                float offsetAngle = MathHelper.Lerp(-0.6f, 0.6f, j / (float)(gelSlamCount - 1f));
+                                float offsetAngle = MathHelper.Lerp(-0.91f, 0.91f, j / (float)(gelSlamCount - 1f));
                                 Vector2 gelSpawnPosition = npc.Center;
                                 Vector2 gelShootVelocity = (target.Center - gelSpawnPosition).SafeNormalize(Vector2.UnitY).RotatedBy(offsetAngle) * gelShootSpeed;
                                 Utilities.NewProjectileBetter(gelSpawnPosition, gelShootVelocity, ModContent.ProjectileType<AcceleratingGel>(), 125, 0f);
@@ -505,12 +505,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 
         #region Drawing and Frames
 
-        public static void PrepareShader()
-        {
-            Main.graphics.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/QueenSlimeRainbow").Value;
-            Main.graphics.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/QueenSlimeFadeMap").Value;
-        }
-
         public static void DrawWings(SpriteBatch spriteBatch, NPC npc, Color color)
         {
             Texture2D wingTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/QueenSlime/QueenSlimeWings").Value;
@@ -662,8 +656,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             crystalDrawPosition -= Main.screenPosition;
 
             spriteBatch.EnterShaderRegion();
-
-            PrepareShader();
             GameShaders.Misc["QueenSlime"].Apply();
 
             bool slamAttack = (QueenSlimeAttackType)npc.ai[0] is QueenSlimeAttackType.RepeatedSlams or QueenSlimeAttackType.CrownDashes;
@@ -686,13 +678,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
             spriteBatch.ExitShaderRegion();
 
             spriteBatch.Draw(crystalTexture, crystalDrawPosition, crystalFrame, color, npc.rotation, crystalOrigin, 1f, SpriteEffects.FlipHorizontally, 0f);
-            PrepareShader();
             GameShaders.Misc["QueenSlime"].Apply();
 
             spriteBatch.EnterShaderRegion();
 
             DrawData drawData = new(texture, drawBottom, frameThing, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.FlipHorizontally, 0);
-            PrepareShader();
             GameShaders.Misc["QueenSlime"].Apply(drawData);
             drawData.Draw(spriteBatch);
             spriteBatch.ExitShaderRegion();

@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                                 type = ModContent.ProjectileType<ThanatosComboLaser>();
                                 shootSpeed = generalShootSpeedFactor * 10f;
                                 projectileDestination = Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Center + Vector2.UnitY * 34f;
-                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 500, 0f, Main.myPlayer, 0f, npc.whoAmI);
+                                laser = Utilities.NewProjectileBetter(npc.Center, npc.SafeDirectionTo(projectileDestination) * shootSpeed, type, 540, 0f, Main.myPlayer, 0f, npc.whoAmI);
                                 if (Main.projectile.IndexInRange(laser))
                                 {
                                     Main.projectile[laser].owner = npc.target;

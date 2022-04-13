@@ -138,7 +138,7 @@ namespace InfernumMode.BaseEntities
             centerOnLaser += Projectile.velocity * scale * startFrameArea.Height / 2f;
 
             // Body drawing.
-            if (laserBodyLength > 0f)
+            if (laserBodyLength > 0f && middleFrameArea.Height >= 1f)
             {
                 float laserOffset = middleFrameArea.Height * scale;
                 float incrementalBodyLength = 0f;

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.Graphics.Shaders;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
@@ -36,7 +37,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
         public const float MaxLaserLength = 3330f;
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Prismatic Ray");
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Prismatic Ray");
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
+        }
 
         public override void SetDefaults()
         {
@@ -111,7 +116,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.scale * 25f, ref _);
         }
 
-		public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
             overWiresUI.Add(index);
         }

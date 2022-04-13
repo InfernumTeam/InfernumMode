@@ -19,6 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Prism");
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 
         public override void SetDefaults()

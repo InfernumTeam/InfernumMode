@@ -152,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Vector2 centerOnLaser = Projectile.Center + Projectile.velocity * Projectile.scale * 5f;
 
             // Body drawing.
-            if (laserBodyLength > 0f)
+            if (laserBodyLength > 0f && middleFrameArea.Height >= 1f)
             {
                 float laserOffset = middleFrameArea.Height * Projectile.scale;
                 float incrementalBodyLength = 0f;

@@ -349,9 +349,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
                         Utilities.NewProjectileBetter(sparkleSpawnPosition, Main.rand.NextVector2Circular(28f, 28f), ModContent.ProjectileType<MajesticSparkleBig>(), 0, 0f);
                     }
                 }
-                Mod calamityModMusic = ModLoader.GetMod("CalamityModMusic");
-                if (calamityModMusic != null)
-                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/DragonGod");
+                if (ModLoader.TryGetMod("CalamityModMusic", out Mod calamityModMusic))
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(calamityModMusic, "Sounds/Music/YharonP2");
                 else 
                     npc.ModNPC.Music = MusicID.LunarBoss;
                 invincibilityTime = phase2InvincibilityTime;
@@ -529,7 +528,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             }
             // Further npc damage manipulation can be done later if necessary.
             else
-                npc.damage = npc.defDamage;
+            {
+                npc.damage = npc.defDamage - 30;
+                npc.defense = 35;
+            }
 
             if (phase2)
             {
@@ -1352,7 +1354,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             ref float hasTeleportedFlag = ref npc.Infernum().ExtraAI[17];
             ref float attackDelay = ref npc.Infernum().ExtraAI[18];
 
-            npc.damage = npc.defDamage;
+            npc.damage = npc.defDamage - 30;
 
             if (attackDelay < 45f)
             {
@@ -1705,7 +1707,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 // Open mouth for a little bit.
                 if (npc.frameCounter is >= 30 and
-					<= 40)
+                    <= 40)
                 {
                     npc.frame.Y = 0;
                 }

@@ -179,7 +179,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         for (int i = 0; i < totalLasers; i++)
                         {
                             Vector2 laserDirection = (MathHelper.TwoPi * i / totalLasers + generalAngularOffset).ToRotationVector2();
-                            int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), 900, 0f);
+                            int deathray = Utilities.NewProjectileBetter(npc.Center, laserDirection, ModContent.ProjectileType<AresSpinningDeathBeam>(), 1050, 0f);
                             if (Main.projectile.IndexInRange(deathray))
                             {
                                 Main.projectile[deathray].ai[1] = npc.whoAmI;
@@ -246,7 +246,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (enraged)
             {
-                aresShootRate -= 24;
+                aresShootRate /= 3;
                 aresCircularBoltCount += 8;
                 aresShotBoltCount += 8;
                 thanatosShootRate -= 24;

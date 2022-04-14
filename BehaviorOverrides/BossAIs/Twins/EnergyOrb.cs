@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             NPC.npcSlots = 1f;
             NPC.aiStyle = AIType = -1;
             NPC.width = NPC.height = 40;
-            NPC.damage = 120;
+            NPC.damage = 84;
             NPC.lifeMax = 1500000;
             NPC.knockBackResist = 0f;
             NPC.noGravity = true;
@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 {
                     if (OwnerAttackTimer > 60f)
                         AngularOffset = AngularOffset.AngleLerp(Target.AngleTo(Target.Center) + MathHelper.PiOver2 * AngularDirection - MathHelper.PiOver2, 0.25f);
-                    NPC.Center = Vector2.Lerp(NPC.Center, Owner.Center + AngularOffset.ToRotationVector2() * Vector2.One * 150f, 0.21f);
+                    NPC.Center = Vector2.Lerp(NPC.Center, Owner.Center + AngularOffset.ToRotationVector2() * Vector2.One * 150f, 0.1f);
                     NPC.damage = 0;
                 }
 
@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             continue;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter((Main.npc[i].Center + NPC.Center) * 0.5f, Vector2.Zero, ModContent.ProjectileType<EnergyBlast>(), 130, 0f);
+                            Utilities.NewProjectileBetter((Main.npc[i].Center + NPC.Center) * 0.5f, Vector2.Zero, ModContent.ProjectileType<EnergyBlast>(), 120, 0f);
 
                         NPC.velocity *= 0.2f;
                         NPC.netUpdate = true;
@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                 }
 
                 if (OwnerAttackTimer is >= 240f and <= 320f)
-                    NPC.Center = Vector2.Lerp(NPC.Center, Target.Center + new Vector2(AngularDirection * 480f, -360f), 0.09f);
+                    NPC.Center = Vector2.Lerp(NPC.Center, Target.Center + new Vector2(AngularDirection * 480f, -360f), 0.012f);
 
                 // Explode into homing energy orbs if the two did not collide.
                 if (Main.netMode != NetmodeID.MultiplayerClient && OwnerAttackTimer == 215f)
@@ -124,7 +124,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
                             continue;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Utilities.NewProjectileBetter((Main.npc[i].Center + NPC.Center) * 0.5f, Vector2.Zero, ModContent.ProjectileType<BigEnergyBlast>(), 155, 0f);
+                            Utilities.NewProjectileBetter((Main.npc[i].Center + NPC.Center) * 0.5f, Vector2.Zero, ModContent.ProjectileType<BigEnergyBlast>(), 150, 0f);
                         OwnerAttackTimer = 420f;
                         Owner.netUpdate = true;
                         break;

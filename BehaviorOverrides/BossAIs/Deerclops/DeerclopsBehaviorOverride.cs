@@ -271,7 +271,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
         public static void SelectNextAttack(NPC npc)
         {
             switch ((DeerclopsAttackType)npc.ai[0])
-			{
+            {
                 case DeerclopsAttackType.ShatteredIceRain:
                     npc.ai[0] = (int)DeerclopsAttackType.GroundLaser;
                     break;

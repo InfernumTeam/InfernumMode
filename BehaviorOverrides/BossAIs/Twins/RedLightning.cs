@@ -26,6 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lightning");
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
             ProjectileID.Sets.MinionShot[Projectile.type] = true;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 70;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;

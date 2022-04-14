@@ -34,6 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             DisplayName.SetDefault("Teratesla Lightning Torrent");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 150;
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 
         public override void SetDefaults()

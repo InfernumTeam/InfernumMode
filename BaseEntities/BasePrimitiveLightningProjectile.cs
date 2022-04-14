@@ -63,6 +63,8 @@ namespace InfernumMode.BaseEntities
 
         public override void AI()
         {
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
+
             // FrameCounter in this context is really just an arbitrary timer
             // which allows random turning to occur.
             Projectile.frameCounter++;

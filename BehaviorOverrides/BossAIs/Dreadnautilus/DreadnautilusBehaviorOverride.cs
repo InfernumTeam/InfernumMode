@@ -1,17 +1,14 @@
 ﻿using CalamityMod;
-using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Buffs.StatDebuffs;
-using CalamityMod.Items.Placeables.Banners;
-using InfernumMode.BehaviorOverrides.BossAIs.DesertScourge;
+using CalamityMod.Particles;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 {
@@ -19,7 +16,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
     {
         public enum DreadnautilusAttackState
         {
-            InitialSummonDelay
+            InitialSummonDelay,
+            BloodSpitToothBalls,
+            EyeGleamEyeFishSummon,
+            RandomBloodBurstSpread,
+            EquallySpreadBloodBolts,
+            HorizontalCharge,
+            SanguineBatSwarm,
+            SquidGames
         }
 
         public override int NPCOverrideType => NPCID.BloodNautilus;
@@ -56,12 +60,419 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public override bool PreAI(NPC npc)
         {
+            npc.TargetClosestIfTargetIsInvalid();
+            Player target = Main.player[npc.target];
+
+            ref float attackTimer = ref npc.ai[1];
+            ref float eyeGleamInterpolant = ref npc.ai[2];
+
+            switch ((DreadnautilusAttackState)npc.ai[0])
+            {
+                case DreadnautilusAttackState.InitialSummonDelay:
+                    DoBehavior_InitialSummonDelay(npc, target, ref attackTimer);
+                    break;
+                case DreadnautilusAttackState.BloodSpitToothBalls:
+                    DoBehavior_BloodSpitToothBalls(npc, target, ref attackTimer);
+                    break;
+                case DreadnautilusAttackState.EyeGleamEyeFishSummon:
+                    DoBehavior_EyeGleamEyeFishSummon(npc, target, ref attackTimer, ref eyeGleamInterpolant);
+                    break;
+                case DreadnautilusAttackState.RandomBloodBurstSpread:
+                    DoBehavior_RandomBloodBurstSpread(npc, target, ref attackTimer);
+                    break;
+            }
+            attackTimer++;
             return false;
+        }
+
+        public static void DoBehavior_InitialSummonDelay(NPC npc, Player target, ref float attackTimer)
+        {
+            npc.velocity *= 0.98f;
+            int direction = -Math.Sign(target.Center.X - npc.Center.X);
+            if (direction != 0)
+                npc.spriteDirection = direction;
+
+            // Create a ring of blood particles on the first frame.
+            if (attackTimer == 1f)
+            {
+                for (int i = 0; i < 36; i++)
+                {
+                    Vector2 velocityDirection = (npc.velocity.SafeNormalize(Vector2.UnitY) * new Vector2(npc.width / 2f, (float)npc.height) * 0.75f * 0.5f).RotatedBy(MathHelper.TwoPi * i / 36f);
+                    Dust blood = Dust.NewDustDirect(npc.Center, 0, 0, 5, 0f, 0f, 100, default, 1.4f);
+                    blood.velocity = velocityDirection.SafeNormalize(Vector2.UnitY) * 3f;
+                    blood.noGravity = true;
+                }
+            }
+
+            // Rise into the air and handle fade shortly after appearing.
+            if (attackTimer > 5f)
+            {
+                npc.velocity.Y = -2.5f;
+                npc.alpha = Utils.Clamp(npc.alpha - 10, 0, 150);
+                if (Collision.SolidCollision(npc.position, npc.width, npc.height))
+                    npc.alpha = Utils.Clamp(npc.alpha + 15, 0, 150);
+            }
+
+            // Transition to the first attack after a short period of time has passed.
+            if (attackTimer >= 50f)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_BloodSpitToothBalls(NPC npc, Player target, ref float attackTimer)
+        {
+            int shootCycleTime = 80;
+            int shootPrepareTime = 30;
+            int totalShotsToDo = 3;
+            float wrappedTime = attackTimer % shootCycleTime;
+            bool preparingToShoot = wrappedTime > shootCycleTime - shootPrepareTime;
+
+            // Turn with 100% sharpness when not preparing to shoot.
+            // If about to shoot however, have the sharpness fall off until eventually there is no more aiming.
+            float angleTurnSharpness = 1f - Utils.GetLerpValue(shootCycleTime - 25f, shootCycleTime - 3f, wrappedTime, true);
+
+            // Have the mouth face towards the target.
+            npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
+            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            if (npc.spriteDirection == -1)
+                idealRotation += MathHelper.Pi;
+
+            if (npc.spriteDirection != npc.direction)
+            {
+                npc.spriteDirection = npc.direction;
+                npc.rotation = -npc.rotation;
+                idealRotation = -idealRotation;
+            }
+            if (angleTurnSharpness > 0f)
+                npc.rotation = npc.rotation.AngleLerp(idealRotation, angleTurnSharpness);
+
+            // Have the movement fall off quickly when preparing to shoot.
+            if (preparingToShoot)
+            {
+                npc.velocity *= 0.97f;
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.Zero, 0.04f);
+                if (npc.velocity.Length() < 0.03f)
+                    npc.velocity = Vector2.Zero;
+
+                // Release a burst of spit balls right before the end of the cycle.
+                if (wrappedTime == shootCycleTime - 1f)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 shootPosition, out Vector2 shootDirection);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            Vector2 shootVelocity = shootDirection.RotatedByRandom(0.33f) * Main.rand.NextFloat(11.5f, 15f);
+                            Utilities.NewProjectileBetter(shootPosition, shootVelocity, ModContent.ProjectileType<GoreSpitBall>(), 120, 0f, npc.target);
+                        }
+
+                        // Rebound backward.
+                        float aimAwayFromTargetInterpolant = Utils.GetLerpValue(250f, 185f, npc.Distance(target.Center), true);
+                        float reboundSpeed = Utils.Remap(npc.Distance(target.Center), 500f, 100f, 5f, 16f);
+                        Vector2 reboundDirection = Vector2.Lerp(shootDirection, npc.SafeDirectionTo(target.Center), aimAwayFromTargetInterpolant).SafeNormalize(Vector2.UnitY);
+                        npc.velocity -= reboundDirection * reboundSpeed;
+
+                        // And sync the NPC, to catch potential accumulating desyncs.
+                        npc.netUpdate = true;
+                    }
+
+                    // Play a split sound.
+                    SoundEngine.PlaySound(SoundID.Item17, npc.Center);
+                }
+            }
+
+            // Move towards the closest side to the target. Also have a slight upward offset at said destination.
+            // This movement becomes extremely fast if notably far from the destination.
+            else
+            {
+                Vector2 hoverDestination = target.Center + new Vector2((npc.Center.X > target.Center.X).ToDirectionInt() * 325f, -60f);
+                float distanceToDestination = npc.Distance(hoverDestination);
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(distanceToDestination, 10f);
+                npc.SimpleFlyMovement(Vector2.Lerp(idealVelocity, (hoverDestination - npc.Center) * 0.15f, Utils.GetLerpValue(180f, 540f, distanceToDestination, true)), 0.4f);
+            }
+
+            if (attackTimer >= totalShotsToDo * shootCycleTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_EyeGleamEyeFishSummon(NPC npc, Player target, ref float attackTimer, ref float eyeGleamInterpolant)
+        {
+            int slowdownTime = 50;
+            int summonTime = 50;
+            int phaseTransitionDelay = 125;
+            int fishSummonCount = 1;
+            int maxFishAtOnce = 3;
+
+            // Slow down, look at the target, and create the gleam effect.
+            npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
+            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            if (npc.spriteDirection == -1)
+                idealRotation += MathHelper.Pi;
+
+            if (npc.spriteDirection != npc.direction)
+            {
+                npc.spriteDirection = npc.direction;
+                npc.rotation = -npc.rotation;
+                idealRotation = -idealRotation;
+            }
+            npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.035f);
+
+            if (attackTimer < slowdownTime)
+            {
+                eyeGleamInterpolant = Utils.GetLerpValue(16f, slowdownTime - 1f, attackTimer, true);
+                npc.velocity *= 0.975f;
+            }
+
+            // Increase the intensity of the gleam and summon wandering eye fish from the sky.
+            else if (attackTimer < slowdownTime + summonTime)
+            {
+                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, -6f, 0.02f);
+                float gleamInterpolant = Utils.GetLerpValue(0f, summonTime, attackTimer - slowdownTime, true);
+                eyeGleamInterpolant = 1f + CalamityUtils.Convert01To010(gleamInterpolant) * 0.6f;
+
+                // Stop the attack early if hit in time.
+                if (npc.justHit)
+                {
+                    eyeGleamInterpolant = 0f;
+                    var sound = SoundEngine.PlaySound(SoundID.NPCHit35, npc.Center);
+                    if (sound != null)
+                    {
+                        CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
+                        sound.Pitch = -0.85f;
+                    }
+
+                    attackTimer = slowdownTime + summonTime + phaseTransitionDelay - 45f;
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * -27f;
+                    npc.netUpdate = true;
+
+                    // Create a lot of blood as an indicator.
+                    Vector2 bloodSpawnPosition = target.Center + Main.rand.NextVector2Circular(target.width, target.height) * 0.04f;
+                    Vector2 splatterDirection = (target.Center - bloodSpawnPosition).SafeNormalize(Vector2.UnitY);
+                    SoundEngine.PlaySound(SoundID.NPCHit18, npc.Center);
+                    for (int i = 0; i < 21; i++)
+                    {
+                        int bloodLifetime = Main.rand.Next(22, 36);
+                        float bloodScale = Main.rand.NextFloat(0.6f, 0.8f);
+                        Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat());
+                        bloodColor = Color.Lerp(bloodColor, new Color(51, 22, 94), Main.rand.NextFloat(0.65f));
+
+                        if (Main.rand.NextBool(20))
+                            bloodScale *= 2f;
+
+                        Vector2 bloodVelocity = splatterDirection.RotatedByRandom(0.81f) * Main.rand.NextFloat(11f, 23f);
+                        bloodVelocity.Y -= 12f;
+                        BloodParticle blood = new(bloodSpawnPosition, bloodVelocity, bloodLifetime, bloodScale, bloodColor);
+                        GeneralParticleHandler.SpawnParticle(blood);
+                    }
+                    for (int i = 0; i < 10; i++)
+                    {
+                        float bloodScale = Main.rand.NextFloat(0.2f, 0.33f);
+                        Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat(0.5f, 1f));
+                        Vector2 bloodVelocity = splatterDirection.RotatedByRandom(0.9f) * Main.rand.NextFloat(9f, 14.5f);
+                        BloodParticle2 blood = new(bloodSpawnPosition, bloodVelocity, 20, bloodScale, bloodColor);
+                        GeneralParticleHandler.SpawnParticle(blood);
+                    }
+
+                    return;
+                }
+
+                // Summon wandering eye fish.
+                if (attackTimer == slowdownTime + summonTime - 8)
+                {
+                    SoundEngine.PlaySound(SoundID.Item122, npc.Center);
+                    SoundEngine.PlaySound(SoundID.Item170, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient && NPC.CountNPCS(NPCID.EyeballFlyingFish) + fishSummonCount <= maxFishAtOnce)
+                    {
+                        for (int i = 0; i < fishSummonCount; i++)
+                        {
+                            for (int j = 0; j < 500; j++)
+                            {
+                                float horizontalOffset = Main.rand.NextFloat(360f, 800f) * Main.rand.NextBool().ToDirectionInt();
+                                float verticalOffset = Main.rand.NextFloat(-550f, -420f);
+                                Vector2 potentialSpawnPosition = target.Center + new Vector2(horizontalOffset, verticalOffset);
+                                if (!Collision.SolidCollision(potentialSpawnPosition - Vector2.One * 50f, 100, 100) && Collision.CanHit(potentialSpawnPosition, 1, 1, target.Center, 1, 1))
+                                {
+                                    NPC.NewNPC(new InfernumSource(), (int)potentialSpawnPosition.X, (int)potentialSpawnPosition.Y, NPCID.EyeballFlyingFish, npc.whoAmI);
+                                    break;
+                                }
+                            }
+                        }
+                        npc.velocity = Vector2.Zero;
+                        npc.netUpdate = true;
+                    }
+                }
+            }
+
+            // Make the gleam fade away again and eventually transition to the next attack.
+            else if (attackTimer < slowdownTime + summonTime + phaseTransitionDelay)
+            {
+                eyeGleamInterpolant = MathHelper.Clamp(eyeGleamInterpolant - 0.04f, 0f, 1f);
+                npc.velocity *= 0.95f;
+            }
+            else
+            {
+                eyeGleamInterpolant = 0f;
+                SelectNextAttack(npc);
+            }
+        }
+
+        public static void DoBehavior_RandomBloodBurstSpread(NPC npc, Player target, ref float attackTimer)
+        {
+            int shootCount = 4;
+            float attackDelay = 90f;
+            float shootTime = 90f;
+            float wrappedAttackTimer = (attackTimer - attackDelay) % (shootTime / shootCount);
+
+            // Look at the target.
+            npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
+            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            if (npc.spriteDirection == -1)
+                idealRotation += MathHelper.Pi;
+
+            if (npc.spriteDirection != npc.direction)
+            {
+                npc.spriteDirection = npc.direction;
+                npc.rotation = -npc.rotation;
+                idealRotation = -idealRotation;
+            }
+            npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.2f);
+
+            if (attackTimer < attackDelay)
+            {
+                npc.velocity *= 0.95f;
+                npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 mouthPosition, out Vector2 mouthDirection);
+                if (!Main.rand.NextBool(4))
+                {
+                    Dust blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 60f - new Vector2(60f), 120, 120, 16, 0f, 0f, 150, Color.Transparent, 0.6f);
+                    blood.fadeIn = 1f;
+                    blood.velocity = blood.position.DirectionTo(mouthPosition + Main.rand.NextVector2Circular(15f, 15f)) * (blood.velocity.Length() + 3f);
+                    blood.noGravity = true;
+                    blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 100f - new Vector2(80f), 160, 160, 16, 0f, 0f, 100, Color.Transparent, 0.9f);
+                    blood.fadeIn = 1.5f;
+                    blood.velocity = blood.position.DirectionTo(mouthPosition + Main.rand.NextVector2Circular(15f, 15f)) * (blood.velocity.Length() + 5f);
+                    blood.noGravity = true;
+                }
+            }
+            else if (attackTimer < attackDelay + shootTime)
+            {
+                npc.velocity *= 0.9f;
+                npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 mouthPosition, out Vector2 mouthDirection);
+                if (wrappedAttackTimer < shootTime / shootCount * 0.8f)
+                {
+                    for (int k = 0; k < 5; k++)
+                    {
+                        Dust blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 50f - new Vector2(15f), 30, 30, 5, 0f, 0f, 0, Color.Transparent, 1.5f);
+                        blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(5f, 5f)) * blood.velocity.Length();
+                        blood.position -= mouthDirection * 60f;
+                        blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 90f - new Vector2(20f), 40, 40, 5, 0f, 0f, 100, Color.Transparent, 1.5f);
+                        blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(10f, 10f)) * (blood.velocity.Length() + 5f);
+                        blood.position -= mouthDirection * 100f;
+                    }
+                }
+
+                // Create blood projectiles.
+                if ((int)wrappedAttackTimer == 0)
+                {
+                    npc.velocity -= mouthDirection * 8f;
+                    for (int l = 0; l < 20; l++)
+                    {
+                        Dust blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 60f - new Vector2(15f), 30, 30, 5, 0f, 0f, 0, Color.Transparent, 1.5f);
+                        blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(5f, 5f)) * blood.velocity.Length();
+                        blood.position -= mouthDirection * 60f;
+                        blood = Dust.NewDustDirect(mouthPosition + mouthDirection * 100f - new Vector2(20f), 40, 40, 5, 0f, 0f, 100, Color.Transparent, 1.5f);
+                        blood.velocity = blood.position.DirectionFrom(mouthPosition + Main.rand.NextVector2Circular(10f, 10f)) * (blood.velocity.Length() + 5f);
+                        blood.position -= mouthDirection * 100f;
+                    }
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int bloodCount = Main.rand.Next(6, 13);
+                        for (int i = 0; i < bloodCount; i++)
+                        {
+                            Vector2 bloodVelocity = mouthDirection * 10f + Main.rand.NextVector2Square(-4f, 4f);
+                            Utilities.NewProjectileBetter(mouthPosition - mouthDirection * 5f, bloodVelocity, ModContent.ProjectileType<BloodShot2>(), 120, 0f, Main.myPlayer);
+                        }
+                    }
+                }
+            }
+
+            if (attackTimer >= attackDelay + shootTime)
+                SelectNextAttack(npc);
         }
 
         public static void SelectNextAttack(NPC npc)
         {
+            DreadnautilusAttackState oldAttack = (DreadnautilusAttackState)npc.ai[0];
+            if (oldAttack == DreadnautilusAttackState.InitialSummonDelay)
+                npc.ai[0] = (int)DreadnautilusAttackState.RandomBloodBurstSpread;
+            if (oldAttack == DreadnautilusAttackState.BloodSpitToothBalls)
+                npc.ai[0] = (int)DreadnautilusAttackState.RandomBloodBurstSpread;
+            if (oldAttack == DreadnautilusAttackState.RandomBloodBurstSpread)
+                npc.ai[0] = (int)DreadnautilusAttackState.EyeGleamEyeFishSummon;
+            if (oldAttack == DreadnautilusAttackState.EyeGleamEyeFishSummon)
+                npc.ai[0] = (int)DreadnautilusAttackState.BloodSpitToothBalls;
+            npc.ai[1] = 0f;
+            npc.netUpdate = true;
+        }
 
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            float eyeGleamInterpolant = npc.ai[2];
+            float backglowFade = Utils.Remap(eyeGleamInterpolant - 1f, 0f, 0.6f, 0f, 1f);
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Vector2 drawPosition = npc.Center - Main.screenPosition;
+            SpriteEffects direction = npc.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            // Create a backglow as necessary.
+            if (backglowFade > 0f)
+            {
+                float drawOffsetFactor = backglowFade * 7.5f + (float)Math.Cos(Main.GlobalTimeWrappedHourly * 5f) * 3f;
+                if (drawOffsetFactor < 0f)
+                    drawOffsetFactor = 0f;
+                Color backglowColor = Color.Red * (float)Math.Pow(backglowFade, 0.55f);
+
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * drawOffsetFactor;
+                    spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+                    spriteBatch.Draw(TextureAssets.Extra[129].Value, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+                }
+            }
+
+            spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            spriteBatch.Draw(TextureAssets.Extra[129].Value, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+
+            // Render a gleam above the eye as necessary.
+            if (eyeGleamInterpolant > 0f)
+            {
+                spriteBatch.SetBlendState(BlendState.Additive);
+
+                Texture2D gleamTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/EmpressStar").Value;
+                Color gleamColor = new Color(0.93f, 0.03f, 0.11f) * eyeGleamInterpolant * npc.Opacity;
+                float eyeOffsetRotation = npc.rotation + MathHelper.Pi * npc.spriteDirection * 0.15f;
+                if (npc.spriteDirection == -1)
+                    eyeOffsetRotation += MathHelper.Pi;
+                Vector2 eyePosition = drawPosition + eyeOffsetRotation.ToRotationVector2() * new Vector2(14f, 18f);
+
+                // Calculate the rotation and scale of each piece of the gleam.
+                float[] eyeRotations = new[] 
+                {
+                    -Main.GlobalTimeWrappedHourly * 3.74f,
+                    Main.GlobalTimeWrappedHourly * 3.74f,
+                    MathHelper.PiOver2
+                };
+                float[] eyeScales = new[]
+                {
+                    npc.Opacity * eyeGleamInterpolant * 1.65f,
+                    npc.Opacity * eyeGleamInterpolant* 1.65f,
+                    npc.Opacity * eyeGleamInterpolant * Utils.Remap((float)Math.Cos(Main.GlobalTimeWrappedHourly * 9.3f), -1f, 1f, 2f, 2.7f),
+                };
+
+                for (int i = 0; i < eyeRotations.Length; i++)
+                    spriteBatch.Draw(gleamTexture, eyePosition, null, gleamColor, eyeRotations[i], gleamTexture.Size() * 0.5f, eyeScales[i] * 0.4f, 0, 0f);
+
+                spriteBatch.ResetBlendState();
+            }
+
+            return false;
         }
     }
 }

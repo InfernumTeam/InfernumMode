@@ -36,6 +36,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
             Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
             Projectile.velocity = (Projectile.velocity * 29f + Projectile.SafeDirectionTo(target.Center) * 16f) / 30f;
             Projectile.Opacity = Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
+            if (Projectile.timeLeft < 40)
+                Projectile.damage = 0;
+
             if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.WithinRange(target.Center, 70f))
             {
                 Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<EnergyBlast>(), 120, 0f);

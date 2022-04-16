@@ -717,6 +717,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             if (phase3)
                 squidSummonCount++;
 
+            // Look at the target.
+            npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
+            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            if (npc.spriteDirection == -1)
+                idealRotation += MathHelper.Pi;
+
+            if (npc.spriteDirection != npc.direction)
+            {
+                npc.spriteDirection = npc.direction;
+                npc.rotation = -npc.rotation;
+                idealRotation = -idealRotation;
+            }
+            npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.12f);
+
             if (attackTimer < summonDelay)
                 npc.velocity *= 0.95f;
 
@@ -728,8 +742,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 int damage = (int)(npc.lifeMax * 0.01f);
                 for (int i = 0; i < squidSummonCount; i++)
                 {
+                    if (NPC.CountNPCS(NPCID.BloodSquid) >= squidSummonCount + 1)
+                        break;
+
                     Vector2 splatterDirection = -mouthDirection.RotatedByRandom(0.78f);
-                    Vector2 bloodSpawnPosition = target.Center + splatterDirection * 60f;
+                    Vector2 bloodSpawnPosition = npc.Center + splatterDirection * 60f;
                     SoundEngine.PlaySound(SoundID.NPCHit18, npc.Center);
                     for (int j = 0; j < 21; j++)
                     {

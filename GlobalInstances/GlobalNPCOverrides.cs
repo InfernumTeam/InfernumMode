@@ -38,6 +38,7 @@ using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
 using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -280,6 +281,30 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == ModContent.NPCType<OldDukeNPC>())
                 CalamityMod.CalamityMod.StopRain();
             return false;
+        }
+
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
+        {
+            if (npc.type == NPCID.BloodNautilus)
+            {
+                // Remove the vanilla loot rule for the Sanguine Staff, Blood Moon Monolith, and Bloody Tear.
+                int[] dropsToReAdd = new int[]
+                {
+                    ItemID.SanguineStaff,
+                    ItemID.BloodMoonMonolith,
+                    ItemID.BloodMoonStarter
+                };
+                npcLoot.RemoveWhere((rule) =>
+                {
+                    if (rule is DropBasedOnExpertMode expertDrop)
+                        return expertDrop.ruleForNormalMode is CommonDrop thing && dropsToReAdd.Contains(thing.itemId);
+                    return false;
+                });
+
+                // And replace them with a 100% chance.
+                for (int i = 0; i < dropsToReAdd.Length; i++)
+                    npcLoot.Add(dropsToReAdd[i]);
+            }
         }
 
         public override void OnKill(NPC npc)

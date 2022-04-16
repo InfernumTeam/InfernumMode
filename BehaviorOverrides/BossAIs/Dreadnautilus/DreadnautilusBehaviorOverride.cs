@@ -30,6 +30,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCSetDefaults | NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
+        public const float Phase2LifeRatio = 0.55f;
+
+        public const float Phase3LifeRatio = 0.25f;
+
         public override void SetDefaults(NPC npc)
         {
             NPCID.Sets.TrailCacheLength[npc.type] = 8;
@@ -65,6 +69,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
 
             npc.ai[3] = 1f;
             npc.dontTakeDamage = false;
+
+            bool phase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
+            bool phase3 = npc.life < npc.lifeMax * Phase3LifeRatio;
             ref float attackTimer = ref npc.ai[1];
             ref float eyeGleamInterpolant = ref npc.ai[2];
 
@@ -74,19 +81,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                     DoBehavior_InitialSummonDelay(npc, target, ref attackTimer);
                     break;
                 case DreadnautilusAttackState.BloodSpitToothBalls:
-                    DoBehavior_BloodSpitToothBalls(npc, target, ref attackTimer);
+                    DoBehavior_BloodSpitToothBalls(npc, target, phase2, phase3, ref attackTimer);
                     break;
                 case DreadnautilusAttackState.EyeGleamEyeFishSummon:
-                    DoBehavior_EyeGleamEyeFishSummon(npc, target, ref attackTimer, ref eyeGleamInterpolant);
+                    DoBehavior_EyeGleamEyeFishSummon(npc, target, phase2, phase3, ref attackTimer, ref eyeGleamInterpolant);
                     break;
                 case DreadnautilusAttackState.RandomBloodBurstSpread:
-                    DoBehavior_RandomBloodBurstSpread(npc, target, ref attackTimer);
+                    DoBehavior_RandomBloodBurstSpread(npc, target, phase2, phase3, ref attackTimer);
                     break;
                 case DreadnautilusAttackState.EquallySpreadBloodBolts:
-                    DoBehavior_EquallySpreadBloodBolts(npc, target, ref attackTimer);
+                    DoBehavior_EquallySpreadBloodBolts(npc, target, phase2, phase3, ref attackTimer);
                     break;
                 case DreadnautilusAttackState.HorizontalCharge:
-                    DoBehavior_HorizontalCharge(npc, target, ref attackTimer);
+                    DoBehavior_HorizontalCharge(npc, target, phase3, ref attackTimer);
+                    break;
+                case DreadnautilusAttackState.SanguineBatSwarm:
+                    DoBehavior_SanguineBatSwarm(npc, target, phase3, ref attackTimer, ref eyeGleamInterpolant);
+                    break;
+                case DreadnautilusAttackState.SquidGames:
+                    DoBehavior_SquidGames(npc, target, phase3, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -126,11 +139,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_BloodSpitToothBalls(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_BloodSpitToothBalls(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
             int shootCycleTime = 80;
             int shootPrepareTime = 30;
             int totalShotsToDo = 3;
+
+            if (phase2)
+            {
+                shootCycleTime += 15;
+                totalShotsToDo++;
+            }
+            if (phase3)
+                totalShotsToDo++;
+
             float wrappedTime = attackTimer % shootCycleTime;
             bool preparingToShoot = wrappedTime > shootCycleTime - shootPrepareTime;
 
@@ -202,13 +224,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_EyeGleamEyeFishSummon(NPC npc, Player target, ref float attackTimer, ref float eyeGleamInterpolant)
+        public static void DoBehavior_EyeGleamEyeFishSummon(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer, ref float eyeGleamInterpolant)
         {
             int slowdownTime = 50;
-            int summonTime = 50;
+            int summonTime = 65;
             int phaseTransitionDelay = 125;
             int fishSummonCount = 1;
             int maxFishAtOnce = 3;
+
+            if (phase2)
+                summonTime -= 15;
+            if (phase3)
+                fishSummonCount++;
 
             // Slow down, look at the target, and create the gleam effect.
             npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
@@ -323,11 +350,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             }
         }
 
-        public static void DoBehavior_RandomBloodBurstSpread(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_RandomBloodBurstSpread(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
             int shootCount = 4;
             float attackDelay = 90f;
             float shootTime = 90f;
+
+            if (phase2)
+                shootCount++;
+
             float wrappedAttackTimer = (attackTimer - attackDelay) % (shootTime / shootCount);
 
             // Look at the target.
@@ -406,14 +437,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_EquallySpreadBloodBolts(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_EquallySpreadBloodBolts(NPC npc, Player target, bool phase2, bool phase3, ref float attackTimer)
         {
             int shootDelay = 75;
             int slowdownTime = 30;
             int shootTime = 120;
             int totalBoltsToShoot = 15;
-            int shootRate = shootTime / totalBoltsToShoot;
             float shootSpeed = 2.7f;
+
+            if (phase2)
+            {
+                shootDelay -= 15;
+                shootSpeed *= 1.15f;
+            }
+            if (phase3)
+            {
+                totalBoltsToShoot += 3;
+                shootSpeed *= 1.25f;
+            }
+
+            int shootRate = shootTime / totalBoltsToShoot;
             ref float shootDirection = ref npc.Infernum().ExtraAI[0];
 
             // Look at the target.
@@ -468,21 +511,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_HorizontalCharge(NPC npc, Player target, ref float attackTimer)
+        public static void DoBehavior_HorizontalCharge(NPC npc, Player target, bool phase3, ref float attackTimer)
         {
             int chargeCount = 3;
             int redirectTime = 40;
-            int chargeTime = 45;
+            int chargeTime = 40;
             int attackTransitionDelay = 8;
             int backSpikeCount = 6;
             float chargeSpeed = 38f;
             float hoverSpeed = 25f;
+
+            if (phase3)
+            {
+                chargeTime -= 6;
+                backSpikeCount += 2;
+            }
+
             ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
             ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
             npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 mouthPosition, out Vector2 mouthDirection);
 
             if (chargeCounter == 0f)
-                redirectTime += 32;
+                redirectTime += 45;
 
             // Initialize the charge direction.
             if (attackTimer == 1f)
@@ -566,25 +616,189 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             }
         }
 
+        public static void DoBehavior_SanguineBatSwarm(NPC npc, Player target, bool phase3, ref float attackTimer, ref float eyeGleamInterpolant)
+        {
+            int slowdownTime = 30;
+            int summonTime = 90;
+            int totalBatsToSummon = 15;
+            int batAttackTime = SanguineBat.Lifetime;
+            int attackTransitionDelay = 90;
+            int bloodBurstReleaseRate = 75;
+            int bloodPerBurst = 4;
+
+            if (phase3)
+            {
+                totalBatsToSummon += 3;
+                bloodPerBurst += 3;
+            }
+
+            int batSummonRate = summonTime / totalBatsToSummon;
+            npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 mouthPosition, out _);
+
+            // Look at the target.
+            npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
+            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            if (npc.spriteDirection == -1)
+                idealRotation += MathHelper.Pi;
+
+            if (npc.spriteDirection != npc.direction)
+            {
+                npc.spriteDirection = npc.direction;
+                npc.rotation = -npc.rotation;
+                idealRotation = -idealRotation;
+            }
+            npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.12f);
+
+            // Slow down at first.
+            if (attackTimer < slowdownTime)
+                npc.velocity = (npc.velocity * 0.97f).MoveTowards(Vector2.Zero, 0.25f);
+
+            // Summon bats in the sky.
+            else if (attackTimer < slowdownTime + summonTime)
+            {
+                npc.velocity = Vector2.Zero;
+
+                eyeGleamInterpolant = CalamityUtils.Convert01To010(Utils.GetLerpValue(0f, summonTime - 5f, attackTimer - slowdownTime, true));
+                if (attackTimer % batSummonRate == batSummonRate - 1f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item122, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        int batLifetime = batAttackTime + (slowdownTime + summonTime - (int)attackTimer);
+                        Vector2 batSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 600f, -1000f);
+                        int bat = Utilities.NewProjectileBetter(batSpawnPosition, Vector2.UnitY * -6f, ModContent.ProjectileType<SanguineBat>(), 130, 0f);
+                        if (Main.projectile.IndexInRange(bat))
+                        {
+                            Main.projectile[bat].ai[1] = batLifetime;
+                            Main.projectile[bat].netUpdate = true;
+                        }
+                    }
+                }
+            }
+
+            // Hover near the target after summoning the bats.
+            else if (attackTimer < slowdownTime + summonTime + batAttackTime)
+            {
+                float speedFactor = Utils.GetLerpValue(bloodBurstReleaseRate * 0.65f, bloodBurstReleaseRate * 0.9f, attackTimer % bloodBurstReleaseRate, true);
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -100f) - npc.velocity;
+                if (!npc.WithinRange(hoverDestination, 50f))
+                {
+                    Vector2 desiredVelocity = npc.SafeDirectionTo(hoverDestination) * speedFactor * 11f;
+                    npc.SimpleFlyMovement(desiredVelocity, 0.225f);
+                }
+
+                // Release bursts of blood periodically.
+                if (attackTimer % bloodBurstReleaseRate == bloodBurstReleaseRate - 1f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item171, npc.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        float offsetAngle = Main.rand.NextBool().ToInt() * MathHelper.Pi / bloodPerBurst;
+                        for (int i = 0; i < bloodPerBurst; i++)
+                        {
+                            Vector2 bloodShootVelocity = (MathHelper.TwoPi * i / bloodPerBurst + offsetAngle).ToRotationVector2() * 8f;
+                            Utilities.NewProjectileBetter(mouthPosition, bloodShootVelocity, ModContent.ProjectileType<BloodShot2>(), 125, 0f);
+                        }
+
+                        npc.netUpdate = true;
+                    }
+                }
+            }
+
+            if (attackTimer >= slowdownTime + summonTime + batAttackTime + attackTransitionDelay)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_SquidGames(NPC npc, Player target, bool phase3, ref float attackTimer)
+        {
+            int summonDelay = 90;
+            int squidSummonCount = 1;
+
+            if (phase3)
+                squidSummonCount++;
+
+            if (attackTimer < summonDelay)
+                npc.velocity *= 0.95f;
+
+            // Have a squid burst out of the Dreadnautilus, leaving blood behind and damaging it.
+            if (attackTimer == summonDelay)
+            {
+                npc.BloodNautilus_GetMouthPositionAndRotation(out _, out Vector2 mouthDirection);
+
+                int damage = (int)(npc.lifeMax * 0.01f);
+                for (int i = 0; i < squidSummonCount; i++)
+                {
+                    Vector2 splatterDirection = -mouthDirection.RotatedByRandom(0.78f);
+                    Vector2 bloodSpawnPosition = target.Center + splatterDirection * 60f;
+                    SoundEngine.PlaySound(SoundID.NPCHit18, npc.Center);
+                    for (int j = 0; j < 21; j++)
+                    {
+                        int bloodLifetime = Main.rand.Next(22, 36);
+                        float bloodScale = Main.rand.NextFloat(0.6f, 0.8f);
+                        Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat());
+                        bloodColor = Color.Lerp(bloodColor, new Color(51, 22, 94), Main.rand.NextFloat(0.65f));
+
+                        if (Main.rand.NextBool(20))
+                            bloodScale *= 2f;
+
+                        Vector2 bloodVelocity = splatterDirection.RotatedByRandom(0.81f) * Main.rand.NextFloat(11f, 23f);
+                        bloodVelocity.Y -= 12f;
+                        BloodParticle blood = new(bloodSpawnPosition, bloodVelocity, bloodLifetime, bloodScale, bloodColor);
+                        GeneralParticleHandler.SpawnParticle(blood);
+                    }
+                    for (int j = 0; j < 10; j++)
+                    {
+                        float bloodScale = Main.rand.NextFloat(0.2f, 0.33f);
+                        Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat(0.5f, 1f));
+                        Vector2 bloodVelocity = splatterDirection.RotatedByRandom(0.9f) * Main.rand.NextFloat(9f, 14.5f);
+                        BloodParticle2 blood = new(bloodSpawnPosition, bloodVelocity, 20, bloodScale, bloodColor);
+                        GeneralParticleHandler.SpawnParticle(blood);
+                    }
+
+                    npc.StrikeNPC(damage, 0f, 0);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient && npc.life > 0)
+                    {
+                        NPC.NewNPC(new InfernumSource(), (int)bloodSpawnPosition.X, (int)bloodSpawnPosition.Y, NPCID.BloodSquid, npc.whoAmI);
+                        npc.velocity = -splatterDirection * 7f;
+                        npc.netUpdate = true;
+                    }
+                }
+            }
+
+            if (attackTimer >= summonDelay + 45f)
+                SelectNextAttack(npc);
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
+            bool phase2 = npc.life < npc.lifeMax * Phase2LifeRatio;
             DreadnautilusAttackState oldAttack = (DreadnautilusAttackState)npc.ai[0];
             switch (oldAttack)
             {
                 case DreadnautilusAttackState.InitialSummonDelay:
-                    npc.ai[0] = (int)DreadnautilusAttackState.HorizontalCharge;
+                    npc.ai[0] = (int)DreadnautilusAttackState.BloodSpitToothBalls;
                     break;
-                case DreadnautilusAttackState.HorizontalCharge:
-                    npc.ai[0] = (int)DreadnautilusAttackState.RandomBloodBurstSpread;
-                    break;
-                case DreadnautilusAttackState.RandomBloodBurstSpread:
+                case DreadnautilusAttackState.BloodSpitToothBalls:
                     npc.ai[0] = (int)DreadnautilusAttackState.EyeGleamEyeFishSummon;
                     break;
                 case DreadnautilusAttackState.EyeGleamEyeFishSummon:
+                    npc.ai[0] = (int)DreadnautilusAttackState.RandomBloodBurstSpread;
+                    break;
+                case DreadnautilusAttackState.RandomBloodBurstSpread:
                     npc.ai[0] = (int)DreadnautilusAttackState.EquallySpreadBloodBolts;
                     break;
                 case DreadnautilusAttackState.EquallySpreadBloodBolts:
-                    npc.ai[0] = (int)DreadnautilusAttackState.HorizontalCharge;
+                    npc.ai[0] = phase2 ? (int)DreadnautilusAttackState.HorizontalCharge : (int)DreadnautilusAttackState.BloodSpitToothBalls;
+                    break;
+                case DreadnautilusAttackState.HorizontalCharge:
+                    npc.ai[0] = (int)DreadnautilusAttackState.SquidGames;
+                    break;
+                case DreadnautilusAttackState.SquidGames:
+                    npc.ai[0] = (int)DreadnautilusAttackState.SanguineBatSwarm;
+                    break;
+                case DreadnautilusAttackState.SanguineBatSwarm:
+                    npc.ai[0] = (int)DreadnautilusAttackState.BloodSpitToothBalls;
                     break;
             }
 

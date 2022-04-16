@@ -63,6 +63,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
+            npc.ai[3] = 1f;
+            npc.dontTakeDamage = false;
             ref float attackTimer = ref npc.ai[1];
             ref float eyeGleamInterpolant = ref npc.ai[2];
 
@@ -79,6 +81,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                     break;
                 case DreadnautilusAttackState.RandomBloodBurstSpread:
                     DoBehavior_RandomBloodBurstSpread(npc, target, ref attackTimer);
+                    break;
+                case DreadnautilusAttackState.EquallySpreadBloodBolts:
+                    DoBehavior_EquallySpreadBloodBolts(npc, target, ref attackTimer);
+                    break;
+                case DreadnautilusAttackState.HorizontalCharge:
+                    DoBehavior_HorizontalCharge(npc, target, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -398,17 +406,191 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 SelectNextAttack(npc);
         }
 
+        public static void DoBehavior_EquallySpreadBloodBolts(NPC npc, Player target, ref float attackTimer)
+        {
+            int shootDelay = 75;
+            int slowdownTime = 30;
+            int shootTime = 120;
+            int totalBoltsToShoot = 15;
+            int shootRate = shootTime / totalBoltsToShoot;
+            float shootSpeed = 2.7f;
+            ref float shootDirection = ref npc.Infernum().ExtraAI[0];
+
+            // Look at the target.
+            npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
+            float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+            if (npc.spriteDirection == -1)
+                idealRotation += MathHelper.Pi;
+
+            if (npc.spriteDirection != npc.direction)
+            {
+                npc.spriteDirection = npc.direction;
+                npc.rotation = -npc.rotation;
+                idealRotation = -idealRotation;
+            }
+            npc.rotation = npc.rotation.AngleLerp(idealRotation, 0.12f);
+
+            // Hover into position prior to firing.
+            if (attackTimer < shootDelay)
+            {
+                Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 530f, -50f);
+                if (!npc.WithinRange(hoverDestination, 50f))
+                {
+                    Vector2 desiredVelocity = npc.SafeDirectionTo(hoverDestination) * 15f;
+                    npc.SimpleFlyMovement(desiredVelocity, 0.4f);
+                }
+            }
+
+            // Slow down for a moment.
+            else if (attackTimer < shootDelay + slowdownTime)
+                npc.velocity = (npc.velocity * 0.97f).MoveTowards(Vector2.Zero, 0.15f);
+
+            // Release accelerating blood bolts in an even spread.
+            else if ((attackTimer - shootDelay - slowdownTime) % shootRate == shootRate - 1f)
+            {
+                SoundEngine.PlaySound(SoundID.Item171, npc.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 mouthPosition, out Vector2 mouthDirection);
+
+                    if (shootDirection == 0f || shootDirection.ToRotationVector2().AngleBetween(npc.SafeDirectionTo(target.Center)) > 1.03f)
+                        shootDirection = mouthDirection.ToRotation();
+
+                    float offsetAngle = Utils.Remap(attackTimer - shootDelay - slowdownTime, 0f, shootTime, -0.91f, 0.91f);
+                    Vector2 shootVelocity = (shootDirection + offsetAngle).ToRotationVector2() * shootSpeed;
+                    Utilities.NewProjectileBetter(mouthPosition, shootVelocity, ModContent.ProjectileType<BloodBolt>(), 120, 0f);
+
+                    npc.netUpdate = true;
+                }
+            }
+
+            else if (attackTimer >= shootDelay + slowdownTime + shootTime)
+                SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_HorizontalCharge(NPC npc, Player target, ref float attackTimer)
+        {
+            int chargeCount = 3;
+            int redirectTime = 40;
+            int chargeTime = 45;
+            int attackTransitionDelay = 8;
+            int backSpikeCount = 6;
+            float chargeSpeed = 38f;
+            float hoverSpeed = 25f;
+            ref float chargeDirection = ref npc.Infernum().ExtraAI[0];
+            ref float chargeCounter = ref npc.Infernum().ExtraAI[1];
+            npc.BloodNautilus_GetMouthPositionAndRotation(out Vector2 mouthPosition, out Vector2 mouthDirection);
+
+            if (chargeCounter == 0f)
+                redirectTime += 32;
+
+            // Initialize the charge direction.
+            if (attackTimer == 1f)
+            {
+                chargeDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
+                npc.netUpdate = true;
+            }
+
+            // Hover into position before charging.
+            if (attackTimer <= redirectTime)
+            {
+                // Make a sound prior to charging.
+                if (attackTimer == redirectTime / 2)
+                    SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+
+                Vector2 hoverDestination = target.Center + Vector2.UnitX * chargeDirection * -420f;
+                npc.Center = npc.Center.MoveTowards(hoverDestination, 2f);
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed * 0.05f);
+
+                // Slow down drastically prior to charge and release an arc of homing spikes away from the target.
+                if (attackTimer == redirectTime)
+                {
+                    SoundEngine.PlaySound(SoundID.Item17, npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < backSpikeCount; i++)
+                        {
+                            Vector2 backSpikeShootVelocity = -mouthDirection.RotatedBy(MathHelper.Lerp(-1.5f, 1.5f, i / (float)(backSpikeCount - 1f))) * 7f;
+                            Utilities.NewProjectileBetter(npc.Center + backSpikeShootVelocity * 8f, backSpikeShootVelocity, ModContent.ProjectileType<GoreSpike>(), 125, 0f);
+                        }
+                    }
+
+                    npc.velocity *= 0.3f;
+                    npc.netUpdate = true;
+                }
+
+                // Determine the current rotation and sprite direction.
+                npc.direction = (npc.Center.X < target.Center.X).ToDirectionInt();
+                float idealRotation = npc.AngleTo(target.Center) - MathHelper.Pi * npc.spriteDirection * 0.15f;
+                if (npc.spriteDirection == -1)
+                    idealRotation += MathHelper.Pi;
+
+                if (npc.spriteDirection != npc.direction)
+                {
+                    npc.spriteDirection = npc.direction;
+                    npc.rotation = -npc.rotation;
+                    idealRotation = -idealRotation;
+                }
+                npc.rotation = npc.rotation.AngleTowards(idealRotation, 0.12f);
+            }
+            else if (attackTimer <= redirectTime + chargeTime)
+            {
+                npc.ai[3] = 0f;
+                npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitX * chargeDirection * chargeSpeed, 0.15f);
+                npc.rotation += npc.spriteDirection * 0.2f;
+                if (attackTimer == redirectTime + chargeTime)
+                    npc.velocity *= 0.7f;
+
+                // Emit blood from the mouth as a means of creating a spiral.
+                Dust blood = Dust.NewDustPerfect(mouthPosition, 267);
+                blood.velocity = mouthDirection * 8f + Main.rand.NextVector2Circular(1.2f, 1.2f);
+                blood.noGravity = true;
+                blood.scale = 1.5f;
+                blood.color = Color.Red;
+
+                // Do damage and become temporarily invulnerable. This is done to prevent dash-cheese.
+                npc.damage = npc.defDamage + 40;
+                npc.dontTakeDamage = true;
+            }
+            else
+                npc.velocity *= 0.92f;
+
+            if (attackTimer >= redirectTime + chargeTime + attackTransitionDelay)
+            {
+                attackTimer = 0f;
+                chargeCounter++;
+                if (chargeCounter >= chargeCount)
+                    SelectNextAttack(npc);
+                npc.netUpdate = true;
+            }
+        }
+
         public static void SelectNextAttack(NPC npc)
         {
             DreadnautilusAttackState oldAttack = (DreadnautilusAttackState)npc.ai[0];
-            if (oldAttack == DreadnautilusAttackState.InitialSummonDelay)
-                npc.ai[0] = (int)DreadnautilusAttackState.RandomBloodBurstSpread;
-            if (oldAttack == DreadnautilusAttackState.BloodSpitToothBalls)
-                npc.ai[0] = (int)DreadnautilusAttackState.RandomBloodBurstSpread;
-            if (oldAttack == DreadnautilusAttackState.RandomBloodBurstSpread)
-                npc.ai[0] = (int)DreadnautilusAttackState.EyeGleamEyeFishSummon;
-            if (oldAttack == DreadnautilusAttackState.EyeGleamEyeFishSummon)
-                npc.ai[0] = (int)DreadnautilusAttackState.BloodSpitToothBalls;
+            switch (oldAttack)
+            {
+                case DreadnautilusAttackState.InitialSummonDelay:
+                    npc.ai[0] = (int)DreadnautilusAttackState.HorizontalCharge;
+                    break;
+                case DreadnautilusAttackState.HorizontalCharge:
+                    npc.ai[0] = (int)DreadnautilusAttackState.RandomBloodBurstSpread;
+                    break;
+                case DreadnautilusAttackState.RandomBloodBurstSpread:
+                    npc.ai[0] = (int)DreadnautilusAttackState.EyeGleamEyeFishSummon;
+                    break;
+                case DreadnautilusAttackState.EyeGleamEyeFishSummon:
+                    npc.ai[0] = (int)DreadnautilusAttackState.EquallySpreadBloodBolts;
+                    break;
+                case DreadnautilusAttackState.EquallySpreadBloodBolts:
+                    npc.ai[0] = (int)DreadnautilusAttackState.HorizontalCharge;
+                    break;
+            }
+
+            for (int i = 0; i < 5; i++)
+                npc.Infernum().ExtraAI[i] = 0f;
+
             npc.ai[1] = 0f;
             npc.netUpdate = true;
         }
@@ -433,12 +615,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dreadnautilus
                 {
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * drawOffsetFactor;
                     spriteBatch.Draw(texture, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
-                    spriteBatch.Draw(TextureAssets.Extra[129].Value, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+
+                    if (npc.ai[3] != 0f)
+                        spriteBatch.Draw(TextureAssets.Extra[129].Value, drawPosition + drawOffset, npc.frame, npc.GetAlpha(backglowColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
                 }
             }
 
             spriteBatch.Draw(texture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
-            spriteBatch.Draw(TextureAssets.Extra[129].Value, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
+            if (npc.ai[3] != 0f)
+                spriteBatch.Draw(TextureAssets.Extra[129].Value, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
 
             // Render a gleam above the eye as necessary.
             if (eyeGleamInterpolant > 0f)

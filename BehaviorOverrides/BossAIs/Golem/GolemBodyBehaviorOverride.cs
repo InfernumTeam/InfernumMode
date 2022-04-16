@@ -38,8 +38,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
-        public static int ArenaWidth = 115;
-        public static int ArenaHeight = 105;
+        public static int ArenaWidth = 100;
+        public static int ArenaHeight = 90;
         public const int AttacksNotToPool = 4; // The last X states in GolemAttackState should not be selected as attacks during the fight
         public const int Phase2TransitionAnimationTime = 180;
         public const float ConstAttackCooldown = 125f;

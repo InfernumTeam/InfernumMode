@@ -211,7 +211,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 plasma = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, randomDustType, 0f, 0f, 100, default, 2f);
                 plasma.velocity *= 2f;
             }
-            CalamityUtils.ExplosionGores(Projectile.Center, 3);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)

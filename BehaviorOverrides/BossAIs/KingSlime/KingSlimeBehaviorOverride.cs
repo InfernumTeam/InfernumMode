@@ -260,7 +260,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 if (digYPosition < 100f)
                     digYPosition = 100f;
 
-                Gore.NewGore(npc.Center + new Vector2(-40f, npc.height * -0.5f), npc.velocity, 734, 1f);
+                Gore.NewGore(new InfernumSource(), npc.Center + new Vector2(-40f, npc.height * -0.5f), npc.velocity, 734, 1f);
                 WorldUtils.Find(new Vector2(digXPosition, digYPosition).ToTileCoordinates(), Searches.Chain(new Searches.Down(200), new GenCondition[]
                 {
                             new CustomTileConditions.IsSolidOrSolidTop(),

@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     if (NPC.collideX || NPC.collideY)
                     {
                         for (int i = 1; i <= 5; i++)
-                            Gore.NewGore(NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Utilities.GetGoreID($"PlagueNuke{i}"));
+                            Gore.NewGore(new InfernumSource(), NPC.Center, Main.rand.NextVector2Circular(2f, 2f), Utilities.GetGoreID($"PlagueNuke{i}"));
                     }
                     NPC.active = false;
                 }

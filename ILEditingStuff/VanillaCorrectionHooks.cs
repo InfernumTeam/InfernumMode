@@ -9,15 +9,16 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.ILEditingStuff.HookManager;
 using Terraria.Audio;
+using Terraria.DataStructures;
 
 namespace InfernumMode.ILEditingStuff
 {
 	public class ReplaceGoresHook : IHookEdit
     {
-        internal static int AlterGores(On.Terraria.Gore.orig_NewGore orig, Vector2 Position, Vector2 Velocity, int Type, float Scale)
+        internal static Gore AlterGores(On.Terraria.Gore.orig_NewGorePerfect_IEntitySource_Vector2_Vector2_int_float orig, IEntitySource source, Vector2 Position, Vector2 Velocity, int Type, float Scale)
         {
             if (InfernumMode.CanUseCustomAIs && Type >= GoreID.Cultist1 && Type <= GoreID.CultistBoss2)
-                return Main.maxDust;
+                return new();
 
             if (InfernumMode.CanUseCustomAIs && Type == 573)
                 Type = Utilities.GetGoreID("DukeFishronGore1");
@@ -28,12 +29,12 @@ namespace InfernumMode.ILEditingStuff
             if (InfernumMode.CanUseCustomAIs && Type == 576)
                 Type = Utilities.GetGoreID("DukeFishronGore4");
 
-            return orig(Position, Velocity, Type, Scale);
+            return orig(source, Position, Velocity, Type, Scale);
         }
 
-        public void Load() => On.Terraria.Gore.NewGore += AlterGores;
+        public void Load() => On.Terraria.Gore.NewGorePerfect_IEntitySource_Vector2_Vector2_int_float += AlterGores;
 
-        public void Unload() => On.Terraria.Gore.NewGore -= AlterGores;
+		public void Unload() => On.Terraria.Gore.NewGorePerfect_IEntitySource_Vector2_Vector2_int_float -= AlterGores;
     }
 
     public class AureusPlatformWalkingHook : IHookEdit

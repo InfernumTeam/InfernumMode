@@ -90,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Projectile.NewProjectile(Projectile.GetProjectileSource_FromThis(), endOfLaser, Main.rand.NextVector2Circular(4f, 8f), ModContent.ProjectileType<RancorFog>(), 0, 0f, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), endOfLaser, Main.rand.NextVector2Circular(4f, 8f), ModContent.ProjectileType<RancorFog>(), 0, 0f, Projectile.owner);
 
             if (Main.rand.NextBool(2))
             {
@@ -98,7 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
                 int damage = 0;
                 float cinderSpeed = Main.rand.NextFloat(2f, 6f);
                 Vector2 cinderVelocity = Vector2.Lerp(-Projectile.velocity, -Vector2.UnitY, 0.45f).RotatedByRandom(0.72f) * cinderSpeed;
-                Projectile.NewProjectile(Projectile.GetProjectileSource_FromThis(), endOfLaser, cinderVelocity, type, damage, 0f, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), endOfLaser, cinderVelocity, type, damage, 0f, Projectile.owner);
             }
 
             if (Projectile.timeLeft % 6 == 5)

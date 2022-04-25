@@ -244,10 +244,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     exoEnergy.noGravity = true;
                 }
 
-                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresPulseCannon1"), NPC.scale);
-                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase1", InfernumMode.CalamityMod), NPC.scale);
-                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase2", InfernumMode.CalamityMod), NPC.scale);
-                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase3", InfernumMode.CalamityMod), NPC.scale);
+                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AresPulseCannon1"), NPC.scale);
+                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase1", InfernumMode.CalamityMod), NPC.scale);
+                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase2", InfernumMode.CalamityMod), NPC.scale);
+                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AresHandBase3", InfernumMode.CalamityMod), NPC.scale);
             }
         }
 

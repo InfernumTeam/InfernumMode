@@ -613,7 +613,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                                 Dust smokeDust = Dust.NewDustDirect(new Vector2(npc.position.X - 20f, npc.position.Y + npc.height), npc.width + 20, 4, 31, 0f, 0f, 100, default, 1.5f);
                                 smokeDust.velocity *= 0.2f;
                             }
-                            Gore smoke = Gore.NewGoreDirect(new Vector2(i - 20, npc.position.Y + npc.height - 8f), default, Main.rand.Next(61, 64), 1f);
+                            Gore smoke = Gore.NewGoreDirect(new InfernumSource(), new Vector2(i - 20, npc.position.Y + npc.height - 8f), default, Main.rand.Next(61, 64), 1f);
                             smoke.velocity *= 0.4f;
                         }
 

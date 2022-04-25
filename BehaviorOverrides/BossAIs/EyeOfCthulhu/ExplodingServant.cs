@@ -101,8 +101,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EyeOfCthulhu
                 {
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
                 }
-                Gore.NewGore(NPC.position, NPC.velocity, 6);
-                Gore.NewGore(NPC.position, NPC.velocity, 7);
+                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, 6);
+                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, 7);
             }
         }
     }

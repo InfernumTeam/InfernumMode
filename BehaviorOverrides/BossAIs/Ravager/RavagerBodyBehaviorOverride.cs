@@ -279,7 +279,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             stompDust.velocity *= 0.2f;
                         }
 
-                        Gore stompGore = Gore.NewGoreDirect(new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
+                        Gore stompGore = Gore.NewGoreDirect(new InfernumSource(), new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
                         stompGore.velocity *= 0.4f;
                     }
 
@@ -628,7 +628,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                                 stompDust.velocity *= 0.2f;
                             }
 
-                            Gore stompGore = Gore.NewGoreDirect(new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
+                            Gore stompGore = Gore.NewGoreDirect(new InfernumSource(), new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
                             stompGore.velocity *= 0.4f;
                         }
 
@@ -746,7 +746,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                                 stompDust.velocity *= 0.2f;
                             }
 
-                            Gore stompGore = Gore.NewGoreDirect(new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
+                            Gore stompGore = Gore.NewGoreDirect(new InfernumSource(), new Vector2(x, npc.Bottom.Y - 12f), default, Main.rand.Next(61, 64), 1f);
                             stompGore.velocity *= 0.4f;
                         }
 

@@ -232,9 +232,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 
                     for (int i = 0; i < 2; i++)
                     {
-                        Gore.NewGore(npc.position, Main.rand.NextVector2Circular(6f, 6f), 143, 1f);
-                        Gore.NewGore(npc.position, Main.rand.NextVector2Circular(6f, 6f), 7, 1f);
-                        Gore.NewGore(npc.position, Main.rand.NextVector2Circular(6f, 6f), 6, 1f);
+                        Gore.NewGore(new InfernumSource(), npc.position, Main.rand.NextVector2Circular(6f, 6f), 143, 1f);
+                        Gore.NewGore(new InfernumSource(), npc.position, Main.rand.NextVector2Circular(6f, 6f), 7, 1f);
+                        Gore.NewGore(new InfernumSource(), npc.position, Main.rand.NextVector2Circular(6f, 6f), 6, 1f);
                     }
 
                     for (int i = 0; i < 20; i++)

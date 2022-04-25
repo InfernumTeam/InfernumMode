@@ -132,7 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 if (subphaseState == 0f)
                 {
                     for (int i = 1; i <= 5; i++)
-                        Gore.NewGore(npc.Center, npc.velocity, Utilities.GetGoreID("CryogenChainGore" + i), npc.scale);
+                        Gore.NewGore(new InfernumSource(), npc.Center, npc.velocity, Utilities.GetGoreID("CryogenChainGore" + i), npc.scale);
 
                     SoundEngine.PlaySound(SoundID.NPCDeath7, npc.Center);
                 }
@@ -140,7 +140,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 if (subphaseState == 1f)
                 {
                     for (int i = 1; i <= 7; i++)
-                        Gore.NewGore(npc.Center, npc.velocity, Utilities.GetGoreID("CryogenGore" + i), npc.scale);
+                        Gore.NewGore(new InfernumSource(), npc.Center, npc.velocity, Utilities.GetGoreID("CryogenGore" + i), npc.scale);
                 }
 
                 // Reset everything and sync.

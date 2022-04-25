@@ -105,7 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
                 for (int k = 0; k < 10; k++)
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
 
-                Gore.NewGore(NPC.position, NPC.velocity, Utilities.GetGoreID("AquaticSeekerHead", InfernumMode.CalamityMod), 1f);
+                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AquaticSeekerHead", InfernumMode.CalamityMod), 1f);
             }
         }
 

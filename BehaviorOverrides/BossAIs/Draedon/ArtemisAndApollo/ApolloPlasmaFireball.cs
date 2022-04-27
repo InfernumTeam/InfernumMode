@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
 using Terraria.ID;
@@ -10,7 +9,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-    public class ApolloPlasmaFireball : ModProjectile
+	public class ApolloPlasmaFireball : ModProjectile
     {
         public bool ShouldExplodeDiagonally => Projectile.ai[0] == 1f;
         public override void SetStaticDefaults()

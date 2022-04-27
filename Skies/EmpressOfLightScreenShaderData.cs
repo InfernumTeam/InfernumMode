@@ -1,13 +1,11 @@
-using InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
-    public class EmpressOfLightScreenShaderData : ScreenShaderData
+	public class EmpressOfLightScreenShaderData : ScreenShaderData
     {
         public int FairyIndex;
 

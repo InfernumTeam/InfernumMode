@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,7 +8,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 {
-    public class ShadowDashTelegraph : ModProjectile
+	public class ShadowDashTelegraph : ModProjectile
     {
         public ref float LifetimeCountdown => ref Projectile.ai[0];
         public ref float AngularOffset => ref Projectile.ai[1];

@@ -1,7 +1,6 @@
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,7 +8,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 {
-    public class AstralBlueComet : ModProjectile
+	public class AstralBlueComet : ModProjectile
     {
         public override void SetStaticDefaults()
         {

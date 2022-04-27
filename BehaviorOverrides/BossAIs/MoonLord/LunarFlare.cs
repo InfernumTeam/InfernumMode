@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -7,7 +6,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
-    public class LunarFlare : ModProjectile
+	public class LunarFlare : ModProjectile
     {
         public ref float Countdown => ref Projectile.ai[0];
         public Player Target => Main.player[Projectile.owner];

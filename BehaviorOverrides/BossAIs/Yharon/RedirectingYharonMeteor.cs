@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,7 +9,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-    public class RedirectingYharonMeteor : ModProjectile
+	public class RedirectingYharonMeteor : ModProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/Boss/YharonFireball";
 

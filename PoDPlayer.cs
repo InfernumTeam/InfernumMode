@@ -1,8 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
-using CalamityMod.Events;
 using CalamityMod.NPCs;
-using CalamityMod.NPCs.OldDuke;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Buffs;
@@ -11,17 +9,15 @@ using InfernumMode.MachineLearning;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
-using System.Reflection;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 namespace InfernumMode
 {
-    public class PoDPlayer : ModPlayer
+	public class PoDPlayer : ModPlayer
     {
         public bool RedElectrified = false;
         public bool ShadowflameInferno = false;

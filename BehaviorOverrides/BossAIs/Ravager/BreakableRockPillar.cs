@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -10,7 +9,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {
-    public class BreakableRockPillar : ModNPC
+	public class BreakableRockPillar : ModNPC
     {
         public Player Target => Main.player[NPC.target];
         public ref float AttackTimer => ref NPC.ai[0];

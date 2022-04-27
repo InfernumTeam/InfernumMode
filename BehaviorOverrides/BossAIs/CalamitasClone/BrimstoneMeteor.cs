@@ -1,9 +1,7 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -12,7 +10,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-    public class BrimstoneMeteor : ModProjectile
+	public class BrimstoneMeteor : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()

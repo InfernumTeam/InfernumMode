@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.GameContent.Generation;
 using Terraria.ID;
@@ -10,7 +9,7 @@ using Terraria.WorldBuilding;
 
 namespace InfernumMode.Systems
 {
-    public class WorldgenSystem : ModSystem
+	public class WorldgenSystem : ModSystem
     {
         public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
         {

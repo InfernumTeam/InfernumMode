@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -13,7 +12,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
-    public class AnahitaExpandingBubble : ModProjectile
+	public class AnahitaExpandingBubble : ModProjectile
     {
         public PrimitiveTrailCopy WaterDrawer;
         public ref float Time => ref Projectile.ai[0];

@@ -2,7 +2,6 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
-using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -20,7 +19,7 @@ using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-    public class CalamitasCloneBehaviorOverride : NPCBehaviorOverride
+	public class CalamitasCloneBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<CalamitasCloneNPC>();
 

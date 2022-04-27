@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
 using Terraria.ID;
@@ -11,7 +10,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 {
-    public class EldritchScythe : ModProjectile
+	public class EldritchScythe : ModProjectile
     {
         public ref float ShootCountdown => ref Projectile.ai[0];
         public ref float AngularOffset => ref Projectile.ai[1];

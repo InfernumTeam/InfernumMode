@@ -1,7 +1,6 @@
 using CalamityMod;
 using InfernumMode.BaseEntities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ using Terraria.ID;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class RedLightning3 : BasePrimitiveLightningProjectile
+	public class RedLightning3 : BasePrimitiveLightningProjectile
     {
         internal PrimitiveTrailCopy LightningDrawer2;
         public override void SetStaticDefaults()

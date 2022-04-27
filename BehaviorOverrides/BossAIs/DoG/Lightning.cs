@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-    public class Lightning : ModProjectile
+	public class Lightning : ModProjectile
     {
         public int telegraphTimer = 80;
         public Vector2 targetPosition;

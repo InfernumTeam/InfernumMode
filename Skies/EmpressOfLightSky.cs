@@ -1,8 +1,6 @@
-using CalamityMod;
 using InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Graphics.Effects;
@@ -11,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
-    public class EmpressOfLightSkyScene : ModSceneEffect
+	public class EmpressOfLightSkyScene : ModSceneEffect
     {
         public override bool IsSceneEffectActive(Player player)
         {

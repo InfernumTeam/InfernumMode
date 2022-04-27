@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -8,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Twins
 {
-    public class HomingCursedFlameBurst : ModProjectile
+	public class HomingCursedFlameBurst : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
         public const int HomeTime = 90;

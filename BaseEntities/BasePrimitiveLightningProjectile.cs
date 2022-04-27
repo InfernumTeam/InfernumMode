@@ -1,6 +1,5 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
@@ -10,7 +9,7 @@ using Terraria.Utilities;
 
 namespace InfernumMode.BaseEntities
 {
-    public abstract class BasePrimitiveLightningProjectile : ModProjectile
+	public abstract class BasePrimitiveLightningProjectile : ModProjectile
     {
         internal PrimitiveTrailCopy LightningDrawer;
 

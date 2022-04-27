@@ -19,7 +19,6 @@ using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
-using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using System.Collections.Generic;
@@ -35,7 +34,7 @@ using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.Balancing
 {
-    public static class NPCHPValues
+	public static class NPCHPValues
     {
         public static Dictionary<int, int> HPValues => new()
         {

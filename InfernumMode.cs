@@ -1,13 +1,7 @@
 using CalamityMod.Events;
-using CalamityMod.NPCs.ExoMechs.Apollo;
-using CalamityMod.NPCs.ExoMechs.Ares;
-using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Particles;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
-using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
-using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.BossRush;
 using InfernumMode.ILEditingStuff;

@@ -1,6 +1,5 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +13,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
-    public class TerateslaLightningBlast : ModProjectile
+	public class TerateslaLightningBlast : ModProjectile
     {
         internal PrimitiveTrailCopy LightningDrawer;
 

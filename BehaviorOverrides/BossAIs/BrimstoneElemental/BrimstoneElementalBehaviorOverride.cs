@@ -3,7 +3,6 @@ using CalamityMod.Dusts;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.Projectiles.Boss;
-using CalamityMod.World;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -20,7 +19,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {
-    public class BrimstoneElementalBehaviorOverride : NPCBehaviorOverride
+	public class BrimstoneElementalBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<BrimmyNPC>();
 

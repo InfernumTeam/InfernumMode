@@ -1,12 +1,11 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class SepulcherSpirit : ModProjectile
+	public class SepulcherSpirit : ModProjectile
     {
         public ref float TimeCountdown => ref Projectile.ai[0];
         public ref float SpiritHue => ref Projectile.localAI[0];

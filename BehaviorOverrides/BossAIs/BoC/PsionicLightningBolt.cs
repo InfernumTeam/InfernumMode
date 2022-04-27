@@ -1,6 +1,5 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +12,7 @@ using Terraria.Utilities;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 {
-    public class PsionicLightningBolt : ModProjectile
+	public class PsionicLightningBolt : ModProjectile
     {
         internal PrimitiveTrailCopy LightningDrawer;
 

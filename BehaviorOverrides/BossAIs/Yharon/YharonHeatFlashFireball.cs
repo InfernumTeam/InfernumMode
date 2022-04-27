@@ -1,11 +1,10 @@
 using CalamityMod.Buffs.DamageOverTime;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-    public class YharonHeatFlashFireball : ModProjectile
+	public class YharonHeatFlashFireball : ModProjectile
     {
         public const int Lifetime = 720;
         public override void SetStaticDefaults()

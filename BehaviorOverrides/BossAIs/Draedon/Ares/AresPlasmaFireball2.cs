@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
 using Terraria.ID;
@@ -10,7 +9,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresPlasmaFireball2 : ModProjectile
+	public class AresPlasmaFireball2 : ModProjectile
     {
         public override void SetStaticDefaults()
         {

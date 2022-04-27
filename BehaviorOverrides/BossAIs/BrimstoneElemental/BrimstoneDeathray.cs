@@ -2,7 +2,6 @@
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
 using CalamityMod.Projectiles.BaseProjectiles;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
@@ -12,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.BrimstoneElemental
 {
-    public class BrimstoneDeathray : BaseLaserbeamProjectile
+	public class BrimstoneDeathray : BaseLaserbeamProjectile
     {
         public int OwnerIndex => (int)Projectile.ai[1];
         public override float Lifetime => 85;

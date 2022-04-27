@@ -1,14 +1,13 @@
 using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
-    public class CeaselessEnergy : ModProjectile
+	public class CeaselessEnergy : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()

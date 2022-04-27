@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -9,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class WavyDarkMagicSkull : ModProjectile
+	public class WavyDarkMagicSkull : ModProjectile
     {
         public ref float IdealDirection => ref Projectile.ai[0];
         public ref float Time => ref Projectile.ai[1];

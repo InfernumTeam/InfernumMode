@@ -1,6 +1,5 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,7 +7,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
-    public class FireBeamTelegraph : ModProjectile
+	public class FireBeamTelegraph : ModProjectile
     {
         public ref float TargetIndex => ref Projectile.ai[0];
         public NPC Owner => Main.npc[(int)Projectile.ai[1]];

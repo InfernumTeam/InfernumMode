@@ -1,12 +1,11 @@
 using CalamityMod.Events;
 using CalamityMod.Skies;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.MusicOverrides
 {
-    public class ExoMechMusicHandler : ModSceneEffect
+	public class ExoMechMusicHandler : ModSceneEffect
     {
         public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/ExoMechBosses");
 

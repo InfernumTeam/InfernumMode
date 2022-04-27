@@ -2,7 +2,6 @@ using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.NPCs.OldDuke;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -11,7 +10,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 {
-    public class SharkSummonVortex : ModProjectile
+	public class SharkSummonVortex : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()

@@ -2,12 +2,11 @@ using CalamityMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
-    public class SwirlingFire : ModProjectile
+	public class SwirlingFire : ModProjectile
     {
         public ref float AngularTurnSpeed => ref Projectile.ai[0];
         public ref float Time => ref Projectile.ai[1];

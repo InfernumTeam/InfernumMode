@@ -1,15 +1,10 @@
 ﻿using CalamityMod;
-using CalamityMod.Events;
-using CalamityMod.NPCs.Crabulon;
-using CalamityMod.Projectiles.Boss;
-using InfernumMode.Miscellaneous;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 using Terraria.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
@@ -19,7 +14,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 {
-    public class QueenSlimeBehaviorOverride : NPCBehaviorOverride
+	public class QueenSlimeBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.QueenSlimeBoss;
 

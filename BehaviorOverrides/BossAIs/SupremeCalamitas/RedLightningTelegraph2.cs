@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -7,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class RedLightningTelegraph2 : ModProjectile
+	public class RedLightningTelegraph2 : ModProjectile
     {
         public ref float Lifetime => ref Projectile.ai[0];
         public ref float Time => ref Projectile.ai[1];

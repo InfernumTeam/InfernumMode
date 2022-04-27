@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -10,7 +9,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
-    public class IceMass : ModProjectile
+	public class IceMass : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
 

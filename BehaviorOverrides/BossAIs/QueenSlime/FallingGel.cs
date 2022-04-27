@@ -1,13 +1,12 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenSlime
 {
-    public class FallingGel : ModProjectile
+	public class FallingGel : ModProjectile
     {
         public override void SetStaticDefaults()
         {

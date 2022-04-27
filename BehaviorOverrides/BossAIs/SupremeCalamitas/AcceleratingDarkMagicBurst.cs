@@ -1,6 +1,5 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
@@ -9,7 +8,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class AcceleratingDarkMagicBurst : ModProjectile
+	public class AcceleratingDarkMagicBurst : ModProjectile
     {
         public PrimitiveTrailCopy TrailDrawer = null;
         public override void SetStaticDefaults()

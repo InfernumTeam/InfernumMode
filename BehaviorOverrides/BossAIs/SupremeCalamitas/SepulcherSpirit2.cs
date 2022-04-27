@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -7,7 +6,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class SepulcherSpirit2 : ModProjectile
+	public class SepulcherSpirit2 : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public ref float SpiritHue => ref Projectile.localAI[0];

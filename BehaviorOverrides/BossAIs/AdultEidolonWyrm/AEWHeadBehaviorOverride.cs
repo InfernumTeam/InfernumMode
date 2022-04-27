@@ -1,7 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AdultEidolonWyrm;
-using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,7 +14,7 @@ using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-    public class AEWHeadBehaviorOverride : NPCBehaviorOverride
+	public class AEWHeadBehaviorOverride : NPCBehaviorOverride
     {
         public enum AEWAttackType
         {

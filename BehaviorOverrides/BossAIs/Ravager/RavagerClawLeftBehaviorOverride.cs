@@ -2,7 +2,6 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
-using CalamityMod.World;
 using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -15,7 +14,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {
-    public class RavagerClawLeftBehaviorOverride : NPCBehaviorOverride
+	public class RavagerClawLeftBehaviorOverride : NPCBehaviorOverride
     {
         public enum RavagerClawAttackState
         {

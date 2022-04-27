@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -8,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
-    public class DyingSun : ModProjectile
+	public class DyingSun : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
         public ref float Time => ref Projectile.ai[0];

@@ -3,7 +3,6 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Buffs.StatBuffs;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
-using CalamityMod.Items.Materials;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.NPCs.Bumblebirb;
@@ -33,12 +32,12 @@ using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
-using Terraria.Audio;
-using Terraria.GameContent.ItemDropRules;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -47,11 +46,10 @@ namespace InfernumMode.GlobalInstances
         #region Instance and Variables
         public override bool InstancePerEntity => true;
 
-        public static bool MLSealTeleport = false;
         public const int TotalExtraAISlots = 100;
 
         // I'll be fucking damned if this isn't enough
-        public float[] ExtraAI = new float[TotalExtraAISlots];
+        public float[] ExtraAI;
         public Vector2 angleTarget = default;
         public Rectangle arenaRectangle = default;
         public bool canTelegraph = false;
@@ -122,12 +120,28 @@ namespace InfernumMode.GlobalInstances
         }
         #endregion
 
+        public override GlobalNPC Clone(NPC npc, NPC npcClone)
+        {
+            if (((NPC)npc.Clone()).TryGetGlobalNPC(out GlobalNPCOverrides clone))
+            {
+                clone.ExtraAI = npc.Infernum().ExtraAI;
+                clone.canTelegraph = npc.Infernum().canTelegraph;
+                clone.arenaRectangle = npc.Infernum().arenaRectangle;
+                clone.angleTarget = npc.Infernum().angleTarget;
+                clone.OptionalPrimitiveDrawer = npc.Infernum().OptionalPrimitiveDrawer;
+                return clone;
+            }
+            return new GlobalNPCOverrides();
+        }
+
         public override void SetDefaults(NPC npc)
         {
             angleTarget = default;
+            ExtraAI = new float[TotalExtraAISlots];
             for (int i = 0; i < ExtraAI.Length; i++)
                 ExtraAI[i] = 0f;
 
+            ExtraAI = new float[TotalExtraAISlots];
             OptionalPrimitiveDrawer = null;
 
             if (InfernumMode.CanUseCustomAIs)

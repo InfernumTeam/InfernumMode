@@ -1,6 +1,5 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -8,7 +7,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
-    public class TrueEyeChargeTelegraph : ModProjectile
+	public class TrueEyeChargeTelegraph : ModProjectile
     {
         public Vector2[] ChargePositions = new Vector2[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";

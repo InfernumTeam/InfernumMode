@@ -231,12 +231,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 HiveMindP2AttackState nextAttack = (HiveMindP2AttackState)(int)npc.Infernum().ExtraAI[5];
                 bool shouldBecomeInvisible =
                     nextAttack is HiveMindP2AttackState.NPCSpawnArc or
-					HiveMindP2AttackState.SpinLunge or
-					HiveMindP2AttackState.CloudDash or
-					HiveMindP2AttackState.UndergroundFlameDash or
-					HiveMindP2AttackState.EaterOfSoulsWall or
-					HiveMindP2AttackState.CursedRain or
-					HiveMindP2AttackState.BlobBurst;
+                    HiveMindP2AttackState.SpinLunge or
+                    HiveMindP2AttackState.CloudDash or
+                    HiveMindP2AttackState.UndergroundFlameDash or
+                    HiveMindP2AttackState.EaterOfSoulsWall or
+                    HiveMindP2AttackState.CursedRain or
+                    HiveMindP2AttackState.BlobBurst;
                 if (shouldBecomeInvisible)
                 {
                     if (nextAttack is HiveMindP2AttackState.EaterOfSoulsWall or HiveMindP2AttackState.CursedRain)

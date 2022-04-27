@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,7 +8,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
-    public class RedLightningRedirectingFeather : ModProjectile
+	public class RedLightningRedirectingFeather : ModProjectile
     {
         public const int AimTime = 16;
         public const int RedirectDelay = 40;

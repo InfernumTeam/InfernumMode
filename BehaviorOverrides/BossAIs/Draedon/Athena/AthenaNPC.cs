@@ -1,6 +1,5 @@
 using CalamityMod;
 using CalamityMod.Items.Potions;
-using CalamityMod.Items.TreasureBags;
 using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,7 +16,7 @@ using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
-    [AutoloadBossHead]
+	[AutoloadBossHead]
     public class AthenaNPC : ModNPC
     {
         public class AthenaTurret

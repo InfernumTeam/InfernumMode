@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.Dusts;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,7 +8,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
-    public class LunarFireball : ModProjectile
+	public class LunarFireball : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public ref float InitialSpeed => ref Projectile.ai[1];

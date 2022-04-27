@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +11,7 @@ using Terraria.Utilities;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 {
-    public class StormLightning : ModProjectile
+	public class StormLightning : ModProjectile
     {
         internal PrimitiveTrailCopy LightningDrawer;
 

@@ -1,7 +1,6 @@
 ﻿using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
-using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -13,7 +12,7 @@ using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-    public class CataclysmBehaviorOverride : NPCBehaviorOverride
+	public class CataclysmBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<CalamitasRun>();
 

@@ -3,7 +3,6 @@ using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.NPCs.AstrumDeus;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +14,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 {
-    public class GiantAstralStar : ModProjectile
+	public class GiantAstralStar : ModProjectile
     {
         public PrimitiveTrailCopy FireDrawer;
         public ref float Time => ref Projectile.ai[0];

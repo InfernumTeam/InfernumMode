@@ -1,14 +1,10 @@
-﻿using CalamityMod.Events;
-using CalamityMod.NPCs.NormalNPCs;
-using InfernumMode.Miscellaneous;
-using InfernumMode.OverridingSystem;
+﻿using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
 using Terraria.Audio;
 using Terraria.GameContent;
 using CalamityMod.Particles;
@@ -16,7 +12,7 @@ using System.Linq;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
 {
-    public class DeerclopsBehaviorOverride : NPCBehaviorOverride
+	public class DeerclopsBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => NPCID.Deerclops;
 

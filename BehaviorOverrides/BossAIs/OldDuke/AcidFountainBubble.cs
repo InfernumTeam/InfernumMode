@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -9,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 {
-    public class AcidFountainBubble : ModProjectile
+	public class AcidFountainBubble : ModProjectile
     {
         public PrimitiveTrailCopy WaterDrawer;
         public ref float Time => ref Projectile.ai[0];

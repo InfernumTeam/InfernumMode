@@ -1,6 +1,5 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Graphics.Shaders;
@@ -10,7 +9,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-    public class SwervingDarkMagicBlast : ModProjectile
+	public class SwervingDarkMagicBlast : ModProjectile
     {
         public PrimitiveTrailCopy TrailDrawer = null;
         public override void SetStaticDefaults()

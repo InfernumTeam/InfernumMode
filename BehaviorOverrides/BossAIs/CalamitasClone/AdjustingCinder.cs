@@ -1,16 +1,14 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Events;
-using CalamityMod.World;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-    public class AdjustingCinder : ModProjectile
+	public class AdjustingCinder : ModProjectile
     {
         public ref float IdealDirection => ref Projectile.ai[0];
         public ref float Time => ref Projectile.ai[1];

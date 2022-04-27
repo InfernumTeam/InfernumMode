@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 {
-    public class HoneyBlast : ModProjectile
+	public class HoneyBlast : ModProjectile
     {
         public bool Poisonous => Projectile.ai[0] == 1f;
         public ref float TotalBounces => ref Projectile.ai[1];

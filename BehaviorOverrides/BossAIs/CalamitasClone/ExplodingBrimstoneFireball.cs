@@ -1,6 +1,5 @@
 using CalamityMod.Dusts;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,7 +7,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-    public class ExplodingBrimstoneFireball : ModProjectile
+	public class ExplodingBrimstoneFireball : ModProjectile
     {
         public override void SetStaticDefaults()
         {

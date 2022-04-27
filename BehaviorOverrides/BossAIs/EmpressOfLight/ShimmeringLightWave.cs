@@ -1,6 +1,5 @@
 using InfernumMode.BaseEntities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
@@ -9,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 {
-    public class ShimmeringLightWave : BaseWaveExplosionProjectile
+	public class ShimmeringLightWave : BaseWaveExplosionProjectile
     {
         public override int Lifetime => 80;
         public override float MaxRadius => 1750f;

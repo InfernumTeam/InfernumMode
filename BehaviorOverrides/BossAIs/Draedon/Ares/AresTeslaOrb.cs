@@ -1,7 +1,6 @@
 using CalamityMod;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -11,7 +10,7 @@ using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresTeslaOrb : ModProjectile
+	public class AresTeslaOrb : ModProjectile
     {
         public ref float Identity => ref Projectile.ai[0];
         public PrimitiveTrail LightningDrawer;

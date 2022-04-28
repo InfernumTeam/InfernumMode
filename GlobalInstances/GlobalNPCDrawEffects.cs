@@ -4,6 +4,7 @@ using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
+using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.Yharon;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
@@ -140,6 +141,9 @@ namespace InfernumMode.GlobalInstances
                 return false;
 
             if (npc.type == NPCID.EaterofWorldsBody)
+                return false;
+
+            if (npc.type == ModContent.NPCType<PerforatorBodyMedium>() || npc.type == ModContent.NPCType<PerforatorTailMedium>())
                 return false;
 
             return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);

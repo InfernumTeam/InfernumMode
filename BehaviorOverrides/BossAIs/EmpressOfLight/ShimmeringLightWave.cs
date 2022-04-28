@@ -11,7 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 	public class ShimmeringLightWave : BaseWaveExplosionProjectile
     {
         public override int Lifetime => 80;
-        public override float MaxRadius => 1750f;
+        public override float MaxRadius => 1000f;
         public override float RadiusExpandRateInterpolant => 0.15f;
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
@@ -44,7 +44,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
 
 		public override void PostDraw(Color lightColor)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
                 PreDraw(ref lightColor);
         }
     }

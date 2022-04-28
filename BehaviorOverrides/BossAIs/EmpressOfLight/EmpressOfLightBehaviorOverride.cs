@@ -124,10 +124,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             EmpressOfLightAttackType.InfiniteBrilliance,
             EmpressOfLightAttackType.DanceOfSwords,
         };
-		#endregion Constants and Attack Patterns
+        #endregion Constants and Attack Patterns
 
-		#region AI and Behaviors
-		public override bool PreAI(NPC npc)
+        #region AI and Behaviors
+        public override bool PreAI(NPC npc)
         {
             npc.TargetClosestIfTargetIsInvalid();
 

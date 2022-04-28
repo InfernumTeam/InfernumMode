@@ -25,7 +25,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
 
         public override void AI()
         {
-            // Make a blood-like sound on the first frame of this projectile's existence.
+            // Make a blood-like sound on the first frame of this projectile's existance.
             if (Projectile.localAI[0] == 0f)
             {
                 SoundEngine.PlaySound(SoundID.Item17, Projectile.position);

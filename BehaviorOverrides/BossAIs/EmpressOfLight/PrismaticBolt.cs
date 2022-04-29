@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 Vector2 idealVelocity = Projectile.velocity;
                 if (Projectile.hostile && Main.player.IndexInRange(targetIndex))
                 {
-                    idealVelocity = Projectile.SafeDirectionTo(Main.player[targetIndex].Center) * 36f;
+                    idealVelocity = Projectile.SafeDirectionTo(Main.player[targetIndex].Center) * 28f;
                     if (Projectile.localAI[0] > 0f)
                         idealVelocity *= Projectile.localAI[0];
                 }

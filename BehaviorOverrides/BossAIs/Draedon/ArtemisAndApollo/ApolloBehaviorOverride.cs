@@ -370,10 +370,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.netUpdate = true;
             }
 
-            float projectileShootSpeed = MathHelper.Lerp(2.7f, 6f, Utils.GetLerpValue(0f, 210f, generalAttackTimer, true));
+            float projectileShootSpeed = MathHelper.Lerp(2.7f, 5.4f, Utils.GetLerpValue(0f, 210f, generalAttackTimer, true));
             Vector2 hoverDestination = target.Center;
             hoverDestination.X += hoverOffsetX;
-            hoverDestination += Vector2.UnitY * hoverSide * 540f;
+            hoverDestination += Vector2.UnitY * hoverSide * 485f;
 
             if (ExoMechManagement.CurrentTwinsPhase <= 2)
                 projectileShootSpeed *= 1.15f;

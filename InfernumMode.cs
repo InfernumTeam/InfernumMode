@@ -46,6 +46,9 @@ namespace InfernumMode
             Filters.Scene["InfernumMode:HiveMind"] = new Filter(new HiveMindScreenShaderData("FilterMiniTower").UseColor(HiveMindSkyColor).UseOpacity(0.6f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:HiveMind"] = new HiveMindSky();
 
+            Filters.Scene["InfernumMode:Perforators"] = new Filter(new PerforatorScreenShaderData("FilterMiniTower").UseColor(new Color(255, 60, 30)).UseOpacity(0.445f), EffectPriority.VeryHigh);
+            SkyManager.Instance["InfernumMode:Perforators"] = new PerforatorSky();
+
             Filters.Scene["InfernumMode:Dragonfolly"] = new Filter(new DragonfollyScreenShaderData("FilterMiniTower").UseColor(Color.Red).UseOpacity(0.6f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:Dragonfolly"] = new DragonfollySky();
 

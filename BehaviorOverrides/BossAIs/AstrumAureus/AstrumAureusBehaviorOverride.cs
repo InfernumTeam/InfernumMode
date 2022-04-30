@@ -419,7 +419,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                                 for (int i = 0; i < 2; i++)
                                 {
-                                    Vector2 spawnPosition = target.Top + new Vector2(MathHelper.Lerp(-900f, 900f, i) + target.velocity.X * 60f, -640f);
+                                    Vector2 spawnPosition = target.Top + new Vector2(MathHelper.Lerp(-900f, 900f, i) + target.velocity.X * 60f, -780f);
                                     Vector2 showerDirection = (target.Center - spawnPosition + target.velocity * 100f).SafeNormalize(Vector2.UnitY);
                                     if (showerDirection.Y < 0.4f)
                                     {

@@ -335,7 +335,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 }
             }
 
-            if (deathAnimationTimer >= 240f && isHead)
+            if (deathAnimationTimer == 240f && isHead)
             {
                 int thanatosHeadID = ModContent.NPCType<ThanatosHead>();
                 int thanatosBodyID = ModContent.NPCType<ThanatosBody2>();
@@ -355,14 +355,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         continue;
 
                     if ((Main.npc[i].type == thanatosBodyID && i % 3 == 0) || Main.npc[i].type == thanatosHeadID)
-                    {
-                        Main.npc[i].life = 0;
-                        Main.npc[i].velocity = Main.rand.NextVector2Circular(12f, 12f);
-                        Main.npc[i].HitEffect();
                         GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(Main.npc[i].Center, Vector2.Zero, explosionColorPalette, 2.1f, 90, 0.4f));
-                    }
                 }
+            }
 
+            if (deathAnimationTimer >= 260f)
+            {
                 npc.life = 0;
                 npc.HitEffect();
                 npc.StrikeNPC(10, 0f, 1);

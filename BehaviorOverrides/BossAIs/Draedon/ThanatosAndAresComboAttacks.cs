@@ -219,7 +219,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             bool aresShouldAttack = attackTimer % 360f > 210f && attackTimer > attackDelay;
             bool thanatosShouldAttack = attackTimer % 360f <= 150f && attackTimer > attackDelay;
             ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[Ares_LineTelegraphInterpolantIndex];
-            ref float telegraphRotation = ref npc.Infernum().ExtraAI[Ares_LineTelegraphInterpolantIndex];
+            ref float telegraphRotation = ref npc.Infernum().ExtraAI[Ares_LineTelegraphRotationIndex];
 
             if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
             {

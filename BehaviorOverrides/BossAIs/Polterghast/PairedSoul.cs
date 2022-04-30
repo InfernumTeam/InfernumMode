@@ -53,6 +53,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
                     polterghast.ai[2]--;
                     Projectile.Kill();
                 }
+                Projectile.damage = 0;
                 Projectile.timeLeft = 2;
             }
             else

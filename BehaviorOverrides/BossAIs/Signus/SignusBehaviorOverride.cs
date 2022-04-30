@@ -172,7 +172,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                         attackSubstate = 2f;
                         attackTimer = 0f;
                         Vector2 chargeDestination = target.Center + npc.SafeDirectionTo(target.Center) * 400f;
-                        npc.velocity = npc.SafeDirectionTo(chargeDestination) * npc.Distance(chargeDestination) / chargeTime;
+                        npc.velocity = npc.SafeDirectionTo(chargeDestination) * MathHelper.Min(npc.Distance(chargeDestination) / chargeTime * 0.5f + 10f, 55f);
                         npc.netUpdate = true;
                     }
                     break;
@@ -758,15 +758,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 Main.spriteBatch.Draw(glowMaskTexture, drawPosition, new Rectangle?(frame), glowmaskColor, rotation, origin, scale, direction, 0f);
             }
 
-            Player target = Main.player[npc.target];
             drawInstance(npc.Center, true, npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
-
-            Vector2 cloneDrawPosition = new(target.Center.X, npc.Center.Y);
-            cloneDrawPosition.X += target.Center.X - npc.Center.X;
-            float lifeRatio = npc.life / (float)npc.lifeMax;
-
-            if (lifeRatio < Phase2LifeRatio)
-                drawInstance(cloneDrawPosition, false, npc.Center.X > target.Center.X ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
             return false;
         }
         #endregion

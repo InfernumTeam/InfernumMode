@@ -24,6 +24,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int WasNotInitialSummonIndex = 11;
         public const int FinalMechIndexIndex = 12;
         public const int FinalPhaseTimerIndex = 16;
+        public const int DeathAnimationTimerIndex = 19;
+        public const int DeathAnimationHasStartedIndex = 20;
+
+        public const int Thanatos_AttackDelayIndex = 13;
+
+        public const int Ares_ProjectileDamageBoostIndex = 8;
+        public const int Ares_LineTelegraphInterpolantIndex = 17;
+        public const int Ares_LineTelegraphRotationIndex = 18;
+
+        public const int Twins_ComplementMechEnrageTimerIndex = 15;
+        public const int Twins_SideSwitchDelayIndex = 18;
+
         public const float Phase2LifeRatio = 0.85f;
         public const float Phase3LifeRatio = 0.625f;
         public const float Phase4LifeRatio = 0.5f;
@@ -103,6 +115,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     return 2;
 
                 return 1;
+            }
+        }
+
+        public static bool ExoMechIsPerformingDeathAnimation
+        {
+            get
+            {
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (Main.npc[i].active && Utilities.IsExoMech(Main.npc[i]) && ExoMechAIUtilities.PerformingDeathAnimation(Main.npc[i]))
+                        return true;
+                }
+                return false;
             }
         }
 

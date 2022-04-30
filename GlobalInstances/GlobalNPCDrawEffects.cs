@@ -7,6 +7,7 @@ using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.Yharon;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -39,8 +40,10 @@ namespace InfernumMode.GlobalInstances
                 npc.type == ModContent.NPCType<ThanatosTail>())
             {
                 bool dealsNoContactDamage = npc.damage == 0;
-                npc.Infernum().ExtraAI[20] = MathHelper.Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
-                return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
+                npc.Infernum().ExtraAI[21] = MathHelper.Clamp(npc.Infernum().ExtraAI[21] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
+                Color color = Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[21]);
+                color = Color.Lerp(color, new Color(255, 0, 0, 64) * npc.Opacity * 0.75f, Utils.GetLerpValue(10f, 75f, npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex], true));
+                return color;
             }
 
             return base.GetAlpha(npc, drawColor);

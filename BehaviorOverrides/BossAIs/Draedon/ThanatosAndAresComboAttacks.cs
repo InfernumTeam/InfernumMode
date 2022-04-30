@@ -138,8 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     // Clear away old projectiles.
                     int[] projectilesToDelete = new int[]
                     {
-                        ModContent.ProjectileType<PlasmaBomb>(),
-                        ModContent.ProjectileType<TypicalPlasmaSpark>(),
+                        ModContent.ProjectileType<SmallPlasmaSpark>(),
                     };
                     for (int i = 0; i < Main.maxProjectiles; i++)
                     {
@@ -219,8 +218,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float rotorSpeed = 23f;
             bool aresShouldAttack = attackTimer % 360f > 210f && attackTimer > attackDelay;
             bool thanatosShouldAttack = attackTimer % 360f <= 150f && attackTimer > attackDelay;
-            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[LineTelegraphInterpolantIndex];
-            ref float telegraphRotation = ref npc.Infernum().ExtraAI[LineTelegraphRotationIndex];
+            ref float telegraphInterpolant = ref npc.Infernum().ExtraAI[Ares_LineTelegraphInterpolantIndex];
+            ref float telegraphRotation = ref npc.Infernum().ExtraAI[Ares_LineTelegraphInterpolantIndex];
 
             if (CurrentThanatosPhase != 4 || CurrentAresPhase != 4)
             {
@@ -266,7 +265,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
             if (npc.type == ModContent.NPCType<AresPlasmaFlamethrower>())
             {
-                armShootType = ModContent.ProjectileType<TypicalPlasmaSpark>();
+                armShootType = ModContent.ProjectileType<SmallPlasmaSpark>();
                 hoverOffset = new Vector2(borderOffset, borderOffset);
                 shootSoundPath = "Sounds/Item/PlasmaCasterFire";
             }

@@ -31,6 +31,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             npc.velocity = Vector2.Lerp(npc.SafeDirectionTo(destination) * flySpeed, maxVelocity, hyperSpeedInterpolant);
         }
 
+        public static bool PerformingDeathAnimation(NPC npc) => npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] != 0f;
+
+        public static bool ShouldExoMechVanish(NPC npc)
+        {
+            NPC finalMech = ExoMechManagement.FindFinalMech();
+            NPC checkNPC = npc.realLife >= 0 ? Main.npc[npc.realLife] : npc;
+
+            // If the final mech is present, all other mechs should vanish.
+            if (finalMech != null && finalMech != checkNPC)
+                return true;
+
+            // If a death animation is ongoing that isn't being performed by the check NPC, all other mechs should vanish.
+            if (ExoMechManagement.ExoMechIsPerformingDeathAnimation && !PerformingDeathAnimation(checkNPC))
+                return true;
+
+            return false;
+        }
+
         public static void HaveArmsInheritAresBodyAttributes(NPC npc)
         {
             // Do nothing if Ares is not present.
@@ -48,6 +66,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             npc.target = aresBody.target;
             npc.Opacity = aresBody.Opacity;
             npc.dontTakeDamage = aresBody.dontTakeDamage;
+
+            // Inherit death animation variables from Ares.
+            npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex] = aresBody.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
+            npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] = aresBody.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex];
         }
 
         public static Vector2 PerformAresArmDirectioning(NPC npc, NPC aresBody, Player target, Vector2 aimDirection, bool currentlyDisabled, bool doingHoverCharge, ref float currentDirection)

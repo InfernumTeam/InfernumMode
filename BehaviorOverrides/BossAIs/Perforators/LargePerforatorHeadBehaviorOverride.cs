@@ -49,9 +49,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 npc.velocity *= 1.01f;
             else
             {
-                Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.6f;
-                npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 19f);
-                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.032f);
+                Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.3f;
+                npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 18f);
+                npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(target.Center), 0.027f);
             }
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 

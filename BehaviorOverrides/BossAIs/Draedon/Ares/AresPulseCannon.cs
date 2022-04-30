@@ -74,6 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
             ExoMechAIUtilities.HaveArmsInheritAresBodyAttributes(NPC);
 
+            bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(NPC);
             Player target = Main.player[NPC.target];
 
             // Disable HP bars.
@@ -124,12 +125,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 NPC.takenDamageMultiplier *= 0.5f;
 
             // Hover near Ares.
-            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge;
+            bool doingHoverCharge = aresBody.ai[0] == (int)AresBodyBehaviorOverride.AresBodyAttackType.HoverCharge && !performingDeathAnimation;
             float horizontalOffset = doingHoverCharge ? 380f : 575f;
             float verticalOffset = doingHoverCharge ? 150f : 0f;
             Vector2 hoverDestination = aresBody.Center + new Vector2((aresBody.Infernum().ExtraAI[15] == 1f ? -1f : 1f) * horizontalOffset, verticalOffset);
             ExoMechAIUtilities.DoSnapHoverMovement(NPC, hoverDestination, 65f, 115f);
             NPC.Infernum().ExtraAI[0] = MathHelper.Clamp(NPC.Infernum().ExtraAI[0] + doingHoverCharge.ToDirectionInt(), 0f, 15f);
+
+            // Check to see if Ares is in the middle of a death animation. If it is, participate in the death animation.
+            if (performingDeathAnimation)
+            {
+                AresBodyBehaviorOverride.HaveArmPerformDeathAnimation(NPC, new Vector2(horizontalOffset, verticalOffset));
+                return;
+            }
 
             // Check to see if this arm should be used for special things in a combo attack.
             float _ = 0f;

@@ -21,6 +21,17 @@ namespace InfernumMode.GlobalInstances
         public override bool InstancePerEntity => true;
 
         public float[] ExtraAI = new float[100];
+
+        public override GlobalProjectile Clone(Projectile projectile, Projectile projectileClone)
+        {
+            if (projectile.TryGetGlobalProjectile(out GlobalProjectileOverrides clone))
+            {
+                clone.ExtraAI = projectile.Infernum().ExtraAI;
+                return clone;
+            }
+            return new GlobalProjectileOverrides();
+        }
+
         public override void SetDefaults(Projectile projectile)
         {
             for (int i = 0; i < ExtraAI.Length; i++)

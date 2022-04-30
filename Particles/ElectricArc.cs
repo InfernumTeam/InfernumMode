@@ -11,7 +11,7 @@ namespace InfernumMode.Particles
     {
         public Color LightColor => Color * 0.45f;
 
-        public Vector2[] TrailPositions = new Vector2[10];
+        public Vector2[] TrailPositions = new Vector2[16];
 
         public override bool UseAdditiveBlend => true;
         public override bool UseCustomDraw => true;

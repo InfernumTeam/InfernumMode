@@ -20,6 +20,8 @@ using Terraria.ModLoader;
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
 using Terraria.Audio;
 using Terraria.GameContent;
+using CalamityMod.Particles;
+using InfernumMode.Particles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -45,9 +47,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCFindFrame | NPCOverrideContext.NPCPreDraw;
 
         public const float Phase1ArmChargeupTime = 240f;
-        public const int ProjectileDamageBoostIndex = 8;
-        public const int LineTelegraphInterpolantIndex = 17;
-        public const int LineTelegraphRotationIndex = 18;
 
         public static int ProjectileDamageBoost
         {
@@ -56,14 +55,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechPrime))
                     return 0;
 
-                return (int)Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[ProjectileDamageBoostIndex];
+                return (int)Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[ExoMechManagement.Ares_ProjectileDamageBoostIndex];
             }
             set
             {
                 if (!Main.npc.IndexInRange(CalamityGlobalNPC.draedonExoMechPrime))
                     return;
 
-                Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[ProjectileDamageBoostIndex] = value;
+                Main.npc[CalamityGlobalNPC.draedonExoMechPrime].Infernum().ExtraAI[ExoMechManagement.Ares_ProjectileDamageBoostIndex] = value;
             }
         }
 
@@ -85,6 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             frameType = (int)AresBodyFrameType.Normal;
 
             // Define attack variables.
+            bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(npc);
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float armsHaveBeenSummoned = ref npc.ai[3];
@@ -98,12 +98,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ref float backarmSwapTimer = ref npc.Infernum().ExtraAI[14];
             ref float laserPulseArmAreSwapped = ref npc.Infernum().ExtraAI[15];
             ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+            ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
+
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
 
             // Continuously reset the telegraph line things.
-            npc.Infernum().ExtraAI[LineTelegraphInterpolantIndex] = 0f;
+            npc.Infernum().ExtraAI[ExoMechManagement.Ares_LineTelegraphInterpolantIndex] = 0f;
 
             // Make the laser and pulse arms swap sometimes.
             if (backarmSwapTimer > 960f)
@@ -179,8 +181,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 npc.netUpdate = true;
             }
 
-            // Become invincible if the complement mech is at high enough health.
-            npc.dontTakeDamage = false;
+            // Become invincible if the complement mech is at high enough health or if in the middle of a death animation.
+            npc.dontTakeDamage = ExoMechAIUtilities.PerformingDeathAnimation(npc);
             if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
                 npc.dontTakeDamage = true;
 
@@ -188,9 +190,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
-            // Become invincible and disappear if the final mech is present.
+            // Become invincible and disappear if necessary.
             npc.Calamity().newAI[1] = 0f;
-            if (finalMech != null && finalMech != npc)
+            if (ExoMechAIUtilities.ShouldExoMechVanish(npc))
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
                 if (npc.Opacity <= 0f)
@@ -218,7 +220,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Handle the final phase transition.
-            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentAresPhase >= 6)
+            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentAresPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
             {
                 attackState = (int)AresBodyAttackType.IdleHover;
                 finalPhaseAnimationTime++;
@@ -256,36 +258,128 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             else
                 armCycleTimer++;
 
-            if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] > 0f)
+            // Become enraged if the Twins are enraged.
+            if (initialMech != null && initialMech.type == ModContent.NPCType<Apollo>() && initialMech.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex] > 0f)
                 enraged = 1f;
-            
-            // Perform specific behaviors.
-            switch ((AresBodyAttackType)(int)attackState)
+
+            if (!performingDeathAnimation)
             {
-                case AresBodyAttackType.IdleHover:
-                    DoBehavior_IdleHover(npc, target, ref attackTimer);
-                    break;
-                case AresBodyAttackType.HoverCharge:
-                    DoBehavior_HoverCharge(npc, target, ref attackTimer);
-                    break;
-                case AresBodyAttackType.RadianceLaserBursts:
-                    DoBehavior_RadianceLaserBursts(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case AresBodyAttackType.LaserSpinBursts:
-                case AresBodyAttackType.DirectionChangingSpinBursts:
-                    DoBehavior_LaserSpinBursts(npc, target, ref enraged, ref attackTimer, ref frameType);
-                    break;
+                // Perform specific behaviors.
+                switch ((AresBodyAttackType)(int)attackState)
+                {
+                    case AresBodyAttackType.IdleHover:
+                        DoBehavior_IdleHover(npc, target, ref attackTimer);
+                        break;
+                    case AresBodyAttackType.HoverCharge:
+                        DoBehavior_HoverCharge(npc, target, ref attackTimer);
+                        break;
+                    case AresBodyAttackType.RadianceLaserBursts:
+                        DoBehavior_RadianceLaserBursts(npc, target, ref attackTimer, ref frameType);
+                        break;
+                    case AresBodyAttackType.LaserSpinBursts:
+                    case AresBodyAttackType.DirectionChangingSpinBursts:
+                        DoBehavior_LaserSpinBursts(npc, target, ref enraged, ref attackTimer, ref frameType);
+                        break;
+                }
             }
+            else
+                DoBehavior_DeathAnimation(npc, ref deathAnimationTimer);
 
             // Perform specific combo attack behaviors.
             if (ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, 1f, ref attackTimer, ref frameType))
                 SelectNextAttack(npc);
             if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
                 SelectNextAttack(npc);
-            npc.rotation = npc.velocity.X * 0.0065f;
+            npc.rotation = npc.rotation.AngleLerp(npc.velocity.X * 0.0065f, 0.2f);
 
             attackTimer++;
             return false;
+        }
+
+        public static void HaveArmPerformDeathAnimation(NPC npc, Vector2 defaultOffset)
+        {
+
+        }
+
+        public static void DoBehavior_DeathAnimation(NPC npc, ref float deathAnimationTimer)
+        {
+            int implosionRingLifetime = 180;
+            int pulseRingCreationRate = 32;
+            int explosionTime = 240;
+            float implosionRingScale = 1.5f;
+            float explosionRingScale = 4f;
+            Vector2 coreCenter = npc.Center + Vector2.UnitY * 24f;
+
+            // Slow down dramatically.
+            npc.velocity *= 0.9f;
+
+            // Use close to the minimum HP.
+            npc.life = 50000;
+
+            // Disable damage.
+            npc.damage = 0;
+            npc.dontTakeDamage = true;
+
+            // Close the boss HP bar.
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Create the implosion ring on the first frame.
+            if (deathAnimationTimer == 1f)
+            {
+                GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, implosionRingScale, implosionRingLifetime));
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AresEnraged"), npc.Center);
+            }
+
+            // Create particles that fly outward every frame.
+            if (deathAnimationTimer > 25f && deathAnimationTimer < implosionRingLifetime - 30f)
+            {
+                float particleScale = Main.rand.NextFloat(0.1f, 0.15f);
+                Vector2 particleVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(10f, 32f);
+                Color particleColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
+
+                for (int j = 0; j < 4; j++)
+                    GeneralParticleHandler.SpawnParticle(new StrongBloom(coreCenter, particleVelocity, particleColor, particleScale, 80));
+
+                for (int i = 0; i < 2; i++)
+                {
+                    particleScale = Main.rand.NextFloat(1.5f, 2f);
+                    particleVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4.5f, 10f);
+                    GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(coreCenter, particleVelocity, particleScale, Color.Cyan, 75, 1f, 12f));
+                }
+            }
+
+            // Periodically create pulse rings.
+            if (deathAnimationTimer > 10f && deathAnimationTimer < implosionRingLifetime - 30f && deathAnimationTimer % pulseRingCreationRate == pulseRingCreationRate - 1f)
+            {
+                float finalScale = Utils.Remap(deathAnimationTimer, 25f, 160f, 3f, 5f) * implosionRingScale;
+                Color pulseColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
+
+                for (int i = 0; i < 3; i++)
+                    GeneralParticleHandler.SpawnParticle(new PulseRing(coreCenter, Vector2.Zero, pulseColor, 0.2f, finalScale, pulseRingCreationRate));
+            }
+
+            // Create an explosion.
+            if (deathAnimationTimer == implosionRingLifetime)
+            {
+                GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, explosionRingScale, explosionTime));
+                var sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
+                if (sound != null)
+                    CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
+            }
+
+            deathAnimationTimer++;
+
+            // Fade away as the explosion progresses.
+            float opacityFadeInterpolant = Utils.GetLerpValue(implosionRingLifetime + explosionTime * 0.75f, implosionRingLifetime, deathAnimationTimer, true);
+            npc.Opacity = (float)Math.Pow(opacityFadeInterpolant, 6.1);
+
+            if (deathAnimationTimer == (int)(implosionRingLifetime + explosionTime * 0.5f))
+            {
+                npc.life = 0;
+                npc.HitEffect();
+                npc.StrikeNPC(10, 0f, 1);
+                npc.checkDead();
+            }
         }
 
         public static void DoBehavior_DoFinalPhaseTransition(NPC npc, Player target, ref float frame, float phaseTransitionAnimationTime)
@@ -691,6 +785,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (CalamityGlobalNPC.draedonExoMechPrime == -1)
                 return true;
 
+            if (ExoMechAIUtilities.PerformingDeathAnimation(npc))
+                return true;
+
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
 
             int thanatosIndex = NPC.FindFirstNPC(ModContent.NPCType<ThanatosHead>());
@@ -706,7 +803,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 return !activeArms.Contains(npc.type);
 
             bool chargingUp = aresBody.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex] is > 0f and
-				< ExoMechManagement.FinalPhaseTransitionTime;
+                < ExoMechManagement.FinalPhaseTransitionTime;
             if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.HoverCharge ||
                 aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts ||
@@ -878,14 +975,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 armProperties[1] = (-1, true);
             }
 
-            if (laserArm != -1)
-                DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[laserArm].Center, armGlowmaskColor, armProperties[0].Item1, armProperties[0].Item2 });
-            if (pulseArm != -1)
-                DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[pulseArm].Center, armGlowmaskColor, armProperties[1].Item1, armProperties[1].Item2 });
-            if (teslaArm != -1)
-                DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[teslaArm].Center, armGlowmaskColor, armProperties[2].Item1, armProperties[2].Item2 });
-            if (plasmaArm != -1)
-                DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[plasmaArm].Center, armGlowmaskColor, armProperties[3].Item1, armProperties[3].Item2 });
+            if (npc.Opacity > 0.05f)
+            {
+                if (laserArm != -1)
+                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[laserArm].Center, armGlowmaskColor, armProperties[0].Item1, armProperties[0].Item2 });
+                if (pulseArm != -1)
+                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[pulseArm].Center, armGlowmaskColor, armProperties[1].Item1, armProperties[1].Item2 });
+                if (teslaArm != -1)
+                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[teslaArm].Center, armGlowmaskColor, armProperties[2].Item1, armProperties[2].Item2 });
+                if (plasmaArm != -1)
+                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[plasmaArm].Center, armGlowmaskColor, armProperties[3].Item1, armProperties[3].Item2 });
+            }
 
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
@@ -927,13 +1027,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Main.spriteBatch.Draw(texture, center, frame, afterimageBaseColor * npc.Opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
             // Draw line telegraphs.
-            float telegraphInterpolant = npc.Infernum().ExtraAI[LineTelegraphInterpolantIndex];
+            float telegraphInterpolant = npc.Infernum().ExtraAI[ExoMechManagement.Ares_LineTelegraphInterpolantIndex];
             if (telegraphInterpolant > 0f)
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
                 Texture2D telegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
-                float telegraphRotation = npc.Infernum().ExtraAI[LineTelegraphRotationIndex];
+                float telegraphRotation = npc.Infernum().ExtraAI[ExoMechManagement.Ares_LineTelegraphRotationIndex];
                 float telegraphScaleFactor = telegraphInterpolant * 1.2f;
                 Vector2 telegraphStart = npc.Center + Vector2.UnitY * 34f + telegraphRotation.ToRotationVector2() * 20f - Main.screenPosition;
                 Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();

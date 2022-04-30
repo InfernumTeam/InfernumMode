@@ -29,9 +29,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     return 0f;
 
                 if (initialMech.Opacity <= 0f)
-                    initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] = 0f;
+                    initialMech.Infernum().ExtraAI[Twins_ComplementMechEnrageTimerIndex] = 0f;
 
-                return initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex];
+                return initialMech.Infernum().ExtraAI[Twins_ComplementMechEnrageTimerIndex];
             }
             set
             {
@@ -39,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (initialMech is null)
                     return;
 
-                initialMech.Infernum().ExtraAI[ApolloBehaviorOverride.ComplementMechEnrageTimerIndex] = value;
+                initialMech.Infernum().ExtraAI[Twins_ComplementMechEnrageTimerIndex] = value;
             }
         }
 

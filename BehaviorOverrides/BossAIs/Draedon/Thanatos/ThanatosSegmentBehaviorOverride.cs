@@ -65,6 +65,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.dontTakeDamage = head.dontTakeDamage;
             npc.damage = head.damage > 0 ? npc.defDamage : 0;
             npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex] = head.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
+            npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex] = head.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
+            npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] = head.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex];
             Player target = Main.player[npc.target];
 
             // Handle open behavior and frames.
@@ -73,6 +75,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             bool canBeOpen = (int)Math.Round(segmentAttackIndex % (SegmentCount / totalSegmentsToFire)) == 0;
             bool thanatosIsFiring = headAttackType != ThanatosHeadAttackType.AggressiveCharge && head.Infernum().ExtraAI[1] > 0f;
             bool segmentShouldContiuouslyBeOpen = headAttackType == ThanatosHeadAttackType.MaximumOverdrive && head.Infernum().ExtraAI[0] == 1f;
+
+            // Handle death animation stuff.
+            if (npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] != 0f)
+            {
+                thanatosIsFiring = false;
+                canBeOpen = true;
+                segmentShouldContiuouslyBeOpen = true;
+                DoBehavior_DeathAnimation(npc, target, ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex], ref frameType);
+            }
 
             // Handle segment opening/closing and projectile firing.
             if (thanatosIsFiring && canBeOpen)

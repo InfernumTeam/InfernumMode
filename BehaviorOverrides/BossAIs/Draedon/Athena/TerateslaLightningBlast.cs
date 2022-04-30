@@ -114,16 +114,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 }
                 while (turnTries < 100);
 
-                // Make any plasma bombs that are hit explode.
-                foreach (Projectile plasmaBomb in Utilities.AllProjectilesByID(ModContent.ProjectileType<PlasmaBomb>()))
-                {
-                    if (Projectile.WithinRange(plasmaBomb.Center, 80f))
-                    {
-                        SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, plasmaBomb.Center);
-                        plasmaBomb.Kill();
-                    }
-                }
-
                 if (Projectile.velocity != Vector2.Zero)
                 {
                     AccumulatedXMovementSpeeds += newBaseDirection.X * (Projectile.extraUpdates + 1) * 2f * originalSpeed;

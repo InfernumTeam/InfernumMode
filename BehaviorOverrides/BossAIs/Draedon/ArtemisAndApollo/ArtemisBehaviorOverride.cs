@@ -43,7 +43,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Define the whoAmI variable.
             CalamityGlobalNPC.draedonExoMechTwinRed = npc.whoAmI;
 
+            // Define the Apollo NPC instance.
+            NPC apollo = Main.npc[npc.realLife];
+
             // Define attack variables.
+            bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(apollo);
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float hoverSide = ref npc.ai[2];
@@ -55,9 +59,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
-            ref float sideSwitchAttackDelay = ref npc.Infernum().ExtraAI[18];
-            NPC finalMech = ExoMechManagement.FindFinalMech();
-            NPC apollo = Main.npc[npc.realLife];
+            ref float sideSwitchAttackDelay = ref npc.Infernum().ExtraAI[ExoMechManagement.Twins_SideSwitchDelayIndex];
+            ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
 
             if (Main.netMode != NetmodeID.MultiplayerClient && hasDoneInitializations == 0f)
             {
@@ -90,6 +93,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             finalMechIndex = apollo.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
             finalPhaseAnimationTime = apollo.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             sideSwitchAttackDelay = apollo.Infernum().ExtraAI[18];
+            deathAnimationTimer = apollo.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
             npc.Calamity().newAI[0] = (int)Artemis.Phase.Charge;
 
             // Get a target.
@@ -100,9 +104,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
                 npc.takenDamageMultiplier *= 0.5f;
 
-            // Become invincible and disappear if the final mech is present.
+            // Become invincible and disappear if necessary.
             npc.Calamity().newAI[1] = 0f;
-            if (finalMech != null && finalMech != apollo)
+            if (ExoMechAIUtilities.ShouldExoMechVanish(npc))
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
                 if (npc.Opacity <= 0f)
@@ -137,7 +141,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
 
             // Handle the final phase transition.
-            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentTwinsPhase >= 6)
+            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentTwinsPhase >= 6 && !performingDeathAnimation)
             {
                 npc.ModNPC<Artemis>().ChargeFlash = 0f;
                 attackState = (int)TwinsAttackType.BasicShots;
@@ -148,27 +152,32 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
 
             // Perform specific attack behaviors.
-            switch ((TwinsAttackType)(int)attackState)
+            if (!performingDeathAnimation)
             {
-                case TwinsAttackType.BasicShots:
-                    DoBehavior_BasicShots(npc, target, sideSwitchAttackDelay > 0f, false, hoverSide, ref frame, ref attackTimer);
-                    break;
-                case TwinsAttackType.SynchronizedCharges:
-                    DoBehavior_SynchronizedCharges(npc, target, hoverSide, ref frame, ref attackTimer);
-                    break;
-                case TwinsAttackType.FireCharge:
-                    DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
-                    break;
-                case TwinsAttackType.SpecialAttack_PlasmaCharges:
-                    DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
-                    break;
-                case TwinsAttackType.SpecialAttack_LaserRayScarletBursts:
-                    DoBehavior_LaserRayScarletBursts(npc, target, ref frame, ref attackTimer);
-                    break;
-                case TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames:
-                    DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);
-                    break;
+                switch ((TwinsAttackType)(int)attackState)
+                {
+                    case TwinsAttackType.BasicShots:
+                        DoBehavior_BasicShots(npc, target, sideSwitchAttackDelay > 0f, false, hoverSide, ref frame, ref attackTimer);
+                        break;
+                    case TwinsAttackType.SynchronizedCharges:
+                        DoBehavior_SynchronizedCharges(npc, target, hoverSide, ref frame, ref attackTimer);
+                        break;
+                    case TwinsAttackType.FireCharge:
+                        DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
+                        break;
+                    case TwinsAttackType.SpecialAttack_PlasmaCharges:
+                        DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
+                        break;
+                    case TwinsAttackType.SpecialAttack_LaserRayScarletBursts:
+                        DoBehavior_LaserRayScarletBursts(npc, target, ref frame, ref attackTimer);
+                        break;
+                    case TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames:
+                        DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);
+                        break;
+                }
             }
+            else
+                DoBehavior_DeathAnimation(npc, target, ref frame, ref npc.ModNPC<Artemis>().ChargeFlash, ref deathAnimationTimer);
 
             // Perform specific combo attack behaviors.
             ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, hoverSide, ref attackTimer, ref frame);

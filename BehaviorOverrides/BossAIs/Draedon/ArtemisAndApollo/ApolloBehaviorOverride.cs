@@ -17,6 +17,8 @@ using Terraria.ModLoader;
 using AresPlasmaFireballInfernum = InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares.AresPlasmaFireball;
 using Terraria.Audio;
 using Terraria.GameContent;
+using CalamityMod.Particles;
+using InfernumMode.Particles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
@@ -37,7 +39,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
         public const int Phase2TransitionTime = 270;
-        public const int ComplementMechEnrageTimerIndex = 15;
 
         #region AI
         public override bool PreAI(NPC npc)
@@ -49,6 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             CalamityGlobalNPC.draedonExoMechTwinGreen = npc.whoAmI;
 
             // Define attack variables.
+            bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(npc);
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float hoverSide = ref npc.ai[2];
@@ -59,9 +61,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             ref float complementMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
-            ref float enrageTimer = ref npc.Infernum().ExtraAI[ComplementMechEnrageTimerIndex];
+            ref float enrageTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.Twins_ComplementMechEnrageTimerIndex];
             ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
-            ref float sideSwitchAttackDelay = ref npc.Infernum().ExtraAI[18];
+            ref float sideSwitchAttackDelay = ref npc.Infernum().ExtraAI[ExoMechManagement.Twins_SideSwitchDelayIndex];
+            ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
+
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
@@ -128,8 +132,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.netUpdate = true;
             }
 
-            // Become invincible if the complement mech is at high enough health.
-            npc.dontTakeDamage = false;
+            // Become invincible if the complement mech is at high enough health or if in the middle of a death animation.
+            npc.dontTakeDamage = ExoMechAIUtilities.PerformingDeathAnimation(npc);
             if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
                 npc.dontTakeDamage = true;
 
@@ -142,9 +146,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (ExoMechManagement.ShouldHaveSecondComboPhaseResistance(npc))
                 npc.takenDamageMultiplier *= 0.5f;
 
-            // Become invincible and disappear if the final mech is present.
+            // Become invincible and disappear if necessary.
             npc.Calamity().newAI[1] = 0f;
-            if (finalMech != null && finalMech != npc)
+            if (ExoMechAIUtilities.ShouldExoMechVanish(npc))
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
                 if (npc.Opacity <= 0f)
@@ -188,7 +192,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
 
             // Handle the final phase transition.
-            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentTwinsPhase >= 6)
+            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentTwinsPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
             {
                 if (finalPhaseAnimationTime == 1f)
                 {
@@ -227,26 +231,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 sideSwitchAttackDelay--;
 
             // Perform specific attack behaviors.
-            switch ((TwinsAttackType)(int)attackState)
+            if (!performingDeathAnimation)
             {
-                case TwinsAttackType.BasicShots:
-                    DoBehavior_BasicShots(npc, target, sideSwitchAttackDelay > 0f, false, hoverSide, ref frame, ref attackTimer);
-                    break;
-                case TwinsAttackType.SynchronizedCharges:
-                    DoBehavior_SynchronizedCharges(npc, target, hoverSide, ref frame, ref attackTimer);
-                    break;
-                case TwinsAttackType.FireCharge:
-                    DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
-                    break;
-                case TwinsAttackType.SpecialAttack_PlasmaCharges:
-                    DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
-                    break;
-                case TwinsAttackType.SpecialAttack_LaserRayScarletBursts:
-                    DoBehavior_LaserRayScarletBursts(npc, target, ref frame, ref attackTimer);
-                    break;
-                case TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames:
-                    DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);
-                    break;
+                switch ((TwinsAttackType)(int)attackState)
+                {
+                    case TwinsAttackType.BasicShots:
+                        DoBehavior_BasicShots(npc, target, sideSwitchAttackDelay > 0f, false, hoverSide, ref frame, ref attackTimer);
+                        break;
+                    case TwinsAttackType.SynchronizedCharges:
+                        DoBehavior_SynchronizedCharges(npc, target, hoverSide, ref frame, ref attackTimer);
+                        break;
+                    case TwinsAttackType.FireCharge:
+                        DoBehavior_FireCharge(npc, target, hoverSide, ref frame, ref attackTimer);
+                        break;
+                    case TwinsAttackType.SpecialAttack_PlasmaCharges:
+                        DoBehavior_PlasmaCharges(npc, target, hoverSide, ref frame, ref attackTimer);
+                        break;
+                    case TwinsAttackType.SpecialAttack_LaserRayScarletBursts:
+                        DoBehavior_LaserRayScarletBursts(npc, target, ref frame, ref attackTimer);
+                        break;
+                    case TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames:
+                        DoBehavior_GatlingLaserAndPlasmaFlames(npc, target, hoverSide, ref frame, ref attackTimer);
+                        break;
+                }
+            }
+            else
+            {
+                DoBehavior_DeathAnimation(npc, target, ref frame, ref npc.ModNPC<Apollo>().ChargeComboFlash, ref deathAnimationTimer);
+                deathAnimationTimer++;
             }
 
             // Perform specific combo attack behaviors.
@@ -299,6 +311,149 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             if (phaseTransitionAnimationTime == chargeupSoundTime + 75f)
                 SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/GatlingLaserFireEnd"), npc.Center);
+        }
+
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float frame, ref float chargeInterpolant, ref float deathAnimationTimer)
+        {
+            int chargeupTime = 180;
+            int reelBackTime = 45;
+            int chargeTime = 90;
+            float hoverSide = (npc.type == ModContent.NPCType<Apollo>()).ToDirectionInt();
+            Vector2 hoverDestination = target.Center + new Vector2(hoverSide * 600f, -180f);
+
+            // Use charge-up frames.
+            npc.frameCounter++;
+            frame = (int)Math.Round(MathHelper.Lerp(70f, 79f, (float)npc.frameCounter / 36f % 1f));
+
+            // Close the HP bar.
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Use close to the minimum HP.
+            npc.life = 50000;
+
+            // Disable contact damage.
+            npc.damage = 0;
+
+            // Explode when colliding with the other mech.
+            bool collidingWithMech = false;
+            if (npc.type == ModContent.NPCType<Apollo>())
+                collidingWithMech = npc.Hitbox.Intersects(Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Artemis>())].Hitbox);
+            if (npc.type == ModContent.NPCType<Artemis>())
+                collidingWithMech = npc.Hitbox.Intersects(Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Apollo>())].Hitbox);
+
+            if (collidingWithMech && deathAnimationTimer > chargeupTime + reelBackTime)
+                deathAnimationTimer = MathHelper.Max(chargeupTime + reelBackTime + chargeTime - 4f, deathAnimationTimer);
+
+            // Hover to the sides of the target and charge energy.
+            if (deathAnimationTimer < chargeupTime)
+            {
+                // Hover.
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 36f, 84f);
+
+                // Determine rotation.
+                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+
+                // Determine the intensity of the charge visuals.
+                chargeInterpolant = Utils.GetLerpValue(chargeupTime - 60f, chargeupTime - 1f, deathAnimationTimer, true);
+
+                float particleCreationChance = Utils.Remap(deathAnimationTimer, 0f, chargeupTime * 0.65f, 0.1f, 0.9f);
+
+                for (int i = 0; i < 2; i++)
+                {
+                    if (Main.rand.NextFloat() > particleCreationChance)
+                        continue;
+
+                    float particleScale = Main.rand.NextFloat(0.4f, 0.55f);
+                    Color particleColor;
+                    Vector2 cannonEndPosition = npc.Center;
+                    if (npc.type == ModContent.NPCType<Apollo>())
+                    {
+                        particleColor = Color.Lerp(Color.Lime, Color.Yellow, Main.rand.NextFloat(0.55f));
+                        cannonEndPosition += (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 85f;
+                    }
+                    else
+                    {
+                        particleColor = Color.Lerp(Color.Orange, Color.Yellow, Main.rand.NextFloat(0.5f));
+                        cannonEndPosition += (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 102f;
+                    }
+
+                    Vector2 particleSpawnPosition = cannonEndPosition + Main.rand.NextVector2Unit() * Main.rand.NextFloat(75f, 165f);
+                    Vector2 particleVelocity = (cannonEndPosition - particleSpawnPosition + npc.velocity * 16f) * 0.06f;
+                    GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(particleSpawnPosition, particleVelocity, particleScale, particleColor, 30));
+                }
+            }
+
+            // Reel back.
+            else if (deathAnimationTimer <= chargeupTime + reelBackTime)
+            {
+                float reelBackInterpolant = Utils.GetLerpValue(0f, reelBackTime * 0.65f, deathAnimationTimer - chargeupTime, true);
+                hoverDestination -= npc.SafeDirectionTo(target.Center) * reelBackInterpolant * 200f;
+                hoverDestination.X -= reelBackInterpolant * hoverSide * 200f;
+                hoverDestination.Y -= reelBackInterpolant * 120f;
+
+                // Hover.
+                ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 36f, 84f);
+
+                // Determine rotation.
+                npc.rotation = npc.AngleTo(target.Center) + MathHelper.PiOver2;
+
+                chargeInterpolant = 1f;
+
+                // Charge.
+                if (deathAnimationTimer == chargeupTime + reelBackTime)
+                {
+                    Vector2 tailEnd = npc.Center - (npc.rotation - MathHelper.PiOver2).ToRotationVector2() * 50f;
+
+                    // Create a sonic boom at the tail end of the mech.
+                    for (int i = 0; i < 2; i++)
+                        GeneralParticleHandler.SpawnParticle(new PulseRing(tailEnd, Vector2.Zero, Color.Cyan, 0f, 8f, 40));
+
+                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/ScorchedEarthShot3"), npc.Center);
+                    npc.velocity = npc.SafeDirectionTo(target.Center) * 40f;
+                    npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
+                }
+            }
+
+            // Explode.
+            else if (deathAnimationTimer >= chargeupTime + reelBackTime + chargeTime)
+            {
+                // Slow down for the sake of preventing gores from flying at the speed of light.
+                npc.velocity *= 0.5f;
+
+                // Create a massive impact explosion and release sparks everywhere.
+                if (npc.type == ModContent.NPCType<Apollo>())
+                {
+                    var sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
+                    if (sound != null)
+                        CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
+
+                    GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(npc.Center, Vector2.Zero, CalamityUtils.ExoPalette, 3f, 90));
+                    for (int i = 0; i < 40; i++)
+                    {
+                        Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 24f);
+                        GeneralParticleHandler.SpawnParticle(new SparkParticle(npc.Center, sparkVelocity, Main.rand.NextBool(4), 60, 2f, Color.Gold));
+
+                        sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 24f);
+                        Color arcColor = Color.Lerp(Color.Yellow, Color.Cyan, Main.rand.NextFloat());
+                        GeneralParticleHandler.SpawnParticle(new ElectricArc(npc.Center, sparkVelocity, arcColor, 0.84f, 60));
+                    }
+
+                    for (int i = 0; i < 32; i++)
+                    {
+                        Color smokeColor = Color.Lerp(Color.Yellow, Color.Cyan, Main.rand.NextFloat());
+                        Vector2 smokeVelocity = (MathHelper.TwoPi * i / 32f).ToRotationVector2() * Main.rand.NextFloat(7f, 11.5f) + Main.rand.NextVector2Circular(4f, 4f);
+                        GeneralParticleHandler.SpawnParticle(new HeavySmokeParticle(npc.Center, smokeVelocity, smokeColor, 56, 2.4f, 1f));
+
+                        smokeVelocity *= 2f;
+                        GeneralParticleHandler.SpawnParticle(new HeavySmokeParticle(npc.Center, smokeVelocity, smokeColor, 56, 3f, 1f));
+                    }
+
+                    npc.life = 0;
+                    npc.HitEffect();
+                    npc.StrikeNPC(10, 0f, 1);
+                    npc.checkDead();
+                }
+            }
         }
 
         public static void DoBehavior_DoFinalPhaseTransition(NPC npc, Player target, ref float frame, float hoverSide, float phaseTransitionAnimationTime)

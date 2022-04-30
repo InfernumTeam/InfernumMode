@@ -132,8 +132,12 @@ namespace InfernumMode.ILEditingStuff
                 }
                 foreach (GlobalNPC g in list.Enumerate(globalNPCs))
                 {
-                    if (g is GlobalNPCOverrides)
-                        return g.Instance(npc).CheckDead(npc);
+                    if (g is GlobalNPCOverrides g2)
+                    {
+                        bool result2 = g2.CheckDead(npc);
+                        if (!result2)
+                            return false;
+                    }
                     result &= g.Instance(npc).CheckDead(npc);
                 }
                 return result;

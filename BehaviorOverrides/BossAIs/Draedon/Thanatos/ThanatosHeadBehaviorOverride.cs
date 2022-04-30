@@ -15,6 +15,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using CalamityMod.Particles;
+using Terraria.Graphics.Shaders;
+using InfernumMode.Particles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
@@ -63,6 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.damage = npc.defDamage;
 
             // Define attack variables.
+            bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(npc);
             ref float attackState = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float segmentsSpawned = ref npc.ai[2];
@@ -70,9 +74,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ref float complementMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
             ref float wasNotInitialSummon = ref npc.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
             ref float finalMechIndex = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
-            ref float attackDelay = ref npc.Infernum().ExtraAI[13];
+            ref float attackDelay = ref npc.Infernum().ExtraAI[ExoMechManagement.Thanatos_AttackDelayIndex];
             ref float finalPhaseAnimationTime = ref npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
             ref float secondComboPhaseResistanceBoostFlag = ref npc.Infernum().ExtraAI[17];
+            ref float deathAnimationTimer = ref npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
+
             NPC initialMech = ExoMechManagement.FindInitialMech();
             NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active ? Main.npc[(int)complementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
@@ -136,14 +142,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
 
-            // Become invincible if the complement mech is at high enough health.
-            npc.dontTakeDamage = false;
+            // Become invincible if the complement mech is at high enough health or if in the middle of a death animation.
+            npc.dontTakeDamage = ExoMechAIUtilities.PerformingDeathAnimation(npc);
             if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
                 npc.dontTakeDamage = true;
-
-            // Become invincible and disappear if the final mech is present.
+            
+            // Become invincible and disappear if necessary.
             npc.Calamity().newAI[1] = 0f;
-            if (finalMech != null && finalMech != npc)
+            if (ExoMechAIUtilities.ShouldExoMechVanish(npc))
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
                 if (npc.Opacity <= 0f)
@@ -168,7 +174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Have a brief period of immortality before attacking to allow for time to uncoil.
-            if (attackDelay < 240f)
+            if (attackDelay < 240f && !performingDeathAnimation)
             {
                 npc.dontTakeDamage = true;
                 npc.damage = 0;
@@ -179,7 +185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             }
 
             // Handle the final phase transition.
-            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentThanatosPhase >= 6)
+            if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentThanatosPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
             {
                 frameType = (int)ThanatosFrameType.Closed;
                 attackState = (int)ThanatosHeadAttackType.AggressiveCharge;
@@ -223,33 +229,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             // Become vulnerable on the map.
             typeof(ThanatosHead).GetField("vulnerable", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(npc.ModNPC, frameType == (int)ThanatosFrameType.Open);
 
-            switch ((ThanatosHeadAttackType)(int)attackState)
+            if (!performingDeathAnimation)
             {
-                case ThanatosHeadAttackType.AggressiveCharge:
-                    DoBehavior_AggressiveCharge(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.TopwardSlam:
-                    DoBehavior_TopwardSlam(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.LaserBarrage:
-                    DoBehavior_LaserBarrage(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.ExoBomb:
-                    DoBehavior_ExoBomb(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.RefractionRotorRays:
-                    DoBehavior_RefractionRotorRays(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.ExoLightBarrage:
-                    DoBehavior_ExoLightBarrage(npc, target, ref attackTimer, ref frameType);
-                    break;
-                case ThanatosHeadAttackType.MaximumOverdrive:
-                    DoBehavior_MaximumOverdrive(npc, target, ref attackTimer, ref frameType);
-                    break;
-            }
+                switch ((ThanatosHeadAttackType)(int)attackState)
+                {
+                    case ThanatosHeadAttackType.AggressiveCharge:
+                        DoBehavior_AggressiveCharge(npc, target, ref attackTimer, ref frameType);
+                        break;
+                    case ThanatosHeadAttackType.TopwardSlam:
+                        DoBehavior_TopwardSlam(npc, target, ref attackTimer, ref frameType);
+                        break;
+                    case ThanatosHeadAttackType.LaserBarrage:
+                        DoBehavior_LaserBarrage(npc, target, ref attackTimer, ref frameType);
+                        break;
+                    case ThanatosHeadAttackType.ExoBomb:
+                        DoBehavior_ExoBomb(npc, target, ref attackTimer, ref frameType);
+                        break;
+                    case ThanatosHeadAttackType.RefractionRotorRays:
+                        DoBehavior_RefractionRotorRays(npc, target, ref attackTimer, ref frameType);
+                        break;
+                    case ThanatosHeadAttackType.ExoLightBarrage:
+                        DoBehavior_ExoLightBarrage(npc, target, ref attackTimer, ref frameType);
+                        break;
+                    case ThanatosHeadAttackType.MaximumOverdrive:
+                        DoBehavior_MaximumOverdrive(npc, target, ref attackTimer, ref frameType);
+                        break;
+                }
 
-            if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
-                SelectNextAttack(npc);
+                if (ExoMechComboAttackContent.UseThanatosAresComboAttack(npc, ref attackTimer, ref frameType))
+                    SelectNextAttack(npc);
+            }
+            else
+            {
+                DoBehavior_DeathAnimation(npc, target, ref deathAnimationTimer, ref frameType);
+                deathAnimationTimer++;
+            }
 
             if (frameType == (int)ThanatosFrameType.Open)
             {
@@ -283,6 +297,80 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             attackTimer++;
 
             return false;
+        }
+
+        public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float deathAnimationTimer, ref float frameType)
+        {
+            bool isHead = npc.type == ModContent.NPCType<ThanatosHead>();
+            bool closeToDying = deathAnimationTimer >= 180f;
+
+            // Close the HP bar.
+            npc.Calamity().ShouldCloseHPBar = true;
+
+            // Use close to the minimum HP.
+            npc.life = 50000;
+
+            // Disable contact damage.
+            npc.dontTakeDamage = true;
+            npc.damage = 0;
+
+            // Slowly attempt to approach the target.
+            if (isHead && !closeToDying)
+            {
+                npc.velocity = Vector2.Lerp(npc.velocity, npc.SafeDirectionTo(target.Center) * 6f, 0.056f);
+                if (npc.velocity.Length() > 10f)
+                    npc.velocity *= 0.96f;
+            }
+
+            // Release bursts of energy sometimes.
+            if (deathAnimationTimer >= 35f && !closeToDying && Main.rand.NextBool(800))
+            {
+                SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
+                GeneralParticleHandler.SpawnParticle(new PulseRing(npc.Center, Vector2.Zero, Color.Red, 0f, 3.5f, 50));
+
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector2 sparkVelocity = -Vector2.UnitY.RotatedByRandom(1.23f) * Main.rand.NextFloat(6f, 14f);
+                    GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(npc.Center, sparkVelocity, 1f, Color.Red, 55, 1f, 5f));
+                }
+            }
+
+            if (deathAnimationTimer >= 240f && isHead)
+            {
+                int thanatosHeadID = ModContent.NPCType<ThanatosHead>();
+                int thanatosBodyID = ModContent.NPCType<ThanatosBody2>();
+
+                // Play an explosion sound.
+                var sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
+                if (sound != null)
+                    CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
+
+                Color[] explosionColorPalette = (Color[])CalamityUtils.ExoPalette.Clone();
+                for (int j = 0; j < explosionColorPalette.Length; j++)
+                    explosionColorPalette[j] = Color.Lerp(explosionColorPalette[j], Color.Red, 0.3f);
+
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    if (!Main.npc[i].active)
+                        continue;
+
+                    if ((Main.npc[i].type == thanatosBodyID && i % 3 == 0) || Main.npc[i].type == thanatosHeadID)
+                    {
+                        Main.npc[i].life = 0;
+                        Main.npc[i].velocity = Main.rand.NextVector2Circular(12f, 12f);
+                        Main.npc[i].HitEffect();
+                        GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(Main.npc[i].Center, Vector2.Zero, explosionColorPalette, 2.1f, 90, 0.4f));
+                    }
+                }
+
+                npc.life = 0;
+                npc.HitEffect();
+                npc.StrikeNPC(10, 0f, 1);
+                npc.checkDead();
+            }
+
+            // Open vents (pretty sus ngl).
+            frameType = (int)ThanatosFrameType.Open;
         }
 
         public static void DoBehavior_AggressiveCharge(NPC npc, Player target, ref float attackTimer, ref float frameType)

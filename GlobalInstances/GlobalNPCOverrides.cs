@@ -38,6 +38,8 @@ using CryogenNPC = CalamityMod.NPCs.Cryogen.Cryogen;
 using OldDukeNPC = CalamityMod.NPCs.OldDuke.OldDuke;
 using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
+using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Apollo;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -497,7 +499,7 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            if ((npc.type is NPCID.Spazmatism or NPCID.Retinazer))
+            if (npc.type is NPCID.Spazmatism or NPCID.Retinazer)
             {
                 bool otherTwinHasCreatedShield = false;
                 for (int i = 0; i < Main.maxNPCs; i++)
@@ -574,13 +576,66 @@ namespace InfernumMode.GlobalInstances
                 return false;
             }
 
-            bool finalMechKilled = ExoMechManagement.FindFinalMech() == npc;
-            if (npc.realLife >= 0)
-                finalMechKilled = ExoMechManagement.FindFinalMech() == Main.npc[npc.realLife];
-            if (finalMechKilled)
-                ExoMechManagement.MakeDraedonSayThings(4);
-            else if (ExoMechManagement.TotalMechs - 1 == 1)
-                ExoMechManagement.MakeDraedonSayThings(5);
+            if (Utilities.IsExoMech(npc))
+            {
+                bool hasPerformedDeathAnimation = npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] != 0f;
+                if (npc.realLife >= 0)
+                    hasPerformedDeathAnimation = Main.npc[npc.realLife].Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] != 0f;
+
+                // Execute battle event triggers if the exo mech in question has finished its death animation.
+                if (hasPerformedDeathAnimation)
+                {
+                    bool finalMechKilled = ExoMechManagement.FindFinalMech() == npc;
+                    if (npc.realLife >= 0)
+                        finalMechKilled = ExoMechManagement.FindFinalMech() == Main.npc[npc.realLife];
+                    if (finalMechKilled)
+                        ExoMechManagement.MakeDraedonSayThings(4);
+                    else if (ExoMechManagement.TotalMechs - 1 == 1)
+                        ExoMechManagement.MakeDraedonSayThings(5);
+                }
+
+                // Otherwise, trigger the exo mech's death animation.
+                // Once it ends this code will be called again.
+                else
+                {
+                    npc.life = npc.lifeMax;
+                    npc.dontTakeDamage = true;
+                    npc.active = true;
+                    if (npc.realLife >= 0)
+                    {
+                        Main.npc[npc.realLife].life = Main.npc[npc.realLife].lifeMax;
+                        Main.npc[npc.realLife].dontTakeDamage = true;
+                        Main.npc[npc.realLife].active = true;
+                        Main.npc[npc.realLife].Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] = 1f;
+                        Main.npc[npc.realLife].netUpdate = true;
+                        Main.npc[npc.realLife].UpdateNPC(npc.realLife);
+                    }
+                    else
+                    {
+                        npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationHasStartedIndex] = 1f;
+
+                        // If Apollo is the one being checked, ensure that Artemis stays alive.
+                        if (npc.type == ModContent.NPCType<Apollo>())
+                        {
+                            int artemisID = ModContent.NPCType<Artemis>();
+                            for (int i = 0; i < Main.maxNPCs; i++)
+                            {
+                                if (Main.npc[i].type == artemisID && Main.npc[i].realLife == npc.whoAmI)
+                                {
+                                    Main.npc[i].life = npc.life;
+                                    Main.npc[i].active = true;
+                                }
+                            }
+                        }
+                        npc.UpdateNPC(npc.whoAmI);
+                    }
+
+                    npc.netUpdate = true;
+                    ExoMechManagement.ClearAwayTransitionProjectiles();
+
+                    return false;
+                }
+            }
 
             return base.CheckDead(npc);
         }

@@ -5,7 +5,7 @@ using System.IO;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresDeathBeamTelegraph : ModProjectile
     {

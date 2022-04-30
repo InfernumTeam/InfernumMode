@@ -452,7 +452,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
         public static void DoBehavior_IchorBlasts(NPC npc, Player target, bool inPhase2, ref float attackTimer)
         {
             int fireDelay = 50;
-            int shootRate = 35;
+            int shootRate = 45;
             int blastCount = 12;
 
             if (inPhase2)
@@ -566,6 +566,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             if (inPhase4)
             {
                 blobReleaseRate--;
+                spinRadius += 75f;
+                totalSpinArc *= 1.5f;
                 chargeSpeed += 1.5f;
                 blobSpeedFactor *= 1.1f;
                 chargeBlobCount += 3;
@@ -681,12 +683,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
 
             // Disable contact damage.
-            npc.damage = 0;
             npc.dontTakeDamage = true;
 
             // Hover above the player and slow down.
             if (attackTimer < wormSummonTime)
             {
+                npc.damage = 0;
+
                 float hoverSpeed = Utils.Remap(attackTimer, 0f, wormSummonTime - 45f, maxHoverSpeed, 0f);
                 if (doneReelingBack)
                     hoverSpeed = maxHoverSpeed;
@@ -754,7 +757,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
         public static void DoBehavior_CrimeraWalls(NPC npc, Player target, bool inPhase3, bool inPhase4, ref float attackTimer)
         {
             int riseTime = 45;
-            int wallCreationTime = 19;
+            int wallCreationTime = 22;
             int attackSwitchDelay = 120;
             float offsetPerCrimera = 160f;
             float wallSpeed = 8f;
@@ -797,7 +800,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > riseTime && attackTimer <= riseTime + wallCreationTime)
             {
                 horizontalWallOffset += offsetPerCrimera;
-                Vector2 wallSpawnOffset = new(horizontalWallOffset - 1200f, -925f);
+                Vector2 wallSpawnOffset = new(horizontalWallOffset - 1800f, -925f);
                 Vector2 wallVelocity = Vector2.Lerp(Vector2.UnitY, -wallSpawnOffset.SafeNormalize(Vector2.UnitY), aimAtTargetInterpolant);
                 wallVelocity = wallVelocity.SafeNormalize(Vector2.UnitY) * wallSpeed;
 
@@ -823,12 +826,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float hoverOffsetDirection = ref npc.Infernum().ExtraAI[1];
 
             // Disable contact damage.
-            npc.damage = 0;
             npc.dontTakeDamage = true;
 
             // Hover above the player and slow down.
             if (attackTimer < wormSummonTime)
             {
+                npc.damage = 0;
+
                 float hoverSpeed = Utils.Remap(attackTimer, 0f, wormSummonTime - 45f, maxHoverSpeed, 0f);
                 if (doneReelingBack)
                     hoverSpeed = maxHoverSpeed;
@@ -866,7 +870,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     npc.netUpdate = true;
                 }
 
-                Vector2 hoverDestination = target.Center + new Vector2(hoverOffsetDirection * 490f, -200f) - npc.velocity;
+                Vector2 hoverDestination = target.Center + new Vector2(hoverOffsetDirection * 560f, -220f) - npc.velocity;
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 12f;
                 npc.SimpleFlyMovement(idealVelocity, 0.5f);
 
@@ -987,7 +991,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int chargeTime = 32;
             int ichorBlobCount = 3;
             float chargeHoverSpeed = 19.5f;
-            float chargeSpeed = 31f;
+            float chargeSpeed = 29f;
             float maxHoverSpeed = 11f;
             bool doneReelingBack = attackTimer >= wormSummonTime + reelBackTime;
 
@@ -995,12 +999,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             ref float chargeDirection = ref npc.Infernum().ExtraAI[1];
 
             // Disable contact damage.
-            npc.damage = 0;
             npc.dontTakeDamage = true;
 
             // Hover above the player and slow down.
             if (attackTimer < wormSummonTime)
             {
+                npc.damage = 0;
+
                 float hoverSpeed = Utils.Remap(attackTimer, 0f, wormSummonTime - 45f, maxHoverSpeed, 0f);
                 if (doneReelingBack)
                     hoverSpeed = maxHoverSpeed;
@@ -1104,10 +1109,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int attackDelay = 150;
             int mouthIchorReleaseRate = 5;
             int ichorWallFireRate = 50;
-            int ichorWallShotCount = 6;
+            int ichorWallShotCount = 5;
             int attackTime = 420;
             int attackTransitionDelay = 120;
-            float ichorWallSpacing = 45f;
+            float ichorWallSpacing = 40f;
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f;
             Vector2 leftMouthPosition = npc.Center + new Vector2(-68f, 6f).RotatedBy(-npc.rotation);
             Vector2 rightMouthPosition = npc.Center + new Vector2(48f, -36f).RotatedBy(npc.rotation);
@@ -1169,7 +1174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     {
                         float ichorShootInterpolant = i / (float)(ichorWallShotCount - 1f);
                         float verticalWallOffset = MathHelper.Lerp(-0.5f, 0.5f, ichorShootInterpolant) * ichorWallSpacing * ichorWallShotCount;
-                        Vector2 wallOffset = new(ichorOffsetDirection * 450f, verticalWallOffset);
+                        Vector2 wallOffset = new(ichorOffsetDirection * 560f, verticalWallOffset);
                         Vector2 wallVelocity = Vector2.UnitX * ichorOffsetDirection * -6.5f;
                         Utilities.NewProjectileBetter(target.Center + wallOffset, wallVelocity, ModContent.ProjectileType<IchorBolt>(), 80, 0f);
                     }

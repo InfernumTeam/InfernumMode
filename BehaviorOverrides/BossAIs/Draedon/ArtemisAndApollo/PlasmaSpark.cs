@@ -5,9 +5,9 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
+namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-    public class TypicalPlasmaSpark : ModProjectile
+    public class PlasmaSpark : ModProjectile
     {
         public override void SetStaticDefaults() => DisplayName.SetDefault("Plasma Spark");
 
@@ -27,7 +27,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
             Projectile.rotation += Projectile.velocity.X * 0.025f;
-            if (Projectile.velocity.Length() < 16f)
+
+            if (Projectile.timeLeft > 240f)
+            {
+                Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+                Projectile.velocity = (Projectile.velocity * 19f + Projectile.SafeDirectionTo(target.Center) * 19f) / 20f;
+            }
+            else if (Projectile.velocity.Length() < 32f)
                 Projectile.velocity *= 1.0225f;
 
             // Emit dust.

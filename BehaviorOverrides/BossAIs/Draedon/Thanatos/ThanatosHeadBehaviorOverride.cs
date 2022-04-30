@@ -153,7 +153,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             {
                 npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.08f, 0f, 1f);
                 if (npc.Opacity <= 0f)
-                    npc.Center = target.Center + Vector2.UnitY * 3400f;
+                    npc.Center = target.Center + Vector2.UnitY * 1600f;
 
                 attackTimer = 0f;
                 attackState = (int)ThanatosHeadAttackType.AggressiveCharge;

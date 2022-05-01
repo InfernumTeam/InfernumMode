@@ -18,7 +18,7 @@ namespace InfernumMode
     {
         public ref float Time => ref Projectile.ai[0];
 
-        public const int Lifetime = 240;
+        public const int Lifetime = 375;
 
         public override string Texture => "CalamityMod/Items/SummonItems/ProfanedCoreUnlimited";
 
@@ -29,7 +29,7 @@ namespace InfernumMode
             Projectile.aiStyle = -1;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 325;
+            Projectile.timeLeft = Lifetime;
             Projectile.Opacity = 0f;
             Projectile.penetrate = -1;
         }
@@ -66,6 +66,10 @@ namespace InfernumMode
                 }
             }
 
+            // Play a rumble sound.
+            if (Time == 75f)
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/LeviathanSummonBase"), Projectile.Center);
+
             if (Time >= 210f)
             {
                 float jitterFactor = Utils.Remap(Projectile.velocity.Length(), 2f, 0f, 0.4f, 3f);
@@ -77,7 +81,7 @@ namespace InfernumMode
                 Main.LocalPlayer.Calamity().GeneralScreenShakePower = Utils.GetLerpValue(2300f, 1300f, Main.LocalPlayer.Distance(Projectile.Center), true) * jitterFactor * 2f;
 
                 // Create falling rock particles.
-                if (Main.rand.NextBool(6))
+                if (Main.rand.NextBool(10))
                 {
                     Vector2 rockSpawnPosition = Projectile.Center + Vector2.UnitX * Main.rand.NextFloatDirection() * 900f;
                     rockSpawnPosition = Utilities.GetGroundPositionFrom(rockSpawnPosition, Searches.Chain(new Searches.Up(9000), new Conditions.IsSolid()));

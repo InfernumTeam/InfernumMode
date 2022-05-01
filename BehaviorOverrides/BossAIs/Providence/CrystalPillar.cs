@@ -9,33 +9,37 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.WorldBuilding;
 using Terraria.Audio;
+using InfernumMode.Systems;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
     public class CrystalPillar : ModProjectile
     {
-        public bool DarknessVariant
-        {
-            get => Projectile.ai[0] == 1f;
-            set => Projectile.ai[0] = value.ToInt();
-        }
-        public ref float MaxPillarHeight => ref Projectile.ai[1];
         public float Time = 0f;
+
         public float CurrentHeight = 0f;
-        public const float StartingHeight = 82f;
+
+        public ref float MaxPillarHeight => ref Projectile.ai[1];
+
+        public const int Lifetime = 180;
+
+        public const float StartingHeight = 50f;
+
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Crystal");
+            DisplayName.SetDefault("Crystal Spike");
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 9999999;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 28;
+            Projectile.width = Projectile.height = 42;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 300;
+            Projectile.timeLeft = Lifetime;
+            Projectile.MaxUpdates = 2;
             Projectile.Calamity().canBreakPlayerDefense = true;
             CooldownSlot = 1;
         }
@@ -67,31 +71,44 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Initialize the pillar.
             if (MaxPillarHeight == 0f)
             {
-                WorldUtils.Find(new Vector2(Projectile.Top.X, Projectile.Top.Y - 160).ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
+                Point newBottom;
+                if (Projectile.velocity.Y != 0f)
                 {
-                    new Conditions.IsSolid(),
-                    new CustomTileConditions.ActiveAndNotActuated()
-                }), out Point newBottom);
-
-                bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
-                Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
-                Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                MaxPillarHeight = MathHelper.Max(0f, Projectile.Top.Y - target.Top.Y) + StartingHeight + 180f + Math.Abs(target.velocity.Y * 60f);
+                    WorldUtils.Find(new Vector2(Projectile.Top.X, Projectile.Top.Y - 160).ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
+                    {
+                        new Conditions.IsSolid(),
+                        new CustomTileConditions.ActiveAndNotActuated()
+                    }), out newBottom);
+                    bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
+                    Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
+                    MaxPillarHeight = (WorldSaveSystem.ProvidenceArena.Bottom - WorldSaveSystem.ProvidenceArena.Top) * 16f;
+                }
+                else
+                {
+                    WorldUtils.Find(new Vector2(Projectile.Top.X - 160, Projectile.Top.Y).ToTileCoordinates(), Searches.Chain(new Searches.Right(6000), new GenCondition[]
+                    {
+                        new Conditions.IsSolid(),
+                        new CustomTileConditions.ActiveAndNotActuated()
+                    }), out newBottom);
+                    bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X - 1, newBottom.Y).IsHalfBlock;
+                    Projectile.Bottom = newBottom.ToWorldCoordinates(isHalfTile ? 8 : 0, 8);
+                    MaxPillarHeight = (WorldSaveSystem.ProvidenceArena.Right - WorldSaveSystem.ProvidenceArena.Left) * 20f;
+                }
+                
                 CurrentHeight = StartingHeight;
-
                 Projectile.netUpdate = true;
             }
 
             // Quickly rise.
-            if (Time is >= 60f and < 75f)
+            if (Time is >= 60f and < 90f)
             {
-                CurrentHeight = MathHelper.Lerp(StartingHeight, MaxPillarHeight, Utils.GetLerpValue(60f, 75f, Time, true));
+                CurrentHeight = MathHelper.Lerp(StartingHeight, MaxPillarHeight, Utils.GetLerpValue(60f, 90f, Time, true));
                 if (Time == 74 || Time % 6 == 0)
                     Projectile.netUpdate = true;
             }
 
             // Play a sound when rising.
-            if (Time == 70)
+            if (Time == 80f)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
                 SoundEngine.PlaySound(SoundID.Item73, target.Center);
@@ -101,13 +118,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
+            float rotation = direction.Y == 0f ? -MathHelper.PiOver2 : 0f;
             if (Time < 60f)
             {
                 float scale = (float)Math.Sin(Time / 60f * MathHelper.Pi) * 5f;
                 if (scale > 1f)
                     scale = 1f;
                 scale *= 2f;
-                Utils.DrawLine(Main.spriteBatch, Projectile.Top + Vector2.UnitY * 10f, Projectile.Top + Vector2.UnitY * (-MaxPillarHeight + 240f), Color.LightGoldenrodYellow, Color.LightGoldenrodYellow, scale);
+
+                Vector2 lineOffset = Vector2.Zero;
+                if (direction.Y == 0f)
+                    lineOffset.Y += 42f;
+
+                Utils.DrawLine(Main.spriteBatch, Projectile.Top + lineOffset, Projectile.Top - direction * (-MaxPillarHeight + 240f), Color.LightGoldenrodYellow, Color.LightGoldenrodYellow, scale);
             }
 
             Texture2D tipTexture = ModContent.Request<Texture2D>(Texture).Value;
@@ -117,13 +141,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Color drawColor = Projectile.GetAlpha(Color.White);
             for (int i = pillarTexture.Height; i < CurrentHeight + pillarTexture.Height; i += pillarTexture.Height)
             {
-                Vector2 drawPosition = Projectile.Bottom - Vector2.UnitY * i - Main.screenPosition;
-                Main.spriteBatch.Draw(pillarTexture, drawPosition, null, drawColor, 0f, pillarTexture.Size() * new Vector2(0.5f, 0f), Projectile.scale, SpriteEffects.None, 0f);
+                Vector2 drawPosition = Projectile.Bottom + direction * i - Main.screenPosition;
+                Main.spriteBatch.Draw(pillarTexture, drawPosition, null, drawColor, rotation, pillarTexture.Size() * new Vector2(0.5f, 0f), Projectile.scale, SpriteEffects.None, 0f);
                 tipBottom = i;
             }
 
-            Vector2 tipDrawPosition = Projectile.Bottom - Vector2.UnitY * (tipBottom - 8f) - Main.screenPosition;
-            Main.spriteBatch.Draw(tipTexture, tipDrawPosition, null, drawColor, 0f, tipTexture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            Vector2 tipDrawPosition = Projectile.Bottom + direction * (tipBottom - 8f) - Main.screenPosition;
+            Main.spriteBatch.Draw(tipTexture, tipDrawPosition, null, drawColor, rotation, tipTexture.Size() * new Vector2(0.5f, 1f), Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -135,8 +159,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
+            Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
             Vector2 start = Projectile.Bottom;
-            Vector2 end = Projectile.Bottom - Vector2.UnitY * (CurrentHeight - 8f);
+            Vector2 end = Projectile.Bottom + direction * (CurrentHeight - 8f);
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Projectile.width * Projectile.scale, ref _);
         }
     }

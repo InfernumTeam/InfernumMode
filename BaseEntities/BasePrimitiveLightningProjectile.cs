@@ -28,6 +28,7 @@ namespace InfernumMode.BaseEntities
         public abstract Color PrimitiveColorFunction(float completionRatio);
 
         public override string Texture => "CalamityMod/Projectiles/LightningProj";
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lightning");

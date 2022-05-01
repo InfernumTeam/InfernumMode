@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
+using Terraria.ID;
 
 namespace CalamityMod.Particles
 {
@@ -33,7 +35,10 @@ namespace CalamityMod.Particles
             Rotation += Spin * ((Velocity.X > 0) ? 1f : -1f);
 
             if (Collision.SolidCollision(Position, 1, 1) && Time < Lifetime - 1 && Time > 8)
+            {
+                SoundEngine.PlaySound(SoundID.Item51, Position);
                 Time = Lifetime - 1;
+            }
         }
     }
 }

@@ -105,6 +105,17 @@ namespace InfernumMode.Systems
                 }
             }
 
+            // Create the right wall.
+            for (int y = top; y < bottom + 2; y++)
+            {
+                int x = left + width - 1;
+                Main.tile[x, y].LiquidAmount = 0;
+                Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
+                Main.tile[x, y].TileType = WorldGen.genRand.NextBool(5) ? runeID : slabID;
+                Main.tile[x, y].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+                Main.tile[x, y].Get<TileWallWireStateData>().IsHalfBlock = false;
+            }
+
             // Find the vertical point at which stairs should be placed.
             int stairLeft = left - 1;
             int stairTop = bottom - 1;

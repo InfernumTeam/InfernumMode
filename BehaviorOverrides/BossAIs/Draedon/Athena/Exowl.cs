@@ -35,7 +35,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public PrimitiveTrail LightningBackgroundDrawer = null;
 
-        public NPC Athena => Main.npc[GlobalNPCOverrides.Athena];
+        public static NPC Athena => Main.npc[GlobalNPCOverrides.Athena];
 
         public Player Target => Main.player[Athena.target];
 

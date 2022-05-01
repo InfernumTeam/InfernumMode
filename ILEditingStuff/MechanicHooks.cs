@@ -5,6 +5,7 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.Golem;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -50,7 +51,7 @@ namespace InfernumMode.ILEditingStuff
         {
             ILCursor cursor = new(il);
 
-            cursor.EmitDelegate<Func<bool>>(() =>
+            cursor.EmitDelegate(() =>
             {
                 if (NPC.AnyNPCs(ModContent.NPCType<ThanatosHead>()))
                     return true;
@@ -158,9 +159,9 @@ namespace InfernumMode.ILEditingStuff
                 return;
 
             c.Index++;
-            c.EmitDelegate<Action>(() =>
+            c.EmitDelegate(() =>
             {
-                if (NPC.AnyNPCs(NPCID.MoonLordCore) && PoDWorld.InfernumMode)
+                if (NPC.AnyNPCs(NPCID.MoonLordCore) && WorldSaveSystem.InfernumMode)
                     Main.LocalPlayer.noBuilding = true;
             });
         }
@@ -174,7 +175,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static int GiveDD2MinibossesPointPriority(On.Terraria.GameContent.Events.DD2Event.orig_GetMonsterPointsWorth orig, int slainMonsterID)
         {
-            if (OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID) && minibossID != NPCID.DD2Betsy && PoDWorld.InfernumMode)
+            if (OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID) && minibossID != NPCID.DD2Betsy && WorldSaveSystem.InfernumMode)
                 return slainMonsterID == minibossID ? 99999 : 0;
 
             return orig(slainMonsterID);

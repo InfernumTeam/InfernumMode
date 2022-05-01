@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
     {
         public PrimitiveTrailCopy FireDrawer;
         public Player Target => Main.player[NPC.target];
-        public NPC Owner => Main.npc[NPC.crimsonBoss];
+        public static NPC Owner => Main.npc[NPC.crimsonBoss];
         public float OwnerAttackTime => Owner.ai[1];
         public ref float ConvergeOffsetAngle => ref NPC.ai[1];
 

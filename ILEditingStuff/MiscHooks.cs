@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -63,13 +64,13 @@ namespace InfernumMode.ILEditingStuff
             cursor.MarkLabel(endOfMethod);
 
             cursor.Index = 0;
-            cursor.EmitDelegate<Action>(() =>
+            cursor.EmitDelegate(() =>
             {
-                if (PoDWorld.InfernumMode)
+                if (WorldSaveSystem.InfernumMode)
                     DrawInfernumModeUI();
             });
 
-            cursor.Emit(OpCodes.Ldsfld, typeof(PoDWorld).GetField("InfernumMode"));
+            cursor.Emit(OpCodes.Call, typeof(WorldSaveSystem).GetMethod("get_InfernumMode", Utilities.UniversalBindingFlags));
             cursor.Emit(OpCodes.Brtrue, endOfMethod);
         }
 
@@ -158,7 +159,7 @@ namespace InfernumMode.ILEditingStuff
             int deathDamage = contactDamage[3] == -1 ? -1 : (int)Math.Round(contactDamage[3] / damageAdjustment);
 
             // If the assigned value would be -1, don't actually assign it. This allows for conditionally disabling the system.
-            int damageToUse = (CalamityWorld.death || PoDWorld.InfernumMode) ? deathDamage : CalamityWorld.revenge ? revengeanceDamage : Main.expertMode ? expertDamage : normalDamage;
+            int damageToUse = (CalamityWorld.death || WorldSaveSystem.InfernumMode) ? deathDamage : CalamityWorld.revenge ? revengeanceDamage : Main.expertMode ? expertDamage : normalDamage;
             if (CalamityWorld.malice && damageToUse != -1)
                 damageToUse = (int)Math.Round(damageToUse * CalamityGlobalNPC.MaliceModeDamageMultiplier);
             if (damageToUse != -1)

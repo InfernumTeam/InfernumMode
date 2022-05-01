@@ -10,7 +10,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
     public class BrainIllusion2 : ModNPC
     {
         public Player Target => Main.player[NPC.target];
-        public NPC Owner => Main.npc[NPC.crimsonBoss];
+        public static NPC Owner => Main.npc[NPC.crimsonBoss];
         public float OwnerAttackTime => Owner.ai[1];
         public ref float AttackTimer => ref NPC.ai[1];
 

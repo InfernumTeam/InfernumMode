@@ -170,7 +170,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 for (int i = 92; i < 98; i++)
                 {
-                    var fuckYou = new Terraria.Audio.LegacySoundStyle(SoundID.Zombie, i);
+                    var fuckYou = new LegacySoundStyle(SoundID.Zombie, i);
                     var roar = SoundEngine.PlaySound(fuckYou, target.Center);
                     if (roar != null)
                     {
@@ -229,7 +229,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Clear projectiles, go to the desperation attack, and do some visual effects when ready to enter the final phase.
             if (npc.Infernum().ExtraAI[8] == 0f && InFinalPhase)
             {
-                var fuckYou = new Terraria.Audio.LegacySoundStyle(SoundID.Zombie, 92);
+                var fuckYou = new LegacySoundStyle(SoundID.Zombie, 92);
                 var roarSound = SoundEngine.PlaySound(fuckYou, npc.Center);
                 if (roarSound != null)
                 {

@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 	public class SoulSeeker2 : ModNPC
     {
         public Player Target => Main.player[NPC.target];
-        public float RingRadius => Main.npc[CalamityGlobalNPC.calamitas].Infernum().ExtraAI[6];
+        public static float RingRadius => Main.npc[CalamityGlobalNPC.calamitas].Infernum().ExtraAI[6];
         public ref float RingAngle => ref NPC.ai[0];
         public ref float AngerTimer => ref NPC.ai[1];
         public ref float AttackTimer => ref NPC.ai[2];

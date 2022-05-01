@@ -9,14 +9,14 @@ namespace InfernumMode.Systems
         public override void NetSend(BinaryWriter writer)
         {
             BitsByte flags = new();
-            flags[0] = PoDWorld.InfernumMode;
+            flags[0] = WorldSaveSystem.InfernumMode;
             writer.Write(flags);
         }
 
         public override void NetReceive(BinaryReader reader)
         {
             BitsByte flags = reader.ReadByte();
-            PoDWorld.InfernumMode = flags[0];
+            WorldSaveSystem.InfernumMode = flags[0];
         }
     }
 }

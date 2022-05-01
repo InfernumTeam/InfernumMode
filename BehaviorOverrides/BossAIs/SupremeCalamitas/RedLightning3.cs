@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             return color * 0.7f;
         }
 
-        public Color PrimitiveColorFunction2(float completionRatio) => new(1f, 1f, 1f, 0.1f);
+        public static Color PrimitiveColorFunction2(float completionRatio) => new(1f, 1f, 1f, 0.1f);
 
         public override bool PreDraw(ref Color lightColor)
         {

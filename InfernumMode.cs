@@ -8,6 +8,7 @@ using InfernumMode.ILEditingStuff;
 using InfernumMode.Items;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Skies;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -22,17 +23,23 @@ using Terraria.ModLoader;
 
 namespace InfernumMode
 {
-	public class InfernumMode : Mod
+    public class InfernumMode : Mod
     {
         internal static InfernumMode Instance = null;
         internal static Mod CalamityMod = null;
-        internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && PoDWorld.InfernumMode;
+        internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && WorldSaveSystem.InfernumMode;
 
         internal static bool BossRushApplies => true;
 
         internal static readonly Color HiveMindSkyColor = new(53, 42, 81);
 
         public static float BlackFade = 0f;
+
+        public static float ProvidenceArenaTimer
+        {
+            get;
+            set;
+        }
 
         public override void Load()
         {

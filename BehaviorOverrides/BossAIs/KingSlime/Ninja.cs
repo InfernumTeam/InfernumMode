@@ -16,7 +16,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
     {
         public PrimitiveTrailCopy FireDrawer;
         public Player Target => Main.player[NPC.target];
-        public ref float CurrentTeleportDirection => ref Main.npc[NPC.FindFirstNPC(NPCID.KingSlime)].Infernum().ExtraAI[6];
+        public static ref float CurrentTeleportDirection => ref Main.npc[NPC.FindFirstNPC(NPCID.KingSlime)].Infernum().ExtraAI[6];
         public ref float Time => ref NPC.ai[0];
         public ref float ShurikenShootCountdown => ref NPC.ai[1];
         public ref float TimeOfFlightCountdown => ref NPC.ai[2];

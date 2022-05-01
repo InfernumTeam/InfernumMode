@@ -513,7 +513,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 Utils.GetLerpValue(1f, 0.9f, completionRatio, true);
             return MathHelper.Lerp(2f, NPC.Infernum().ExtraAI[2] * 0.7f, completionRatio) + widthOffset;
         }
-        public Color RayColorFunction(float completionRatio)
+        public static Color RayColorFunction(float completionRatio)
         {
             return Color.Cyan * Utils.GetLerpValue(0.8f, 0.5f, completionRatio, true) * 0.6f;
         }
@@ -532,7 +532,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             LightRayDrawer.Draw(points, -Main.screenPosition, 47);
         }
 
-        public void DrawExowlHologram(SpriteBatch spriteBatch, Vector2 drawPosition, int exowlFrame, float hologramInterpolant)
+        public static void DrawExowlHologram(SpriteBatch spriteBatch, Vector2 drawPosition, int exowlFrame, float hologramInterpolant)
         {
             float hologramOpacity = (float)Math.Pow(hologramInterpolant, 0.45);
             Texture2D exowlTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/Exowl").Value;

@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
     {
         public ref float Time => ref Projectile.ai[0];
         public int MainCultistIndex => (int)Projectile.ai[1];
-        public Color RitualColor => Color.White;
+        public static Color RitualColor => Color.White;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ritual");
 
         public override void SetDefaults()

@@ -1101,6 +1101,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 }, rainbowVibrance * 1.5f);
 
                 int frameHeight = generalTexture.Height / 3;
+                if (frameHeight <= 0)
+                    frameHeight = 1;
+
                 Rectangle frame = generalTexture.Frame(1, 3, 0, (npc.frame.Y / frameHeight + frameOffset) % 3);
 
                 // Draw the base texture.
@@ -1132,7 +1135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 gradientShader.UseOpacity(rainbowOpacity);
                 gradientShader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTexture"));
 
-                gradientShader.Apply(null);
+                //gradientShader.Apply(null);
 
                 thingToDo();
 

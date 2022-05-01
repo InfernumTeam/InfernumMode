@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
     public class RainbowCrystal2 : ModProjectile
     {
-        public float ProvidenceLifeRatio => Main.npc[CalamityGlobalNPC.holyBoss].life / (float)Main.npc[CalamityGlobalNPC.holyBoss].lifeMax;
+        public static float ProvidenceLifeRatio => Main.npc[CalamityGlobalNPC.holyBoss].life / (float)Main.npc[CalamityGlobalNPC.holyBoss].lifeMax;
         public ref float CrystalHue => ref Projectile.ai[0];
         public bool ProvidenceInPhase2 => Projectile.ai[1] == 1f;
         public bool HasStartedFall

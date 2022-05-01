@@ -11,7 +11,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     public class LightRayTelegraph : ModProjectile
     {
         public int Lifetime;
-        public NPC Thanatos => Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
+        public static NPC Thanatos => Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
         public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - MathHelper.PiOver2 + CurrentSpread).ToRotationVector2() * Projectile.Opacity * 275f;
 
         public Color RayColor => CalamityUtils.MulticolorLerp(RayHue, CalamityUtils.ExoPalette);

@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
     public class LightOverloadRay : ModProjectile
     {
         public PrimitiveTrailCopy LaserDrawer;
-        public NPC Thanatos => Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
+        public static NPC Thanatos => Main.npc[CalamityGlobalNPC.draedonExoMechWorm];
         public Vector2 StartingPosition => Thanatos.Center - (Thanatos.rotation - MathHelper.PiOver2).ToRotationVector2() * Projectile.Opacity * 5f;
 
         // This is only used in drawing to represent increments as a semi-hack. Don't mess with it.

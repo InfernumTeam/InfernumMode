@@ -24,7 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             set => NPC.localAI[2] = value.ToInt();
         }
 
-        public NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
+        public static NPC AttackerGuardian => Main.npc[CalamityGlobalNPC.doughnutBoss];
         public bool ShouldBeInvisible => AttackerGuardian.localAI[2] != 0f;
         public float AttackTime => AttackerGuardian.ai[1];
         public AttackerGuardianBehaviorOverride.AttackGuardianAttackState AttackerState => (AttackerGuardianBehaviorOverride.AttackGuardianAttackState)(int)AttackerGuardian.ai[0];

@@ -4,6 +4,7 @@ using CalamityMod.Items.TreasureBags;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -72,7 +73,7 @@ namespace InfernumMode
         {
             if (item.type == ItemID.RodofDiscord && (NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>())))
             {
-                if (PoDWorld.InfernumMode)
+                if (WorldSaveSystem.InfernumMode)
                 {
                     DoGTeleportDenialText(player);
                     return false;

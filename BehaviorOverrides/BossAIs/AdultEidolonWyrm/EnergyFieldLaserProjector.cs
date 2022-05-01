@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public int SpinDirection = 1;
         public float MoveIncrement = 0;
         public Vector2 InitialTargetPosition;
-        public int LaserAttackTime => 180;
+        public static int LaserAttackTime => 180;
         public float CloseInInterpolant => Utils.GetLerpValue(LaserAttackTime - 60f, LaserAttackTime, AttackTimer, true);
         public Player Target => Main.player[NPC.target];
         public ref float AttackTimer => ref NPC.ai[0];

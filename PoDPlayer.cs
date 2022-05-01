@@ -6,6 +6,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
+using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
@@ -81,7 +82,7 @@ namespace InfernumMode
             ShadowflameInferno = false;
             DarkFlames = false;
 
-            if (PoDWorld.InfernumMode)
+            if (WorldSaveSystem.InfernumMode)
                 Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);
         }
         #endregion
@@ -194,17 +195,17 @@ namespace InfernumMode
             }
 
             // Ensure that Revengeance Mode is always active while Infernum is active.
-            if (PoDWorld.InfernumMode && !CalamityWorld.revenge)
+            if (WorldSaveSystem.InfernumMode && !CalamityWorld.revenge)
                 CalamityWorld.revenge = true;
 
             // Ensure that Malice Mode is never active while Infernum is active.
-            if (PoDWorld.InfernumMode && CalamityWorld.malice)
+            if (WorldSaveSystem.InfernumMode && CalamityWorld.malice)
             {
                 CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.MaliceText2", Color.Crimson);
                 CalamityWorld.malice = false;
             }
 
-            if (PoDWorld.InfernumMode && CalamityWorld.DoGSecondStageCountdown > 600)
+            if (WorldSaveSystem.InfernumMode && CalamityWorld.DoGSecondStageCountdown > 600)
             {
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {

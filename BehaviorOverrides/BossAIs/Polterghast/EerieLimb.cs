@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         public Vector2 IdealPosition;
         public LimbCollection Limbs;
         public PrimitiveTrailCopy LimbDrawer = null;
-        public NPC Polterghast => Main.npc[CalamityGlobalNPC.ghostBoss];
+        public static NPC Polterghast => Main.npc[CalamityGlobalNPC.ghostBoss];
         public Player Target => Main.player[NPC.target];
         public int Direction => (NPC.ai[0] >= 2f).ToDirectionInt();
         public ref float IdealPositionTimer => ref NPC.ai[1];

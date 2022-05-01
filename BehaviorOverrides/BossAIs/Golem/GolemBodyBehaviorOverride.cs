@@ -1687,7 +1687,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         }
 
-        private void DeleteGolemArena()
+        private static void DeleteGolemArena()
         {
             int surface = (int)Main.worldSurface;
             for (int i = 0; i < Main.maxTilesX; i++)
@@ -1696,7 +1696,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
                 {
                     if (Main.tile[i, j] != null)
                     {
-                        if (Main.tile[i, j].TileType == ModContent.TileType<Tiles.GolemArena>())
+                        if (Main.tile[i, j].TileType == ModContent.TileType<GolemArena>())
                         {
                             Main.tile[i, j].ClearEverything();
                             if (Main.netMode == NetmodeID.Server)

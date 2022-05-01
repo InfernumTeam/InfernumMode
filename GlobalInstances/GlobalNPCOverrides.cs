@@ -40,6 +40,7 @@ using PolterghastNPC = CalamityMod.NPCs.Polterghast.Polterghast;
 using SlimeGodCore = CalamityMod.NPCs.SlimeGod.SlimeGodCore;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Apollo;
+using InfernumMode.Systems;
 
 namespace InfernumMode.GlobalInstances
 {
@@ -66,7 +67,7 @@ namespace InfernumMode.GlobalInstances
         #region Reset Effects
         public override void ResetEffects(NPC npc)
         {
-            void ResetSavedIndex(ref int type, int type1, int type2 = -1)
+            static void ResetSavedIndex(ref int type, int type1, int type2 = -1)
             {
                 if (type >= 0)
                 {
@@ -98,7 +99,7 @@ namespace InfernumMode.GlobalInstances
         #region Get Alpha
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
-            if (npc.type == ModContent.NPCType<CalamitasRun3>() && PoDWorld.InfernumMode)
+            if (npc.type == ModContent.NPCType<CalamitasRun3>() && WorldSaveSystem.InfernumMode)
             {
                 bool brotherAlive = false;
                 if (CalamityGlobalNPC.cataclysm != -1)
@@ -115,7 +116,7 @@ namespace InfernumMode.GlobalInstances
                         brotherAlive = true;
                     }
                 }
-                if (PoDWorld.InfernumMode && brotherAlive)
+                if (WorldSaveSystem.InfernumMode && brotherAlive)
                     return new Color(100, 0, 0, 127);
             }
             return base.GetAlpha(npc, drawColor);
@@ -661,7 +662,7 @@ namespace InfernumMode.GlobalInstances
 
         public override void OnHitPlayer(NPC npc, Player target, int damage, bool crit)
         {
-            if (!PoDWorld.InfernumMode)
+            if (!WorldSaveSystem.InfernumMode)
                 return;
 
             if (npc.type == ModContent.NPCType<CrabulonIdle>())

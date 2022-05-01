@@ -44,7 +44,7 @@ namespace InfernumMode.BossIntroScreens
 
         public static float AspectRatioFactor => Main.screenHeight / 1440f;
 
-        public DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
+        public static DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
 
         public Vector2 DrawPosition => BaseDrawPosition;
 

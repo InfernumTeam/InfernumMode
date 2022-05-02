@@ -30,7 +30,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             SpawnEffect,
             MoltenBlasts,
-            CrystalSpikes
+
+            // These two attacks should not exist near each-other pattern-wise.
+            // They both fulfill niches of needing to be careful with space and together might lead to stupid situations.
+            CrystalSpikes,
+            HolyBombs
         }
 
         public enum ProvidenceFrameDrawingType
@@ -224,10 +228,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     DoBehavior_SpawnEffects(npc, target, ref wasSummonedAtNight, ref attackTimer);
                     break;
                 case ProvidenceAttackType.MoltenBlasts:
-                    DoBehavior_MoltenBlasts(npc, target, lifeRatio, arenaCenter, ref attackTimer);
+                    DoBehavior_MoltenBlasts(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case ProvidenceAttackType.CrystalSpikes:
                     DoBehavior_CrystalSpikes(npc, target, lifeRatio, arenaArea, ref attackTimer);
+                    break;
+                case ProvidenceAttackType.HolyBombs:
+                    DoBehavior_HolyBombs(npc, target, lifeRatio, arenaArea, ref attackTimer);
                     break;
             }
             npc.rotation = npc.velocity.X * 0.003f;
@@ -301,7 +308,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_MoltenBlasts(NPC npc, Player target, float lifeRatio, Vector2 arenaCenter, ref float attackTimer)
+        public static void DoBehavior_MoltenBlasts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int blastShootCount = 8;
             int totalBlobsFromBlasts = 8;
@@ -340,7 +347,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_CrystalSpikes(NPC npc, Player target, float lifeRatio, Rectangle arenaArea, ref float attackTimer)
         {
-            int spikeCreationDelay = 75;
+            int spikeCreationDelay = 110;
             int spikeCreationRate = 50;
             int spikeCount = 3;
             float offsetPerSpike = 140f;
@@ -372,8 +379,63 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 npc.netUpdate = true;
             }
 
-            if (attackTimer >= spikeCreationDelay + CrystalPillar.Lifetime * spikeCount / 2 + 8)
+            if (attackTimer >= spikeCreationDelay + CrystalPillar.Lifetime * spikeCount / 4 + 8)
                 SelectNextAttack(npc);
+        }
+
+        public static void DoBehavior_HolyBombs(NPC npc, Player target, float lifeRatio, Rectangle arenaArea, ref float attackTimer)
+        {
+            int blastShootCount = 4;
+            int boltCount = 7;
+            int bombShootRate = 84;
+            int explosionDelay = 220;
+            float boltSpeed = 7f;
+            float bombExplosionRadius = 1220f;
+            ref float bombShootCounter = ref npc.Infernum().ExtraAI[1];
+            ref float universalAttackTimer = ref npc.Infernum().ExtraAI[2];
+
+            if (bombShootCounter >= blastShootCount)
+                npc.velocity *= 0.96f;
+            else
+                DoVanillaFlightMovement(npc, target, true, ref npc.Infernum().ExtraAI[0]);
+
+            // Release molten blobs.
+            if (attackTimer >= bombShootRate && !npc.WithinRange(target.Center, 200f))
+            {
+                if (bombShootCounter >= blastShootCount)
+                {
+                    SelectNextAttack(npc);
+                    return;
+                }
+
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    // Release the holy bomb.
+                    float bombSpeed = MathHelper.Lerp(14f, 20f, 1f - lifeRatio);
+                    Vector2 bombSpawnPosition = npc.Center + npc.velocity * 7f;
+                    Vector2 bombVelocity = npc.SafeDirectionTo(target.Center) * bombSpeed;
+                    int bomb = Utilities.NewProjectileBetter(bombSpawnPosition, bombVelocity, ModContent.ProjectileType<HolyBomb>(), 0, 0f);
+                    if (Main.projectile.IndexInRange(bomb))
+                    {
+                        Main.projectile[bomb].ai[0] = bombExplosionRadius;
+                        Main.projectile[bomb].timeLeft = (int)(bombShootRate * blastShootCount - universalAttackTimer) + explosionDelay;
+                    }
+
+                    // Release molten bolts.
+                    for (int i = 0; i < boltCount; i++)
+                    {
+                        float offsetAngle = MathHelper.Lerp(-0.59f, 0.59f, i / (float)(boltCount - 1f));
+                        Vector2 boltShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * boltSpeed;
+                        Utilities.NewProjectileBetter(npc.Center, boltShootVelocity, ModContent.ProjectileType<MoltenFire>(), 220, 0f);
+                    }
+
+                    attackTimer = 0f;
+                    bombShootCounter++;
+                    npc.netUpdate = true;
+                }
+            }
+            universalAttackTimer++;
         }
 
         public static void DoVanillaFlightMovement(NPC npc, Player target, bool stayAwayFromTarget, ref float flightPath)
@@ -425,13 +487,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
 
-            switch ((int)npc.ai[2] % 2)
+            switch ((int)npc.ai[2] % 3)
             {
                 case 0:
                     npc.ai[0] = (int)ProvidenceAttackType.MoltenBlasts;
                     break;
                 case 1:
                     npc.ai[0] = (int)ProvidenceAttackType.CrystalSpikes;
+                    break;
+                case 2:
+                    npc.ai[0] = (int)ProvidenceAttackType.HolyBombs;
                     break;
             }
 

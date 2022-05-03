@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Deerclops
             Projectile.hostile = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 360;
-            Projectile.alpha = 255;
+            Projectile.Opacity = 0f;
         }
 
         public override void AI()

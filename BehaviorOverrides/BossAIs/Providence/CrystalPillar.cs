@@ -131,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 if (direction.Y == 0f)
                     lineOffset.Y += 42f;
 
-                Utils.DrawLine(Main.spriteBatch, Projectile.Top + lineOffset, Projectile.Top - direction * (-MaxPillarHeight + 240f), Color.LightGoldenrodYellow, Color.LightGoldenrodYellow, scale);
+                Utils.DrawLine(Main.spriteBatch, Projectile.Top + lineOffset, Projectile.Top - direction * (-MaxPillarHeight + 240f) + lineOffset, Color.LightGoldenrodYellow, Color.LightGoldenrodYellow, scale);
             }
 
             Texture2D tipTexture = ModContent.Request<Texture2D>(Texture).Value;
@@ -158,6 +158,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            if (Time < 60f)
+                return false;
+
             float _ = 0f;
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitY);
             Vector2 start = Projectile.Bottom;

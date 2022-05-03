@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 if (Projectile.velocity.Y != oldVelocity.Y)
                     Projectile.velocity.Y = -oldVelocity.Y;
 
-                if (Projectile.velocity.Y is < 3f and > (-3f))
+                if (Projectile.velocity.Y is < 3f and > -3f)
                     Projectile.velocity = Vector2.Zero;
             }
             else

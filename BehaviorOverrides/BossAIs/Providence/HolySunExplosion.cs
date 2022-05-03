@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             List<float> rotationPoints = new();
             List<Vector2> drawPoints = new();
 
-            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 30f)
+            for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 10f)
             {
                 rotationPoints.Clear();
                 drawPoints.Clear();

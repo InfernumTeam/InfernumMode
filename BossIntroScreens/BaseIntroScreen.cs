@@ -101,6 +101,8 @@ namespace InfernumMode.BossIntroScreens
                 Texture2D greyscaleTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/THanosAura").Value;
                 float coverScaleFactor = Utils.GetLerpValue(0f, 0.5f, AnimationCompletion, true) * 12.5f;
                 coverScaleFactor *= Utils.GetLerpValue(1f, 0.84f, AnimationCompletion, true);
+                if (coverScaleFactor > 6f)
+                    coverScaleFactor = 6f;
 
                 Vector2 coverCenter = new(Main.screenWidth * 0.5f, Main.screenHeight * 0.32f);
 

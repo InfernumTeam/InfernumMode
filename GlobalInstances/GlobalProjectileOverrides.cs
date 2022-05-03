@@ -113,7 +113,9 @@ namespace InfernumMode.GlobalInstances
             }
 
             Vector2 adjustedCenter = projectile.Center - new Vector2(5f);
-            NPC[] platforms = Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == ModContent.NPCType<GolemArenaPlatform>()).OrderBy(n => projectile.Distance(n.Center)).ToArray();
+            NPC[] platforms = Main.npc.Take(Main.maxNPCs).Where(n => n.active && 
+                (n.type == ModContent.NPCType<GolemArenaPlatform>() || n.type == ModContent.NPCType<ProvArenaPlatform>()))
+                .OrderBy(n => projectile.Distance(n.Center)).ToArray();
             NPC[] attachedPlatforms = platforms.Where(p =>
             {
                 Rectangle platformHitbox = p.Hitbox;

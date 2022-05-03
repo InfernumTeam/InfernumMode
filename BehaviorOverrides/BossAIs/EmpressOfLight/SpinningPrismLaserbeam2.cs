@@ -113,12 +113,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             GameShaders.Misc["Infernum:PrismaticRay"].UseImage1("Images/Misc/Perlin");
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak").Value;
 
-            Vector2[] basePoints = new Vector2[24];
+            Vector2[] basePoints = new Vector2[8];
             for (int i = 0; i < basePoints.Length; i++)
                 basePoints[i] = Projectile.Center + Projectile.velocity * i / (basePoints.Length - 1f) * LaserLength;
 
             Vector2 overallOffset = -Main.screenPosition;
-            RayDrawer.Draw(basePoints, overallOffset, 32);
+            RayDrawer.Draw(basePoints, overallOffset, 16);
             return false;
         }
 

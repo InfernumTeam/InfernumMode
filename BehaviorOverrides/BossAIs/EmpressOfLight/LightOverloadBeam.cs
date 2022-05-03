@@ -96,12 +96,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak").Value;
             Projectile.scale /= 0.8f;
 
-            RayDrawer.Draw(basePoints, overallOffset, 92);
+            RayDrawer.Draw(basePoints, overallOffset, 42);
 
             Projectile.scale *= 1.5f;
             GameShaders.Misc["Infernum:PrismaticRay"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap"));
             Main.instance.GraphicsDevice.Textures[2] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2").Value;
-            RayDrawer.Draw(basePoints, overallOffset, 92);
+            RayDrawer.Draw(basePoints, overallOffset, 42);
             Projectile.scale /= 1.5f;
             return false;
         }

@@ -1270,7 +1270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
             // Release lasers.
             if (attackTimer == telegraphTime)
             {
-                SoundEngine.PlayTrackedSound(CalamityUtils.GetTrackableSound("InfernumMode/InfernumMode/Sounds/Custom/EmpressOfLightScream"), target.Center);
+                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/EmpressOfLightScream"), npc.Center);
 
                 int laserDamage = (int)(LaserbeamDamage * 0.7f);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1383,6 +1383,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EmpressOfLight
                 npc.ai[0] = (int)Phase2AttackCycle[phaseCycleIndex % Phase2AttackCycle.Length];
             if (InPhase3(npc))
                 npc.ai[0] = (int)Phase3AttackCycle[phaseCycleIndex % Phase3AttackCycle.Length];
+            if (InPhase4(npc))
+                npc.ai[0] = (int)Phase4AttackCycle[phaseCycleIndex % Phase4AttackCycle.Length];
 
             npc.Infernum().ExtraAI[5]++;
 

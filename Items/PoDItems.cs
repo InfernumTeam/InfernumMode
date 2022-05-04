@@ -1,5 +1,6 @@
 using CalamityMod;
 using CalamityMod.CalPlayer;
+using CalamityMod.Items.SummonItems;
 using CalamityMod.Items.TreasureBags;
 using CalamityMod.NPCs.DevourerofGods;
 using InfernumMode.Balancing;
@@ -50,6 +51,15 @@ namespace InfernumMode
                         line2.Text += "\nCreates a rectangular arena around the altar. If the altar is inside of the temple solid tiles within the arena are broken";
                 }
             }
+
+            if (item.type == ModContent.ItemType<ProfanedCoreUnlimited>() && InfernumMode.CanUseCustomAIs)
+            {
+                foreach (TooltipLine line2 in tooltips)
+                {
+                    if (line2.Mod == "Terraria" && line2.Name == "Tooltip1")
+                        line2.Text = "Summoned Providence when used at the profaned alter in the underworld";
+                }
+            }
         }
 
         internal static void DoGTeleportDenialText(Player player)
@@ -79,6 +89,10 @@ namespace InfernumMode
                     return false;
                 }
             }
+
+            if (item.type == ModContent.ItemType<ProfanedCoreUnlimited>() && InfernumMode.CanUseCustomAIs)
+                return false;
+
             return base.CanUseItem(item, player);
         }
         public override bool? UseItem(Item item, Player player)

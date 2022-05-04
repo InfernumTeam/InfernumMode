@@ -15,7 +15,7 @@ using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.ILEditingStuff
 {
-	public class OverrideSystemHooks : IHookEdit
+    public class OverrideSystemHooks : IHookEdit
     {
         internal static void NPCPreAIChange(ILContext context)
         {
@@ -183,12 +183,15 @@ namespace InfernumMode.ILEditingStuff
                 HookList<GlobalProjectile> list = (HookList<GlobalProjectile>)typeof(ProjectileLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
 
                 bool result = true;
-                foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
+                if (globalProjectiles != null)
                 {
-                    if (g is not null and CalamityGlobalProjectile)
-                        continue;
+                    foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
+                    {
+                        if (g is not null and CalamityGlobalProjectile)
+                            continue;
 
-                    result &= g.PreDraw(projectile, ref lightColor);
+                        result &= g.PreDraw(projectile, ref lightColor);
+                    }
                 }
                 if (result && projectile.ModProjectile != null)
                 {

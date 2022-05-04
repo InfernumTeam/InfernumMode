@@ -30,17 +30,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-            if (Projectile.velocity.Length() < 33f)
-                Projectile.velocity *= 1.033f;
+            if (Projectile.velocity.Length() < 27f)
+                Projectile.velocity *= 1.03f;
 
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.5f);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
+            float oldScale = Projectile.scale;
+            Projectile.scale *= 1.2f;
+            lightColor = Color.Lerp(lightColor, Main.hslToRgb(Projectile.identity / 7f % 1f, 1f, 0.5f), 0.9f);
+            lightColor.A = 128;
+            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
+            Projectile.scale = oldScale;
+
             lightColor = Color.Lerp(lightColor, Color.White, 0.5f);
             lightColor.A = 128;
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
+
             return false;
         }
 

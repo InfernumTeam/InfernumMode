@@ -95,7 +95,7 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<ProfanedGuardianBoss2>()] = BossRushEvent.BossRushActive ? 205000 : 72000,
             [ModContent.NPCType<ProfanedGuardianBoss3>()] = BossRushEvent.BossRushActive ? 205000 : 72000,
             [ModContent.NPCType<Bumblefuck>()] = BossRushEvent.BossRushActive ? 860000 : 280000,
-            [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 520000,
+            [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 600000,
             [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 632100 : 465432,
             [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 1600000 : 1000001,
             [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2450000 : 1116000,

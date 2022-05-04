@@ -27,6 +27,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public const float Phase2LifeRatio = 0.55f;
 
+        public const float Phase3LifeRatio = 0.25f;
+
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw | NPCOverrideContext.NPCFindFrame;
 
         #region Enumerations
@@ -141,6 +143,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Death effects.
             if (lifeRatio < 0.04f)
             {
+                npc.Opacity = 1f;
                 if (deathEffectTimer == 1f && !Main.dedServ)
                     SoundEngine.PlaySound(SoundID.DD2_DefeatScene.WithVolume(1.65f), target.Center);
 
@@ -151,8 +154,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     int[] typesToDelete = new int[]
                     {
-                        ModContent.ProjectileType<HolyFire2>(),
-                        ModContent.ProjectileType<HolySpear>()
+                        ModContent.ProjectileType<AcceleratingCrystalShard>(),
+                        ModContent.ProjectileType<BouncingCrystalBlade>(),
+                        ModContent.ProjectileType<CrystalPillar>(),
+                        ModContent.ProjectileType<FallingCrystalShard>(),
+                        ModContent.ProjectileType<HolySunExplosion>(),
+                        ModContent.ProjectileType<MoltenFire>(),
+                        ModContent.ProjectileType<ProfanedSpear>(),
+                        ModContent.ProjectileType<HolyBlast>(),
                     };
                     for (int i = 0; i < Main.maxProjectiles; i++)
                     {
@@ -195,7 +204,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                             if (Vector2.Dot(shootVelocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(target.Center)) < 0.5f)
                                 shootVelocity *= 1.7f;
 
-                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 280, 0f, 255);
+                            Utilities.NewProjectileBetter(npc.Center, shootVelocity, shootType, 0, 0f, 255);
                         }
                     }
                 }
@@ -237,12 +246,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             bool inPhase2 = lifeRatio < Phase2LifeRatio;
+            bool inPhase3 = lifeRatio < Phase3LifeRatio;
             if (inPhase2 && phase2AnimationTimer < 180f)
             {
+                if (phase2AnimationTimer == 0f)
+                {
+                    npc.ai[2] = -1f;
+                    SelectNextAttack(npc);
+                }
+
+                npc.Opacity = 1f;
                 DoBehavior_EnterPhase2(npc, phase2AnimationTimer);
                 phase2AnimationTimer++;
                 return false;
             }
+
+            // Create a platform below the target in phase 2 if few platforms exist and the player is almost or entirely out of flight time.
+            if (inPhase2 && target.wingTime < 60f && NPC.CountNPCS(ModContent.NPCType<ProvArenaPlatform>()) < 4)
+                CreatePlatform(target.Bottom + Vector2.UnitY * 75f, -Vector2.UnitY * 2.4f);
 
             // Execute attack patterns.
             switch ((ProvidenceAttackType)attackType)
@@ -251,25 +272,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     DoBehavior_SpawnEffects(npc, target, ref wasSummonedAtNight, ref attackTimer);
                     break;
                 case ProvidenceAttackType.MoltenBlasts:
-                    DoBehavior_MoltenBlasts(npc, target, lifeRatio, inPhase2, ref attackTimer);
+                    DoBehavior_MoltenBlasts(npc, target, lifeRatio, ref attackTimer);
                     break;
                 case ProvidenceAttackType.CrystalSpikes:
-                    DoBehavior_CrystalSpikes(npc, inPhase2, arenaArea, ref attackTimer);
+                    DoBehavior_CrystalSpikes(npc, inPhase2, inPhase3, arenaArea, ref attackTimer);
                     break;
                 case ProvidenceAttackType.HolyBombs:
-                    DoBehavior_HolyBombs(npc, target, lifeRatio, inPhase2, ref attackTimer);
+                    DoBehavior_HolyBombs(npc, target, lifeRatio, inPhase2, inPhase3, ref attackTimer);
                     break;
                 case ProvidenceAttackType.AcceleratingCrystalFan:
-                    DoBehavior_AcceleratingCrystalFan(npc, target, false, inPhase2, lifeRatio, crystalCenter, ref attackTimer);
+                    DoBehavior_AcceleratingCrystalFan(npc, target, false, inPhase2, inPhase3, crystalCenter, ref attackTimer);
                     break;
                 case ProvidenceAttackType.SinusoidalCrystalFan:
-                    DoBehavior_AcceleratingCrystalFan(npc, target, true, inPhase2, lifeRatio, crystalCenter, ref attackTimer);
+                    DoBehavior_AcceleratingCrystalFan(npc, target, true, inPhase2, inPhase3, crystalCenter, ref attackTimer);
                     break;
                 case ProvidenceAttackType.CeilingCinders:
-                    DoBehavior_CeilingCinders(npc, target, lifeRatio, inPhase2, arenaArea, ref attackTimer);
+                    DoBehavior_CeilingCinders(npc, target, inPhase2, inPhase3, arenaArea, ref attackTimer);
                     break;
                 case ProvidenceAttackType.CrystalRainTransformation:
-                    DoBehavior_CrystalRainTransformation(npc, target, lifeRatio, inPhase2, ref attackTimer);
+                    DoBehavior_CrystalRainTransformation(npc, target, lifeRatio, inPhase2, inPhase3, ref attackTimer);
                     break;
                 case ProvidenceAttackType.CrystalBlades:
                     DoBehavior_CrystalBlades(npc, lifeRatio, ref attackTimer);
@@ -425,20 +446,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_MoltenBlasts(NPC npc, Player target, float lifeRatio, bool inPhase2, ref float attackTimer)
+        public static void DoBehavior_MoltenBlasts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int blastShootCount = 8;
             int totalBlobsFromBlasts = 8;
             int blastShootRate = 45;
-            int platformSpawnRate = 0;
             float moltenBlastSpeed = MathHelper.Lerp(14f, 20f, 1f - lifeRatio);
-
-            if (inPhase2)
-            {
-                blastShootCount += 2;
-                blastShootRate -= 8;
-                platformSpawnRate += 20;
-            }
 
             ref float blastShootCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -446,15 +459,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 npc.velocity *= 0.96f;
             else
                 DoVanillaFlightMovement(npc, target, true, ref npc.Infernum().ExtraAI[0]);
-
-            // Create platforms as necessary.
-            if (platformSpawnRate >= 1f && attackTimer % platformSpawnRate == platformSpawnRate - 1f)
-            {
-                Rectangle arenaArea = npc.Infernum().arenaRectangle;
-                Vector2 platformSpawnPosition = new(Main.rand.NextFloat(arenaArea.Left + 32f, arenaArea.Right - 32f), arenaArea.Bottom + 16f);
-                platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.5f);
-                CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 3f);
-            }
 
             // Release molten blobs.
             if (attackTimer >= blastShootRate && !npc.WithinRange(target.Center, 350f))
@@ -480,10 +484,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        public static void DoBehavior_CrystalSpikes(NPC npc, bool inPhase2, Rectangle arenaArea, ref float attackTimer)
+        public static void DoBehavior_CrystalSpikes(NPC npc, bool inPhase2, bool inPhase3, Rectangle arenaArea, ref float attackTimer)
         {
             int spikeCreationDelay = 110;
-            int spikeCreationRate = 56;
+            int spikeCreationRate = 50;
             int spikeCount = 3;
             int platformSpawnRate = 0;
             float offsetPerSpike = 150f;
@@ -494,6 +498,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 spikeCount++;
                 platformSpawnRate += 24;
                 offsetPerSpike += 40f;
+            }
+
+            if (inPhase3)
+            {
+                spikeCreationRate -= 12;
+                offsetPerSpike -= 15f;
             }
 
             ref float spikeCounter = ref npc.Infernum().ExtraAI[0];
@@ -537,9 +547,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_HolyBombs(NPC npc, Player target, float lifeRatio, bool inPhase2, ref float attackTimer)
+        public static void DoBehavior_HolyBombs(NPC npc, Player target, float lifeRatio, bool inPhase2, bool inPhase3, ref float attackTimer)
         {
-            int blastShootCount = 4;
+            int blastShootCount = 5;
             int boltCount = 7;
             int bombShootRate = 84;
             int explosionDelay = 315;
@@ -552,8 +562,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // Make explosions have a slight variance in terms of when they explode, instead of all at once.
                 explosionDelay += Main.rand.Next(90);
                 boltCount += 2;
-                platformSpawnRate += 40;
+                platformSpawnRate += 34;
                 boltSpeed += 2f;
+                bombExplosionRadius += 100f;
+            }
+
+            if (inPhase3)
+            {
+                blastShootCount++;
+                platformSpawnRate += 12;
                 bombExplosionRadius += 100f;
             }
 
@@ -570,7 +587,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             {
                 Rectangle arenaArea = npc.Infernum().arenaRectangle;
                 Vector2 platformSpawnPosition = new(Main.rand.NextFloat(arenaArea.Left + 32f, arenaArea.Right - 32f), arenaArea.Bottom + 16f);
-                platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.5f);
+                platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.725f);
                 CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 3f);
             }
 
@@ -613,9 +630,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             universalAttackTimer++;
         }
 
-        public static void DoBehavior_AcceleratingCrystalFan(NPC npc, Player target, bool useSinusoidalFan, bool inPhase2, float lifeRatio, Vector2 crystalCenter, ref float attackTimer)
+        public static void DoBehavior_AcceleratingCrystalFan(NPC npc, Player target, bool useSinusoidalFan, bool inPhase2, bool inPhase3, Vector2 crystalCenter, ref float attackTimer)
         {
-            int crystalFireDelay = 60;
+            int crystalFireDelay = 70;
             int crystalReleaseRate = 4;
             int crystalReleaseCount = 16;
             int crystalFanCount = 3;
@@ -628,6 +645,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 platformSpawnRate += 24;
                 maxFanOffsetAngle += 0.23f;
                 crystalSpeed += 1.2f;
+            }
+
+            if (inPhase3)
+            {
+                crystalReleaseRate--;
+                crystalFanCount--;
+                platformSpawnRate += 6;
             }
 
             // Use less wide fan if using a sinusoidal pattern.
@@ -731,7 +755,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 DoVanillaFlightMovement(npc, target, false, ref npc.Infernum().ExtraAI[0]);
         }
 
-        public static void DoBehavior_CeilingCinders(NPC npc, Player target, float lifeRatio, bool inPhase2, Rectangle arenaArea, ref float attackTimer)
+        public static void DoBehavior_CeilingCinders(NPC npc, Player target, bool inPhase2, bool inPhase3, Rectangle arenaArea, ref float attackTimer)
         {
             int cinderCreationDelay = 135;
             int circularCinderCount = 15;
@@ -744,6 +768,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 circularCinderCount += 7;
                 offsetPerCinder -= 10f;
                 circularCinderSpeed += 1.25f;
+            }
+
+            if (inPhase3)
+            {
+                circularCinderCount += 3;
+                circularCinderSpeed += 0.95f;
             }
 
             ref float horizontalOffset = ref npc.Infernum().ExtraAI[0];
@@ -802,7 +832,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_CrystalRainTransformation(NPC npc, Player target, float lifeRatio, bool inPhase2, ref float attackTimer)
+        public static void DoBehavior_CrystalRainTransformation(NPC npc, Player target, float lifeRatio, bool inPhase2, bool inPhase3, ref float attackTimer)
         {
             int shootDelay = 90;
             int totalCrystalBursts = (int)MathHelper.Lerp(15f, 24f, 1f - lifeRatio);
@@ -816,6 +846,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 platformSpawnRate += 32;
                 crystalBurstShootRate += 5;
                 totalCrystalsPerBurst -= 2;
+            }
+
+            if (inPhase3)
+            {
+                platformSpawnRate += 8;
+                totalCrystalsPerBurst++;
             }
 
             ref float burstTimer = ref npc.Infernum().ExtraAI[2];
@@ -832,9 +868,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             Vector2 destination;
             if (target.gravDir == -1f)
-                destination = target.Top + Vector2.UnitY * 360f;
+                destination = target.Top + Vector2.UnitY * 400f;
             else
-                destination = target.Bottom - Vector2.UnitY * 360f;
+                destination = target.Bottom - Vector2.UnitY * 400f;
 
             // Fade into rainbow crystal form at first.
             if (attackTimer < shootDelay)
@@ -927,7 +963,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int bladeRelaseRate = 45;
             int laserShootTime = HolyFireBeam.Lifetime;
             float bladeSpeed = 8f;
-            float maxLaserAngularVelocity = MathHelper.ToRadians(1f + (1f - lifeRatio) * 0.125f);
+            float maxLaserAngularVelocity = MathHelper.ToRadians(0.7f + (1f - lifeRatio) * 0.125f);
             ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float telegraphOpacity = ref npc.Infernum().ExtraAI[1];
             ref float laserCount = ref npc.Infernum().ExtraAI[2];
@@ -983,6 +1019,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                             Main.projectile[fireBeam].ai[1] = offsetAngleInterpolant;
                     }
                 }
+
+                // Create a platform below the player.
+                CreatePlatform(target.Bottom + Vector2.UnitY * 50f, Vector2.UnitY * -2f);
             }
 
             if (attackTimer >= laserShootDelay + laserShootTime + 20f)
@@ -1090,7 +1129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int blastShootCount = 6;
             int blastShootRate = 60;
             int platformSpawnRate = 32;
-            float holyBlastSpeed = MathHelper.Lerp(14f, 20f, 1f - lifeRatio);
+            float holyBlastSpeed = MathHelper.Lerp(12f, 18f, 1f - lifeRatio);
 
             ref float blastShootCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -1185,6 +1224,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int attackCount = 10;
             if (inPhase2)
                 attackCount += 3;
+
+            if (npc.ai[0] == (int)ProvidenceAttackType.SpawnEffect)
+                npc.ai[2] = 0f;
 
             switch ((int)npc.ai[2] % attackCount)
             {

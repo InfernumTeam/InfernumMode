@@ -42,7 +42,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             enemySelector.Add(NPCID.EaterofSouls);
             enemySelector.Add(NPCID.DevourerHead, 0.4);
             enemySelector.Add(ModContent.NPCType<DarkHeart>(), 0.65);
-            enemySelector.Add(ModContent.NPCType<DankCreeper>(), 0.4);
             NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y, enemySelector.Get(), 1);
         }
     }

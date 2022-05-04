@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             VineCharge,
             ShadowOrbSummon,
             RainHover,
-            DarkHeartSlam
+            EaterOfSoulsSlam
         }
 
         public override int NPCOverrideType => NPCID.EaterofWorldsHead;
@@ -92,8 +92,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 case EoWAttackState.RainHover:
                     DoAttack_RainHover(npc, target, splitCounter, enraged, ref attackTimer);
                     break;
-                case EoWAttackState.DarkHeartSlam:
-                    DoAttack_DarkHeartSlam(npc, target, splitCounter, enraged, ref attackTimer);
+                case EoWAttackState.EaterOfSoulsSlam:
+                    DoAttack_EaterOfSoulsSlam(npc, target, splitCounter, enraged, ref attackTimer);
                     break;
             }
 
@@ -130,12 +130,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             DoDefaultMovement(npc, target, flySpeed, turnSpeedFactor);
 
             // Periodically release fireballs.
-            int shootRate = splitCounter >= TotalSplitsToPerform - 1f ? 92 : 120;
-            if (splitCounter == TotalSplitsToPerform)
-                shootRate += 18;
-
+            int shootRate = (int)(splitCounter * 40f) + 120;
             if (BossRushEvent.BossRushActive)
-                shootRate = 38;
+                shootRate = 56;
 
             if (attackTimer % shootRate == shootRate - 1f)
             {
@@ -301,7 +298,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         }
 
 
-        public static void DoAttack_DarkHeartSlam(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
+        public static void DoAttack_EaterOfSoulsSlam(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
         {
             ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
 
@@ -338,13 +335,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 105, 0f);
 
                         // Release 5 dark hearts if none currently exist.
-                        if (!NPC.AnyNPCs(ModContent.NPCType<DarkHeart>()))
+                        if (!NPC.AnyNPCs(NPCID.EaterofSouls))
                         {
                             for (int i = 0; i < 5; i++)
                             {
                                 Vector2 initialSeekerVelocity = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 8f;
                                 Vector2 spawnPosition = npc.Center + initialSeekerVelocity * 2f;
-                                int seeker = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<DarkHeart>(), 1);
+                                int seeker = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, NPCID.EaterofSouls, 1);
                                 if (Main.npc.IndexInRange(seeker))
                                     Main.npc[seeker].velocity = initialSeekerVelocity;
                             }
@@ -423,7 +420,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             possibleAttacks.AddWithCondition(EoWAttackState.RainHover, splitCounter >= 1f);
 
             for (int i = 0; i < 2; i++)
-                possibleAttacks.AddWithCondition(EoWAttackState.DarkHeartSlam, splitCounter >= 2f);
+                possibleAttacks.AddWithCondition(EoWAttackState.EaterOfSoulsSlam, splitCounter >= 2f);
             possibleAttacks.RemoveAll(p => p == oldAttackState);
 
             npc.TargetClosest();

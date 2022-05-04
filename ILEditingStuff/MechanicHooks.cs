@@ -77,11 +77,32 @@ namespace InfernumMode.ILEditingStuff
 
     public class DrawBlackEffectHook : IHookEdit
     {
+        public static List<int> DrawCacheBeforeBlack = new(Main.maxProjectiles);
         public static List<int> DrawCacheProjsOverSignusBlackening = new(Main.maxProjectiles);
         public static List<int> DrawCacheAdditiveLighting = new(Main.maxProjectiles);
         internal static void DrawBlackout(ILContext il)
         {
             ILCursor cursor = new(il);
+
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchCallOrCallvirt<Main>("DrawBackgroundBlackFill")))
+                return;
+
+            cursor.EmitDelegate(() =>
+            {
+                for (int i = 0; i < DrawCacheBeforeBlack.Count; i++)
+                {
+                    try
+                    {
+                        Main.instance.DrawProj(DrawCacheBeforeBlack[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        TimeLogger.DrawException(e);
+                        Main.projectile[DrawCacheBeforeBlack[i]].active = false;
+                    }
+                }
+                DrawCacheBeforeBlack.Clear();
+            });
 
             if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<MoonlordDeathDrama>("DrawWhite")))
                 return;

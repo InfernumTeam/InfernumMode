@@ -1,4 +1,5 @@
 using CalamityMod;
+using InfernumMode.ILEditingStuff;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -69,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
-            behindNPCsAndTiles.Add(index);
+            DrawBlackEffectHook.DrawCacheBeforeBlack.Add(index);
         }
 
         public override bool ShouldUpdatePosition() => false;

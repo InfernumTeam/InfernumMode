@@ -172,33 +172,35 @@ namespace InfernumMode.ILEditingStuff
 
         internal delegate bool PreDrawDelegate(Projectile projectile, ref Color lightColor);
 
+        internal static bool ProjectilePreDrawDelegateFuckYou(Projectile projectile, ref Color lightColor)
+        {
+            var globalProjectiles = (Instanced<GlobalProjectile>[])typeof(Projectile).GetField("globalProjectiles", Utilities.UniversalBindingFlags).GetValue(projectile);
+            HookList<GlobalProjectile> list = (HookList<GlobalProjectile>)typeof(ProjectileLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
+
+            bool result = true;
+            if (globalProjectiles != null)
+            {
+                foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
+                {
+                    if (g is not null and CalamityGlobalProjectile)
+                        continue;
+
+                    result &= g.PreDraw(projectile, ref lightColor);
+                }
+            }
+            if (result && projectile.ModProjectile != null)
+            {
+                return projectile.ModProjectile.PreDraw(ref lightColor);
+            }
+            return result;
+        }
+
         internal static void ProjectilePreDrawChange(ILContext context)
         {
             ILCursor cursor = new(context);
             cursor.Emit(OpCodes.Ldarg_0);
             cursor.Emit(OpCodes.Ldarg_1);
-            cursor.EmitDelegate(new PreDrawDelegate((Projectile projectile, ref Color lightColor) =>
-            {
-                var globalProjectiles = (Instanced<GlobalProjectile>[])typeof(Projectile).GetField("globalProjectiles", Utilities.UniversalBindingFlags).GetValue(projectile);
-                HookList<GlobalProjectile> list = (HookList<GlobalProjectile>)typeof(ProjectileLoader).GetField("HookPreDraw", Utilities.UniversalBindingFlags).GetValue(null);
-
-                bool result = true;
-                if (globalProjectiles != null)
-                {
-                    foreach (GlobalProjectile g in list.Enumerate(globalProjectiles))
-                    {
-                        if (g is not null and CalamityGlobalProjectile)
-                            continue;
-
-                        result &= g.PreDraw(projectile, ref lightColor);
-                    }
-                }
-                if (result && projectile.ModProjectile != null)
-                {
-                    return projectile.ModProjectile.PreDraw(ref lightColor);
-                }
-                return result;
-            }));
+            cursor.EmitDelegate(ProjectilePreDrawDelegateFuckYou);
             cursor.Emit(OpCodes.Ret);
         }
 

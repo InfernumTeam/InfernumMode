@@ -38,7 +38,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             ExowlHologramSwarm,
             AimedPulseLasers,
             DashingIllusions,
-            ElectricCharge
+            ElectricCharge,
+            IllusionRocketCharge
         }
 
         public enum AthenaTurretFrameType
@@ -75,6 +76,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             set => NPC.localAI[0] = (int)value;
         }
 
+        public bool HasSummonedComplementMech
+        {
+            get => NPC.Infernum().ExtraAI[ExoMechManagement.HasSummonedComplementMechIndex] == 1f;
+            set => NPC.Infernum().ExtraAI[ExoMechManagement.HasSummonedComplementMechIndex] = value.ToInt();
+        }
+
+        public bool WasInitialSummon
+        {
+            get => NPC.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex] == 0f;
+            set => NPC.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex] = (!value).ToInt();
+        }
+
         public ref float AttackTimer => ref NPC.ai[1];
 
         public ref float MinionRedCrystalGlow => ref NPC.localAI[1];
@@ -82,6 +95,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public ref float TelegraphInterpolant => ref NPC.localAI[2];
 
         public ref float TelegraphRotation => ref NPC.localAI[3];
+
+        public ref float ComplementMechIndex => ref NPC.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
+
+        public ref float FinalMechIndex => ref NPC.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
 
         public static Vector2 UniversalVerticalTurretOffset => Vector2.UnitY * -22f;
 
@@ -188,42 +205,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public override void AI()
         {
             float lifeRatio = NPC.life / (float)NPC.lifeMax;
-            ref float hasSummonedComplementMech = ref NPC.Infernum().ExtraAI[ExoMechManagement.HasSummonedComplementMechIndex];
-            ref float complementMechIndex = ref NPC.Infernum().ExtraAI[ExoMechManagement.ComplementMechIndexIndex];
-            ref float wasNotInitialSummon = ref NPC.Infernum().ExtraAI[ExoMechManagement.WasNotInitialSummonIndex];
-            ref float finalMechIndex = ref NPC.Infernum().ExtraAI[ExoMechManagement.FinalMechIndexIndex];
-            ref float attackDelay = ref NPC.Infernum().ExtraAI[ExoMechManagement.Thanatos_AttackDelayIndex];
-            ref float finalPhaseAnimationTime = ref NPC.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex];
-            ref float secondComboPhaseResistanceBoostFlag = ref NPC.Infernum().ExtraAI[17];
-            ref float deathAnimationTimer = ref NPC.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex];
-
             NPC initialMech = ExoMechManagement.FindInitialMech();
-            NPC complementMech = complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Utilities.IsExoMech(Main.npc[(int)complementMechIndex]) ? Main.npc[(int)complementMechIndex] : null;
+            NPC complementMech = ComplementMechIndex >= 0 && Main.npc[(int)ComplementMechIndex].active && Utilities.IsExoMech(Main.npc[(int)ComplementMechIndex]) ? Main.npc[(int)ComplementMechIndex] : null;
             NPC finalMech = ExoMechManagement.FindFinalMech();
 
             // Handle initializations.
             if (!HasInitialized)
             {
                 InitializeTurrets();
-                finalMechIndex = -1f;
-                complementMechIndex = -1f;
+                FinalMechIndex = -1f;
+                ComplementMechIndex = -1f;
                 HasInitialized = true;
                 NPC.netUpdate = true;
             }
 
             // Summon the complement mech and reset things once ready.
-            if (hasSummonedComplementMech == 0f && lifeRatio < ExoMechManagement.Phase4LifeRatio)
+            if (!HasSummonedComplementMech && lifeRatio < ExoMechManagement.Phase4LifeRatio)
             {
                 Exowl.MakeAllExowlsExplode();
                 ExoMechManagement.SummonComplementMech(NPC);
-                hasSummonedComplementMech = 1f;
+                HasSummonedComplementMech = true;
                 AttackTimer = 0f;
                 SelectNextAttack();
                 NPC.netUpdate = true;
             }
 
             // Summon the final mech once ready.
-            if (wasNotInitialSummon == 0f && finalMechIndex == -1f && complementMech != null && complementMech.life / (float)complementMech?.lifeMax < ExoMechManagement.ComplementMechInvincibilityThreshold)
+            if (WasInitialSummon && FinalMechIndex == -1f && complementMech != null && complementMech.life / (float)complementMech?.lifeMax < ExoMechManagement.ComplementMechInvincibilityThreshold)
             {
                 Exowl.MakeAllExowlsExplode();
                 ExoMechManagement.SummonFinalMech(NPC);
@@ -238,12 +246,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
             // Become invincible if the complement mech is at high enough health or if in the middle of a death animation.
             NPC.dontTakeDamage = ExoMechAIUtilities.PerformingDeathAnimation(NPC);
-            if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
+            if (ComplementMechIndex >= 0 && Main.npc[(int)ComplementMechIndex].active && Main.npc[(int)ComplementMechIndex].life > Main.npc[(int)ComplementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
                 NPC.dontTakeDamage = true;
 
             // Become invincible and disappear if necessary.
             if (ExoMechAIUtilities.ShouldExoMechVanish(NPC))
             {
+                NPC.damage = 0;
                 NPC.Opacity = MathHelper.Clamp(NPC.Opacity - 0.08f, 0f, 1f);
                 if (NPC.Opacity <= 0f)
                     NPC.Center = Target.Center - Vector2.UnitY * 1600f;
@@ -257,6 +266,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 NPC.Opacity = MathHelper.Clamp(NPC.Opacity + 0.08f, 0f, 1f);
 
             // Reset things.
+            NPC.damage = NPC.defDamage;
             MinionRedCrystalGlow = 0f;
             TelegraphInterpolant = 0f;
             TurretFrameState = AthenaTurretFrameType.CloseAllTurrets;
@@ -278,6 +288,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     break;
                 case AthenaAttackType.ElectricCharge:
                     DoBehavior_ElectricCharge();
+                    break;
+                case AthenaAttackType.IllusionRocketCharge:
+                    DoBehavior_IllusionRocketCharge();
                     break;
             }
             AttackTimer++;
@@ -421,7 +434,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 NPC.velocity = Vector2.Zero;
                 NPC.Center = Target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 510f, -240f);
                 while (Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
-                    NPC.position.Y -= 12f;
+                    NPC.position.Y -= 120f;
 
                 SoundEngine.PlaySound(SoundID.Item104, NPC.Center);
                 SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/CodebreakerBeam"), NPC.Center);
@@ -636,7 +649,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 }
             }
 
-            // Charge at the target and release tesla orbs..
+            // Charge at the target and release tesla orbs.
             if (AttackTimer == attackDelay + chargeDelay)
             {
                 SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LargeWeaponFire"), NPC.Center);
@@ -654,7 +667,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             if (AttackTimer > attackDelay + chargeDelay + chargeTime)
             {
                 NPC.velocity *= 0.97f;
-                NPC.Opacity = MathHelper.Clamp(NPC.Opacity - 0.05f, 0f, 1f);
+                NPC.Opacity = MathHelper.Clamp(NPC.Opacity - 0.15f, 0f, 1f);
 
                 // Charge again once completely faded away.
                 if (NPC.Opacity <= 0f)
@@ -753,6 +766,73 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             attackDelay++;
         }
 
+        public void DoBehavior_IllusionRocketCharge()
+        {
+            int chargeCount = 6;
+            int redirectTime = 40;
+            int chargeTime = 36;
+            int attackTransitionDelay = 8;
+            int rocketReleaseRate = 15;
+            float rocketShootSpeed = 10.5f;
+            float chargeSpeed = 58f;
+            float hoverSpeed = 25f;
+            ref float chargeDirection = ref NPC.Infernum().ExtraAI[0];
+            ref float chargeCounter = ref NPC.Infernum().ExtraAI[1];
+
+            if (chargeCounter == 0f)
+                redirectTime += 16;
+
+            // Initialize the charge direction.
+            if (AttackTimer == 1f)
+            {
+                chargeDirection = (Target.Center.X > NPC.Center.X).ToDirectionInt();
+                NPC.netUpdate = true;
+            }
+
+            // Hover into position before charging.
+            if (AttackTimer <= redirectTime)
+            {
+                Vector2 hoverDestination = Target.Center + Vector2.UnitX * chargeDirection * -420f;
+                NPC.Center = NPC.Center.MoveTowards(hoverDestination, 12.5f);
+                NPC.SimpleFlyMovement(NPC.SafeDirectionTo(hoverDestination) * hoverSpeed, hoverSpeed * 0.16f);
+                if (AttackTimer == redirectTime)
+                    NPC.velocity *= 0.3f;
+            }
+            else if (AttackTimer <= redirectTime + chargeTime)
+            {
+                // Charge and release rockets.
+                NPC.velocity = Vector2.Lerp(NPC.velocity, Vector2.UnitX * chargeDirection * chargeSpeed, 0.15f);
+                if (AttackTimer == redirectTime + chargeTime)
+                    NPC.velocity *= 0.7f;
+
+                // Fire rockets. This does not happen if close to the target.
+                if (AttackTimer % rocketReleaseRate == rocketReleaseRate - 1f && !NPC.WithinRange(Target.Center, 350f))
+                {
+                    SoundEngine.PlaySound(SoundID.Item36, NPC.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 rocketShootVelocity = (Target.Center - MainTurretCenter).SafeNormalize(-Vector2.UnitY) * rocketShootSpeed;
+                        Utilities.NewProjectileBetter(MainTurretCenter, rocketShootVelocity, ModContent.ProjectileType<AthenaRocket>(), 500, 0f);
+                    }
+                }
+
+                // Do damage and become temporarily invulnerable. This is done to prevent dash-cheese.
+                NPC.damage = NPC.defDamage;
+                NPC.dontTakeDamage = true;
+            }
+            else
+                NPC.velocity *= 0.92f;
+
+            if (AttackTimer >= redirectTime + chargeTime + attackTransitionDelay)
+            {
+                AttackTimer = 0f;
+                chargeCounter++;
+                if (chargeCounter >= chargeCount)
+                    SelectNextAttack();
+                NPC.netUpdate = true;
+            }
+        }
+
         public void SelectNextAttack()
         {
             for (int i = 0; i < 5; i++)
@@ -773,6 +853,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     AttackState = AthenaAttackType.ElectricCharge;
                     break;
                 case AthenaAttackType.ElectricCharge:
+                    AttackState = AthenaAttackType.IllusionRocketCharge;
+                    break;
+                case AthenaAttackType.IllusionRocketCharge:
                     AttackState = AthenaAttackType.CircleOfLightning;
                     break;
             }
@@ -941,6 +1024,53 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             // Declare the trail drawers if they have yet to be defined.
             if (FlameTrail is null)
                 FlameTrail = new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
+
+            if (AttackState == AthenaAttackType.IllusionRocketCharge)
+            {
+                Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+                for (int i = -3; i <= 7; i++)
+                {
+                    if (i == 0)
+                        continue;
+
+                    Color duplicateColor = Color.White;
+                    Vector2 baseDrawPosition = NPC.Center - screenPos;
+                    Vector2 drawPosition = baseDrawPosition;
+
+                    // Create lagging afterimages.
+                    if (i > 3)
+                    {
+                        float lagBehindFactor = Utils.GetLerpValue(30f, 70f, AttackTimer, true);
+                        if (lagBehindFactor == 0f)
+                            continue;
+
+                        drawPosition = baseDrawPosition + NPC.velocity * -3f * (i - 4f) * lagBehindFactor;
+                        duplicateColor *= 1f - (i - 3f) / 4f;
+                    }
+
+                    // Create cool afterimages while charging at the target.
+                    else
+                    {
+                        float hue = (i + 5f) / 10f;
+                        float drawOffsetFactor = 60f;
+                        Vector3 offsetInformation = Vector3.Transform(Vector3.Forward,
+                            Matrix.CreateRotationX((Main.GlobalTimeWrappedHourly - 0.3f + i * 0.1f) * 0.7f * MathHelper.TwoPi) *
+                            Matrix.CreateRotationY((Main.GlobalTimeWrappedHourly - 0.8f + i * 0.3f) * 0.7f * MathHelper.TwoPi) *
+                            Matrix.CreateRotationZ((Main.GlobalTimeWrappedHourly + i * 0.5f) * 0.1f * MathHelper.TwoPi));
+                        drawOffsetFactor += Utils.GetLerpValue(-1f, 1f, offsetInformation.Z, true) * 70f;
+                        Vector2 drawOffset = new Vector2(offsetInformation.X, offsetInformation.Y) * drawOffsetFactor;
+                        drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * AttackTimer / 180f);
+
+                        float luminanceInterpolant = Utils.GetLerpValue(90f, 0f, AttackTimer, true);
+                        duplicateColor = Main.hslToRgb(hue, 1f, MathHelper.Lerp(0.5f, 1f, luminanceInterpolant)) * NPC.Opacity * 0.8f;
+                        duplicateColor.A /= 3;
+                        drawPosition += drawOffset;
+                    }
+
+                    // Draw the base texture.
+                    spriteBatch.Draw(texture, drawPosition, NPC.frame, duplicateColor, NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, 0, 0f);
+                }
+            }
 
             DrawBaseNPC(NPC, screenPos, drawColor, FlameTrailPulse, FlameTrail);
 

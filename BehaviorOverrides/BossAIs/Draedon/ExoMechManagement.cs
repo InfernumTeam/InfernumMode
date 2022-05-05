@@ -5,7 +5,9 @@ using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos;
+using InfernumMode.GlobalInstances;
 using Microsoft.Xna.Framework;
 using System.Linq;
 using Terraria;
@@ -60,6 +62,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 if (aresBody.life <= aresBody.lifeMax * Phase3LifeRatio)
                     return 3;
                 if (aresBody.life <= aresBody.lifeMax * Phase2LifeRatio)
+                    return 2;
+
+                return 1;
+            }
+        }
+
+        public static int CurrentAthenaPhase
+        {
+            get
+            {
+                if (!NPC.AnyNPCs(ModContent.NPCType<AthenaNPC>()))
+                    return 0;
+
+                NPC athena = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<AthenaNPC>())];
+
+                if (FindFinalMech() is null && athena.Infernum().ExtraAI[FinalMechIndexIndex] >= 0f)
+                    return TotalMechs == 1 ? 6 : 3;
+                if (FindFinalMech() == athena)
+                    return 5;
+                if (ComplementMechIsPresent(athena) || athena.Infernum().ExtraAI[HasSummonedComplementMechIndex] == 1f)
+                    return 4;
+                if (athena.life <= athena.lifeMax * Phase3LifeRatio)
+                    return 3;
+                if (athena.life <= athena.lifeMax * Phase2LifeRatio)
                     return 2;
 
                 return 1;
@@ -141,6 +167,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<ThanatosHead>())
                 return CalamityGlobalNPC.draedonExoMechPrime != -1;
 
+            // Athena summon the Twins.
+            if (npc.type == ModContent.NPCType<AthenaNPC>())
+                return GlobalNPCOverrides.Athena != -1;
+
             // The twins summon Thanatos.
             if (npc.type == ModContent.NPCType<Apollo>() || npc.type == ModContent.NPCType<Artemis>())
                 return CalamityGlobalNPC.draedonExoMechWorm != -1;
@@ -160,13 +190,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         {
             int apolloID = ModContent.NPCType<Apollo>();
             int thanatosID = ModContent.NPCType<ThanatosHead>();
+            int athenaID = ModContent.NPCType<AthenaNPC>();
             int aresID = ModContent.NPCType<AresBody>();
             NPC initialMech = null;
 
             // Find the initial mech. If it cannot be found, return nothing.
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
+                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
                     continue;
                 if (!Main.npc[i].active)
                     continue;
@@ -191,10 +222,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Check to see if the initial mech believes that the final mech index is in use by a mech.
             int apolloID = ModContent.NPCType<Apollo>();
             int thanatosID = ModContent.NPCType<ThanatosHead>();
+            int athenaID = ModContent.NPCType<ThanatosHead>();
             int aresID = ModContent.NPCType<AresBody>();
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
+                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
                     continue;
                 if (!Main.npc[i].active)
                     continue;
@@ -225,6 +257,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<AresSpinningRedDeathray>(),
                 ModContent.ProjectileType<ExolaserBomb>(),
                 ModContent.ProjectileType<RefractionRotor>(),
+                ModContent.ProjectileType<PulseBeamStart>(),
+                ModContent.ProjectileType<PulseLaser>(),
             };
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -260,6 +294,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ares.Opacity = 0.01f;
 
                 ares.netUpdate = true;
+            }
+
+            // Athena summons the twins.
+            if (npc.type == ModContent.NPCType<AthenaNPC>())
+            {
+                Vector2 apolloSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
+                int complementMech = NPC.NewNPC(new InfernumSource(), (int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
+                NPC apollo = Main.npc[complementMech];
+                npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
+
+                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
+                apollo.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+                apollo.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
+
+                apollo.netUpdate = true;
             }
 
             // Ares summons Thanatos.
@@ -307,11 +356,27 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 apollo.netUpdate = true;
             }
 
+            // Athena summons Ares.
+            if (npc.type == ModContent.NPCType<AthenaNPC>())
+            {
+                Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
+                int finalMech = NPC.NewNPC(new InfernumSource(), (int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
+                NPC ares = Main.npc[finalMech];
+                npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
+                Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
+
+                // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
+                ares.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
+                ares.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
+
+                ares.netUpdate = true;
+            }
+
             // Twins summon Thanatos.
             if (npc.type == ModContent.NPCType<Apollo>())
             {
-                Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int finalMech = NPC.NewNPC(new InfernumSource(), (int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
+                Vector2 thanatosSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
+                int finalMech = NPC.NewNPC(new InfernumSource(), (int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
                 NPC thanatos = Main.npc[finalMech];
                 npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
                 Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
@@ -330,11 +395,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 int apolloID = ModContent.NPCType<Apollo>();
                 int thanatosID = ModContent.NPCType<ThanatosHead>();
+                int athenaID = ModContent.NPCType<AthenaNPC>();
                 int aresID = ModContent.NPCType<AresBody>();
                 int count = 0;
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != aresID)
+                    if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
                         continue;
                     if (!Main.npc[i].active || Main.npc[i].Opacity <= 0f)
                         continue;

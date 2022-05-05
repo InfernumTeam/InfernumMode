@@ -42,7 +42,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
         public override void AI()
         {
             // Disappear if the main boss is not present.
-            if (!Main.npc.IndexInRange(NPC.crimsonBoss) || !Owner.active || (BoCAttackState)(int)Owner.ai[0] != BoCAttackState.SpinPull)
+            if (!Main.npc.IndexInRange(NPC.crimsonBoss) || !Owner.active || (BoCAttackState)(int)Owner.ai[0] != BoCAttackState.IllusionSpinCharge)
             {
                 NPC.active = false;
                 NPC.netUpdate = true;

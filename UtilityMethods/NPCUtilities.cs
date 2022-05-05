@@ -3,6 +3,7 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -50,6 +51,10 @@ namespace InfernumMode
             {
                 return true;
             }
+
+            // Athena.
+            if (npc.type == ModContent.NPCType<AthenaNPC>())
+                return true;
 
             // Artemis and Apollo.
             if (npc.type == ModContent.NPCType<Artemis>() ||

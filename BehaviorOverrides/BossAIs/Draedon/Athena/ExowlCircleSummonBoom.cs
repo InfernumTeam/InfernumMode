@@ -7,8 +7,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
     public class ExowlCircleSummonBoom : BaseWaveExplosionProjectile
     {
-        public override int Lifetime => 180;
-        public override float MaxRadius => 4300f;
+        public override int Lifetime => 45;
+        public override float MaxRadius => 1300f;
         public override float RadiusExpandRateInterpolant => 0.15f;
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {

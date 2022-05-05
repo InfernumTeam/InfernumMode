@@ -12,12 +12,16 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
+using InfernumMode.Particles;
+using CalamityMod.Particles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
     public class Exowl : ModNPC
     {
         public int NPCToAttachTo = -1;
+
+        public int ExplodeCountdown;
 
         public bool UseConfusionEffect = false;
 
@@ -37,15 +41,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public static NPC Athena => Main.npc[GlobalNPCOverrides.Athena];
 
-        public Player Target => Main.player[Athena.target];
-
-        public ref float AttackTimer => ref Athena.ai[1];
-
         public ref float AttackState => ref NPC.ai[0];
 
         public ref float IndividualAttackTimer => ref NPC.ai[1];
 
-        public ref float MinionRedCrystalGlow => ref Athena.localAI[1];
+        public static Player Target => Main.player[Athena.target];
+
+        public static ref float AttackTimer => ref Athena.ai[1];
+
+        public static ref float MinionRedCrystalGlow => ref Athena.localAI[1];
 
         public override void SetStaticDefaults()
         {
@@ -73,6 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write(ExplodeCountdown);
             writer.Write(CircleRadius);
             writer.Write(CircleOffsetAngle);
             writer.WriteVector2(CircleCenter);
@@ -80,15 +85,45 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            ExplodeCountdown = reader.ReadInt32();
             CircleRadius = reader.ReadSingle();
             CircleOffsetAngle = reader.ReadSingle();
             CircleCenter = reader.ReadVector2();
+        }
+
+        public static void MakeAllExowlsExplode()
+        {
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].type == ModContent.NPCType<Exowl>())
+                {
+                    Main.npc[i].ModNPC<Exowl>().ExplodeCountdown = 60;
+                    Main.npc[i].netUpdate = true;
+                }
+            }
         }
 
         public override void AI()
         {
             NPC.damage = 0;
             NPC.timeLeft = 3600;
+
+            if (ExplodeCountdown > 0)
+            {
+                NPC.velocity *= 0.9f;
+                NPC.Center += Main.rand.NextVector2Circular(5f, 5f);
+                ExplodeCountdown--;
+
+                if (ExplodeCountdown <= 0)
+                {
+                    SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, NPC.Center);
+                    ElectricExplosionRing explosion = new(NPC.Center, Vector2.Zero, CalamityUtils.ExoPalette, 0.2f, 45, 0.6f);
+                    GeneralParticleHandler.SpawnParticle(explosion);
+                    NPC.active = false;
+                }
+                return;
+            }
+
             if (!Main.npc.IndexInRange(GlobalNPCOverrides.Athena))
             {
                 NPC.active = false;
@@ -229,7 +264,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             return color;
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
             Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/Exowl_Glowmask").Value;
@@ -245,16 +280,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (LightningBackgroundDrawer is null)
                     LightningBackgroundDrawer = new PrimitiveTrail(LightningBackgroundWidthFunction, LightningBackgroundColorFunction, PrimitiveTrail.RigidPointRetreivalFunction);
 
-                Main.spriteBatch.EnterShaderRegion();
-
                 // Draw electricity between NPCs.
                 if (NPCToAttachTo >= 0 && Main.npc[NPCToAttachTo].active)
                 {
                     NPC npcToAttachTo = Main.npc[NPCToAttachTo];
                     Vector2 end = npcToAttachTo.Center + npcToAttachTo.rotation.ToRotationVector2() * 30f;
                     List<Vector2> arm2ElectricArcPoints = AresTeslaOrb.DetermineElectricArcPoints(NPC.Center, end, 250290787);
-                    LightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 40);
-                    LightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 40);
+                    LightningBackgroundDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 30);
+                    LightningDrawer.Draw(arm2ElectricArcPoints, -Main.screenPosition, 30);
                 }
 
                 // Draw thrusters as necessary.
@@ -281,11 +314,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                         for (int i = 0; i < 3; i++)
                         {
                             Vector2 drawOffset = (MathHelper.TwoPi * i / 3f).ToRotationVector2() * 2f;
-                            FlameTrail.Draw(drawPositions, drawOffset - Main.screenPosition, 33);
+                            FlameTrail.Draw(drawPositions, drawOffset - Main.screenPosition, 28);
                         }
                     }
                 }
-                Main.spriteBatch.ExitShaderRegion();
 
                 // Draw the glowmask and regular texture.
                 // This is influenced by the crystal glow at the end.

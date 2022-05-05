@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             CreeperBloodDripping,
             DashingIllusions,
             PsionicBombardment,
-            SpinPull
+            IllusionSpinCharge
         }
         #endregion
 
@@ -104,8 +104,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 case BoCAttackState.PsionicBombardment:
                     DoAttack_PsionicBombardment(npc, target, enraged, ref attackTimer);
                     break;
-                case BoCAttackState.SpinPull:
-                    DoAttack_SpinPull(npc, target, enraged, ref attackTimer);
+                case BoCAttackState.IllusionSpinCharge:
+                    DoAttack_IllusionSpinCharge(npc, target, enraged, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -435,7 +435,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             }
         }
 
-        public static void DoAttack_SpinPull(NPC npc, Player target, bool enraged, ref float attackTimer)
+        public static void DoAttack_IllusionSpinCharge(NPC npc, Player target, bool enraged, ref float attackTimer)
         {
             int teleportFadeTime = 50;
             float spinRadius = 395f;
@@ -519,9 +519,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     newAttackType = BoCAttackState.PsionicBombardment;
                     break;
                 case BoCAttackState.PsionicBombardment:
-                    newAttackType = BoCAttackState.SpinPull;
+                    newAttackType = BoCAttackState.IllusionSpinCharge;
                     break;
-                case BoCAttackState.SpinPull:
+                case BoCAttackState.IllusionSpinCharge:
                     newAttackType = Main.rand.NextBool(2) ? BoCAttackState.DiagonalCharge : BoCAttackState.BloodDashSwoop;
                     break;
             }

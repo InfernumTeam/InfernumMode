@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override void AI()
         {
             Projectile.scale += 0.08f;
-            Radius = MathHelper.Lerp(Radius, MaxRadius, 0.05f);
+            Radius = MathHelper.Lerp(Radius, MaxRadius, 0.1f);
             Projectile.Opacity = Utils.GetLerpValue(8f, 42f, Projectile.timeLeft, true) * 0.55f;
 
             Time++;

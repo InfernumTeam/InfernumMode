@@ -79,6 +79,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 if (Main.projectile.IndexInRange(explosion))
                     Main.projectile[explosion].ModProjectile<HolySunExplosion>().MaxRadius = ExplosionRadius * 0.7f;
             }
+
+            // Do some some mild screen-shake effects to accomodate the explosion.
+            // This effect is set instead of added to to ensure separate explosions do not together create an excessive amount of shaking.
+            float screenShakeFactor = Utils.Remap(Projectile.Distance(Main.LocalPlayer.Center), 2000f, 1300f, 0f, 5f);
+            if (Main.LocalPlayer.Calamity().GeneralScreenShakePower < screenShakeFactor)
+                Main.LocalPlayer.Calamity().GeneralScreenShakePower = screenShakeFactor;
         }
 
         public override bool? CanDamage() => false;

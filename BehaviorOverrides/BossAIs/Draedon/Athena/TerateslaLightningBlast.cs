@@ -32,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         {
             DisplayName.SetDefault("Teratesla Lightning Torrent");
             ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 150;
+            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 80;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
         }
 
@@ -47,6 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             Projectile.hostile = true;
             Projectile.extraUpdates = 4;
             Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
+            Projectile.extraUpdates += 2;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -155,7 +156,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             GameShaders.Misc["Infernum:AresLightningArc"].UseImage1("Images/Misc/Perlin");
             GameShaders.Misc["Infernum:AresLightningArc"].Apply();
 
-            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 50);
+            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 8);
             return false;
         }
     }

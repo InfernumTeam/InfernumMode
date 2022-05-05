@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     break;
                 case BoCAttackState.DashingIllusions:
                 case BoCAttackState.BloodDashSwoop:
-                case BoCAttackState.SpinPull:
+                case BoCAttackState.IllusionSpinCharge:
                     destination = owner.Center + destinationOffsetDirection * 16f;
                     idealAlpha = 255;
                     break;

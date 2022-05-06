@@ -437,7 +437,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 SoundEngine.PlaySound(SoundID.Item103, NPC.Center);
                 NPC.velocity = Vector2.Zero;
                 NPC.Center = Target.Center + new Vector2(Main.rand.NextBool().ToDirectionInt() * 510f, -240f);
-                while (Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
+                while (Collision.SolidCollision(NPC.position - Vector2.One * 200f, NPC.width + 400, NPC.height + 400))
                     NPC.position.Y -= 120f;
 
                 SoundEngine.PlaySound(SoundID.Item104, NPC.Center);
@@ -1071,7 +1071,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                         drawOffsetFactor += Utils.GetLerpValue(-1f, 1f, offsetInformation.Z, true) * 70f;
                         Vector2 drawOffset = new Vector2(offsetInformation.X, offsetInformation.Y) * drawOffsetFactor;
                         drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * AttackTimer / 180f);
-                        drawOffset *= Utils.GetLerpValue(20f, 27f, NPC.velocity.Length(), true);
+
+                        if ((int)AttackState == (int)ExoMechComboAttackContent.ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance)
+                            drawOffset *= Utils.GetLerpValue(16f, 25f, NPC.velocity.Length(), true);
 
                         float luminanceInterpolant = Utils.GetLerpValue(90f, 0f, AttackTimer, true);
                         duplicateColor = Main.hslToRgb(hue, 1f, MathHelper.Lerp(0.5f, 1f, luminanceInterpolant)) * NPC.Opacity * 0.8f;

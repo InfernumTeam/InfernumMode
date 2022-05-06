@@ -265,6 +265,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, hoverSide, ref attackTimer, ref frame))
                 SelectNextAttack(npc);
 
+            if (ExoMechComboAttackContent.UseTwinsAthenaComboAttack(npc, hoverSide, ref attackTimer, ref frame))
+                SelectNextAttack(npc);
+
             attackTimer++;
             return false;
         }
@@ -598,7 +601,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Calculate frames.
             frame = (int)Math.Round(MathHelper.Lerp(20f, 29f, attackTimer / shootRate % 1f));
-            if (ExoMechManagement.CurrentTwinsPhase >= 2)
+            if (ExoMechManagement.ExoTwinsAreInSecondPhase)
                 frame += 60f;
 
             if (shootCounter >= totalShots)
@@ -777,7 +780,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             }
 
             // Update frames for the second phase.
-            if (ExoMechManagement.CurrentTwinsPhase >= 2 && frame <= 30f)
+            if (ExoMechManagement.ExoTwinsAreInSecondPhase && frame <= 30f)
                 frame += 60f;
 
             if (attackTimer >= 540f)
@@ -820,7 +823,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Calculate frames.
             frame = (int)Math.Round(MathHelper.Lerp(10f, 19f, attackTimer / 45f % 1f));
-            if (ExoMechManagement.CurrentTwinsPhase >= 2)
+            if (ExoMechManagement.ExoTwinsAreInSecondPhase)
                 frame += 60f;
 
             // Charge at the target when ready.
@@ -1310,9 +1313,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Delete leftover Artemis lasers.
             foreach (Projectile laser in Utilities.AllProjectilesByID(ModContent.ProjectileType<ArtemisLaser>()))
-            {
                 laser.Kill();
-            }
 
             npc.netUpdate = true;
         }

@@ -181,6 +181,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Perform specific combo attack behaviors.
             ExoMechComboAttackContent.UseTwinsAresComboAttack(npc, hoverSide, ref attackTimer, ref frame);
+            ExoMechComboAttackContent.UseTwinsAthenaComboAttack(npc, hoverSide, ref attackTimer, ref frame);
             return false;
         }
 

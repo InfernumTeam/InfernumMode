@@ -144,6 +144,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             }
         }
 
+        public static bool ExoTwinsAreEnteringSecondPhase
+        {
+            get
+            {
+                if (!NPC.AnyNPCs(ModContent.NPCType<Apollo>()))
+                    return false;
+
+                NPC apollo = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Apollo>())];
+                return apollo.ai[3] is > 0f and < Phase2TransitionTime;
+            }
+        }
+
+        public static bool ExoTwinsAreInSecondPhase
+        {
+            get
+            {
+                if (!NPC.AnyNPCs(ModContent.NPCType<Apollo>()))
+                    return false;
+
+                NPC apollo = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Apollo>())];
+                return apollo.ai[3] >= Phase2TransitionTime;
+            }
+        }
+
         public static bool ExoMechIsPerformingDeathAnimation
         {
             get
@@ -366,6 +390,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
 
                 // Tell the newly summoned mech that it is not the initial mech and that it cannot summon more mechs.
+                ares.ai[0] = (int)AresBodyAttackType.IdleHover;
                 ares.Infernum().ExtraAI[HasSummonedComplementMechIndex] = 1f;
                 ares.Infernum().ExtraAI[WasNotInitialSummonIndex] = 1f;
 

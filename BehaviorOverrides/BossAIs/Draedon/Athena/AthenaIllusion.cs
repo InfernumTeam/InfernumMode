@@ -37,9 +37,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         }
 
         public override void SetDefaults()
-		{
+        {
             AthenaSetDefaults(NPC);
             NPC.damage = 0;
+            NPC.chaseable = false;
         }
 
         public override void AI()
@@ -97,6 +98,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             if (FlameTrail is null)
                 FlameTrail = new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
+            drawColor = Color.Lerp(drawColor, new(0f, 1f, 1f, 0.7f), 0.65f);
             DrawBaseNPC(NPC, screenPos, drawColor, FlameTrailPulse, FlameTrail);
             return false;
         }

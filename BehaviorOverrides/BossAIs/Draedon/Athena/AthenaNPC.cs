@@ -293,6 +293,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     DoBehavior_IllusionRocketCharge();
                     break;
             }
+
+            if (ExoMechComboAttackContent.UseTwinsAthenaComboAttack(NPC, 1f, ref AttackTimer, ref NPC.localAI[0]))
+                SelectNextAttack();
+
             AttackTimer++;
         }
 
@@ -378,7 +382,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 lightningShootVelocity = TelegraphRotation.ToRotationVector2() * 8.4f;
-                    int lightning = Utilities.NewProjectileBetter(MainTurretCenter - lightningShootVelocity * 7.6f, lightningShootVelocity, ModContent.ProjectileType<TerateslaLightningBlast>(), 530, 0f);
+                    int lightning = Utilities.NewProjectileBetter(MainTurretCenter - lightningShootVelocity * 12f, lightningShootVelocity, ModContent.ProjectileType<TerateslaLightningBlast>(), 530, 0f);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Main.projectile[lightning].ai[0] = TelegraphRotation;
@@ -620,12 +624,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         {
             int attackDelay = 35;
             int chargeDelay = 75;
-            int chargeTime = 34;
+            int chargeTime = 36;
             int illusionCount = 7;
             int chargeCount = 8;
-            float chargeSpeed = 40f;
+            float chargeSpeed = 39f;
             float predictivenessFactor = 0f;
             ref float chargeCounter = ref NPC.Infernum().ExtraAI[0];
+
+            // Always have all turrets open.
+            // This allows the player to distinguish between the real and fake versions of the boss.
+            TurretFrameState = AthenaTurretFrameType.OpenMainTurret;
 
             // Do teleportation effects.
             if (AttackTimer <= attackDelay)
@@ -689,8 +697,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             int waitTime = 8;
             int chargeTime = 45;
             int totalCharges = 6;
-            int sparkCount = 18;
-            float chargeSpeed = 49f;
+            int sparkCount = 36;
+            float chargeSpeed = 42.5f;
             float predictivenessFactor = 6f;
             Vector2 hoverDestination = Target.Center + new Vector2((Target.Center.X < NPC.Center.X).ToDirectionInt() * 540f, -300f);
 
@@ -769,18 +777,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public void DoBehavior_IllusionRocketCharge()
         {
             int chargeCount = 6;
-            int redirectTime = 40;
+            int redirectTime = 25;
             int chargeTime = 36;
             int attackTransitionDelay = 8;
-            int rocketReleaseRate = 15;
-            float rocketShootSpeed = 10.5f;
+            int rocketReleaseRate = 8;
+            float rocketShootSpeed = 16f;
             float chargeSpeed = 58f;
             float hoverSpeed = 25f;
             ref float chargeDirection = ref NPC.Infernum().ExtraAI[0];
             ref float chargeCounter = ref NPC.Infernum().ExtraAI[1];
 
             if (chargeCounter == 0f)
-                redirectTime += 16;
+                redirectTime += 32;
 
             // Initialize the charge direction.
             if (AttackTimer == 1f)
@@ -859,6 +867,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     AttackState = AthenaAttackType.CircleOfLightning;
                     break;
             }
+
+            if (ExoMechComboAttackContent.ShouldSelectComboAttack(NPC, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
+                NPC.ai[0] = (int)newAttack;
 
             AttackTimer = 0f;
             NPC.netUpdate = true;
@@ -1025,10 +1036,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             if (FlameTrail is null)
                 FlameTrail = new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
-            if (AttackState == AthenaAttackType.IllusionRocketCharge)
+            if (AttackState == AthenaAttackType.IllusionRocketCharge || (int)AttackState == (int)ExoMechComboAttackContent.ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance)
             {
                 Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-                for (int i = -3; i <= 7; i++)
+                for (int i = -3; i <= 8; i++)
                 {
                     if (i == 0)
                         continue;
@@ -1060,6 +1071,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                         drawOffsetFactor += Utils.GetLerpValue(-1f, 1f, offsetInformation.Z, true) * 70f;
                         Vector2 drawOffset = new Vector2(offsetInformation.X, offsetInformation.Y) * drawOffsetFactor;
                         drawOffset = drawOffset.RotatedBy(MathHelper.TwoPi * AttackTimer / 180f);
+                        drawOffset *= Utils.GetLerpValue(20f, 27f, NPC.velocity.Length(), true);
 
                         float luminanceInterpolant = Utils.GetLerpValue(90f, 0f, AttackTimer, true);
                         duplicateColor = Main.hslToRgb(hue, 1f, MathHelper.Lerp(0.5f, 1f, luminanceInterpolant)) * NPC.Opacity * 0.8f;

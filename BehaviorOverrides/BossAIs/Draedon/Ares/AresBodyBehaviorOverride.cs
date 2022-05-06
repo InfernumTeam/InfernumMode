@@ -85,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Define attack variables.
             bool performingDeathAnimation = ExoMechAIUtilities.PerformingDeathAnimation(npc);
-            ref float attackState = ref npc.ai[0];
+            ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
             ref float armsHaveBeenSummoned = ref npc.ai[3];
             ref float armCycleCounter = ref npc.Infernum().ExtraAI[5];
@@ -157,7 +157,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Summon the complement mech and reset things once ready.
             if (hasSummonedComplementMech == 0f && lifeRatio < ExoMechManagement.Phase4LifeRatio)
             {
-                if (attackState != (int)AresBodyAttackType.IdleHover)
+                if (attackType != (int)AresBodyAttackType.IdleHover)
                 {
                     // Destroy all lasers and telegraphs.
                     for (int i = 0; i < Main.maxProjectiles; i++)
@@ -199,7 +199,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     npc.Center = target.Center - Vector2.UnitY * 1500f;
 
                 attackTimer = 0f;
-                attackState = (int)AresBodyAttackType.IdleHover;
+                attackType = (int)AresBodyAttackType.IdleHover;
                 npc.Calamity().newAI[1] = (int)AresBody.SecondaryPhase.PassiveAndImmune;
                 npc.Calamity().ShouldCloseHPBar = true;
                 npc.dontTakeDamage = true;
@@ -222,7 +222,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Handle the final phase transition.
             if (finalPhaseAnimationTime < ExoMechManagement.FinalPhaseTransitionTime && ExoMechManagement.CurrentAresPhase >= 6 && !ExoMechManagement.ExoMechIsPerformingDeathAnimation)
             {
-                attackState = (int)AresBodyAttackType.IdleHover;
+                attackType = (int)AresBodyAttackType.IdleHover;
                 finalPhaseAnimationTime++;
                 npc.dontTakeDamage = true;
                 DoBehavior_DoFinalPhaseTransition(npc, target, ref frameType, finalPhaseAnimationTime);
@@ -230,22 +230,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Use combo attacks as necessary.
-            if (ExoMechManagement.TotalMechs >= 2 && (int)attackState < 100)
+            if (ExoMechManagement.TotalMechs >= 2 && (int)attackType < 100)
             {
                 attackTimer = 0f;
 
                 if (initialMech.whoAmI == npc.whoAmI)
                     SelectNextAttack(npc);
 
-                attackState = initialMech.ai[0];
+                attackType = initialMech.ai[0];
                 npc.netUpdate = true;
             }
 
             // Reset the attack type if it was a combo attack but the respective mech is no longer present.
-            if (((finalMech != null && finalMech.Opacity > 0f) || ExoMechManagement.CurrentAresPhase >= 6) && attackState >= 100f)
+            if (((finalMech != null && finalMech.Opacity > 0f) || ExoMechManagement.CurrentAresPhase >= 6) && attackType >= 100f)
             {
                 attackTimer = 0f;
-                attackState = 0f;
+                attackType = 0f;
                 npc.netUpdate = true;
             }
 
@@ -265,7 +265,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (!performingDeathAnimation)
             {
                 // Perform specific behaviors.
-                switch ((AresBodyAttackType)(int)attackState)
+                switch ((AresBodyAttackType)(int)attackType)
                 {
                     case AresBodyAttackType.IdleHover:
                         DoBehavior_IdleHover(npc, target, ref attackTimer);

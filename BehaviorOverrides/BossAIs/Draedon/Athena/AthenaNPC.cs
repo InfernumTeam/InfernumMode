@@ -329,6 +329,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 SoundEngine.PlaySound(SoundID.Item103, NPC.Center);
                 NPC.velocity = Vector2.Zero;
                 NPC.Center = Target.Center + (MathHelper.TwoPi * Main.rand.Next(4) / 4f).ToRotationVector2() * 450f;
+                while (Collision.SolidCollision(NPC.position - Vector2.One * 200f, NPC.width + 400, NPC.height + 400))
+                    NPC.position.Y -= 120f;
+
                 SoundEngine.PlaySound(SoundID.Item104, NPC.Center);
                 NPC.netUpdate = true;
             }

@@ -309,7 +309,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 npc.Opacity = 1f;
 
             // Define a general-purpose mouth position vector.
-            Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, -15f);
+            Vector2 mouthPosition = npc.Center + new Vector2((float)Math.Cos(npc.rotation) * (npc.width + 28f) * -npc.spriteDirection * 0.5f, 15f);
 
             switch ((OldDukeAttackState)(int)attackState)
             {
@@ -496,6 +496,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 chargeSpeed += 5.4f;
             }
 
+            // Make the predictiveness more loose if the target is charing at Old Duke. This is done to make the "tricking" strategy more consistently possible.
+            float playerChargingAtOldDukeFactor = (float)Math.Cos(target.SafeDirectionTo(npc.Center).AngleBetween(target.velocity));
+
+            // Make this effect taper off if the target is moving slowly.
+            playerChargingAtOldDukeFactor *= Utils.GetLerpValue(7f, 10f, target.velocity.Length(), true);
+            aimAheadFactor += Utils.Remap(playerChargingAtOldDukeFactor, 0.61f, 0.9f, 0f, 1.4f);
+
             if (attackTimer >= chargeTime)
             {
                 SelectNextAttack(npc);
@@ -662,7 +669,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > shootDelay && (attackTimer - shootDelay) % bubbleSummonRate == bubbleSummonRate - 1f)
             {
                 Vector2 bubbleSpawnPosition = target.Center + new Vector2(Main.rand.NextFloatDirection() * 1000f + target.velocity.X * 60f, 800f);
-                Vector2 bubbleVelocity = -Vector2.UnitY * Main.rand.NextFloat(10.5f, 13.5f);
+                Vector2 bubbleVelocity = -Vector2.UnitY * Main.rand.NextFloat(8.5f, 11.5f);
                 if (inPhase2)
                     bubbleVelocity *= 1.15f;
                 if (BossRushEvent.BossRushActive)

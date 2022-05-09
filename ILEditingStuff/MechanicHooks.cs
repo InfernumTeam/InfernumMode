@@ -22,6 +22,7 @@ using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.ILEditingStuff
 {
+    /*
     public class MakeGolemRoomInvariableHook : IHookEdit
     {
         public static void MakeGolemRoomInvariable(ILContext il)
@@ -44,6 +45,7 @@ namespace InfernumMode.ILEditingStuff
 
         public void Unload() => CalamityGenNewTemple -= MakeGolemRoomInvariable;
     }
+    */
 
     public class FixExoMechActiveDefinitionRigidityHook : IHookEdit
     {
@@ -219,7 +221,7 @@ namespace InfernumMode.ILEditingStuff
             {
                 orig(self);
             }
-			catch { }
+            catch { }
 
             if (useShader)
             {

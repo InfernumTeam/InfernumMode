@@ -261,8 +261,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             // Create a platform below the target in phase 2 if few platforms exist and the player is almost or entirely out of flight time.
-            if (inPhase2 && target.wingTime < 60f && NPC.CountNPCS(ModContent.NPCType<ProvArenaPlatform>()) < 4)
-                CreatePlatform(target.Bottom + Vector2.UnitY * 75f, -Vector2.UnitY * 2.4f);
+            if (inPhase2 && target.wingTime < 60f)
+            {
+                int platformID = ModContent.NPCType<ProvArenaPlatform>();
+                var nearbyPlatforms = Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == platformID && n.WithinRange(target.Center, 420f));
+
+                if (!nearbyPlatforms.Any())
+                    CreatePlatform(target.Bottom + Vector2.UnitY * 100f, -Vector2.UnitY * 3f);
+            }
 
             // Execute attack patterns.
             switch ((ProvidenceAttackType)attackType)
@@ -447,9 +453,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_MoltenBlasts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            int blastShootCount = 8;
+            int blastShootCount = 10;
             int totalBlobsFromBlasts = 8;
-            int blastShootRate = 45;
+            int blastShootRate = 30;
             float moltenBlastSpeed = MathHelper.Lerp(14f, 20f, 1f - lifeRatio);
 
             ref float blastShootCounter = ref npc.Infernum().ExtraAI[1];
@@ -486,7 +492,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_CrystalSpikes(NPC npc, bool inPhase2, bool inPhase3, Rectangle arenaArea, ref float attackTimer)
         {
             int spikeCreationDelay = 110;
-            int spikeCreationRate = 50;
+            int spikeCreationRate = 45;
             int spikeCount = 3;
             int platformSpawnRate = 0;
             float offsetPerSpike = 150f;
@@ -759,7 +765,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int cinderCreationDelay = 135;
             int circularCinderCount = 15;
             int attackSwitchDelay = 180;
-            float offsetPerCinder = 130f;
+            float offsetPerCinder = 120f;
             float circularCinderSpeed = 5f;
 
             if (inPhase2)
@@ -836,7 +842,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int shootDelay = 90;
             int totalCrystalBursts = (int)MathHelper.Lerp(15f, 24f, 1f - lifeRatio);
             int crystalBurstShootRate = (int)MathHelper.Lerp(36f, 24f, 1f - lifeRatio);
-            int totalCrystalsPerBurst = 15;
+            int totalCrystalsPerBurst = 16;
             int transitionDelay = 120;
             int platformSpawnRate = 0;
 
@@ -933,7 +939,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_CrystalBlades(NPC npc, float lifeRatio, ref float attackTimer)
         {
-            int crystalCount = (int)MathHelper.Lerp(11f, 20f, 1f - lifeRatio);
+            int crystalCount = (int)MathHelper.Lerp(12f, 22f, 1f - lifeRatio);
             int bladeReleaseDelay = 90;
 
             // Slow down.
@@ -962,7 +968,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int bladeRelaseRate = 45;
             int laserShootTime = HolyFireBeam.Lifetime;
             float bladeSpeed = 8f;
-            float maxLaserAngularVelocity = MathHelper.ToRadians(0.7f + (1f - lifeRatio) * 0.125f);
+            float maxLaserAngularVelocity = MathHelper.ToRadians(0.72f + (1f - lifeRatio) * 0.16f);
             ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float telegraphOpacity = ref npc.Infernum().ExtraAI[1];
             ref float laserCount = ref npc.Infernum().ExtraAI[2];
@@ -1037,8 +1043,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int attackTime = 300;
             int attackTransitionDelay = 120;
             int platformSpawnRate = 32;
-            float spearShootSpeed = 7.5f;
-            float crystalShootSpeed = 6f;
+            float spearShootSpeed = 8.4f;
+            float crystalShootSpeed = 5f;
 
             // Create platforms as necessary.
             if (attackTimer % platformSpawnRate == platformSpawnRate - 1f)
@@ -1126,7 +1132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_HolyBlasts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
             int blastShootCount = 6;
-            int blastShootRate = 60;
+            int blastShootRate = 55;
             int platformSpawnRate = 32;
             float holyBlastSpeed = MathHelper.Lerp(12f, 18f, 1f - lifeRatio);
 

@@ -5,12 +5,12 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
-	public class DarkMagicFlame : ModProjectile
+    public class RedirectingDarkSoul : ModProjectile
     {
         public ref float Time => ref Projectile.ai[0];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Dark Flame");
+            DisplayName.SetDefault("Dark Soul");
             Main.projFrames[Projectile.type] = 4;
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
@@ -18,7 +18,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 16;
+            Projectile.width = Projectile.height = 34;
             Projectile.hostile = true;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
@@ -29,27 +29,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void AI()
         {
+            Projectile.Opacity = Utils.GetLerpValue(0f, 15f, Time, true);
             Projectile.frameCounter++;
-            if (Projectile.frameCounter % 5 == 4)
-                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
-            Projectile.Opacity = Utils.GetLerpValue(0f, 24f, Time, true);
+            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
 
-            // Attempt to hover above the target.
-            Vector2 destination = Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center;
-            if (Time < 15f)
-            {
-                float flySpeed = MathHelper.Lerp(8f, 20f, Time / 15f);
-                Projectile.velocity = (Projectile.velocity * 29f + Projectile.SafeDirectionTo(destination) * flySpeed) / 30f;
-            }
-            else if (Projectile.velocity.Length() < 43f)
-            {
-                Projectile.velocity *= 1.035f;
-                if (Time < 45f)
-                    Projectile.velocity = Projectile.velocity.RotateTowards(Projectile.AngleTo(destination), 0.04f);
-            }
-            Projectile.tileCollide = Time > 60f;
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            Projectile.spriteDirection = (Projectile.velocity.X > 0f).ToDirectionInt();
+            if (Projectile.spriteDirection == -1)
+                Projectile.rotation += MathHelper.Pi;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            // Slow down dramatically on the vertical axis and speed upon the horizontal one.
+            Projectile.velocity.X *= 1.0175f;
+            Projectile.velocity.Y *= 0.925f;
 
             Time++;
         }
@@ -59,7 +50,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             for (int i = 0; i < 5; i++)
             {
                 Dust fire = Dust.NewDustDirect(Projectile.Center - Vector2.One * 12f, 6, 6, 267);
-                fire.color = Color.Red;
+                fire.color = Color.Lerp(Color.Fuchsia, Color.Orange, Main.rand.NextFloat());
+                fire.scale = Main.rand.NextFloat(1f, 1.3f);
                 fire.noGravity = true;
             }
         }

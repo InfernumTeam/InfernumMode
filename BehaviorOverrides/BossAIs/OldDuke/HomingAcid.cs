@@ -39,9 +39,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Time < 80f)
                 return;
 
-            float idealFlySpeed = BossRushEvent.BossRushActive ? 29f : 20.25f;
+            float idealFlySpeed = BossRushEvent.BossRushActive ? 29f : 12.25f;
             if (!Projectile.WithinRange(ClosestPlayer.Center, 150f))
-                Projectile.velocity = (Projectile.velocity * 49f + Projectile.SafeDirectionTo(ClosestPlayer.Center) * idealFlySpeed) / 50f;
+                Projectile.velocity = (Projectile.velocity * 59f + Projectile.SafeDirectionTo(ClosestPlayer.Center) * idealFlySpeed) / 60f;
 
             if (Projectile.WithinRange(ClosestPlayer.Center, 20f))
                 Projectile.Kill();
@@ -54,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             Texture2D texture = Utilities.ProjTexture(Projectile.type);
             Vector2 drawPosition = Projectile.position + Projectile.Size * 0.5f - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
-            Color backAfterimageColor = Projectile.GetAlpha(new Color(85, 224, 60, 0) * 0.5f);
+            Color backAfterimageColor = Projectile.GetAlpha(new Color(1f, 1f, 1f, 0f) * 0.5f);
             for (int i = 0; i < 8; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 4f;

@@ -79,9 +79,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 return;
             }
 
-            if (Main.npc[CalamityGlobalNPC.SCal].ai[2] > 0f || SupremeCalamitasBehaviorOverride.CurrentAttack(Main.npc[CalamityGlobalNPC.SCal]) == SupremeCalamitasBehaviorOverride.SCalAttackType.LightningLines)
-                AttackTimer = 0f;
-
             // Disappear and be absorbed as necessary.
             if (Main.npc[CalamityGlobalNPC.SCal].Infernum().ExtraAI[8] == 1f)
             {
@@ -142,7 +139,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             {
                 NPC.velocity *= 0.96f;
                 NPC.velocity = NPC.velocity.MoveTowards(Vector2.Zero, 0.15f);
-                if (WrappedAttackTimer == 65f && SupremeCalamitasBehaviorOverride.CurrentAttack(Main.npc[CalamityGlobalNPC.SCal]) != SupremeCalamitasBehaviorOverride.SCalAttackType.LightningLines)
+                if (WrappedAttackTimer == 65f)
                 {
                     SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFuryShot, NPC.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)

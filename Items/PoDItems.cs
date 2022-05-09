@@ -57,7 +57,7 @@ namespace InfernumMode
                 foreach (TooltipLine line2 in tooltips)
                 {
                     if (line2.Mod == "Terraria" && line2.Name == "Tooltip1")
-                        line2.Text = "Summoned Providence when used at the profaned alter in the underworld";
+                        line2.Text = "Summons Providence when used at the profaned alter in the underworld";
                 }
             }
         }
@@ -66,7 +66,7 @@ namespace InfernumMode
         {
             if (!player.chaosState)
             {
-                player.AddBuff(BuffID.ChaosState, CalamityPlayer.chaosStateDurationBoss, true);
+                player.AddBuff(BuffID.ChaosState, CalamityPlayer.chaosStateDuration, true);
                 Projectile.NewProjectile(new InfernumSource(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<RoDFailPulse>(), 0, 0f, player.whoAmI);
 
                 string[] possibleEdgyShitToSay = new string[]

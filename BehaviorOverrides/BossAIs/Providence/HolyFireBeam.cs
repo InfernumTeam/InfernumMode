@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public ref float Time => ref Projectile.ai[0];
 
-        public const int Lifetime = 210;
+        public const int Lifetime = 360;
 
         public const float LaserLength = 4800f;
 

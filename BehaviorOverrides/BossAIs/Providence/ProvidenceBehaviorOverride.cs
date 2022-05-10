@@ -450,7 +450,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_MoltenBlasts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            int blastShootCount = 10;
+            int blastShootCount = 12;
             int totalBlobsFromBlasts = 8;
             int blastShootRate = 30;
             float moltenBlastSpeed = MathHelper.Lerp(14f, 20f, 1f - lifeRatio);
@@ -557,7 +557,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int explosionDelay = 315;
             int platformSpawnRate = 0;
             float boltSpeed = 7f;
-            float bombExplosionRadius = 1220f;
+            float bombExplosionRadius = 1600f;
 
             if (inPhase2)
             {
@@ -566,14 +566,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 boltCount += 2;
                 platformSpawnRate += 34;
                 boltSpeed += 2f;
-                bombExplosionRadius += 100f;
+                bombExplosionRadius += 300f;
             }
 
             if (inPhase3)
             {
                 blastShootCount++;
                 platformSpawnRate += 12;
-                bombExplosionRadius += 100f;
+                bombExplosionRadius += 300f;
             }
 
             ref float bombShootCounter = ref npc.Infernum().ExtraAI[1];
@@ -639,8 +639,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int crystalReleaseCount = 16;
             int crystalFanCount = 3;
             int platformSpawnRate = 0;
-            float maxFanOffsetAngle = 0.93f;
-            float crystalSpeed = 8.4f;
+            float maxFanOffsetAngle = 1.09f;
+            float crystalSpeed = 9.6f;
 
             if (inPhase2)
             {
@@ -958,7 +958,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int laserShootDelay = 180;
             int bladeRelaseRate = 45;
             int laserShootTime = HolyFireBeam.Lifetime;
-            float bladeSpeed = 8f;
+            float bladeSpeed = 9f;
             float maxLaserAngularVelocity = MathHelper.ToRadians(0.72f + (1f - lifeRatio) * 0.16f);
             ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float telegraphOpacity = ref npc.Infernum().ExtraAI[1];
@@ -1121,9 +1121,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public static void DoBehavior_HolyBlasts(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            int blastShootCount = 6;
-            int blastShootRate = 55;
-            int platformSpawnRate = 32;
+            int blastShootCount = 8;
+            int blastShootRate = 45;
+            int platformSpawnRate = 35;
             float holyBlastSpeed = MathHelper.Lerp(12f, 18f, 1f - lifeRatio);
 
             ref float blastShootCounter = ref npc.Infernum().ExtraAI[1];

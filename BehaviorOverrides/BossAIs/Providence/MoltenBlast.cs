@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             {
                 for (int i = 0; i < blobCount; i++)
                 {
-                    Vector2 velocity = Main.rand.NextVector2Circular(5f, 5f);
+                    Vector2 velocity = Main.rand.NextVector2Circular(9f, 9f);
                     Projectile.NewProjectile(projectile.Center, velocity, ModContent.ProjectileType<MoltenBlob>(), (int)Math.Round(projectile.damage * 0.75), 0f, projectile.owner);
                 }
 

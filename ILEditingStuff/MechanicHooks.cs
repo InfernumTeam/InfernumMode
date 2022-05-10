@@ -20,29 +20,6 @@ using static InfernumMode.ILEditingStuff.HookManager;
 
 namespace InfernumMode.ILEditingStuff
 {
-    public class MakeGolemRoomInvariableHook : IHookEdit
-    {
-        public static void MakeGolemRoomInvariable(ILContext il)
-        {
-            ILCursor cursor = new ILCursor(il);
-
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(106)))
-                return;
-
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchStloc(29)))
-                return;
-
-            cursor.Emit(OpCodes.Ldsfld, typeof(GolemBodyBehaviorOverride).GetField("ArenaWidth", Utilities.UniversalBindingFlags));
-            cursor.Emit(OpCodes.Stloc, 31);
-            cursor.Emit(OpCodes.Ldsfld, typeof(GolemBodyBehaviorOverride).GetField("ArenaHeight", Utilities.UniversalBindingFlags));
-            cursor.Emit(OpCodes.Stloc, 32);
-        }
-
-        public void Load() => CalamityGenNewTemple += MakeGolemRoomInvariable;
-
-        public void Unload() => CalamityGenNewTemple -= MakeGolemRoomInvariable;
-    }
-
     public class FixExoMechActiveDefinitionRigidityHook : IHookEdit
     {
         public static void ChangeExoMechIsActiveDefinition(ILContext il)

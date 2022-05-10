@@ -40,8 +40,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             WeightedRandom<int> enemySelector = new WeightedRandom<int>(Main.rand);
             enemySelector.Add(NPCID.EaterofSouls);
             enemySelector.Add(NPCID.DevourerHead, 0.4);
-            enemySelector.Add(ModContent.NPCType<DarkHeart>(), 0.65);
-            enemySelector.Add(ModContent.NPCType<DankCreeper>(), 0.4);
             NPC.NewNPC((int)projectile.Center.X, (int)projectile.Center.Y, enemySelector.Get(), 1);
         }
     }

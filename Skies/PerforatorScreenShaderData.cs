@@ -40,7 +40,7 @@ namespace InfernumMode.Skies
             if (HiveIndex != -1)
                 UseTargetPosition(Main.npc[HiveIndex].Center);
             else
-                Filters.Scene["InfernumMode:Perforators"].Deactivate(Array.Empty<object>());
+                Filters.Scene["InfernumMode:Perforators"].Deactivate();
             base.Apply();
         }
     }

@@ -11,46 +11,49 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 
         public override void SetDefaults()
         {
-            NPC.damage = 50;
-            NPC.width = 16;
-            NPC.height = 22;
-            NPC.defense = 20;
-            NPC.lifeMax = AquaticSeekerHead2.TotalLife;
-            NPC.aiStyle = AIType = -1;
-            NPC.knockBackResist = 0f;
-            NPC.alpha = 255;
-            NPC.behindTiles = true;
-            NPC.noGravity = true;
-            NPC.noTileCollide = true;
-            NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.netAlways = true;
-            NPC.dontCountMe = true;
+            npc.damage = 50;
+            npc.width = 16;
+            npc.height = 22;
+            npc.defense = 20;
+            npc.lifeMax = AquaticSeekerHead2.TotalLife;
+            npc.aiStyle = aiType = -1;
+            npc.knockBackResist = 0f;
+            npc.alpha = 255;
+            npc.behindTiles = true;
+            npc.noGravity = true;
+            npc.noTileCollide = true;
+            npc.HitSound = SoundID.NPCHit1;
+            npc.DeathSound = SoundID.NPCDeath1;
+            npc.netAlways = true;
+            npc.dontCountMe = true;
         }
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position) => false;
 
-        public override void AI() => AquaticSeekerBody2.DoSegmentBehavior(NPC);
+        public override void AI() => AquaticSeekerBody2.DoSegmentBehavior(npc);
 
-        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => NPC.lifeMax = AquaticSeekerHead2.TotalLife;
+        public override void ScaleExpertStats(int numPlayers, float bossLifeScale) => npc.lifeMax = AquaticSeekerHead2.TotalLife;
 
         public override bool CheckActive() => false;
 
-        public override bool SpecialOnKill() => true;
+        public override bool PreNPCLoot()
+        {
+            return false;
+        }
 
-		public override void HitEffect(int hitDirection, double damage)
+        public override void HitEffect(int hitDirection, double damage)
         {
             for (int k = 0; k < 3; k++)
             {
-                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
+                Dust.NewDust(npc.position, npc.width, npc.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
             }
-            if (NPC.life <= 0)
+            if (npc.life <= 0)
             {
                 for (int k = 0; k < 10; k++)
                 {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
+                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.Blood, hitDirection, -1f, 0, default, 1f);
                 }
-                Gore.NewGore(new InfernumSource(), NPC.position, NPC.velocity, Utilities.GetGoreID("AquaticSeekerTail", InfernumMode.CalamityMod), 1f);
+                Gore.NewGore(npc.position, npc.velocity, InfernumMode.CalamityMod.GetGoreSlot("Gores/AquaticScourgeGores/AquaticSeekerTail"), 1f);
             }
         }
     }

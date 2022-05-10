@@ -7,7 +7,6 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static InfernumMode.BehaviorOverrides.BossAIs.Draedon.ExoMechManagement;
@@ -44,7 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float hoverSpeed = 34f;
             float chargeSpeed = 24f;
             float spinAngularVelocity = MathHelper.ToRadians(1.8f);
-            float spinSlowdownInterpolant = Utils.GetLerpValue(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, attackTimer, true);
+            float spinSlowdownInterpolant = Utils.InverseLerp(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, attackTimer, true);
             ref float twinsSpinRotation = ref npc.Infernum().ExtraAI[0];
 
             if (CurrentTwinsPhase != 4)
@@ -88,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Shoot fireballs.
                 if (exoTwinIsShooting)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -107,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 // Shoot lasers.
                 if (exoTwinIsShooting)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LaserCannon"), npc.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -166,7 +165,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     {
                         npc.velocity = Vector2.UnitX * Math.Sign(target.Center.X - npc.Center.X) * chargeSpeed;
                         npc.netUpdate = true;
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/ELRFire"), target.Center);
+                        Main.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), target.Center);
                     }
 
                     // Release rockets upward.

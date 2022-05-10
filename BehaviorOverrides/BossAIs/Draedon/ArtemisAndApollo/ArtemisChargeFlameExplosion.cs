@@ -3,56 +3,55 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-    public class ArtemisChargeFlameExplosion : ModProjectile
+	public class ArtemisChargeFlameExplosion : ModProjectile
     {
-        public ref float Identity => ref Projectile.ai[0];
+        public ref float Identity => ref projectile.ai[0];
         public PrimitiveTrail LightningDrawer;
         public PrimitiveTrail LightningBackgroundDrawer;
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Exofire Explosion");
-            Main.projFrames[Projectile.type] = 5;
+            Main.projFrames[projectile.type] = 5;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 44;
-            Projectile.height = 44;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 300;
-            Projectile.Calamity().canBreakPlayerDefense = true;
-            CooldownSlot = 1;
+            projectile.width = 44;
+            projectile.height = 44;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 300;
+            projectile.Calamity().canBreakPlayerDefense = true;
+            cooldownSlot = 1;
         }
 
         public override void AI()
         {
             // Emit light.
-            Lighting.AddLight(Projectile.Center, 0.3f * Projectile.Opacity, 0.3f * Projectile.Opacity, 0.3f * Projectile.Opacity);
+            Lighting.AddLight(projectile.Center, 0.3f * projectile.Opacity, 0.3f * projectile.Opacity, 0.3f * projectile.Opacity);
 
             // Handle frames.
-            Projectile.frameCounter++;
-            Projectile.frame = Projectile.frameCounter / 8;
+            projectile.frameCounter++;
+            projectile.frame = projectile.frameCounter / 8;
 
             // Die once the final frame is passed.
-            if (Projectile.frame >= Main.projFrames[Projectile.type])
-                Projectile.Kill();
+            if (projectile.frame >= Main.projFrames[projectile.type])
+                projectile.Kill();
         }
 
-        public override bool CanHitPlayer(Player target) => Projectile.Opacity == 1f && Projectile.timeLeft < 240f;
+        public override bool CanHitPlayer(Player target) => projectile.Opacity == 1f && projectile.timeLeft < 240f;
 
         public override Color? GetAlpha(Color lightColor) => Color.White;
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Projectile.Opacity != 1f)
+            if (projectile.Opacity != 1f)
                 return;
 
             target.AddBuff(BuffID.OnFire, 240);
@@ -60,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
+            Main.PlaySound(SoundID.Item93, projectile.Center);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -69,13 +68,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             for (int i = 0; i < 3; i++)
             {
                 Vector2 sparkVelocity = Main.rand.NextVector2CircularEdge(10f, 10f);
-                Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<ExofireSpark>(), 530, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, sparkVelocity, ModContent.ProjectileType<ExofireSpark>(), 530, 0f);
             }
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = Projectile;
+            target.Calamity().lastProjectileHit = projectile;
         }
     }
 }

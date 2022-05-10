@@ -5,14 +5,16 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
 
+using TMLSoundType = Terraria.ModLoader.SoundType;
+
 namespace InfernumMode.BossIntroScreens
 {
-	public class AquaticScourgeIntroScreen : BaseIntroScreen
+    public class AquaticScourgeIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new(completionRatio =>
+        public override TextColorData TextColor => new TextColorData(completionRatio =>
         {
-            Color sulphuricColor = new(41, 142, 134);
-            Color fleshColor = new(165, 119, 112);
+            Color sulphuricColor = new Color(41, 142, 134);
+            Color fleshColor = new Color(165, 119, 112);
             return Color.Lerp(sulphuricColor, fleshColor, ((float)Math.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.PiOver2) * 0.5f + 0.5f) * 0.72f);
         });
 
@@ -24,6 +26,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<AquaticScourgeHead>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DesertScourgeRoar");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/DesertScourgeRoar");
     }
 }

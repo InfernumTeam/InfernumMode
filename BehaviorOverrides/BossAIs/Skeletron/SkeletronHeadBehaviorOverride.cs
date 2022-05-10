@@ -7,8 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 {
@@ -103,11 +101,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
                     if (phaseChangeCountdown == 35f)
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                        Main.PlaySound(SoundID.Roar, target.Center, 0);
                         npc.velocity = -Vector2.UnitY * 4f;
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
+                            Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<PolterghastWave>(), 0, 0f);
                     }
 
                     attackTimer = 0f;
@@ -182,29 +180,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 2000f))
             {
                 Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, animationTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(200f, 192f, animationTimer, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(0f, 15f, animationTimer, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(200f, 192f, animationTimer, true);
             }
 
-            npc.Opacity = Utils.GetLerpValue(0f, 45f, animationTimer, true);
+            npc.Opacity = Utils.InverseLerp(0f, 45f, animationTimer, true);
             npc.damage = 0;
             npc.dontTakeDamage = true;
 
             if (animationTimer < 90f)
-                npc.velocity = -Vector2.UnitY * MathHelper.Lerp(0.1f, 4f, Utils.GetLerpValue(0f, 35f, animationTimer, true) * Utils.GetLerpValue(45f, 35f, animationTimer, true));
+                npc.velocity = -Vector2.UnitY * MathHelper.Lerp(0.1f, 4f, Utils.InverseLerp(0f, 35f, animationTimer, true) * Utils.InverseLerp(45f, 35f, animationTimer, true));
 
             // Summon hands.
             if (animationTimer == 80f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int hand = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
+                    int hand = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
                     Main.npc[hand].ai[0] = -1f;
                     Main.npc[hand].ai[1] = npc.whoAmI;
                     Main.npc[hand].target = npc.target;
                     Main.npc[hand].netUpdate = true;
 
-                    hand = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
+                    hand = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.SkeletronHand, npc.whoAmI);
                     Main.npc[hand].ai[0] = 1f;
                     Main.npc[hand].ai[1] = npc.whoAmI;
                     Main.npc[hand].target = npc.target;
@@ -215,7 +213,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             // Roar and attack.
             if (animationTimer == 160f)
             {
-                SoundEngine.PlaySound(SoundID.Item122, target.Center);
+                Main.PlaySound(SoundID.Item122, target.Center);
                 for (int i = 0; i < 220; i++)
                 {
                     Dust ectoplasm = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(60f, 60f), 264);
@@ -231,9 +229,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             if (animationTimer == 190f)
             {
                 animationChargeTimer = 70f;
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                Main.PlaySound(SoundID.Roar, target.Center, 0);
 
-                float chargeSpeed = MathHelper.Lerp(6f, 14f, Utils.GetLerpValue(560f, 1230f, npc.Distance(target.Center), true));
+                float chargeSpeed = MathHelper.Lerp(6f, 14f, Utils.InverseLerp(560f, 1230f, npc.Distance(target.Center), true));
                 npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                 npc.netUpdate = true;
             }
@@ -317,14 +315,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             if (attackTimer % 1050f < 600f)
             {
                 Vector2 destination = target.Center - Vector2.UnitY * 250f;
-                Vector2 acceleration = new(0.135f, 0.085f);
+                Vector2 acceleration = new Vector2(0.135f, 0.085f);
                 DoHoverMovement(npc, destination, acceleration);
 
                 int skullShootRate = 42;
                 bool targetInLineOfSight = Collision.CanHit(npc.Center, 1, 1, target.position, target.width, target.head);
                 if (attackTimer % skullShootRate == skullShootRate - 1f && targetInLineOfSight)
                 {
-                    SoundEngine.PlaySound(SoundID.Item8, target.Center);
+                    Main.PlaySound(SoundID.Item8, target.Center);
                     Vector2 skullShootVelocity = Vector2.Lerp(npc.velocity.SafeNormalize(Vector2.UnitY), npc.SafeDirectionTo(target.Center, Vector2.UnitY), 0.75f) * npc.velocity.Length();
                     skullShootVelocity.X *= 0.4f;
                     skullShootVelocity = skullShootVelocity.ClampMagnitude(10f, 16f);
@@ -348,7 +346,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             else
             {
                 if (attackTimer % 1050f == 601f)
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    Main.PlaySound(SoundID.Roar, target.Center, 0);
 
                 float moveSpeed = BossRushEvent.BossRushActive ? 20.75f : 7.75f;
                 npc.direction = (npc.velocity.X > 0f).ToDirectionInt();
@@ -372,7 +370,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             int totalShots = 6;
             int shootRate = 45;
             Vector2 destination = target.Center - Vector2.UnitY * 360f;
-            Vector2 acceleration = new(0.08f, 0.06f);
+            Vector2 acceleration = new Vector2(0.08f, 0.06f);
             DoHoverMovement(npc, destination, acceleration);
 
             npc.rotation = npc.velocity.X * 0.05f;
@@ -383,7 +381,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             if (!npc.WithinRange(target.Center, 85f) && attackTimer % shootRate == shootRate - 1f)
             {
                 int currentShotCounter = (int)(attackTimer / shootRate);
-                SoundEngine.PlaySound(SoundID.Item8, target.Center);
+                Main.PlaySound(SoundID.Item8, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -420,7 +418,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
         public static void DoBehavior_HandWaves(NPC npc, Player target, ref float attackTimer)
         {
             Vector2 destination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 520f, -330f);
-            Vector2 acceleration = new(0.3f, 0.3f);
+            Vector2 acceleration = new Vector2(0.3f, 0.3f);
 
             if (attackTimer < 90f)
             {
@@ -443,7 +441,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             npc.rotation = npc.velocity.X * 0.05f;
 
             if (attackTimer % 160f == 85f)
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                Main.PlaySound(SoundID.Roar, target.Center, 0);
 
             if (attackTimer >= 305f)
             {
@@ -463,11 +461,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
             // Roar and charge after enough time has passed.
             if (attackTimer == 50f)
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                Main.PlaySound(SoundID.Roar, target.Center, 0);
 
             if (attackTimer >= 50f && attackTimer % 45f == 0f)
             {
-                SoundEngine.PlaySound(SoundID.Item8, target.Center);
+                Main.PlaySound(SoundID.Item8, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     if (phase3)
@@ -494,7 +492,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 }
             }
 
-            if (attackTimer is > 50f and < 270f)
+            if (attackTimer > 50f && attackTimer < 270f)
             {
                 float moveSpeed = BossRushEvent.BossRushActive ? 21.25f : 7.25f;
                 if (phase3)
@@ -526,7 +524,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
         {
             float adjustedTimer = attackTimer % 180f;
             Vector2 destination = target.Center - Vector2.UnitY * 400f;
-            Vector2 acceleration = new(0.5f, 0.35f);
+            Vector2 acceleration = new Vector2(0.5f, 0.35f);
             if (adjustedTimer > 45f)
             {
                 destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 100f;
@@ -551,7 +549,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
         {
             float adjustedTimer = attackTimer % 150f;
             Vector2 destination = target.Center - Vector2.UnitY * 360f;
-            Vector2 acceleration = new(0.4f, 0.27f);
+            Vector2 acceleration = new Vector2(0.4f, 0.27f);
             if (adjustedTimer > 45f)
             {
                 destination.X += (target.Center.X < npc.Center.X).ToDirectionInt() * 100f;
@@ -578,7 +576,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             int shootRate = 90;
             int attackDelay = 135;
             Vector2 destination = target.Center - Vector2.UnitY * 400f;
-            Vector2 acceleration = new(0.08f, 0.12f);
+            Vector2 acceleration = new Vector2(0.08f, 0.12f);
             DoHoverMovement(npc, destination, acceleration);
 
             npc.rotation = npc.velocity.X * 0.05f;
@@ -600,7 +598,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
             if (!npc.WithinRange(target.Center, 85f) && attackTimer % shootRate == shootRate - 1f && attackTimer > attackDelay)
             {
-                SoundEngine.PlaySound(SoundID.Item8, target.Center);
+                Main.PlaySound(SoundID.Item8, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -651,11 +649,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
             float backGlowFade = 0f;
 
             if (canDrawBehindGlow)
-                backGlowFade = Utils.GetLerpValue(10f, 65f, phaseChangeTimer, true);
+                backGlowFade = Utils.InverseLerp(10f, 65f, phaseChangeTimer, true);
             if (npc.Infernum().ExtraAI[1] >= 3f)
                 backGlowFade = 1f;
 
-            Texture2D npcTexture = TextureAssets.Npc[npc.type].Value;
+            Texture2D npcTexture = Main.npcTexture[npc.type];
             for (int i = 0; i < 6; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * (i + 0.5f) / 6f).ToRotationVector2() * 4f + Vector2.UnitY * 2f;
@@ -663,7 +661,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
                 Color drawColor = Color.Lerp(Color.Transparent, Color.Fuchsia, backGlowFade) * backGlowFade * 0.24f;
                 drawColor.A = 0;
 
-                Main.spriteBatch.Draw(npcTexture, drawPosition, null, drawColor, npc.rotation, npcTexture.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(npcTexture, drawPosition, null, drawColor, npc.rotation, npcTexture.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
 
             return true;

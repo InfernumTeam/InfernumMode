@@ -7,36 +7,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
 {
     public class SlowerSandTooth : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
-        public Player Target => Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+        public ref float Time => ref projectile.ai[0];
+        public Player Target => Main.player[Player.FindClosest(projectile.Center, 1, 1)];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Sand Tooth");
 
         public override void SetDefaults()
         {
-            Projectile.width = 20;
-            Projectile.height = 20;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.penetrate = 1;
-            Projectile.timeLeft = 450;
+            projectile.width = 20;
+            projectile.height = 20;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.penetrate = 1;
+            projectile.timeLeft = 450;
         }
 
         public override void AI()
         {
-            if (Time is < 250f and > 60f)
+            if (Time < 250f && Time > 60f)
             {
-                float oldSpeed = Projectile.velocity.Length();
-                Projectile.velocity = (Projectile.velocity * 24f + Projectile.SafeDirectionTo(Target.Center) * oldSpeed) / 25f;
-                Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * oldSpeed;
+                float oldSpeed = projectile.velocity.Length();
+                projectile.velocity = (projectile.velocity * 24f + projectile.SafeDirectionTo(Target.Center) * oldSpeed) / 25f;
+                projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * oldSpeed;
             }
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver4;
             Time++;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D tex = Utilities.ProjTexture(Projectile.type);
-            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, tex.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
+            Texture2D tex = Main.projectileTexture[projectile.type];
+            spriteBatch.Draw(tex, projectile.Center - Main.screenPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, tex.Size() / 2f, projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

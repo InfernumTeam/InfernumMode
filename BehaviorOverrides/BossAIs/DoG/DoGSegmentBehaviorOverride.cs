@@ -55,16 +55,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     npc.width = 120;
                     npc.height = 120;
                     npc.frame = new Rectangle(0, 0, 142, 126);
-                    bodyPhase2StartedField?.SetValue(npc.ModNPC, true);
-                    bodyPhase2StartedField2?.SetValue(npc.ModNPC, true);
+                    bodyPhase2StartedField?.SetValue(npc.modNPC, true);
+                    bodyPhase2StartedField2?.SetValue(npc.modNPC, true);
                 }
                 else
                 {
                     npc.width = 100;
                     npc.height = 100;
                     npc.frame = new Rectangle(0, 0, 106, 200);
-                    tailPhase2StartedField?.SetValue(npc.ModNPC, true);
-                    tailPhase2StartedField2?.SetValue(npc.ModNPC, true);
+                    tailPhase2StartedField?.SetValue(npc.modNPC, true);
+                    tailPhase2StartedField2?.SetValue(npc.modNPC, true);
                 }
             }
             npc.Infernum().ExtraAI[33] = head.Infernum().ExtraAI[33];
@@ -133,7 +133,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Reset the invicibility time variable used in the vanilla AI.
             if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
-                invincibilityTimeField.SetValue(npc.ModNPC, 0);
+                invincibilityTimeField.SetValue(npc.modNPC, 0);
 
             // Decide segment size stuff.
             Vector2 size = npc.Size;
@@ -188,8 +188,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (InPhase2)
             {
                 npc.scale = 1f;
-                Texture2D bodyTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Body").Value;
-                Texture2D glowmaskTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlow").Value;
+                Texture2D bodyTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Body");
+                Texture2D glowmaskTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2BodyGlow");
                 Vector2 drawPosition2 = npc.Center - Main.screenPosition;
                 Vector2 origin2 = bodyTexture2.Size() * 0.5f;
 
@@ -209,17 +209,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     for (int i = 0; i < 12; i++)
                     {
                         Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
-                        Main.spriteBatch.Draw(bodyTexture2, drawPosition2 + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(bodyTexture2, drawPosition2 + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
                     }
                 }
 
-                Main.spriteBatch.Draw(bodyTexture2, drawPosition2, null, npc.GetAlpha(lightColor), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(bodyTexture2, drawPosition2, null, npc.GetAlpha(lightColor), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
                 return false;
             }
 
-            Texture2D bodyTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Body").Value;
-            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1BodyGlowmask").Value;
+            Texture2D bodyTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Body");
+            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1BodyGlowmask");
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = bodyTexture.Size() * 0.5f;
 
@@ -239,11 +239,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
-                    Main.spriteBatch.Draw(bodyTexture, drawPosition + afterimageOffset, null, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(bodyTexture, drawPosition + afterimageOffset, null, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
                 }
             }
-            Main.spriteBatch.Draw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(bodyTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
     }
@@ -265,8 +265,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (InPhase2)
             {
                 npc.scale = 1f;
-                Texture2D tailTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Tail").Value;
-                Texture2D glowmaskTexture2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlow").Value;
+                Texture2D tailTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Tail");
+                Texture2D glowmaskTexture2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2TailGlow");
                 Vector2 drawPosition2 = npc.Center - Main.screenPosition;
                 Vector2 origin2 = tailTexture2.Size() * 0.5f;
 
@@ -286,17 +286,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     for (int i = 0; i < 12; i++)
                     {
                         Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
-                        Main.spriteBatch.Draw(tailTexture2, drawPosition2 + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(tailTexture2, drawPosition2 + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
                     }
                 }
 
-                Main.spriteBatch.Draw(tailTexture2, drawPosition2, null, npc.GetAlpha(lightColor), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(tailTexture2, drawPosition2, null, npc.GetAlpha(lightColor), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(glowmaskTexture2, drawPosition2, null, npc.GetAlpha(Color.White), npc.rotation, origin2, npc.scale, SpriteEffects.None, 0f);
                 return false;
             }
 
-            Texture2D tailTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Tail").Value;
-            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1TailGlowmask").Value;
+            Texture2D tailTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Tail");
+            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1TailGlowmask");
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = tailTexture.Size() * 0.5f;
 
@@ -316,11 +316,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
-                    Main.spriteBatch.Draw(tailTexture, drawPosition + afterimageOffset, null, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(tailTexture, drawPosition + afterimageOffset, null, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
                 }
             }
-            Main.spriteBatch.Draw(tailTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(tailTexture, drawPosition, null, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glowmaskTexture, drawPosition, null, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

@@ -14,7 +14,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using DoGHead = CalamityMod.NPCs.DevourerofGods.DevourerofGodsHead;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
@@ -77,8 +76,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             {
                 npc.Calamity().CanHaveBossHealthBar = true;
 
-                typeof(DoGHead).GetField("phase2Started", Utilities.UniversalBindingFlags)?.SetValue(npc.ModNPC, true);
-                typeof(DoGHead).GetField("Phase2Started", Utilities.UniversalBindingFlags)?.SetValue(npc.ModNPC, true);
+                typeof(DoGHead).GetField("phase2Started", Utilities.UniversalBindingFlags)?.SetValue(npc.modNPC, true);
+                typeof(DoGHead).GetField("Phase2Started", Utilities.UniversalBindingFlags)?.SetValue(npc.modNPC, true);
 
                 return DoGPhase2HeadBehaviorOverride.Phase2AI(npc, ref phaseCycleTimer, ref passiveAttackDelay, ref portalIndex, ref segmentFadeType);
             }
@@ -123,10 +122,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     for (int segmentSpawn = 0; segmentSpawn < 81; segmentSpawn++)
                     {
                         int segment;
-                        if (segmentSpawn is >= 0 and < 80)
-                            segment = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsBody").Type, npc.whoAmI);
+                        if (segmentSpawn >= 0 && segmentSpawn < 80)
+                            segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsBody"), npc.whoAmI);
                         else
-                            segment = NPC.NewNPC(new InfernumSource(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsTail").Type, npc.whoAmI);
+                            segment = NPC.NewNPC((int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.NPCType("DevourerofGodsTail"), npc.whoAmI);
 
                         Main.npc[segment].realLife = npc.whoAmI;
                         Main.npc[segment].ai[2] = npc.whoAmI;
@@ -155,9 +154,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 {
                     for (int a = 0; a < Main.maxNPCs; a++)
                     {
-                        if (Main.npc[a].type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsHead") .Type||
-                            Main.npc[a].type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsBody") .Type||
-                            Main.npc[a].type == InfernumMode.CalamityMod.Find<ModNPC>("DevourerofGodsTail").Type)
+                        if (Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsHead") ||
+                            Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsBody") ||
+                            Main.npc[a].type == InfernumMode.CalamityMod.NPCType("DevourerofGodsTail"))
                             Main.npc[a].active = false;
                     }
                 }
@@ -176,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 // Idly release laserbeams.
                 if (phaseCycleTimer % 150f == 0f && passiveAttackDelay >= 300f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item12, target.position);
+                    Main.PlaySound(SoundID.Item12, target.position);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 16; i++)
@@ -210,7 +209,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX) * 1600f;
-                    portalIndex = Projectile.NewProjectile(new InfernumSource(), spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
+                    portalIndex = Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
 
                     Main.projectile[(int)portalIndex].localAI[0] = 1f;
                     Main.projectile[(int)portalIndex].localAI[1] = 280f;
@@ -307,7 +306,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 idealFlyAcceleration *= 2.5f;
                 flySpeedFactor = 1.5f;
             }
-            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.GetLerpValue(460f, 600f, distanceFromDestination, true) * 0.41f;
+            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.InverseLerp(460f, 600f, distanceFromDestination, true) * 0.41f;
 
             // Charge if the player is far away.
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
@@ -330,10 +329,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (speed > 24.5f)
                     speed -= 0.08f;
 
-                if (directionToPlayerOrthogonality is < 0.85f and > 0.5f)
+                if (directionToPlayerOrthogonality < 0.85f && directionToPlayerOrthogonality > 0.5f)
                     speed += 0.24f;
 
-                if (directionToPlayerOrthogonality is < 0.5f and > (-0.7f))
+                if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
                     speed -= 0.1f;
 
                 speed = MathHelper.Clamp(speed, flySpeedFactor * 14f, flySpeedFactor * 32f);
@@ -354,7 +353,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         if (chompTime == 0f)
                         {
                             chompTime = 18f;
-                            SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
+                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
                         }
                     }
                 }
@@ -372,7 +371,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (chompTime == 0f)
                 {
                     chompTime = 18f;
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
                 }
             }
         }
@@ -391,11 +390,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             float jawRotation = npc.Infernum().ExtraAI[7];
 
-            Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Head").Value;
+            Texture2D headTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Head");
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 headTextureOrigin = headTexture.Size() * 0.5f;
 
-            Texture2D jawTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Jaw").Value;
+            Texture2D jawTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Jaw");
             Vector2 jawOrigin = jawTexture.Size() * 0.5f;
 
             for (int i = -1; i <= 1; i += 2)
@@ -410,14 +409,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Vector2 jawPosition = drawPosition;
                 jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * (18f + i * (34f + jawBaseOffset + (float)Math.Sin(jawRotation) * 20f));
                 jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (16f + (float)Math.Sin(jawRotation) * 20f);
-                Main.spriteBatch.Draw(jawTexture, jawPosition, null, lightColor, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
+                spriteBatch.Draw(jawTexture, jawPosition, null, lightColor, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
             }
 
             Rectangle headFrame = headTexture.Frame();
-            Main.spriteBatch.Draw(headTexture, drawPosition, headFrame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            spriteBatch.Draw(headTexture, drawPosition, headFrame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
 
-            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1HeadGlow").Value;
-            Main.spriteBatch.Draw(glowmaskTexture, drawPosition, headFrame, Color.White, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1HeadGlow");
+            spriteBatch.Draw(glowmaskTexture, drawPosition, headFrame, Color.White, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
             return false;
         }
         #endregion Drawing

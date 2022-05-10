@@ -7,7 +7,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
     public class AtlantisSpear2 : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[1];
+        public ref float Time => ref projectile.ai[1];
         public override string Texture => "CalamityMod/Projectiles/Magic/AtlantisSpear";
 
         public override void SetStaticDefaults()
@@ -17,63 +17,63 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 52;
-            Projectile.aiStyle = 4;
-            Projectile.friendly = false;
-            Projectile.hostile = true;
-            Projectile.alpha = 255;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
-            AIType = ProjectileID.CrystalVileShardShaft;
+            projectile.width = projectile.height = 52;
+            projectile.aiStyle = 4;
+            projectile.friendly = false;
+            projectile.hostile = true;
+            projectile.alpha = 255;
+            projectile.penetrate = -1;
+            projectile.tileCollide = false;
+            aiType = ProjectileID.CrystalVileShardShaft;
         }
 
         public override void AI()
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
-            if (Projectile.ai[0] == 0f)
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            if (projectile.ai[0] == 0f)
             {
-                Projectile.alpha -= 50;
-                if (Projectile.alpha <= 0)
+                projectile.alpha -= 50;
+                if (projectile.alpha <= 0)
                 {
-                    Projectile.alpha = 0;
-                    Projectile.ai[0] = 1f;
+                    projectile.alpha = 0;
+                    projectile.ai[0] = 1f;
                     if (Time == 0f)
                     {
                         Time++;
-                        Projectile.position += Projectile.velocity;
+                        projectile.position += projectile.velocity;
                     }
                 }
             }
             else
             {
-                if (Projectile.alpha < 170 && Projectile.alpha + 5 >= 170)
+                if (projectile.alpha < 170 && projectile.alpha + 5 >= 170)
                 {
                     for (int i = 0; i < 8; i++)
                     {
-                        Dust water = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 206, Projectile.velocity.X * 0.005f, Projectile.velocity.Y * 0.005f, 200, default, 1f);
+                        Dust water = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 206, projectile.velocity.X * 0.005f, projectile.velocity.Y * 0.005f, 200, default, 1f);
                         water.noGravity = true;
                         water.velocity *= 0.5f;
                     }
                 }
-                Projectile.alpha += 7;
-                if (Projectile.alpha >= 255)
+                projectile.alpha += 7;
+                if (projectile.alpha >= 255)
                 {
-                    Projectile.Kill();
+                    projectile.Kill();
                 }
             }
             if (Main.rand.NextBool(4))
             {
-                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, 206, Projectile.velocity.X * 0.005f, Projectile.velocity.Y * 0.005f);
+                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, 206, projectile.velocity.X * 0.005f, projectile.velocity.Y * 0.005f);
             }
         }
 
-        public override Color? GetAlpha(Color lightColor) => new Color(200, 200, 200, Projectile.alpha);
+        public override Color? GetAlpha(Color lightColor) => new Color(200, 200, 200, projectile.alpha);
 
         public override void Kill(int timeLeft)
         {
             for (int k = 0; k < 3; k++)
             {
-                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, 206, Projectile.oldVelocity.X * 0.005f, Projectile.oldVelocity.Y * 0.005f);
+                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, 206, projectile.oldVelocity.X * 0.005f, projectile.oldVelocity.Y * 0.005f);
             }
         }
     }

@@ -10,48 +10,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AquaticScourge
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Toxic Cloud");
-            Main.projFrames[Projectile.type] = 4;
+            Main.projFrames[projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 32;
-            Projectile.height = 32;
-            Projectile.hostile = true;
-            Projectile.alpha = 255;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 1800;
+            projectile.width = 32;
+            projectile.height = 32;
+            projectile.hostile = true;
+            projectile.alpha = 255;
+            projectile.penetrate = -1;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.timeLeft = 1800;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, 0.4f, 0.54f, 0.21f);
+            Lighting.AddLight(projectile.Center, 0.4f, 0.54f, 0.21f);
 
-            Projectile.frameCounter++;
-            Projectile.frame = Projectile.frameCounter / 9 % Main.projFrames[Projectile.type];
+            projectile.frameCounter++;
+            projectile.frame = projectile.frameCounter / 9 % Main.projFrames[projectile.type];
 
-            Projectile.velocity *= 0.995f;
+            projectile.velocity *= 0.995f;
 
-            if (Projectile.timeLeft < 180)
+            if (projectile.timeLeft < 180)
             {
-                Projectile.damage = 0;
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.03f, 0f, 1f);
-                if (Projectile.Opacity <= 0f)
-                    Projectile.Kill();
+                projectile.damage = 0;
+                projectile.Opacity = MathHelper.Clamp(projectile.Opacity - 0.03f, 0f, 1f);
+                if (projectile.Opacity <= 0f)
+                    projectile.Kill();
             }
-            else if (Projectile.alpha > 30)
+            else if (projectile.alpha > 30)
             {
-                Projectile.alpha -= 30;
-                if (Projectile.alpha < 30)
+                projectile.alpha -= 30;
+                if (projectile.alpha < 30)
                 {
-                    Projectile.alpha = 30;
+                    projectile.alpha = 30;
                 }
             }
         }
 
-        public override bool CanHitPlayer(Player target) => Projectile.timeLeft >= 180;
+        public override bool CanHitPlayer(Player target) => projectile.timeLeft >= 180;
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.Venom, 300);
     }

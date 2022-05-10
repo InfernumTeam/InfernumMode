@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -7,47 +8,47 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 {
     public class IchorBolt : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
+        public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ichor Spit");
-            Main.projFrames[Projectile.type] = 3;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
+            Main.projFrames[projectile.type] = 3;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 2;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 12;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 300;
-            Projectile.Opacity = 0f;
+            projectile.width = projectile.height = 12;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.timeLeft = 300;
+            projectile.Opacity = 0f;
         }
 
         public override void AI()
         {
             // Handle frames.
-            Projectile.frameCounter++;
-            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
+            projectile.frameCounter++;
+            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
             // Decide rotation.
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             // Accelerate.
-            if (Projectile.velocity.Length() < 20f)
-                Projectile.velocity *= 1.022f;
+            if (projectile.velocity.Length() < 20f)
+                projectile.velocity *= 1.022f;
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.1f, 0f, 1f);
         }
 
-        public override Color? GetAlpha(Color lightColor) => new(255, 255, 255, Projectile.alpha);
+        public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, projectile.alpha);
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
             return false;
         }
     }

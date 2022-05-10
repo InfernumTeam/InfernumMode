@@ -5,7 +5,6 @@ using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.Projectiles.Boss;
 using CalamityMod.Skies;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,14 +17,12 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using DraedonNPC = CalamityMod.NPCs.ExoMechs.Draedon;
-using Terraria.Audio;
-using Terraria.GameContent;
 using CalamityMod.Particles;
 using InfernumMode.Particles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-    public class AresBodyBehaviorOverride : NPCBehaviorOverride
+	public class AresBodyBehaviorOverride : NPCBehaviorOverride
     {
         public enum AresBodyFrameType
         {
@@ -130,16 +127,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     switch (i)
                     {
                         case 0:
-                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresLaserCannon>(), npc.whoAmI);
+                            lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresLaserCannon>(), npc.whoAmI);
                             break;
                         case 1:
-                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresPlasmaFlamethrower>(), npc.whoAmI);
+                            lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresPlasmaFlamethrower>(), npc.whoAmI);
                             break;
                         case 2:
-                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresTeslaCannon>(), npc.whoAmI);
+                            lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresTeslaCannon>(), npc.whoAmI);
                             break;
                         case 3:
-                            lol = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresPulseCannon>(), npc.whoAmI);
+                            lol = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<AresPulseCannon>(), npc.whoAmI);
                             break;
                         default:
                             break;
@@ -327,7 +324,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (deathAnimationTimer == 1f)
             {
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, implosionRingScale, implosionRingLifetime));
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AresEnraged"), npc.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AresEnraged"), npc.Center);
             }
 
             // Create particles that fly outward every frame.
@@ -351,7 +348,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Periodically create pulse rings.
             if (deathAnimationTimer > 10f && deathAnimationTimer < implosionRingLifetime - 30f && deathAnimationTimer % pulseRingCreationRate == pulseRingCreationRate - 1f)
             {
-                float finalScale = Utils.Remap(deathAnimationTimer, 25f, 160f, 3f, 5f) * implosionRingScale;
+                float finalScale = MathHelper.Lerp(3f, 5f, Utils.InverseLerp(25f, 160f, deathAnimationTimer, true));
                 Color pulseColor = CalamityUtils.MulticolorLerp(Main.rand.NextFloat(), CalamityUtils.ExoPalette);
 
                 for (int i = 0; i < 3; i++)
@@ -362,7 +359,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (deathAnimationTimer == implosionRingLifetime)
             {
                 GeneralParticleHandler.SpawnParticle(new ElectricExplosionRing(coreCenter, Vector2.Zero, CalamityUtils.ExoPalette, explosionRingScale, explosionTime));
-                var sound = SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
+                var sound = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
                 if (sound != null)
                     CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
             }
@@ -370,7 +367,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             deathAnimationTimer++;
 
             // Fade away as the explosion progresses.
-            float opacityFadeInterpolant = Utils.GetLerpValue(implosionRingLifetime + explosionTime * 0.75f, implosionRingLifetime, deathAnimationTimer, true);
+            float opacityFadeInterpolant = Utils.InverseLerp(implosionRingLifetime + explosionTime * 0.75f, implosionRingLifetime, deathAnimationTimer, true);
             npc.Opacity = (float)Math.Pow(opacityFadeInterpolant, 6.1);
 
             if (deathAnimationTimer == (int)(implosionRingLifetime + explosionTime * 0.5f))
@@ -392,7 +389,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 3f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
 
             // Clear away all lasers and laser telegraphs.
             if (phaseTransitionAnimationTime == 3f)
@@ -482,7 +479,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                             Utilities.NewProjectileBetter(coreSpawnPosition, shootVelocity, ModContent.ProjectileType<TeslaSpark>(), 550, 0f);
                         }
                     }
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/ELRFire"), target.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), target.Center);
                 }
                 npc.velocity *= 1.015f;
             }
@@ -546,7 +543,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Create laser bursts and tesla sparks.
             if (wrappedAttackTimer == telegraphTime - 1f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/TeslaCannonFire"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -617,7 +614,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Delete projectiles after the delay has concluded.
             if (attackTimer == shootDelay + 1f)
             {
-                List<int> projectilesToDelete = new()
+                List<int> projectilesToDelete = new List<int>()
                 {
                     ModContent.ProjectileType<AresPlasmaFireball>(),
                     ModContent.ProjectileType<AresPlasmaFireball2>(),
@@ -660,7 +657,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Create laser bursts.
             if (attackTimer == shootDelay + telegraphTime - 1f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/TeslaCannonFire"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TeslaCannonFire"), target.Center);
 
                 // Create lightning bolts in the sky.
                 int lightningBoltCount = ExoMechManagement.CurrentAresPhase >= 6 ? 55 : 30;
@@ -695,12 +692,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Make the laser spin.
             float adjustedTimer = attackTimer - (shootDelay + telegraphTime);
-            float spinSpeed = Utils.GetLerpValue(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 190f;
+            float spinSpeed = Utils.InverseLerp(0f, 420f, adjustedTimer, true) * MathHelper.Pi / 190f;
             if (npc.ai[0] == (int)AresBodyAttackType.DirectionChangingSpinBursts)
             {
                 if (adjustedTimer == (int)(spinTime * 0.5f) - 60)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
 
                     // Create lightning bolts in the sky.
                     int lightningBoltCount = ExoMechManagement.CurrentAresPhase >= 6 ? 55 : 30;
@@ -709,9 +706,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                 }
 
                 if (adjustedTimer < spinTime * 0.5f)
-                    spinSpeed *= Utils.GetLerpValue(spinTime * 0.5f, spinTime * 0.5f - 45f, adjustedTimer, true);
+                    spinSpeed *= Utils.InverseLerp(spinTime * 0.5f, spinTime * 0.5f - 45f, adjustedTimer, true);
                 else
-                    spinSpeed *= -Utils.GetLerpValue(spinTime * 0.5f, spinTime * 0.5f + 45f, adjustedTimer, true);
+                    spinSpeed *= -Utils.InverseLerp(spinTime * 0.5f, spinTime * 0.5f + 45f, adjustedTimer, true);
                 spinSpeed *= 0.84f;
             }
 
@@ -721,7 +718,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (!npc.WithinRange(target.Center, AresDeathBeamTelegraph.TelegraphWidth + 135f) && enraged == 0f)
             {
                 if (Main.player[Main.myPlayer].active && !Main.player[Main.myPlayer].dead)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/AresEnraged"), target.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/AresEnraged"), target.Center);
 
                 // Have Draedon comment on the player's attempts to escape.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -802,8 +799,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechComboAttackContent.AffectedAresArms.TryGetValue((ExoMechComboAttackContent.ExoMechComboAttackType)aresBody.ai[0], out int[] activeArms))
                 return !activeArms.Contains(npc.type);
 
-            bool chargingUp = aresBody.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex] is > 0f and
-                < ExoMechManagement.FinalPhaseTransitionTime;
+            bool chargingUp = aresBody.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex] > 0f &&
+                aresBody.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex] < ExoMechManagement.FinalPhaseTransitionTime;
             if (aresBody.ai[0] == (int)AresBodyAttackType.RadianceLaserBursts ||
                 aresBody.ai[0] == (int)AresBodyAttackType.HoverCharge ||
                 aresBody.ai[0] == (int)AresBodyAttackType.LaserSpinBursts ||
@@ -895,7 +892,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                     }
                     break;
                 case AresBodyFrameType.Laugh:
-                    if (currentFrame is <= 35 or >= 47)
+                    if (currentFrame <= 35 || currentFrame >= 47)
                         currentFrame = 36f;
 
                     if (npc.frameCounter >= 6D)
@@ -916,16 +913,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static float FlameTrailWidthFunctionBig(NPC npc, float completionRatio)
         {
-            return MathHelper.SmoothStep(60f, 22f, completionRatio) * Utils.GetLerpValue(0f, 15f, npc.Infernum().ExtraAI[0], true);
+            return MathHelper.SmoothStep(60f, 22f, completionRatio) * Utils.InverseLerp(0f, 15f, npc.Infernum().ExtraAI[0], true);
         }
 
         public static Color FlameTrailColorFunctionBig(NPC npc, float completionRatio)
         {
-            float trailOpacity = Utils.GetLerpValue(0.8f, 0.27f, completionRatio, true) * Utils.GetLerpValue(0f, 0.067f, completionRatio, true) * 1.3f;
+            float trailOpacity = Utils.InverseLerp(0.8f, 0.27f, completionRatio, true) * Utils.InverseLerp(0f, 0.067f, completionRatio, true) * 1.3f;
             Color startingColor = Color.Lerp(Color.White, Color.Yellow, 0.25f);
             Color middleColor = Color.Lerp(Color.Orange, Color.White, 0.35f);
             Color endColor = Color.Lerp(Color.Red, Color.White, 0.17f);
-            Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * Utils.GetLerpValue(0f, 15f, npc.Infernum().ExtraAI[0], true) * trailOpacity;
+            Color color = CalamityUtils.MulticolorLerp(completionRatio, startingColor, middleColor, endColor) * Utils.InverseLerp(0f, 15f, npc.Infernum().ExtraAI[0], true) * trailOpacity;
             color.A = 0;
             return color;
         }
@@ -978,30 +975,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (npc.Opacity > 0.05f)
             {
                 if (laserArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[laserArm].Center, armGlowmaskColor, armProperties[0].Item1, armProperties[0].Item2 });
+                    DrawArmFunction.Invoke(npc.modNPC, new object[] { spriteBatch, Main.npc[laserArm].Center, armGlowmaskColor, armProperties[0].Item1, armProperties[0].Item2 });
                 if (pulseArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[pulseArm].Center, armGlowmaskColor, armProperties[1].Item1, armProperties[1].Item2 });
+                    DrawArmFunction.Invoke(npc.modNPC, new object[] { spriteBatch, Main.npc[pulseArm].Center, armGlowmaskColor, armProperties[1].Item1, armProperties[1].Item2 });
                 if (teslaArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[teslaArm].Center, armGlowmaskColor, armProperties[2].Item1, armProperties[2].Item2 });
+                    DrawArmFunction.Invoke(npc.modNPC, new object[] { spriteBatch, Main.npc[teslaArm].Center, armGlowmaskColor, armProperties[2].Item1, armProperties[2].Item2 });
                 if (plasmaArm != -1)
-                    DrawArmFunction.Invoke(npc.ModNPC, new object[] { spriteBatch, Main.npc[plasmaArm].Center, armGlowmaskColor, armProperties[3].Item1, armProperties[3].Item2 });
+                    DrawArmFunction.Invoke(npc.modNPC, new object[] { spriteBatch, Main.npc[plasmaArm].Center, armGlowmaskColor, armProperties[3].Item1, armProperties[3].Item2 });
             }
 
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D texture = Main.npcTexture[npc.type];
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
             int numAfterimages = 9;
 
-            float finalPhaseGlowInterpolant = Utils.GetLerpValue(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex], true);
+            float finalPhaseGlowInterpolant = Utils.InverseLerp(0f, ExoMechManagement.FinalPhaseTransitionTime * 0.75f, npc.Infernum().ExtraAI[ExoMechManagement.FinalPhaseTimerIndex], true);
             if (finalPhaseGlowInterpolant > 0f)
             {
                 float backAfterimageOffset = finalPhaseGlowInterpolant * 6f;
                 for (int i = 0; i < 8; i++)
                 {
-                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTimeWrappedHourly * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
+                    Color color = Main.hslToRgb((i / 8f + Main.GlobalTime * 0.6f) % 1f, 1f, 0.56f) * 0.5f;
                     color.A = 0;
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 0.8f).ToRotationVector2() * backAfterimageOffset;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 0.8f).ToRotationVector2() * backAfterimageOffset;
                     Main.spriteBatch.Draw(texture, center + drawOffset, frame, npc.GetAlpha(color), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
                 }
             }
@@ -1020,7 +1017,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             Main.spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
-            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresBodyGlow").Value;
+            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresBodyGlow");
             if (npc.ai[0] == (int)AresBodyAttackType.HoverCharge)
                 afterimageBaseColor = Color.White;
 
@@ -1032,12 +1029,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             {
                 Main.spriteBatch.SetBlendState(BlendState.Additive);
 
-                Texture2D telegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D telegraphTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
                 float telegraphRotation = npc.Infernum().ExtraAI[ExoMechManagement.Ares_LineTelegraphRotationIndex];
                 float telegraphScaleFactor = telegraphInterpolant * 1.2f;
                 Vector2 telegraphStart = npc.Center + Vector2.UnitY * 34f + telegraphRotation.ToRotationVector2() * 20f - Main.screenPosition;
                 Vector2 telegraphOrigin = new Vector2(0.5f, 0f) * telegraphTexture.Size();
-                Vector2 telegraphScale = new(telegraphScaleFactor, 3f);
+                Vector2 telegraphScale = new Vector2(telegraphScaleFactor, 3f);
                 Color telegraphColor = new Color(255, 55, 0) * (float)Math.Pow(telegraphInterpolant, 0.79);
                 Main.spriteBatch.Draw(telegraphTexture, telegraphStart, null, telegraphColor, telegraphRotation - MathHelper.PiOver2, telegraphOrigin, telegraphScale, 0, 0f);
 

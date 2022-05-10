@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -6,78 +7,78 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 {
-	public class AcceleratingSkull : ModProjectile
+    public class AcceleratingSkull : ModProjectile
     {
-        public ref float IdealHorizontalOffsetSpeed => ref Projectile.ai[0];
+        public ref float IdealHorizontalOffsetSpeed => ref projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Skull");
-            Main.projFrames[Projectile.type] = 3;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            Main.projFrames[projectile.type] = 3;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 26;
-            Projectile.height = 28;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 300;
+            projectile.width = 26;
+            projectile.height = 28;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 300;
         }
         public override void AI()
         {
-            if (Projectile.localAI[0] == 0f)
+            if (projectile.localAI[0] == 0f)
             {
-                Projectile.frame = Main.rand.Next(Main.projFrames[Projectile.type]);
-                Projectile.localAI[0] = 1f;
+                projectile.frame = Main.rand.Next(Main.projFrames[projectile.type]);
+                projectile.localAI[0] = 1f;
             }
 
             // Move to the sides.
             if (IdealHorizontalOffsetSpeed != -9999f)
             {
-                Projectile.velocity.X = Utils.GetLerpValue(300f, 250f, Projectile.timeLeft, true) *
-                    Utils.GetLerpValue(220f, 250f, Projectile.timeLeft, true) *
+                projectile.velocity.X = Utils.InverseLerp(300f, 250f, projectile.timeLeft, true) *
+                    Utils.InverseLerp(220f, 250f, projectile.timeLeft, true) *
                     IdealHorizontalOffsetSpeed;
             }
 
             // And accelerate downward.
-            if (Projectile.timeLeft > 270f)
-                Projectile.velocity.Y *= 0.98f;
+            if (projectile.timeLeft > 270f)
+                projectile.velocity.Y *= 0.98f;
             else
             {
-                if (Projectile.velocity.Y < 2.5f)
-                    Projectile.velocity.Y = 2.5f;
-                Projectile.velocity.Y *= 1.0285f;
+                if (projectile.velocity.Y < 2.5f)
+                    projectile.velocity.Y = 2.5f;
+                projectile.velocity.Y *= 1.0285f;
             }
 
-            Projectile.rotation = Projectile.velocity.ToRotation();
-            Projectile.spriteDirection = (Math.Cos(Projectile.rotation) > 0f).ToDirectionInt();
-            if (Projectile.spriteDirection == -1)
-                Projectile.rotation += MathHelper.Pi;
+            projectile.rotation = projectile.velocity.ToRotation();
+            projectile.spriteDirection = (Math.Cos(projectile.rotation) > 0f).ToDirectionInt();
+            if (projectile.spriteDirection == -1)
+                projectile.rotation += MathHelper.Pi;
 
             for (int i = 0; i < 2; i++)
             {
-                Dust magic = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 264);
-                magic.velocity = -Projectile.velocity.RotatedByRandom(0.53f) * 0.15f;
+                Dust magic = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 264);
+                magic.velocity = -projectile.velocity.RotatedByRandom(0.53f) * 0.15f;
                 magic.scale = Main.rand.NextFloat(0.45f, 0.7f);
                 magic.fadeIn = 0.6f;
                 magic.noLight = true;
                 magic.noGravity = true;
             }
 
-            if (Projectile.timeLeft > 250f)
-                Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 0.3f);
+            if (projectile.timeLeft > 250f)
+                Lighting.AddLight(projectile.Center, Color.White.ToVector3() * 0.3f);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             Color drawColor = Color.Purple;
             drawColor.A = 0;
 
-            Utilities.DrawAfterimagesCentered(Projectile, drawColor, ProjectileID.Sets.TrailingMode[Projectile.type], 2);
+            Utilities.DrawAfterimagesCentered(projectile, drawColor, ProjectileID.Sets.TrailingMode[projectile.type], 2);
             return true;
         }
     }

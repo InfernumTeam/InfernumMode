@@ -3,28 +3,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 
 namespace InfernumMode.Skies
 {
-    public class PerforatorScene : ModSceneEffect
-    {
-        public override bool IsSceneEffectActive(Player player)
-        {
-            int perforatorHiveID = ModContent.NPCType<PerforatorHive>();
-            int perforatorHive = NPC.FindFirstNPC(perforatorHiveID);
-            NPC perforatorHiveNPC = perforatorHive >= 0 ? Main.npc[perforatorHive] : null;
-            return perforatorHiveNPC != null && perforatorHiveNPC.localAI[1] > 0f;
-        }
-
-        public override void SpecialVisuals(Player player)
-        {
-            player.ManageSpecialBiomeVisuals("InfernumMode:Perforators", IsSceneEffectActive(player));
-        }
-    }
-
     public class PerforatorSky : CustomSky
     {
         private bool isActive = false;
@@ -43,7 +26,7 @@ namespace InfernumMode.Skies
             }
 
             if (NPC.FindFirstNPC(ModContent.NPCType<PerforatorHive>()) == -1)
-                Deactivate(Array.Empty<object>());
+                Deactivate();
         }
 
         private float GetIntensity()
@@ -90,7 +73,7 @@ namespace InfernumMode.Skies
             if (maxDepth >= 0 && minDepth < 0)
             {
                 float intensity = this.GetIntensity();
-                Main.spriteBatch.Draw(TextureAssets.BlackTile.Value, new Rectangle(0, 0, Main.screenWidth * 2, Main.screenHeight * 2), Color.Crimson * intensity);
+                Main.spriteBatch.Draw(Main.blackTileTexture, new Rectangle(0, 0, Main.screenWidth * 2, Main.screenHeight * 2), Color.Crimson * intensity);
             }
         }
 

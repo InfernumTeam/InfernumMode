@@ -9,9 +9,8 @@ float uProgress;
 float2 uImageSize1;
 float2 uImageSize2;
 float uLetterCompletionRatio;
-float4 uShaderSpecificData;
 
-float GetLerpValue(float from, float to, float x)
+float InverseLerp(float from, float to, float x)
 {
     return saturate((x - from) / (to - from));
 }

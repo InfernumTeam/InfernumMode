@@ -1,18 +1,17 @@
 ﻿using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
+using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-	public class CatastropheBehaviorOverride : NPCBehaviorOverride
+    public class CatastropheBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<CalamitasRun2>();
 
@@ -63,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
+            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
             bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -156,7 +155,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                 npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
 
                 // Roar and begin carpet bombing.
-                SoundEngine.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
+                Main.PlaySound(SoundID.Roar, (int)npc.position.X, (int)npc.position.Y, 0, 1f, 0f);
             }
 
             if (attackTimer > redirectTime)
@@ -177,7 +176,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
                     shootVelocity += bombOffsetDirectionAngle.ToRotationVector2() * 2.12f;
                     Utilities.NewProjectileBetter(spawnPosition, shootVelocity, ModContent.ProjectileType<BrimstoneBomb>(), 140, 0f);
                 }
-                SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, target.Center);
+                Main.PlaySound(SoundID.DD2_BetsyFireballShot, target.Center);
             }
 
             if (attackTimer > redirectTime + carpetBombTime)
@@ -236,7 +235,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 80f) && attackTimer > 45f))
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                        Main.PlaySound(SoundID.Roar, npc.Center, 0);
                         npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
 
                         // Release fireballs upward if alone and charging down.
@@ -284,7 +283,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static void SelectNewAttack(NPC npc)
         {
-            List<CatastropheAttackType> possibleAttacks = new()
+            List<CatastropheAttackType> possibleAttacks = new List<CatastropheAttackType>
             {
                 CatastropheAttackType.BrimstoneCarpetBombing,
                 CatastropheAttackType.VerticalCharges

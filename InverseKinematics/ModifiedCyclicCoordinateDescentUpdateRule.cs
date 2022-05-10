@@ -17,7 +17,7 @@ namespace InfernumMode.InverseKinematics
         public void Update(LimbCollection limbs, Vector2 destination)
         {
             float distanceFromEnd = Vector2.Distance(destination, limbs.EndPoint);
-            float slowdownInterpolant = Utils.GetLerpValue(4f, 35f, distanceFromEnd, true);
+            float slowdownInterpolant = Utils.InverseLerp(4f, 35f, distanceFromEnd, true);
 
             Vector2 originalEndPoint = limbs.EndPoint;
             for (int i = limbs.Limbs.Length - 1; i >= 0; i--)

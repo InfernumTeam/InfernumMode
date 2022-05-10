@@ -10,7 +10,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using EbonianSlimeGod = CalamityMod.NPCs.SlimeGod.SlimeGod;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
@@ -218,7 +217,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
                     for (int i = 0; i < totalSlimesToSpawn; i++)
                     {
-                        int slime = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SlimeSpawnCrimson3>(), npc.whoAmI);
+                        int slime = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SlimeSpawnCrimson3>(), npc.whoAmI);
                         if (Main.npc.IndexInRange(slime))
                         {
                             Main.npc[slime].velocity = Main.rand.NextVector2CircularEdge(6f, 6f);
@@ -229,7 +228,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                     }
                 }
 
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SlimeGodPossession"), npc.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SlimeGodPossession"), npc.Center);
                 for (int k = 0; k < 50; k++)
                     Dust.NewDust(npc.position, npc.width, npc.height, 4, Main.rand.NextFloatDirection() * 3f, -1f, 0, default, 1f);
             }
@@ -309,7 +308,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
             // Attempt to hover to a position above the player.
             if (attackTimer < 420f)
             {
-                float flySpeed = MathHelper.Lerp(12.5f, 27f, Utils.GetLerpValue(150f, 300f, attackTimer, true));
+                float flySpeed = MathHelper.Lerp(12.5f, 27f, Utils.InverseLerp(150f, 300f, attackTimer, true));
                 Vector2 destination = target.Center - Vector2.UnitY * 340f;
                 npc.velocity = (npc.velocity * 4f + npc.SafeDirectionTo(destination) * flySpeed) / 5f;
 
@@ -333,7 +332,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
                 // If velocity is 0 (indicating something has been hit) create a shockwave and some other things.
                 if (npc.velocity.Y == 0f && attackTimer < 900f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 70, 1.25f, -0.25f);
+                    Main.PlaySound(SoundID.Item, (int)npc.position.X, (int)npc.position.Y, 70, 1.25f, -0.25f);
                     for (int x = (int)npc.Left.X - 30; x < (int)npc.Right.X + 30; x += 10)
                     {
                         for (int i = 0; i < 6; i++)
@@ -369,7 +368,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 
                 // Enforce extra gravity.
                 if (npc.velocity.Y < 42f)
-                    npc.velocity.Y += MathHelper.Lerp(0.3f, 1.5f, Utils.GetLerpValue(420f, 455f, attackTimer, true));
+                    npc.velocity.Y += MathHelper.Lerp(0.3f, 1.5f, Utils.InverseLerp(420f, 455f, attackTimer, true));
                 npc.velocity.X *= 0.9f;
 
                 // Custom gravity is used.

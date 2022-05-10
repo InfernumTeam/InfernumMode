@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
@@ -15,66 +14,66 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 18;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
-            Projectile.hostile = true;
-            Projectile.timeLeft = 360;
-            Projectile.Opacity = 0f;
-            Projectile.hide = true;
+            projectile.width = projectile.height = 18;
+            projectile.penetrate = -1;
+            projectile.tileCollide = false;
+            projectile.hostile = true;
+            projectile.timeLeft = 360;
+            projectile.Opacity = 0f;
+            projectile.hide = true;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.1f, 0f, 1f);
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (Projectile.timeLeft == 330)
-                SoundEngine.PlaySound(SoundID.Item12, Projectile.Center);
+            if (projectile.timeLeft == 330)
+                Main.PlaySound(SoundID.Item12, projectile.Center);
         }
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return new Color(255, 255, 255, 56) * Projectile.Opacity;
+            return new Color(255, 255, 255, 56) * projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            if (Projectile.timeLeft > 330)
+            if (projectile.timeLeft > 330)
             {
-                float width = (float)Math.Sin(MathHelper.Pi * Utils.GetLerpValue(360f, 330f, Projectile.timeLeft, true)) * 5f + 1f;
-                Vector2 end = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.Zero) * 5100f;
-                Main.spriteBatch.DrawLineBetter(Projectile.Center, end, Color.Red * 0.4f, width * 1.8f);
-                Main.spriteBatch.DrawLineBetter(Projectile.Center, end, Color.White * 0.6f, width);
+                float width = (float)Math.Sin(MathHelper.Pi * Utils.InverseLerp(360f, 330f, projectile.timeLeft, true)) * 5f + 1f;
+                Vector2 end = projectile.Center + projectile.velocity.SafeNormalize(Vector2.Zero) * 5100f;
+                spriteBatch.DrawLineBetter(projectile.Center, end, Color.Red * 0.4f, width * 1.8f);
+                spriteBatch.DrawLineBetter(projectile.Center, end, Color.White * 0.6f, width);
                 return false;
             }
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
+            Texture2D texture = Main.projectileTexture[projectile.type];
             Vector2 origin = texture.Size() * 0.5f;
 
             for (int i = 0; i < 7; i++)
             {
-                Vector2 drawOffset = -Projectile.velocity.SafeNormalize(Vector2.Zero) * i * 7f;
-                Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
-                Color backAfterimageColor = Projectile.GetAlpha(lightColor) * ((7f - i) / 7f);
-                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Vector2 drawOffset = -projectile.velocity.SafeNormalize(Vector2.Zero) * i * 7f;
+                Vector2 afterimageDrawPosition = projectile.Center + drawOffset - Main.screenPosition;
+                Color backAfterimageColor = projectile.GetAlpha(lightColor) * ((7f - i) / 7f);
+                spriteBatch.Draw(texture, afterimageDrawPosition, null, backAfterimageColor, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             }
 
-            Color frontAfterimageColor = Projectile.GetAlpha(lightColor) * 0.15f;
+            Color frontAfterimageColor = projectile.GetAlpha(lightColor) * 0.15f;
             for (int i = 0; i < 8; i++)
             {
-                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 4f;
-                Vector2 afterimageDrawPosition = Projectile.Center + drawOffset - Main.screenPosition;
-                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + projectile.rotation - MathHelper.PiOver2).ToRotationVector2() * 4f;
+                Vector2 afterimageDrawPosition = projectile.Center + drawOffset - Main.screenPosition;
+                spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             }
             return false;
         }
 
-        public override bool ShouldUpdatePosition() => Projectile.timeLeft < 330;
+        public override bool ShouldUpdatePosition() => projectile.timeLeft < 330;
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
         {
-            behindProjectiles.Add(index);
+            drawCacheProjsBehindProjectiles.Add(index);
         }
     }
 }

@@ -8,40 +8,39 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Terraria.WorldBuilding;
-using Terraria.Audio;
+using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
     public class MushroomPillar : ModProjectile
     {
-        public ref float MaxPillarHeight => ref Projectile.ai[0];
-        public ref float Time => ref Projectile.ai[1];
+        public ref float MaxPillarHeight => ref projectile.ai[0];
+        public ref float Time => ref projectile.ai[1];
         public float CurrentHeight = 0f;
         public const float StartingHeight = 22f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Mushroom Column");
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 28;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 200;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            projectile.width = projectile.height = 28;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 200;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(CurrentHeight);
-            writer.Write(Projectile.rotation);
+            writer.Write(projectile.rotation);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             CurrentHeight = reader.ReadSingle();
-            Projectile.rotation = reader.ReadSingle();
+            projectile.rotation = reader.ReadSingle();
         }
 
         public override void AI()
@@ -50,14 +49,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
             // Fade in at the beginning of the projectile's life.
             if (Time < 60f)
-                Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 1f, 0.35f);
+                projectile.Opacity = MathHelper.Lerp(projectile.Opacity, 1f, 0.35f);
 
             // Wither away at the end of the projectile's life.
-            else if (Projectile.timeLeft < 40f)
+            else if (projectile.timeLeft < 40f)
             {
-                Projectile.damage = 0;
-                Projectile.scale = MathHelper.Lerp(Projectile.scale, 0.05f, 0.08f);
-                Projectile.Opacity = MathHelper.Lerp(Projectile.Opacity, 0f, 0.25f);
+                projectile.damage = 0;
+                projectile.scale = MathHelper.Lerp(projectile.scale, 0.05f, 0.08f);
+                projectile.Opacity = MathHelper.Lerp(projectile.Opacity, 0f, 0.25f);
             }
 
             // Initialize the pillar.
@@ -67,24 +66,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             // Quickly rise.
             if (Main.netMode != NetmodeID.MultiplayerClient && Time >= 60f && Time < 75f)
             {
-                CurrentHeight = MathHelper.Lerp(StartingHeight, MaxPillarHeight, Utils.GetLerpValue(60f, 75f, Time, true));
+                CurrentHeight = MathHelper.Lerp(StartingHeight, MaxPillarHeight, Utils.InverseLerp(60f, 75f, Time, true));
                 if (Time % 6 == 0)
-                    Projectile.netUpdate = true;
+                    projectile.netUpdate = true;
             }
 
             // Play a sound when rising.
             if (Time == 70)
             {
-                Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-                SoundEngine.PlaySound(SoundID.Item42, target.Center);
+                Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+                Main.PlaySound(SoundID.Item42, target.Center);
             }
         }
 
         public void InitializePillarProperties()
         {
             // Prevent exploits by having the player linger underground in a tight tunnel.
-            Vector2 checkPosition = Projectile.Top - Vector2.UnitY * 160f;
-            bool exploitAttempted = !Collision.CanHit(Projectile.Bottom, 1, 1, Projectile.Top - Vector2.UnitY * 180f, 1, 1);
+            Vector2 checkPosition = projectile.Top - Vector2.UnitY * 160f;
+            bool exploitAttempted = !Collision.CanHit(projectile.Bottom, 1, 1, projectile.Top - Vector2.UnitY * 180f, 1, 1);
 
             WorldUtils.Find(checkPosition.ToTileCoordinates(), Searches.Chain(new Searches.Down(6000), new GenCondition[]
             {
@@ -94,56 +93,56 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             }), out Point newBottom);
 
             if (exploitAttempted)
-                newBottom = Projectile.Bottom.ToTileCoordinates();
+                newBottom = projectile.Bottom.ToTileCoordinates();
 
-            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).IsHalfBlock;
-            Projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
+            bool isHalfTile = CalamityUtils.ParanoidTileRetrieval(newBottom.X, newBottom.Y - 1).halfBrick();
+            projectile.Bottom = newBottom.ToWorldCoordinates(8, isHalfTile ? 8 : 0);
 
-            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            MaxPillarHeight = MathHelper.Max(0f, Projectile.Top.Y - target.Top.Y) + StartingHeight + 60f + Math.Abs(target.velocity.Y * 15f);
+            Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+            MaxPillarHeight = MathHelper.Max(0f, projectile.Top.Y - target.Top.Y) + StartingHeight + 60f + Math.Abs(target.velocity.Y * 15f);
 
             // Add some variance to the pillar height to make them feel a bit more alive.
-            MaxPillarHeight += MathHelper.Lerp(0f, 100f, Projectile.identity / 7f % 7f) * Main.rand.NextFloat(0.45f, 1.55f);
+            MaxPillarHeight += MathHelper.Lerp(0f, 100f, projectile.identity / 7f % 7f) * Main.rand.NextFloat(0.45f, 1.55f);
 
             CurrentHeight = StartingHeight;
-            Projectile.rotation = Main.rand.NextFloat(-0.1f, 0.1f);
+            projectile.rotation = Main.rand.NextFloat(-0.1f, 0.1f);
 
-            if (!Collision.CanHit(Projectile.Bottom - Vector2.UnitY * 10f, 2, 2, Projectile.Bottom - Vector2.UnitY * 32f, 2, 2))
-                Projectile.Kill();
+            if (!Collision.CanHit(projectile.Bottom - Vector2.UnitY * 10f, 2, 2, projectile.Bottom - Vector2.UnitY * 32f, 2, 2))
+                projectile.Kill();
 
-            Projectile.netUpdate = true;
+            projectile.netUpdate = true;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D mushroomTexture = ModContent.Request<Texture2D>(Texture).Value;
-            Vector2 aimDirection = Vector2.UnitY.RotatedBy(Projectile.rotation);
+            Texture2D mushroomTexture = ModContent.GetTexture(Texture);
+            Vector2 aimDirection = Vector2.UnitY.RotatedBy(projectile.rotation);
             if (Time < 60f)
             {
                 float telegraphLineWidth = (float)Math.Sin(Time / 60f * MathHelper.Pi) * 3f;
                 if (telegraphLineWidth > 2f)
                     telegraphLineWidth = 2f;
-                Main.spriteBatch.DrawLineBetter(Projectile.Top + aimDirection * 10f, Projectile.Top + aimDirection * -MaxPillarHeight, Color.Cyan, telegraphLineWidth);
+                spriteBatch.DrawLineBetter(projectile.Top + aimDirection * 10f, projectile.Top + aimDirection * -MaxPillarHeight, Color.Cyan, telegraphLineWidth);
             }
 
             float tipBottom = 0f;
-            Vector2 scale = new(Projectile.scale, 1f);
+            Vector2 scale = new Vector2(projectile.scale, 1f);
 
-            DrawStalk(scale, aimDirection, mushroomTexture, ref tipBottom);
+            DrawStalk(spriteBatch, scale, aimDirection, mushroomTexture, ref tipBottom);
 
-            Vector2 tipDrawPosition = Projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
-            Main.spriteBatch.Draw(mushroomTexture, tipDrawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            Vector2 tipDrawPosition = projectile.Bottom - aimDirection * (tipBottom + 4f) - Main.screenPosition;
+            spriteBatch.Draw(mushroomTexture, tipDrawPosition, null, projectile.GetAlpha(Color.White), projectile.rotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             return false;
         }
 
-        public void DrawStalk(Vector2 scale, Vector2 aimDirection, Texture2D mushroomTexture, ref float tipBottom)
+        public void DrawStalk(SpriteBatch spriteBatch, Vector2 scale, Vector2 aimDirection, Texture2D mushroomTexture, ref float tipBottom)
         {
-            Texture2D pillarTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/MushroomPillarPiece").Value;
+            Texture2D pillarTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/MushroomPillarPiece");
 
-            UnifiedRandom sproutRNG = new(Projectile.identity);
+            UnifiedRandom sproutRNG = new UnifiedRandom(projectile.identity);
             for (int i = pillarTexture.Height; i < CurrentHeight + pillarTexture.Height; i += pillarTexture.Height)
             {
-                Vector2 drawPosition = Projectile.Bottom - aimDirection * i - Main.screenPosition;
+                Vector2 drawPosition = projectile.Bottom - aimDirection * i - Main.screenPosition;
 
                 // Draw sprouts on the side from time to time.
                 if (sproutRNG.NextFloat() < 0.7f && Math.Abs(i - (CurrentHeight + pillarTexture.Height)) > 60f)
@@ -156,24 +155,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
                     float sproutRotation = aimDirection.RotatedBy(offsetRotation).ToRotation();
                     Vector2 sproutPosition = drawPosition + sproutRotation.ToRotationVector2().RotatedBy(-MathHelper.PiOver2) * 10f;
-                    Main.spriteBatch.Draw(mushroomTexture, sproutPosition, null, Projectile.GetAlpha(Color.White), sproutRotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(mushroomTexture, sproutPosition, null, projectile.GetAlpha(Color.White), sproutRotation, mushroomTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
                 }
 
-                Main.spriteBatch.Draw(pillarTexture, drawPosition, null, Projectile.GetAlpha(Color.White), Projectile.rotation, pillarTexture.Size() * new Vector2(0.5f, 0f), scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(pillarTexture, drawPosition, null, projectile.GetAlpha(Color.White), projectile.rotation, pillarTexture.Size() * new Vector2(0.5f, 0f), scale, SpriteEffects.None, 0f);
                 tipBottom = i;
             }
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
 
-        public override bool? CanDamage() => Time >= 70f ? null : false;
+        public override bool CanDamage() => Time >= 70f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            Vector2 start = Projectile.Bottom;
-            Vector2 end = Projectile.Bottom - Vector2.UnitY.RotatedBy(Projectile.rotation) * (CurrentHeight - 8f);
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Projectile.width * Projectile.scale, ref _);
+            Vector2 start = projectile.Bottom;
+            Vector2 end = projectile.Bottom - Vector2.UnitY.RotatedBy(projectile.rotation) * (CurrentHeight - 8f);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, projectile.width * projectile.scale, ref _);
         }
     }
 }

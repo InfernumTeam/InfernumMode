@@ -1,7 +1,7 @@
 ﻿using CalamityMod;
 using Terraria;
 using Terraria.ID;
-using Terraria.WorldBuilding;
+using Terraria.World.Generation;
 
 namespace InfernumMode.Miscellaneous
 {
@@ -9,12 +9,12 @@ namespace InfernumMode.Miscellaneous
     {
         public class ActiveAndNotActuated : GenCondition
         {
-            protected override bool CheckValidity(int x, int y) => CalamityUtils.ParanoidTileRetrieval(x, y).HasUnactuatedTile;
+            protected override bool CheckValidity(int x, int y) => CalamityUtils.ParanoidTileRetrieval(x, y).nactive();
         }
 
         public class NotPlatform : GenCondition
         {
-            protected override bool CheckValidity(int x, int y) => !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval(x, y).TileType];
+            protected override bool CheckValidity(int x, int y) => !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval(x, y).type];
         }
 
         public class IsSolidOrSolidTop : GenCondition
@@ -22,7 +22,7 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return tile.HasUnactuatedTile && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]);
+                return tile.nactive() && (Main.tileSolid[tile.type] || Main.tileSolidTop[tile.type]);
             }
         }
 
@@ -31,7 +31,7 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return tile.LiquidAmount >= 200 && tile.LiquidType == LiquidID.Water;
+                return (tile.liquid >= 200 && !tile.honey() && !tile.lava());
             }
         }
 
@@ -40,7 +40,7 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return (tile.LiquidAmount >= 200 && tile.LiquidType == LiquidID.Water) || (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]);
+                return (tile.liquid >= 200 && !tile.honey() && !tile.lava()) || (tile.nactive() && Main.tileSolid[tile.type]);
             }
         }
 
@@ -49,7 +49,7 @@ namespace InfernumMode.Miscellaneous
             protected override bool CheckValidity(int x, int y)
             {
                 Tile tile = CalamityUtils.ParanoidTileRetrieval(x, y);
-                return (tile.LiquidAmount >= 200 && tile.LiquidType == LiquidID.Lava) || (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType]);
+                return (tile.liquid >= 200 && tile.lava()) || (tile.nactive() && Main.tileSolid[tile.type]);
             }
         }
     }

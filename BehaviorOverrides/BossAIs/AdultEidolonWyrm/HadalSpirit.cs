@@ -13,41 +13,41 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Hadal Spirit");
-            Main.projFrames[Projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            Main.projFrames[projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 32;
-            Projectile.height = 32;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.penetrate = -1;
-            Projectile.alpha = 255;
-            Projectile.timeLeft = 240;
-            CooldownSlot = 1;
+            projectile.width = 32;
+            projectile.height = 32;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.penetrate = -1;
+            projectile.alpha = 255;
+            projectile.timeLeft = 240;
+            cooldownSlot = 1;
         }
 
         public override void AI()
         {
-            Projectile.frameCounter++;
-            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
-            Projectile.Opacity = Utils.GetLerpValue(240f, 230f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 8f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            projectile.frameCounter++;
+            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
+            projectile.Opacity = Utils.InverseLerp(240f, 230f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 8f, projectile.timeLeft, true);
+            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            float etherealnessFactor = Projectile.Opacity * 0.6f;
-            float opacity = MathHelper.Lerp(1f, 0.75f, etherealnessFactor) * Projectile.Opacity;
-            Color color = Color.Lerp(lightColor, Main.hslToRgb(Main.GlobalTimeWrappedHourly * 0.7f % 1f, 1f, 0.85f), etherealnessFactor * 0.85f);
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            float etherealnessFactor = projectile.Opacity * 0.6f;
+            float opacity = MathHelper.Lerp(1f, 0.75f, etherealnessFactor) * projectile.Opacity;
+            Color color = Color.Lerp(lightColor, Main.hslToRgb(Main.GlobalTime * 0.7f % 1f, 1f, 0.85f), etherealnessFactor * 0.85f);
             color.A = (byte)(int)(255 - etherealnessFactor * 84f);
-            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+            Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
 
             if (etherealnessFactor > 0f)
@@ -56,22 +56,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
                 for (int i = 0; i < 16; i++)
                 {
-                    Color baseColor = Main.hslToRgb((Main.GlobalTimeWrappedHourly * 1.7f + i / 16f + Projectile.identity * 0.31f) % 1f, 1f, 0.9f);
+                    Color baseColor = Main.hslToRgb((Main.GlobalTime * 1.7f + i / 16f + projectile.identity * 0.31f) % 1f, 1f, 0.9f);
                     Color etherealAfterimageColor = Color.Lerp(lightColor, baseColor, etherealnessFactor * 0.85f) * 0.32f;
                     etherealAfterimageColor.A = (byte)(int)(255 - etherealnessFactor * 255f);
                     Vector2 drawOffset = (MathHelper.TwoPi * i / 16f).ToRotationVector2() * etherealOffsetPulse;
-                    Main.spriteBatch.Draw(texture, drawPosition + drawOffset, frame, etherealAfterimageColor * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(texture, drawPosition + drawOffset, frame, etherealAfterimageColor * opacity, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
                 }
             }
 
             for (int i = 0; i < (int)Math.Round(1f + etherealnessFactor); i++)
-                Main.spriteBatch.Draw(texture, drawPosition, frame, color * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, drawPosition, frame, color * opacity, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = Projectile;
+            target.Calamity().lastProjectileHit = projectile;
         }
     }
 }

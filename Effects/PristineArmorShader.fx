@@ -14,7 +14,6 @@ float2 uImageSize0;
 float2 uImageSize1;
 float uIntensity;
 float uVibrancy;
-float4 uShaderSpecificData;
 
 float4 CosineInterpolation(float value)
 {

@@ -19,6 +19,7 @@ using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SunkenSea;
 using CalamityMod.NPCs.SupremeCalamitas;
 using CalamityMod.NPCs.Yharon;
+using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone;
 using InfernumMode.BehaviorOverrides.BossAIs.EoW;
 using System.Collections.Generic;
@@ -34,14 +35,14 @@ using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 
 namespace InfernumMode.Balancing
 {
-	public static class NPCHPValues
+    public static class NPCHPValues
     {
-        public static Dictionary<int, int> HPValues => new()
+        public static Dictionary<int, int> HPValues => new Dictionary<int, int>()
         {
             [ModContent.NPCType<DesertScourgeHead>()] = BossRushEvent.BossRushActive ? 1185000 : 7200,
             [ModContent.NPCType<GiantClam>()] = Main.hardMode ? 16200 : 4100,
             [NPCID.KingSlime] = BossRushEvent.BossRushActive ? 420000 : 4200,
-            [NPCID.EyeofCthulhu] = BossRushEvent.BossRushActive ? 770000 : 6620,
+            [NPCID.EyeofCthulhu] = BossRushEvent.BossRushActive ? 770000 : 6100,
             [NPCID.BrainofCthulhu] = BossRushEvent.BossRushActive ? 289000 : 11089,
             [ModContent.NPCType<CrabulonBoss>()] = BossRushEvent.BossRushActive ? 1776000 : 12400,
             [NPCID.EaterofWorldsHead] = BossRushEvent.BossRushActive ? EoWHeadBehaviorOverride.TotalLifeAcrossWormBossRush : EoWHeadBehaviorOverride.TotalLifeAcrossWorm,
@@ -51,7 +52,7 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<HiveMindP1Boss>()] = BossRushEvent.BossRushActive ? 606007 : 9600,
             [ModContent.NPCType<PerforatorHive>()] = BossRushEvent.BossRushActive ? 420419 : 7265,
             [ModContent.NPCType<PerforatorHeadSmall>()] = BossRushEvent.BossRushActive ? 119000 : 3000,
-            [ModContent.NPCType<PerforatorHeadMedium>()] = BossRushEvent.BossRushActive ? 200000 : 4335,
+            [ModContent.NPCType<PerforatorBodyMedium>()] = BossRushEvent.BossRushActive ? 7675 : 160,
             [ModContent.NPCType<PerforatorHeadLarge>()] = BossRushEvent.BossRushActive ? 174500 : 5500,
             [NPCID.QueenBee] = BossRushEvent.BossRushActive ? 611100 : 9669,
             [NPCID.SkeletronHead] = BossRushEvent.BossRushActive ? 608105 : 13860,
@@ -71,9 +72,9 @@ namespace InfernumMode.Balancing
             [NPCID.TheDestroyer] = BossRushEvent.BossRushActive ? 610580 : CalculateMechHP(111000),
             [NPCID.Probe] = BossRushEvent.BossRushActive ? 15000 : CalculateMechHP(170),
             [ModContent.NPCType<BrimstoneElemental>()] = BossRushEvent.BossRushActive ? 1105000 : 85515,
-            [ModContent.NPCType<CalamitasRun3>()] = BossRushEvent.BossRushActive ? 485000 : DownedBossSystem.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 244444 : 76250,
-            [ModContent.NPCType<CalamitasRun>()] = BossRushEvent.BossRushActive ? 193380 : DownedBossSystem.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 55000 : 20600,
-            [ModContent.NPCType<CalamitasRun2>()] = BossRushEvent.BossRushActive ? 176085 : DownedBossSystem.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 41000 : 13000,
+            [ModContent.NPCType<CalamitasRun3>()] = BossRushEvent.BossRushActive ? 485000 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 244444 : 76250,
+            [ModContent.NPCType<CalamitasRun>()] = BossRushEvent.BossRushActive ? 193380 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 55000 : 20600,
+            [ModContent.NPCType<CalamitasRun2>()] = BossRushEvent.BossRushActive ? 176085 : CalamityWorld.downedProvidence && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI ? 41000 : 13000,
             [ModContent.NPCType<SoulSeeker>()] = BossRushEvent.BossRushActive ? 24000 : 2100,
             [NPCID.Plantera] = BossRushEvent.BossRushActive ? 575576 : 110500,
             [ModContent.NPCType<Leviathan>()] = BossRushEvent.BossRushActive ? 1200000 : 116096,
@@ -95,13 +96,13 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<ProfanedGuardianBoss2>()] = BossRushEvent.BossRushActive ? 205000 : 72000,
             [ModContent.NPCType<ProfanedGuardianBoss3>()] = BossRushEvent.BossRushActive ? 205000 : 72000,
             [ModContent.NPCType<Bumblefuck>()] = BossRushEvent.BossRushActive ? 860000 : 280000,
-            [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 600000,
+            [ModContent.NPCType<ProvidenceBoss>()] = BossRushEvent.BossRushActive ? 2015000 : 520000,
             [ModContent.NPCType<StormWeaverHead>()] = BossRushEvent.BossRushActive ? 632100 : 465432,
             [ModContent.NPCType<OldDukeBoss>()] = BossRushEvent.BossRushActive ? 1600000 : 1000001,
             [ModContent.NPCType<DevourerofGodsHead>()] = BossRushEvent.BossRushActive ? 2450000 : 1116000,
             [ModContent.NPCType<Yharon>()] = BossRushEvent.BossRushActive ? 3333330 : 2718280,
             [ModContent.NPCType<ThanatosHead>()] = 1256160,
-            [ModContent.NPCType<AresBody>()] = 2500000,
+            [ModContent.NPCType<AresBody>()] = 2300000,
             [ModContent.NPCType<Artemis>()] = 2300000,
             [ModContent.NPCType<Apollo>()] = 2300000,
             [ModContent.NPCType<SupremeCalamitas>()] = BossRushEvent.BossRushActive ? 3456780 : -1,

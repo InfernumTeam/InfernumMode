@@ -11,14 +11,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 {
     public class GolemEyeLaserRay : BaseLaserbeamProjectile
     {
-        public ref float AngularVelocity => ref Projectile.ai[0];
-        public int OwnerIndex => (int)Projectile.ai[1];
+        public ref float AngularVelocity => ref projectile.ai[0];
+        public int OwnerIndex => (int)projectile.ai[1];
         public override float Lifetime => 120;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.White;
-        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/GolemHeadBeamBegin").Value;
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/GolemHeadBeamMid").Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/GolemHeadBeamEnd").Value;
+        public override Texture2D LaserBeginTexture => ModContent.GetTexture("InfernumMode/ExtraTextures/GolemHeadBeamBegin");
+        public override Texture2D LaserMiddleTexture => ModContent.GetTexture("InfernumMode/ExtraTextures/GolemHeadBeamMid");
+        public override Texture2D LaserEndTexture => ModContent.GetTexture("InfernumMode/ExtraTextures/GolemHeadBeamEnd");
         public override float MaxLaserLength => 2400f;
         public override float MaxScale => 1f;
         public override string Texture => "InfernumMode/ExtraTextures/GolemHeadBeamBegin";
@@ -26,40 +26,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 14;
-            Projectile.hostile = true;
-            Projectile.alpha = 255;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
-            Projectile.timeLeft = (int)Lifetime;
-            Projectile.Calamity().canBreakPlayerDefense = true;
-            CooldownSlot = 1;
+            projectile.width = projectile.height = 14;
+            projectile.hostile = true;
+            projectile.alpha = 255;
+            projectile.penetrate = -1;
+            projectile.tileCollide = false;
+            projectile.timeLeft = (int)Lifetime;
+            projectile.Calamity().canBreakPlayerDefense = true;
+            cooldownSlot = 1;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(Projectile.localAI[0]);
-            writer.Write(Projectile.localAI[1]);
+            writer.Write(projectile.localAI[0]);
+            writer.Write(projectile.localAI[1]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            Projectile.localAI[0] = reader.ReadSingle();
-            Projectile.localAI[1] = reader.ReadSingle();
+            projectile.localAI[0] = reader.ReadSingle();
+            projectile.localAI[1] = reader.ReadSingle();
         }
         public override void AttachToSomething()
         {
             if (!Main.npc.IndexInRange(OwnerIndex))
             {
-                Projectile.Kill();
+                projectile.Kill();
                 return;
             }
 
-            Projectile.Center = Main.npc[OwnerIndex].Bottom + new Vector2((AngularVelocity > 0f).ToDirectionInt() * 15f, -57f).RotatedBy(Main.npc[OwnerIndex].rotation) + Projectile.velocity * 2f;
-            Projectile.velocity = Projectile.velocity.RotatedBy(AngularVelocity).SafeNormalize(Vector2.UnitY);
+            projectile.Center = Main.npc[OwnerIndex].Bottom + new Vector2((AngularVelocity > 0f).ToDirectionInt() * 15f, -57f).RotatedBy(Main.npc[OwnerIndex].rotation) + projectile.velocity * 2f;
+            projectile.velocity = projectile.velocity.RotatedBy(AngularVelocity).SafeNormalize(Vector2.UnitY);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(BuffID.OnFire, 240);
     }

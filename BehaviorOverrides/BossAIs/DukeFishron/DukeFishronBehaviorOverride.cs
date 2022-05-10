@@ -13,8 +13,7 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
-using Terraria.Audio;
+using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 {
@@ -141,11 +140,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             DukeAttackType.RazorbladeRazorstorm,
         };
 
-        public static readonly Dictionary<DukeAttackType[], Func<NPC, bool>> SubphaseTable = new()
+        public static readonly Dictionary<DukeAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<DukeAttackType[], Func<NPC, bool>>()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > Phase2LifeRatio,
-            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax is < Phase2LifeRatio and >= Phase3LifeRatio,
-            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax is < Phase3LifeRatio and >= Phase4LifeRatio,
+            [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio,
+            [Subphase3Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase3LifeRatio && npc.life / (float)npc.lifeMax >= Phase4LifeRatio,
             [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase4LifeRatio,
         };
 
@@ -181,7 +180,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             npc.dontTakeDamage = false;
             npc.damage = npc.defDamage;
-            npc.Calamity().DR = MathHelper.Lerp(0.1f, 0.37f, Utils.GetLerpValue(5f, 1.6f, npc.velocity.Length(), true));
+            npc.Calamity().DR = MathHelper.Lerp(0.1f, 0.37f, Utils.InverseLerp(5f, 1.6f, npc.velocity.Length(), true));
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool inPhase2 = lifeRatio < Phase2LifeRatio;
             bool inPhase3 = lifeRatio < Phase3LifeRatio;
@@ -217,7 +216,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                 // Roar in the middle of animation.
                 if (attackDelay == 30f)
-                    SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                    Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
 
                 if (attackDelay >= 30f)
                     frameDrawType = (int)DukeFrameDrawingType.OpenMouth;
@@ -242,7 +241,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 if (phaseTransitionTime == 75f)
                 {
                     hasEyes01Flag = 1f;
-                    SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                    Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
                 }
 
                 phaseTransitionTime++;
@@ -391,7 +390,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 float predictivenessFactor = 0f;
 
                 if (enraged)
-                    predictivenessFactor = Utils.GetLerpValue(80f, 360f, npc.Distance(target.Center), true) * 20f;
+                    predictivenessFactor = Utils.InverseLerp(80f, 360f, npc.Distance(target.Center), true) * 20f;
 
                 npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
                 npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor) * chargeSpeed;
@@ -466,7 +465,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (hoverDirection == 0f)
             {
                 hoverDirection = Math.Sign((npc.Center - target.Center).X);
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
             }
 
             Vector2 hoverVelocity = npc.SafeDirectionTo(target.Center + new Vector2(hoverDirection * 400f, -320f) - npc.velocity) * 8f;
@@ -476,11 +475,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             // Belch bubbles.
             if (attackTimer % bubbleShootRate == 0)
             {
-                SoundEngine.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
+                Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int bubble = NPC.NewNPC(new InfernumSource(), (int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
+                    int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
                     Main.npc[bubble].velocity = Main.npc[bubble].SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * Main.rand.NextFloat(minBubbleSpeed, maxBubbleSpeed);
                 }
             }
@@ -516,7 +515,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (hoverDirection == 0f)
             {
                 hoverDirection = Math.Sign((npc.Center - target.Center).X);
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
             }
 
             // Hover into position.
@@ -526,7 +525,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 npc.damage = 0;
 
                 // Define rotation.
-                float slowdownFactor = Utils.GetLerpValue(hoverRedirectTime - 45f, hoverRedirectTime, attackTimer, true);
+                float slowdownFactor = Utils.InverseLerp(hoverRedirectTime - 45f, hoverRedirectTime, attackTimer, true);
                 float idealRotation = npc.AngleTo(target.Center).AngleLerp(GetAdjustedRotation(npc, target, 0f), slowdownFactor);
                 npc.rotation = npc.rotation.AngleLerp(GetAdjustedRotation(npc, target, idealRotation, true), 0.25f);
 
@@ -539,7 +538,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (attackTimer == hoverRedirectTime)
             {
                 npc.velocity = Vector2.UnitX * -npc.spriteDirection * chargeSpeed;
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
             }
 
             // Spin and release bubbles.
@@ -560,11 +559,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                 if (attackTimer % bubbleReleaseRate == bubbleReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
+                    Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int bubble = NPC.NewNPC(new InfernumSource(), (int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
+                        int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, NPCID.DetonatingBubble);
                         Main.npc[bubble].velocity = Main.npc[bubble].SafeDirectionTo(target.Center).RotatedByRandom(0.1f) * Main.rand.NextFloat(10f, 16f);
                     }
                 }
@@ -612,18 +611,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     npc.netUpdate = true;
 
                     // Roar.
-                    SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                    Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
                 }
             }
 
             // And dash while releasing bubbles.
             else if (attackSubstate == 1f)
             {
-                SoundEngine.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
+                Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % bubbleShootRate == bubbleShootRate - 1)
                 {
-                    int bubble = NPC.NewNPC(new InfernumSource(), (int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedirectingBubble>());
+                    int bubble = NPC.NewNPC((int)mouthPosition.X, (int)mouthPosition.Y, ModContent.NPCType<RedirectingBubble>());
                     Main.npc[bubble].Center += npc.velocity * 1.5f;
                     Main.npc[bubble].velocity = Vector2.UnitY * ((int)(attackTimer / bubbleShootRate) % 2 == 0).ToDirectionInt() * RedirectingBubble.InitialSpeed;
                     Main.npc[bubble].velocity += npc.velocity * 0.4f;
@@ -659,8 +658,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (attackTimer == slowdownTime)
             {
                 // Roar.
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
-                List<int> xSpawnPositions = new()
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                List<int> xSpawnPositions = new List<int>()
                 {
                     (int)(target.Center.X - (enraged ? 500f : 600f)) / 16,
                     (int)(target.Center.X + (enraged ? 500f : 600f)) / 16
@@ -736,7 +735,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (attackTimer == redirectTime)
             {
                 // Roar.
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
 
                 npc.velocity = npc.SafeDirectionTo(target.Center) * lungeSpeed;
                 npc.netUpdate = true;
@@ -762,7 +761,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     if (Main.netMode != NetmodeID.Server)
                     {
                         WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
-                        float waveSine = 0.1f * (float)Math.Sin(Main.GlobalTimeWrappedHourly * 20f);
+                        float waveSine = 0.1f * (float)Math.Sin(Main.GlobalTime * 20f);
                         Vector2 ripplePos = npc.Center + npc.velocity * 7f;
                         Color waveData = new Color(0.5f, 0.1f * Math.Sign(waveSine) + 0.5f, 0f, 1f) * Math.Abs(waveSine);
                         ripple.QueueRipple(ripplePos, waveData, Vector2.One * 860f, RippleShape.Circle, npc.rotation);
@@ -817,7 +816,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             // Summon tornadoes.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == hoverTime - 45f)
             {
-                List<int> xSpawnPositions = new()
+                List<int> xSpawnPositions = new List<int>()
                 {
                     (int)(target.Center.X - (enraged ? 600f : 750f)) / 16,
                     (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
@@ -840,7 +839,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 npc.velocity = Vector2.UnitX.RotatedBy(MathHelper.Pi * -0.087f) * initialChargeSpeed * -offsetDirection;
 
                 // Roar.
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
 
                 npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
                 npc.netUpdate = true;
@@ -858,7 +857,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
                 if (attackTimer % typhoonBurstRate == typhoonBurstRate - 1f && !npc.WithinRange(target.Center, 300f))
                 {
-                    SoundEngine.PlaySound(SoundID.Item84, npc.Center);
+                    Main.PlaySound(SoundID.Item84, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < typhoonCount; i++)
@@ -892,7 +891,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 npc.velocity = Vector2.Zero;
                 npc.netUpdate = true;
 
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
             }
 
             // Otherwise hover in place.
@@ -903,8 +902,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             }
 
             npc.rotation = GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true);
-            npc.Opacity = Utils.GetLerpValue(teleportDelay, 0f, attackTimer, true) + Utils.GetLerpValue(0f, chargeDelay, attackTimer - teleportDelay, true);
-            eyeGlowmaskOpacity = Utils.GetLerpValue(teleportDelay, 0f, attackTimer, true) + Utils.GetLerpValue(0f, 12f, attackTimer - teleportDelay - chargeDelay, true);
+            npc.Opacity = Utils.InverseLerp(teleportDelay, 0f, attackTimer, true) + Utils.InverseLerp(0f, chargeDelay, attackTimer - teleportDelay, true);
+            eyeGlowmaskOpacity = Utils.InverseLerp(teleportDelay, 0f, attackTimer, true) + Utils.InverseLerp(0f, 12f, attackTimer - teleportDelay - chargeDelay, true);
             frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
             if (attackTimer >= chargeDelay)
@@ -961,7 +960,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public static Color ColorFunction(float completionRatio)
         {
-            return Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly))) * (1f - completionRatio) * 1.6f;
+            return Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime))) * (1f - completionRatio) * 1.6f;
         }
 
         public static float WidthFunction(float completionRatio) => MathHelper.SmoothStep(50f, 35f, completionRatio);
@@ -975,11 +974,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
 
-            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/VoronoiShapes"));
+            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/VoronoiShapes"));
 
             bool hasEyes = npc.Infernum().ExtraAI[9] == 1f || npc.Infernum().ExtraAI[11] > 0f;
-            Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronGlowmask").Value;
-            Texture2D dukeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronResprite").Value;
+            Texture2D eyeTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronGlowmask");
+            Texture2D dukeTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronResprite");
             Vector2 origin = npc.frame.Size() * 0.5f;
             void DrawOldDukeInstance(Color color, Vector2 drawPosition, int direction)
             {
@@ -992,22 +991,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 float transitionCompletionRatio = npc.Infernum().ExtraAI[8] / 120f;
                 if (transitionCompletionRatio > 0f)
                 {
-                    float drawOffsetFactor = Utils.GetLerpValue(0f, 0.75f, transitionCompletionRatio, true) * Utils.GetLerpValue(1f, 0.75f, transitionCompletionRatio, true) * 30f;
+                    float drawOffsetFactor = Utils.InverseLerp(0f, 0.75f, transitionCompletionRatio, true) * Utils.InverseLerp(1f, 0.75f, transitionCompletionRatio, true) * 30f;
                     Color backimageColor = lightColor.MultiplyRGB(Color.Turquoise) * transitionCompletionRatio * 0.4f;
                     for (int i = 0; i < 4; i++)
                     {
                         Vector2 drawOffset = (MathHelper.TwoPi * i / 4f).ToRotationVector2() * drawOffsetFactor;
-                        Main.spriteBatch.Draw(dukeTexture, drawPosition + drawOffset - Main.screenPosition, npc.frame, backimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                        spriteBatch.Draw(dukeTexture, drawPosition + drawOffset - Main.screenPosition, npc.frame, backimageColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                     }
                 }
 
-                Main.spriteBatch.Draw(dukeTexture, drawPosition - Main.screenPosition, npc.frame, color, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                spriteBatch.Draw(dukeTexture, drawPosition - Main.screenPosition, npc.frame, color, npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
                 if (hasEyes)
                 {
                     Color eyeColor = Color.Lerp(Color.White, Color.Yellow, 0.5f) * npc.Infernum().ExtraAI[11];
                     eyeColor *= (float)Math.Pow(color.ToVector3().Length() / 1.414f, 0.6);
-                    Main.spriteBatch.Draw(eyeTexture, drawPosition - Main.screenPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    spriteBatch.Draw(eyeTexture, drawPosition - Main.screenPosition, npc.frame, eyeColor, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 

@@ -4,12 +4,13 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
+using TMLSoundType = Terraria.ModLoader.SoundType;
 
 namespace InfernumMode.BossIntroScreens
 {
-	public class DesertScourgeIntroScreen : BaseIntroScreen
+    public class DesertScourgeIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new(completionRatio =>
+        public override TextColorData TextColor => new TextColorData(completionRatio =>
         {
             float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.TwoPi) * 0.5f + 0.5f;
             return Color.Lerp(new Color(229, 197, 146), new Color(119, 76, 38), colorFadeInterpolant);
@@ -23,6 +24,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<DesertScourgeHead>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/DesertScourgeRoar");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/DesertScourgeRoar");
     }
 }

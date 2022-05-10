@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
             }
             projectile.velocity = Vector2.Zero;
             projectile.position = projectile.Center;
-            projectile.Size = new Vector2(16f, 16f) * MathHelper.Lerp(1.25f, 8f, Utils.GetLerpValue(0f, 9f, projectile.ai[0]));
+            projectile.Size = new Vector2(16f, 16f) * MathHelper.Lerp(1.25f, 8f, Utils.InverseLerp(0f, 9f, projectile.ai[0]));
             projectile.Center = projectile.position;
             Point topLeftPoint = projectile.TopLeft.ToTileCoordinates();
             Point bottomRightPoint = projectile.BottomRight.ToTileCoordinates();
@@ -35,10 +35,10 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
                         if (Vector2.Distance(projectile.Center, new Vector2(i * 16, j * 16)) <= projectile.width / 2)
                         {
                             Tile tile = Framing.GetTileSafely(i, j);
-                            if (tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType] && !Main.tileFrameImportant[tile.TileType])
+                            if (tile.active() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type] && !Main.tileFrameImportant[tile.type])
                             {
                                 Tile tileAbove = Framing.GetTileSafely(i, j - 1);
-                                if (!tileAbove.HasTile || !Main.tileSolid[tileAbove.TileType] || Main.tileSolidTop[tileAbove.TileType])
+                                if (!tileAbove.active() || !Main.tileSolid[tileAbove.type] || Main.tileSolidTop[tileAbove.type])
                                 {
                                     int dustCount = WorldGen.KillTile_GetTileDustAmount(true, tile, i, j);
                                     for (int k = 0; k < dustCount; k++)
@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
                                     if (dustCount > 0 && Main.rand.Next(3) != 0)
                                     {
                                         float horizontalOffsetFactor = Math.Abs((topLeftPoint.X / 2 + bottomRightPoint.X / 2) - i) / 20f;
-                                        Gore gore = Gore.NewGoreDirect(new InfernumSource(), projectile.position, Vector2.Zero, 61 + Main.rand.Next(3), 1f - lifetimeIncrement * 0.15f + horizontalOffsetFactor * 0.5f);
+                                        Gore gore = Gore.NewGoreDirect(projectile.position, Vector2.Zero, 61 + Main.rand.Next(3), 1f - lifetimeIncrement * 0.15f + horizontalOffsetFactor * 0.5f);
                                         gore.velocity.Y -= 0.1f + lifetimeIncrement * 0.5f + horizontalOffsetFactor * lifetimeIncrement * 1f;
                                         gore.velocity.Y *= Main.rand.NextFloat();
                                         gore.position = new Vector2(i * 16 + 20, j * 16 + 20);

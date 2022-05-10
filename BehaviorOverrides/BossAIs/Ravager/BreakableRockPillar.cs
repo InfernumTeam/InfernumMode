@@ -1,43 +1,42 @@
 using CalamityMod;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
+using CalamityMod.World;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {
-	public class BreakableRockPillar : ModNPC
+    public class BreakableRockPillar : ModNPC
     {
-        public Player Target => Main.player[NPC.target];
-        public ref float AttackTimer => ref NPC.ai[0];
+        public Player Target => Main.player[npc.target];
+        public ref float AttackTimer => ref npc.ai[0];
         public override void SetStaticDefaults()
         {
-            this.HideFromBestiary();
             DisplayName.SetDefault("Rock Pillar");
         }
 
         public override void SetDefaults()
         {
-            NPC.damage = 180;
-            NPC.width = 60;
-            NPC.height = 60;
-            NPC.defense = 50;
-            NPC.DR_NERD(0.3f);
-            NPC.chaseable = false;
-            NPC.noTileCollide = true;
-            NPC.noGravity = true;
-            NPC.canGhostHeal = false;
-            NPC.lifeMax = DownedBossSystem.downedProvidence ? 5600 : 1300;
-            NPC.alpha = 255;
-            NPC.aiStyle = -1;
-            AIType = -1;
-            NPC.knockBackResist = 0f;
-            NPC.HitSound = SoundID.NPCHit41;
-            NPC.DeathSound = SoundID.NPCDeath14;
-            NPC.Calamity().canBreakPlayerDefense = true;
+            npc.damage = 180;
+            npc.width = 60;
+            npc.height = 60;
+            npc.defense = 50;
+            npc.DR_NERD(0.3f);
+            npc.chaseable = false;
+            npc.noTileCollide = true;
+            npc.noGravity = true;
+            npc.canGhostHeal = false;
+            npc.lifeMax = CalamityWorld.downedProvidence ? 5600 : 1300;
+            npc.alpha = 255;
+            npc.aiStyle = -1;
+            aiType = -1;
+            npc.knockBackResist = 0f;
+            npc.HitSound = SoundID.NPCHit41;
+            npc.DeathSound = SoundID.NPCDeath14;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
@@ -45,67 +44,67 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             // Handle despawn stuff.
             if (CalamityGlobalNPC.scavenger == -1)
             {
-                NPC.active = false;
+                npc.active = false;
                 return;
             }
 
-            if (NPC.timeLeft < 3600)
-                NPC.timeLeft = 3600;
+            if (npc.timeLeft < 3600)
+                npc.timeLeft = 3600;
 
             // Inherit Ravager's target.
-            NPC.target = Main.npc[CalamityGlobalNPC.scavenger].target;
+            npc.target = Main.npc[CalamityGlobalNPC.scavenger].target;
 
             // Rise up at first and spin.
             if (AttackTimer < 180f)
             {
-                NPC.damage = 0;
-                NPC.rotation += MathHelper.Lerp(0f, 0.3f, Utils.GetLerpValue(0f, 24f, AttackTimer, true) * Utils.GetLerpValue(180f, 30f, AttackTimer, true));
-                NPC.Opacity = Utils.GetLerpValue(0f, 12f, AttackTimer, true);
-                NPC.velocity = Vector2.UnitY * MathHelper.Lerp(-40f, 0f, Utils.GetLerpValue(0f, 30f, AttackTimer, true));
+                npc.damage = 0;
+                npc.rotation += MathHelper.Lerp(0f, 0.3f, Utils.InverseLerp(0f, 24f, AttackTimer, true) * Utils.InverseLerp(180f, 30f, AttackTimer, true));
+                npc.Opacity = Utils.InverseLerp(0f, 12f, AttackTimer, true);
+                npc.velocity = Vector2.UnitY * MathHelper.Lerp(-40f, 0f, Utils.InverseLerp(0f, 30f, AttackTimer, true));
 
                 // Stop if enough time has passed and the ideal direction is being aimed at.
-                Vector2 idealDirection = NPC.SafeDirectionTo(Target.Center);
+                Vector2 idealDirection = npc.SafeDirectionTo(Target.Center);
                 idealDirection = new Vector2(idealDirection.X, idealDirection.Y * 0.15f).SafeNormalize(Vector2.Zero);
 
                 // Lunge in the ideal direction if enough time has passed or aiming in the direction of the ideal velocity.
-                bool canLunge = NPC.rotation.ToRotationVector2().AngleBetween(idealDirection) < 0.39f || AttackTimer > 175f;
+                bool canLunge = npc.rotation.ToRotationVector2().AngleBetween(idealDirection) < 0.39f || AttackTimer > 175f;
                 if (AttackTimer > 35f && canLunge)
                 {
-                    NPC.velocity = idealDirection * 19f;
+                    npc.velocity = idealDirection * 19f;
                     AttackTimer = 180f;
-                    NPC.netUpdate = true;
+                    npc.netUpdate = true;
                 }
             }
 
             // Release rocks downward after being launched.
             else if (AttackTimer % 12f == 11f)
             {
-                SoundEngine.PlaySound(SoundID.Item51, NPC.Center);
+                Main.PlaySound(SoundID.Item51, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int rockDamage = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive ? 340 : 205;
-                    Vector2 rockSpawnPosition = NPC.Center + NPC.rotation.ToRotationVector2() * Main.rand.NextFloatDirection() * 120f;
+                    int rockDamage = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive ? 340 : 205;
+                    Vector2 rockSpawnPosition = npc.Center + npc.rotation.ToRotationVector2() * Main.rand.NextFloatDirection() * 120f;
                     Utilities.NewProjectileBetter(rockSpawnPosition, Vector2.UnitY * 5f, ModContent.ProjectileType<RockPiece>(), rockDamage, 0f);
                 }
             }
 
             if (AttackTimer > 180f)
             {
-                NPC.damage = NPC.defDamage;
-                NPC.rotation = NPC.velocity.ToRotation();
+                npc.damage = npc.defDamage;
+                npc.rotation = npc.velocity.ToRotation();
             }
 
             // Die naturally after enough time has passed.
             if (AttackTimer > 330f)
             {
-                NPC.life = 0;
-                NPC.HitEffect();
-                NPC.checkDead();
+                npc.life = 0;
+                npc.HitEffect();
+                npc.checkDead();
             }
 
             AttackTimer++;
         }
 
-        public override bool SpecialOnKill() => true;
+        public override bool PreNPCLoot() => false;
     }
 }

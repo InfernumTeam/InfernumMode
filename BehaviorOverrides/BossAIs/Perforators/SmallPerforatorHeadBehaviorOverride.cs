@@ -7,12 +7,11 @@ using InfernumMode.BehaviorOverrides.BossAIs.Perforators;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using System;
-using Terraria.Audio;
 using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
-    public class SmallPerforatorHeadBehaviorOverride : NPCBehaviorOverride
+	public class SmallPerforatorHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHeadSmall>();
 
@@ -53,8 +52,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 // Reset the falling ichor flag for later.
                 hasReleasedFallingIchor = 0f;
 
-                float xDamp = Utils.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.3f, 1f);
-                float yDamp = Utils.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.3f, 1f);
+                float xDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.3f, 1f);
+                float yDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.3f, 1f);
                 Vector2 flyDestination = target.Center + Vector2.UnitY * 550f;
                 Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.8f;
                 npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 20f);
@@ -70,12 +69,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (wrappedAttackTimer == 180f)
             {
                 target.Calamity().GeneralScreenShakePower = 5f;
-                SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact, target.Center);
-                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
+                Main.PlaySound(SoundID.DD2_MonkStaffGroundImpact, target.Center);
+                Main.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
             }
 
             // Rise upward.
-            if (wrappedAttackTimer is >= 180f and < 255f)
+            if (wrappedAttackTimer >= 180f && wrappedAttackTimer < 255f)
 			{
                 npc.velocity.X *= 0.96f;
                 npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y - 0.55f, -14.5f, 15f);
@@ -83,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 // Release ichor into the air once above the target and in air.
                 if (hasReleasedFallingIchor == 0f && npc.Top.Y < target.Bottom.Y && !Collision.SolidCollision(npc.position, npc.width, npc.height))
                 {
-                    SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
+                    Main.PlaySound(SoundID.NPCHit20, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient && !npc.WithinRange(target.Center, 170f))
                     {
                         for (int i = 0; i < fallingIchorCount; i++)
@@ -91,7 +90,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                             float projectileOffsetInterpolant = i / (float)(fallingIchorCount - 1f);
                             float horizontalSpeed = MathHelper.Lerp(-21f, 21f, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 6f;
                             float verticalSpeed = Main.rand.NextFloat(-12f, -11f);
-                            Vector2 ichorVelocity = new(horizontalSpeed, verticalSpeed);
+                            Vector2 ichorVelocity = new Vector2(horizontalSpeed, verticalSpeed);
                             Utilities.NewProjectileBetter(npc.Top + Vector2.UnitY * 10f, ichorVelocity, ModContent.ProjectileType<FallingIchor>(), 80, 0f);
                         }
                         npc.netUpdate = true;

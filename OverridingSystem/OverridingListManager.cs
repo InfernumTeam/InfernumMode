@@ -12,13 +12,13 @@ namespace InfernumMode.OverridingSystem
         private const string message = "Yes this is extremely cumbersome and a pain in the ass but not doing it resulted in Calamity Rev+ AIs conflicting with this mode's";
 #pragma warning restore IDE0051 // Remove unused private members
 
-        internal static Dictionary<int, NPCPreAIDelegate> InfernumNPCPreAIOverrideList = new();
-        internal static Dictionary<int, Delegate> InfernumSetDefaultsOverrideList = new();
-        internal static Dictionary<int, NPCPreDrawDelegate> InfernumPreDrawOverrideList = new();
-        internal static Dictionary<int, Delegate> InfernumFrameOverrideList = new();
+        internal static Dictionary<int, NPCPreAIDelegate> InfernumNPCPreAIOverrideList = new Dictionary<int, NPCPreAIDelegate>();
+        internal static Dictionary<int, Delegate> InfernumSetDefaultsOverrideList = new Dictionary<int, Delegate>();
+        internal static Dictionary<int, NPCPreDrawDelegate> InfernumPreDrawOverrideList = new Dictionary<int, NPCPreDrawDelegate>();
+        internal static Dictionary<int, Delegate> InfernumFrameOverrideList = new Dictionary<int, Delegate>();
 
-        internal static Dictionary<int, Delegate> InfernumProjectilePreAIOverrideList = new();
-        internal static Dictionary<int, Delegate> InfernumProjectilePreDrawOverrideList = new();
+        internal static Dictionary<int, Delegate> InfernumProjectilePreAIOverrideList = new Dictionary<int, Delegate>();
+        internal static Dictionary<int, Delegate> InfernumProjectilePreDrawOverrideList = new Dictionary<int, Delegate>();
 
         public delegate bool NPCPreAIDelegate(NPC npc);
         public delegate bool NPCPreDrawDelegate(NPC npc, SpriteBatch spriteBatch, Color lightColor);

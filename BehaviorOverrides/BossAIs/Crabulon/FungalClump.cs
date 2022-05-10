@@ -10,42 +10,42 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
     public class FungalClump : ModNPC
     {
         public PrimitiveTrailCopy FireDrawer;
-        public Player Target => Main.player[NPC.target];
-        public NPC Owner => Main.npc[(int)NPC.ai[0]];
+        public Player Target => Main.player[npc.target];
+        public NPC Owner => Main.npc[(int)npc.ai[0]];
         public float MainBossLifeRatio => Owner.life / (float)Owner.lifeMax;
-        public ref float Time => ref NPC.ai[1];
+        public ref float Time => ref npc.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fungal Clump");
-            NPCID.Sets.TrailingMode[NPC.type] = 0;
-            NPCID.Sets.TrailCacheLength[NPC.type] = 7;
+            NPCID.Sets.TrailingMode[npc.type] = 0;
+            NPCID.Sets.TrailCacheLength[npc.type] = 7;
         }
 
         public override void SetDefaults()
         {
-            NPC.npcSlots = 1f;
-            NPC.aiStyle = AIType = -1;
-            NPC.width = NPC.height = 50;
-            NPC.damage = 45;
-            NPC.lifeMax = 5000;
-            NPC.knockBackResist = 0f;
-            NPC.dontTakeDamage = true;
-            NPC.noGravity = true;
-            NPC.noTileCollide = true;
-            NPC.netAlways = true;
+            npc.npcSlots = 1f;
+            npc.aiStyle = aiType = -1;
+            npc.width = npc.height = 50;
+            npc.damage = 45;
+            npc.lifeMax = 5000;
+            npc.knockBackResist = 0f;
+            npc.dontTakeDamage = true;
+            npc.noGravity = true;
+            npc.noTileCollide = true;
+            npc.netAlways = true;
         }
 
         public override void AI()
         {
             // Die if the main boss is not present.
-            if (!Main.npc.IndexInRange((int)NPC.ai[0]) || !Owner.active || !NPC.AnyNPCs(ModContent.NPCType<CrabulonIdle>()))
+            if (!Main.npc.IndexInRange((int)npc.ai[0]) || !Owner.active || !NPC.AnyNPCs(ModContent.NPCType<CrabulonIdle>()))
             {
-                NPC.active = false;
-                NPC.netUpdate = true;
+                npc.active = false;
+                npc.netUpdate = true;
                 return;
             }
 
-            NPC.target = Owner.target;
+            npc.target = Owner.target;
             float hoverSpeed = MathHelper.Lerp(7f, 11f, 1f - MainBossLifeRatio);
             if (BossRushEvent.BossRushActive)
                 hoverSpeed *= 2.15f;
@@ -62,20 +62,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             // Home more quickly if close to the target.
             // However, if really close to the target, stop homing and simply go in the
             // current direction.
-            Vector2 hoverDestination = (Target.Center + (NPC.whoAmI * 10.81f).ToRotationVector2() * 24f);
-            if (!NPC.WithinRange(hoverDestination, 180f))
-                NPC.velocity = (NPC.velocity * 115f + NPC.SafeDirectionTo(hoverDestination) * hoverSpeed) / 116f;
-            else if (!NPC.WithinRange(hoverDestination, 90f))
-                NPC.velocity = (NPC.velocity * 90f + NPC.SafeDirectionTo(hoverDestination) * hoverSpeed * 0.8f) / 91f;
+            Vector2 hoverDestination = (Target.Center + (npc.whoAmI * 10.81f).ToRotationVector2() * 24f);
+            if (!npc.WithinRange(hoverDestination, 180f))
+                npc.velocity = (npc.velocity * 115f + npc.SafeDirectionTo(hoverDestination) * hoverSpeed) / 116f;
+            else if (!npc.WithinRange(hoverDestination, 90f))
+                npc.velocity = (npc.velocity * 90f + npc.SafeDirectionTo(hoverDestination) * hoverSpeed * 0.8f) / 91f;
         }
 
         public void ReleaseSpores()
         {
-            int spore = Utilities.NewProjectileBetter(NPC.Center, Vector2.UnitY.RotatedBy(-0.45f) * -6f, ModContent.ProjectileType<HomingSpore>(), 45, 0f);
-            Main.projectile[spore].ai[0] = Utils.GetLerpValue(0.45f, 0.1f, MainBossLifeRatio);
+            int spore = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY.RotatedBy(-0.45f) * -6f, ModContent.ProjectileType<HomingSpore>(), 45, 0f);
+            Main.projectile[spore].ai[0] = Utils.InverseLerp(0.45f, 0.1f, MainBossLifeRatio);
 
-            spore = Utilities.NewProjectileBetter(NPC.Center, Vector2.UnitY.RotatedBy(0.45f) * -6f, ModContent.ProjectileType<HomingSpore>(), 45, 0f);
-            Main.projectile[spore].ai[0] = Utils.GetLerpValue(0.45f, 0.1f, MainBossLifeRatio);
+            spore = Utilities.NewProjectileBetter(npc.Center, Vector2.UnitY.RotatedBy(0.45f) * -6f, ModContent.ProjectileType<HomingSpore>(), 45, 0f);
+            Main.projectile[spore].ai[0] = Utils.InverseLerp(0.45f, 0.1f, MainBossLifeRatio);
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

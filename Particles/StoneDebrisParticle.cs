@@ -1,11 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Audio;
 using Terraria.ID;
 
 namespace CalamityMod.Particles
 {
-    public class StoneDebrisParticle2 : Particle
+	public class StoneDebrisParticle2 : Particle
     {
         public override string Texture => "CalamityMod/Particles/StoneDebris";
         public override bool SetLifetime => true;
@@ -36,7 +35,7 @@ namespace CalamityMod.Particles
 
             if (Collision.SolidCollision(Position, 1, 1) && Time < Lifetime - 1 && Time > 8)
             {
-                SoundEngine.PlaySound(SoundID.Item51, Position);
+                Main.PlaySound(SoundID.Item51, Position);
                 Time = Lifetime - 1;
             }
         }

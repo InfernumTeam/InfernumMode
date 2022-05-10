@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     if (npc.timeLeft > 45)
                         npc.timeLeft = 45;
                     else
-                        npc.Opacity = Utils.GetLerpValue(4f, 45f, npc.timeLeft, true);
+                        npc.Opacity = Utils.InverseLerp(4f, 45f, npc.timeLeft, true);
                 }
                 return false;
             }

@@ -88,13 +88,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 if (hiveBlobSummonTimer >= 540f)
                 {
                     hiveBlobSummonTimer = 0f;
-                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
+                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.NPCType("HiveBlob"), npc.whoAmI, 0f, 0f, 0f, 0f, 255);
                 }
                 if (hasSummonedInitialBlobsFlag == 0f)
                 {
                     hasSummonedInitialBlobsFlag = 1f;
                     for (int i = 0; i < 7; i++)
-                        NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.Find<ModNPC>("HiveBlob").Type, npc.whoAmI, 0f, 0f, 0f, 0f, 255);
+                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, InfernumMode.CalamityMod.NPCType("HiveBlob"), npc.whoAmI, 0f, 0f, 0f, 0f, 255);
                 }
             }
 
@@ -120,8 +120,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                             if (Main.rand.NextBool(3))
                                 thingToSummon = ModContent.NPCType<DankCreeper>();
 
-                            int summonedThing = NPC.NewNPC(new InfernumSource(), x, y, thingToSummon, 0, 0f, 0f, 0f, 0f, 255);
-                            Main.npc[summonedThing].SetDefaults(thingToSummon);
+                            int summonedThing = NPC.NewNPC(x, y, thingToSummon, 0, 0f, 0f, 0f, 0f, 255);
+                            Main.npc[summonedThing].SetDefaults(thingToSummon, -1f);
                             Main.npc[summonedThing].velocity = -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver2) * 3f;
                             if (Main.netMode == NetmodeID.Server && summonedThing < Main.maxNPCs)
                                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, summonedThing, 0f, 0f, 0f, 0, 0, 0);
@@ -200,10 +200,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                     npc.position.Y = target.position.Y - npc.height;
                     int tilePosX = (int)npc.Center.X / 16;
                     int tilePosY = (int)(npc.position.Y + npc.height) / 16 + 1;
-                    while (!(Main.tile[tilePosX, tilePosY].HasUnactuatedTile && Main.tileSolid[Main.tile[tilePosX, tilePosY].TileType]))
+                    if (Main.tile[tilePosX, tilePosY] == null)
+                        Main.tile[tilePosX, tilePosY] = new Tile();
+                    while (!(Main.tile[tilePosX, tilePosY].nactive() && Main.tileSolid[Main.tile[tilePosX, tilePosY].type]))
                     {
                         tilePosY++;
                         npc.position.Y += 16;
+                        if (Main.tile[tilePosX, tilePosY] == null)
+                            Main.tile[tilePosX, tilePosY] = new Tile();
                     }
                 }
                 npc.netUpdate = true;

@@ -5,7 +5,6 @@ using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.SupremeCalamitas;
-using CalamityMod.Systems;
 using CalamityMod.UI;
 using CalamityMod.World;
 using MonoMod.Cil;
@@ -14,7 +13,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.ILEditingStuff
 {
-    public static partial class HookManager
+	public static partial class HookManager
     {
         public static event ILContext.Manipulator ModifyPreAINPC
         {
@@ -72,8 +71,8 @@ namespace InfernumMode.ILEditingStuff
 
         public static event ILContext.Manipulator CalamityWorldPostUpdate
         {
-            add => HookEndpointManager.Modify(typeof(WorldMiscUpdateSystem).GetMethod("PostUpdateWorld", Utilities.UniversalBindingFlags), value);
-            remove => HookEndpointManager.Unmodify(typeof(WorldMiscUpdateSystem).GetMethod("PostUpdateWorld", Utilities.UniversalBindingFlags), value);
+            add => HookEndpointManager.Modify(typeof(CalamityWorld).GetMethod("PostUpdate", Utilities.UniversalBindingFlags), value);
+            remove => HookEndpointManager.Unmodify(typeof(CalamityWorld).GetMethod("PostUpdate", Utilities.UniversalBindingFlags), value);
         }
 
         public static event ILContext.Manipulator CalamityPlayerModifyHitByProjectile
@@ -134,12 +133,6 @@ namespace InfernumMode.ILEditingStuff
         {
             add => HookEndpointManager.Modify(typeof(Draedon).GetMethod("get_ExoMechIsPresent", Utilities.UniversalBindingFlags), value);
             remove => HookEndpointManager.Unmodify(typeof(Draedon).GetMethod("get_ExoMechIsPresent", Utilities.UniversalBindingFlags), value);
-        }
-
-        public static event ILContext.Manipulator ExoMechSelectionUIDraw
-        {
-            add => HookEndpointManager.Modify(typeof(ExoMechSelectionUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
-            remove => HookEndpointManager.Unmodify(typeof(ExoMechSelectionUI).GetMethod("Draw", Utilities.UniversalBindingFlags), value);
         }
     }
 }

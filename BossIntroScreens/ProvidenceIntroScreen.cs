@@ -9,7 +9,7 @@ namespace InfernumMode.BossIntroScreens
 {
     public class ProvidenceIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new(_ =>
+        public override TextColorData TextColor => new TextColorData(_ =>
         {
             float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.Pi * 3f) * 0.5f + 0.5f;
             if (!Main.dayTime)
@@ -32,8 +32,6 @@ namespace InfernumMode.BossIntroScreens
                 return "The Blaze of Absolution\nProvidence";
             }
         }
-
-        public override int AnimationTime => 160;
 
         public override float TextScale => MajorBossTextScale;
 

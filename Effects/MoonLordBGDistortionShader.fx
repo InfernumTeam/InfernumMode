@@ -16,9 +16,8 @@ float2 uTopLeftFreeArea;
 float2 uBottomRightFreeArea;
 float2x2 uZoomMatrix;
 bool uVerticalInversion;
-float4 uShaderSpecificData;
 
-float GetLerpValue(float from, float to, float x)
+float InverseLerp(float from, float to, float x)
 {
     return saturate((x - from) / (to - from));
 }
@@ -38,7 +37,7 @@ float4 PixelShaderFunction(float4 position : SV_POSITION, float2 coords : TEXCOO
     float4 noiseResult = (noiseColor1 * 0.2 + noiseColor2 * 0.6);
     float2 center = float2((topLeft.x + bottomRight.x) / 2, (topLeft.y + bottomRight.y) / 2);
     
-    return lerp(noiseResult, 0, 1 - pow(GetLerpValue(0, 1.6, distance(coords, center)), 10));
+    return lerp(noiseResult, 0, 1 - pow(InverseLerp(0, 1.6, distance(coords, center)), 10));
 }
 
 technique Technique1

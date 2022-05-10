@@ -11,7 +11,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using LeviathanNPC = CalamityMod.NPCs.Leviathan.Leviathan;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
@@ -133,10 +132,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             // Play idle water sounds.
             if (Main.rand.NextBool(180))
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
+                Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
 
             if (leviathanAlive)
-                npc.ModNPC.Music = Main.npc[CalamityGlobalNPC.leviathan].ModNPC.Music;
+                npc.modNPC.music = Main.npc[CalamityGlobalNPC.leviathan].modNPC.music;
 
             if (shouldWaitForLeviathan)
             {
@@ -146,7 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 leviathanMusicFade++;
                 if (!NPC.AnyNPCs(ModContent.NPCType<LeviathanNPC>()))
                 {
-                    target.Infernum().MusicMuffleFactor = Utils.GetLerpValue(10f, 330f, leviathanMusicFade, true);
+                    target.Infernum().MusicMuffleFactor = Utils.InverseLerp(10f, 330f, leviathanMusicFade, true);
                     leviathanMusicFade++;
                 }
                 return false;
@@ -160,7 +159,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
                 // Descend back into the ocean.
                 npc.direction = (npc.Center.X < Main.maxTilesX * 8f).ToDirectionInt();
-                target.Infernum().MusicMuffleFactor = Utils.GetLerpValue(10f, 330f, leviathanMusicFade, true);
+                target.Infernum().MusicMuffleFactor = Utils.InverseLerp(10f, 330f, leviathanMusicFade, true);
                 leviathanMusicFade++;
 
                 if (npc.alpha <= 0)
@@ -268,7 +267,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaBubble>(), 145, 0f);
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
+                Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
             }
 
             if (attackTimer >= bubbleShootRate * totalBubbles + bubbleShootRate - 2f)
@@ -304,9 +303,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
             else if (attackTimer % singClefFireRate == singClefFireRate - 1)
             {
-                destination += (MathHelper.TwoPi * Utils.GetLerpValue(singDelay, singDelay + singClefFireRate * singClefCount, attackTimer, true)).ToRotationVector2() * 360f;
-                Main.musicPitch = Main.rand.NextFloat(-0.25f, 0.25f);
-                SoundEngine.PlaySound(SoundID.Item26, target.Center);
+                destination += (MathHelper.TwoPi * Utils.InverseLerp(singDelay, singDelay + singClefFireRate * singClefCount, attackTimer, true)).ToRotationVector2() * 360f;
+                Main.harpNote = Main.rand.NextFloat(-0.25f, 0.25f);
+                Main.PlaySound(SoundID.Item26, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * clefShootSpeed, ModContent.ProjectileType<SirenSong>(), 145, 0f);
@@ -332,7 +331,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(headPosition, (target.Center - headPosition).SafeNormalize(Vector2.UnitY) * bubbleShootSpeed, ModContent.ProjectileType<AnahitaExpandingBubble>(), 150, 0f);
 
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
+                Main.PlaySound(SoundID.Zombie, (int)npc.position.X, (int)npc.position.Y, 35);
             }
 
             if (attackTimer == (enraged || BossRushEvent.BossRushActive ? 135f : 210f))
@@ -373,7 +372,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             }
 
             if (attackTimer == 5f)
-                SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
+                Main.PlaySound(SoundID.DD2_PhantomPhoenixShot, target.Center);
 
             int wrappedAttackTimer = (int)(attackTimer % (hoverTime + chargeTime));
             if (wrappedAttackTimer < hoverTime)
@@ -462,7 +461,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 bool closeToPlayer = npc.WithinRange(target.Center, 180f);
                 if (aimingAtPlayer && closeToPlayer && atlantisCooldown <= 0f)
                 {
-                    SoundEngine.PlaySound(SoundID.DD2_KoboldIgnite, target.Center);
+                    Main.PlaySound(SoundID.DD2_KoboldIgnite, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (float offset = 0f; offset < 110f; offset += 10f)

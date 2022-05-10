@@ -4,65 +4,64 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
     public class DustDevil : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
-        public ref float Variant => ref Projectile.ai[1];
+        public ref float Time => ref projectile.ai[0];
+        public ref float Variant => ref projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dust Devil");
-            Main.projFrames[Projectile.type] = 6;
+            Main.projFrames[projectile.type] = 6;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 38;
-            Projectile.alpha = 255;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 480;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
+            projectile.width = projectile.height = 38;
+            projectile.alpha = 255;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 480;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
         }
 
         public override void AI()
         {
             // Play a wind sound.
-            if (Projectile.localAI[0] == 0f)
+            if (projectile.localAI[0] == 0f)
             {
-                SoundEngine.PlaySound(SoundID.DD2_BookStaffCast, Projectile.Center);
-                Projectile.localAI[0] = 1f;
+                Main.PlaySound(SoundID.DD2_BookStaffCast, projectile.Center);
+                projectile.localAI[0] = 1f;
             }
 
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
+            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.075f, 0f, 1f);
 
             // Bob up and down vertically.
-            float idealVerticalVelocity = (float)Math.Sin(Time / 75f + Projectile.identity) * 6f;
-            Projectile.velocity.Y = MathHelper.Lerp(Projectile.velocity.Y, idealVerticalVelocity, 0.04f);
+            float idealVerticalVelocity = (float)Math.Sin(Time / 75f + projectile.identity) * 6f;
+            projectile.velocity.Y = MathHelper.Lerp(projectile.velocity.Y, idealVerticalVelocity, 0.04f);
 
             // Speed up horizontally.
-            if (Math.Abs(Projectile.velocity.X) < 11f)
-                Projectile.velocity.X *= 1.01f;
+            if (Math.Abs(projectile.velocity.X) < 11f)
+                projectile.velocity.X *= 1.01f;
 
             // Determine frames.
-            Projectile.frameCounter++;
-            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
+            projectile.frameCounter++;
+            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
             Time++;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Rectangle frame = texture.Frame(5, Main.projFrames[Projectile.type], (int)Variant, Projectile.frame);
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Rectangle frame = texture.Frame(5, Main.projFrames[projectile.type], (int)Variant, projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPosition, frame, Color.White * projectile.Opacity, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

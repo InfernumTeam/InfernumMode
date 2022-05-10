@@ -9,44 +9,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 {
     public class FallingIchor : ModProjectile
     {
-        internal const float Gravity = 0.18f;
+        internal const float Gravity = 0.25f;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor");
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 12;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 420;
-            Projectile.penetrate = -1;
+            projectile.width = projectile.height = 12;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.timeLeft = 420;
+            projectile.penetrate = 1;
         }
 
         public override void AI()
         {
-            Projectile.velocity.X *= 0.97f;
-            Projectile.tileCollide = Projectile.timeLeft < 350;
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            projectile.tileCollide = projectile.timeLeft < 350;
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            bool shouldDie = Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height);
-            shouldDie &= !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16).TileType];
+            bool shouldDie = Collision.SolidCollision(projectile.position, projectile.width, projectile.height);
+            shouldDie &= !TileID.Sets.Platforms[CalamityUtils.ParanoidTileRetrieval((int)projectile.Center.X / 16, (int)projectile.Center.Y / 16).type];
             if (shouldDie)
-                Projectile.Kill();
+                projectile.Kill();
 
             // Release blood idly.
-            Dust blood = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Blood, 0f, 0f, 100, default, 0.5f);
+            Dust blood = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, DustID.Blood, 0f, 0f, 100, default, 0.5f);
             blood.velocity = Vector2.Zero;
             blood.noGravity = true;
 
-            Projectile.velocity.Y += Gravity;
-            if (Projectile.velocity.Y >= 5f)
-                Projectile.velocity.Y = 5f;
+            projectile.velocity.Y += Gravity;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<BurningBlood>(), 120);
 
-        public override Color? GetAlpha(Color lightColor) => new Color(246, 195, 80, Projectile.alpha);
+        public override Color? GetAlpha(Color lightColor) => new Color(246, 195, 80, projectile.alpha);
     }
 }

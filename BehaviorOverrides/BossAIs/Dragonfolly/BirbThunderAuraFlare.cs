@@ -6,14 +6,13 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 {
     public class BirbThunderAuraFlare : ModProjectile
     {
-        public ref float Time => ref Projectile.localAI[0];
-        public ref float PulsationFactor => ref Projectile.localAI[1];
+        public ref float Time => ref projectile.localAI[0];
+        public ref float PulsationFactor => ref projectile.localAI[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
 
         public override void SetStaticDefaults()
@@ -23,12 +22,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 32;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 1200;
+            projectile.width = projectile.height = 32;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 1200;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -45,9 +44,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override void AI()
         {
-            if (Projectile.ai[1] > 0f)
+            if (projectile.ai[1] > 0f)
             {
-                int targetIndex = (int)Projectile.ai[1] - 1;
+                int targetIndex = (int)projectile.ai[1] - 1;
                 if (targetIndex < 255)
                 {
                     Time++;
@@ -58,9 +57,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         EmitDust();
                     }
 
-                    Projectile.velocity = Projectile.SafeDirectionTo(Main.player[targetIndex].Center) * (Time / 8f + 7f);
-                    if (Projectile.WithinRange(Main.player[targetIndex].Center, 32f))
-                        Projectile.Kill();
+                    projectile.velocity = projectile.SafeDirectionTo(Main.player[targetIndex].Center) * (Time / 8f + 7f);
+                    if (projectile.WithinRange(Main.player[targetIndex].Center, 32f))
+                        projectile.Kill();
                 }
             }
         }
@@ -72,9 +71,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
             for (int i = 0; i < 10; i++)
             {
-                Dust redLightning = Dust.NewDustPerfect(Projectile.Center, 267);
+                Dust redLightning = Dust.NewDustPerfect(projectile.Center, 267);
                 redLightning.velocity = Main.rand.NextVector2CircularEdge(2f, 1.6f).RotatedByRandom(MathHelper.TwoPi) * Main.rand.NextFloat(0.6f, 1f);
-                redLightning.velocity += Projectile.velocity;
+                redLightning.velocity += projectile.velocity;
                 redLightning.color = Color.Red;
                 redLightning.noGravity = true;
                 redLightning.scale = Main.rand.NextFloat(0.85f, 1.25f);
@@ -83,19 +82,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, (int)Projectile.position.X, (int)Projectile.position.Y);
+            Main.PlaySound(SoundID.DD2_BetsyFireballImpact, (int)projectile.position.X, (int)projectile.position.Y);
 
-            if (Projectile.owner != Main.myPlayer)
+            if (projectile.owner != Main.myPlayer)
                 return;
 
             int type = ModContent.ProjectileType<BirbAura>();
             if (CalamityUtils.CountProjectiles(type) >= 2)
             {
-                Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
                 return;
             }
-            float x = Utils.Clamp((int)(Projectile.Center.Y / 16f), 10, Main.maxTilesX - 110) * 16;
-            float y = Utils.Clamp((int)(Projectile.Center.X / 16f), 10, Main.maxTilesX - 110) * 16 + 900;
+            float x = Utils.Clamp((int)(projectile.Center.Y / 16f), 10, Main.maxTilesX - 110) * 16;
+            float y = Utils.Clamp((int)(projectile.Center.X / 16f), 10, Main.maxTilesX - 110) * 16 + 900;
             Vector2 laserVelocity;
 
             x += 1000f;

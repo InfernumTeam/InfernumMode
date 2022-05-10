@@ -5,26 +5,25 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
     public class LightBurst : ModProjectile
     {
-        public ref float ActionCountdown => ref Projectile.ai[0];
-        public ref float ExplosionTelegraphFade => ref Projectile.ai[1];
-        public static readonly Vector2 TelegraphRingScale = new(0.8f, 1.333f);
+        public ref float ActionCountdown => ref projectile.ai[0];
+        public ref float ExplosionTelegraphFade => ref projectile.ai[1];
+        public static readonly Vector2 TelegraphRingScale = new Vector2(0.8f, 1.333f);
         public override void SetStaticDefaults() => DisplayName.SetDefault("Light Burst");
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 2;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.hide = true;
-            Projectile.timeLeft = 45;
-            Projectile.penetrate = -1;
+            projectile.width = projectile.height = 2;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.hide = true;
+            projectile.timeLeft = 45;
+            projectile.penetrate = -1;
         }
 
         public override void AI()
@@ -38,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 if (ActionCountdown % 8f == 7f)
                 {
                     Vector2 dustSpawnOffset = Main.rand.NextVector2CircularEdge(TelegraphRingScale.X, TelegraphRingScale.Y) * Main.rand.NextFloat(84f, 96f) * 1.45f;
-                    Dust light = Dust.NewDustPerfect(Projectile.Center + dustSpawnOffset, 267);
+                    Dust light = Dust.NewDustPerfect(projectile.Center + dustSpawnOffset, 267);
                     light.color = Color.White * 1.3f;
                     light.color.A = 0;
                     light.scale = Main.rand.NextFloat(1.7f, 2f);
@@ -48,19 +47,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 }
 
                 ActionCountdown--;
-                Projectile.timeLeft = 45;
+                projectile.timeLeft = 45;
                 return;
             }
 
             // Play an explosion sound.
-            if (Projectile.timeLeft == 25f)
+            if (projectile.timeLeft == 25f)
             {
-                Projectile.localAI[0] = 1f;
-                SoundEngine.PlaySound(SoundID.Item122, Projectile.Center);
+                projectile.localAI[0] = 1f;
+                Main.PlaySound(SoundID.Item122, projectile.Center);
             }
 
-            Projectile.Opacity = Utils.GetLerpValue(0f, 12f, Projectile.timeLeft);
-            Projectile.scale = MathHelper.SmoothStep(0.05f, 5f + Projectile.identity % 4f / 4f * 0.4f, Utils.GetLerpValue(45f, 5f, Projectile.timeLeft));
+            projectile.Opacity = Utils.InverseLerp(0f, 12f, projectile.timeLeft);
+            projectile.scale = MathHelper.SmoothStep(0.05f, 5f + projectile.identity % 4f / 4f * 0.4f, Utils.InverseLerp(45f, 5f, projectile.timeLeft));
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -68,50 +67,50 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (ActionCountdown > 0f)
                 return false;
 
-            Rectangle hitbox = Utils.CenteredRectangle(Projectile.Center, new Vector2(0.6f, 1f) * Projectile.scale * 80f);
+            Rectangle hitbox = Utils.CenteredRectangle(projectile.Center, new Vector2(0.6f, 1f) * projectile.scale * 80f);
             return targetHitbox.Intersects(hitbox);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D telegraphTexture = Utilities.ProjTexture(Projectile.type);
+            Texture2D telegraphTexture = Main.projectileTexture[projectile.type];
 
             // Draw a single ring to show where the explosion will happen.
             if (ActionCountdown > 0f)
             {
                 Color ringColor = Color.White * 0.425f;
-                Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, ringColor, 0f, telegraphTexture.Size() * 0.5f, TelegraphRingScale * 1.6f, SpriteEffects.None, 0f);
+                Vector2 drawPosition = projectile.Center - Main.screenPosition;
+                spriteBatch.Draw(telegraphTexture, drawPosition, null, ringColor, 0f, telegraphTexture.Size() * 0.5f, TelegraphRingScale * 1.6f, SpriteEffects.None, 0f);
 
-                float explosionTelegraphFade = Utils.GetLerpValue(0f, 20f, ExplosionTelegraphFade, true) * 0.16f;
-                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, ringColor * explosionTelegraphFade, 0f, telegraphTexture.Size() * 0.5f, TelegraphRingScale * 5f, SpriteEffects.None, 0f);
+                float explosionTelegraphFade = Utils.InverseLerp(0f, 20f, ExplosionTelegraphFade, true) * 0.16f;
+                spriteBatch.Draw(telegraphTexture, drawPosition, null, ringColor * explosionTelegraphFade, 0f, telegraphTexture.Size() * 0.5f, TelegraphRingScale * 5f, SpriteEffects.None, 0f);
                 return false;
             }
 
             // Create a much fainter ring to act as a telegraph that shows where the explosion will happen.
-            Color telegraphColor = Color.White * Projectile.Opacity * 0.2f;
+            Color telegraphColor = Color.White * projectile.Opacity * 0.2f;
             telegraphColor.A = 0;
 
             for (int i = 0; i < 35; i++)
             {
-                Vector2 drawPosition = Projectile.Center + (MathHelper.TwoPi * i / 35f + Main.GlobalTimeWrappedHourly * 3f).ToRotationVector2();
+                Vector2 drawPosition = projectile.Center + (MathHelper.TwoPi * i / 35f + Main.GlobalTime * 3f).ToRotationVector2();
                 drawPosition -= Main.screenPosition;
 
-                Vector2 scale = new Vector2(0.6f, 1f) * Projectile.scale;
+                Vector2 scale = new Vector2(0.6f, 1f) * projectile.scale;
                 scale *= MathHelper.Lerp(0.015f, 1f, i / 35f);
 
-                Main.spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, 0f, telegraphTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(telegraphTexture, drawPosition, null, telegraphColor, 0f, telegraphTexture.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             }
             return false;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
 
         public override void Kill(int timeLeft)
         {
             for (int i = 0; i < 20; i++)
             {
-                Dust magic = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(30f, 30f), 267);
+                Dust magic = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(30f, 30f), 267);
                 magic.color = Color.SkyBlue;
                 magic.scale = 1.1f;
                 magic.fadeIn = 1.6f;
@@ -121,9 +120,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
         {
-            behindNPCs.Add(index);
+            drawCacheProjsBehindNPCs.Add(index);
         }
     }
 }

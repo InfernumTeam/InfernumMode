@@ -6,8 +6,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -84,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             // Define pupil variables.
             pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.15f);
-            pupilOutwardness = MathHelper.Lerp(0.2f, 0.8f, Utils.GetLerpValue(150f, 400f, npc.Distance(target.Center), true));
+            pupilOutwardness = MathHelper.Lerp(0.2f, 0.8f, Utils.InverseLerp(150f, 400f, npc.Distance(target.Center), true));
             pupilScale = MathHelper.Lerp(pupilScale, 0.4f, 0.1f);
 
             if (eyeCount > 1)
@@ -132,7 +130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 Vector2 hoverDestination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * 600f;
                 if (attackTimer < fireDelay)
                 {
-                    float movementSpeedInterpolant = 1f - Utils.GetLerpValue(fireDelay * 0.6f, fireDelay * 0.85f, attackTimer, true);
+                    float movementSpeedInterpolant = 1f - Utils.InverseLerp(fireDelay * 0.6f, fireDelay * 0.85f, attackTimer, true);
                     npc.rotation = npc.rotation.AngleLerp(npc.AngleTo(target.Center), 0.25f);
                     npc.Center = npc.Center.MoveTowards(hoverDestination, movementSpeedInterpolant * 3f);
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * movementSpeedInterpolant * 21f, 0.85f);
@@ -153,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 // Release lasers.
                 if (attackTimer == fireDelay)
                 {
-                    SoundEngine.PlaySound(SoundID.Zombie, target.Center, 104);
+                    Main.PlaySound(SoundID.Zombie, target.Center, 104);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = -1; i <= 1; i += 2)
@@ -175,7 +173,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 600f, chargeVerticalOffset);
                 if (attackTimer < fireDelay)
                 {
-                    float movementSpeedInterpolant = 1f - Utils.GetLerpValue(fireDelay * 0.6f, fireDelay * 0.85f, attackTimer, true);
+                    float movementSpeedInterpolant = 1f - Utils.InverseLerp(fireDelay * 0.6f, fireDelay * 0.85f, attackTimer, true);
                     npc.Center = npc.Center.MoveTowards(hoverDestination, movementSpeedInterpolant * 3f);
                     npc.rotation = npc.spriteDirection == 1 ? MathHelper.Pi : 0f;
                     npc.velocity = npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), 25f);
@@ -197,7 +195,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         // Cast charge telegraph lines and prepare the initial charge.
                         if (attackTimer == fireDelay)
                         {
-                            SoundEngine.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
+                            Main.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
                             npc.velocity = new Vector2(Math.Sign(target.Center.X - npc.Center.X), -3.4f).SafeNormalize(Vector2.UnitY) * chargeSpeed;
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -210,7 +208,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                                     chargePositions[i + 1] = chargePositions[i] + currentVelocity * chargeRate;
                                     currentVelocity = Vector2.Reflect(currentVelocity, Vector2.UnitY) * new Vector2(1f, 0.85f);
                                 }
-                                int telegraph = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TrueEyeChargeTelegraph>(), 0, 0f);
+                                int telegraph = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TrueEyeChargeTelegraph>(), 0, 0f);
                                 if (Main.projectile.IndexInRange(telegraph))
                                 {
                                     Main.projectile[telegraph].ModProjectile<TrueEyeChargeTelegraph>().ChargePositions = chargePositions;
@@ -274,7 +272,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 float angularOffest = MathHelper.TwoPi * (groupIndex - 1f) / NPC.CountNPCS(npc.type);
                 float spinArc = MathHelper.Pi * spinDirection;
-                float hoverSlowdown = Utils.GetLerpValue(1f, 0.8f, wrappedAttackTimer / spinTime, true);
+                float hoverSlowdown = Utils.InverseLerp(1f, 0.8f, wrappedAttackTimer / spinTime, true);
                 Vector2 idealPosition = target.Center + (spinArc * wrappedAttackTimer / spinTime + angularOffest).ToRotationVector2() * spinOffset;
                 Vector2 aheadPosition = target.Center + (spinArc * (wrappedAttackTimer + 1f) / spinTime + angularOffest).ToRotationVector2() * spinOffset;
                 npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
@@ -292,9 +290,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Stop in place and look at the target before charging.
             else if (wrappedAttackTimer < spinTime + chargeTelegraphTime)
             {
-                float telegraphCompletion = Utils.GetLerpValue(0f, chargeTelegraphTime, wrappedAttackTimer - spinTime, true);
-                float pupilDilation = Utils.GetLerpValue(0f, 0.6f, telegraphCompletion, true);
-                telegraphInterpolant = Utils.GetLerpValue(0f, 0.65f, telegraphCompletion, true) * Utils.GetLerpValue(1f, 0.75f, telegraphCompletion, true);
+                float telegraphCompletion = Utils.InverseLerp(0f, chargeTelegraphTime, wrappedAttackTimer - spinTime, true);
+                float pupilDilation = Utils.InverseLerp(0f, 0.6f, telegraphCompletion, true);
+                telegraphInterpolant = Utils.InverseLerp(0f, 0.65f, telegraphCompletion, true) * Utils.InverseLerp(1f, 0.75f, telegraphCompletion, true);
 
                 // Define the telegraph direction.
                 if (telegraphCompletion < 0.9f)
@@ -302,7 +300,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
                 // Scream before charging.
                 if (wrappedAttackTimer == spinTime + 8f)
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
+                    Main.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
 
                 // Slow down.
                 npc.velocity = (npc.velocity * 0.825f).MoveTowards(Vector2.Zero, 1.5f);
@@ -322,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             else if (wrappedAttackTimer == spinTime + chargeTelegraphTime)
             {
                 if (groupIndex == 1f)
-                    SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, target.Center);
+                    Main.PlaySound(SoundID.DD2_WyvernDiveDown, target.Center);
 
                 telegraphInterpolant = 0f;
                 npc.velocity = telegraphDirection.ToRotationVector2() * chargeSpeed;
@@ -342,7 +340,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 npc.damage = npc.defDamage;
                 if (chargeCounter % 2f == 1f && wrappedAttackTimer % orbReleaseRate == orbReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item72, npc.Center);
+                    Main.PlaySound(SoundID.Item72, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 orbVelocity = npc.velocity.SafeNormalize(Vector2.UnitY) * 6f;
@@ -406,7 +404,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 pupilScale = MathHelper.Lerp(pupilScale, 0.35f, 0.15f);
 
                 // Hover into position before attacking.
-                float slowdownFactor = Utils.GetLerpValue(0.9f, 0.65f, wrappedAttackTimer / repositionTime, true);
+                float slowdownFactor = Utils.InverseLerp(0.9f, 0.65f, wrappedAttackTimer / repositionTime, true);
                 Vector2 hoverDestination = target.Center + (MathHelper.TwoPi * (groupIndex - 1f + chargeCounter * 0.5f) / 3f).ToRotationVector2() * repositionOffset;
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * slowdownFactor * 31f;
                 npc.Center = npc.Center.MoveTowards(hoverDestination, 12f);
@@ -422,7 +420,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Create phantasmal spheres.
             else if (wrappedAttackTimer < repositionTime + sphereCastTime)
             {
-                float sphereCastCompletion = Utils.GetLerpValue(0f, sphereCastTime, wrappedAttackTimer - repositionTime, true);
+                float sphereCastCompletion = Utils.InverseLerp(0f, sphereCastTime, wrappedAttackTimer - repositionTime, true);
                 float continuousSphereOffsetAngle = MathHelper.TwoPi * sphereCastCompletion;
                 float idealPupilRotation = npc.AngleTo(target.Center).AngleLerp(continuousSphereOffsetAngle, CalamityUtils.Convert01To010(sphereCastCompletion));
                 pupilRotation = pupilRotation.AngleLerp(idealPupilRotation, 0.2f);
@@ -444,7 +442,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         sphereOffsetAngle = MathHelper.Pi * (sphereCreationCounter - 1f) / sphereCastCount + MathHelper.Pi;
                     Vector2 sphereOffset = -Vector2.UnitY.RotatedBy(sphereOffsetAngle) * 36f;
 
-                    SoundEngine.PlaySound(SoundID.Item122, npc.Center + sphereOffset);
+                    Main.PlaySound(SoundID.Item122, npc.Center + sphereOffset);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 sphereVelocity = sphereOffset.SafeNormalize(Vector2.Zero) * 6f;
@@ -472,7 +470,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 if (groupIndex == groupIndexToAttack)
                 {
-                    var explosionSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
+                    var explosionSound = Main.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
                     if (explosionSound != null)
                     {
                         explosionSound.Volume = MathHelper.Clamp(explosionSound.Volume * 1.9f, 0f, 1f);
@@ -613,7 +611,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 float angularOffest = MathHelper.TwoPi * (groupIndex - 1f) / NPC.CountNPCS(npc.type);
                 float spinArc = MathHelper.Pi * 0.666f;
-                float hoverSlowdown = Utils.GetLerpValue(1f, 0.8f, wrappedAttackTimer / attckDelay, true);
+                float hoverSlowdown = Utils.InverseLerp(1f, 0.8f, wrappedAttackTimer / attckDelay, true);
                 Vector2 idealPosition = target.Center + (spinArc * wrappedAttackTimer / attckDelay + angularOffest).ToRotationVector2() * spinOffset;
                 Vector2 aheadPosition = target.Center + (spinArc * (wrappedAttackTimer + 1f) / attckDelay + angularOffest).ToRotationVector2() * spinOffset;
 
@@ -635,12 +633,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 if (groupIndex != 1f)
                 {
                     idealRotation += npc.AngleTo(target.Center) + MathHelper.PiOver2;
-                    telegraphInterpolant = Utils.GetLerpValue(attckDelay, attckDelay + slowdownTime, attackTimer, true);
+                    telegraphInterpolant = Utils.InverseLerp(attckDelay, attckDelay + slowdownTime, attackTimer, true);
                 }
 
                 // Scream before charging.
                 if (wrappedAttackTimer == attckDelay + (int)(slowdownTime * 0.5f) && groupIndex != 1f)
-                    SoundEngine.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
+                    Main.PlaySound(SoundID.Zombie, npc.Center, Main.rand.Next(100, 103));
 
                 pupilRotation = pupilRotation.AngleLerp(npc.AngleTo(target.Center), 0.15f);
                 pupilOutwardness = MathHelper.Lerp(pupilOutwardness, 0.4f, 0.15f);
@@ -669,7 +667,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 if (wrappedAttackTimer == attckDelay + slowdownTime + 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
+                    Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
                     npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                     npc.netUpdate = true;
@@ -700,15 +698,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D pupilTexture = TextureAssets.Extra[19].Value;
+            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D pupilTexture = Main.extraTexture[19];
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition - (npc.rotation + MathHelper.PiOver2).ToRotationVector2() * npc.spriteDirection * 32f;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipVertically : SpriteEffects.FlipHorizontally;
             Color color = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.3f));
-            Main.spriteBatch.Draw(texture, baseDrawPosition, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, 1f, direction, 0f);
+            spriteBatch.Draw(texture, baseDrawPosition, npc.frame, color, npc.rotation, npc.frame.Size() * 0.5f, 1f, direction, 0f);
 
             Vector2 pupilOffset = CalculatePupilOffset(npc);
-            Main.spriteBatch.Draw(pupilTexture, baseDrawPosition + pupilOffset, null, color, npc.rotation, pupilTexture.Size() / 2f, npc.localAI[2], SpriteEffects.None, 0f);
+            spriteBatch.Draw(pupilTexture, baseDrawPosition + pupilOffset, null, color, npc.rotation, pupilTexture.Size() / 2f, npc.localAI[2], SpriteEffects.None, 0f);
 
             // Draw line telegraphs as necessary.
             NPC core = Main.npc[(int)npc.ai[3]];
@@ -717,19 +715,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];
                 if (lineTelegraphInterpolant > 0f)
                 {
-                    Main.spriteBatch.SetBlendState(BlendState.Additive);
+                    spriteBatch.SetBlendState(BlendState.Additive);
 
-                    Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
-                    Texture2D bloomCircle = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/THanosAura").Value;
+                    Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLineSmall");
+                    Texture2D bloomCircle = ModContent.GetTexture("CalamityMod/ExtraTextures/THanosAura");
 
                     Color outlineColor = Color.Lerp(Color.Turquoise, Color.White, lineTelegraphInterpolant);
-                    Vector2 origin = new(line.Width / 2f, line.Height);
-                    Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);
+                    Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                    Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 0.5f, 2.4f);
                     Vector2 drawPosition = baseDrawPosition + pupilOffset;
 
                     // Create bloom on the pupil.
                     Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * (float)Math.Pow(lineTelegraphInterpolant, 2D);
-                    Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
+                    spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
 
                     if (npc.Infernum().ExtraAI[0] >= -100f)
                     {
@@ -737,11 +735,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         {
                             Vector2 beamDirection = -npc.SafeDirectionTo(Main.player[npc.target].Center).RotatedBy(npc.Infernum().ExtraAI[0] * i);
                             float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
-                            Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                            spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
                         }
                     }
 
-                    Main.spriteBatch.ResetBlendState();
+                    spriteBatch.ResetBlendState();
                 }
             }
             if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalDance)
@@ -749,46 +747,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 float lineTelegraphInterpolant = npc.Infernum().ExtraAI[0];
                 if (lineTelegraphInterpolant > 0f)
                 {
-                    Main.spriteBatch.SetBlendState(BlendState.Additive);
+                    spriteBatch.SetBlendState(BlendState.Additive);
 
-                    Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
-                    Texture2D bloomCircle = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/THanosAura").Value;
+                    Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLineSmall");
+                    Texture2D bloomCircle = ModContent.GetTexture("CalamityMod/ExtraTextures/THanosAura");
 
                     Color outlineColor = Color.Lerp(Color.Turquoise, Color.White, lineTelegraphInterpolant);
-                    Vector2 origin = new(line.Width / 2f, line.Height);
-                    Vector2 beamScale = new(lineTelegraphInterpolant * 1.3f, 2.4f);
+                    Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                    Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 1.3f, 2.4f);
                     Vector2 drawPosition = baseDrawPosition + pupilOffset;
 
                     // Create bloom on the pupil.
                     Vector2 bloomSize = new Vector2(30f) / bloomCircle.Size() * (float)Math.Pow(lineTelegraphInterpolant, 2D);
-                    Main.spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
+                    spriteBatch.Draw(bloomCircle, drawPosition, null, Color.Turquoise, 0f, bloomCircle.Size() * 0.5f, bloomSize, 0, 0f);
 
                     Vector2 beamDirection = -npc.Infernum().ExtraAI[1].ToRotationVector2();
                     float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
-                    Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                    spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
 
-                    Main.spriteBatch.ResetBlendState();
+                    spriteBatch.ResetBlendState();
                 }
             }
-            if (core.ai[0] is ((int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage) or
-				((int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalWrath))
+            if (core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalBarrage ||
+                core.ai[0] == (int)MoonLordCoreBehaviorOverride.MoonLordAttackState.PhantasmalWrath)
             {
                 float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];
                 if (lineTelegraphInterpolant > 0f)
                 {
-                    Main.spriteBatch.SetBlendState(BlendState.Additive);
+                    spriteBatch.SetBlendState(BlendState.Additive);
 
-                    Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
+                    Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLineSmall");
                     Color outlineColor = Color.Lerp(Color.Turquoise, Color.White, lineTelegraphInterpolant);
-                    Vector2 origin = new(line.Width / 2f, line.Height);
-                    Vector2 beamScale = new(lineTelegraphInterpolant * 1.3f, 2.4f);
+                    Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                    Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 1.3f, 2.4f);
                     Vector2 drawPosition = baseDrawPosition + pupilOffset;
 
                     Vector2 beamDirection = -npc.SafeDirectionTo(Main.player[npc.target].Center);
                     float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
-                    Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                    spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
 
-                    Main.spriteBatch.ResetBlendState();
+                    spriteBatch.ResetBlendState();
                 }
             }
             return false;

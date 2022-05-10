@@ -1,81 +1,81 @@
 using CalamityMod;
 using CalamityMod.Dusts;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
-	public class LunarFireball : ModProjectile
+    public class LunarFireball : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
-        public ref float InitialSpeed => ref Projectile.ai[1];
+        public ref float Time => ref projectile.ai[0];
+        public ref float InitialSpeed => ref projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Lunar Flame");
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 16;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 420;
-            Projectile.alpha = 225;
-            CooldownSlot = 1;
+            projectile.width = projectile.height = 16;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 420;
+            projectile.alpha = 225;
+            cooldownSlot = 1;
         }
 
         public override void AI()
         {
-            Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt();
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.04f, 0f, 1f);
+            projectile.rotation += (projectile.velocity.X > 0f).ToDirectionInt();
+            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.04f, 0f, 1f);
 
             if (InitialSpeed == 0f)
-                InitialSpeed = Projectile.velocity.Length();
+                InitialSpeed = projectile.velocity.Length();
 
-            bool horizontalVariant = Projectile.identity % 2 == 1;
+            bool horizontalVariant = projectile.identity % 2 == 1;
             if (Time < 60f)
             {
-                Vector2 idealVelocity = Vector2.UnitX * (Projectile.velocity.X > 0f).ToDirectionInt() * InitialSpeed;
+                Vector2 idealVelocity = Vector2.UnitX * (projectile.velocity.X > 0f).ToDirectionInt() * InitialSpeed;
                 if (!horizontalVariant)
-                    idealVelocity = Vector2.UnitY * (Projectile.velocity.Y > 0f).ToDirectionInt() * InitialSpeed;
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, idealVelocity, Time / 300f);
+                    idealVelocity = Vector2.UnitY * (projectile.velocity.Y > 0f).ToDirectionInt() * InitialSpeed;
+                projectile.velocity = Vector2.Lerp(projectile.velocity, idealVelocity, Time / 300f);
             }
-            else if (Time > 90f && Projectile.velocity.Length() < 36f)
+            else if (Time > 90f && projectile.velocity.Length() < 36f)
             {
                 if (horizontalVariant)
-                    Projectile.velocity *= new Vector2(1.01f, 0.98f);
+                    projectile.velocity *= new Vector2(1.01f, 0.98f);
                 else
-                    Projectile.velocity *= new Vector2(0.98f, 1.01f);
+                    projectile.velocity *= new Vector2(0.98f, 1.01f);
             }
 
-            Lighting.AddLight(Projectile.Center, 0f, Projectile.Opacity * 0.4f, Projectile.Opacity * 0.4f);
+            Lighting.AddLight(projectile.Center, 0f, projectile.Opacity * 0.4f, projectile.Opacity * 0.4f);
 
             Time++;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
+            Utilities.DrawAfterimagesCentered(projectile, Color.White, ProjectileID.Sets.TrailingMode[projectile.type], 1);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 20);
+            Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 20);
             for (int dust = 0; dust < 4; dust++)
-                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, (int)CalamityDusts.Nightwither, 0f, 0f);
+                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, (int)CalamityDusts.Nightwither, 0f, 0f);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = Projectile;
+            target.Calamity().lastProjectileHit = projectile;
         }
     }
 }

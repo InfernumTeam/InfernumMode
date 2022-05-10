@@ -1,62 +1,62 @@
 using CalamityMod;
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
-	public class IceMass : ModProjectile
+    public class IceMass : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
+        public ref float Time => ref projectile.ai[0];
 
         public const int ShardBurstCount = 9;
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ice Mass");
 
         public override void SetDefaults()
         {
-            Projectile.width = 92;
-            Projectile.height = 102;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.netImportant = true;
-            Projectile.hostile = true;
-            Projectile.timeLeft = 180;
-            Projectile.Opacity = 0f;
-            Projectile.extraUpdates = 1;
-            Projectile.penetrate = -1;
+            projectile.width = 92;
+            projectile.height = 102;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.netImportant = true;
+            projectile.hostile = true;
+            projectile.timeLeft = 180;
+            projectile.Opacity = 0f;
+            projectile.extraUpdates = 1;
+            projectile.penetrate = -1;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = Utils.GetLerpValue(0f, 40f, Time, true);
-            Projectile.rotation += MathHelper.Pi / 30f;
+            projectile.Opacity = Utils.InverseLerp(0f, 40f, Time, true);
+            projectile.rotation += MathHelper.Pi / 30f;
 
             if (Time >= 110)
-                Projectile.velocity *= 0.975f;
+                projectile.velocity *= 0.975f;
             Time++;
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             // Draw telegraph lines.
             // The amount of these will create a somewhat geometric pattern.
-            if (Time is > 60f and < 170f)
+            if (Time > 60f && Time < 170f)
             {
-                float lineWidth = Utils.GetLerpValue(60f, 90f, Time, true) * Utils.GetLerpValue(170f, 140f, Time, true) * 2.5f + 0.2f;
+                float lineWidth = Utils.InverseLerp(60f, 90f, Time, true) * Utils.InverseLerp(170f, 140f, Time, true) * 2.5f + 0.2f;
 
                 if (lineWidth > 1f)
-                    lineWidth += (float)Math.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.15f;
+                    lineWidth += (float)Math.Sin(Main.GlobalTime * 5f) * 0.15f;
 
                 for (int i = 0; i < ShardBurstCount; i++)
                 {
                     Vector2 lineDirection = (MathHelper.TwoPi * (i + 0.5f) / ShardBurstCount).ToRotationVector2();
-                    Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + lineDirection * 5980f, Color.SkyBlue, lineWidth);
+                    spriteBatch.DrawLineBetter(projectile.Center, projectile.Center + lineDirection * 5980f, Color.SkyBlue, lineWidth);
                 }
             }
             return true;
@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item92, Projectile.Center);
+            Main.PlaySound(SoundID.Item92, projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
@@ -74,7 +74,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 for (float speed = 6f; speed <= 21f; speed += 3.3f)
                 {
                     Vector2 iceVelocity = (MathHelper.TwoPi * (i + 0.5f) / ShardBurstCount).ToRotationVector2() * speed * (BossRushEvent.BossRushActive ? 1.6f : 1f);
-                    Utilities.NewProjectileBetter(Projectile.Center, iceVelocity, ModContent.ProjectileType<IceShard>(), 185, 0f);
+                    Utilities.NewProjectileBetter(projectile.Center, iceVelocity, ModContent.ProjectileType<IceShard>(), 185, 0f);
                 }
             }
         }

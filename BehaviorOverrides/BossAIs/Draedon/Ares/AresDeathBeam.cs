@@ -18,63 +18,63 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public int OwnerIndex
         {
-            get => (int)Projectile.ai[1];
-            set => Projectile.ai[1] = value;
+            get => (int)projectile.ai[1];
+            set => projectile.ai[1] = value;
         }
         public float LifetimeThing;
         public override float MaxScale => 1f;
         public override float MaxLaserLength => AresDeathBeamTelegraph.TelegraphWidth;
         public override float Lifetime => LifetimeThing;
-        public override Color LaserOverlayColor => new(250, 250, 250, 100);
+        public override Color LaserOverlayColor => new Color(250, 250, 250, 100);
         public override Color LightCastColor => Color.White;
-        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("CalamityMod/Projectiles/Boss/AresDeathBeamStart").Value;
-        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/AresDeathBeamMiddle").Value;
-        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/Lasers/AresDeathBeamEnd").Value;
+        public override Texture2D LaserBeginTexture => ModContent.GetTexture("CalamityMod/Projectiles/Boss/AresDeathBeamStart");
+        public override Texture2D LaserMiddleTexture => ModContent.GetTexture("CalamityMod/ExtraTextures/Lasers/AresDeathBeamMiddle");
+        public override Texture2D LaserEndTexture => ModContent.GetTexture("CalamityMod/ExtraTextures/Lasers/AresDeathBeamEnd");
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Exo Overload Beam");
-            Main.projFrames[Projectile.type] = 5;
+            Main.projFrames[projectile.type] = 5;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 30;
-            Projectile.height = 30;
-            Projectile.hostile = true;
-            Projectile.alpha = 255;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
-            Projectile.timeLeft = 600;
-            Projectile.Calamity().canBreakPlayerDefense = true;
-            CooldownSlot = 1;
+            projectile.width = 30;
+            projectile.height = 30;
+            projectile.hostile = true;
+            projectile.alpha = 255;
+            projectile.penetrate = -1;
+            projectile.tileCollide = false;
+            projectile.timeLeft = 600;
+            projectile.Calamity().canBreakPlayerDefense = true;
+            cooldownSlot = 1;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(Projectile.localAI[0]);
-            writer.Write(Projectile.localAI[1]);
+            writer.Write(projectile.localAI[0]);
+            writer.Write(projectile.localAI[1]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            Projectile.localAI[0] = reader.ReadSingle();
-            Projectile.localAI[1] = reader.ReadSingle();
+            projectile.localAI[0] = reader.ReadSingle();
+            projectile.localAI[1] = reader.ReadSingle();
         }
 
         public override void AttachToSomething()
         {
             if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<AresBody>())
             {
-                Vector2 fireFrom = new(Main.npc[OwnerIndex].Center.X - 1f, Main.npc[OwnerIndex].Center.Y + 23f);
-                fireFrom += Projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(35f, 127f, Projectile.scale * Projectile.scale);
-                Projectile.Center = fireFrom;
+                Vector2 fireFrom = new Vector2(Main.npc[OwnerIndex].Center.X - 1f, Main.npc[OwnerIndex].Center.Y + 23f);
+                fireFrom += projectile.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(35f, 127f, projectile.scale * projectile.scale);
+                projectile.Center = fireFrom;
             }
 
             // Die of the owner is invalid in some way.
             else
             {
-                Projectile.Kill();
+                projectile.Kill();
                 return;
             }
         }
@@ -82,7 +82,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public override float DetermineLaserLength()
         {
             float[] sampledLengths = new float[10];
-            Collision.LaserScan(Projectile.Center, Projectile.velocity, Projectile.width * Projectile.scale, MaxLaserLength, sampledLengths);
+            Collision.LaserScan(projectile.Center, projectile.velocity, projectile.width * projectile.scale, MaxLaserLength, sampledLengths);
 
             float newLaserLength = sampledLengths.Average();
 
@@ -97,10 +97,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         {
             // Spawn dust at the end of the beam.
             int dustType = 107;
-            Vector2 dustCreationPosition = Projectile.Center + Projectile.velocity * (LaserLength - 14f);
+            Vector2 dustCreationPosition = projectile.Center + projectile.velocity * (LaserLength - 14f);
             for (int i = 0; i < 2; i++)
             {
-                float dustDirection = Projectile.velocity.ToRotation() + Main.rand.NextBool().ToDirectionInt() * MathHelper.PiOver2;
+                float dustDirection = projectile.velocity.ToRotation() + Main.rand.NextBool().ToDirectionInt() * MathHelper.PiOver2;
                 Vector2 dustVelocity = dustDirection.ToRotationVector2() * Main.rand.NextFloat(2f, 4f);
                 Dust exoEnergy = Dust.NewDustDirect(dustCreationPosition, 0, 0, dustType, dustVelocity.X, dustVelocity.Y, 0, new Color(0, 255, 255), 1f);
                 exoEnergy.noGravity = true;
@@ -109,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (Main.rand.NextBool(5))
             {
-                Vector2 dustSpawnOffset = Projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * Projectile.width * 0.5f;
+                Vector2 dustSpawnOffset = projectile.velocity.RotatedBy(MathHelper.PiOver2) * Main.rand.NextFloatDirection() * projectile.width * 0.5f;
                 Dust exoEnergy = Dust.NewDustDirect(dustCreationPosition + dustSpawnOffset - Vector2.One * 4f, 8, 8, dustType, 0f, 0f, 100, new Color(0, 255, 255), 1.5f);
                 exoEnergy.velocity *= 0.5f;
 
@@ -118,48 +118,48 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Determine frames.
-            Projectile.frameCounter++;
-            if (Projectile.frameCounter % 5f == 0f)
-                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+            projectile.frameCounter++;
+            if (projectile.frameCounter % 5f == 0f)
+                projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             // This should never happen, but just in case-
-            if (Projectile.velocity == Vector2.Zero)
+            if (projectile.velocity == Vector2.Zero)
                 return false;
 
             Color beamColor = LaserOverlayColor;
-            Rectangle startFrameArea = LaserBeginTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
-            Rectangle middleFrameArea = LaserMiddleTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
-            Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+            Rectangle startFrameArea = LaserBeginTexture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
+            Rectangle middleFrameArea = LaserMiddleTexture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
+            Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
 
             // Start texture drawing.
             Main.spriteBatch.Draw(LaserBeginTexture,
-                             Projectile.Center - Main.screenPosition,
+                             projectile.Center - Main.screenPosition,
                              startFrameArea,
                              beamColor,
-                             Projectile.rotation,
+                             projectile.rotation,
                              LaserBeginTexture.Size() / 2f,
-                             Projectile.scale,
+                             projectile.scale,
                              SpriteEffects.None,
                              0f);
 
             // Prepare things for body drawing.
             float laserBodyLength = LaserLength + middleFrameArea.Height;
-            Vector2 centerOnLaser = Projectile.Center;
+            Vector2 centerOnLaser = projectile.Center;
 
             // Body drawing.
-            Rectangle screenArea = new((int)(Main.screenPosition.X - 100f), (int)(Main.screenPosition.Y - 100f), Main.screenWidth + 200, Main.screenHeight + 200);
+            Rectangle screenArea = new Rectangle((int)(Main.screenPosition.X - 100f), (int)(Main.screenPosition.Y - 100f), Main.screenWidth + 200, Main.screenHeight + 200);
             if (laserBodyLength > 0f && middleFrameArea.Height >= 1f)
             {
-                float laserOffset = middleFrameArea.Height * Projectile.scale;
+                float laserOffset = middleFrameArea.Height * projectile.scale;
                 float incrementalBodyLength = 0f;
                 while (incrementalBodyLength + 1f < laserBodyLength)
                 {
                     if (!screenArea.Intersects(new Rectangle((int)centerOnLaser.X, (int)centerOnLaser.Y, 1, 1)))
                     {
-                        centerOnLaser += Projectile.velocity * laserOffset;
+                        centerOnLaser += projectile.velocity * laserOffset;
                         incrementalBodyLength += laserOffset;
                         continue;
                     }
@@ -168,14 +168,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                                      centerOnLaser - Main.screenPosition,
                                      middleFrameArea,
                                      beamColor,
-                                     Projectile.rotation,
+                                     projectile.rotation,
                                      LaserMiddleTexture.Size() * 0.5f,
-                                     Projectile.scale,
+                                     projectile.scale,
                                      SpriteEffects.None,
                                      0f);
                     incrementalBodyLength += laserOffset;
-                    centerOnLaser += Projectile.velocity * laserOffset;
-                    middleFrameArea.Y += LaserMiddleTexture.Height / Main.projFrames[Projectile.type];
+                    centerOnLaser += projectile.velocity * laserOffset;
+                    middleFrameArea.Y += LaserMiddleTexture.Height / Main.projFrames[projectile.type];
                     if (middleFrameArea.Y + middleFrameArea.Height > LaserMiddleTexture.Height)
                         middleFrameArea.Y = 0;
                 }
@@ -186,9 +186,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
                              laserEndCenter,
                              endFrameArea,
                              beamColor,
-                             Projectile.rotation,
+                             projectile.rotation,
                              LaserEndTexture.Size() * 0.5f,
-                             Projectile.scale,
+                             projectile.scale,
                              SpriteEffects.None,
                              0f);
             return false;
@@ -200,11 +200,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             target.AddBuff(BuffID.Frostburn, 360);
         }
 
-        public override bool CanHitPlayer(Player target) => Projectile.scale >= 0.5f;
+        public override bool CanHitPlayer(Player target) => projectile.scale >= 0.5f;
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = Projectile;
+            target.Calamity().lastProjectileHit = projectile;
         }
     }
 }

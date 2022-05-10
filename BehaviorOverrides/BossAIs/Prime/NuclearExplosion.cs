@@ -13,59 +13,59 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 14;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 180;
-            Projectile.extraUpdates = 1;
-            Projectile.penetrate = -1;
-            Projectile.scale = 0.15f;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            projectile.width = projectile.height = 14;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.timeLeft = 180;
+            projectile.extraUpdates = 1;
+            projectile.penetrate = -1;
+            projectile.scale = 0.15f;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            Projectile.scale += 0.06f;
-            Projectile.Opacity = Utils.GetLerpValue(300f, 265f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 50f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            projectile.scale += 0.06f;
+            projectile.Opacity = Utils.InverseLerp(300f, 265f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 50f, projectile.timeLeft, true);
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (Projectile.velocity.Length() < 18f)
-                Projectile.velocity *= 1.02f;
+            if (projectile.velocity.Length() < 18f)
+                projectile.velocity *= 1.02f;
 
-            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.Opacity > 0.74f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.Opacity > 0.74f)
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    Vector2 spawnPosition = Projectile.Center + Main.rand.NextVector2Circular(35f, 35f);
+                    Vector2 spawnPosition = projectile.Center + Main.rand.NextVector2Circular(35f, 35f);
                     Vector2 smokeVelocity = -Vector2.UnitY.RotatedByRandom(2.16f) * Main.rand.NextFloat(6f, 29f);
-                    Projectile.NewProjectile(new InfernumSource(), spawnPosition, smokeVelocity, ModContent.ProjectileType<NukeSmoke>(), 0, 0f);
+                    Projectile.NewProjectile(spawnPosition, smokeVelocity, ModContent.ProjectileType<NukeSmoke>(), 0, 0f);
                 }
             }
 
-            Lighting.AddLight(Projectile.Center, Color.Red.ToVector3());
+            Lighting.AddLight(projectile.Center, Color.Red.ToVector3());
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
-            Color explosionColor = Color.OrangeRed * Projectile.Opacity * 0.65f;
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Color explosionColor = Color.OrangeRed * projectile.Opacity * 0.65f;
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < 2; i++)
-                Main.spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
 
-            Main.spriteBatch.ResetBlendState();
+            spriteBatch.ResetBlendState();
             return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * 135f);
+            return Utilities.CircularCollision(projectile.Center, targetHitbox, projectile.scale * 135f);
         }
 
-        public override bool? CanDamage() => Projectile.Opacity > 0.45f ? null : false;
+        public override bool CanDamage() => projectile.Opacity > 0.45f;
     }
 }

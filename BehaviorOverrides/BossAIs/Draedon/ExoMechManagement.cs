@@ -152,7 +152,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     return false;
 
                 NPC apollo = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Apollo>())];
-                return apollo.ai[3] is > 0f and < Phase2TransitionTime;
+                return apollo.ai[3] > 0f && apollo.ai[3] < Phase2TransitionTime;
             }
         }
 
@@ -307,7 +307,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<ThanatosHead>() || npc.type == ModContent.NPCType<Apollo>())
             {
                 Vector2 thanatosSpawnPosition = Main.player[npc.target].Center + Vector2.UnitY * 2100f;
-                int complementMech = NPC.NewNPC(new InfernumSource(), (int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
+                int complementMech = NPC.NewNPC((int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
                 NPC ares = Main.npc[complementMech];
                 npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
 
@@ -324,7 +324,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<AthenaNPC>())
             {
                 Vector2 apolloSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int complementMech = NPC.NewNPC(new InfernumSource(), (int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
+                int complementMech = NPC.NewNPC((int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
                 NPC apollo = Main.npc[complementMech];
                 npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
 
@@ -339,7 +339,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<AresBody>())
             {
                 Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int complementMech = NPC.NewNPC(new InfernumSource(), (int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
+                int complementMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
                 NPC thanatos = Main.npc[complementMech];
                 npc.Infernum().ExtraAI[ComplementMechIndexIndex] = complementMech;
 
@@ -368,7 +368,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<AresBody>() || npc.type == ModContent.NPCType<ThanatosHead>())
             {
                 Vector2 apolloSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 2100f;
-                int finalMech = NPC.NewNPC(new InfernumSource(), (int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
+                int finalMech = NPC.NewNPC((int)apolloSpawnPosition.X, (int)apolloSpawnPosition.Y, ModContent.NPCType<Apollo>(), 1);
                 NPC apollo = Main.npc[finalMech];
                 npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
                 Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
@@ -384,7 +384,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<AthenaNPC>())
             {
                 Vector2 aresSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int finalMech = NPC.NewNPC(new InfernumSource(), (int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
+                int finalMech = NPC.NewNPC((int)aresSpawnPosition.X, (int)aresSpawnPosition.Y, ModContent.NPCType<AresBody>(), 1);
                 NPC ares = Main.npc[finalMech];
                 npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
                 Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
@@ -401,7 +401,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             if (npc.type == ModContent.NPCType<Apollo>())
             {
                 Vector2 thanatosSpawnPosition = Main.player[npc.target].Center - Vector2.UnitY * 1400f;
-                int finalMech = NPC.NewNPC(new InfernumSource(), (int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
+                int finalMech = NPC.NewNPC((int)thanatosSpawnPosition.X, (int)thanatosSpawnPosition.Y, ModContent.NPCType<ThanatosHead>(), 1);
                 NPC thanatos = Main.npc[finalMech];
                 npc.Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;
                 Main.npc[(int)npc.Infernum().ExtraAI[ComplementMechIndexIndex]].Infernum().ExtraAI[FinalMechIndexIndex] = finalMech;

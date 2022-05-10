@@ -9,53 +9,53 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.GreatSandShark
 {
     public class SwervingSandShark : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
-        public ref float Variant => ref Projectile.ai[1];
+        public ref float Time => ref projectile.ai[0];
+        public ref float Variant => ref projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Sand Shark");
-            Main.projFrames[Projectile.type] = 4;
+            Main.projFrames[projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 44;
-            Projectile.alpha = 255;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 480;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            projectile.width = projectile.height = 44;
+            projectile.alpha = 255;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 480;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
             // Fade in.
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.15f, 0f, 1f);
+            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.15f, 0f, 1f);
 
             // Determine frames.
-            Projectile.frameCounter++;
-            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
+            projectile.frameCounter++;
+            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
             // Wave up and down over time.
             Vector2 moveOffset = Vector2.UnitX * (float)Math.Sin(Time / 17f) * 5f;
-            Projectile.Center += moveOffset;
+            projectile.Center += moveOffset;
 
-            Projectile.rotation = (Projectile.velocity + moveOffset).ToRotation();
-            Projectile.rotation += MathHelper.Pi;
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
+            projectile.rotation = (projectile.velocity + moveOffset).ToRotation();
+            projectile.rotation += MathHelper.Pi;
+            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.075f, 0f, 1f);
 
             Time++;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Rectangle frame = texture.Frame(4, Main.projFrames[Projectile.type], (int)Variant % 4, Projectile.frame);
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Rectangle frame = texture.Frame(4, Main.projFrames[projectile.type], (int)Variant % 4, projectile.frame);
             Vector2 origin = frame.Size() * 0.5f;
-            Main.spriteBatch.Draw(texture, drawPosition, frame, Color.White * Projectile.Opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPosition, frame, Color.White * projectile.Opacity, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

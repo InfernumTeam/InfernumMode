@@ -10,8 +10,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using PlaguebringerBoss = CalamityMod.NPCs.PlaguebringerGoliath.PlaguebringerGoliath;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
@@ -139,7 +137,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             ref float chargeTimer = ref npc.Infernum().ExtraAI[2];
             ref float chargeState = ref npc.Infernum().ExtraAI[3];
             ref float hoverTimer = ref npc.Infernum().ExtraAI[4];
-            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * 660f, hoverOffsetY);
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 660f, hoverOffsetY);
 
             if (NPC.AnyNPCs(ModContent.NPCType<SmallDrone>()))
             {
@@ -177,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
                     }
                 }
                 else
@@ -240,7 +238,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             {
                 // Attempt to hover near the target.
                 case 0:
-                    Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * 720f, -360f);
+                    Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 720f, -360f);
                     Vector2 hoverDestination = target.Center + hoverOffset;
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 29f, 2f);
@@ -265,7 +263,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     missileShootTimer++;
                     if (missileShootTimer >= missileShootRate)
                     {
-                        SoundEngine.PlaySound(SoundID.Item11, npc.Center);
+                        Main.PlaySound(SoundID.Item11, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 abdomenPosition = npc.Center + Vector2.UnitY.RotatedBy(npc.rotation) * new Vector2(npc.spriteDirection, 1f) * 108f;
@@ -317,7 +315,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             {
                 // Attempt to hover near the target.
                 case 0:
-                    Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, -360f);
+                    Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 420f, -360f);
                     Vector2 hoverDestination = target.Center + hoverOffset;
                     npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                     npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 21f, 1f);
@@ -342,7 +340,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     vomitShootTimer++;
                     if (vomitShootTimer >= vomitShootRate)
                     {
-                        SoundEngine.PlaySound(SoundID.Item11, npc.Center);
+                        Main.PlaySound(SoundID.Item11, npc.Center);
 
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -394,7 +392,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             ref float chargeTimer = ref npc.Infernum().ExtraAI[1];
             ref float chargeState = ref npc.Infernum().ExtraAI[2];
             ref float hoverTimer = ref npc.Infernum().ExtraAI[3];
-            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * horizontalOffset, -325f);
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * horizontalOffset, -325f);
 
             // Do initializations.
             if (Main.netMode != NetmodeID.MultiplayerClient && chargeState == 0f)
@@ -423,7 +421,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
                     }
                 }
                 else
@@ -452,7 +450,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 // Otherwise, release missiles.
                 else if (Main.netMode != NetmodeID.MultiplayerClient && chargeTimer % 10f == 9f)
                 {
-                    Vector2 missileShootVelocity = new(npc.velocity.X * 0.6f, 15f);
+                    Vector2 missileShootVelocity = new Vector2(npc.velocity.X * 0.6f, 15f);
                     missileShootVelocity += Main.rand.NextVector2Circular(1.25f, 1.25f);
                     Utilities.NewProjectileBetter(npc.Center + missileShootVelocity * 2f, missileShootVelocity, ModContent.ProjectileType<PlagueMissile>(), 180, 0f);
                 }
@@ -484,7 +482,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             ref float chargeState = ref npc.Infernum().ExtraAI[3];
             ref float hoverTimer = ref npc.Infernum().ExtraAI[4];
             ref float summonTimer = ref npc.Infernum().ExtraAI[5];
-            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, hoverOffsetY);
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, hoverOffsetY);
 
             // Do initializations.
             if (Main.netMode != NetmodeID.MultiplayerClient && chargeState == 0f)
@@ -515,7 +513,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
                     }
                 }
                 else
@@ -567,7 +565,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                     if (Main.netMode != NetmodeID.MultiplayerClient && NPC.CountNPCS(ModContent.NPCType<ExplosivePlagueCharger>()) < 9)
                     {
                         Vector2 chargerSpawnPosition = npc.Center + Main.rand.NextVector2Unit() * new Vector2(2f, 1f) * Main.rand.NextFloat(100f, 180f);
-                        NPC.NewNPC(new InfernumSource(), (int)chargerSpawnPosition.X, (int)chargerSpawnPosition.Y, ModContent.NPCType<ExplosivePlagueCharger>());
+                        NPC.NewNPC((int)chargerSpawnPosition.X, (int)chargerSpawnPosition.Y, ModContent.NPCType<ExplosivePlagueCharger>());
                     }
                 }
 
@@ -584,10 +582,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             void summonDrones(int droneSummonCount, int moveIncrement, int spinDirection, float angularOffsetPerIncrement)
             {
-                List<int> drones = new();
+                List<int> drones = new List<int>();
                 for (int i = 0; i < droneSummonCount; i++)
                 {
-                    int drone = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SmallDrone>());
+                    int drone = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SmallDrone>());
                     Main.npc[drone].target = npc.target;
                     drones.Add(drone);
                 }
@@ -636,7 +634,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             ref float chargeState = ref npc.Infernum().ExtraAI[3];
             ref float hoverTimer = ref npc.Infernum().ExtraAI[4];
             ref float bombingTimer = ref npc.Infernum().ExtraAI[5];
-            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, hoverOffsetY);
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, hoverOffsetY);
 
             // Do initializations.
             if (Main.netMode != NetmodeID.MultiplayerClient && chargeState == 0f)
@@ -667,7 +665,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
                     }
                 }
                 else
@@ -730,7 +728,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 }
 
                 if (bombingTimer == bombingDelay)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/TankCannon"), target.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/TankCannon"), target.Center);
 
                 if (bombingTimer > bombingDelay + 90f)
                 {
@@ -753,14 +751,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             ref float chargeState = ref npc.Infernum().ExtraAI[2];
             ref float hoverTimer = ref npc.Infernum().ExtraAI[3];
             ref float bombingTimer = ref npc.Infernum().ExtraAI[4];
-            Vector2 hoverOffset = new((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, 0f);
+            Vector2 hoverOffset = new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 470f, 0f);
 
             // Create a wave visual effect.
             if (attackTimer == 1f)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<PlagueWave>(), 0, 0f);
-                SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                Main.PlaySound(SoundID.Roar, npc.Center, 0);
             }
 
             // Do initializations.
@@ -791,7 +789,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                         npc.spriteDirection = (target.Center.X > npc.Center.X).ToDirectionInt();
                         npc.netUpdate = true;
 
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGDash"), target.Center);
                     }
                 }
                 else
@@ -833,7 +831,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             bool canReleaseBombs = attackTimer % 16f == 15f;
             if (canReleaseBombs)
             {
-                SoundEngine.PlaySound(SoundID.Item45, target.Center);
+                Main.PlaySound(SoundID.Item45, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float bombRotation = Main.rand.NextBool(2).ToInt() * Main.rand.NextFloatDirection() * 0.14f;
@@ -865,13 +863,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             if (attackTimer == 1f)
             {
                 Utilities.DisplayText("NUCLEAR CORE GENERATED. INITIATING BUILD PROCEDURE!", Color.Lime);
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 4; i++)
-                        NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BuilderDroneSmall>(), npc.whoAmI, Target: npc.target);
-                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BuilderDroneBig>(), npc.whoAmI, Target: npc.target);
-                    NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y + 24, ModContent.NPCType<PlagueNuke>(), npc.whoAmI, Target: npc.target);
+                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BuilderDroneSmall>(), npc.whoAmI, Target: npc.target);
+                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<BuilderDroneBig>(), npc.whoAmI, Target: npc.target);
+                    NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y + 24, ModContent.NPCType<PlagueNuke>(), npc.whoAmI, Target: npc.target);
                 }
                 npc.netUpdate = true;
             }
@@ -964,12 +962,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         {
             bool charging = npc.localAI[0] == (int)PBGFrameType.Charge;
             ref float previousFrameType = ref npc.localAI[1];
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D glowTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathGlow").Value;
+            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D glowTexture = ModContent.GetTexture("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathGlow");
             if (charging)
             {
-                texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathChargeTex").Value;
-                glowTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathChargeTexGlow").Value;
+                texture = ModContent.GetTexture("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathChargeTex");
+                glowTexture = ModContent.GetTexture("CalamityMod/NPCs/PlaguebringerGoliath/PlaguebringerGoliathChargeTexGlow");
             }
 
             // Reset frames when frame types change.
@@ -986,7 +984,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             int frameCount = 3;
             int afterimageCount = 10;
-            Rectangle frame = new(npc.frame.X, npc.frame.Y, texture.Width / 2, texture.Height / frameCount);
+            Rectangle frame = new Rectangle(npc.frame.X, npc.frame.Y, texture.Width / 2, texture.Height / frameCount);
             Vector2 origin = frame.Size() / 2f;
 
             if (CalamityConfig.Instance.Afterimages)
@@ -995,13 +993,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 {
                     Color color38 = npc.GetAlpha(Color.Lerp(lightColor, Color.White, 0.5f)) * ((afterimageCount - i) / 15f);
                     Vector2 drawPosition = npc.oldPos[i] + npc.Size * 0.5f - Main.screenPosition;
-                    Main.spriteBatch.Draw(texture, drawPosition, frame, color38, npc.rotation, origin, npc.scale, spriteEffects, 0f);
+                    spriteBatch.Draw(texture, drawPosition, frame, color38, npc.rotation, origin, npc.scale, spriteEffects, 0f);
                 }
             }
 
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
-            Main.spriteBatch.Draw(texture, baseDrawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
-            Main.spriteBatch.Draw(glowTexture, baseDrawPosition, frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            spriteBatch.Draw(texture, baseDrawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
+            spriteBatch.Draw(glowTexture, baseDrawPosition, frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, spriteEffects, 0f);
             return false;
         }
         #endregion Frames and Drawcode

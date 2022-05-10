@@ -9,7 +9,7 @@ namespace InfernumMode.BossIntroScreens
 {
     public class CryogenIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new(completionRatio =>
+        public override TextColorData TextColor => new TextColorData(completionRatio =>
         {
             return Color.Lerp(Color.Cyan, Color.LightCyan, ((float)Math.Sin(AnimationCompletion * MathHelper.Pi * 4f) * 0.5f + 0.5f) * 0.72f);
         });

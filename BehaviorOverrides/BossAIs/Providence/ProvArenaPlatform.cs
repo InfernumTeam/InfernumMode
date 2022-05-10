@@ -12,25 +12,25 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault(string.Empty);
-            NPCID.Sets.TrailingMode[NPC.type] = 0;
-            NPCID.Sets.TrailCacheLength[NPC.type] = 7;
+            NPCID.Sets.TrailingMode[npc.type] = 0;
+            NPCID.Sets.TrailCacheLength[npc.type] = 7;
         }
 
         public override void SetDefaults()
         {
-            NPC.damage = 0;
-            NPC.lifeMax = 500;
-            NPC.immortal = true;
-            NPC.dontTakeDamage = true;
-            NPC.noGravity = true;
-            NPC.noTileCollide = true;
-            NPC.dontCountMe = true;
-            NPC.width = 100;
-            NPC.height = 24;
-            NPC.aiStyle = -1;
-            NPC.knockBackResist = 0;
-            NPC.Opacity = 0f;
-            NPC.netAlways = true;
+            npc.damage = 0;
+            npc.lifeMax = 500;
+            npc.immortal = true;
+            npc.dontTakeDamage = true;
+            npc.noGravity = true;
+            npc.noTileCollide = true;
+            npc.dontCountMe = true;
+            npc.width = 100;
+            npc.height = 24;
+            npc.aiStyle = -1;
+            npc.knockBackResist = 0;
+            npc.Opacity = 0f;
+            npc.netAlways = true;
         }
 
         public override void AI()
@@ -38,38 +38,38 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Die if Providence is not present.
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.holyBoss))
             {
-                NPC.active = false;
+                npc.active = false;
                 return;
             }
 
             // Die if the platform has left Providence's arena.
-            if (!Main.npc[CalamityGlobalNPC.holyBoss].Infernum().arenaRectangle.Intersects(NPC.Hitbox))
+            if (!Main.npc[CalamityGlobalNPC.holyBoss].Infernum().arenaRectangle.Intersects(npc.Hitbox))
             {
-                NPC.active = false;
+                npc.active = false;
                 return;
             }
 
             // Fade in.
-            NPC.Opacity = MathHelper.Clamp(NPC.Opacity + 0.1f, 0f, 1f);
+            npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
-            NPC.gfxOffY = -6;
+            npc.gfxOffY = -6;
 
-            float offsetFromPreviousPosition = NPC.position.Y - NPC.oldPosition.Y;
+            float offsetFromPreviousPosition = npc.position.Y - npc.oldPosition.Y;
             foreach (Player player in Main.player)
             {
                 if (!player.active || player.dead || player.GoingDownWithGrapple || Collision.SolidCollision(player.position, player.width, player.height) || player.controlDown)
                     continue;
 
-                Rectangle playerRect = new((int)player.position.X, (int)player.position.Y + (player.height), player.width, 1);
+                Rectangle playerRect = new Rectangle((int)player.position.X, (int)player.position.Y + (player.height), player.width, 1);
 
                 int effectiveNPCHitboxHeight = Math.Min((int)player.velocity.Y, 0) + (int)Math.Abs(offsetFromPreviousPosition) + 14;
-                if (playerRect.Intersects(new Rectangle((int)NPC.position.X, (int)NPC.position.Y, NPC.width, effectiveNPCHitboxHeight)) && player.position.Y <= NPC.position.Y)
+                if (playerRect.Intersects(new Rectangle((int)npc.position.X, (int)npc.position.Y, npc.width, effectiveNPCHitboxHeight)) && player.position.Y <= npc.position.Y)
                 {
                     if (!player.justJumped && player.velocity.Y >= 0)
                     {
                         player.velocity.Y = 0;
-                        player.position.Y = NPC.position.Y - player.height + 4;
-                        player.position += NPC.velocity;
+                        player.position.Y = npc.position.Y - player.height + 4;
+                        player.position += npc.velocity;
 
                         if (Math.Abs(player.velocity.X) < 0.01f)
                         {
@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         }
 
         // Ensure that platforms are fullbright, for visual clarity.
-        public override Color? GetAlpha(Color drawColor) => Color.White * NPC.Opacity;
+        public override Color? GetAlpha(Color drawColor) => Color.White * npc.Opacity;
 
         public override bool CheckActive() => false;
 

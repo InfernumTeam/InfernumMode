@@ -73,7 +73,7 @@ namespace InfernumMode
             damage = (int)(damage * 0.5);
             if (Main.expertMode)
                 damage = (int)(damage * 0.5);
-            return Projectile.NewProjectile(new InfernumSource(), spawnX, spawnY, velocityX, velocityY, type, damage, knockback, owner, ai0, ai1);
+            return Projectile.NewProjectile(spawnX, spawnY, velocityX, velocityY, type, damage, knockback, owner, ai0, ai1);
         }
 
         /// <summary>

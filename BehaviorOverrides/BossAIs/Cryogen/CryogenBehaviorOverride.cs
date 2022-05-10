@@ -11,7 +11,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 using CryogenBoss = CalamityMod.NPCs.Cryogen.Cryogen;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 {
@@ -132,15 +131,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 if (subphaseState == 0f)
                 {
                     for (int i = 1; i <= 5; i++)
-                        Gore.NewGore(new InfernumSource(), npc.Center, npc.velocity, Utilities.GetGoreID("CryogenChainGore" + i), npc.scale);
+                        Gore.NewGore(npc.Center, npc.velocity, InfernumMode.Instance.GetGoreSlot("Gores/CryogenChainGore" + i), npc.scale);
 
-                    SoundEngine.PlaySound(SoundID.NPCDeath7, npc.Center);
+                    Main.PlaySound(SoundID.NPCDeath7, npc.Center);
                 }
 
                 if (subphaseState == 1f)
                 {
                     for (int i = 1; i <= 7; i++)
-                        Gore.NewGore(new InfernumSource(), npc.Center, npc.velocity, Utilities.GetGoreID("CryogenGore" + i), npc.scale);
+                        Gore.NewGore(npc.Center, npc.velocity, InfernumMode.Instance.GetGoreSlot("Gores/CryogenGore" + i), npc.scale);
                 }
 
                 // Reset everything and sync.
@@ -148,7 +147,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    var sound = SoundEngine.GetActiveSound(SlotId.FromFloat(npc.Infernum().ExtraAI[0]));
+                    var sound = Main.GetActiveSound(SlotId.FromFloat(npc.Infernum().ExtraAI[0]));
                     sound?.Stop();
                 }
 
@@ -389,7 +388,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             if (attackTimer % burstCreationRate == burstCreationRate - 1f)
             {
                 EmitIceParticles(npc.Center, 3.5f, 25);
-                SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                Main.PlaySound(SoundID.Item28, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float angleOffset = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -453,7 +452,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             if (attackTimer % burstCreationRate == burstCreationRate - 1f)
             {
                 EmitIceParticles(npc.Center, 3.5f, 25);
-                SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                Main.PlaySound(SoundID.Item28, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -512,7 +511,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 else
                     EmitIceParticles(new Vector2(teleportPositionX, teleportPositionY), 3f, 6);
 
-                npc.Opacity = Utils.GetLerpValue(teleportWaitTime - 1f, teleportWaitTime - 45f, attackTimer, true);
+                npc.Opacity = Utils.InverseLerp(teleportWaitTime - 1f, teleportWaitTime - 45f, attackTimer, true);
             }
 
             // Do the teleport.
@@ -527,7 +526,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                     Utilities.NewProjectileBetter(npc.Center, bombVelocity, ModContent.ProjectileType<IceBomb2>(), 135, 0f);
                 }
 
-                SoundEngine.PlaySound(SoundID.Item8, npc.Center);
+                Main.PlaySound(SoundID.Item8, npc.Center);
 
                 teleportPositionX = 0f;
                 teleportPositionY = 0f;
@@ -578,7 +577,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             if (attackTimer % burstCreationRate == burstCreationRate - 1f && attackTimer < burstCreationRate * burstCount)
             {
                 EmitIceParticles(npc.Center, 3.5f, 25);
-                SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                Main.PlaySound(SoundID.Item28, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -646,17 +645,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             {
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(initialTeleportOffset) * 8f, 0.35f);
                 npc.rotation = npc.velocity.X * 0.02f;
-                npc.Opacity = Utils.GetLerpValue(intialTeleportDelay - 1f, intialTeleportDelay - 24f, attackTimer, true);
+                npc.Opacity = Utils.InverseLerp(intialTeleportDelay - 1f, intialTeleportDelay - 24f, attackTimer, true);
             }
             else
             {
                 teleportTimer++;
-                npc.Opacity = Utils.GetLerpValue(teleportDelay - 1f, teleportDelay - 24f, teleportTimer, true);
+                npc.Opacity = Utils.InverseLerp(teleportDelay - 1f, teleportDelay - 24f, teleportTimer, true);
 
                 // Periodically release redirecting icicles.
                 if (attackTimer % spikeReleaseRate == spikeReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                    Main.PlaySound(SoundID.Item28, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 icicleShootVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(2f, 4f);
@@ -744,7 +743,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 if (attackTimer >= chargeDelay)
                 {
                     // Play a charge sound.
-                    SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                    Main.PlaySound(SoundID.Item28, npc.Center);
 
                     attackTimer = 0f;
                     attackSubstate = 2f;
@@ -762,7 +761,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
                 // Release redirecting icicles perpendicularly.
                 if (attackTimer % 30f == 29f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item72, npc.Center);
+                    Main.PlaySound(SoundID.Item72, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -812,11 +811,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             ref float blizzardSound = ref npc.Infernum().ExtraAI[0];
 
             // Make the blizzard stronger when the aurora spirits appear.
-            float intensityFactor = Utils.GetLerpValue(60f, 120f, attackTimer, true) * Utils.GetLerpValue(spiritSummonTime, spiritSummonTime - 60f, attackTimer, true);
+            float intensityFactor = Utils.InverseLerp(60f, 120f, attackTimer, true) * Utils.InverseLerp(spiritSummonTime, spiritSummonTime - 60f, attackTimer, true);
 
             bool shouldStopSound = Main.ambientVolume > 0f;
-            if (attackTimer == 60f && Main.netMode != NetmodeID.Server && SoundEngine.GetActiveSound(SlotId.FromFloat(blizzardSound)) == null && !shouldStopSound)
-                blizzardSound = SoundEngine.PlayTrackedSound(SoundID.BlizzardStrongLoop, npc.Center).ToFloat();
+            if (attackTimer == 60f && Main.netMode != NetmodeID.Server && Main.GetActiveSound(SlotId.FromFloat(blizzardSound)) == null && !shouldStopSound)
+                blizzardSound = Main.PlayTrackedSound(SoundID.BlizzardStrongLoop, npc.Center).ToFloat();
 
             bool canShoot = attackTimer > shootDelay && attackTimer < spiritSummonTime;
             if (Main.netMode != NetmodeID.MultiplayerClient && canShoot && attackTimer % spiritSummonRate == spiritSummonRate - 1f)
@@ -838,7 +837,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
             if (Main.netMode != NetmodeID.Server)
             {
-                var sound = SoundEngine.GetActiveSound(SlotId.FromFloat(blizzardSound));
+                var sound = Main.GetActiveSound(SlotId.FromFloat(blizzardSound));
                 if (sound != null)
                 {
                     if (shouldStopSound)
@@ -882,7 +881,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             if (attackTimer % 60f == 50f && !npc.WithinRange(target.Center, 180f))
             {
                 EmitIceParticles(npc.Center, 7f, 60);
-                SoundEngine.PlaySound(SoundID.Item28, npc.Center);
+                Main.PlaySound(SoundID.Item28, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -934,23 +933,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         {
             Main.projFrames[npc.type] = 12;
 
-            Texture2D subphase1Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen1").Value;
-            Texture2D subphase1TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen1Glow").Value;
+            Texture2D subphase1Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen1");
+            Texture2D subphase1TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen1Glow");
 
-            Texture2D subphase2Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen2").Value;
-            Texture2D subphase2TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen2Glow").Value;
+            Texture2D subphase2Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen2");
+            Texture2D subphase2TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen2Glow");
 
-            Texture2D subphase3Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen3").Value;
-            Texture2D subphase3TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen3Glow").Value;
+            Texture2D subphase3Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen3");
+            Texture2D subphase3TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen3Glow");
 
-            Texture2D subphase4Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen4").Value;
-            Texture2D subphase4TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen4Glow").Value;
+            Texture2D subphase4Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen4");
+            Texture2D subphase4TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen4Glow");
 
-            Texture2D subphase5Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen5").Value;
-            Texture2D subphase5TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen5Glow").Value;
+            Texture2D subphase5Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen5");
+            Texture2D subphase5TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen5Glow");
 
-            Texture2D subphase6Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen6").Value;
-            Texture2D subphase6TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen6Glow").Value;
+            Texture2D subphase6Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen6");
+            Texture2D subphase6TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen6Glow");
 
             Texture2D drawTexture = subphase1Texture;
             Texture2D glowTexture = subphase1TextureGlow;
@@ -995,8 +994,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
             }
 
             Vector2 drawPosition = npc.Center - Main.screenPosition;
-            Main.spriteBatch.Draw(drawTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(drawTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
 

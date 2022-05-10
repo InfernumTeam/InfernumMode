@@ -9,10 +9,10 @@ namespace InfernumMode.BossIntroScreens
 {
     public class HiveMindIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new(completionRatio =>
+        public override TextColorData TextColor => new TextColorData(completionRatio =>
         {
-            Color cursedFlameColor = new(0, 175, 51);
-            Color corruptFleshColor = new(130, 97, 124);
+            Color cursedFlameColor = new Color(0, 175, 51);
+            Color corruptFleshColor = new Color(130, 97, 124);
             return Color.Lerp(cursedFlameColor, corruptFleshColor, (float)Math.Sin(completionRatio * MathHelper.Pi * 4f + AnimationCompletion * MathHelper.Pi));
         });
 

@@ -14,22 +14,27 @@ namespace InfernumMode.Items
             DisplayName.SetDefault("The Great Sand Shark");
             Tooltip.SetDefault("Nature proves itself to be a formidable mistress.\n" +
                 "Even in the most extreme of environmental circumstances it seems that there is no shortage of such displays of resilience.");
-            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            ItemID.Sets.ItemNoGravity[item.type] = true;
         }
 
         public override void SetDefaults()
         {
-            Item.width = 20;
-            Item.height = 20;
-            Item.rare = ItemRarityID.Yellow;
-            Item.consumable = false;
+            item.width = 20;
+            item.height = 20;
+            item.rare = ItemRarityID.Yellow;
+            item.consumable = false;
         }
 
         public override bool CanUseItem(Player player) => false;
 
         public override void AddRecipes()
         {
-            CreateRecipe(1).AddTile(TileID.Bookcases).AddIngredient(ModContent.ItemType<GreatSandSharkBanner>()).AddIngredient(ModContent.ItemType<VictoryShard>(), 10).Register();
+            ModRecipe r = new ModRecipe(mod);
+            r.SetResult(this);
+            r.AddTile(TileID.Bookcases);
+            r.AddIngredient(ModContent.ItemType<GreatSandSharkBanner>());
+            r.AddIngredient(ModContent.ItemType<VictoryShard>(), 10);
+            r.AddRecipe();
         }
     }
 }

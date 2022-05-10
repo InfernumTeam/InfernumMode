@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 {
@@ -32,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
             ref float time = ref npc.ai[2];
 
             // Reel inward prior to snapping.
-            if (time is > (-20f) and < 5f)
+            if (time > -20f && time < 5f)
                 attachOffset = MathHelper.Lerp(attachOffset, 45f, 0.05f);
 
             // Reach outward swiftly in hopes of hitting a target.
@@ -40,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 attachOffset = MathHelper.Lerp(attachOffset, 3900f, 0.021f);
 
             if (time == 30f)
-                SoundEngine.PlaySound(SoundID.Item74, npc.Center);
+                Main.PlaySound(SoundID.Item74, npc.Center);
 
             if (time > 70f)
             {

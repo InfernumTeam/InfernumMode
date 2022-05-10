@@ -13,18 +13,18 @@ namespace InfernumMode.BaseEntities
         #region Auto-Properties
         public float RotationalSpeed
         {
-            get => Projectile.ai[0];
-            set => Projectile.ai[0] = value;
+            get => projectile.ai[0];
+            set => projectile.ai[0] = value;
         }
         public float Time
         {
-            get => Projectile.localAI[0];
-            set => Projectile.localAI[0] = value;
+            get => projectile.localAI[0];
+            set => projectile.localAI[0] = value;
         }
         public float LaserLength
         {
-            get => Projectile.localAI[1];
-            set => Projectile.localAI[1] = value;
+            get => projectile.localAI[1];
+            set => projectile.localAI[1] = value;
         }
         #endregion
 
@@ -39,12 +39,12 @@ namespace InfernumMode.BaseEntities
             AttachToSomething();
 
             // Ensure the the velocity is a unit vector. This has NaN safety in place with a fallback of <0, -1>.
-            Projectile.velocity = Projectile.velocity.SafeNormalize(-Vector2.UnitY);
+            projectile.velocity = projectile.velocity.SafeNormalize(-Vector2.UnitY);
 
             Time++;
             if (Time >= Lifetime)
             {
-                Projectile.Kill();
+                projectile.Kill();
                 return;
             }
 
@@ -56,7 +56,7 @@ namespace InfernumMode.BaseEntities
             LaserLength = MathHelper.Lerp(LaserLength, idealLaserLength, 0.9f); // Very quickly approach the ideal laser length.
 
             DelegateMethods.v3_1 = LightCastColor.ToVector3();
-            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.width * Projectile.scale, DelegateMethods.CastLight);
+            Utils.PlotTileLine(projectile.Center, projectile.Center + projectile.velocity * LaserLength, projectile.width * projectile.scale, new Utils.PerLinePoint(DelegateMethods.CastLight));
         }
 
         /// <summary>
@@ -69,9 +69,9 @@ namespace InfernumMode.BaseEntities
             // In this case, "doing something with that angle" means incrementing it by a constant. This allows the laser to perform "arcing" motion.
             // You could attempt to make it intelligent by having it move towards the target like the Last Prism, but that's not done here.
 
-            float updatedVelocityDirection = Projectile.velocity.ToRotation() + RotationalSpeed;
-            Projectile.rotation = updatedVelocityDirection - MathHelper.PiOver2; // Pretty much all lasers have a vertical sheet.
-            Projectile.velocity = updatedVelocityDirection.ToRotationVector2();
+            float updatedVelocityDirection = projectile.velocity.ToRotation() + RotationalSpeed;
+            projectile.rotation = updatedVelocityDirection - MathHelper.PiOver2; // Pretty much all lasers have a vertical sheet.
+            projectile.velocity = updatedVelocityDirection.ToRotationVector2();
         }
 
         /// <summary>
@@ -79,9 +79,9 @@ namespace InfernumMode.BaseEntities
         /// </summary>
         public virtual void DetermineScale()
         {
-            Projectile.scale = (float)Math.Sin(Time / Lifetime * MathHelper.Pi) * ScaleExpandRate * MaxScale;
-            if (Projectile.scale > MaxScale)
-                Projectile.scale = MaxScale;
+            projectile.scale = (float)Math.Sin(Time / Lifetime * MathHelper.Pi) * ScaleExpandRate * MaxScale;
+            if (projectile.scale > MaxScale)
+                projectile.scale = MaxScale;
         }
 
         /// <summary>
@@ -110,22 +110,22 @@ namespace InfernumMode.BaseEntities
         public float DetermineLaserLength_CollideWithTiles(int samplePointCount)
         {
             float[] laserLengthSamplePoints = new float[samplePointCount];
-            Collision.LaserScan(Projectile.Center, Projectile.velocity, Projectile.scale, MaxLaserLength, laserLengthSamplePoints);
+            Collision.LaserScan(projectile.Center, projectile.velocity, projectile.scale, MaxLaserLength, laserLengthSamplePoints);
             return laserLengthSamplePoints.Average();
         }
 
         protected internal void DrawBeamWithColor(SpriteBatch spriteBatch, Color beamColor, float scale, int startFrame = 0, int middleFrame = 0, int endFrame = 0)
         {
-            Rectangle startFrameArea = LaserBeginTexture.Frame(1, Main.projFrames[Projectile.type], 0, startFrame);
-            Rectangle middleFrameArea = LaserMiddleTexture.Frame(1, Main.projFrames[Projectile.type], 0, middleFrame);
-            Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[Projectile.type], 0, endFrame);
+            Rectangle startFrameArea = LaserBeginTexture.Frame(1, Main.projFrames[projectile.type], 0, startFrame);
+            Rectangle middleFrameArea = LaserMiddleTexture.Frame(1, Main.projFrames[projectile.type], 0, middleFrame);
+            Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[projectile.type], 0, endFrame);
 
             // Start texture drawing.
-            Main.spriteBatch.Draw(LaserBeginTexture,
-                             Projectile.Center - Main.screenPosition,
+            spriteBatch.Draw(LaserBeginTexture,
+                             projectile.Center - Main.screenPosition,
                              startFrameArea,
                              beamColor,
-                             Projectile.rotation,
+                             projectile.rotation,
                              LaserBeginTexture.Size() / 2f,
                              scale,
                              SpriteEffects.None,
@@ -134,27 +134,27 @@ namespace InfernumMode.BaseEntities
             // Prepare things for body drawing.
             float laserBodyLength = LaserLength;
             laserBodyLength -= (startFrameArea.Height / 2 + endFrameArea.Height) * scale;
-            Vector2 centerOnLaser = Projectile.Center;
-            centerOnLaser += Projectile.velocity * scale * startFrameArea.Height / 2f;
+            Vector2 centerOnLaser = projectile.Center;
+            centerOnLaser += projectile.velocity * scale * startFrameArea.Height / 2f;
 
             // Body drawing.
-            if (laserBodyLength > 0f && middleFrameArea.Height >= 1f)
+            if (laserBodyLength > 0f)
             {
                 float laserOffset = middleFrameArea.Height * scale;
                 float incrementalBodyLength = 0f;
                 while (incrementalBodyLength + 1f < laserBodyLength)
                 {
-                    Main.spriteBatch.Draw(LaserMiddleTexture,
+                    spriteBatch.Draw(LaserMiddleTexture,
                                      centerOnLaser - Main.screenPosition,
                                      middleFrameArea,
                                      beamColor,
-                                     Projectile.rotation,
+                                     projectile.rotation,
                                      LaserMiddleTexture.Width * 0.5f * Vector2.UnitX,
                                      scale,
                                      SpriteEffects.None,
                                      0f);
                     incrementalBodyLength += laserOffset;
-                    centerOnLaser += Projectile.velocity * laserOffset;
+                    centerOnLaser += projectile.velocity * laserOffset;
                 }
             }
 
@@ -162,11 +162,11 @@ namespace InfernumMode.BaseEntities
             if (Math.Abs(LaserLength - DetermineLaserLength()) < 30f)
             {
                 Vector2 laserEndCenter = centerOnLaser - Main.screenPosition;
-                Main.spriteBatch.Draw(LaserEndTexture,
+                spriteBatch.Draw(LaserEndTexture,
                                  laserEndCenter,
                                  endFrameArea,
                                  beamColor,
-                                 Projectile.rotation,
+                                 projectile.rotation,
                                  LaserEndTexture.Frame(1, 1, 0, 0).Top(),
                                  scale,
                                  SpriteEffects.None,
@@ -184,15 +184,15 @@ namespace InfernumMode.BaseEntities
         public override void CutTiles()
         {
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackMelee;
-            Utils.PlotTileLine(Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.Size.Length() * Projectile.scale, DelegateMethods.CutTiles);
+            Utils.PlotTileLine(projectile.Center, projectile.Center + projectile.velocity * LaserLength, projectile.Size.Length() * projectile.scale, new Utils.PerLinePoint(DelegateMethods.CutTiles));
         }
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             // This should never happen, but just in case-
-            if (Projectile.velocity == Vector2.Zero)
+            if (projectile.velocity == Vector2.Zero)
                 return false;
 
-            DrawBeamWithColor(Main.spriteBatch, LaserOverlayColor, Projectile.scale);
+            DrawBeamWithColor(spriteBatch, LaserOverlayColor, projectile.scale);
             return false;
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -200,7 +200,7 @@ namespace InfernumMode.BaseEntities
             if (projHitbox.Intersects(targetHitbox))
                 return true;
             float _ = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity * LaserLength, Projectile.Size.Length() * Projectile.scale, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), projectile.Center, projectile.Center + projectile.velocity * LaserLength, projectile.Size.Length() * projectile.scale, ref _);
         }
 
         public override bool ShouldUpdatePosition() => false;

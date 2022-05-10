@@ -6,53 +6,53 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
     public class MoonLordExplosionCinder : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
-        public ref float Lifetime => ref Projectile.ai[1];
+        public ref float Time => ref projectile.ai[0];
+        public ref float Lifetime => ref projectile.ai[1];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Cinder");
-            Main.projFrames[Projectile.type] = 3;
+            Main.projFrames[projectile.type] = 3;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 4;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
-            Projectile.DamageType = DamageClass.Magic;
-            Projectile.timeLeft = 300;
-            Projectile.ignoreWater = true;
+            projectile.width = projectile.height = 4;
+            projectile.penetrate = -1;
+            projectile.tileCollide = false;
+            projectile.magic = true;
+            projectile.timeLeft = 300;
+            projectile.ignoreWater = true;
         }
 
         public override void AI()
         {
             // Decide a frame to use on the first frame this projectile exists.
-            if (Projectile.localAI[0] == 0f)
+            if (projectile.localAI[0] == 0f)
             {
-                Projectile.frame = Main.rand.Next(Main.projFrames[Projectile.type]);
-                Projectile.localAI[0] = 1f;
+                projectile.frame = Main.rand.Next(Main.projFrames[projectile.type]);
+                projectile.localAI[0] = 1f;
             }
 
             // Make a decision for the lifetime for the cinder if one has not yet been made.
             if (Lifetime == 0f)
             {
                 Lifetime = Main.rand.Next(40, 75);
-                Projectile.netUpdate = true;
+                projectile.netUpdate = true;
             }
 
             // Calculate scale of the cinder.
             else
             {
-                Projectile.scale = Utils.GetLerpValue(0f, 20f, Time, true) * Utils.GetLerpValue(Lifetime, Lifetime - 20f, Time, true);
-                Projectile.scale *= MathHelper.Lerp(0.8f, 1.6f, Projectile.identity % 6f / 6f);
+                projectile.scale = Utils.InverseLerp(0f, 20f, Time, true) * Utils.InverseLerp(Lifetime, Lifetime - 20f, Time, true);
+                projectile.scale *= MathHelper.Lerp(0.8f, 1.6f, projectile.identity % 6f / 6f);
             }
 
             if (Time >= Lifetime)
-                Projectile.Kill();
+                projectile.Kill();
 
             Time++;
         }
 
-        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
     }
 }

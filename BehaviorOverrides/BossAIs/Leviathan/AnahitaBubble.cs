@@ -1,6 +1,7 @@
 using CalamityMod.Events;
 using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -10,10 +11,10 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
-	public class AnahitaBubble : ModProjectile
+    public class AnahitaBubble : ModProjectile
     {
         public PrimitiveTrailCopy WaterDrawer;
-        public ref float Time => ref Projectile.ai[0];
+        public ref float Time => ref projectile.ai[0];
         public const float Radius = 32f;
         public override void SetStaticDefaults()
         {
@@ -22,31 +23,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = (int)Radius;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 150;
-            CooldownSlot = 1;
+            projectile.width = projectile.height = (int)Radius;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 150;
+            cooldownSlot = 1;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = (float)Math.Sin(Projectile.timeLeft / 150f * MathHelper.Pi) * 3f;
-            if (Projectile.Opacity > 1f)
-                Projectile.Opacity = 1f;
-            Projectile.scale = Projectile.Opacity;
+            projectile.Opacity = (float)Math.Sin(projectile.timeLeft / 150f * MathHelper.Pi) * 3f;
+            if (projectile.Opacity > 1f)
+                projectile.Opacity = 1f;
+            projectile.scale = projectile.Opacity;
 
-            if (Projectile.timeLeft < 90)
-                Projectile.velocity *= 0.98f;
+            if (projectile.timeLeft < 90)
+                projectile.velocity *= 0.98f;
 
             Time++;
         }
 
-        public float WidthFunction(float completionRatio) => Radius * Projectile.scale * (float)Math.Sin(MathHelper.Pi * completionRatio);
+        public float WidthFunction(float completionRatio) => Radius * projectile.scale * (float)Math.Sin(MathHelper.Pi * completionRatio);
 
-        public Color ColorFunction(float completionRatio) => Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTimeWrappedHourly)) * 0.5f) * Projectile.Opacity;
+        public Color ColorFunction(float completionRatio) => Color.Lerp(Color.DeepSkyBlue, Color.Turquoise, (float)Math.Abs(Math.Sin(completionRatio * MathHelper.Pi + Main.GlobalTime)) * 0.5f) * projectile.Opacity;
 
         public override void Kill(int timeLeft)
         {
@@ -59,30 +60,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 if (BossRushEvent.BossRushActive)
                     shootVelocity *= 1.6f;
 
-                Utilities.NewProjectileBetter(Projectile.Center, shootVelocity, ModContent.ProjectileType<WaterSpear>(), 155, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<WaterSpear>(), 155, 0f);
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (WaterDrawer is null)
                 WaterDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
 
-            GameShaders.Misc["Infernum:DukeTornado"].UseImage1("Images/Misc/Perlin");
-            List<Vector2> drawPoints = new();
+            GameShaders.Misc["Infernum:DukeTornado"].UseImage("Images/Misc/Perlin");
+            List<Vector2> drawPoints = new List<Vector2>();
 
             for (float offsetAngle = -MathHelper.PiOver2; offsetAngle <= MathHelper.PiOver2; offsetAngle += MathHelper.Pi / 6f)
             {
                 drawPoints.Clear();
 
-                float adjustedAngle = offsetAngle + Main.GlobalTimeWrappedHourly * 2.2f;
+                float adjustedAngle = offsetAngle + Main.GlobalTime * 2.2f;
                 Vector2 offsetDirection = adjustedAngle.ToRotationVector2();
                 Vector2 radius = Vector2.One * Radius;
-                radius.Y *= MathHelper.Lerp(1f, 2f, (float)Math.Abs(Math.Cos(Main.GlobalTimeWrappedHourly * 1.9f)));
+                radius.Y *= MathHelper.Lerp(1f, 2f, (float)Math.Abs(Math.Cos(Main.GlobalTime * 1.9f)));
 
                 for (int i = 0; i <= 8; i++)
                 {
-                    drawPoints.Add(Vector2.Lerp(Projectile.Center - offsetDirection * radius * 0.8f, Projectile.Center + offsetDirection * radius * 0.8f, i / 8f));
+                    drawPoints.Add(Vector2.Lerp(projectile.Center - offsetDirection * radius * 0.8f, projectile.Center + offsetDirection * radius * 0.8f, i / 8f));
                 }
 
                 WaterDrawer.Draw(drawPoints, -Main.screenPosition, 42, adjustedAngle);

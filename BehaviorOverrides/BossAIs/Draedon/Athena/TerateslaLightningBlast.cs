@@ -1,5 +1,6 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,6 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 {
@@ -18,36 +18,35 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         internal PrimitiveTrailCopy LightningDrawer;
 
         public const int Lifetime = 45;
-        public ref float InitialVelocityAngle => ref Projectile.ai[0];
+        public ref float InitialVelocityAngle => ref projectile.ai[0];
 
         // Technically not a ratio, and more of a seed, but it is used in a 0-2pi squash
         // later in the code to get an arbitrary unit vector (which is then checked).
-        public ref float BaseTurnAngleRatio => ref Projectile.ai[1];
-        public ref float AccumulatedXMovementSpeeds => ref Projectile.localAI[0];
-        public ref float BranchingIteration => ref Projectile.localAI[1];
+        public ref float BaseTurnAngleRatio => ref projectile.ai[1];
+        public ref float AccumulatedXMovementSpeeds => ref projectile.localAI[0];
+        public ref float BranchingIteration => ref projectile.localAI[1];
 
         public virtual float LightningTurnRandomnessFactor { get; } = 2f;
         public override string Texture => "CalamityMod/Projectiles/LightningProj";
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Teratesla Lightning Torrent");
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 80;
-            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 10000;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 1;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 80;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 14;
-            Projectile.height = 14;
-            Projectile.alpha = 255;
-            Projectile.penetrate = -1;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.hostile = true;
-            Projectile.extraUpdates = 4;
-            Projectile.timeLeft = Projectile.MaxUpdates * Lifetime;
-            Projectile.extraUpdates += 2;
+            projectile.width = 14;
+            projectile.height = 14;
+            projectile.alpha = 255;
+            projectile.penetrate = -1;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.hostile = true;
+            projectile.extraUpdates = 4;
+            projectile.timeLeft = projectile.MaxUpdates * Lifetime;
+            projectile.extraUpdates += 2;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -66,20 +65,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         {
             // FrameCounter in this context is really just an arbitrary timer
             // which allows random turning to occur.
-            Projectile.frameCounter++;
-            Projectile.oldPos[1] = Projectile.oldPos[0];
+            projectile.frameCounter++;
+            projectile.oldPos[1] = projectile.oldPos[0];
 
-            Projectile.scale = (float)Math.Sin(MathHelper.Pi * Projectile.timeLeft / (Lifetime * Projectile.MaxUpdates)) * 2f;
-            if (Projectile.scale > 1f)
-                Projectile.scale = 1f;
+            projectile.scale = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / (Lifetime * projectile.MaxUpdates)) * 2f;
+            if (projectile.scale > 1f)
+                projectile.scale = 1f;
 
-            Lighting.AddLight(Projectile.Center, Color.White.ToVector3());
-            if (Projectile.frameCounter >= Projectile.extraUpdates * 2)
+            Lighting.AddLight(projectile.Center, Color.White.ToVector3());
+            if (projectile.frameCounter >= projectile.extraUpdates * 2)
             {
-                Projectile.frameCounter = 0;
+                projectile.frameCounter = 0;
 
-                float originalSpeed = MathHelper.Min(15f, Projectile.velocity.Length());
-                UnifiedRandom unifiedRandom = new((int)BaseTurnAngleRatio);
+                float originalSpeed = MathHelper.Min(15f, projectile.velocity.Length());
+                UnifiedRandom unifiedRandom = new UnifiedRandom((int)BaseTurnAngleRatio);
                 int turnTries = 0;
                 Vector2 newBaseDirection = -Vector2.UnitY;
                 Vector2 potentialBaseDirection;
@@ -102,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                     // This mess of math basically encourages movement at the ends of an extraUpdate cycle,
                     // discourages super frequenent randomness as the accumulated X speed changes get larger,
                     // or if the original speed is quite large.
-                    if (Math.Abs(potentialBaseDirection.X * (Projectile.extraUpdates + 1) * 2f * originalSpeed + AccumulatedXMovementSpeeds) > Projectile.MaxUpdates * LightningTurnRandomnessFactor)
+                    if (Math.Abs(potentialBaseDirection.X * (projectile.extraUpdates + 1) * 2f * originalSpeed + AccumulatedXMovementSpeeds) > projectile.MaxUpdates * LightningTurnRandomnessFactor)
                     {
                         canChangeLightningDirection = false;
                     }
@@ -115,26 +114,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 }
                 while (turnTries < 100);
 
-                if (Projectile.velocity != Vector2.Zero)
+                if (projectile.velocity != Vector2.Zero)
                 {
-                    AccumulatedXMovementSpeeds += newBaseDirection.X * (Projectile.extraUpdates + 1) * 2f * originalSpeed;
-                    Projectile.velocity = newBaseDirection.RotatedBy(InitialVelocityAngle + MathHelper.PiOver2) * originalSpeed;
-                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                    AccumulatedXMovementSpeeds += newBaseDirection.X * (projectile.extraUpdates + 1) * 2f * originalSpeed;
+                    projectile.velocity = newBaseDirection.RotatedBy(InitialVelocityAngle + MathHelper.PiOver2) * originalSpeed;
+                    projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
                 }
             }
         }
 
-        public float PrimitiveWidthFunction(float completionRatio) => CalamityUtils.Convert01To010(completionRatio) * Projectile.scale * 12f;
+        public float PrimitiveWidthFunction(float completionRatio) => CalamityUtils.Convert01To010(completionRatio) * projectile.scale * 12f;
 
         public Color PrimitiveColorFunction(float completionRatio)
         {
-            Color color = Color.Lerp(Color.Cyan, Color.Blue, Projectile.identity % 5f / 10f);
+            Color color = Color.Lerp(Color.Cyan, Color.Blue, projectile.identity % 5f / 10f);
             return color;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            List<Vector2> checkPoints = Projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToList();
+            List<Vector2> checkPoints = projectile.oldPos.Where(oldPos => oldPos != Vector2.Zero).ToList();
             if (checkPoints.Count <= 2)
                 return false;
 
@@ -148,15 +147,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             return false;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             if (LightningDrawer is null)
                 LightningDrawer = new PrimitiveTrailCopy(PrimitiveWidthFunction, PrimitiveColorFunction, null, false, GameShaders.Misc["Infernum:AresLightningArc"]);
 
-            GameShaders.Misc["Infernum:AresLightningArc"].UseImage1("Images/Misc/Perlin");
+            GameShaders.Misc["Infernum:AresLightningArc"].UseImage("Images/Misc/Perlin");
             GameShaders.Misc["Infernum:AresLightningArc"].Apply();
 
-            LightningDrawer.Draw(Projectile.oldPos, Projectile.Size * 0.5f - Main.screenPosition, 8);
+            LightningDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 8);
             return false;
         }
     }

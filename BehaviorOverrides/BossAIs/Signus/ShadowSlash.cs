@@ -16,36 +16,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override void SetDefaults()
         {
-            Projectile.width = 500;
-            Projectile.height = 100;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 30;
-            Projectile.hide = true;
-            Projectile.Calamity().canBreakPlayerDefense = true;
-            CooldownSlot = 1;
+            projectile.width = 500;
+            projectile.height = 100;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.timeLeft = 30;
+            projectile.hide = true;
+            projectile.Calamity().canBreakPlayerDefense = true;
+            cooldownSlot = 1;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = Projectile.timeLeft / 30f;
-            Projectile.scale = Utils.GetLerpValue(30f, 25f, Projectile.timeLeft, true);
-            Projectile.scale *= MathHelper.Lerp(0.7f, 1.1f, Projectile.identity % 6f / 6f) * 0.5f;
-            Projectile.rotation = Projectile.ai[0];
+            projectile.Opacity = projectile.timeLeft / 30f;
+            projectile.scale = Utils.InverseLerp(30f, 25f, projectile.timeLeft, true);
+            projectile.scale *= MathHelper.Lerp(0.7f, 1.1f, projectile.identity % 6f / 6f) * 0.5f;
+            projectile.rotation = projectile.ai[0];
         }
 
-        public override Color? GetAlpha(Color lightColor) => Color.DarkViolet * Projectile.Opacity * 1.4f;
+        public override Color? GetAlpha(Color lightColor) => Color.DarkViolet * projectile.Opacity * 1.4f;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            Vector2 start = Projectile.Center - Projectile.rotation.ToRotationVector2() * Projectile.width * Projectile.scale * 0.5f;
-            Vector2 end = Projectile.Center + Projectile.rotation.ToRotationVector2() * Projectile.width * Projectile.scale * 0.5f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Projectile.height * 0.5f, ref _);
+            Vector2 start = projectile.Center - projectile.rotation.ToRotationVector2() * projectile.width * projectile.scale * 0.5f;
+            Vector2 end = projectile.Center + projectile.rotation.ToRotationVector2() * projectile.width * projectile.scale * 0.5f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, projectile.height * 0.5f, ref _);
         }
 
-        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        public override void DrawBehind(int index, List<int> drawCacheProjsBehindNPCsAndTiles, List<int> drawCacheProjsBehindNPCs, List<int> drawCacheProjsBehindProjectiles, List<int> drawCacheProjsOverWiresUI)
         {
             DrawBlackEffectHook.DrawCacheProjsOverSignusBlackening.Add(index);
         }

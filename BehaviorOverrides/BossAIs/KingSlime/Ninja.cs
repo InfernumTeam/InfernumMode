@@ -7,46 +7,44 @@ using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 {
     public class Ninja : ModNPC
     {
         public PrimitiveTrailCopy FireDrawer;
-        public Player Target => Main.player[NPC.target];
-        public static ref float CurrentTeleportDirection => ref Main.npc[NPC.FindFirstNPC(NPCID.KingSlime)].Infernum().ExtraAI[6];
-        public ref float Time => ref NPC.ai[0];
-        public ref float ShurikenShootCountdown => ref NPC.ai[1];
-        public ref float TimeOfFlightCountdown => ref NPC.ai[2];
-        public ref float TeleportCountdown => ref NPC.ai[3];
-        public ref float KatanaUseTimer => ref NPC.Infernum().ExtraAI[0];
-        public ref float KatanaUseLength => ref NPC.Infernum().ExtraAI[1];
-        public ref float KatanaRotation => ref NPC.Infernum().ExtraAI[2];
-        public ref float AttackDelayFuckYou => ref NPC.Infernum().ExtraAI[3];
-        public ref float StuckTimer => ref NPC.localAI[0];
+        public Player Target => Main.player[npc.target];
+        public ref float CurrentTeleportDirection => ref Main.npc[NPC.FindFirstNPC(NPCID.KingSlime)].Infernum().ExtraAI[6];
+        public ref float Time => ref npc.ai[0];
+        public ref float ShurikenShootCountdown => ref npc.ai[1];
+        public ref float TimeOfFlightCountdown => ref npc.ai[2];
+        public ref float TeleportCountdown => ref npc.ai[3];
+        public ref float KatanaUseTimer => ref npc.Infernum().ExtraAI[0];
+        public ref float KatanaUseLength => ref npc.Infernum().ExtraAI[1];
+        public ref float KatanaRotation => ref npc.Infernum().ExtraAI[2];
+        public ref float AttackDelayFuckYou => ref npc.Infernum().ExtraAI[3];
+        public ref float StuckTimer => ref npc.localAI[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ninja");
-            Main.npcFrameCount[NPC.type] = 9;
-            NPCID.Sets.TrailingMode[NPC.type] = 3;
-            NPCID.Sets.TrailCacheLength[NPC.type] = 9;
+            Main.npcFrameCount[npc.type] = 9;
+            NPCID.Sets.TrailingMode[npc.type] = 3;
+            NPCID.Sets.TrailCacheLength[npc.type] = 9;
         }
 
         public override void SetDefaults()
         {
-            NPC.npcSlots = 1f;
-            NPC.aiStyle = AIType = -1;
-            NPC.width = NPC.height = 26;
-            NPC.damage = 5;
-            NPC.lifeMax = 100;
-            NPC.knockBackResist = 0f;
-            NPC.dontTakeDamage = true;
-            NPC.noGravity = false;
-            NPC.noTileCollide = false;
-            NPC.netAlways = true;
-            NPC.Calamity().canBreakPlayerDefense = true;
+            npc.npcSlots = 1f;
+            npc.aiStyle = aiType = -1;
+            npc.width = npc.height = 26;
+            npc.damage = 5;
+            npc.lifeMax = 100;
+            npc.knockBackResist = 0f;
+            npc.dontTakeDamage = true;
+            npc.noGravity = false;
+            npc.noTileCollide = false;
+            npc.netAlways = true;
+            npc.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer) => writer.Write(StuckTimer);
@@ -58,26 +56,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             // Disappear if the main boss is not present.
             if (!NPC.AnyNPCs(NPCID.KingSlime))
             {
-                Utils.PoofOfSmoke(NPC.Center);
-                NPC.active = false;
-                NPC.netUpdate = true;
+                Utils.PoofOfSmoke(npc.Center);
+                npc.active = false;
+                npc.netUpdate = true;
                 return;
             }
 
-            NPC.damage = KatanaUseTimer > 0 ? 115 : 0;
-            NPC.noTileCollide = NPC.Bottom.Y < Target.Top.Y;
+            npc.damage = KatanaUseTimer > 0 ? 115 : 0;
+            npc.noTileCollide = npc.Bottom.Y < Target.Top.Y;
             AttackDelayFuckYou++;
 
-            if (MathHelper.Distance(NPC.position.X, NPC.oldPosition.X) < 2f)
+            if (MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 2f)
                 StuckTimer += 2f;
 
-            NPC.TargetClosest();
+            npc.TargetClosest();
 
-            Tile tileBelow = Framing.GetTileSafely(NPC.Bottom);
+            Tile tileBelow = Framing.GetTileSafely(npc.Bottom);
             bool onSolidGround = WorldGen.SolidTile(tileBelow);
-            if (Main.tileSolidTop[tileBelow.TileType] && tileBelow.HasUnactuatedTile)
+            if (Main.tileSolidTop[tileBelow.type] && tileBelow.nactive())
                 onSolidGround = true;
-            float horizontalDistanceFromTarget = MathHelper.Distance(Target.Center.X, NPC.Center.X);
+            float horizontalDistanceFromTarget = MathHelper.Distance(Target.Center.X, npc.Center.X);
 
             if (ShurikenShootCountdown > 0f)
             {
@@ -86,7 +84,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int shurikenCount = (int)MathHelper.Lerp(2f, 6f, Utils.GetLerpValue(300f, 720f, NPC.Distance(Target.Center), true));
+                        int shurikenCount = (int)MathHelper.Lerp(2f, 6f, Utils.InverseLerp(300f, 720f, npc.Distance(Target.Center), true));
                         float shurikenSpeed = 5.5f;
                         if (BossRushEvent.BossRushActive)
                         {
@@ -96,12 +94,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
                         for (int i = 0; i < shurikenCount; i++)
                         {
-                            Vector2 shurikenVelocity = NPC.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i / (float)(shurikenCount - 1f))) * shurikenSpeed;
-                            Utilities.NewProjectileBetter(NPC.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 72, 0f);
+                            Vector2 shurikenVelocity = npc.SafeDirectionTo(Target.Center).RotatedBy(MathHelper.Lerp(-0.36f, 0.36f, i / (float)(shurikenCount - 1f))) * shurikenSpeed;
+                            Utilities.NewProjectileBetter(npc.Center + shurikenVelocity, shurikenVelocity, ModContent.ProjectileType<Shuriken>(), 72, 0f);
                         }
                     }
 
-                    SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
+                    Main.PlaySound(SoundID.Item1, npc.Center);
                 }
 
                 ShurikenShootCountdown--;
@@ -109,29 +107,29 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
 
             if (TimeOfFlightCountdown > 0f)
             {
-                if (NPC.velocity.X != 0f)
+                if (npc.velocity.X != 0f)
                 {
                     if (KatanaUseTimer > 0f)
                     {
-                        NPC.rotation = KatanaRotation - MathHelper.PiOver2;
-                        KatanaRotation += MathHelper.ToRadians(22f) * NPC.spriteDirection;
+                        npc.rotation = KatanaRotation - MathHelper.PiOver2;
+                        KatanaRotation += MathHelper.ToRadians(22f) * npc.spriteDirection;
                         KatanaUseTimer--;
                     }
                     else
                     {
-                        NPC.spriteDirection = (NPC.velocity.X > 0f).ToDirectionInt();
+                        npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
 
                         // Spin when going upward.
-                        if (NPC.velocity.Y < 0f)
-                            NPC.rotation += NPC.spriteDirection * 0.3f;
+                        if (npc.velocity.Y < 0f)
+                            npc.rotation += npc.spriteDirection * 0.3f;
                         // And aim footfirst when going downward.
                         // Unless it's April 1st. In which case he becomes a goddamn bouncy ball lmao
                         else if (!Utilities.IsAprilFirst())
-                            NPC.rotation = NPC.velocity.ToRotation() - MathHelper.PiOver2;
+                            npc.rotation = npc.velocity.ToRotation() - MathHelper.PiOver2;
                     }
                 }
                 else
-                    NPC.rotation = 0f;
+                    npc.rotation = 0f;
 
                 TimeOfFlightCountdown--;
                 if (onSolidGround && TimeOfFlightCountdown < 35f)
@@ -141,17 +139,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             }
             else
             {
-                NPC.rotation = 0f;
-                NPC.spriteDirection = (NPC.velocity.X > 0f).ToDirectionInt();
+                npc.rotation = 0f;
+                npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
             }
 
             if (Time % 150f > 130f)
-                NPC.velocity.X *= 0.945f;
+                npc.velocity.X *= 0.945f;
             else
                 DoRunEffects();
 
             // Teleport if far from the target or it is typically possible to do so.
-            bool canDashTeleport = (!NPC.WithinRange(Target.Center, 850f) || StuckTimer >= 150f) && AttackDelayFuckYou > 150f;
+            bool canDashTeleport = (!npc.WithinRange(Target.Center, 850f) || StuckTimer >= 150f) && AttackDelayFuckYou > 150f;
 
             if (TeleportCountdown > 0f)
             {
@@ -163,17 +161,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             if (onSolidGround)
                 KatanaUseTimer = 0f;
 
-            if (NPC.WithinRange(Target.Center, 260f) && KatanaUseTimer <= 0f && AttackDelayFuckYou > 150f && onSolidGround)
+            if (npc.WithinRange(Target.Center, 260f) && KatanaUseTimer <= 0f && AttackDelayFuckYou > 150f && onSolidGround)
             {
-                NPC.spriteDirection = (Target.Center.X > NPC.Center.X).ToDirectionInt();
-                NPC.velocity = NPC.SafeDirectionTo(Target.Center) * 8f;
-                NPC.velocity.Y -= 4f;
+                npc.spriteDirection = (Target.Center.X > npc.Center.X).ToDirectionInt();
+                npc.velocity = npc.SafeDirectionTo(Target.Center) * 8f;
+                npc.velocity.Y -= 4f;
                 KatanaRotation = 0f;
                 KatanaUseTimer = KatanaUseLength = 54f;
                 ShurikenShootCountdown = 0f;
-                NPC.netUpdate = true;
+                npc.netUpdate = true;
 
-                SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
+                Main.PlaySound(SoundID.Item1, npc.Center);
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && canDashTeleport)
@@ -181,7 +179,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 StuckTimer = 0f;
                 DoJump(12f);
                 TeleportCountdown = 70f;
-                NPC.netUpdate = true;
+                npc.netUpdate = true;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && horizontalDistanceFromTarget > 320f && Time % 60f == 59f && onSolidGround)
@@ -192,7 +190,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 jumpSpeed *= Main.rand.NextFloat(1.15f, 1.4f);
                 DoJump(jumpSpeed);
 
-                NPC.netUpdate = true;
+                npc.netUpdate = true;
             }
 
             Time++;
@@ -204,14 +202,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 destination = Target.Center;
 
             float gravity = 0.3f;
-            NPC.velocity = Utilities.GetProjectilePhysicsFiringVelocity(NPC.Center, destination.Value, gravity, jumpSpeed, out _);
+            npc.velocity = Utilities.GetProjectilePhysicsFiringVelocity(npc.Center, destination.Value, gravity, jumpSpeed, out _);
             ShurikenShootCountdown = 24f;
 
             // Use the Time of Flight formula to determine how long the jump will last.
-            TimeOfFlightCountdown = (int)Math.Ceiling(Math.Abs(NPC.velocity.Y * 2f / gravity));
-            NPC.spriteDirection = (Target.Center.X - NPC.Center.X > 0f).ToDirectionInt();
+            TimeOfFlightCountdown = (int)Math.Ceiling(Math.Abs(npc.velocity.Y * 2f / gravity));
+            npc.spriteDirection = (Target.Center.X - npc.Center.X > 0f).ToDirectionInt();
 
-            NPC.netUpdate = true;
+            npc.netUpdate = true;
         }
 
         public void DoRunEffects()
@@ -219,43 +217,43 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             if (TeleportCountdown > 0)
                 return;
 
-            int idealDirection = (Target.Center.X - NPC.Center.X > 0f).ToDirectionInt();
+            int idealDirection = (Target.Center.X - npc.Center.X > 0f).ToDirectionInt();
             float runAcceleration = 0.11f;
             float maxRunSpeed = 4.5f;
 
             // Accelerate much faster if decelerating to make the effect more smooth.
-            if (idealDirection != Math.Sign(NPC.velocity.X))
+            if (idealDirection != Math.Sign(npc.velocity.X))
                 runAcceleration *= 4f;
 
             // Run towards the target.
-            if (MathHelper.Distance(NPC.Center.X, Target.Center.X) > 40f)
-                NPC.velocity.X = MathHelper.Clamp(NPC.velocity.X + idealDirection * runAcceleration, -maxRunSpeed, maxRunSpeed);
+            if (MathHelper.Distance(npc.Center.X, Target.Center.X) > 40f)
+                npc.velocity.X = MathHelper.Clamp(npc.velocity.X + idealDirection * runAcceleration, -maxRunSpeed, maxRunSpeed);
             else
-                NPC.velocity *= 1.02f;
+                npc.velocity *= 1.02f;
 
-            bool onSolidGround = WorldGen.SolidTile(Framing.GetTileSafely(NPC.Bottom + Vector2.UnitY * 16f));
-            Tile tileAheadAboveTarget = Framing.GetTileSafely(NPC.Bottom + new Vector2(NPC.spriteDirection * 16f, -16f));
-            Tile tileAheadBelowTarget = Framing.GetTileSafely(NPC.Bottom + new Vector2(NPC.spriteDirection * 16f, 16f));
+            bool onSolidGround = WorldGen.SolidTile(Framing.GetTileSafely(npc.Bottom + Vector2.UnitY * 16f));
+            Tile tileAheadAboveTarget = Framing.GetTileSafely(npc.Bottom + new Vector2(npc.spriteDirection * 16f, -16f));
+            Tile tileAheadBelowTarget = Framing.GetTileSafely(npc.Bottom + new Vector2(npc.spriteDirection * 16f, 16f));
 
             // Jump if there's an impending obstacle.
-            if (onSolidGround && tileAheadAboveTarget.HasTile && Main.tileSolid[tileAheadAboveTarget.TileType])
+            if (onSolidGround && tileAheadAboveTarget.active() && Main.tileSolid[tileAheadAboveTarget.type])
             {
                 DoJump(10f);
-                NPC.netUpdate = true;
+                npc.netUpdate = true;
             }
 
             // If the next tile below the ninja's feet is inactive or actuated, jump.
-            if (onSolidGround && !tileAheadBelowTarget.HasTile && Main.tileSolid[tileAheadBelowTarget.TileType])
+            if (onSolidGround && !tileAheadBelowTarget.active() && Main.tileSolid[tileAheadBelowTarget.type])
             {
                 DoJump(11.5f);
-                NPC.netUpdate = true;
+                npc.netUpdate = true;
             }
 
             // Jump if is stuck somewhat on the X axis.
-            if (onSolidGround && MathHelper.Distance(NPC.position.X, NPC.oldPosition.X) < 2f)
+            if (onSolidGround && MathHelper.Distance(npc.position.X, npc.oldPosition.X) < 2f)
             {
                 DoJump(15f);
-                NPC.netUpdate = true;
+                npc.netUpdate = true;
             }
             else
                 StuckTimer = 0f;
@@ -266,8 +264,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             // Do the teleport dash.
             if (TeleportCountdown > 35f)
             {
-                NPC.velocity.X = MathHelper.SmoothStep(0f, NPC.spriteDirection * 6f, Utils.GetLerpValue(35f, 70f, TeleportCountdown, true));
-                NPC.Opacity = Utils.GetLerpValue(35f, 45f, TeleportCountdown, true);
+                npc.velocity.X = MathHelper.SmoothStep(0f, npc.spriteDirection * 6f, Utils.InverseLerp(35f, 70f, TeleportCountdown, true));
+                npc.Opacity = Utils.InverseLerp(35f, 45f, TeleportCountdown, true);
             }
 
             // Decide where to teleport to.
@@ -280,7 +278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     top.Y = 100f;
 
                 CurrentTeleportDirection *= -1f;
-                NPC.spriteDirection = (int)CurrentTeleportDirection;
+                npc.spriteDirection = (int)CurrentTeleportDirection;
 
                 int downwardMove = 0;
                 while (true)
@@ -288,7 +286,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                     downwardMove++;
                     if (WorldGen.SolidTile((int)top.X / 16, (int)top.Y / 16))
                         break;
-                    if (Framing.GetTileSafely((int)top.X / 16, (int)top.Y / 16).HasTile && Main.tileSolidTop[Framing.GetTileSafely((int)top.X / 16, (int)top.Y / 16).TileType])
+                    if (Framing.GetTileSafely((int)top.X / 16, (int)top.Y / 16).active() && Main.tileSolidTop[Framing.GetTileSafely((int)top.X / 16, (int)top.Y / 16).type])
                         break;
 
                     top.Y += 16f;
@@ -302,14 +300,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 for (int tries = 0; tries < 10000; tries++)
                 {
                     Vector2 potentialSpawnPoint = groundedTargetPosition + new Vector2(Main.rand.NextFloat(-500f - tries * 0.06f, 500f + tries * 0.06f), Main.rand.NextFloat(-30f, 500f + tries * 0.03f));
-                    Vector2 potentialEndPoint = potentialSpawnPoint + Vector2.UnitX * NPC.spriteDirection * 150f;
+                    Vector2 potentialEndPoint = potentialSpawnPoint + Vector2.UnitX * npc.spriteDirection * 150f;
 
                     // Ignore a position is too close to the target.
                     if (Target.WithinRange(potentialSpawnPoint, 270f) || Target.WithinRange(potentialEndPoint, 270f))
                         continue;
 
                     // If it's close to the original position.
-                    if (NPC.WithinRange(potentialSpawnPoint, 200f) || !Target.WithinRange(potentialSpawnPoint, 900f))
+                    if (npc.WithinRange(potentialSpawnPoint, 200f) || !Target.WithinRange(potentialSpawnPoint, 900f))
                         continue;
 
                     if (!Collision.CanHit(potentialSpawnPoint, 1, 1, Target.position, Target.width, Target.height))
@@ -320,12 +318,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                         continue;
 
                     // If the side is incorrect.
-                    if (Math.Sign(potentialSpawnPoint.X - NPC.Center.X) != NPC.spriteDirection)
+                    if (Math.Sign(potentialSpawnPoint.X - npc.Center.X) != npc.spriteDirection)
                         continue;
 
                     // Or if there's no ground near the position.
                     Point teleportPointTileBottom = potentialSpawnPoint.ToTileCoordinates();
-                    bool activeSolidTop = Main.tileSolidTop[Framing.GetTileSafely(teleportPointTileBottom.X, teleportPointTileBottom.Y).TileType] && Framing.GetTileSafely(teleportPointTileBottom.X, teleportPointTileBottom.Y).HasTile;
+                    bool activeSolidTop = Main.tileSolidTop[Framing.GetTileSafely(teleportPointTileBottom.X, teleportPointTileBottom.Y).type] && Framing.GetTileSafely(teleportPointTileBottom.X, teleportPointTileBottom.Y).active();
                     if (!WorldGen.SolidTile(teleportPointTileBottom.X, teleportPointTileBottom.Y + 1) && !activeSolidTop)
                         continue;
 
@@ -334,17 +332,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
                 }
 
                 if (teleportPoint != Vector2.Zero)
-                    NPC.Center = teleportPoint;
-                NPC.netUpdate = true;
+                    npc.Center = teleportPoint;
+                npc.netUpdate = true;
             }
             else
             {
-                NPC.velocity.X = MathHelper.SmoothStep(0f, NPC.spriteDirection * 6f, Utils.GetLerpValue(0f, 35f, TeleportCountdown, true));
-                NPC.Opacity = Utils.GetLerpValue(35f, 25f, TeleportCountdown, true);
+                npc.velocity.X = MathHelper.SmoothStep(0f, npc.spriteDirection * 6f, Utils.InverseLerp(0f, 35f, TeleportCountdown, true));
+                npc.Opacity = Utils.InverseLerp(35f, 25f, TeleportCountdown, true);
             }
 
             // Spawn no dust if fading out a good amount.
-            if (NPC.Opacity < 0.5f)
+            if (npc.Opacity < 0.5f)
                 return;
 
             // Release ninja dodge dust.
@@ -352,7 +350,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    Dust ninjaDodgeDust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 31, 0f, 0f, 100, default, 2f);
+                    Dust ninjaDodgeDust = Dust.NewDustDirect(npc.position, npc.width, npc.height, 31, 0f, 0f, 100, default, 2f);
                     ninjaDodgeDust.position += Main.rand.NextVector2Square(-20f, 20f);
                     ninjaDodgeDust.velocity *= 0.4f;
                     ninjaDodgeDust.scale *= Main.rand.NextFloat(1f, 1.4f);
@@ -365,58 +363,58 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
             }
         }
 
-		public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
-            Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-            Texture2D outlineTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/NinjaOutline").Value;
-            Vector2 outlineDrawPosition = NPC.Center - screenPos - Vector2.UnitY * 6f;
-            SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D outlineTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/NinjaOutline");
+            Vector2 outlineDrawPosition = npc.Center - Main.screenPosition - Vector2.UnitY * 6f;
+            SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             if (KatanaUseTimer > 0f)
             {
-                Texture2D katanaTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/Katana").Value;
-                Vector2 drawPosition = NPC.Center - screenPos - Vector2.UnitY.RotatedBy(NPC.rotation) * 5f;
-                drawPosition -= NPC.rotation.ToRotationVector2() * NPC.spriteDirection * 22f;
-                float rotation = MathHelper.PiOver4 + NPC.rotation;
+                Texture2D katanaTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/Katana");
+                Vector2 drawPosition = npc.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(npc.rotation) * 5f;
+                drawPosition -= npc.rotation.ToRotationVector2() * npc.spriteDirection * 22f;
+                float rotation = MathHelper.PiOver4 + npc.rotation;
                 SpriteEffects katanaDirection = direction | SpriteEffects.FlipHorizontally;
-                if (NPC.spriteDirection == 1)
+                if (npc.spriteDirection == 1)
                 {
                     katanaDirection |= SpriteEffects.FlipHorizontally;
                     rotation -= MathHelper.PiOver2;
                 }
                 else
                     rotation += MathHelper.PiOver2;
-                Main.spriteBatch.Draw(katanaTexture, drawPosition, null, NPC.GetAlpha(drawColor), rotation, katanaTexture.Size() * 0.5f, 1f, katanaDirection, 0f);
+                spriteBatch.Draw(katanaTexture, drawPosition, null, npc.GetAlpha(drawColor), rotation, katanaTexture.Size() * 0.5f, 1f, katanaDirection, 0f);
             }
-            Main.spriteBatch.Draw(outlineTexture, outlineDrawPosition, NPC.frame, Color.White * NPC.Opacity * 0.6f, NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale * 1.05f, direction, 0f);
-            Main.spriteBatch.Draw(texture, outlineDrawPosition, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, NPC.frame.Size() * 0.5f, NPC.scale, direction, 0f);
+            spriteBatch.Draw(outlineTexture, outlineDrawPosition, npc.frame, Color.White * npc.Opacity * 0.6f, npc.rotation, npc.frame.Size() * 0.5f, npc.scale * 1.05f, direction, 0f);
+            spriteBatch.Draw(texture, outlineDrawPosition, npc.frame, npc.GetAlpha(drawColor), npc.rotation, npc.frame.Size() * 0.5f, npc.scale, direction, 0f);
             return false;
         }
 
         public override void FindFrame(int frameHeight)
         {
             frameHeight = 48;
-            if (TimeOfFlightCountdown > 0f || !NPC.collideY)
+            if (TimeOfFlightCountdown > 0f || !npc.collideY)
             {
                 if (KatanaUseTimer > 0f)
-                    NPC.frame.Y = frameHeight * 3;
+                    npc.frame.Y = frameHeight * 3;
                 else
-                    NPC.frame.Y = frameHeight * 8;
+                    npc.frame.Y = frameHeight * 8;
                 return;
             }
 
             if (TeleportCountdown > 0f)
             {
-                NPC.frame.Y = frameHeight * 3;
+                npc.frame.Y = frameHeight * 3;
                 return;
             }
 
-            NPC.frameCounter++;
-            if (NPC.frameCounter % 3f == 2f && NPC.collideY)
-                NPC.frame.Y += frameHeight;
+            npc.frameCounter++;
+            if (npc.frameCounter % 3f == 2f && npc.collideY)
+                npc.frame.Y += frameHeight;
 
-            if (NPC.frame.Y >= frameHeight * 8)
-                NPC.frame.Y = 0;
+            if (npc.frame.Y >= frameHeight * 8)
+                npc.frame.Y = 0;
         }
 
         public override bool CheckActive() => false;

@@ -4,17 +4,14 @@ using CalamityMod.NPCs.Cryogen;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
-using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.Yharon;
-using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -28,7 +25,7 @@ namespace InfernumMode.GlobalInstances
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
             // Give a dark tint to the moon lord.
-            if (npc.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordCore)
+            if (npc.type == NPCID.MoonLordHand || npc.type == NPCID.MoonLordHead || npc.type == NPCID.MoonLordCore)
             {
                 if (InfernumMode.CanUseCustomAIs)
                     return MoonLordCoreBehaviorOverride.OverallTint;
@@ -40,10 +37,8 @@ namespace InfernumMode.GlobalInstances
                 npc.type == ModContent.NPCType<ThanatosTail>())
             {
                 bool dealsNoContactDamage = npc.damage == 0;
-                npc.Infernum().ExtraAI[21] = MathHelper.Clamp(npc.Infernum().ExtraAI[21] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
-                Color color = Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[21]);
-                color = Color.Lerp(color, new Color(255, 0, 0, 64) * npc.Opacity * 0.75f, Utils.GetLerpValue(10f, 75f, npc.Infernum().ExtraAI[ExoMechManagement.DeathAnimationTimerIndex], true));
-                return color;
+                npc.Infernum().ExtraAI[20] = MathHelper.Clamp(npc.Infernum().ExtraAI[20] + dealsNoContactDamage.ToDirectionInt() * 0.025f, 0f, 1f);
+                return Color.Lerp(drawColor * npc.Opacity, new Color(102, 74, 232, 0) * npc.Opacity * 0.6f, npc.Infernum().ExtraAI[20]);
             }
 
             return base.GetAlpha(npc, drawColor);
@@ -86,9 +81,9 @@ namespace InfernumMode.GlobalInstances
         #endregion
 
         #region Manual Drawing
-        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
         {
-            if (InfernumMode.CanUseCustomAIs && !npc.IsABestiaryIconDummy)
+            if (InfernumMode.CanUseCustomAIs)
             {
                 bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
                 if (isDoG && npc.alpha >= 252)
@@ -115,18 +110,25 @@ namespace InfernumMode.GlobalInstances
                             float horizontalOffset = Math.Abs(npc.Center.X - Main.LocalPlayer.Center.X);
                             float verticalOffset = Math.Abs(npc.Center.Y - Main.LocalPlayer.Center.Y);
 
-                            drawPosition.X = i is 0 or 2 ? Main.LocalPlayer.Center.X + horizontalOffset : Main.LocalPlayer.Center.X - horizontalOffset;
-                            drawPosition.Y = i is 0 or 1 ? Main.LocalPlayer.Center.Y + verticalOffset : Main.LocalPlayer.Center.Y - verticalOffset;
-                            drawPosition.Y += npc.gfxOffY;
-                            drawPosition -= screenPos;
+                            if (i == 0 || i == 2)
+                                drawPosition.X = Main.LocalPlayer.Center.X + horizontalOffset;
+                            else
+                                drawPosition.X = Main.LocalPlayer.Center.X - horizontalOffset;
 
-                            Main.spriteBatch.Draw(TextureAssets.Npc[npc.type].Value, drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
+                            if (i == 0 || i == 1)
+                                drawPosition.Y = Main.LocalPlayer.Center.Y + verticalOffset;
+                            else
+                                drawPosition.Y = Main.LocalPlayer.Center.Y - verticalOffset;
+                            drawPosition.Y += npc.gfxOffY;
+                            drawPosition -= Main.screenPosition;
+
+                            spriteBatch.Draw(Main.npcTexture[npc.type], drawPosition, npc.frame, shroomColor, npc.rotation, origin, npc.scale, direction, 0f);
                         }
                     }
                     return OverridingListManager.InfernumPreDrawOverrideList[npc.type].Invoke(npc, spriteBatch, drawColor);
                 }
             }
-            return base.PreDraw(npc, spriteBatch, screenPos, drawColor);
+            return base.PreDraw(npc, spriteBatch, drawColor);
         }
         #endregion
 
@@ -136,7 +138,7 @@ namespace InfernumMode.GlobalInstances
             if (!InfernumMode.CanUseCustomAIs)
                 return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);
 
-            if (npc.type is NPCID.CultistBoss or NPCID.CultistBossClone)
+            if (npc.type == NPCID.CultistBoss || npc.type == NPCID.CultistBossClone)
                 scale = 1f;
 
             bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
@@ -144,9 +146,6 @@ namespace InfernumMode.GlobalInstances
                 return false;
 
             if (npc.type == NPCID.EaterofWorldsBody)
-                return false;
-
-            if (npc.type == ModContent.NPCType<PerforatorBodyMedium>() || npc.type == ModContent.NPCType<PerforatorTailMedium>())
                 return false;
 
             return base.DrawHealthBar(npc, hbPosition, ref scale, ref position);

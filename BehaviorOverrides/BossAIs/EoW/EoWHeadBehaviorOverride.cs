@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 {
@@ -22,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             VineCharge,
             ShadowOrbSummon,
             RainHover,
-            EaterOfSoulsSlam
+            DarkHeartSlam
         }
 
         public override int NPCOverrideType => NPCID.EaterofWorldsHead;
@@ -92,8 +91,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 case EoWAttackState.RainHover:
                     DoAttack_RainHover(npc, target, splitCounter, enraged, ref attackTimer);
                     break;
-                case EoWAttackState.EaterOfSoulsSlam:
-                    DoAttack_EaterOfSoulsSlam(npc, target, splitCounter, enraged, ref attackTimer);
+                case EoWAttackState.DarkHeartSlam:
+                    DoAttack_DarkHeartSlam(npc, target, splitCounter, enraged, ref attackTimer);
                     break;
             }
 
@@ -130,13 +129,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             DoDefaultMovement(npc, target, flySpeed, turnSpeedFactor);
 
             // Periodically release fireballs.
-            int shootRate = (int)(splitCounter * 40f) + 120;
+            int shootRate = splitCounter >= TotalSplitsToPerform - 1f ? 92 : 120;
+            if (splitCounter == TotalSplitsToPerform)
+                shootRate += 18;
+
             if (BossRushEvent.BossRushActive)
-                shootRate = 56;
+                shootRate = 38;
 
             if (attackTimer % shootRate == shootRate - 1f)
             {
-                SoundEngine.PlaySound(SoundID.Item20, npc.Center);
+                Main.PlaySound(SoundID.Item20, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -182,7 +184,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             // Periodically shoot small flames.
             if (attackTimer % 120f == 119f)
             {
-                SoundEngine.PlaySound(SoundID.Item20, npc.Center);
+                Main.PlaySound(SoundID.Item20, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -197,7 +199,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             }
 
             float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
-            offsetAngle *= Utils.GetLerpValue(100f, 350f, npc.Distance(target.Center), true);
+            offsetAngle *= Utils.InverseLerp(100f, 350f, npc.Distance(target.Center), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed;
             if (!npc.WithinRange(target.Center, 400f) || npc.velocity == Vector2.Zero || npc.velocity.Length() < 5f)
@@ -212,7 +214,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 npc.velocity *= 1.018f;
                 if (npc.soundDelay <= 0)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    Main.PlaySound(SoundID.Roar, target.Center, 0);
                     npc.soundDelay = 80;
                 }
             }
@@ -268,7 +270,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             // Hover above the player.
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 300f + target.velocity * 25f;
             float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
-            offsetAngle *= Utils.GetLerpValue(70f, 240f, npc.Distance(hoverDestination), true);
+            offsetAngle *= Utils.InverseLerp(70f, 240f, npc.Distance(hoverDestination), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 12f;
             if (splitCounter == 2f)
@@ -298,7 +300,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         }
 
 
-        public static void DoAttack_EaterOfSoulsSlam(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
+        public static void DoAttack_DarkHeartSlam(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
         {
             ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
 
@@ -328,20 +330,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 // Release a shockwave and dark hearts once tiles have been hit.
                 if (inTiles && wasPreviouslyInTiles == 0f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item62, npc.Center);
+                    Main.PlaySound(SoundID.Item62, npc.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 105, 0f);
 
                         // Release 5 dark hearts if none currently exist.
-                        if (!NPC.AnyNPCs(NPCID.EaterofSouls))
+                        if (!NPC.AnyNPCs(ModContent.NPCType<DarkHeart>()))
                         {
                             for (int i = 0; i < 5; i++)
                             {
                                 Vector2 initialSeekerVelocity = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 8f;
                                 Vector2 spawnPosition = npc.Center + initialSeekerVelocity * 2f;
-                                int seeker = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, NPCID.EaterofSouls, 1);
+                                int seeker = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<DarkHeart>(), 1);
                                 if (Main.npc.IndexInRange(seeker))
                                     Main.npc[seeker].velocity = initialSeekerVelocity;
                             }
@@ -379,7 +381,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
         public static void DoDefaultMovement(NPC npc, Player target, float flySpeed, float turnSpeedFactor)
         {
             float offsetAngle = MathHelper.Lerp(-0.76f, 0.76f, npc.whoAmI % 4f / 4f);
-            offsetAngle *= Utils.GetLerpValue(100f, 350f, npc.Distance(target.Center), true);
+            offsetAngle *= Utils.InverseLerp(100f, 350f, npc.Distance(target.Center), true);
 
             Vector2 idealVelocity = npc.SafeDirectionTo(target.Center) * flySpeed * 0.95f;
 
@@ -388,7 +390,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 if (Main.npc[i].type == npc.type && i != npc.whoAmI)
-                    pushAway += npc.SafeDirectionTo(Main.npc[i].Center, Vector2.UnitY) * Utils.GetLerpValue(135f, 45f, npc.Distance(Main.npc[i].Center), true) * 1.8f;
+                    pushAway += npc.SafeDirectionTo(Main.npc[i].Center, Vector2.UnitY) * Utils.InverseLerp(135f, 45f, npc.Distance(Main.npc[i].Center), true) * 1.8f;
             }
             idealVelocity += pushAway;
 
@@ -411,7 +413,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             float splitCounter = npc.ai[2];
             EoWAttackState oldAttackState = (EoWAttackState)(int)npc.ai[0];
 
-            List<EoWAttackState> possibleAttacks = new()
+            List<EoWAttackState> possibleAttacks = new List<EoWAttackState>
             {
                 EoWAttackState.CursedBombBurst,
                 EoWAttackState.VineCharge,
@@ -420,7 +422,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             possibleAttacks.AddWithCondition(EoWAttackState.RainHover, splitCounter >= 1f);
 
             for (int i = 0; i < 2; i++)
-                possibleAttacks.AddWithCondition(EoWAttackState.EaterOfSoulsSlam, splitCounter >= 2f);
+                possibleAttacks.AddWithCondition(EoWAttackState.DarkHeartSlam, splitCounter >= 2f);
             possibleAttacks.RemoveAll(p => p == oldAttackState);
 
             npc.TargetClosest();
@@ -449,10 +451,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
             // Create new worms with linked HP.
             int wormCount = (int)Math.Pow(2D, splitCounter);
-            int realLife = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
+            int realLife = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
             for (int i = 0; i < wormCount - 1; i++)
             {
-                int secondWorm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
+                int secondWorm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.EaterofWorldsHead, 1, ai2: splitCounter, ai3: npc.ai[3] * 0.5f, Target: npc.target);
                 if (Main.npc.IndexInRange(secondWorm))
                 {
                     Main.npc[secondWorm].realLife = realLife;
@@ -470,9 +472,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
             {
                 int nextIndex;
                 if (i < segmentCount)
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI);
                 else
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
+                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI);
 
                 // The head.
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;
@@ -484,7 +486,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 // Mark an index based on whether it can be split at a specific split counter value.
 
                 // Small worm split indices.
-                if (i is (BaseBodySegmentCount / 4) or (BaseBodySegmentCount * 3 / 4))
+                if (i == BaseBodySegmentCount / 4 || i == BaseBodySegmentCount * 3 / 4)
                     Main.npc[nextIndex].ai[3] = 2f;
 
                 // Medium worm split index.

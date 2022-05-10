@@ -10,57 +10,57 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 {
     public class HomingAcid : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
-        public Player ClosestPlayer => Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
+        public ref float Time => ref projectile.ai[0];
+        public Player ClosestPlayer => Main.player[Player.FindClosest(projectile.Center, 1, 1)];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Acid");
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 18;
-            Projectile.height = 20;
-            Projectile.hostile = true;
-            Projectile.tileCollide = true;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 240;
-            CooldownSlot = 1;
+            projectile.width = 18;
+            projectile.height = 20;
+            projectile.hostile = true;
+            projectile.tileCollide = true;
+            projectile.ignoreWater = true;
+            projectile.timeLeft = 240;
+            cooldownSlot = 1;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = Utils.GetLerpValue(0f, 35f, Time, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            projectile.Opacity = Utils.InverseLerp(0f, 35f, Time, true) * Utils.InverseLerp(0f, 35f, projectile.timeLeft, true);
+            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
             Time++;
 
             if (Time < 80f)
                 return;
 
-            float idealFlySpeed = BossRushEvent.BossRushActive ? 29f : 12.25f;
-            if (!Projectile.WithinRange(ClosestPlayer.Center, 150f))
-                Projectile.velocity = (Projectile.velocity * 59f + Projectile.SafeDirectionTo(ClosestPlayer.Center) * idealFlySpeed) / 60f;
+            float idealFlySpeed = BossRushEvent.BossRushActive ? 29f : 20.25f;
+            if (!projectile.WithinRange(ClosestPlayer.Center, 150f))
+                projectile.velocity = (projectile.velocity * 49f + projectile.SafeDirectionTo(ClosestPlayer.Center) * idealFlySpeed) / 50f;
 
-            if (Projectile.WithinRange(ClosestPlayer.Center, 20f))
-                Projectile.Kill();
+            if (projectile.WithinRange(ClosestPlayer.Center, 20f))
+                projectile.Kill();
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<SulphuricPoisoning>(), 120);
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
-            Vector2 drawPosition = Projectile.position + Projectile.Size * 0.5f - Main.screenPosition;
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.position + projectile.Size * 0.5f - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
-            Color backAfterimageColor = Projectile.GetAlpha(new Color(1f, 1f, 1f, 0f) * 0.5f);
+            Color backAfterimageColor = projectile.GetAlpha(new Color(85, 224, 60, 0) * 0.5f);
             for (int i = 0; i < 8; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 4f;
-                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, backAfterimageColor, Projectile.rotation, origin, Projectile.scale, 0, 0f);
+                spriteBatch.Draw(texture, drawPosition + drawOffset, null, backAfterimageColor, projectile.rotation, origin, projectile.scale, 0, 0f);
             }
-            Utilities.DrawAfterimagesCentered(Projectile, new Color(117, 95, 133, 184) * Projectile.Opacity, ProjectileID.Sets.TrailingMode[Projectile.type], 2);
+            Utilities.DrawAfterimagesCentered(projectile, new Color(117, 95, 133, 184) * projectile.Opacity, ProjectileID.Sets.TrailingMode[projectile.type], 2);
 
             return false;
         }

@@ -8,10 +8,10 @@ namespace InfernumMode.BossIntroScreens
 {
     public class PlanteraIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new(completionRatio =>
+        public override TextColorData TextColor => new TextColorData(completionRatio =>
         {
-            Color plantColor = new(96, 148, 14);
-            Color flowerColor = new(225, 128, 206);
+            Color plantColor = new Color(96, 148, 14);
+            Color flowerColor = new Color(225, 128, 206);
             float flowerInterpolant = (float)Math.Pow(Math.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.Pi) * 0.5f + 0.5f, 2.3);
             return Color.Lerp(plantColor, flowerColor, flowerInterpolant);
         });
@@ -34,7 +34,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override float LetterDisplayCompletionRatio(int animationTimer)
         {
-            float completionRatio = Utils.GetLerpValue(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
+            float completionRatio = Utils.InverseLerp(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
 
             // If the completion ratio exceeds the point where the name is displayed, display all letters.
             int startOfLargeTextIndex = TextToDisplay.IndexOf('\n');

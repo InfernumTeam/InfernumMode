@@ -2,16 +2,16 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
+using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {
-	public class FlamePillarBehaviorOverride : NPCBehaviorOverride
+    public class FlamePillarBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<FlamePillar>();
 
@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             npc.aiStyle = -1;
             npc.knockBackResist = 0f;
             npc.LifeMaxNERB(4145, 4145, 146960);
-            if (DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive)
+            if (CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive)
                 npc.lifeMax = 22650;
 
             for (int k = 0; k < npc.buffImmune.Length; k++)
@@ -73,12 +73,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 Utilities.NewProjectileBetter(npc.Center - flameVelocity * spawnOffsetFactor, flameVelocity, ModContent.ProjectileType<RitualFlame>(), 0, 0f);
             }
 
-            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive;
+            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
 
             // Release bursts of dark flames.
             if (attackTimer > 25f && attackTimer % 70f == 69f)
             {
-                SoundEngine.PlaySound(SoundID.Item100, npc.Center);
+                Main.PlaySound(SoundID.Item100, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

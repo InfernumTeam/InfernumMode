@@ -7,9 +7,11 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+using TMLSoundType = Terraria.ModLoader.SoundType;
+
 namespace InfernumMode.BossIntroScreens
 {
-	public class SCalIntroScreen : BaseIntroScreen
+    public class SCalIntroScreen : BaseIntroScreen
     {
         public override TextColorData TextColor => Color.White;
 
@@ -31,12 +33,12 @@ namespace InfernumMode.BossIntroScreens
         {
             shader.Parameters["uColor"].SetValue(Color.Red.ToVector3());
             shader.Parameters["uSecondaryColor"].SetValue(Color.Orange.ToVector3());
-            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("Terraria/Images/Misc/Perlin").Value;
+            shader.GraphicsDevice.Textures[1] = ModContent.GetTexture("Terraria/Misc/Perlin");
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<SupremeCalamitas>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SupremeCalamitasSpawn");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/SupremeCalamitasSpawn");
 
         public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.Item100;
 
@@ -44,7 +46,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override float LetterDisplayCompletionRatio(int animationTimer)
         {
-            float completionRatio = Utils.GetLerpValue(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
+            float completionRatio = Utils.InverseLerp(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
 
             // If the completion ratio exceeds the point where the name is displayed, display all letters.
             int startOfLargeTextIndex = TextToDisplay.IndexOf('\n');

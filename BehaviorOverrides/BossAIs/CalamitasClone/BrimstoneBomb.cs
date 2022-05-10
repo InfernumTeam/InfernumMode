@@ -1,50 +1,51 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-	public class BrimstoneBomb : ModProjectile
+    public class BrimstoneBomb : ModProjectile
     {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Brimstone Bomb");
-            Main.projFrames[Projectile.type] = 6;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
+            Main.projFrames[projectile.type] = 6;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 5;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 36;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 300;
-            Projectile.Opacity = 0f;
-            CooldownSlot = 1;
+            projectile.width = projectile.height = 36;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 300;
+            projectile.Opacity = 0f;
+            cooldownSlot = 1;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.075f, 0f, 1f);
+            projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.075f, 0f, 1f);
 
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            Lighting.AddLight(Projectile.Center, Color.Red.ToVector3() * 1.2f);
+            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            Lighting.AddLight(projectile.Center, Color.Red.ToVector3() * 1.2f);
 
-            Projectile.frameCounter++;
-            Projectile.frame = Projectile.frameCounter / 5 % Main.projFrames[Projectile.type];
+            projectile.frameCounter++;
+            projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
 
-            if (Projectile.velocity.Y < 18f)
-                Projectile.velocity.Y += 0.32f;
-            Projectile.velocity.X *= 0.985f;
+            if (projectile.velocity.Y < 18f)
+                projectile.velocity.Y += 0.32f;
+            projectile.velocity.X *= 0.985f;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, 0);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, 0);
             return false;
         }
     }

@@ -1,43 +1,44 @@
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 {
-	public class HomingSpore : ModProjectile
+    public class HomingSpore : ModProjectile
     {
-        public float HomePower => Projectile.ai[0];
+        public float HomePower => projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spore");
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 2;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 8;
-            Projectile.scale = 0.8f;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = 1;
-            Projectile.timeLeft = 150;
-            Projectile.Opacity = 0f;
+            projectile.width = projectile.height = 8;
+            projectile.scale = 0.8f;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = 1;
+            projectile.timeLeft = 150;
+            projectile.Opacity = 0f;
         }
 
         public override void AI()
         {
             HomeInOnTarget();
 
-            Lighting.AddLight(Projectile.Center, Color.CornflowerBlue.ToVector3() * Projectile.Opacity * 0.5f);
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Lighting.AddLight(projectile.Center, Color.CornflowerBlue.ToVector3() * projectile.Opacity * 0.5f);
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver4;
 
-            if (Projectile.timeLeft > 10f)
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
+            if (projectile.timeLeft > 10f)
+                projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.1f, 0f, 1f);
             else
-                Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity - 0.1f, 0f, 1f);
+                projectile.Opacity = MathHelper.Clamp(projectile.Opacity - 0.1f, 0f, 1f);
         }
 
         public void HomeInOnTarget()
@@ -46,19 +47,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
             if (BossRushEvent.BossRushActive)
                 homeSpeed *= 3f;
 
-            Player target = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            if (Projectile.timeLeft <= 105 && !Projectile.WithinRange(target.Center, 55f))
-                Projectile.velocity = (Projectile.velocity * 15f + Projectile.SafeDirectionTo(target.Center) * homeSpeed) / 16f;
+            Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+            if (projectile.timeLeft <= 105 && !projectile.WithinRange(target.Center, 55f))
+                projectile.velocity = (projectile.velocity * 15f + projectile.SafeDirectionTo(target.Center) * homeSpeed) / 16f;
         }
 
-        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type]);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type]);
             return false;
         }
 
-        public override bool? CanDamage() => Projectile.alpha < 20 ? null : false;
+        public override bool CanDamage() => projectile.alpha < 20;
     }
 }

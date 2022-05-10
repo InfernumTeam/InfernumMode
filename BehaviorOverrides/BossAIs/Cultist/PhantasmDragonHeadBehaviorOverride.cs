@@ -3,7 +3,6 @@ using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
@@ -22,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             // Make a roar sound on summoning.
             if (npc.localAI[3] == 0f)
             {
-                SoundEngine.PlaySound(SoundID.Item119, npc.position);
+                Main.PlaySound(SoundID.Item119, npc.position);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     CreatePhantasmDragonSegments(npc, 40);
 
@@ -91,10 +90,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                     newSpeed -= 0.045f;
 
                 float angleBetweenDirectionAndTarget = npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center));
-                if (angleBetweenDirectionAndTarget < 0.55f && angleBetweenDirectionAndTarget > (MathHelper.Pi / 3f))
+                if (angleBetweenDirectionAndTarget < 0.55f && angleBetweenDirectionAndTarget > MathHelper.Pi / 3f)
                     newSpeed += 0.09f;
 
-                if (angleBetweenDirectionAndTarget < (MathHelper.Pi / 3f) && angleBetweenDirectionAndTarget > (MathHelper.Pi * 0.75f))
+                if (angleBetweenDirectionAndTarget < MathHelper.Pi / 3f && angleBetweenDirectionAndTarget > MathHelper.Pi * 0.75f)
                     newSpeed -= 0.0725f;
 
                 newSpeed = MathHelper.Clamp(newSpeed, 8.5f, 19f) * (BossRushEvent.BossRushActive ? 1.7f : 1f);
@@ -123,7 +122,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
                 if (i == segmentCount - 1)
                     bodyType = NPCID.CultistDragonTail;
 
-                int nextSegment = NPC.NewNPC(new InfernumSource(), (int)npc.position.X, (int)npc.position.Y, bodyType, previousSegment, 0f, 0f, 0f, 0f, 255);
+                int nextSegment = NPC.NewNPC((int)npc.position.X, (int)npc.position.Y, bodyType, previousSegment, 0f, 0f, 0f, 0f, 255);
                 Main.npc[nextSegment].ai[3] = npc.whoAmI;
                 Main.npc[nextSegment].ai[1] = previousSegment;
                 Main.npc[nextSegment].realLife = npc.whoAmI;

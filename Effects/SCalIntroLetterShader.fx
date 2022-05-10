@@ -9,7 +9,6 @@ float uProgress;
 float2 uImageSize1;
 float2 uImageSize2;
 float uLetterCompletionRatio;
-float4 uShaderSpecificData;
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {

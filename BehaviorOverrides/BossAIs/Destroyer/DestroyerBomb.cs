@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
@@ -13,55 +12,55 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Explosion");
-            Main.projFrames[Projectile.type] = 3;
+            Main.projFrames[projectile.type] = 3;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 20;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = true;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 660;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            projectile.width = projectile.height = 20;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = true;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 660;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            Projectile.frameCounter++;
+            projectile.frameCounter++;
 
             // Flick with red right before death as a telegraph.
-            if (Projectile.frameCounter % 4 == 3)
-                Projectile.frame = Projectile.frame == 0 ? (Projectile.timeLeft < 60 ? 2 : 1) : 0;
+            if (projectile.frameCounter % 4 == 3)
+                projectile.frame = projectile.frame == 0 ? (projectile.timeLeft < 60 ? 2 : 1) : 0;
 
-            if (Projectile.velocity.Y < 17f)
-                Projectile.velocity.Y += 0.2f;
+            if (projectile.velocity.Y < 17f)
+                projectile.velocity.Y += 0.2f;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-            Projectile.tileCollide = Projectile.timeLeft < 540;
+            projectile.tileCollide = projectile.timeLeft < 540;
 
-            Tile tileAtPosition = CalamityUtils.ParanoidTileRetrieval((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16);
-            Player closestPlayer = Main.player[Player.FindClosest(Projectile.Center, 1, 1)];
-            if ((TileID.Sets.Platforms[tileAtPosition.TileType] && tileAtPosition.HasTile && Projectile.tileCollide) || (Projectile.WithinRange(closestPlayer.Center, 60f) && Projectile.timeLeft < 580))
-                Projectile.Kill();
+            Tile tileAtPosition = CalamityUtils.ParanoidTileRetrieval((int)projectile.Center.X / 16, (int)projectile.Center.Y / 16);
+            Player closestPlayer = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+            if ((TileID.Sets.Platforms[tileAtPosition.type] && tileAtPosition.active() && projectile.tileCollide) || (projectile.WithinRange(closestPlayer.Center, 60f) && projectile.timeLeft < 580))
+                projectile.Kill();
 
-            Lighting.AddLight(Projectile.Center, Vector3.One * 0.85f);
+            Lighting.AddLight(projectile.Center, Vector3.One * 0.85f);
         }
 
         // Explode on death.
         public override void Kill(int timeLeft)
         {
-            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, 84);
-            Projectile.damage = 50;
-            Projectile.Damage();
+            CalamityGlobalProjectile.ExpandHitboxBy(projectile, 84);
+            projectile.damage = 50;
+            projectile.Damage();
 
-            SoundEngine.PlaySound(SoundID.Item14, Projectile.position);
+            Main.PlaySound(SoundID.Item14, projectile.position);
 
-            Utils.PoofOfSmoke(Projectile.Center);
+            Utils.PoofOfSmoke(projectile.Center);
         }
 
-        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = Projectile;
+        public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit) => target.Calamity().lastProjectileHit = projectile;
     }
 }

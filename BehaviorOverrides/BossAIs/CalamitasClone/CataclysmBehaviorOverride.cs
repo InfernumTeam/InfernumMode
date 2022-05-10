@@ -1,18 +1,17 @@
 ﻿using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Calamitas;
+using CalamityMod.World;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 {
-	public class CataclysmBehaviorOverride : NPCBehaviorOverride
+    public class CataclysmBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<CalamitasRun>();
 
@@ -63,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = DownedBossSystem.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
+            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive && CalamitasCloneBehaviorOverride.ReadyToUseBuffedAI;
             bool otherBrotherIsPresent = NPC.AnyNPCs(ModContent.NPCType<CalamitasRun2>());
             ref float attackType = ref npc.ai[0];
             ref float attackTimer = ref npc.ai[1];
@@ -130,7 +129,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
                     if (attackTimer > 240f || (npc.WithinRange(hoverDestination, 80f) && attackTimer > 45f))
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                        Main.PlaySound(SoundID.Roar, npc.Center, 0);
                         npc.velocity = npc.SafeDirectionTo(target.Center, -Vector2.UnitY) * chargeSpeed;
                         attackTimer = 0f;
                         attackState = 1f;
@@ -227,7 +226,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
             {
                 if (attackTimer % fireballReleaseRate == fireballReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item73, target.Center);
+                    Main.PlaySound(SoundID.Item73, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -257,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public static void SelectNewAttack(NPC npc)
         {
-            List<CataclysmAttackType> possibleAttacks = new()
+            List<CataclysmAttackType> possibleAttacks = new List<CataclysmAttackType>
             {
                 CataclysmAttackType.BrimstoneFireBurst,
                 CataclysmAttackType.HorizontalCharges

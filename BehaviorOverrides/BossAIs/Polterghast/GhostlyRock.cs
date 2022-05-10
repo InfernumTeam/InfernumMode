@@ -1,55 +1,56 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
-	public class GhostlyRock : ModProjectile
+    public class GhostlyRock : ModProjectile
     {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Rock");
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 1;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 3;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 1;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 3;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 32;
-            Projectile.scale = 1.25f;
-            Projectile.hostile = true;
-            Projectile.friendly = false;
-            Projectile.tileCollide = false;
-            Projectile.timeLeft = 300;
+            projectile.width = projectile.height = 32;
+            projectile.scale = 1.25f;
+            projectile.hostile = true;
+            projectile.friendly = false;
+            projectile.tileCollide = false;
+            projectile.timeLeft = 300;
         }
 
         public override void AI()
         {
-            if (Projectile.velocity.Length() < 27f)
-                Projectile.velocity *= 1.045f;
+            if (projectile.velocity.Length() < 27f)
+                projectile.velocity *= 1.045f;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            Projectile.Opacity = Utils.GetLerpValue(300f, 295f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 25f, Projectile.timeLeft, true);
-            Lighting.AddLight(Projectile.Center, Color.White.ToVector3());
+            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            projectile.Opacity = Utils.InverseLerp(300f, 295f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 25f, projectile.timeLeft, true);
+            Lighting.AddLight(projectile.Center, Color.White.ToVector3());
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 2);
+            Utilities.DrawAfterimagesCentered(projectile, Color.White, ProjectileID.Sets.TrailingMode[projectile.type], 2);
             return false;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity >= 1f ? null : false;
+        public override bool CanDamage() => projectile.Opacity >= 1f;
 
         public override void Kill(int timeLeft)
         {
-            Projectile.position = Projectile.Center;
-            Projectile.width = Projectile.height = 64;
-            Projectile.position.X = Projectile.position.X - Projectile.width / 2;
-            Projectile.position.Y = Projectile.position.Y - Projectile.height / 2;
-            Projectile.maxPenetrate = -1;
-            Projectile.Damage();
+            projectile.position = projectile.Center;
+            projectile.width = projectile.height = 64;
+            projectile.position.X = projectile.position.X - projectile.width / 2;
+            projectile.position.Y = projectile.position.Y - projectile.height / 2;
+            projectile.maxPenetrate = -1;
+            projectile.Damage();
         }
     }
 }

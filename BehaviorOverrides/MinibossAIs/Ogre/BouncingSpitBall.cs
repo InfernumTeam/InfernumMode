@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
 {
@@ -13,34 +12,34 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
 
         public override void SetDefaults()
         {
-            Projectile.width = 20;
-            Projectile.height = 20;
-            Projectile.hostile = true;
-            Projectile.tileCollide = true;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 470;
-            Projectile.penetrate = -1;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            projectile.width = 20;
+            projectile.height = 20;
+            projectile.hostile = true;
+            projectile.tileCollide = true;
+            projectile.ignoreWater = true;
+            projectile.timeLeft = 470;
+            projectile.penetrate = -1;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = Utils.GetLerpValue(470f, 463f, Projectile.timeLeft, true);
-            Projectile.velocity.Y += 0.2f;
-            Projectile.rotation += Projectile.velocity.X * 0.04f;
+            projectile.Opacity = Utils.InverseLerp(470f, 463f, projectile.timeLeft, true);
+            projectile.velocity.Y += 0.2f;
+            projectile.rotation += projectile.velocity.X * 0.04f;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity > 0.75f ? null : false;
+        public override bool CanDamage() => projectile.Opacity > 0.75f;
 
-        public override Color? GetAlpha(Color lightColor) => Color.White * Projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => Color.White * projectile.Opacity;
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            Projectile.velocity.Y = MathHelper.Clamp(oldVelocity.Y * -1.2f, -28f, 28f);
-            Projectile.velocity.Y += Projectile.SafeDirectionTo(Main.player[Player.FindClosest(Projectile.Center, 1, 1)].Center).Y * 10f;
-            Projectile.netUpdate = true;
+            projectile.velocity.Y = MathHelper.Clamp(oldVelocity.Y * -1.2f, -28f, 28f);
+            projectile.velocity.Y += projectile.SafeDirectionTo(Main.player[Player.FindClosest(projectile.Center, 1, 1)].Center).Y * 10f;
+            projectile.netUpdate = true;
 
-            SoundEngine.PlaySound(SoundID.Item17, Projectile.Center);
+            Main.PlaySound(SoundID.Item17, projectile.Center);
             for (int i = 0; i < 4; i++)
             {
                 int dustType = Utils.SelectRandom(Main.rand, new int[]
@@ -48,11 +47,11 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Ogre
                         4,
                         256
                 });
-                Dust spit = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustType, Projectile.velocity.X, Projectile.velocity.Y, 100);
-                spit.velocity = spit.velocity / 4f + Projectile.velocity / 2f - Vector2.UnitY * 5f;
+                Dust spit = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, dustType, projectile.velocity.X, projectile.velocity.Y, 100);
+                spit.velocity = spit.velocity / 4f + projectile.velocity / 2f - Vector2.UnitY * 5f;
                 spit.scale = Main.rand.NextFloat(1f, 1.45f);
-                spit.position = Projectile.Center;
-                spit.position += Main.rand.NextVector2Circular(Projectile.width, Projectile.width) * 2f;
+                spit.position = projectile.Center;
+                spit.position += Main.rand.NextVector2Circular(projectile.width, projectile.width) * 2f;
                 spit.noLight = true;
                 if (spit.type == 4)
                     spit.color = new Color(80, 170, 40, 120);

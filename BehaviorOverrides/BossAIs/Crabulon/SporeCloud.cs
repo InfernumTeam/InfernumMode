@@ -12,85 +12,85 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spore Gas");
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 2;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 32;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
+            projectile.width = projectile.height = 32;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.penetrate = -1;
+            projectile.tileCollide = false;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(Projectile.localAI[0]);
+            writer.Write(projectile.localAI[0]);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            Projectile.localAI[0] = reader.ReadSingle();
+            projectile.localAI[0] = reader.ReadSingle();
         }
 
         public override void AI()
         {
-            Projectile.ai[1] += 1f;
-            if (Projectile.ai[1] > 720f)
+            projectile.ai[1] += 1f;
+            if (projectile.ai[1] > 720f)
             {
-                Projectile.localAI[0] += 10f;
-                Projectile.damage = 0;
+                projectile.localAI[0] += 10f;
+                projectile.damage = 0;
             }
 
-            if (Projectile.localAI[0] > 255f)
+            if (projectile.localAI[0] > 255f)
             {
-                Projectile.Kill();
-                Projectile.localAI[0] = 255f;
+                projectile.Kill();
+                projectile.localAI[0] = 255f;
             }
 
-            Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.1f, Projectile.Opacity * 0.2f, Projectile.Opacity * 0.19f);
+            Lighting.AddLight(projectile.Center, projectile.Opacity * 0.1f, projectile.Opacity * 0.2f, projectile.Opacity * 0.19f);
 
-            Projectile.alpha = (int)(100.0 + Projectile.localAI[0] * 0.7);
-            Projectile.rotation += Projectile.velocity.X * 0.02f;
-            Projectile.rotation += Projectile.direction * 0.002f;
+            projectile.alpha = (int)(100.0 + projectile.localAI[0] * 0.7);
+            projectile.rotation += projectile.velocity.X * 0.02f;
+            projectile.rotation += projectile.direction * 0.002f;
 
-            if (Projectile.velocity.Length() > 0.04f)
-                Projectile.velocity *= 0.985f;
+            if (projectile.velocity.Length() > 0.04f)
+                projectile.velocity *= 0.985f;
         }
 
-        public override bool CanHitPlayer(Player target) => Projectile.ai[1] <= 720f;
+        public override bool CanHitPlayer(Player target) => projectile.ai[1] <= 720f;
 
 
         public override Color? GetAlpha(Color lightColor)
         {
-            if (Projectile.ai[1] > 720f)
+            if (projectile.ai[1] > 720f)
             {
-                byte b2 = (byte)((26f - (Projectile.ai[1] - 720f)) * 10f);
-                byte a2 = (byte)(Projectile.alpha * (b2 / 255f));
+                byte b2 = (byte)((26f - (projectile.ai[1] - 720f)) * 10f);
+                byte a2 = (byte)(projectile.alpha * (b2 / 255f));
                 return new Color(b2, b2, b2, a2);
             }
-            return new Color(255, 255, 255, Projectile.alpha);
+            return new Color(255, 255, 255, projectile.alpha);
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
-            switch ((int)Projectile.ai[0])
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            switch ((int)projectile.ai[0])
             {
                 case 0:
                     break;
                 case 1:
-                    texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/SporeCloud2").Value;
+                    texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/SporeCloud2");
                     break;
                 case 2:
-                    texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/SporeCloud3").Value;
+                    texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/SporeCloud3");
                     break;
                 default:
                     break;
             }
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1, texture);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1, texture);
             return false;
         }
 

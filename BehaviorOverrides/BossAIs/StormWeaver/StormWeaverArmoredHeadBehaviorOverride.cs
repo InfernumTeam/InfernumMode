@@ -7,7 +7,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {
@@ -46,7 +45,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             {
                 if (phase2 == 0f)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCDeath14, (int)npc.Center.X, (int)npc.Center.Y);
+                    Main.PlaySound(SoundID.NPCDeath14, (int)npc.Center.X, (int)npc.Center.Y);
 
                     npc.Calamity().DR = 0f;
                     npc.Calamity().unbreakableDR = false;
@@ -136,7 +135,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                     electricity.noGravity = true;
                 }
 
-                SoundEngine.PlaySound(SoundID.Item94, npc.Center);
+                Main.PlaySound(SoundID.Item94, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 7; i++)
@@ -170,7 +169,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             {
                 if (!npc.WithinRange(target.Center, 210f))
                 {
-                    SoundEngine.PlaySound(SoundID.Item122, target.Center);
+                    Main.PlaySound(SoundID.Item122, target.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -203,7 +202,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
             ref float attackState = ref npc.ai[1];
             float oldAttackState = npc.ai[1];
-            WeightedRandom<float> newStatePicker = new(Main.rand);
+            WeightedRandom<float> newStatePicker = new WeightedRandom<float>(Main.rand);
             newStatePicker.Add((int)StormWeaverArmoredAttackType.NormalMove, 1.5);
             newStatePicker.Add((int)StormWeaverArmoredAttackType.SparkBurst);
             newStatePicker.Add((int)StormWeaverArmoredAttackType.LightningDischarge);

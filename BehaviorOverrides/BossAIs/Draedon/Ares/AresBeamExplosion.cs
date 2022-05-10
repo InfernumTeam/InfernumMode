@@ -3,56 +3,55 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
     public class AresBeamExplosion : ModProjectile
     {
-        public ref float Identity => ref Projectile.ai[0];
+        public ref float Identity => ref projectile.ai[0];
         public PrimitiveTrail LightningDrawer;
         public PrimitiveTrail LightningBackgroundDrawer;
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Exoburst Explosion");
-            Main.projFrames[Projectile.type] = 7;
+            Main.projFrames[projectile.type] = 7;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 68;
-            Projectile.height = 68;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 300;
-            Projectile.Calamity().canBreakPlayerDefense = true;
-            CooldownSlot = 1;
+            projectile.width = 68;
+            projectile.height = 68;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 300;
+            projectile.Calamity().canBreakPlayerDefense = true;
+            cooldownSlot = 1;
         }
 
         public override void AI()
         {
             // Emit light.
-            Lighting.AddLight(Projectile.Center, 0.3f * Projectile.Opacity, 0.3f * Projectile.Opacity, 0.3f * Projectile.Opacity);
+            Lighting.AddLight(projectile.Center, 0.3f * projectile.Opacity, 0.3f * projectile.Opacity, 0.3f * projectile.Opacity);
 
             // Handle frames.
-            Projectile.frameCounter++;
-            Projectile.frame = Projectile.frameCounter / 4;
+            projectile.frameCounter++;
+            projectile.frame = projectile.frameCounter / 4;
 
             // Die once the final frame is passed.
-            if (Projectile.frame >= Main.projFrames[Projectile.type])
-                Projectile.Kill();
+            if (projectile.frame >= Main.projFrames[projectile.type])
+                projectile.Kill();
         }
 
-        public override bool CanHitPlayer(Player target) => Projectile.Opacity == 1f;
+        public override bool CanHitPlayer(Player target) => projectile.Opacity == 1f;
 
         public override Color? GetAlpha(Color lightColor) => Color.White;
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item93, Projectile.Center);
+            Main.PlaySound(SoundID.Item93, projectile.Center);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -61,13 +60,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             for (int i = 0; i < 3; i++)
             {
                 Vector2 sparkVelocity = Main.rand.NextVector2CircularEdge(10f, 10f);
-                Utilities.NewProjectileBetter(Projectile.Center, sparkVelocity, ModContent.ProjectileType<ExoburstSpark>(), 550, 0f);
+                Utilities.NewProjectileBetter(projectile.Center, sparkVelocity, ModContent.ProjectileType<ExoburstSpark>(), 550, 0f);
             }
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = Projectile;
+            target.Calamity().lastProjectileHit = projectile;
         }
     }
 }

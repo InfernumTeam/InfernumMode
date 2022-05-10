@@ -10,8 +10,6 @@ using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 {
@@ -39,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public const float BaseFlySpeedFactor = 6f;
         public const float Phase2LifeRatio = 0.65f;
         public const float Phase3LifeRatio = 0.33333f;
-        public static readonly Color OverallTint = new(7, 81, 81);
+        public static readonly Color OverallTint = new Color(7, 81, 81);
 
         public static bool IsEnraged
         {
@@ -127,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (introSoundTimer < IntroSoundLength)
             {
                 if (introSoundTimer == 0f)
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/MoonLordIntro"), target.Center);
+                    Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/MoonLordIntro"), target.Center);
                 introSoundTimer++;
             }
 
@@ -148,10 +146,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     for (int j = closestTileCoords.Y - ArenaHeight / 2; j <= closestTileCoords.Y + ArenaHeight / 2; j++)
                     {
                         // Create arena tiles.
-                        if ((Math.Abs(closestTileCoords.X - i) == ArenaWidth / 2 || Math.Abs(closestTileCoords.Y - j) == ArenaHeight / 2) && !Main.tile[i, j].HasTile)
+                        if ((Math.Abs(closestTileCoords.X - i) == ArenaWidth / 2 || Math.Abs(closestTileCoords.Y - j) == ArenaHeight / 2) && !Main.tile[i, j].active())
                         {
-                            Main.tile[i, j].TileType = (ushort)ModContent.TileType<MoonlordArena>();
-                            Main.tile[i, j].Get<TileWallWireStateData>().HasTile = true;
+                            Main.tile[i, j].type = (ushort)ModContent.TileType<MoonlordArena>();
+                            Main.tile[i, j].active(true);
                             if (Main.netMode == NetmodeID.Server)
                                 NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
                             else
@@ -170,8 +168,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 for (int i = 92; i < 98; i++)
                 {
-                    var fuckYou = new LegacySoundStyle(SoundID.Zombie, i);
-                    var roar = SoundEngine.PlaySound(fuckYou, target.Center);
+                    var fuckYou = new Terraria.Audio.LegacySoundStyle(SoundID.Zombie, i);
+                    var roar = Main.PlaySound(fuckYou, target.Center);
                     if (roar != null)
                     {
                         roar.Volume = MathHelper.Clamp(roar.Volume * 1.85f, 0f, 1f);
@@ -229,8 +227,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Clear projectiles, go to the desperation attack, and do some visual effects when ready to enter the final phase.
             if (npc.Infernum().ExtraAI[8] == 0f && InFinalPhase)
             {
-                var fuckYou = new LegacySoundStyle(SoundID.Zombie, 92);
-                var roarSound = SoundEngine.PlaySound(fuckYou, npc.Center);
+                var fuckYou = new Terraria.Audio.LegacySoundStyle(SoundID.Zombie, 92);
+                var roarSound = Main.PlaySound(fuckYou, npc.Center);
                 if (roarSound != null)
                 {
                     roarSound.Volume = MathHelper.Clamp(roarSound.Volume * 2f, 0f, 1f);
@@ -258,7 +256,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC n = Main.npc[i];
-                    bool isBodyPart = n.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordFreeEye;
+                    bool isBodyPart = n.type == NPCID.MoonLordHand || n.type == NPCID.MoonLordHead || n.type == NPCID.MoonLordFreeEye;
                     if (n.active && n.ai[3] == npc.whoAmI && isBodyPart)
                     {
                         n.netSpam = npc.netSpam;
@@ -277,7 +275,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
             // Roar after a bit of time has passed.
             if (attackTimer == 30f)
-                SoundEngine.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 92, 1f, 0f);
+                Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 92, 1f, 0f);
 
             if (Main.netMode != NetmodeID.Server && !IntroScreenManager.ScreenIsObstructed)
             {
@@ -294,13 +292,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     int[] bodyPartIndices = new int[3];
                     for (int i = 0; i < 2; i++)
                     {
-                        int handIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X + i * 800 - 400, (int)npc.Center.Y - 100, NPCID.MoonLordHand, npc.whoAmI);
+                        int handIndex = NPC.NewNPC((int)npc.Center.X + i * 800 - 400, (int)npc.Center.Y - 100, NPCID.MoonLordHand, npc.whoAmI);
                         Main.npc[handIndex].ai[2] = i;
                         Main.npc[handIndex].netUpdate = true;
                         bodyPartIndices[i] = handIndex;
                     }
 
-                    int headIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y - 400, NPCID.MoonLordHead, npc.whoAmI);
+                    int headIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y - 400, NPCID.MoonLordHead, npc.whoAmI);
                     Main.npc[headIndex].netUpdate = true;
                     bodyPartIndices[2] = headIndex;
 
@@ -337,7 +335,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (attackTimer < 60f)
             {
                 if (attackTimer == 4f)
-                    SoundEngine.PlaySound(SoundID.NPCDeath61, npc.Center);
+                    Main.PlaySound(SoundID.NPCDeath61, npc.Center);
                 MoonlordDeathDrama.RequestLight(attackTimer / 60f, npc.Center);
             }
             else
@@ -353,13 +351,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 }
 
                 // Create explosions periodically.
-                float explosionCreationRate = MathHelper.Lerp(0.075f, 0.24f, Utils.GetLerpValue(75f, 300f, attackTimer, true));
+                float explosionCreationRate = MathHelper.Lerp(0.075f, 0.24f, Utils.InverseLerp(75f, 300f, attackTimer, true));
                 if (Main.netMode != NetmodeID.MultiplayerClient && Main.rand.NextFloat() < explosionCreationRate)
                 {
                     Vector2 explosionSpawnPosition = npc.Center + Main.rand.NextVector2Circular(200f, 450f);
                     Utilities.NewProjectileBetter(explosionSpawnPosition, Vector2.Zero, ModContent.ProjectileType<MoonLordExplosion>(), 0, 0f);
                 }
-                MoonlordDeathDrama.RequestLight(Utils.GetLerpValue(480f, 530f, attackTimer, true) * 8f, npc.Center);
+                MoonlordDeathDrama.RequestLight(Utils.InverseLerp(480f, 530f, attackTimer, true) * 8f, npc.Center);
             }
 
             if (attackTimer >= 550f)
@@ -398,8 +396,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Create a bunch of nebulae across the arena.
             if (attackTimer % nebulaSummonRate == 1f)
             {
-                SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, target.Center);
-                SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath, target.Center);
+                Main.PlaySound(SoundID.DD2_EtherianPortalOpen, target.Center);
+                Main.PlaySound(SoundID.DD2_BetsyFlameBreath, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int nebulaSeed = Main.rand.Next(1000);
@@ -409,17 +407,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                         for (float y = arena.Top; y < arena.Bottom; y += Main.rand.NextFloat(80f, 115f))
                         {
                             float noise = CalamityUtils.PerlinNoise2D(x / 800f, y / 800f, 2, nebulaSeed) * 0.5f + 0.5f;
-                            float xInterpolant = Utils.GetLerpValue(arena.Left, arena.Right, x, true);
-                            float yInterpolant = Utils.GetLerpValue(arena.Top, arena.Bottom, y, true);
-                            Vector2 playerCenter = new(Utils.GetLerpValue(arena.Left, arena.Right, target.Center.X, true),
-                                Utils.GetLerpValue(arena.Top, arena.Bottom, target.Center.Y, true));
+                            float xInterpolant = Utils.InverseLerp(arena.Left, arena.Right, x, true);
+                            float yInterpolant = Utils.InverseLerp(arena.Top, arena.Bottom, y, true);
+                            Vector2 playerCenter = new Vector2(Utils.InverseLerp(arena.Left, arena.Right, target.Center.X, true),
+                                Utils.InverseLerp(arena.Top, arena.Bottom, target.Center.Y, true));
                             float edgeInterpolant = Vector2.Distance(playerCenter, new Vector2(xInterpolant, yInterpolant)) * 1.414f;
 
                             // Bias noise towards 0 if close to the center.
-                            noise = MathHelper.Lerp(noise, 0f, Utils.GetLerpValue(0.33f, 0.2f, edgeInterpolant, true));
+                            noise = MathHelper.Lerp(noise, 0f, Utils.InverseLerp(0.33f, 0.2f, edgeInterpolant, true));
 
                             // Create nebulae.
-                            Vector2 nebulaSpawnPosition = new(x, y);
+                            Vector2 nebulaSpawnPosition = new Vector2(x, y);
                             if (!target.WithinRange(nebulaSpawnPosition, Main.rand.NextFloat(325f, 400f)) && noise > 0.53f)
                             {
                                 Vector2 nebulaVelocity = Main.rand.NextVector2Circular(2f, 2f);
@@ -539,7 +537,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC n = Main.npc[i];
-                bool isBodyPart = n.type is NPCID.MoonLordHand or NPCID.MoonLordHead or NPCID.MoonLordFreeEye;
+                bool isBodyPart = n.type == NPCID.MoonLordHand || n.type == NPCID.MoonLordHead || n.type == NPCID.MoonLordFreeEye;
                 if (n.active && n.ai[3] == npc.whoAmI && isBodyPart)
                 {
                     for (int j = 0; j < 5; j++)
@@ -582,11 +580,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 for (int j = 0; j < Main.maxTilesY; j++)
                 {
-                    if (Main.tile[i, j].TileType != arenaTileID || !Main.tile[i, j].HasTile)
+                    if (Main.tile[i, j].type != arenaTileID || !Main.tile[i, j].active())
                         continue;
 
-                    Main.tile[i, j].TileType = TileID.Dirt;
-                    Main.tile[i, j].Get<TileWallWireStateData>().HasTile = false;
+                    Main.tile[i, j].type = TileID.Dirt;
+                    Main.tile[i, j].active(false);
                     if (Main.netMode == NetmodeID.Server)
                         NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
                     else
@@ -597,12 +595,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D coreTexture = TextureAssets.Npc[npc.type].Value;
-            Texture2D coreOutlineTexture = TextureAssets.Extra[16].Value;
-            Texture2D forearmTexture = TextureAssets.Extra[14].Value;
-            Texture2D bodyTexture = TextureAssets.Extra[13].Value;
-            Vector2 leftHalfOrigin = new(bodyTexture.Width, 278f);
-            Vector2 rightHalfOrigin = new(0f, 278f);
+            Texture2D coreTexture = Main.npcTexture[npc.type];
+            Texture2D coreOutlineTexture = Main.extraTexture[16];
+            Texture2D forearmTexture = Main.extraTexture[14];
+            Texture2D bodyTexture = Main.extraTexture[13];
+            Vector2 leftHalfOrigin = new Vector2(bodyTexture.Width, 278f);
+            Vector2 rightHalfOrigin = new Vector2(0f, 278f);
             Vector2 center = npc.Center;
             Point coreTileCoords = (npc.Center + new Vector2(0f, -150f)).ToTileCoordinates();
             Color color = npc.GetAlpha(Color.Lerp(Lighting.GetColor(coreTileCoords.X, coreTileCoords.Y), Color.White, 0.3f));
@@ -610,7 +608,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             {
                 int armIndex = -1;
                 bool leftArm = a == 0;
-                Vector2 directionThing = new((!leftArm).ToDirectionInt(), 1f);
+                Vector2 directionThing = new Vector2((!leftArm).ToDirectionInt(), 1f);
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     if (Main.npc[i].active && Main.npc[i].type == NPCID.MoonLordHand && Main.npc[i].ai[2] == a && Main.npc[i].ai[3] == npc.whoAmI)
@@ -626,17 +624,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                     float rotationalOffset = (float)Math.Acos(MathHelper.Clamp(shoulderOffset.Length() / 340f, 0f, 1f)) * -directionThing.X;
                     float forearmRotation = shoulderOffset.ToRotation() - rotationalOffset - MathHelper.PiOver2;
                     SpriteEffects direction = (!leftArm) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-                    Vector2 forearmOrigin = new(76f, 66f);
+                    Vector2 forearmOrigin = new Vector2(76f, 66f);
                     if (!leftArm)
                         forearmOrigin.X = forearmTexture.Width - forearmOrigin.X;
 
-                    Main.spriteBatch.Draw(forearmTexture, shoulderPosition - Main.screenPosition, null, color, forearmRotation, forearmOrigin, 1f, direction, 0f);
+                    spriteBatch.Draw(forearmTexture, shoulderPosition - Main.screenPosition, null, color, forearmRotation, forearmOrigin, 1f, direction, 0f);
                 }
             }
-            Main.spriteBatch.Draw(bodyTexture, center - Main.screenPosition, null, color, 0f, leftHalfOrigin, 1f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(bodyTexture, center - Main.screenPosition, null, color, 0f, rightHalfOrigin, 1f, SpriteEffects.FlipHorizontally, 0f);
-            Main.spriteBatch.Draw(coreOutlineTexture, center - Main.screenPosition, null, color, 0f, new Vector2(112f, 101f), 1f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(coreTexture, center - Main.screenPosition, npc.frame, color, 0f, npc.frame.Size() / 2f, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(bodyTexture, center - Main.screenPosition, null, color, 0f, leftHalfOrigin, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(bodyTexture, center - Main.screenPosition, null, color, 0f, rightHalfOrigin, 1f, SpriteEffects.FlipHorizontally, 0f);
+            spriteBatch.Draw(coreOutlineTexture, center - Main.screenPosition, null, color, 0f, new Vector2(112f, 101f), 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(coreTexture, center - Main.screenPosition, npc.frame, color, 0f, npc.frame.Size() / 2f, 1f, SpriteEffects.None, 0f);
             return false;
         }
     }

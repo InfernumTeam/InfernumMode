@@ -44,7 +44,7 @@ namespace InfernumMode.BossIntroScreens
 
         public static float AspectRatioFactor => Main.screenHeight / 1440f;
 
-        public static DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
+        public DynamicSpriteFont FontToUse => BossHealthBarManager.HPBarFont;
 
         public Vector2 DrawPosition => BaseDrawPosition;
 
@@ -98,13 +98,11 @@ namespace InfernumMode.BossIntroScreens
                 if (isBright)
                     sb.SetBlendState(BlendState.Additive);
 
-                Texture2D greyscaleTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/THanosAura").Value;
-                float coverScaleFactor = Utils.GetLerpValue(0f, 0.5f, AnimationCompletion, true) * 12.5f;
-                coverScaleFactor *= Utils.GetLerpValue(1f, 0.84f, AnimationCompletion, true);
-                if (coverScaleFactor > 6f)
-                    coverScaleFactor = 6f;
+                Texture2D greyscaleTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/THanosAura");
+                float coverScaleFactor = Utils.InverseLerp(0f, 0.5f, AnimationCompletion, true) * 12.5f;
+                coverScaleFactor *= Utils.InverseLerp(1f, 0.84f, AnimationCompletion, true);
 
-                Vector2 coverCenter = new(Main.screenWidth * 0.5f, Main.screenHeight * 0.32f);
+                Vector2 coverCenter = new Vector2(Main.screenWidth * 0.5f, Main.screenHeight * 0.32f);
 
                 for (int i = 0; i < 2; i++)
                     sb.Draw(greyscaleTexture, coverCenter, null, ScreenCoverColor, 0f, greyscaleTexture.Size() * 0.5f, coverScaleFactor, 0, 0);
@@ -131,13 +129,13 @@ namespace InfernumMode.BossIntroScreens
 
         public virtual void DrawText(SpriteBatch sb)
         {
-            float opacity = Utils.GetLerpValue(TextDelayInterpolant, TextDelayInterpolant + 0.05f, AnimationCompletion, true) * Utils.GetLerpValue(1f, 0.77f, AnimationCompletion, true);
+            float opacity = Utils.InverseLerp(TextDelayInterpolant, TextDelayInterpolant + 0.05f, AnimationCompletion, true) * Utils.InverseLerp(1f, 0.77f, AnimationCompletion, true);
 
             if (CanPlaySound && SoundToPlayWithTextCreation != null)
             {
                 if (!HasPlayedMainSound)
                 {
-                    SoundEngine.PlaySound(SoundToPlayWithTextCreation, Main.LocalPlayer.Center);
+                    Main.PlaySound(SoundToPlayWithTextCreation, Main.LocalPlayer.Center);
                     HasPlayedMainSound = true;
                 }
             }
@@ -166,7 +164,7 @@ namespace InfernumMode.BossIntroScreens
                     // Play a sound if a new letter was added and a sound of this effect is initialized.
                     if (totalLettersToDisplay > previousTotalLettersToDisplay && SoundToPlayWithLetterAddition != null && !playedNewLetterSound)
                     {
-                        SoundEngine.PlaySound(SoundToPlayWithLetterAddition, Main.LocalPlayer.Center);
+                        Main.PlaySound(SoundToPlayWithLetterAddition, Main.LocalPlayer.Center);
                         playedNewLetterSound = true;
                     }
 
@@ -176,7 +174,7 @@ namespace InfernumMode.BossIntroScreens
 
                     if (ShaderToApplyToLetters != null)
                     {
-                        ShaderToApplyToLetters.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly);
+                        ShaderToApplyToLetters.Parameters["uTime"].SetValue(Main.GlobalTime);
                         ShaderToApplyToLetters.Parameters["uLetterCompletionRatio"].SetValue(individualLineLetterCompletionRatio);
                         PrepareShader(ShaderToApplyToLetters);
                         ShaderToApplyToLetters.CurrentTechnique.Passes[0].Apply();
@@ -192,7 +190,7 @@ namespace InfernumMode.BossIntroScreens
                     // Draw afterimage instances of the the text.
                     for (int k = 0; k < 4; k++)
                     {
-                        float afterimageOpacityInterpolant = Utils.GetLerpValue(1f, TextDelayInterpolant + 0.05f, AnimationCompletion, true);
+                        float afterimageOpacityInterpolant = Utils.InverseLerp(1f, TextDelayInterpolant + 0.05f, AnimationCompletion, true);
                         float afterimageOpacity = (float)Math.Pow(afterimageOpacityInterpolant, 2D) * 0.3f;
                         Color afterimageColor = textColor * afterimageOpacity;
                         Vector2 drawOffset = (MathHelper.TwoPi * k / 4f).ToRotationVector2() * (1f - afterimageOpacityInterpolant) * 30f;

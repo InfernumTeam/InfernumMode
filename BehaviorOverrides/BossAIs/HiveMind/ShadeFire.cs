@@ -5,7 +5,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 {
     public class ShadeFire : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
+        public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fire");
@@ -13,34 +13,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
         public override void SetDefaults()
         {
-            Projectile.width = 6;
-            Projectile.height = 6;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.DamageType = DamageClass.Ranged;
-            Projectile.penetrate = -1;
-            Projectile.extraUpdates = 3;
-            Projectile.timeLeft = 80;
-            Projectile.tileCollide = false;
+            projectile.width = 6;
+            projectile.height = 6;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.ranged = true;
+            projectile.penetrate = -1;
+            projectile.extraUpdates = 3;
+            projectile.timeLeft = 80;
+            projectile.tileCollide = false;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, Projectile.Opacity * 0.15f, 0f, Projectile.Opacity * 0.2f);
-            if (Projectile.timeLeft > 80)
-                Projectile.timeLeft = 80;
+            Lighting.AddLight(projectile.Center, projectile.Opacity * 0.15f, 0f, projectile.Opacity * 0.2f);
+            if (projectile.timeLeft > 80)
+                projectile.timeLeft = 80;
 
             Time++;
             if (Time <= 7f)
                 return;
 
-            float fireScale = MathHelper.Lerp(0.25f, 1f, Utils.GetLerpValue(8f, 10f, Time, true));
+            float fireScale = MathHelper.Lerp(0.25f, 1f, Utils.InverseLerp(8f, 10f, Time, true));
             if (Main.rand.NextBool(2))
             {
                 for (int i = 0; i < 3; i++)
                 {
                     int dustType = i == 2 ? 157 : 14;
-                    Dust shadeFire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, dustType, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1f);
+                    Dust shadeFire = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, dustType, projectile.velocity.X * 0.2f, projectile.velocity.Y * 0.2f, 100, default, 1f);
                     if (Main.rand.NextBool(3))
                     {
                         shadeFire.noGravity = true;
@@ -52,7 +52,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
 
                     shadeFire.velocity *= 1.2f;
                     shadeFire.scale *= fireScale;
-                    shadeFire.velocity += Projectile.velocity;
+                    shadeFire.velocity += projectile.velocity;
                     if (!shadeFire.noGravity)
                         shadeFire.velocity *= 0.5f;
                 }

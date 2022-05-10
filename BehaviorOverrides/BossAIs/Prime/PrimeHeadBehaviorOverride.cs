@@ -10,8 +10,6 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Utilities;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 {
@@ -51,12 +49,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             armCycleTimer %= 1800f;
             if (armCycleTimer < 450f)
-                return armType is NPCID.PrimeSaw or NPCID.PrimeVice;
+                return armType == NPCID.PrimeSaw || armType == NPCID.PrimeVice;
             if (armCycleTimer < 900f)
-                return armType is NPCID.PrimeVice or NPCID.PrimeCannon;
+                return armType == NPCID.PrimeVice || armType == NPCID.PrimeCannon;
             if (armCycleTimer < 1350f)
-                return armType is NPCID.PrimeCannon or NPCID.PrimeLaser;
-            return armType is NPCID.PrimeLaser or NPCID.PrimeSaw;
+                return armType == NPCID.PrimeCannon || armType == NPCID.PrimeLaser;
+            return armType == NPCID.PrimeLaser || armType == NPCID.PrimeSaw;
         }
 
         public static void ArmHoverAI(NPC npc)
@@ -97,7 +95,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Create the shield.
             if (Main.netMode != NetmodeID.MultiplayerClient && hasCreatedShield == 0f)
             {
-                int shield = Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, 255, npc.whoAmI);
+                int shield = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<PrimeShield>(), 0, 0f, 255, npc.whoAmI);
                 Main.projectile[shield].ai[0] = npc.whoAmI;
                 hasCreatedShield = 1f;
             }
@@ -118,7 +116,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 attackType = (int)PrimeAttackType.SpawnEffects;
                 hasRedoneSpawnAnimation = 1f;
 
-                List<int> projectilesToDelete = new()
+                List<int> projectilesToDelete = new List<int>()
                 {
                     ModContent.ProjectileType<MetallicSpike>(),
                     ModContent.ProjectileType<LaserBolt>(),
@@ -177,8 +175,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             if (Main.LocalPlayer.WithinRange(Main.LocalPlayer.Center, 3700f))
             {
                 Main.LocalPlayer.Infernum().ScreenFocusPosition = npc.Center;
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.GetLerpValue(0f, 15f, attackTimer, true);
-                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.GetLerpValue(210f, 202f, attackTimer, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant = Utils.InverseLerp(0f, 15f, attackTimer, true);
+                Main.LocalPlayer.Infernum().ScreenFocusInterpolant *= Utils.InverseLerp(210f, 202f, attackTimer, true);
             }
 
             // Don't do damage during the spawn animation.
@@ -209,30 +207,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 npc.rotation = npc.rotation.AngleLerp(0f, 0.2f);
                 if (attackTimer > 210f)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    Main.PlaySound(SoundID.Roar, target.Center, 0);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient && npc.ai[3] == 0f)
                     {
                         npc.TargetClosest();
-                        int arm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeCannon, npc.whoAmI);
+                        int arm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeCannon, npc.whoAmI);
                         Main.npc[arm].ai[0] = -1f;
                         Main.npc[arm].ai[1] = npc.whoAmI;
                         Main.npc[arm].target = npc.target;
                         Main.npc[arm].netUpdate = true;
 
-                        arm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeLaser, npc.whoAmI);
+                        arm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeLaser, npc.whoAmI);
                         Main.npc[arm].ai[0] = 1f;
                         Main.npc[arm].ai[1] = npc.whoAmI;
                         Main.npc[arm].target = npc.target;
                         Main.npc[arm].netUpdate = true;
 
-                        arm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeSaw, npc.whoAmI);
+                        arm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeSaw, npc.whoAmI);
                         Main.npc[arm].ai[0] = 1f;
                         Main.npc[arm].ai[1] = npc.whoAmI;
                         Main.npc[arm].target = npc.target;
                         Main.npc[arm].netUpdate = true;
 
-                        arm = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeVice, npc.whoAmI);
+                        arm = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.PrimeVice, npc.whoAmI);
                         Main.npc[arm].ai[0] = -1f;
                         Main.npc[arm].ai[1] = npc.whoAmI;
                         Main.npc[arm].target = npc.target;
@@ -289,7 +287,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                         Utilities.NewProjectileBetter(npc.Center + spikeVelocity * 12f, spikeVelocity, ModContent.ProjectileType<MetallicSpike>(), 135, 0f);
                     }
                 }
-                SoundEngine.PlaySound(SoundID.Item101, target.Center);
+                Main.PlaySound(SoundID.Item101, target.Center);
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= shootRate * shootCount + 90f)
@@ -319,7 +317,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 if (!npc.WithinRange(target.Center, 250f))
                     npc.velocity *= 0.87f;
 
-                SoundEngine.PlaySound(SoundID.Item42, npc.Center);
+                Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient && wrappedTime % 3f == 2f)
                 {
                     float rocketSpeed = Main.rand.NextFloat(10.5f, 12f) * (AnyArms ? 0.825f : 1f);
@@ -408,10 +406,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                                 Utilities.NewProjectileBetter(npc.Center + shootVelocity * 7f, shootVelocity, ModContent.ProjectileType<MetallicSpike>(), 135, 0f);
                             }
                         }
-                        SoundEngine.PlaySound(SoundID.Item101, target.Center);
+                        Main.PlaySound(SoundID.Item101, target.Center);
                     }
 
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    Main.PlaySound(SoundID.Roar, target.Center, 0);
                 }
 
                 frameType = (int)PrimeFrameType.Spikes;
@@ -432,12 +430,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Calculate the line telegraph interpolant.
             lineTelegraphInterpolant = 0f;
             if (attackTimer < shootDelay)
-                lineTelegraphInterpolant = Utils.GetLerpValue(0f, 0.8f, attackTimer / shootDelay, true);
+                lineTelegraphInterpolant = Utils.InverseLerp(0f, 0.8f, attackTimer / shootDelay, true);
 
             // Hover into position.
             angularOffset = MathHelper.ToRadians(39f);
             Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
-            float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.GetLerpValue(shootDelay / 2, shootDelay - 5f, attackTimer, true));
+            float movementSpeed = MathHelper.Lerp(33f, 4.5f, Utils.InverseLerp(shootDelay / 2, shootDelay - 5f, attackTimer, true));
             npc.velocity = (npc.velocity * 7f + npc.SafeDirectionTo(hoverDestination) * MathHelper.Min(npc.Distance(hoverDestination), movementSpeed)) / 8f;
 
             // Stay away from the target, to prevent cheap contact damage.
@@ -450,15 +448,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
 
             // Play a telegraph sound prior to firing.
             if (attackTimer == 5f)
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/CrystylCharge"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/CrystylCharge"), target.Center);
 
             if (attackTimer == shootDelay - 35f)
-                SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                Main.PlaySound(SoundID.Roar, target.Center, 0);
 
             // Release the lasers from eyes.
             if (attackTimer == shootDelay)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LaserCannon"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = -1; i <= 1; i += 2)
@@ -486,10 +484,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             int rocketReleaseRate = lifeRatio < Phase2LifeRatio ? 11 : 18;
             if (attackTimer > shootDelay && attackTimer % rocketReleaseRate == rocketReleaseRate - 1f)
             {
-                SoundEngine.PlaySound(SoundID.Item42, npc.Center);
+                Main.PlaySound(SoundID.Item42, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    float rocketAngularOffset = Utils.GetLerpValue(shootDelay, 195f, attackTimer, true) * MathHelper.TwoPi;
+                    float rocketAngularOffset = Utils.InverseLerp(shootDelay, 195f, attackTimer, true) * MathHelper.TwoPi;
                     Vector2 rocketVelocity = rocketAngularOffset.ToRotationVector2() * (Main.rand.NextFloat(5.5f, 6.2f) + npc.Distance(target.Center) * 0.00267f);
                     Utilities.NewProjectileBetter(npc.Center + Vector2.UnitY * 33f + rocketVelocity * 2.5f, rocketVelocity, ModContent.ProjectileType<MetallicSpike>(), 155, 0f);
                 }
@@ -536,7 +534,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Create a bunch of scenic lightning and decide the laser direction.
             if (attackTimer == lightningCreationDelay)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/LightningStrike"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LightningStrike"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 6; i++)
@@ -572,7 +570,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             else if (struckByLightningFlag == 1f)
             {
                 Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 320f, -270f) - npc.velocity * 4f;
-                float movementSpeed = MathHelper.Lerp(1f, 0.7f, Utils.GetLerpValue(45f, 90f, attackTimer, true)) * npc.Distance(target.Center) * 0.0074f;
+                float movementSpeed = MathHelper.Lerp(1f, 0.7f, Utils.InverseLerp(45f, 90f, attackTimer, true)) * npc.Distance(target.Center) * 0.0074f;
                 if (movementSpeed < 4.25f)
                     movementSpeed = 0f;
 
@@ -590,15 +588,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // Prepare line telegraphs.
                 if (attackTimer < 165f)
                 {
-                    lineTelegraphInterpolant = Utils.GetLerpValue(lightningCreationDelay, 165, attackTimer, true);
-                    laserDirection += Utils.GetLerpValue(0f, 0.6f, lineTelegraphInterpolant, true) * Utils.GetLerpValue(1f, 0.7f, lineTelegraphInterpolant, true) * MathHelper.Pi / 300f;
+                    lineTelegraphInterpolant = Utils.InverseLerp(lightningCreationDelay, 165, attackTimer, true);
+                    laserDirection += Utils.InverseLerp(0f, 0.6f, lineTelegraphInterpolant, true) * Utils.InverseLerp(1f, 0.7f, lineTelegraphInterpolant, true) * MathHelper.Pi / 300f;
                 }
 
                 // Roar as a telegraph.
                 if (attackTimer == 130f)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                    Main.PlaySound(SoundID.Roar, target.Center, 0);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
                 }
                 if (attackTimer > 95f)
                     frameType = (int)PrimeFrameType.OpenMouth;
@@ -611,7 +609,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // Their purpose is to act as a "border".
                 if (attackTimer == 165f)
                 {
-                    SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LaserCannon"), target.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 12; i++)
@@ -634,14 +632,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 if (attackTimer > 165f)
                 {
                     frameType = (int)PrimeFrameType.Spikes;
-                    laserOffsetAngle += Utils.GetLerpValue(165f, 255f, attackTimer, true) * laserSignDirection * MathHelper.Pi / 300f;
+                    laserOffsetAngle += Utils.InverseLerp(165f, 255f, attackTimer, true) * laserSignDirection * MathHelper.Pi / 300f;
                 }
 
                 // Release electric sparks periodically, along with missiles.
                 Vector2 mouthPosition = npc.Center + Vector2.UnitY * 33f;
                 if (attackTimer > 180f && attackTimer < 435f && attackTimer % 44f == 43f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item12, npc.Center);
+                    Main.PlaySound(SoundID.Item12, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -654,7 +652,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 }
                 if (attackTimer > 180f && attackTimer < 435f && attackTimer % 30f == 29f)
                 {
-                    SoundEngine.PlaySound(SoundID.Item42, npc.Center);
+                    Main.PlaySound(SoundID.Item42, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 rocketVelocity = (target.Center - mouthPosition).SafeNormalize(Vector2.UnitY).RotatedByRandom(0.47f) * (shootSpeedAdditive + 6.75f);
@@ -664,7 +662,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             }
 
             if (attackTimer > 435f)
-                superchargeTimer = Utils.GetLerpValue(465f, 435f, attackTimer, true) * 30f;
+                superchargeTimer = Utils.InverseLerp(465f, 435f, attackTimer, true) * 30f;
 
             if (attackTimer > 465f)
                 SelectNextAttack(npc);
@@ -688,7 +686,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             // Release a bunch of tesla orb bombs around the target.
             if (attackTimer == slowdownTime)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/MechGaussRifle"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/MechGaussRifle"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < bombCount; i++)
@@ -758,7 +756,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                     npc.velocity.Y -= 10f;
                     npc.netUpdate = true;
 
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    Main.PlaySound(SoundID.Roar, target.Center, 0);
                 }
 
                 // Release lasers upward.
@@ -779,7 +777,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             PrimeAttackType currentAttack = (PrimeAttackType)(int)npc.ai[0];
-            WeightedRandom<PrimeAttackType> attackSelector = new(Main.rand);
+            WeightedRandom<PrimeAttackType> attackSelector = new WeightedRandom<PrimeAttackType>(Main.rand);
             if (!AnyArms)
             {
                 attackSelector.Add(PrimeAttackType.MetalBurst);
@@ -800,7 +798,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 attackSelector.Add(PrimeAttackType.RocketRelease);
             }
 
-            npc.velocity *= MathHelper.Lerp(1f, 0.25f, Utils.GetLerpValue(14f, 30f, npc.velocity.Length()));
+            npc.velocity *= MathHelper.Lerp(1f, 0.25f, Utils.InverseLerp(14f, 30f, npc.velocity.Length()));
 
             do
                 npc.ai[0] = (int)attackSelector.Get();
@@ -821,8 +819,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
         {
             NPCID.Sets.MustAlwaysDraw[npc.type] = true;
 
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D eyeGlowTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/PrimeEyes").Value;
+            Texture2D texture = Main.npcTexture[npc.type];
+            Texture2D eyeGlowTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/PrimeEyes");
             Rectangle frame = texture.Frame(1, Main.npcFrameCount[npc.type], 0, (int)npc.localAI[0]);
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
             for (int i = 9; i >= 0; i -= 2)
@@ -833,54 +831,54 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 afterimageColor.G = (byte)(afterimageColor.G * (10 - i) / 20);
                 afterimageColor.B = (byte)(afterimageColor.B * (10 - i) / 20);
                 afterimageColor.A = (byte)(afterimageColor.A * (10 - i) / 20);
-                Main.spriteBatch.Draw(texture, drawPosition, frame, afterimageColor, npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(Main.npcTexture[npc.type], drawPosition, frame, afterimageColor, npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             }
 
-            float superchargePower = Utils.GetLerpValue(0f, 30f, npc.Infernum().ExtraAI[1], true);
+            float superchargePower = Utils.InverseLerp(0f, 30f, npc.Infernum().ExtraAI[1], true);
             if (npc.ai[0] != (int)PrimeAttackType.LightningSupercharge)
                 superchargePower = 0f;
 
             if (superchargePower > 0f)
             {
-                float outwardness = superchargePower * 6f + (float)Math.Cos(Main.GlobalTimeWrappedHourly * 2f) * 0.5f;
+                float outwardness = superchargePower * 6f + (float)Math.Cos(Main.GlobalTime * 2f) * 0.5f;
                 for (int i = 0; i < 8; i++)
                 {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTimeWrappedHourly * 2.9f).ToRotationVector2() * outwardness;
+                    Vector2 drawOffset = (MathHelper.TwoPi * i / 8f + Main.GlobalTime * 2.9f).ToRotationVector2() * outwardness;
                     Color drawColor = Color.Red * 0.42f;
                     drawColor.A = 0;
 
-                    Main.spriteBatch.Draw(texture, baseDrawPosition + drawOffset, frame, npc.GetAlpha(drawColor), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(texture, baseDrawPosition + drawOffset, frame, npc.GetAlpha(drawColor), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
                 }
             }
 
-            Main.spriteBatch.Draw(texture, baseDrawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, baseDrawPosition, frame, npc.GetAlpha(lightColor), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
 
             // Draw line telegraphs for the eye attack.
             float lineTelegraphInterpolant = npc.Infernum().ExtraAI[1];
             if (npc.ai[0] == (int)PrimeAttackType.EyeLaserRays && lineTelegraphInterpolant > 0f)
             {
-                Main.spriteBatch.SetBlendState(BlendState.Additive);
+                spriteBatch.SetBlendState(BlendState.Additive);
 
                 float angularOffset = npc.Infernum().ExtraAI[2];
-                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
                 Player target = Main.player[npc.target];
                 Color outlineColor = Color.Lerp(Color.Red, Color.White, lineTelegraphInterpolant);
-                Vector2 origin = new(line.Width / 2f, line.Height);
-                Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);
+                Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 0.5f, 2.4f);
                 for (int i = -1; i <= 1; i += 2)
                 {
                     Vector2 drawPosition = npc.Center + new Vector2(i * 16f, -8f).RotatedBy(npc.rotation) - Main.screenPosition;
                     Vector2 beamDirection = -(target.Center - (drawPosition + Main.screenPosition)).SafeNormalize(-Vector2.UnitY).RotatedBy(angularOffset * -i);
                     float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
-                    Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                    spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
                 }
-                Main.spriteBatch.ResetBlendState();
+                spriteBatch.ResetBlendState();
             }
 
             // Draw line telegraphs for the lightning attack.
             if (npc.ai[0] == (int)PrimeAttackType.LightningSupercharge && lineTelegraphInterpolant > 0f)
             {
-                Main.spriteBatch.SetBlendState(BlendState.Additive);
+                spriteBatch.SetBlendState(BlendState.Additive);
 
                 float angularOffset = npc.Infernum().ExtraAI[5];
 
@@ -894,21 +892,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
                 // slope of laser = (p2.y - p0.y) / (p2.x - p0.x) = 0.187266
                 // d = arctan(slope of laser) - arctan(slope of telegraph) = -0.0586534
                 float angularDiscrepancy = -0.0586534f;
-                Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLine").Value;
+                Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLine");
                 Color outlineColor = Color.Lerp(Color.Red, Color.White, lineTelegraphInterpolant);
-                Vector2 origin = new(line.Width / 2f, line.Height);
-                Vector2 beamScale = new(lineTelegraphInterpolant * 0.5f, 2.4f);
+                Vector2 origin = new Vector2(line.Width / 2f, line.Height);
+                Vector2 beamScale = new Vector2(lineTelegraphInterpolant * 0.5f, 2.4f);
                 for (int i = 0; i < 12; i++)
                 {
                     Vector2 beamDirection = (MathHelper.TwoPi * i / 12f + angularOffset - angularDiscrepancy).ToRotationVector2();
                     Vector2 drawPosition = npc.Center - Vector2.UnitY * 16f + beamDirection * 2f - Main.screenPosition;
                     float beamRotation = beamDirection.ToRotation() - MathHelper.PiOver2;
-                    Main.spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
+                    spriteBatch.Draw(line, drawPosition, null, outlineColor, beamRotation, origin, beamScale, 0, 0f);
                 }
-                Main.spriteBatch.ResetBlendState();
+                spriteBatch.ResetBlendState();
             }
 
-            Main.spriteBatch.Draw(eyeGlowTexture, baseDrawPosition, frame, new Color(200, 200, 200, 255), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(eyeGlowTexture, baseDrawPosition, frame, new Color(200, 200, 200, 255), npc.rotation, frame.Size() * 0.5f, npc.scale, SpriteEffects.None, 0f);
             return false;
         }
         #endregion Frames and Drawcode

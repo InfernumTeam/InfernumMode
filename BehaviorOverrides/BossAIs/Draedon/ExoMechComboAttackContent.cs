@@ -70,7 +70,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (aresAndTwins)
             {
-                WeightedRandom<ExoMechComboAttackType> attackSelector = new(Main.rand);
+                WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
 
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_DualLaserCharges);
                 attackSelector.Add(ExoMechComboAttackType.AresTwins_CircleAttack);
@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (athenaAndTwins)
             {
-                WeightedRandom<ExoMechComboAttackType> attackSelector = new(Main.rand);
+                WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
 
                 attackSelector.Add(ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance);
                 newAttack = attackSelector.Get();
@@ -104,7 +104,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
             if (thanatosAndAres)
             {
-                WeightedRandom<ExoMechComboAttackType> attackSelector = new(Main.rand);
+                WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_LaserCircle);
                 attackSelector.Add(ExoMechComboAttackType.ThanatosAres_ElectricCage);
 

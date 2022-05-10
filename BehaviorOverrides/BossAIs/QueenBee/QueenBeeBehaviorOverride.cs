@@ -6,7 +6,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 {
@@ -92,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<BeeWave>(), 0, 0f);
 
-                    SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                    Main.PlaySound(SoundID.Roar, npc.Center, 0);
                     GotoNextAttackState(npc);
                 }
 
@@ -128,7 +127,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
         #region Specific Attacks
         public static void DoSpawnAnimationStuff(NPC npc, Player target, float animationTimer)
         {
-            npc.Opacity = Utils.GetLerpValue(0f, 45f, animationTimer, true);
+            npc.Opacity = Utils.InverseLerp(0f, 45f, animationTimer, true);
             npc.damage = 0;
             npc.dontTakeDamage = true;
 
@@ -193,8 +192,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             if (attackState == 0f)
             {
                 Vector2 destination = target.Center + Vector2.UnitX * (target.Center.X < npc.Center.X).ToDirectionInt() * hoverOffset;
-                npc.Center = npc.Center.MoveTowards(destination, Utils.GetLerpValue(0f, 40f, generalAttackTimer, true) * 5f);
-                npc.velocity += npc.SafeDirectionTo(destination) * Utils.GetLerpValue(0f, 40f, generalAttackTimer, true) * baseChargeSpeed / 30f;
+                npc.Center = npc.Center.MoveTowards(destination, Utils.InverseLerp(0f, 40f, generalAttackTimer, true) * 5f);
+                npc.velocity += npc.SafeDirectionTo(destination) * Utils.InverseLerp(0f, 40f, generalAttackTimer, true) * baseChargeSpeed / 30f;
 
                 frameType = (int)QueenBeeFrameType.UpwardFly;
                 if (npc.WithinRange(destination, 48f) || Math.Abs(target.Center.Y - npc.Center.Y) < 15f)
@@ -206,7 +205,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                     attackState = 1f;
                     frameType = (int)QueenBeeFrameType.HorizontalCharge;
 
-                    SoundEngine.PlaySound(SoundID.Roar, npc.Center, 0);
+                    Main.PlaySound(SoundID.Roar, npc.Center, 0);
 
                     npc.netUpdate = true;
                 }
@@ -241,7 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
         {
             ref float flyDestinationX = ref npc.Infernum().ExtraAI[0];
             ref float flyDestinationY = ref npc.Infernum().ExtraAI[1];
-            Vector2 currentFlyDestination = new(flyDestinationX, flyDestinationY);
+            Vector2 currentFlyDestination = new Vector2(flyDestinationX, flyDestinationY);
 
             if (flyDestinationX == 0f || flyDestinationY == 0f || flyDestinationY > target.Center.Y - 40f)
                 currentFlyDestination = target.Center - Vector2.UnitY * 270f;
@@ -269,14 +268,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             }
 
             bool canShoot = npc.Bottom.Y < target.position.Y;
-            Vector2 baseStingerSpawnPosition = new(npc.Center.X + Main.rand.Next(20) * npc.spriteDirection, npc.Center.Y + npc.height * 0.3f);
+            Vector2 baseStingerSpawnPosition = new Vector2(npc.Center.X + Main.rand.Next(20) * npc.spriteDirection, npc.Center.Y + npc.height * 0.3f);
 
             frameType = (int)QueenBeeFrameType.UpwardFly;
 
             if (attackTimer % shootRate == shootRate - 1f && canShoot && Collision.CanHit(baseStingerSpawnPosition, 1, 1, target.Center, 1, 1))
             {
                 // Play a shoot sound when firing.
-                SoundEngine.PlaySound(SoundID.Item17, npc.Center);
+                Main.PlaySound(SoundID.Item17, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -353,11 +352,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
             if (attackTimer % shootRate == shootRate - 1f && canShoot)
             {
                 // Play a shoot sound when firing.
-                SoundEngine.PlaySound(SoundID.Item17, npc.Center);
+                Main.PlaySound(SoundID.Item17, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 honeySpawnPosition = new(npc.Center.X, npc.Center.Y + npc.height * 0.325f);
+                    Vector2 honeySpawnPosition = new Vector2(npc.Center.X, npc.Center.Y + npc.height * 0.325f);
                     Vector2 honeyShootVelocity = (target.Center - honeySpawnPosition).SafeNormalize(Vector2.UnitY) * shootSpeed;
                     int honeyBlast = Utilities.NewProjectileBetter(honeySpawnPosition, honeyShootVelocity, ModContent.ProjectileType<HoneyBlast>(), 85, 0f);
                     if (Main.projectile.IndexInRange(honeyBlast))
@@ -392,7 +391,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % summonRate == summonRate - 1f)
             {
-                Vector2 spawnPosition = new(npc.Center.X, npc.Center.Y + npc.height * 0.325f);
+                Vector2 spawnPosition = new Vector2(npc.Center.X, npc.Center.Y + npc.height * 0.325f);
                 spawnPosition += Main.rand.NextVector2Circular(25f, 25f);
 
                 if (canShootHornetHives)
@@ -403,7 +402,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 }
                 else
                 {
-                    int bee = NPC.NewNPC(new InfernumSource(), (int)spawnPosition.X, (int)spawnPosition.Y, NPCID.Bee);
+                    int bee = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, NPCID.Bee);
                     Main.npc[bee].velocity = Main.npc[bee].SafeDirectionTo(target.Center, Vector2.UnitY).RotatedByRandom(0.37f) * 4f;
                 }
             }
@@ -432,7 +431,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.QueenBee
                 // Roar and make a circle of honey dust as an indicator before release the bees.
                 if (attackTimer == hoverTime + 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, target.Center, 0);
+                    Main.PlaySound(SoundID.Roar, target.Center, 0);
                     for (int i = 0; i < 30; i++)
                     {
                         Vector2 honeyDustVelocity = (MathHelper.TwoPi * i / 30f).ToRotationVector2() * 5f;

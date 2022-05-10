@@ -1,36 +1,37 @@
 using CalamityMod.Buffs.DamageOverTime;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-	public class YharonHeatFlashFireball : ModProjectile
+    public class YharonHeatFlashFireball : ModProjectile
     {
         public const int Lifetime = 720;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Fire");
-            Main.projFrames[Projectile.type] = 4;
+            Main.projFrames[projectile.type] = 4;
         }
         public override void SetDefaults()
         {
-            Projectile.width = 36;
-            Projectile.height = 46;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.alpha = 50;
-            Projectile.timeLeft = Lifetime;
+            projectile.width = 36;
+            projectile.height = 46;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.alpha = 50;
+            projectile.timeLeft = Lifetime;
         }
 
         public override void AI()
         {
-            if (Projectile.frameCounter++ % 5 == 4)
-                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
-            Projectile.gfxOffY = -36;
+            if (projectile.frameCounter++ % 5 == 4)
+                projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
+            projectile.gfxOffY = -36;
         }
 
-        public override bool? CanDamage() => Projectile.timeLeft < Lifetime - 30 ? null : false;
+        public override bool CanDamage() => projectile.timeLeft < Lifetime - 30;
 
         public override void Kill(int timeLeft)
         {
@@ -38,7 +39,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             {
                 for (int i = 0; i < 30; i++)
                 {
-                    Dust dust = Dust.NewDustPerfect(Projectile.Center, 6);
+                    Dust dust = Dust.NewDustPerfect(projectile.Center, DustID.Fire);
                     dust.velocity = Main.rand.NextVector2Circular(15f, 15f);
                     dust.noGravity = true;
                 }

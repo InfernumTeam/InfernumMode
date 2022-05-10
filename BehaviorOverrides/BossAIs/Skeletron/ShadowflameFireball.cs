@@ -12,26 +12,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
         public override void SetDefaults()
         {
-            Projectile.scale = 1.3f;
-            Projectile.width = Projectile.height = 16;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 210;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            projectile.scale = 1.3f;
+            projectile.width = projectile.height = 16;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 210;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            Projectile.tileCollide = Projectile.timeLeft < 90;
-            Projectile.rotation += (Projectile.velocity.X > 0f).ToDirectionInt() * 0.3f;
+            projectile.tileCollide = projectile.timeLeft < 90;
+            projectile.rotation += (projectile.velocity.X > 0f).ToDirectionInt() * 0.3f;
 
             if (Main.dedServ)
                 return;
 
-            Dust cursedFlame = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width, Projectile.height) * 0.5f, 173);
-            cursedFlame.velocity = Vector2.UnitY.RotatedBy(Projectile.velocity.ToRotation()) * Main.rand.NextFloat(1.5f, 2.3f);
+            Dust cursedFlame = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2Circular(projectile.width, projectile.height) * 0.5f, 173);
+            cursedFlame.velocity = Vector2.UnitY.RotatedBy(projectile.velocity.ToRotation()) * Main.rand.NextFloat(1.5f, 2.3f);
             cursedFlame.scale = Main.rand.NextFloat(0.7f, 0.8f);
             cursedFlame.fadeIn = 0.6f;
             cursedFlame.noGravity = true;
@@ -42,12 +42,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Skeletron
 
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
 
-            Main.spriteBatch.Draw(texture, drawPosition, null, Color.White, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPosition, null, Color.White, projectile.rotation, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

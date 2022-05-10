@@ -8,40 +8,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
     public class PlagueCloud : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
+        public ref float Time => ref projectile.ai[0];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Plague Cloud");
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 24;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = false;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 60;
+            projectile.width = projectile.height = 24;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = false;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 60;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = (float)Math.Sqrt(Projectile.timeLeft / 60f);
-            Projectile.rotation += Projectile.velocity.Y * 0.015f;
-            Projectile.velocity *= 0.98f;
+            projectile.Opacity = (float)Math.Sqrt(projectile.timeLeft / 60f);
+            projectile.rotation += projectile.velocity.Y * 0.015f;
+            projectile.velocity *= 0.98f;
         }
 
-        public override bool? CanDamage() => Projectile.Opacity >= 0.4f ? null : false;
+        public override bool CanDamage() => projectile.Opacity >= 0.4f;
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Vector2 origin = texture.Size() * 0.5f;
 
             for (int i = 0; i < 6; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
-                Main.spriteBatch.Draw(texture, drawPosition + drawOffset, null, Projectile.GetAlpha(Color.Red) * 0.6f, Projectile.rotation, origin, Projectile.scale, 0, 0f);
+                spriteBatch.Draw(texture, drawPosition + drawOffset, null, projectile.GetAlpha(Color.Red) * 0.6f, projectile.rotation, origin, projectile.scale, 0, 0f);
             }
-            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, 0, 0f);
+            spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, origin, projectile.scale, 0, 0f);
             return false;
         }
     }

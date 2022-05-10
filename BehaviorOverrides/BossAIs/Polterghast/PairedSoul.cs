@@ -10,69 +10,68 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 {
     public class PairedSoul : ModProjectile
     {
-        public Projectile Twin => Main.projectile[(int)Projectile.ai[1]];
-        public Player Target => Main.player[Projectile.owner];
+        public Projectile Twin => Main.projectile[(int)projectile.ai[1]];
+        public Player Target => Main.player[projectile.owner];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Soul");
-            Main.projFrames[Projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
+            Main.projFrames[projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 2;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 32;
-            Projectile.hostile = true;
-            Projectile.friendly = false;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 150;
+            projectile.width = projectile.height = 32;
+            projectile.hostile = true;
+            projectile.friendly = false;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.timeLeft = 150;
         }
 
         public override void AI()
         {
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.ghostBoss))
             {
-                Projectile.Kill();
+                projectile.Kill();
                 return;
             }
 
             NPC polterghast = Main.npc[CalamityGlobalNPC.ghostBoss];
-            Projectile.Opacity = Utils.GetLerpValue(150f, 142f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 15f, Projectile.timeLeft, true);
+            projectile.Opacity = Utils.InverseLerp(150f, 142f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 15f, projectile.timeLeft, true);
 
             float speedFactor = BossRushEvent.BossRushActive ? 1.67f : 1f;
-            if (!Projectile.WithinRange(Twin.Center, 35f))
-                Projectile.velocity = (Projectile.velocity * 39f + Projectile.SafeDirectionTo(Twin.Center) * speedFactor * 26f) / 40f;
+            if (!projectile.WithinRange(Twin.Center, 35f))
+                projectile.velocity = (projectile.velocity * 39f + projectile.SafeDirectionTo(Twin.Center) * speedFactor * 26f) / 40f;
 
-            if (Projectile.timeLeft < 3)
+            if (projectile.timeLeft < 3)
             {
-                Projectile.velocity = (Projectile.velocity * 11f + Projectile.SafeDirectionTo(polterghast.Center) * speedFactor * 45f) / 12f;
-                if (Projectile.Hitbox.Intersects(polterghast.Hitbox))
+                projectile.velocity = (projectile.velocity * 11f + projectile.SafeDirectionTo(polterghast.Center) * speedFactor * 45f) / 12f;
+                if (projectile.Hitbox.Intersects(polterghast.Hitbox))
                 {
                     polterghast.ai[2]--;
-                    Projectile.Kill();
+                    projectile.Kill();
                 }
-                Projectile.damage = 0;
-                Projectile.timeLeft = 2;
+                projectile.timeLeft = 2;
             }
             else
-                Projectile.velocity = Projectile.velocity.RotateTowards(Projectile.AngleTo(Target.Center), 0.011f);
-            Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * speedFactor * 26f;
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+                projectile.velocity = projectile.velocity.RotateTowards(projectile.AngleTo(Target.Center), 0.011f);
+            projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * speedFactor * 26f;
+            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-            Projectile.frameCounter++;
-            if (Projectile.frameCounter % 5 == 4)
-                Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
+            projectile.frameCounter++;
+            if (projectile.frameCounter % 5 == 4)
+                projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/SoulLarge").Value;
-            if (Projectile.whoAmI % 2 == 0)
-                texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/SoulLargeCyan").Value;
+            Texture2D texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/SoulLarge");
+            if (projectile.whoAmI % 2 == 0)
+                texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/SoulLargeCyan");
 
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 2, texture);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 2, texture);
             return false;
         }
 
@@ -80,17 +79,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
         {
             Color color = Color.White;
             color.A = 0;
-            return color * Projectile.Opacity;
+            return color * projectile.Opacity;
         }
 
         public override void Kill(int timeLeft)
         {
-            Projectile.position = Projectile.Center;
-            Projectile.width = Projectile.height = 64;
-            Projectile.position.X = Projectile.position.X - Projectile.width / 2;
-            Projectile.position.Y = Projectile.position.Y - Projectile.height / 2;
-            Projectile.maxPenetrate = -1;
-            Projectile.Damage();
+            projectile.position = projectile.Center;
+            projectile.width = projectile.height = 64;
+            projectile.position.X = projectile.position.X - projectile.width / 2;
+            projectile.position.Y = projectile.position.Y - projectile.height / 2;
+            projectile.maxPenetrate = -1;
+            projectile.Damage();
         }
     }
 }

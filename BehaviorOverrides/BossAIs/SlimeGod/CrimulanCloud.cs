@@ -7,46 +7,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
     public class CrimulanCloud : ModNPC
     {
-        public ref float Time => ref NPC.ai[0];
-        public Player Target => Main.player[NPC.target];
+        public ref float Time => ref npc.ai[0];
+        public Player Target => Main.player[npc.target];
         public override void SetStaticDefaults() => DisplayName.SetDefault("Crimulan Cloud");
 
         public override void SetDefaults()
         {
-            NPC.damage = 0;
-            NPC.width = NPC.height = 42;
-            NPC.lifeMax = 20;
-            NPC.noTileCollide = false;
-            NPC.noGravity = true;
-            NPC.netAlways = true;
-            NPC.dontTakeDamage = true;
-            NPC.aiStyle = AIType = -1;
-            NPC.scale = 1f;
-            NPC.knockBackResist = 0f;
-            NPC.noTileCollide = true;
+            npc.damage = 0;
+            npc.width = npc.height = 42;
+            npc.lifeMax = 20;
+            npc.noTileCollide = false;
+            npc.noGravity = true;
+            npc.netAlways = true;
+            npc.dontTakeDamage = true;
+            npc.aiStyle = aiType = -1;
+            npc.scale = 1f;
+            npc.knockBackResist = 0f;
+            npc.noTileCollide = true;
         }
 
         public override void AI()
         {
             if (!Main.npc.IndexInRange(CalamityGlobalNPC.slimeGodRed))
             {
-                NPC.active = false;
-                NPC.netUpdate = true;
+                npc.active = false;
+                npc.netUpdate = true;
                 return;
             }
 
-            NPC.TargetClosest();
+            npc.TargetClosest();
 
             Vector2 destination = Target.Center + Vector2.UnitX * 450f;
-            NPC.Center = NPC.Center.MoveTowards(destination, 5f);
-            if (NPC.Center != destination)
-                NPC.velocity = (NPC.velocity * 15f + NPC.SafeDirectionTo(destination) * 13f) / 16f;
+            npc.Center = npc.Center.MoveTowards(destination, 5f);
+            if (npc.Center != destination)
+                npc.velocity = (npc.velocity * 15f + npc.SafeDirectionTo(destination) * 13f) / 16f;
             else
-                NPC.velocity = Vector2.Zero;
+                npc.velocity = Vector2.Zero;
 
             for (int i = 0; i < 4; i++)
             {
-                Dust gel = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, Main.rand.NextBool(2) ? 4 : 267);
+                Dust gel = Dust.NewDustDirect(npc.position, npc.width, npc.height, Main.rand.NextBool(2) ? 4 : 267);
                 gel.color = Color.Red;
                 gel.velocity = Main.rand.NextVector2Circular(3f, 3f);
                 gel.noGravity = true;

@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             }
 
             // Fade in and out over time.
-            npc.Opacity = Utils.GetLerpValue(0f, 15f, time, true) * Utils.GetLerpValue(600f, 550f, time, true);
+            npc.Opacity = Utils.InverseLerp(0f, 15f, time, true) * Utils.InverseLerp(600f, 550f, time, true);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
 
@@ -86,7 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                 // Determine if tile collision is happening.
                 Tile tile = Framing.GetTileSafely(npc.Center.ToTileCoordinates());
-                bool collidingWithTile = tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType] && !TileID.Sets.Platforms[tile.TileType];
+                bool collidingWithTile = tile.nactive() && Main.tileSolid[tile.type] && !Main.tileSolidTop[tile.type] && !TileID.Sets.Platforms[tile.type];
 
                 if (collidingWithTile)
                 {

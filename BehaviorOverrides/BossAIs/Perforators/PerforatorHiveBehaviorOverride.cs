@@ -1,5 +1,4 @@
 ﻿using CalamityMod;
-using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.Particles;
@@ -10,14 +9,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 {
-    public class PerforatorHiveBehaviorOverride : NPCBehaviorOverride
+	public class PerforatorHiveBehaviorOverride : NPCBehaviorOverride
     {
         public enum PerforatorHiveAttackState
         {
@@ -97,8 +94,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     // Rise upward and create an explosion sound.
                     if (finalPhaseTransitionTimer == 45f)
                     {
-                        SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
-                        var explosionSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
+                        Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
+                        var explosionSound = Main.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
                         if (explosionSound != null)
                         {
                             CalamityUtils.SafeVolumeChange(ref explosionSound, 2.2f);
@@ -106,7 +103,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                         }
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PerforatorWave>(), 0, 0f);
+                            Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<PerforatorWave>(), 0, 0f);
 
                         npc.velocity = -Vector2.UnitY * 12f;
                         npc.netUpdate = true;
@@ -114,7 +111,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 }
 
                 finalPhaseTransitionTimer++;
-                backgroundStrength = Utils.GetLerpValue(45f, 150f, finalPhaseTransitionTimer, true);
+                backgroundStrength = Utils.InverseLerp(45f, 150f, finalPhaseTransitionTimer, true);
             }
 
             switch ((PerforatorHiveAttackState)attackState)
@@ -205,7 +202,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
                 Vector2 bloodVelocity = eruptDirection.RotatedByRandom(0.81f) * splatterIntensity * Main.rand.NextFloat(11f, 23f);
                 bloodVelocity.Y -= splatterIntensity * 12f;
-                BloodParticle blood = new(bloodSpawnPosition, bloodVelocity, bloodLifetime, bloodScale, bloodColor);
+                BloodParticle blood = new BloodParticle(bloodSpawnPosition, bloodVelocity, bloodLifetime, bloodScale, bloodColor);
                 GeneralParticleHandler.SpawnParticle(blood);
             }
             for (int i = 0; i < 10; i++)
@@ -213,14 +210,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 float bloodScale = Main.rand.NextFloat(0.35f, 0.4f);
                 Color bloodColor = Color.Lerp(Color.Red, Color.DarkRed, Main.rand.NextFloat(0.5f, 1f));
                 Vector2 bloodVelocity = eruptDirection.RotatedByRandom(0.9f) * splatterIntensity * Main.rand.NextFloat(9f, 14.5f);
-                BloodParticle2 blood = new(bloodSpawnPosition, bloodVelocity, 35, bloodScale, bloodColor);
+                BloodParticle2 blood = new BloodParticle2(bloodSpawnPosition, bloodVelocity, 35, bloodScale, bloodColor);
                 GeneralParticleHandler.SpawnParticle(blood);
             }
 
             // Spawn the Worm Bosstm.
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, wormHeadID, 1);
+                NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, wormHeadID, 1);
 
                 // Reel back in pain, indicating that the worm physically burrowed out of the hive.
                 npc.velocity = eruptDirection * -8f;
@@ -331,7 +328,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 // Release ichor into the air that slowly falls and charge at the target.
                 if (attackTimer >= chargeDelay)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
+                    Main.PlaySound(SoundID.NPCHit20, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < fallingIchorCount; i++)
@@ -339,7 +336,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                             float projectileOffsetInterpolant = i / (float)(fallingIchorCount - 1f);
                             float horizontalSpeed = MathHelper.Lerp(-16f, 16f, projectileOffsetInterpolant) + Main.rand.NextFloatDirection() / fallingIchorCount * 5f;
                             float verticalSpeed = Main.rand.NextFloat(-8f, -7f);
-                            Vector2 ichorVelocity = new(horizontalSpeed, verticalSpeed);
+                            Vector2 ichorVelocity = new Vector2(horizontalSpeed, verticalSpeed);
                             Utilities.NewProjectileBetter(npc.Top + Vector2.UnitY * 10f, ichorVelocity, ModContent.ProjectileType<FallingIchor>(), 75, 0f);
                         }
 
@@ -435,9 +432,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 bool enoughCrimerasAreAround = NPC.CountNPCS(NPCID.Crimera) >= crimeraLimit;
                 if (attackTimer % crimeraSpawnRate == crimeraSpawnRate / 2 && !enoughCrimerasAreAround)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCDeath23, npc.Center);
+                    Main.PlaySound(SoundID.NPCDeath23, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Crimera, npc.whoAmI);
+                        NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Crimera, npc.whoAmI);
                 }
 
                 if (attackTimer >= chargeTime)
@@ -519,7 +516,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 if (attackTimer % shootRate == shootRate - 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
+                    Main.PlaySound(SoundID.NPCHit20, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < 3; i++)
@@ -609,7 +606,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 npc.velocity = Vector2.Zero;
 
                 // Make the spin slow down near the end, to make the impending charge readable.
-                float spinSlowdownFactor = Utils.GetLerpValue(spinTime - 1f, spinTime * 0.65f, attackTimer, true);
+                float spinSlowdownFactor = Utils.InverseLerp(spinTime - 1f, spinTime * 0.65f, attackTimer, true);
                 spinOffsetAngle += totalSpinArc / spinTime * spinDirection * spinSlowdownFactor;
 
                 // Release blobs away from the player periodically. These serve as arena obstacles for successive attacks.
@@ -621,7 +618,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
                     if (lineOfSightIsClear)
                     {
-                        SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
+                        Main.PlaySound(SoundID.NPCHit20, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             int blob = Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 75, 0f);
@@ -634,7 +631,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 // Charge at the target after the spin concludes.
                 if (attackTimer >= spinTime)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCDeath23, npc.Center);
+                    Main.PlaySound(SoundID.NPCDeath23, npc.Center);
 
                     Vector2 shootDirection = npc.SafeDirectionTo(target.Center) * (blobSpeedFactor > 0f).ToDirectionInt();
                     bool lineOfSightIsClear = Collision.CanHit(npc.Center, 1, 1, npc.Center + shootDirection * 120f, 1, 1);
@@ -690,7 +687,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 npc.damage = 0;
 
-                float hoverSpeed = Utils.Remap(attackTimer, 0f, wormSummonTime - 45f, maxHoverSpeed, 0f);
+                float hoverSpeed = MathHelper.Lerp(maxHoverSpeed, 0f, Utils.InverseLerp(wormSummonTime - 45f, 0f, attackTimer, true));
                 if (doneReelingBack)
                     hoverSpeed = maxHoverSpeed;
 
@@ -789,7 +786,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             // Prepare wall attack stuff.
             if (attackTimer == riseTime)
             {
-                SoundEngine.PlaySound(SoundID.NPCDeath23, npc.Center);
+                Main.PlaySound(SoundID.NPCDeath23, npc.Center);
 
                 npc.velocity = Vector2.Zero;
                 horizontalWallOffset = Main.rand.NextFloat(-35f, 35f);
@@ -800,7 +797,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > riseTime && attackTimer <= riseTime + wallCreationTime)
             {
                 horizontalWallOffset += offsetPerCrimera;
-                Vector2 wallSpawnOffset = new(horizontalWallOffset - 1800f, -925f);
+                Vector2 wallSpawnOffset = new Vector2(horizontalWallOffset - 1800f, -925f);
                 Vector2 wallVelocity = Vector2.Lerp(Vector2.UnitY, -wallSpawnOffset.SafeNormalize(Vector2.UnitY), aimAtTargetInterpolant);
                 wallVelocity = wallVelocity.SafeNormalize(Vector2.UnitY) * wallSpeed;
 
@@ -833,10 +830,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 npc.damage = 0;
 
-                float hoverSpeed = Utils.Remap(attackTimer, 0f, wormSummonTime - 45f, maxHoverSpeed, 0f);
-                if (doneReelingBack)
-                    hoverSpeed = maxHoverSpeed;
-
+                float hoverSpeed = maxHoverSpeed;
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 325f;
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeed;
 
@@ -860,7 +854,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 }
 
                 if (postWormSummonAttackTimer >= 300f)
-                    backafterimageGlowInterpolant = Utils.GetLerpValue(300f, 350f, postWormSummonAttackTimer, true);
+                    backafterimageGlowInterpolant = Utils.InverseLerp(300f, 350f, postWormSummonAttackTimer, true);
 
                 // Switch directions after enough time has passed.
                 if (postWormSummonAttackTimer >= 380f)
@@ -876,7 +870,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
                 if (attackTimer % ichorBurstReleaseRate == ichorBurstReleaseRate - 1f && npc.WithinRange(hoverDestination, 150f))
                 {
-                    SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
+                    Main.PlaySound(SoundID.NPCHit20, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         for (int i = 0; i < burstIchorCount; i++)
@@ -963,7 +957,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 // Release ichor upward.
                 if (attackTimer % ichorReleaseRate == ichorReleaseRate / 2 && attackTimer < chargeTime * 0.67)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCDeath23, npc.Center);
+                    Main.PlaySound(SoundID.NPCDeath23, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 ichorVelocity = -Vector2.UnitY.RotatedByRandom(0.2f) * 7f;
@@ -1006,10 +1000,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 npc.damage = 0;
 
-                float hoverSpeed = Utils.Remap(attackTimer, 0f, wormSummonTime - 45f, maxHoverSpeed, 0f);
-                if (doneReelingBack)
-                    hoverSpeed = maxHoverSpeed;
-
+                float hoverSpeed = maxHoverSpeed;
                 Vector2 hoverDestination = target.Center - Vector2.UnitY * 325f;
                 Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * hoverSpeed;
 
@@ -1053,14 +1044,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                         // Otherwise slow down in anticipation of the target and release ichor blobs upward.
                         else
                         {
-                            SoundEngine.PlaySound(SoundID.NPCDeath23, npc.Center);
+                            Main.PlaySound(SoundID.NPCDeath23, npc.Center);
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
                                 for (int i = 0; i < ichorBlobCount; i++)
                                 {
                                     float projectileShootInterpolant = i / (float)(ichorBlobCount - 1f);
                                     float horizontalShootSpeed = MathHelper.Lerp(-10f, 10f, projectileShootInterpolant) + Main.rand.NextFloatDirection() * 0.64f;
-                                    Vector2 blobVelocity = new(horizontalShootSpeed, -7f);
+                                    Vector2 blobVelocity = new Vector2(horizontalShootSpeed, -7f);
                                     int blob = Utilities.NewProjectileBetter(npc.Center + blobVelocity, blobVelocity, ModContent.ProjectileType<IchorBlob>(), 80, 0f);
                                     if (Main.projectile.IndexInRange(blob))
                                         Main.projectile[blob].ai[1] = target.Center.Y;
@@ -1130,8 +1121,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 // Rise upward and create an explosion sound.
                 if (attackTimer == moveDelay)
                 {
-                    SoundEngine.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
-                    var explosionSound = SoundEngine.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
+                    Main.PlaySound(SoundID.Roar, (int)npc.Center.X, (int)npc.Center.Y, 0);
+                    var explosionSound = Main.PlaySound(SoundID.DD2_BetsyFireballImpact, npc.Center);
                     if (explosionSound != null)
                     {
                         CalamityUtils.SafeVolumeChange(ref explosionSound, 2.2f);
@@ -1139,7 +1130,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     }
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        Projectile.NewProjectile(new InfernumSource(), npc.Center, Vector2.Zero, ModContent.ProjectileType<PerforatorWave>(), 0, 0f);
+                        Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<PerforatorWave>(), 0, 0f);
 
                     npc.velocity = -Vector2.UnitY * 12f;
                     npc.netUpdate = true;
@@ -1174,7 +1165,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                     {
                         float ichorShootInterpolant = i / (float)(ichorWallShotCount - 1f);
                         float verticalWallOffset = MathHelper.Lerp(-0.5f, 0.5f, ichorShootInterpolant) * ichorWallSpacing * ichorWallShotCount;
-                        Vector2 wallOffset = new(ichorOffsetDirection * 560f, verticalWallOffset);
+                        Vector2 wallOffset = new Vector2(ichorOffsetDirection * 560f, verticalWallOffset);
                         Vector2 wallVelocity = Vector2.UnitX * ichorOffsetDirection * -6.5f;
                         Utilities.NewProjectileBetter(target.Center + wallOffset, wallVelocity, ModContent.ProjectileType<IchorBolt>(), 80, 0f);
                     }
@@ -1183,7 +1174,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
                 // Release ichor from the mouth.
                 if (attackTimer % mouthIchorReleaseRate == mouthIchorReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
+                    Main.PlaySound(SoundID.NPCHit20, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         foreach (Vector2 mouthPosition in mouthPositions)
@@ -1209,13 +1200,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int ichorBlastAttackType = inPhase3 ? (int)PerforatorHiveAttackState.IchorRain : (int)(int)PerforatorHiveAttackState.IchorBlasts;
             int ichorFromAboveAttackType = inPhase4 ? (int)PerforatorHiveAttackState.IchorFountainCharge : (int)(int)PerforatorHiveAttackState.DiagonalBloodCharge;
 
-            npc.ai[0] = (PerforatorHiveAttackState)npc.ai[0] switch
-            {
-                PerforatorHiveAttackState.HorizontalCrimeraSpawnCharge or PerforatorHiveAttackState.CrimeraWalls => ichorBlastAttackType,
-                PerforatorHiveAttackState.IchorBlasts or PerforatorHiveAttackState.IchorRain => (int)PerforatorHiveAttackState.IchorSpinDash,
-                PerforatorHiveAttackState.IchorSpinDash => ichorFromAboveAttackType,
-                _ => crimeraAttackType,
-            };
+            switch ((PerforatorHiveAttackState)npc.ai[0])
+			{
+                case PerforatorHiveAttackState.HorizontalCrimeraSpawnCharge:
+                case PerforatorHiveAttackState.CrimeraWalls:
+                    npc.ai[0] = ichorBlastAttackType;
+                    break;
+                case PerforatorHiveAttackState.IchorBlasts:
+                case PerforatorHiveAttackState.IchorRain:
+                    npc.ai[0] = (int)PerforatorHiveAttackState.IchorSpinDash;
+                    break;
+                case PerforatorHiveAttackState.IchorSpinDash:
+                    npc.ai[0] = ichorFromAboveAttackType;
+                    break;
+                default:
+                    npc.ai[0] = crimeraAttackType;
+                    break;
+            }
 
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
@@ -1231,9 +1232,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             {
                 int nextIndex;
                 if (i < wormLength - 1)
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI + 1);
+                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, bodyType, npc.whoAmI + 1);
                 else
-                    nextIndex = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI + 1);
+                    nextIndex = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, tailType, npc.whoAmI + 1);
 
                 Main.npc[nextIndex].realLife = npc.whoAmI;
                 Main.npc[nextIndex].ai[2] = npc.whoAmI;
@@ -1257,7 +1258,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             if (npc.spriteDirection == 1)
                 direction = SpriteEffects.FlipHorizontally;
 
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D texture = Main.npcTexture[npc.type];
             Vector2 origin = npc.frame.Size() * 0.5f;
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition;
             float backafterimageGlowInterpolant = npc.localAI[0];
@@ -1275,7 +1276,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             spriteBatch.Draw(texture, baseDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
 
-            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Perforator/PerforatorHiveGlow").Value;
+            texture = ModContent.GetTexture("CalamityMod/NPCs/Perforator/PerforatorHiveGlow");
             Color glowmaskColor = Color.Lerp(Color.White, Color.Yellow, 0.5f);
 
             spriteBatch.Draw(texture, baseDrawPosition, npc.frame, glowmaskColor, npc.rotation, origin, npc.scale, direction, 0f);

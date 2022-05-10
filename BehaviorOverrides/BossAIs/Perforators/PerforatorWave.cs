@@ -14,7 +14,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
         public override float DetermineScreenShakePower(float lifetimeCompletionRatio, float distanceFromPlayer)
         {
             float baseShakePower = MathHelper.Lerp(1f, 5f, (float)Math.Sin(MathHelper.Pi * lifetimeCompletionRatio));
-            return baseShakePower * Utils.GetLerpValue(2200f, 1050f, distanceFromPlayer, true);
+            return baseShakePower * Utils.InverseLerp(2200f, 1050f, distanceFromPlayer, true);
         }
 
         public override Color DetermineExplosionColor(float lifetimeCompletionRatio)
@@ -22,8 +22,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             return Color.Lerp(Color.Crimson, Color.Gray, MathHelper.Clamp(lifetimeCompletionRatio * 1.5f, 0f, 1f));
         }
 
-        public override void SendExtraAI(BinaryWriter writer) => writer.Write((int)Projectile.localAI[1]);
+        public override void SendExtraAI(BinaryWriter writer) => writer.Write((int)projectile.localAI[1]);
 
-        public override void ReceiveExtraAI(BinaryReader reader) => Projectile.localAI[1] = reader.ReadInt32();
+        public override void ReceiveExtraAI(BinaryReader reader) => projectile.localAI[1] = reader.ReadInt32();
     }
 }

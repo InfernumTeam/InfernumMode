@@ -12,45 +12,45 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 14;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 150;
-            Projectile.extraUpdates = 1;
-            Projectile.scale = 0.15f;
-            Projectile.Calamity().canBreakPlayerDefense = true;
+            projectile.width = projectile.height = 14;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.timeLeft = 150;
+            projectile.extraUpdates = 1;
+            projectile.scale = 0.15f;
+            projectile.Calamity().canBreakPlayerDefense = true;
         }
 
         public override void AI()
         {
-            Projectile.scale += 0.18f;
-            Projectile.Opacity = Utils.GetLerpValue(150f, 142f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 40f, Projectile.timeLeft, true);
-            Lighting.AddLight(Projectile.Center, Color.Cyan.ToVector3());
+            projectile.scale += 0.18f;
+            projectile.Opacity = Utils.InverseLerp(150f, 142f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 40f, projectile.timeLeft, true);
+            Lighting.AddLight(projectile.Center, Color.Cyan.ToVector3());
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Main.spriteBatch.SetBlendState(BlendState.Additive);
+            spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D texture = Utilities.ProjTexture(Projectile.type);
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
 
             for (int i = 0; i < 3; i++)
             {
-                Color explosionColor = Color.Lerp(Color.White, Color.Cyan, i / 2f) * Projectile.Opacity * 0.7f;
-                Main.spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, Projectile.scale, SpriteEffects.None, 0f);
+                Color explosionColor = Color.Lerp(Color.White, Color.Cyan, i / 2f) * projectile.Opacity * 0.7f;
+                spriteBatch.Draw(texture, drawPosition, null, explosionColor, 0f, texture.Size() * 0.5f, projectile.scale, SpriteEffects.None, 0f);
             }
 
-            Main.spriteBatch.ResetBlendState();
+            spriteBatch.ResetBlendState();
             return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            return Utilities.CircularCollision(Projectile.Center, targetHitbox, Projectile.scale * 135f);
+            return Utilities.CircularCollision(projectile.Center, targetHitbox, projectile.scale * 135f);
         }
 
-        public override bool? CanDamage() => Projectile.Opacity > 0.45f ? null : false;
+        public override bool CanDamage() => projectile.Opacity > 0.45f;
     }
 }

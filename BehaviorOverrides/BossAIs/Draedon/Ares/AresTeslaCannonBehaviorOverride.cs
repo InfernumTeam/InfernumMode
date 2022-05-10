@@ -11,8 +11,6 @@ using Terraria;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
@@ -53,7 +51,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center + target.velocity * aimPredictiveness);
 
             // Shoot slower if pointing downward.
-            orbShootSpeed *= MathHelper.Lerp(1f, 0.8f, Utils.GetLerpValue(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
+            orbShootSpeed *= MathHelper.Lerp(1f, 0.8f, Utils.InverseLerp(0.61f, 0.24f, aimDirection.AngleBetween(Vector2.UnitY), true));
 
             if (ExoMechManagement.CurrentAresPhase >= 2)
             {
@@ -165,7 +163,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             // Fire orbs.
             if (attackTimer >= chargeDelay && attackTimer % shootRate == shootRate - 1f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaBolt"), npc.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaBolt"), npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -261,7 +259,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an NPC.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Texture2D texture = Main.npcTexture[npc.type];
             Rectangle frame = npc.frame;
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 center = npc.Center - Main.screenPosition;
@@ -282,7 +280,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ExoMechAIUtilities.DrawAresArmTelegraphEffect(spriteBatch, npc, Color.Cyan, texture, center, frame, origin);
             Main.spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresTeslaCannonGlow").Value;
+            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresTeslaCannonGlow");
 
             if (CalamityConfig.Instance.Afterimages)
             {

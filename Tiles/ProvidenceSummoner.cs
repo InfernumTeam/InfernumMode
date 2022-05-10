@@ -4,7 +4,6 @@ using CalamityMod.Items.SummonItems;
 using CalamityMod.NPCs.Providence;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
@@ -17,13 +16,13 @@ namespace InfernumMode.Tiles
     {
         public const int Width = 3;
         public const int Height = 2;
-        public override void SetStaticDefaults()
+
+        public override void SetDefaults()
         {
-            MinPick = int.MaxValue;
+            minPick = int.MaxValue;
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileSpelunker[Type] = true;
-            TileID.Sets.DisableSmartCursor[Type] = true;
 
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.newTile.Width = Width;
@@ -49,12 +48,12 @@ namespace InfernumMode.Tiles
             return true;
         }
 
-        public override bool RightClick(int i, int j)
+        public override bool NewRightClick(int i, int j)
         {
             Tile tile = Main.tile[i, j];
 
-            int left = i - tile.TileFrameX / 18;
-            int top = j - tile.TileFrameY / 18;
+            int left = i - tile.frameX / 18;
+            int top = j - tile.frameY / 18;
 
             if (!Main.LocalPlayer.HasItem(ModContent.ItemType<ProfanedCoreUnlimited>()))
                 return true;
@@ -68,24 +67,24 @@ namespace InfernumMode.Tiles
             Vector2 ritualSpawnPosition = new Vector2(left + Width * 0.5f, top).ToWorldCoordinates();
             ritualSpawnPosition += new Vector2(-10f, -24f);
 
-            SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen, ritualSpawnPosition);
-            Projectile.NewProjectile(new EntitySource_WorldEvent(), ritualSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ProvidenceSummonerProjectile>(), 0, 0f, Main.myPlayer);
+            Main.PlaySound(SoundID.DD2_EtherianPortalOpen, ritualSpawnPosition);
+            Projectile.NewProjectile(ritualSpawnPosition, Vector2.Zero, ModContent.ProjectileType<ProvidenceSummonerProjectile>(), 0, 0f, Main.myPlayer);
 
             return true;
         }
 
         public override void MouseOver(int i, int j)
         {
-            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCoreUnlimited>();
+            Main.LocalPlayer.showItemIcon2 = ModContent.ItemType<ProfanedCoreUnlimited>();
             Main.LocalPlayer.noThrow = 2;
-            Main.LocalPlayer.cursorItemIconEnabled = true;
+            Main.LocalPlayer.showItemIcon = true;
         }
 
         public override void MouseOverFar(int i, int j)
         {
-            Main.LocalPlayer.cursorItemIconID = ModContent.ItemType<ProfanedCoreUnlimited>();
+            Main.LocalPlayer.showItemIcon2 = ModContent.ItemType<ProfanedCoreUnlimited>();
             Main.LocalPlayer.noThrow = 2;
-            Main.LocalPlayer.cursorItemIconEnabled = true;
+            Main.LocalPlayer.showItemIcon = true;
         }
     }
 }

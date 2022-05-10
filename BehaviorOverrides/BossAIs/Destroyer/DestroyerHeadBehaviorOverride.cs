@@ -7,7 +7,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 {
@@ -169,10 +168,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             for (int i = 0; i < BodySegmentCount; i++)
             {
                 int newSegment;
-                if (i is >= 0 and < (int)(BodySegmentCount - 1f))
-                    newSegment = NPC.NewNPC(new InfernumSource(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
+                if (i >= 0 && i < BodySegmentCount - 1f)
+                    newSegment = NPC.NewNPC((int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerBody, head.whoAmI);
                 else
-                    newSegment = NPC.NewNPC(new InfernumSource(), (int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);
+                    newSegment = NPC.NewNPC((int)head.position.X + (head.width / 2), (int)head.position.Y + (head.height / 2), NPCID.TheDestroyerTail, head.whoAmI);
 
                 Main.npc[newSegment].realLife = head.whoAmI;
 
@@ -245,7 +244,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Move into the charge.
             if (attackTimer > hoverRedirectTime && attackTimer <= hoverRedirectTime + chargeRedirectTime)
             {
-                Vector2 idealChargeVelocity = new(idealChargeVelocityX, idealChargeVelocityY);
+                Vector2 idealChargeVelocity = new Vector2(idealChargeVelocityX, idealChargeVelocityY);
                 npc.velocity = npc.velocity.MoveTowards(idealChargeVelocity, 5f);
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(target.Center) * idealChargeVelocity.Length(), 3f);
             }
@@ -257,13 +256,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Release lightning from behind the worm once the charge has begun.
             if (attackTimer == hoverRedirectTime + chargeRedirectTime / 2)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/LargeWeaponFire"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LargeWeaponFire"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probeCount = 2;
                     for (int i = 0; i < probeCount; i++)
                     {
-                        int probe = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
                         Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
                     }
                 }
@@ -311,12 +310,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                     npc.velocity = npc.velocity.RotateTowards(idealVelocity.ToRotation(), MathHelper.Pi * 0.016f, true) * MathHelper.Lerp(npc.velocity.Length(), maxDiveAscendSpeed, 0.1f);
 
                 // Create shake effects for players.
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.GetLerpValue(diveTime + ascendTime / 2, diveTime + ascendTime, attackTimer, true);
+                Main.LocalPlayer.Infernum().CurrentScreenShakePower = Utils.InverseLerp(diveTime + ascendTime / 2, diveTime + ascendTime, attackTimer, true);
                 Main.LocalPlayer.Infernum().CurrentScreenShakePower = MathHelper.Lerp(Main.LocalPlayer.Infernum().CurrentScreenShakePower, 2f, 7f);
-                Main.LocalPlayer.Infernum().CurrentScreenShakePower *= Utils.GetLerpValue(2000f, 1100f, npc.Distance(Main.LocalPlayer.Center), true);
+                Main.LocalPlayer.Infernum().CurrentScreenShakePower *= Utils.InverseLerp(2000f, 1100f, npc.Distance(Main.LocalPlayer.Center), true);
 
                 if (attackTimer == diveTime + ascendTime - 15f)
-                    SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
+                    Main.PlaySound(SoundID.DD2_ExplosiveTrapExplode, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer >= diveTime + ascendTime - 30f)
                 {
@@ -384,8 +383,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public static void DoAttack_ProbeBombing(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.GetLerpValue(360f, 420f, attackTimer, true));
-            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.GetLerpValue(360f, 420f, attackTimer, true)), npc.Distance(destination));
+            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
+            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
             npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
             if (npc.WithinRange(destination, 30f))
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
@@ -394,13 +393,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             if (attackTimer % 45f == 44f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probeCount = (int)MathHelper.Lerp(1f, 3f, 1f - lifeRatio);
                     for (int i = 0; i < probeCount; i++)
                     {
-                        int probe = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
                         Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
                     }
                 }
@@ -412,8 +411,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
         public static void DoAttack_SuperchargedProbeBombing(NPC npc, Player target, float lifeRatio, ref float attackTimer)
         {
-            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.GetLerpValue(360f, 420f, attackTimer, true));
-            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.GetLerpValue(360f, 420f, attackTimer, true)), npc.Distance(destination));
+            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
+            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
             npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
             if (npc.WithinRange(destination, 30f))
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
@@ -422,13 +421,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             if (attackTimer == 90f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int probeCount = (int)Math.Round(MathHelper.Lerp(3f, 6f, 1f - lifeRatio));
                     for (int i = 0; i < probeCount; i++)
                     {
-                        int probe = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());
+                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());
                         Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
                         Main.npc[probe].ai[3] = (i == 0f).ToInt();
                     }
@@ -518,7 +517,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
                     if (attackTimer > 140f && attackTimer <= 285f && attackTimer % 45f == 44f)
                     {
-                        SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 shootVelocity = npc.SafeDirectionTo(target.Center) * 16f;
@@ -564,10 +563,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         {
             float idealRotation = npc.AngleTo(target.Center);
             float acceleration = MathHelper.Lerp(0.03f, 0.043f, 1f - lifeRatio);
-            float movementSpeed = MathHelper.Lerp(14f, 26f, Utils.GetLerpValue(0f, 120f, attackTimer, true));
-            float slowdownInterpolant = Utils.GetLerpValue(480f, 510f, attackTimer, true);
+            float movementSpeed = MathHelper.Lerp(14f, 26f, Utils.InverseLerp(0f, 120f, attackTimer, true));
+            float slowdownInterpolant = Utils.InverseLerp(480f, 510f, attackTimer, true);
             movementSpeed *= MathHelper.Lerp(1f, 0.35f, slowdownInterpolant);
-            movementSpeed += MathHelper.Lerp(0f, 15f, Utils.GetLerpValue(420f, 3000f, npc.Distance(target.Center), true));
+            movementSpeed += MathHelper.Lerp(0f, 15f, Utils.InverseLerp(420f, 3000f, npc.Distance(target.Center), true));
             movementSpeed *= BossRushEvent.BossRushActive ? 2.1f : 1f;
             acceleration *= BossRushEvent.BossRushActive ? 2f : 1f;
             acceleration *= MathHelper.Lerp(1f, 0.5f, slowdownInterpolant);
@@ -584,10 +583,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
             // Periodically release probes.
             if (attackTimer % 75f == 74f && slowdownInterpolant < 0.3f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int probe = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                    int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
                     Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
                 }
             }
@@ -612,8 +611,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
         {
             ref float segmentToFire = ref npc.Infernum().ExtraAI[0];
 
-            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.GetLerpValue(360f, 420f, attackTimer, true));
-            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.GetLerpValue(360f, 420f, attackTimer, true)), npc.Distance(destination));
+            Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
+            npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
             npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
             if (npc.WithinRange(destination, 30f))
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
@@ -629,7 +628,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 
             if (attackTimer % 55f == 54f)
             {
-                SoundEngine.PlaySound(SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Item/PlasmaCasterFire"), target.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < 2; i++)
@@ -638,7 +637,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
                         if (NPC.CountNPCS(NPCID.Probe) >= 7)
                             break;
 
-                        int probe = NPC.NewNPC(new InfernumSource(), (int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
+                        int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, NPCID.Probe);
                         Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
                     }
                 }

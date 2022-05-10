@@ -2,118 +2,118 @@ using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Projectiles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 {
-	public class RedirectingYharonMeteor : ModProjectile
+    public class RedirectingYharonMeteor : ModProjectile
     {
         public override string Texture => "CalamityMod/Projectiles/Boss/YharonFireball";
 
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dragon Fireball");
-            Main.projFrames[Projectile.type] = 5;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 4;
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+            Main.projFrames[projectile.type] = 5;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 34;
-            Projectile.height = 34;
-            Projectile.hostile = true;
-            Projectile.alpha = 255;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 720;
-            Projectile.tileCollide = false;
-            Projectile.Calamity().canBreakPlayerDefense = true;
-            CooldownSlot = 1;
+            projectile.width = 34;
+            projectile.height = 34;
+            projectile.hostile = true;
+            projectile.alpha = 255;
+            projectile.penetrate = -1;
+            projectile.timeLeft = 720;
+            projectile.tileCollide = false;
+            projectile.Calamity().canBreakPlayerDefense = true;
+            cooldownSlot = 1;
         }
 
         public override void AI()
         {
-            Projectile.frameCounter++;
-            if (Projectile.frameCounter > 4)
+            projectile.frameCounter++;
+            if (projectile.frameCounter > 4)
             {
-                Projectile.frame++;
-                Projectile.frameCounter = 0;
+                projectile.frame++;
+                projectile.frameCounter = 0;
             }
-            if (Projectile.frame >= Main.projFrames[Projectile.type])
-                Projectile.frame = 0;
+            if (projectile.frame >= Main.projFrames[projectile.type])
+                projectile.frame = 0;
 
-            if (Projectile.velocity.Y < -1f)
+            if (projectile.velocity.Y < -1f)
             {
-                Projectile.velocity.Y *= 0.9775f;
+                projectile.velocity.Y *= 0.9775f;
             }
             else
             {
-                Projectile.velocity.Y += 0.3f;
-                if (Projectile.velocity.Y > 16f)
-                    Projectile.velocity.Y = 16f;
+                projectile.velocity.Y += 0.3f;
+                if (projectile.velocity.Y > 16f)
+                    projectile.velocity.Y = 16f;
             }
 
-            Projectile.velocity.X *= 0.995f;
+            projectile.velocity.X *= 0.995f;
 
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-            if (Projectile.ai[0] >= 2f)
+            if (projectile.ai[0] >= 2f)
             {
-                Projectile.alpha -= 25;
-                if (Projectile.alpha < 0)
-                    Projectile.alpha = 0;
+                projectile.alpha -= 25;
+                if (projectile.alpha < 0)
+                    projectile.alpha = 0;
             }
 
             if (Main.rand.NextBool(16))
             {
-                Dust fire = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, 55, 0f, 0f, 200, default, 1f);
+                Dust fire = Dust.NewDustDirect(projectile.position, projectile.width, projectile.height, 55, 0f, 0f, 200, default, 1f);
                 fire.scale *= 0.7f;
-                fire.velocity += Projectile.velocity * 0.25f;
+                fire.velocity += projectile.velocity * 0.25f;
             }
         }
 
-        public override bool CanHitPlayer(Player target) => Projectile.velocity.Y >= -16f;
+        public override bool CanHitPlayer(Player target) => projectile.velocity.Y >= -16f;
 
-        public override Color? GetAlpha(Color lightColor) => new Color(200, 200, 200, Projectile.alpha);
+        public override Color? GetAlpha(Color lightColor) => new Color(200, 200, 200, projectile.alpha);
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor, 1);
+            CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], lightColor, 1);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item, (int)Projectile.position.X, (int)Projectile.position.Y, 14, 0.5f, 0f);
-            CalamityGlobalProjectile.ExpandHitboxBy(Projectile, 144);
+            Main.PlaySound(SoundID.Item, (int)projectile.position.X, (int)projectile.position.Y, 14, 0.5f, 0f);
+            CalamityGlobalProjectile.ExpandHitboxBy(projectile, 144);
             for (int d = 0; d < 2; d++)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 55, 0f, 0f, 100, default, 1.5f);
+                Dust.NewDust(projectile.position, projectile.width, projectile.height, 55, 0f, 0f, 100, default, 1.5f);
             }
             for (int d = 0; d < 20; d++)
             {
-                int idx = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 55, 0f, 0f, 0, default, 2.5f);
+                int idx = Dust.NewDust(projectile.position, projectile.width, projectile.height, 55, 0f, 0f, 0, default, 2.5f);
                 Main.dust[idx].noGravity = true;
                 Main.dust[idx].velocity *= 3f;
-                idx = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 55, 0f, 0f, 100, default, 1.5f);
+                idx = Dust.NewDust(projectile.position, projectile.width, projectile.height, 55, 0f, 0f, 100, default, 1.5f);
                 Main.dust[idx].velocity *= 2f;
                 Main.dust[idx].noGravity = true;
             }
-            Projectile.Damage();
+            projectile.Damage();
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)
         {
-            if (Projectile.velocity.Y >= -16f)
+            if (projectile.velocity.Y >= -16f)
                 target.AddBuff(ModContent.BuffType<LethalLavaBurn>(), 180);
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = Projectile;
+            target.Calamity().lastProjectileHit = projectile;
         }
     }
 }

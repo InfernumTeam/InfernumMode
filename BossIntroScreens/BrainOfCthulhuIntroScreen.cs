@@ -8,9 +8,9 @@ namespace InfernumMode.BossIntroScreens
 {
     public class BrainOfCthulhuIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new(completionRatio =>
+        public override TextColorData TextColor => new TextColorData(completionRatio =>
         {
-            Color ichorColor = new(250, 171, 4);
+            Color ichorColor = new Color(250, 171, 4);
             return Color.Lerp(Color.IndianRed, ichorColor, ((float)Math.Sin(completionRatio * MathHelper.Pi * 3f + AnimationCompletion * MathHelper.PiOver2) * 0.5f + 0.5f) * 0.6f);
         });
 

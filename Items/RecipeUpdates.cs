@@ -20,7 +20,7 @@ namespace InfernumMode.Items
         {
             Main.recipe.Where(x => x.createItem.type == itemType).ToList().ForEach(s =>
             {
-                for (int i = 0; i < s.requiredItem.Count; i++)
+                for (int i = 0; i < s.requiredItem.Length; i++)
                 {
                     if (s.requiredItem[i].type == ingredientType)
                         s.requiredItem[i] = new Item();

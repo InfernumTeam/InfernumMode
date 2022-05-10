@@ -6,6 +6,8 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
+using TMLSoundType = Terraria.ModLoader.SoundType;
+
 namespace InfernumMode.BossIntroScreens
 {
     public class TwinsIntroScreen : BaseIntroScreen
@@ -23,12 +25,12 @@ namespace InfernumMode.BossIntroScreens
         public override void PrepareShader(Effect shader)
         {
             shader.Parameters["uColor"].SetValue(new Vector3(0.12f, 0.86f, 0.52f));
-            shader.GraphicsDevice.Textures[1] = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/DiagonalGleam").Value;
+            shader.GraphicsDevice.Textures[1] = ModContent.GetTexture("InfernumMode/ExtraTextures/DiagonalGleam");
         }
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(NPCID.Retinazer) || NPC.AnyNPCs(NPCID.Spazmatism);
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.Instance, "Sounds/Custom/ThanatosTransition");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.Instance.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/ThanatosTransition");
 
         public override LegacySoundStyle SoundToPlayWithLetterAddition => SoundID.NPCHit4;
 
@@ -36,7 +38,7 @@ namespace InfernumMode.BossIntroScreens
 
         public override float LetterDisplayCompletionRatio(int animationTimer)
         {
-            float completionRatio = Utils.GetLerpValue(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
+            float completionRatio = Utils.InverseLerp(TextDelayInterpolant, 0.92f, animationTimer / (float)AnimationTime, true);
 
             // If the completion ratio exceeds the point where the name is displayed, display all letters.
             int startOfLargeTextIndex = TextToDisplay.IndexOf('\n');

@@ -1,52 +1,53 @@
 using CalamityMod.Events;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
-	public class IchorGelWave : ModProjectile
+    public class IchorGelWave : ModProjectile
     {
         public override void SetStaticDefaults() => DisplayName.SetDefault("Ichor Gel Wave");
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 30;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 300;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
+            projectile.width = projectile.height = 30;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.timeLeft = 300;
+            projectile.penetrate = -1;
+            projectile.tileCollide = false;
         }
 
         public override void AI()
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            Projectile.Opacity = Utils.GetLerpValue(300f, 290f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 10f, Projectile.timeLeft, true) * 0.6f;
+            projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            projectile.Opacity = Utils.InverseLerp(300f, 290f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * 0.6f;
 
-            if (Projectile.velocity.Length() < 29f)
-                Projectile.velocity *= BossRushEvent.BossRushActive ? 1.0325f : 1.0215f;
+            if (projectile.velocity.Length() < 29f)
+                projectile.velocity *= BossRushEvent.BossRushActive ? 1.0325f : 1.0215f;
 
-            if (Projectile.timeLeft < 50)
-                Projectile.velocity *= 0.98f;
+            if (projectile.timeLeft < 50)
+                projectile.velocity *= 0.98f;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            if (Projectile.timeLeft > 295)
+            if (projectile.timeLeft > 295)
                 return false;
 
-            Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 2);
+            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 2);
             return false;
         }
 
-        public override Color? GetAlpha(Color lightColor) => new Color(200, 200, 200, Projectile.alpha) * Projectile.Opacity;
+        public override Color? GetAlpha(Color lightColor) => new Color(200, 200, 200, projectile.alpha) * projectile.Opacity;
 
         public override void Kill(int timeLeft)
         {
             for (int k = 0; k < 3; k++)
-                Dust.NewDust(Projectile.position + Projectile.velocity, Projectile.width, Projectile.height, 170, Projectile.oldVelocity.X * 0.5f, Projectile.oldVelocity.Y * 0.5f);
+                Dust.NewDust(projectile.position + projectile.velocity, projectile.width, projectile.height, 170, projectile.oldVelocity.X * 0.5f, projectile.oldVelocity.Y * 0.5f);
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

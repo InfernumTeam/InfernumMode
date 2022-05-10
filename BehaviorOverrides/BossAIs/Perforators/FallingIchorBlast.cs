@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using CalamityMod;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 {
@@ -11,47 +12,47 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Ichor Blob");
-            ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
-            ProjectileID.Sets.TrailCacheLength[Projectile.type] = 2;
+            ProjectileID.Sets.TrailingMode[projectile.type] = 0;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 2;
         }
 
         public override void SetDefaults()
         {
-            Projectile.width = 52;
-            Projectile.height = 56;
-            Projectile.hostile = true;
-            Projectile.ignoreWater = true;
-            Projectile.tileCollide = true;
-            Projectile.penetrate = -1;
+            projectile.width = 52;
+            projectile.height = 56;
+            projectile.hostile = true;
+            projectile.ignoreWater = true;
+            projectile.tileCollide = true;
+            projectile.penetrate = -1;
         }
 
         public override void AI()
         {
-            if (Projectile.position.Y > Projectile.ai[1] - 32f)
-                Projectile.tileCollide = true;
+            if (projectile.position.Y > projectile.ai[1] - 32f)
+                projectile.tileCollide = true;
 
             // Add yellow light based on alpha
-            Lighting.AddLight(Projectile.Center, (255 - Projectile.alpha) * 0.2f / 255f, (255 - Projectile.alpha) * 0.16f / 255f, (255 - Projectile.alpha) * 0.04f / 255f);
+            Lighting.AddLight(projectile.Center, (255 - projectile.alpha) * 0.2f / 255f, (255 - projectile.alpha) * 0.16f / 255f, (255 - projectile.alpha) * 0.04f / 255f);
 
             // Rotate.
-            Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
+            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             // Reduce x velocity every frame.
-            Projectile.velocity.X *= 0.9925f;
+            projectile.velocity.X *= 0.9925f;
 
             // Die if water or lava is hit.
-            if (Projectile.wet || Projectile.lavaWet)
-                Projectile.Kill();
+            if (projectile.wet || projectile.lavaWet)
+                projectile.Kill();
             else
             {
                 // Fall.
-                Projectile.velocity.Y += 0.26f;
-                if (Projectile.velocity.Y > 9f)
-                    Projectile.velocity.Y = 9f;
+                projectile.velocity.Y += 0.26f;
+                if (projectile.velocity.Y > 9f)
+                    projectile.velocity.Y = 9f;
             }
         }
 
-        public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
+        public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough)
         {
             fallThrough = true;
             return true;
@@ -59,13 +60,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
         public override bool OnTileCollide(Vector2 oldVelocity) => true;
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CalamityUtils.CircularHitboxCollision(Projectile.Center, 16f, targetHitbox);
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CalamityUtils.CircularHitboxCollision(projectile.Center, 16f, targetHitbox);
 
-        public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, Projectile.alpha);
+        public override Color? GetAlpha(Color lightColor) => new Color(255, 255, 255, projectile.alpha);
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            CalamityUtils.DrawAfterimagesCentered(Projectile, ProjectileID.Sets.TrailingMode[Projectile.type], lightColor);
+            CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], lightColor);
             return false;
         }
 

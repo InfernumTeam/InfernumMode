@@ -7,12 +7,11 @@ using InfernumMode.BehaviorOverrides.BossAIs.Perforators;
 using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using System;
-using Terraria.Audio;
 using CalamityMod;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 {
-    public class MediumPerforatorHeadBehaviorOverride : NPCBehaviorOverride
+	public class MediumPerforatorHeadBehaviorOverride : NPCBehaviorOverride
     {
         public override int NPCOverrideType => ModContent.NPCType<PerforatorHeadMedium>();
 
@@ -48,8 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
             // Fly towards the target.
-            float xDamp = Utils.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.2f, 1f);
-            float yDamp = Utils.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.2f, 1f);
+            float xDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitX)), 0f, 1f, 0.2f, 1f);
+            float yDamp = Utilities.Remap(Math.Abs(Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), Vector2.UnitY)), 0f, 1f, 0.2f, 1f);
             Vector2 flyDestination = target.Center;
 
             if (npc.WithinRange(flyDestination, 400f) && npc.velocity.Length() > 6f)
@@ -65,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             bool readyToFire = attackTimer % toothBallReleaseRate == toothBallReleaseRate - 1f;
             if (!npc.WithinRange(target.Center, 225f) && readyToFire)
             {
-                SoundEngine.PlaySound(SoundID.NPCHit20, npc.Center);
+                Main.PlaySound(SoundID.NPCHit20, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 toothBallShootVelocity = npc.SafeDirectionTo(target.Center) * toothBallShootSpeed;

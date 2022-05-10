@@ -6,8 +6,6 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
-using Terraria.GameContent;
 
 namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 {
@@ -105,7 +103,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
                     idealRotation += MathHelper.Pi;
                 npc.rotation = idealRotation;
 
-                SoundEngine.PlaySound(SoundID.DD2_BetsyWindAttack, target.Center);
+                Main.PlaySound(SoundID.DD2_BetsyWindAttack, target.Center);
             }
 
             // Flap wings faster depending on fly speed.
@@ -174,7 +172,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
                 if (attackTimer % 6f == 5f)
                 {
-                    SoundEngine.PlayTrackedSound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                    Main.PlayTrackedSound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                     Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 140f, 20f).RotatedBy(npc.rotation);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -201,8 +199,8 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
             if (attackTimer == summonTime / 2)
             {
-                SoundEngine.PlaySound(SoundID.DD2_BetsySummon, target.Center);
-                SoundEngine.PlaySound(SoundID.DD2_BetsyScream, target.Center);
+                Main.PlaySound(SoundID.DD2_BetsySummon, target.Center);
+                Main.PlaySound(SoundID.DD2_BetsyScream, target.Center);
             }
             if (attackTimer >= summonTime / 2 && attackTimer % 4f == 3f && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -317,7 +315,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
             // Do the charge.
             if (attackTimer == hoverRedirectTime)
             {
-                SoundEngine.PlayTrackedSound(SoundID.DD2_BetsyFlameBreath, npc.Center);
+                Main.PlayTrackedSound(SoundID.DD2_BetsyFlameBreath, npc.Center);
                 npc.velocity = Vector2.UnitX * (target.Center.X > npc.Center.X).ToDirectionInt() * horizontalFlySpeed;
                 npc.spriteDirection = (npc.velocity.X > 0f).ToDirectionInt();
                 Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ProjectileID.DD2BetsyFlameBreath, 190, 0f, -1, 0f, npc.whoAmI);
@@ -335,7 +333,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
                 if (attackTimer % 10f == 9f)
                 {
-                    SoundEngine.PlayTrackedSound(SoundID.DD2_BetsyFireballShot, npc.Center);
+                    Main.PlayTrackedSound(SoundID.DD2_BetsyFireballShot, npc.Center);
 
                     Vector2 mouthPosition = npc.Center + new Vector2(npc.spriteDirection * 140f, 20f).RotatedBy(npc.rotation);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -383,9 +381,9 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D npcTexture = TextureAssets.Npc[npc.type].Value;
-            Texture2D wingsTexture = TextureAssets.Extra[81].Value;
-            Texture2D armsTexture = TextureAssets.Extra[82].Value;
+            Texture2D npcTexture = Main.npcTexture[npc.type];
+            Texture2D wingsTexture = Main.extraTexture[81];
+            Texture2D armsTexture = Main.extraTexture[82];
             SpriteEffects direction = (npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally);
 
             int wingArmFrame = (int)(npc.localAI[1] / 4f) % 9;
@@ -398,7 +396,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
                 armsDrawOffset.X *= -1f;
 
             Rectangle armFrame = armsTexture.Frame(2, 5, wingArmFrame / 5, wingArmFrame % 5);
-            Vector2 armsOrigin = new(16f, 176f);
+            Vector2 armsOrigin = new Vector2(16f, 176f);
             if (direction.HasFlag(SpriteEffects.FlipHorizontally))
                 armsOrigin.X = armFrame.Width - armsOrigin.X;
             if (direction.HasFlag(SpriteEffects.FlipHorizontally))
@@ -408,7 +406,7 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
                 wingsDrawOffset.X *= -1f;
 
             Rectangle wingsFrame = wingsTexture.Frame(2, 5, wingArmFrame / 5, wingArmFrame % 5);
-            Vector2 wingsOrigin = new(215f, 170f);
+            Vector2 wingsOrigin = new Vector2(215f, 170f);
             if (direction.HasFlag(SpriteEffects.FlipHorizontally))
                 wingsOrigin.X = wingsFrame.Width - wingsOrigin.X;
 
@@ -421,13 +419,13 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
                 Color afterimageColor = color * (1f - i / 10f) * 0.35f;
                 afterimageColor.A /= 2;
 
-                Main.spriteBatch.Draw(armsTexture, afterimageDrawPosition + armsDrawOffset.RotatedBy(oldRotation), armFrame, afterimageColor, oldRotation, armsOrigin, 1f, direction, 0f);
-                Main.spriteBatch.Draw(npcTexture, afterimageDrawPosition, npc.frame, afterimageColor, oldRotation, npcOrigin, 1f, direction, 0f);
-                Main.spriteBatch.Draw(wingsTexture, afterimageDrawPosition + wingsDrawOffset.RotatedBy(oldRotation), wingsFrame, afterimageColor, oldRotation, wingsOrigin, 1f, direction, 0f);
+                spriteBatch.Draw(armsTexture, afterimageDrawPosition + armsDrawOffset.RotatedBy(oldRotation), armFrame, afterimageColor, oldRotation, armsOrigin, 1f, direction, 0f);
+                spriteBatch.Draw(npcTexture, afterimageDrawPosition, npc.frame, afterimageColor, oldRotation, npcOrigin, 1f, direction, 0f);
+                spriteBatch.Draw(wingsTexture, afterimageDrawPosition + wingsDrawOffset.RotatedBy(oldRotation), wingsFrame, afterimageColor, oldRotation, wingsOrigin, 1f, direction, 0f);
             }
-            Main.spriteBatch.Draw(armsTexture, drawPosition + armsDrawOffset.RotatedBy(npc.rotation), armFrame, color, npc.rotation, armsOrigin, 1f, direction, 0f);
-            Main.spriteBatch.Draw(npcTexture, drawPosition, npc.frame, color, npc.rotation, npcOrigin, 1f, direction, 0f);
-            Main.spriteBatch.Draw(wingsTexture, drawPosition + wingsDrawOffset.RotatedBy(npc.rotation), wingsFrame, color, npc.rotation, wingsOrigin, 1f, direction, 0f);
+            spriteBatch.Draw(armsTexture, drawPosition + armsDrawOffset.RotatedBy(npc.rotation), armFrame, color, npc.rotation, armsOrigin, 1f, direction, 0f);
+            spriteBatch.Draw(npcTexture, drawPosition, npc.frame, color, npc.rotation, npcOrigin, 1f, direction, 0f);
+            spriteBatch.Draw(wingsTexture, drawPosition + wingsDrawOffset.RotatedBy(npc.rotation), wingsFrame, color, npc.rotation, wingsOrigin, 1f, direction, 0f);
             return false;
         }
     }

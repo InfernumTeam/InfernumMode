@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.WorldBuilding;
+using Terraria.World.Generation;
 
 namespace InfernumMode
 {

@@ -20,7 +20,7 @@ float uSaturation;
 float4 uSourceRect;
 float2 uZoom;
 
-float GetLerpValue(float x, float from, float to)
+float InverseLerp(float x, float from, float to)
 {
     return saturate((x - from) / (to - from));
 }
@@ -29,7 +29,7 @@ float4 Filter(float2 coords : TEXCOORD0) : COLOR0
     float4 color = tex2D(uImage0, coords);
     float distanceFromCenter = saturate(distance(coords, 0.5) * 1.414);
     float vignetteStart = lerp(1, 0.85, uIntensity);
-    float vignetteOpacity = GetLerpValue(vignetteStart, distanceFromCenter, 1);
+    float vignetteOpacity = InverseLerp(vignetteStart, distanceFromCenter, 1);
     return color * lerp(0.7, 1, vignetteOpacity);
 }
 

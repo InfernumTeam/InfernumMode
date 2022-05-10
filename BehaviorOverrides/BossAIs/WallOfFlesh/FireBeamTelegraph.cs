@@ -1,62 +1,62 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 {
-	public class FireBeamTelegraph : ModProjectile
+    public class FireBeamTelegraph : ModProjectile
     {
-        public ref float TargetIndex => ref Projectile.ai[0];
-        public NPC Owner => Main.npc[(int)Projectile.ai[1]];
+        public ref float TargetIndex => ref projectile.ai[0];
+        public NPC Owner => Main.npc[(int)projectile.ai[1]];
         public Player Target => Main.player[(int)TargetIndex];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults() => DisplayName.SetDefault("Telegraph");
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 2;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.timeLeft = 85;
-            Projectile.penetrate = -1;
+            projectile.width = projectile.height = 2;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.timeLeft = 85;
+            projectile.penetrate = -1;
         }
 
         public override void AI()
         {
             // Determine an initial target.
-            if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.localAI[0] == 0f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.localAI[0] == 0f)
             {
-                TargetIndex = Player.FindClosest(Projectile.Center, 1, 1);
-                Projectile.localAI[0] = 1f;
-                Projectile.netUpdate = true;
+                TargetIndex = Player.FindClosest(projectile.Center, 1, 1);
+                projectile.localAI[0] = 1f;
+                projectile.netUpdate = true;
             }
 
-            Projectile.scale = Utils.GetLerpValue(0f, 10f, Projectile.timeLeft, true) * Utils.GetLerpValue(85f, 75f, Projectile.timeLeft, true);
-            Projectile.scale = MathHelper.SmoothStep(0.04f, 4f, Projectile.scale);
+            projectile.scale = Utils.InverseLerp(0f, 10f, projectile.timeLeft, true) * Utils.InverseLerp(85f, 75f, projectile.timeLeft, true);
+            projectile.scale = MathHelper.SmoothStep(0.04f, 4f, projectile.scale);
 
             // Try to aim at the target.
-            if (Projectile.timeLeft > 32f)
-                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.SafeDirectionTo(Target.Center), 0.09f);
+            if (projectile.timeLeft > 32f)
+                projectile.velocity = Vector2.Lerp(projectile.velocity, projectile.SafeDirectionTo(Target.Center), 0.09f);
 
-            Projectile.Center = Owner.Center + Projectile.velocity.SafeNormalize(Vector2.UnitY) * 70f;
+            projectile.Center = Owner.Center + projectile.velocity.SafeNormalize(Vector2.UnitY) * 70f;
 
             if (!Owner.active)
-                Projectile.Kill();
+                projectile.Kill();
 
-            Owner.rotation = Projectile.velocity.ToRotation();
+            Owner.rotation = projectile.velocity.ToRotation();
             if (Owner.direction < 0)
                 Owner.rotation += MathHelper.Pi;
 
-            if (Projectile.timeLeft > 30)
+            if (projectile.timeLeft > 30)
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    Dust fire = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2CircularEdge(40f, 40f), 264);
+                    Dust fire = Dust.NewDustPerfect(projectile.Center + Main.rand.NextVector2CircularEdge(40f, 40f), 264);
                     fire.color = Color.Orange;
-                    fire.velocity = (Projectile.Center - fire.position) * 0.08f;
+                    fire.velocity = (projectile.Center - fire.position) * 0.08f;
                     fire.fadeIn = 0.5f;
                     fire.noGravity = true;
                     fire.noLight = true;
@@ -64,17 +64,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
             }
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Vector2 aimDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
+            Vector2 aimDirection = projectile.velocity.SafeNormalize(Vector2.UnitY);
 
             for (int i = 0; i <= 4; i++)
             {
-                float lineWidth = MathHelper.SmoothStep(0.25f, 1f, i / 4f) * Projectile.scale;
+                float lineWidth = MathHelper.SmoothStep(0.25f, 1f, i / 4f) * projectile.scale;
                 Color lineColor = Color.Lerp(Color.White, Color.Orange, MathHelper.Lerp(0.15f, 1f, i / 4f));
                 lineColor.A = 0;
 
-                Main.spriteBatch.DrawLineBetter(Projectile.Center, Projectile.Center + aimDirection * 2050f, lineColor, lineWidth);
+                spriteBatch.DrawLineBetter(projectile.Center, projectile.Center + aimDirection * 2050f, lineColor, lineWidth);
             }
             return false;
         }
@@ -84,19 +84,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
         public override void Kill(int timeLeft)
         {
             if (Target.Center.Y > (Main.maxTilesY - 300f) * 16f)
-                SoundEngine.PlaySound(SoundID.Item74, Target.Center);
+                Main.PlaySound(SoundID.Item74, Target.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            Vector2 beamDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-            int beam = Utilities.NewProjectileBetter(Projectile.Center, beamDirection, ModContent.ProjectileType<FireBeamWoF>(), 220, 0f);
+            Vector2 beamDirection = projectile.velocity.SafeNormalize(Vector2.UnitY);
+            int beam = Utilities.NewProjectileBetter(projectile.Center, beamDirection, ModContent.ProjectileType<FireBeamWoF>(), 220, 0f);
             if (Main.projectile.IndexInRange(beam))
                 Main.projectile[beam].ai[1] = Owner.whoAmI;
         }
 
         public override void ModifyHitPlayer(Player target, ref int damage, ref bool crit)
         {
-            target.Calamity().lastProjectileHit = Projectile;
+            target.Calamity().lastProjectileHit = projectile;
         }
     }
 }

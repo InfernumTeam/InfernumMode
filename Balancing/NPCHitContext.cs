@@ -1,6 +1,5 @@
 using CalamityMod;
 using Terraria;
-using Terraria.ModLoader;
 
 namespace InfernumMode.Balancing
 {
@@ -18,11 +17,11 @@ namespace InfernumMode.Balancing
             ClassType? classType = null;
             if (proj.active)
             {
-                if (proj.CountsAsClass(DamageClass.Melee))
+                if (proj.melee)
                     classType = ClassType.Melee;
-                if (proj.CountsAsClass(DamageClass.Ranged))
+                if (proj.ranged)
                     classType = ClassType.Ranged;
-                if (proj.CountsAsClass(DamageClass.Magic))
+                if (proj.magic)
                     classType = ClassType.Magic;
                 if (proj.minion)
                     classType = ClassType.Summon;

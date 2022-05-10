@@ -5,16 +5,18 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;
 
+using TMLSoundType = Terraria.ModLoader.SoundType;
+
 namespace InfernumMode.BossIntroScreens
 {
-	public class SlimeGodIntroScreen : BaseIntroScreen
+    public class SlimeGodIntroScreen : BaseIntroScreen
     {
-        public override TextColorData TextColor => new(completionRatio =>
+        public override TextColorData TextColor => new TextColorData(completionRatio =>
         {
-            Color redSlimeColor = new(170, 25, 57);
-            Color purpleSlimeColor = new(108, 67, 108);
+            Color redSlimeColor = new Color(170, 25, 57);
+            Color purpleSlimeColor = new Color(108, 67, 108);
 
-            float colorSpan = (float)Math.Abs(Math.Tan(MathHelper.Pi * completionRatio + Main.GlobalTimeWrappedHourly * 3f));
+            float colorSpan = (float)Math.Abs(Math.Tan(MathHelper.Pi * completionRatio + Main.GlobalTime * 3f));
 
             // Perform special checks to prevent potential exceptions causing problems with draw-logic or precision errors.
             if (float.IsInfinity(colorSpan) || float.IsNaN(colorSpan))
@@ -22,7 +24,7 @@ namespace InfernumMode.BossIntroScreens
             if (colorSpan > 1000f)
                 colorSpan = 1000f;
 
-            float colorInterpolant = Utils.GetLerpValue(0f, 0.5f, colorSpan, true);
+            float colorInterpolant = Utils.InverseLerp(0f, 0.5f, colorSpan, true);
             return Color.Lerp(redSlimeColor, purpleSlimeColor, colorInterpolant);
         });
 
@@ -34,6 +36,6 @@ namespace InfernumMode.BossIntroScreens
 
         public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<SlimeGodCore>());
 
-        public override LegacySoundStyle SoundToPlayWithTextCreation => SoundLoader.GetLegacySoundSlot(InfernumMode.CalamityMod, "Sounds/Custom/SlimeGodPossession");
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/SlimeGodPossession");
     }
 }

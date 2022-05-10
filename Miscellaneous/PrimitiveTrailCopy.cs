@@ -18,7 +18,7 @@ namespace InfernumMode
             public Vector2 TextureCoordinates;
             public VertexDeclaration VertexDeclaration => _vertexDeclaration;
 
-            private static readonly VertexDeclaration _vertexDeclaration = new(new VertexElement[]
+            private static readonly VertexDeclaration _vertexDeclaration = new VertexDeclaration(new VertexElement[]
             {
                 new VertexElement(0, VertexElementFormat.Vector2, VertexElementUsage.Position, 0),
                 new VertexElement(8, VertexElementFormat.Color, VertexElementUsage.Color, 0),
@@ -103,7 +103,7 @@ namespace InfernumMode
             if (!UsesSmoothening)
             {
                 List<Vector2> basePoints = originalPositions.Where(originalPosition => originalPosition != Vector2.Zero).ToList();
-                List<Vector2> endPoints = new();
+                List<Vector2> endPoints = new List<Vector2>();
 
                 if (basePoints.Count < 3)
                     return endPoints;
@@ -120,7 +120,7 @@ namespace InfernumMode
                 return endPoints;
             }
 
-            List<Vector2> controlPoints = new();
+            List<Vector2> controlPoints = new List<Vector2>();
             for (int i = 0; i < originalPositions.Count(); i++)
             {
                 // Don't incorporate points that are zeroed out.
@@ -134,13 +134,13 @@ namespace InfernumMode
                     offset += OffsetFunction(completionRatio);
                 controlPoints.Add(originalPositions.ElementAt(i) + offset);
             }
-            BezierCurve bezierCurve = new(controlPoints.ToArray());
+            BezierCurve bezierCurve = new BezierCurve(controlPoints.ToArray());
             return controlPoints.Count <= 1 ? controlPoints : bezierCurve.GetPoints(totalTrailPoints);
         }
 
         public VertexPosition2DColor[] GetVerticesFromTrailPoints(List<Vector2> trailPoints, float? directionOverride = null)
         {
-            List<VertexPosition2DColor> vertices = new();
+            List<VertexPosition2DColor> vertices = new List<VertexPosition2DColor>();
             for (int i = 0; i < trailPoints.Count - 1; i++)
             {
                 float completionRatio = i / (float)trailPoints.Count;
@@ -153,12 +153,12 @@ namespace InfernumMode
                 if (directionOverride.HasValue)
                     directionToAhead = directionOverride.Value.ToRotationVector2();
 
-                Vector2 leftCurrentTextureCoord = new(completionRatio, 0f);
-                Vector2 rightCurrentTextureCoord = new(completionRatio, 1f);
+                Vector2 leftCurrentTextureCoord = new Vector2(completionRatio, 0f);
+                Vector2 rightCurrentTextureCoord = new Vector2(completionRatio, 1f);
 
                 // Point 90 degrees away from the direction towards the next point, and use it to mark the edges of the rectangle.
                 // This doesn't use RotatedBy for the sake of performance (there can potentially be a lot of trail points).
-                Vector2 sideDirection = new(-directionToAhead.Y, directionToAhead.X);
+                Vector2 sideDirection = new Vector2(-directionToAhead.Y, directionToAhead.X);
 
                 // What this is doing, at its core, is defining a rectangle based on two triangles.
                 // These triangles are defined based on the width of the strip at that point.
@@ -170,7 +170,7 @@ namespace InfernumMode
             return vertices.ToArray();
         }
 
-        public static short[] GetIndicesFromTrailPoints(int pointCount)
+        public short[] GetIndicesFromTrailPoints(int pointCount)
         {
             // What this is doing is basically representing each point on the vertices list as
             // indices. These indices should come together to create a tiny rectangle that acts

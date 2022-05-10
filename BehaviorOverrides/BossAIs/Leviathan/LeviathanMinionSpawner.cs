@@ -6,14 +6,13 @@ using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.WorldBuilding;
-using Terraria.Audio;
+using Terraria.World.Generation;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 {
     public class LeviathanMinionSpawner : ModProjectile
     {
-        internal ref float Time => ref Projectile.ai[1];
+        internal ref float Time => ref projectile.ai[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults()
         {
@@ -22,12 +21,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override void SetDefaults()
         {
-            Projectile.width = Projectile.height = 20;
-            Projectile.hostile = true;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.netImportant = true;
-            Projectile.timeLeft = 150;
+            projectile.width = projectile.height = 20;
+            projectile.hostile = true;
+            projectile.tileCollide = false;
+            projectile.ignoreWater = true;
+            projectile.netImportant = true;
+            projectile.timeLeft = 150;
         }
 
         public override void AI()
@@ -41,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (Main.netMode == NetmodeID.Server)
                 return;
 
-            WorldUtils.Find((Projectile.Center - Vector2.UnitY * 1200f).ToTileCoordinates(), Searches.Chain(new Searches.Down(150), new CustomTileConditions.IsWater()), out Point waterTop);
+            WorldUtils.Find((projectile.Center - Vector2.UnitY * 1200f).ToTileCoordinates(), Searches.Chain(new Searches.Down(150), new CustomTileConditions.IsWater()), out Point waterTop);
 
             // Making bubbling water as an indicator.
             if (Time % 4f == 3f && Time > 50f)
@@ -57,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
                 for (float x = -xArea; x <= xArea; x += 50f)
                 {
                     // As well as liquid disruption.
-                    float ripplePower = MathHelper.Lerp(20f, 50f, (float)Math.Sin(Main.GlobalTimeWrappedHourly + x / xArea * MathHelper.TwoPi) * 0.5f + 0.5f);
+                    float ripplePower = MathHelper.Lerp(20f, 50f, (float)Math.Sin(Main.GlobalTime + x / xArea * MathHelper.TwoPi) * 0.5f + 0.5f);
                     ripplePower *= MathHelper.Lerp(0.5f, 1f, Time / 150f);
 
                     WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
@@ -69,11 +68,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Zombie, Projectile.Center, 40);
+            Main.PlaySound(SoundID.Zombie, projectile.Center, 40);
             if (Main.netMode != NetmodeID.Server)
             {
                 WaterShaderData ripple = (WaterShaderData)Filters.Scene["WaterDistortion"].GetShader();
-                Vector2 ripplePos = Projectile.Center;
+                Vector2 ripplePos = projectile.Center;
 
                 for (int i = 0; i < 7; i++)
                     ripple.QueueRipple(ripplePos, Color.White, Vector2.One * 500f, RippleShape.Square, Main.rand.NextFloat(MathHelper.TwoPi));
@@ -81,7 +80,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            int spawnedNPC = NPC.NewNPC(new InfernumSource(), (int)Projectile.Center.X, (int)Projectile.Center.Y, (int)Projectile.ai[0]);
+            int spawnedNPC = NPC.NewNPC((int)projectile.Center.X, (int)projectile.Center.Y, (int)projectile.ai[0]);
             if (Main.npc.IndexInRange(spawnedNPC))
                 Main.npc[spawnedNPC].velocity = Vector2.UnitY.RotatedByRandom(0.4f) * -12f;
         }

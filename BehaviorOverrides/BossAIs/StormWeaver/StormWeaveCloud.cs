@@ -4,32 +4,31 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 {
     public class StormWeaveCloud : ModProjectile
     {
-        public ref float Time => ref Projectile.ai[0];
-        public ref float Variant => ref Projectile.ai[1];
+        public ref float Time => ref projectile.ai[0];
+        public ref float Variant => ref projectile.ai[1];
         public override string Texture => "CalamityMod/Projectiles/InvisibleProj";
         public override void SetStaticDefaults() => DisplayName.SetDefault("Cloud");
 
         public override void SetDefaults()
         {
-            Projectile.width = 72;
-            Projectile.height = 72;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
-            Projectile.timeLeft = 300;
-            Projectile.Opacity = 0f;
-            Projectile.scale = 0.01f;
+            projectile.width = 72;
+            projectile.height = 72;
+            projectile.penetrate = -1;
+            projectile.tileCollide = false;
+            projectile.timeLeft = 300;
+            projectile.Opacity = 0f;
+            projectile.scale = 0.01f;
         }
 
         public override void AI()
         {
-            Projectile.Opacity = Utils.GetLerpValue(300f, 285f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 35f, Projectile.timeLeft, true);
-            Projectile.scale = MathHelper.Clamp(Projectile.Opacity + 0.065f, 0f, 1f);
+            projectile.Opacity = Utils.InverseLerp(300f, 285f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 35f, projectile.timeLeft, true);
+            projectile.scale = MathHelper.Clamp(projectile.Opacity + 0.065f, 0f, 1f);
 
             if (Variant == 0f)
             {
@@ -37,37 +36,37 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
                 switch ((int)Variant)
                 {
                     case 1:
-                        Projectile.Size = new Vector2(530f, 218f);
+                        projectile.Size = new Vector2(530f, 218f);
                         break;
                     case 2:
-                        Projectile.Size = new Vector2(372f, 132f);
+                        projectile.Size = new Vector2(372f, 132f);
                         break;
                     case 3:
-                        Projectile.Size = new Vector2(296f, 116f);
+                        projectile.Size = new Vector2(296f, 116f);
                         break;
                     case 4:
-                        Projectile.Size = new Vector2(226f, 68f);
+                        projectile.Size = new Vector2(226f, 68f);
                         break;
                 }
 
-                Projectile.netUpdate = true;
+                projectile.netUpdate = true;
             }
 
-            Projectile.velocity = Projectile.velocity.MoveTowards(Vector2.Zero, 0.04f) * 0.985f;
+            projectile.velocity = projectile.velocity.MoveTowards(Vector2.Zero, 0.04f) * 0.985f;
 
             if (Time > 60f)
             {
-                for (int i = 0; i < Projectile.width / 105f; i++)
+                for (int i = 0; i < projectile.width / 105f; i++)
                 {
                     if (!Main.rand.NextBool(92))
                         continue;
 
-                    SoundEngine.PlaySound(SoundID.DD2_LightningAuraZap, Projectile.Center);
+                    Main.PlaySound(SoundID.DD2_LightningAuraZap, projectile.Center);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 sparkVelocity = Vector2.UnitY * Main.rand.NextFloat(12f, 16f);
-                        Vector2 sparkSpawnPosition = Projectile.Bottom + new Vector2(Main.rand.NextFloatDirection() * Projectile.width * 0.45f, Main.rand.NextFloat(-8f, 0f));
+                        Vector2 sparkSpawnPosition = projectile.Bottom + new Vector2(Main.rand.NextFloatDirection() * projectile.width * 0.45f, Main.rand.NextFloat(-8f, 0f));
                         Utilities.NewProjectileBetter(sparkSpawnPosition, sparkVelocity, ModContent.ProjectileType<WeaverSpark2>(), 255, 0f);
                         Utilities.NewProjectileBetter(sparkSpawnPosition, -sparkVelocity, ModContent.ProjectileType<WeaverSpark2>(), 255, 0f);
                     }
@@ -79,28 +78,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return Color.Lerp(lightColor, Color.Black, Utils.GetLerpValue(0f, 25f, Time, true) * 0.45f) * Projectile.Opacity;
+            return Color.Lerp(lightColor, Color.Black, Utils.InverseLerp(0f, 25f, Time, true) * 0.45f) * projectile.Opacity;
         }
 
-        public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            if (Variant is <= 0f or > 4f)
+            if (Variant <= 0f || Variant > 4f)
                 return false;
 
-            Texture2D texture = ModContent.Request<Texture2D>($"InfernumMode/BehaviorOverrides/BossAIs/StormWeaver/StormWeaveCloud{(int)Variant}").Value;
+            Texture2D texture = ModContent.GetTexture($"InfernumMode/BehaviorOverrides/BossAIs/StormWeaver/StormWeaveCloud{(int)Variant}");
             Vector2 origin = texture.Size() * 0.5f;
 
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Color frontAfterimageColor = Projectile.GetAlpha(Color.Lerp(lightColor, Color.Cyan, 0.8f)) * 0.25f;
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Color frontAfterimageColor = projectile.GetAlpha(Color.Lerp(lightColor, Color.Cyan, 0.8f)) * 0.25f;
             for (int i = 0; i < 8; i++)
             {
                 Vector2 drawOffset = (MathHelper.TwoPi * i / 8f).ToRotationVector2();
-                drawOffset *= MathHelper.Lerp(-1f, 8f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 1.3f) * 0.5f + 0.5f);
+                drawOffset *= MathHelper.Lerp(-1f, 8f, (float)Math.Sin(Main.GlobalTime * 1.3f) * 0.5f + 0.5f);
 
                 Vector2 afterimageDrawPosition = drawPosition + drawOffset;
-                Main.spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, afterimageDrawPosition, null, frontAfterimageColor, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             }
-            Main.spriteBatch.Draw(texture, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

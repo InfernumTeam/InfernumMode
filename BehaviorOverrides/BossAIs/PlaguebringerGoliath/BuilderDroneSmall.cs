@@ -4,68 +4,67 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.Audio;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 {
     public class BuilderDroneSmall : ModNPC
     {
         public Vector2 GeneralHoverPosition;
-        public Player Target => Main.player[NPC.target];
-        public ref float GeneralTimer => ref NPC.ai[0];
+        public Player Target => Main.player[npc.target];
+        public ref float GeneralTimer => ref npc.ai[0];
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Small Builder Drone");
-            Main.npcFrameCount[NPC.type] = 5;
+            Main.npcFrameCount[npc.type] = 5;
         }
 
         public override void SetDefaults()
         {
-            NPC.damage = 100;
-            NPC.npcSlots = 0f;
-            NPC.width = NPC.height = 42;
-            NPC.defense = 15;
-            NPC.lifeMax = 1200;
+            npc.damage = 100;
+            npc.npcSlots = 0f;
+            npc.width = npc.height = 42;
+            npc.defense = 15;
+            npc.lifeMax = 1200;
             if (BossRushEvent.BossRushActive)
-                NPC.lifeMax = 11256;
+                npc.lifeMax = 11256;
 
-            NPC.aiStyle = AIType = -1;
-            NPC.knockBackResist = 0f;
-            NPC.noGravity = true;
-            NPC.noTileCollide = true;
-            NPC.canGhostHeal = false;
-            NPC.HitSound = SoundID.NPCHit4;
-            NPC.DeathSound = SoundID.NPCDeath14;
+            npc.aiStyle = aiType = -1;
+            npc.knockBackResist = 0f;
+            npc.noGravity = true;
+            npc.noTileCollide = true;
+            npc.canGhostHeal = false;
+            npc.HitSound = SoundID.NPCHit4;
+            npc.DeathSound = SoundID.NPCDeath14;
         }
 
         public override void AI()
         {
-            Lighting.AddLight(NPC.Center, 0.03f, 0.2f, 0f);
+            Lighting.AddLight(npc.Center, 0.03f, 0.2f, 0f);
 
             // Handle despawn stuff.
             if (!Target.active || Target.dead)
             {
-                NPC.TargetClosest(false);
+                npc.TargetClosest(false);
                 if (!Target.active || Target.dead)
                 {
-                    if (NPC.timeLeft > 10)
-                        NPC.timeLeft = 10;
+                    if (npc.timeLeft > 10)
+                        npc.timeLeft = 10;
                     return;
                 }
             }
-            else if (NPC.timeLeft > 600)
-                NPC.timeLeft = 600;
+            else if (npc.timeLeft > 600)
+                npc.timeLeft = 600;
 
-            NPC.dontTakeDamage = GeneralTimer < 60f;
+            npc.dontTakeDamage = GeneralTimer < 60f;
 
             Vector2 continousHoverPosition = Target.Center + new Vector2(-280f, -225f);
-            continousHoverPosition += (NPC.whoAmI * 1.58436f).ToRotationVector2() * (float)Math.Cos(GeneralTimer / 17f) * 42f;
+            continousHoverPosition += (npc.whoAmI * 1.58436f).ToRotationVector2() * (float)Math.Cos(GeneralTimer / 17f) * 42f;
             if (Vector2.Distance(GeneralHoverPosition, continousHoverPosition) > 325f)
                 GeneralHoverPosition = continousHoverPosition;
 
             // Move in the general area of the hover position if not noticeably close or movement is very low.
-            if (!NPC.WithinRange(continousHoverPosition, 95f) || NPC.velocity.Length() < 2.25f)
-                NPC.SimpleFlyMovement(NPC.SafeDirectionTo(GeneralHoverPosition) * 11f, 0.9f);
+            if (!npc.WithinRange(continousHoverPosition, 95f) || npc.velocity.Length() < 2.25f)
+                npc.SimpleFlyMovement(npc.SafeDirectionTo(GeneralHoverPosition) * 11f, 0.9f);
 
             // Explode into rockets if the big builder is gone or the nuke has been launched.
             if (!NPC.AnyNPCs(ModContent.NPCType<BuilderDroneBig>()) || GeneralTimer >= PlagueNuke.BuildTime)
@@ -73,13 +72,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 rocketVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(9f, 13f);
-                    Vector2 rocketSpawnPosition = NPC.Center + rocketVelocity * 4f;
+                    Vector2 rocketSpawnPosition = npc.Center + rocketVelocity * 4f;
                     Utilities.NewProjectileBetter(rocketSpawnPosition, rocketVelocity, ModContent.ProjectileType<RedirectingPlagueMissile>(), 160, 0f);
                 }
 
-                NPC.life = 0;
-                NPC.checkDead();
-                NPC.active = false;
+                npc.life = 0;
+                npc.checkDead();
+                npc.active = false;
                 return;
             }
 
@@ -88,24 +87,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             {
                 NPC nuke = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<PlagueNuke>())];
                 Vector2 end = nuke.Center + Main.rand.NextVector2Circular(8f, 8f);
-                Dust.QuickDust(NPC.Center, Color.Lime).scale = 1.4f;
+                Dust.QuickDust(npc.Center, Color.Lime).scale = 1.4f;
                 Dust.QuickDust(end, Color.Lime).scale = 1.4f;
                 for (float num2 = 0f; num2 < 1f; num2 += 0.01f)
-                    Dust.QuickDust(Vector2.Lerp(NPC.Center, end, num2), Color.Lime).scale = 0.95f;
+                    Dust.QuickDust(Vector2.Lerp(npc.Center, end, num2), Color.Lime).scale = 0.95f;
 
                 switch (Main.rand.Next(4))
                 {
                     case 0:
-                        SoundEngine.PlaySound(SoundID.Item12, NPC.Center);
+                        Main.PlaySound(SoundID.Item12, npc.Center);
                         break;
                     case 1:
-                        SoundEngine.PlaySound(SoundID.Item15, NPC.Center);
+                        Main.PlaySound(SoundID.Item15, npc.Center);
                         break;
                     case 2:
-                        SoundEngine.PlaySound(SoundID.Item22, NPC.Center);
+                        Main.PlaySound(SoundID.Item22, npc.Center);
                         break;
                     case 3:
-                        SoundEngine.PlaySound(SoundID.Item23, NPC.Center);
+                        Main.PlaySound(SoundID.Item23, npc.Center);
                         break;
                 }
             }
@@ -113,19 +112,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
             GeneralTimer++;
         }
 
-        public override bool SpecialOnKill() => true;
+        public override bool PreNPCLoot() => false;
 
-		public override bool CheckDead()
+        public override bool CheckDead()
         {
-            SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, NPC.position);
+            Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.position);
 
-            NPC.position = NPC.Center;
-            NPC.width = NPC.height = 84;
-            NPC.Center = NPC.position;
+            npc.position = npc.Center;
+            npc.width = npc.height = 84;
+            npc.Center = npc.position;
 
             for (int i = 0; i < 15; i++)
             {
-                Dust plague = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 89, 0f, 0f, 100, default, 1.4f);
+                Dust plague = Dust.NewDustDirect(npc.position, npc.width, npc.height, 89, 0f, 0f, 100, default, 1.4f);
                 if (Main.rand.NextBool(2))
                 {
                     plague.scale = 0.5f;
@@ -137,11 +136,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             for (int i = 0; i < 30; i++)
             {
-                Dust plague = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 89, 0f, 0f, 100, default, 1.85f);
+                Dust plague = Dust.NewDustDirect(npc.position, npc.width, npc.height, 89, 0f, 0f, 100, default, 1.85f);
                 plague.noGravity = true;
                 plague.velocity *= 5f;
 
-                plague = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, 89, 0f, 0f, 100, default, 2f);
+                plague = Dust.NewDustDirect(npc.position, npc.width, npc.height, 89, 0f, 0f, 100, default, 2f);
                 plague.velocity *= 2f;
                 plague.noGravity = true;
             }
@@ -151,15 +150,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
         public override void FindFrame(int frameHeight)
         {
-            NPC.frameCounter++;
+            npc.frameCounter++;
 
-            if (NPC.frameCounter >= 5D)
+            if (npc.frameCounter >= 5D)
             {
-                NPC.frame.Y += frameHeight;
-                if (NPC.frame.Y >= frameHeight * Main.npcFrameCount[NPC.type])
-                    NPC.frame.Y = 0;
+                npc.frame.Y += frameHeight;
+                if (npc.frame.Y >= frameHeight * Main.npcFrameCount[npc.type])
+                    npc.frame.Y = 0;
 
-                NPC.frameCounter = 0D;
+                npc.frameCounter = 0D;
             }
         }
     }

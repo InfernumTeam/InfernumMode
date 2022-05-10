@@ -52,7 +52,7 @@ namespace InfernumMode.Balancing
             [ModContent.NPCType<HiveMindP1Boss>()] = BossRushEvent.BossRushActive ? 606007 : 9600,
             [ModContent.NPCType<PerforatorHive>()] = BossRushEvent.BossRushActive ? 420419 : 7265,
             [ModContent.NPCType<PerforatorHeadSmall>()] = BossRushEvent.BossRushActive ? 119000 : 3000,
-            [ModContent.NPCType<PerforatorBodyMedium>()] = BossRushEvent.BossRushActive ? 7675 : 160,
+            [ModContent.NPCType<PerforatorHeadMedium>()] = BossRushEvent.BossRushActive ? 200000 : 4335,
             [ModContent.NPCType<PerforatorHeadLarge>()] = BossRushEvent.BossRushActive ? 174500 : 5500,
             [NPCID.QueenBee] = BossRushEvent.BossRushActive ? 611100 : 9669,
             [NPCID.SkeletronHead] = BossRushEvent.BossRushActive ? 608105 : 13860,

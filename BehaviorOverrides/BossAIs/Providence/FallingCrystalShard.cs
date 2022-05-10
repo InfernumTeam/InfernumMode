@@ -31,7 +31,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             Projectile.velocity.X *= 0.99f;
-            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + 0.12f, -20f, 7.5f);
+            Projectile.velocity.Y = MathHelper.Clamp(Projectile.velocity.Y + .15f, -20f, 10f);
             Projectile.tileCollide = Projectile.velocity.Y > 7f;
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.5f);
         }

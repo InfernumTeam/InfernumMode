@@ -669,7 +669,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 // Summon tornadoes on the ground/water.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int y = Utils.Clamp((int)target.Center.Y / 16 - 50, 20, Main.maxTilesY - 20);
+                    int y = Utils.Clamp((int)target.Center.Y / 16 - 5, 20, Main.maxTilesY - 20);
                     foreach (int x in xSpawnPositions)
                     {
                         WorldUtils.Find(new Point(x, y), Searches.Chain(new Searches.Down(Main.maxTilesY - 10), new CustomTileConditions.IsWaterOrSolid()), out Point result);
@@ -823,7 +823,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
                 };
 
-                int y = Utils.Clamp((int)target.Center.Y / 16 + 75, 20, Main.maxTilesY - 20);
+                int y = Utils.Clamp((int)target.Center.Y / 16 + 45, 20, Main.maxTilesY - 20);
                 foreach (int x in xSpawnPositions)
                 {
                     Vector2 spawnPosition = new Point(x, y).ToWorldCoordinates();

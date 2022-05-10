@@ -460,6 +460,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                 }
             }
 
+            Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<CorruptThorn>());
+
             npc.netUpdate = true;
         }
 

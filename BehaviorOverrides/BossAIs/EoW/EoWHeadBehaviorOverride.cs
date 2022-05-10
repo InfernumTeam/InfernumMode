@@ -343,7 +343,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
                             {
                                 Vector2 initialSeekerVelocity = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 8f;
                                 Vector2 spawnPosition = npc.Center + initialSeekerVelocity * 2f;
-                                int seeker = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<DarkHeart>(), 1);
+                                int seeker = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, NPCID.EaterofSouls, 1);
                                 if (Main.npc.IndexInRange(seeker))
                                     Main.npc[seeker].velocity = initialSeekerVelocity;
                             }

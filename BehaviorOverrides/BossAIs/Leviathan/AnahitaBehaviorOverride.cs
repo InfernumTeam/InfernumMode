@@ -352,7 +352,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             float totalCharges = 3f;
             if (enraged)
             {
-                chargeTime = 270;
+                chargeTime = 30;
                 chargeSpeed += 6f;
             }
             if (outOfOcean)

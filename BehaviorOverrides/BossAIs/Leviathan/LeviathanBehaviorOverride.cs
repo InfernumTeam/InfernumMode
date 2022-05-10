@@ -42,7 +42,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             LeviathanAttackType.LazilyHover,
             LeviathanAttackType.BubbleBelch,
             LeviathanAttackType.Charge,
-            LeviathanAttackType.CallForHelp,
             LeviathanAttackType.LazilyHover,
             LeviathanAttackType.MeteorVomiting,
         };
@@ -53,7 +52,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
             LeviathanAttackType.Charge,
             LeviathanAttackType.BubbleBelch,
             LeviathanAttackType.BubbleBelch,
-            LeviathanAttackType.CallForHelp,
             LeviathanAttackType.LazilyHover,
             LeviathanAttackType.Charge,
             LeviathanAttackType.MeteorVomiting,

@@ -1,10 +1,13 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
+using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
+using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -12,7 +15,7 @@ using Terraria.World.Generation;
 
 namespace InfernumMode
 {
-	public class ProvidenceSummonerProjectile : ModProjectile
+    public class ProvidenceSummonerProjectile : ModProjectile
     {
         public ref float Time => ref projectile.ai[0];
 
@@ -116,6 +119,27 @@ namespace InfernumMode
             {
                 CalamityUtils.SpawnBossBetter(projectile.Center - Vector2.UnitY * 325f, ModContent.NPCType<Providence>());
                 Utilities.NewProjectileBetter(projectile.Center, Vector2.Zero, ModContent.ProjectileType<ProvSummonFlameExplosion>(), 0, 0f);
+
+                // Break existing tiles.
+                // This is done to ensure that there are no unexpected tiles that may trivialize the platforming aspect of the fight.
+                int[] validTiles = new int[]
+                {
+                    ModContent.TileType<ProfanedSlab>(),
+                    ModContent.TileType<RunicProfanedBrick>(),
+                    ModContent.TileType<ProvidenceSummoner>(),
+                };
+                for (int i = PoDWorld.ProvidenceArena.Left; i < PoDWorld.ProvidenceArena.Right; i++)
+                {
+                    for (int j = PoDWorld.ProvidenceArena.Top; j < PoDWorld.ProvidenceArena.Bottom; j++)
+                    {
+                        Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
+                        if (tile.active() && (Main.tileSolid[tile.type] || Main.tileSolidTop[tile.type]))
+                        {
+                            if (!validTiles.Contains(tile.type))
+                                WorldGen.KillTile(i, j);
+                        }
+                    }
+                }
             }
         }
 

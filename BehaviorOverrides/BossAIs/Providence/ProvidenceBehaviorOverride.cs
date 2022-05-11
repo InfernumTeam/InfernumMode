@@ -265,7 +265,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 var nearbyPlatforms = Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == platformID && n.WithinRange(target.Center, 420f));
 
                 if (!nearbyPlatforms.Any())
-                    CreatePlatform(target.Bottom + Vector2.UnitY * 250f, -Vector2.UnitY * 3f);
+                    CreatePlatform(target.Bottom + Vector2.UnitY * 400f, -Vector2.UnitY * 2f);
             }
 
             // Execute attack patterns.
@@ -577,7 +577,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int explosionDelay = 315;
             int platformSpawnRate = 0;
             float boltSpeed = 10f;
-            float bombExplosionRadius = 1600f;
+            float bombExplosionRadius = 1500f;
 
             if (inPhase2)
             {
@@ -586,18 +586,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 boltCount += 2;
                 platformSpawnRate += 34;
                 boltSpeed += 3f;
-                bombExplosionRadius += 300f;
+                bombExplosionRadius += 200f;
             }
 
             if (inPhase3)
             {
                 blastShootCount++;
                 platformSpawnRate += 12;
-                bombExplosionRadius += 300f;
+                bombExplosionRadius += 200f;
             }
 
             if (!Main.dayTime)
-                bombExplosionRadius += 400f;
+                bombExplosionRadius += 250f;
 
             ref float bombShootCounter = ref npc.Infernum().ExtraAI[1];
             ref float universalAttackTimer = ref npc.Infernum().ExtraAI[2];

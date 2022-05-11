@@ -14,7 +14,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 {
-	public class PerforatorHiveBehaviorOverride : NPCBehaviorOverride
+    public class PerforatorHiveBehaviorOverride : NPCBehaviorOverride
     {
         public enum PerforatorHiveAttackState
         {
@@ -1201,7 +1201,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int ichorFromAboveAttackType = inPhase4 ? (int)PerforatorHiveAttackState.IchorFountainCharge : (int)(int)PerforatorHiveAttackState.DiagonalBloodCharge;
 
             switch ((PerforatorHiveAttackState)npc.ai[0])
-			{
+            {
                 case PerforatorHiveAttackState.HorizontalCrimeraSpawnCharge:
                 case PerforatorHiveAttackState.CrimeraWalls:
                     npc.ai[0] = ichorBlastAttackType;

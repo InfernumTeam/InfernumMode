@@ -130,7 +130,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             DukeAttackType.Charge,
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
+            DukeAttackType.ChargeTeleport,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
             DukeAttackType.TidalWave,
+            DukeAttackType.ChargeTeleport,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
+            DukeAttackType.ChargeWait,
+            DukeAttackType.Charge,
             DukeAttackType.ChargeTeleport,
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
@@ -709,8 +719,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public static void DoBehavior_TidalWave(NPC npc, Player target, ref float attackTimer, ref float frameDrawType, bool inPhase3, bool enraged)
         {
+            int lungeMaxTime = 105;
             int redirectTime = inPhase3 ? 32 : 45;
-            float lungeSpeed = enraged ? 30f : 22f;
+            float lungeSpeed = enraged ? 30f : 24.5f;
             float waveSpeed = enraged ? 20f : 13.5f;
             if (inPhase3)
             {
@@ -726,7 +737,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
             frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
 
-            int lungeMaxTime = 180;
             if (attackTimer < redirectTime)
             {
                 Vector2 destination = target.Center - Vector2.UnitY.RotatedBy(target.velocity.X / 20f * MathHelper.ToRadians(26f)) * 430f;
@@ -776,12 +786,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         public static void DoBehavior_RazorbladeRazorstorm(NPC npc, Player target, ref float attackTimer, ref float frameDrawType, bool inPhase4, bool enraged)
         {
             int hoverTime = 105;
-            float initialChargeSpeed = enraged ? 34f : 30f;
             int chargeRedirectTime = 23;
-            int chargeCount = 6;
-            int typhoonBurstRate = enraged ? 24 : 37;
+            int chargeCount = 4;
+            int upwardChargeCount = 4;
+            int upwardChargeTime = 54;
+            int upwardChargeFadeinTime = 18;
+            int typhoonBurstRate = enraged ? 24 : 35;
             int typhoonCount = enraged ? 11 : 5;
-            float typhoonBurstSpeed = enraged ? 11f : 6f;
+            float upwardChargeSpeed = 29f;
+            float initialChargeSpeed = enraged ? 34f : 30f;
+            float typhoonBurstSpeed = enraged ? 11f : 6.4f;
             ref float offsetDirection = ref npc.Infernum().ExtraAI[0];
 
             if (inPhase4)
@@ -845,7 +859,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
                 npc.netUpdate = true;
             }
-            if (attackTimer > hoverTime)
+
+            // Do reflected charge.
+            if (attackTimer > hoverTime && attackTimer < hoverTime + chargeCount * chargeRedirectTime)
             {
                 // Reflected charge.
                 if (attackTimer % chargeRedirectTime == chargeRedirectTime - 1f)
@@ -871,7 +887,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 }
             }
 
-            if (attackTimer >= hoverTime + chargeCount * chargeRedirectTime + 45f)
+            // Perform upward charges.
+            if (attackTimer >= hoverTime + chargeCount * chargeRedirectTime)
+            {
+                float chargeTimer = (attackTimer - (hoverTime + chargeCount * chargeRedirectTime)) % (upwardChargeFadeinTime + upwardChargeTime);
+
+                // Fade in and look up at the target.
+                if (chargeTimer <= upwardChargeFadeinTime)
+                {
+                    Vector2 hoverDestination = target.Center + Vector2.UnitY * 360f;
+                    npc.Opacity = chargeTimer / upwardChargeFadeinTime;
+
+                    if (npc.position.Y < target.Center.Y + 20f)
+                        npc.position.Y = target.Center.Y + 20f;
+
+                    npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.125f).MoveTowards(hoverDestination, 5f);
+                    npc.rotation = GetAdjustedRotation(npc, target, npc.AngleTo(target.Center));
+                    npc.velocity = Vector2.Zero;
+                }
+
+                // Charge.
+                else
+                {
+                    npc.velocity.X = 0f;
+                    npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * upwardChargeSpeed, 0.18f);
+                    npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
+                    GenerateParticles(npc);
+                }
+            }
+
+            if (attackTimer >= hoverTime + chargeCount * chargeRedirectTime + (upwardChargeFadeinTime + upwardChargeTime) * upwardChargeCount + 15f)
                 SelectNextAttack(npc);
         }
 

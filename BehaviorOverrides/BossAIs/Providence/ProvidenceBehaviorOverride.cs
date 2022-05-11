@@ -97,6 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             npc.width = 600;
             npc.height = 450;
             npc.defense = 50;
+            npc.dontTakeDamage = false;
             npc.Infernum().arenaRectangle = arenaArea;
             if (drawState == (int)ProvidenceFrameDrawingType.CocoonState)
                 npc.defense = CocoonDefense;
@@ -396,6 +397,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Fade in.
             npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.1f, 0f, 1f);
 
+            // Disable damage.
+            npc.dontTakeDamage = true;
+
             for (int i = 0; i < 3; i++)
             {
                 Color rainbowColor = Main.hslToRgb(Main.rand.NextFloat(), 0.95f, 0.5f);
@@ -455,8 +459,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             int blastShootCount = 12;
             int totalBlobsFromBlasts = 8;
-            int blastShootRate = 30;
+            int blastShootRate = 27;
             float moltenBlastSpeed = MathHelper.Lerp(14f, 20f, 1f - lifeRatio);
+
+            if (!Main.dayTime)
+            {
+                blastShootCount += 4;
+                totalBlobsFromBlasts += 4;
+                blastShootRate -= 12;
+            }
 
             ref float blastShootCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -511,6 +522,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 offsetPerSpike -= 15f;
             }
 
+            if (!Main.dayTime)
+            {
+                spikeCreationRate -= 8;
+                spikeCount = 3;
+                offsetPerSpike -= 25f;
+            }
+
             ref float spikeCounter = ref npc.Infernum().ExtraAI[0];
 
             // Create platforms as necessary.
@@ -527,9 +545,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // Upward spikes.
                 if (spikeCounter % 2f == 0f)
                 {
+                    float xOffset = Main.rand.NextFloat(-35f, 35f);
                     for (float x = arenaArea.Left; x < arenaArea.Right; x += offsetPerSpike)
                     {
-                        Vector2 crystalPosition = new(x, arenaArea.Center.Y);
+                        Vector2 crystalPosition = new Vector2(x + xOffset, arenaArea.Center.Y);
                         Utilities.NewProjectileBetter(crystalPosition, Vector2.UnitY * -0.01f, ModContent.ProjectileType<CrystalPillar>(), 225, 0f);
                     }
                 }
@@ -537,9 +556,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // Rightward spikes.
                 else
                 {
+                    float yOffset = Main.rand.NextFloat(-35f, 35f);
                     for (float y = arenaArea.Top + 100f; y < arenaArea.Bottom - 80f; y += offsetPerSpike)
                     {
-                        Vector2 crystalPosition = new(arenaArea.Center.X, y);
+                        Vector2 crystalPosition = new Vector2(arenaArea.Center.X, y + yOffset);
                         Utilities.NewProjectileBetter(crystalPosition, Vector2.UnitX * -0.01f, ModContent.ProjectileType<CrystalPillar>(), 225, 0f);
                     }
                 }
@@ -555,11 +575,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_HolyBombs(NPC npc, Player target, float lifeRatio, bool inPhase2, bool inPhase3, ref float attackTimer)
         {
             int blastShootCount = 5;
-            int boltCount = 7;
+            int boltCount = 9;
             int bombShootRate = 84;
             int explosionDelay = 315;
             int platformSpawnRate = 0;
-            float boltSpeed = 7f;
+            float boltSpeed = 8f;
             float bombExplosionRadius = 1600f;
 
             if (inPhase2)
@@ -578,6 +598,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 platformSpawnRate += 12;
                 bombExplosionRadius += 300f;
             }
+
+            if (!Main.dayTime)
+                bombExplosionRadius += 400f;
 
             ref float bombShootCounter = ref npc.Infernum().ExtraAI[1];
             ref float universalAttackTimer = ref npc.Infernum().ExtraAI[2];
@@ -638,7 +661,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         public static void DoBehavior_AcceleratingCrystalFan(NPC npc, Player target, bool useSinusoidalFan, bool inPhase2, bool inPhase3, Vector2 crystalCenter, ref float attackTimer)
         {
             int crystalFireDelay = 70;
-            int crystalReleaseRate = 4;
+            int crystalReleaseRate = 3;
             int crystalReleaseCount = 16;
             int crystalFanCount = 3;
             int platformSpawnRate = 0;
@@ -657,6 +680,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 crystalReleaseRate--;
                 crystalFanCount--;
                 platformSpawnRate += 6;
+            }
+
+            if (!Main.dayTime)
+            {
+                maxFanOffsetAngle += 0.3f;
+                crystalSpeed += 4f;
             }
 
             // Use less wide fan if using a sinusoidal pattern.
@@ -858,6 +887,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 platformSpawnRate += 8;
                 totalCrystalsPerBurst++;
             }
+            
+            if (!Main.dayTime)
+            {
+                crystalBurstShootRate -= 7;
+                totalCrystalsPerBurst += 8;
+            }
 
             ref float burstTimer = ref npc.Infernum().ExtraAI[2];
             ref float burstCounter = ref npc.Infernum().ExtraAI[3];
@@ -969,6 +1004,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int laserShootTime = HolyFireBeam.Lifetime;
             float bladeSpeed = 9f;
             float maxLaserAngularVelocity = MathHelper.ToRadians(0.72f + (1f - lifeRatio) * 0.16f);
+           
+            if (!Main.dayTime)
+            {
+                bladeRelaseRate -= 10;
+                bladeSpeed += 3f;
+            }
+
             ref float laserOffsetAngle = ref npc.Infernum().ExtraAI[0];
             ref float telegraphOpacity = ref npc.Infernum().ExtraAI[1];
             ref float laserCount = ref npc.Infernum().ExtraAI[2];
@@ -982,7 +1024,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Initialize the laser offset angle on the first frame.
             if (attackTimer == 1f)
             {
-                laserCount = 8f;
+                laserCount = 9f;
+                if (!Main.dayTime)
+                    laserCount = 13f;
+
                 laserOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                 npc.netUpdate = true;
             }
@@ -1136,6 +1181,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int platformSpawnRate = 35;
             float holyBlastSpeed = MathHelper.Lerp(12f, 18f, 1f - lifeRatio);
 
+            if (!Main.dayTime)
+            {
+                blastShootCount += 5;
+                blastShootRate -= 12;
+                holyBlastSpeed += 3f;
+            }
+
             ref float blastShootCounter = ref npc.Infernum().ExtraAI[1];
 
             if (blastShootCounter >= blastShootCount)
@@ -1203,6 +1255,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             float speedBoost = (1f - lifeRatio) * 7.5f;
             float acceleration = (accelerationBoost + 1.15f) * speedFactor;
             float maxFlySpeed = (speedBoost + 17f) * speedFactor;
+            
+            // Fly faster at night.
+            if (!Main.dayTime)
+            {
+                maxFlySpeed *= 1.35f;
+                acceleration *= 1.35f;
+            }
 
             // Don't stray too far from the target.
             npc.velocity.X = MathHelper.Clamp(npc.velocity.X + flightPath * acceleration, -maxFlySpeed, maxFlySpeed);

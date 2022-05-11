@@ -32,8 +32,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override void AI()
         {
-            if (projectile.velocity.Length() < 22f && Time >= 25f)
-                projectile.velocity *= 1.03f;
+            if (projectile.velocity.Length() < 25f && Time >= 25f)
+                projectile.velocity *= 1.035f;
 
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];

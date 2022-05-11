@@ -37,7 +37,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             projectile.Opacity = MathHelper.Clamp(projectile.Opacity + 0.08f, 0f, 1f);
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            projectile.velocity *= 0.985f;
+            projectile.velocity *= 0.99f;
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;

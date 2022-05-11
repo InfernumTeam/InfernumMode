@@ -30,8 +30,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             Projectile.Opacity = MathHelper.Clamp(Projectile.Opacity + 0.1f, 0f, 1f);
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
-            if (Projectile.velocity.Length() < 30f)
-                Projectile.velocity *= 1.032f;
+            if (Projectile.velocity.Length() < 33f)
+                Projectile.velocity *= 1.035f;
 
             Lighting.AddLight(Projectile.Center, Color.Yellow.ToVector3() * 0.5f);
         }

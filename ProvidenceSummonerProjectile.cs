@@ -1,11 +1,14 @@
 ﻿using CalamityMod;
 using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
-using InfernumMode.BehaviorOverrides.BossAIs.Providence;
+using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
+using InfernumMode.Systems;
+using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -118,6 +121,27 @@ namespace InfernumMode
             {
                 CalamityUtils.SpawnBossBetter(Projectile.Center - Vector2.UnitY * 325f, ModContent.NPCType<Providence>());
                 Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<ProvSummonFlameExplosion>(), 0, 0f);
+
+                // Break existing tiles.
+                // This is done to ensure that there are no unexpected tiles that may trivialize the platforming aspect of the fight.
+                int[] validTiles = new int[]
+                {
+                    ModContent.TileType<ProfanedSlab>(),
+                    ModContent.TileType<RunicProfanedBrick>(),
+                    ModContent.TileType<ProvidenceSummoner>(),
+                };
+                for (int i = WorldSaveSystem.ProvidenceArena.Left; i < WorldSaveSystem.ProvidenceArena.Right; i++)
+                {
+                    for (int j = WorldSaveSystem.ProvidenceArena.Top; j < WorldSaveSystem.ProvidenceArena.Bottom; j++)
+                    {
+                        Tile tile = CalamityUtils.ParanoidTileRetrieval(i, j);
+                        if (tile.active() && (Main.tileSolid[tile.type] || Main.tileSolidTop[tile.type]))
+                        {
+                            if (!validTiles.Contains(tile.type))
+                                WorldGen.KillTile(i, j);
+                        }
+                    }
+                }
             }
         }
 

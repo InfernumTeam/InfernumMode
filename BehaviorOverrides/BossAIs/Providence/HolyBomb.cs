@@ -75,7 +75,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             SoundEngine.PlaySound(SoundID.DD2_KoboldExplosion, Projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int explosion = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 250, 0f);
+                int explosion = Utilities.NewProjectileBetter(Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HolySunExplosion>(), 350, 0f);
                 if (Main.projectile.IndexInRange(explosion))
                     Main.projectile[explosion].ModProjectile<HolySunExplosion>().MaxRadius = ExplosionRadius * 0.7f;
             }

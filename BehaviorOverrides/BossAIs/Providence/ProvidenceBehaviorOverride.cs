@@ -258,16 +258,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 return false;
             }
 
-            // Create a platform below the target in phase 2 if few platforms exist and the player is almost or entirely out of flight time.
-            if (inPhase2 && target.wingTime < 60f)
-            {
-                int platformID = ModContent.NPCType<ProvArenaPlatform>();
-                var nearbyPlatforms = Main.npc.Take(Main.maxNPCs).Where(n => n.active && n.type == platformID && n.WithinRange(target.Center, 420f));
-
-                if (!nearbyPlatforms.Any())
-                    CreatePlatform(target.Bottom + Vector2.UnitY * 400f, -Vector2.UnitY * 2f);
-            }
-
             // Execute attack patterns.
             switch ((ProvidenceAttackType)attackType)
             {
@@ -574,7 +564,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             int blastShootCount = 6;
             int boltCount = 11;
             int bombShootRate = 84;
-            int explosionDelay = 315;
+            int explosionDelay = 120;
             int platformSpawnRate = 0;
             float boltSpeed = 10f;
             float bombExplosionRadius = 1500f;

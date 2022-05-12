@@ -261,7 +261,7 @@ namespace InfernumMode.BossRush
                 }, dimnessFactor: 0.6f, permittedNPCs: new int[] { ModContent.NPCType<SCalWormArm>(), ModContent.NPCType<SCalWormHead>(), ModContent.NPCType<SCalWormBody>(),
                     ModContent.NPCType<SCalWormBodyWeak>(), ModContent.NPCType<SCalWormTail>(),
                     ModContent.NPCType<SoulSeekerSupreme>(), ModContent.NPCType<BrimstoneHeart>(), ModContent.NPCType<SupremeCataclysm>(),
-                    ModContent.NPCType<SupremeCatastrophe>(), ModContent.NPCType<ShadowDemon>() }),
+                    ModContent.NPCType<SupremeCatastrophe>(), /*ModContent.NPCType<ShadowDemon>()*/ }),
             };
 
             BossDeathEffects = new Dictionary<int, Action<NPC>>()

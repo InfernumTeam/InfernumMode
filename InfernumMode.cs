@@ -151,6 +151,9 @@ namespace InfernumMode
                 Ref<Effect> hologramShader = new Ref<Effect>(GetEffect("Effects/HologramShader"));
                 GameShaders.Misc["Infernum:Hologram"] = new MiscShaderData(hologramShader, "HologramPass");
 
+                Ref<Effect> matrixShader = new Ref<Effect>(GetEffect("Effects/LocalLinearTransformationShader"));
+                GameShaders.Misc["Infernum:LinearTransformation"] = new MiscShaderData(matrixShader, "TransformationPass");
+
                 OverrideMusicBox(ItemID.MusicBoxBoss3, GetSoundSlot(SoundType.Music, "Sounds/Music/Boss3"), TileID.MusicBoxes, 36 * 12);
                 OverrideMusicBox(ItemID.MusicBoxLunarBoss, GetSoundSlot(SoundType.Music, "Sounds/Music/MoonLord"), TileID.MusicBoxes, 36 * 32);
             }

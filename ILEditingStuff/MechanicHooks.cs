@@ -86,7 +86,7 @@ namespace InfernumMode.ILEditingStuff
         {
             ILCursor cursor = new(il);
 
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchCallOrCallvirt<Main>("DrawBackgroundBlackFill")))
+            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchCall<Main>("DrawBackgroundBlackFill")))
                 return;
 
             cursor.EmitDelegate(() =>
@@ -106,7 +106,7 @@ namespace InfernumMode.ILEditingStuff
                 DrawCacheBeforeBlack.Clear();
             });
 
-            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<MoonlordDeathDrama>("DrawWhite")))
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCall<MoonlordDeathDrama>("DrawWhite")))
                 return;
 
             cursor.EmitDelegate(() =>

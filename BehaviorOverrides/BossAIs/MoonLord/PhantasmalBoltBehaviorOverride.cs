@@ -15,7 +15,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             projectile.Infernum().ExtraAI[0]++;
             if (projectile.localAI[0] == 0f)
             {
-                if (Main.rand.Next(2) == 0)
+                if (Main.rand.NextBool(2))
                     Main.PlaySound(SoundID.Item124, projectile.position);
                 else
                     Main.PlaySound(SoundID.Item125, projectile.position);

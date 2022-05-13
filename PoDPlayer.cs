@@ -1,5 +1,6 @@
 ﻿using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
+using CalamityMod.CalPlayer;
 using CalamityMod.Events;
 using CalamityMod.Items.Armor;
 using CalamityMod.NPCs;
@@ -72,6 +73,17 @@ namespace InfernumMode
 
         public static bool ApplyEarlySpeedNerfs => InfernumMode.CalamityMod.Version < new Version("1.5.0.004");
 
+        #region Nurse Cheese Death
+        public override bool ModifyNurseHeal(NPC nurse, ref int health, ref bool removeDebuffs, ref string chatText)
+        {
+            if (InfernumMode.CanUseCustomAIs && CalamityPlayer.areThereAnyDamnBosses)
+            {
+                chatText = "I cannot help you. Good luck.";
+                return false;
+            }
+            return true;
+        }
+        #endregion Nurse Cheese Death
         #region Skies
         internal static readonly FieldInfo EffectsField = typeof(SkyManager).GetField("_effects", BindingFlags.NonPublic | BindingFlags.Instance);
         public override void UpdateBiomeVisuals()

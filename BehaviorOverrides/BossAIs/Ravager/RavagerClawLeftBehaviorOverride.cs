@@ -239,7 +239,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         if (Main.rand.NextBool(2))
                             smoke.fadeIn = 1.4f;
                     }
-                    if (Main.rand.Next(2) == 0)
+                    if (Main.rand.NextBool(2))
                     {
                         for (int i = 0; i < 2; i++)
                         {

@@ -89,7 +89,7 @@ namespace InfernumMode.ILEditingStuff
 
             int start = cursor.Index - 1;
 
-            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCallOrCallvirt<CalamityNetcode>("SyncWorld")))
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCall<CalamityNetcode>("SyncWorld")))
                 return;
 
             int end = cursor.Index;

@@ -1,10 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using CalamityMod.Particles;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 
-namespace CalamityMod.Particles
+namespace InfernumMode.Particles
 {
-	public class StoneDebrisParticle2 : Particle
+    public class StoneDebrisParticle2 : Particle
     {
         public override string Texture => "CalamityMod/Particles/StoneDebris";
         public override bool SetLifetime => true;

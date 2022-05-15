@@ -23,7 +23,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
-            projectile.timeLeft = 240;
+            projectile.timeLeft = 270;
             projectile.penetrate = -1;
             cooldownSlot = 1;
         }
@@ -37,7 +37,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             projectile.rotation += 0.4f * (projectile.velocity.X > 0).ToDirectionInt();
             projectile.Opacity = Utils.InverseLerp(0f, 30f, Time, true) * Utils.InverseLerp(0f, 16f, projectile.timeLeft, true);
 
-            if (Time > 40f)
+            if (projectile.timeLeft < 90f)
+            {
+                if (projectile.velocity.Length() < 15f)
+                    projectile.velocity *= 1.016f;
+            }
+            else if (Time > 40f)
             {
                 float oldSpeed = projectile.velocity.Length();
                 Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];

@@ -47,7 +47,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         #endregion
 
         #region Pattern Lists
-        public static readonly DukeAttackType[] Subphase1Pattern = new DukeAttackType[]
+        public static DukeAttackType[] Subphase1Pattern => new DukeAttackType[]
         {
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
@@ -71,7 +71,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             DukeAttackType.StationaryBubbleCharge,
         };
 
-        public static readonly DukeAttackType[] Subphase2Pattern = new DukeAttackType[]
+        public static DukeAttackType[] Subphase2Pattern => new DukeAttackType[]
         {
             DukeAttackType.ChargeWait,
             DukeAttackType.Charge,
@@ -101,56 +101,36 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             DukeAttackType.BubbleSpin,
         };
 
-        public static readonly DukeAttackType[] Subphase3Pattern = new DukeAttackType[]
-        {
-            DukeAttackType.ChargeTeleport,
-            DukeAttackType.Charge,
-            DukeAttackType.RazorbladeRazorstorm,
-            DukeAttackType.ChargeTeleport,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.SharkTornadoSummon,
-            DukeAttackType.Charge,
-            DukeAttackType.Charge,
-            DukeAttackType.TidalWave,
-            DukeAttackType.SharkTornadoSummon,
-        };
+        public static DukeAttackType[] Subphase3Pattern =>
+            DoCharge(3, true).
+            Fuse(new DukeAttackType[] { DukeAttackType.RazorbladeRazorstorm, }).
+            Fuse(DoCharge(5, true)).
+            Fuse(new DukeAttackType[] { DukeAttackType.SharkTornadoSummon, }).
+            Fuse(DoCharge(3, true)).
+            Fuse(new DukeAttackType[] { DukeAttackType.SharkTornadoSummon, }).
+            ToArray();
 
-        public static readonly DukeAttackType[] Subphase4Pattern = new DukeAttackType[]
-        {
-            DukeAttackType.ChargeTeleport,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.ChargeTeleport,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.TidalWave,
-            DukeAttackType.ChargeTeleport,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.ChargeTeleport,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.ChargeWait,
-            DukeAttackType.Charge,
-            DukeAttackType.RazorbladeRazorstorm,
-        };
+        public static DukeAttackType[] Subphase4Pattern =>
+            DoCharge(7, true).
+            Fuse(new DukeAttackType[] { DukeAttackType.TidalWave, }).
+            Fuse(DoCharge(7, true)).
+            Fuse(new DukeAttackType[] { DukeAttackType.RazorbladeRazorstorm, }).
+            ToArray();
 
-        public static readonly Dictionary<DukeAttackType[], Func<NPC, bool>> SubphaseTable = new Dictionary<DukeAttackType[], Func<NPC, bool>>()
+        public static DukeAttackType[] DoCharge(int chargeCount, bool teleportAtStart = false)
+        {
+            List<DukeAttackType> result = new List<DukeAttackType>();
+
+            result.AddWithCondition(DukeAttackType.ChargeTeleport, teleportAtStart);
+            for (int i = 0; i < chargeCount; i++)
+            {
+                result.Add(DukeAttackType.ChargeWait);
+                result.Add(DukeAttackType.Charge);
+            }
+            return result.ToArray();
+        }
+
+        public static Dictionary<DukeAttackType[], Func<NPC, bool>> SubphaseTable => new Dictionary<DukeAttackType[], Func<NPC, bool>>()
         {
             [Subphase1Pattern] = (npc) => npc.life / (float)npc.lifeMax > Phase2LifeRatio,
             [Subphase2Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase2LifeRatio && npc.life / (float)npc.lifeMax >= Phase3LifeRatio,
@@ -366,24 +346,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (inPhase2)
             {
                 chargeTime -= 5;
-                decelerationTime -= 2;
+                decelerationTime -= 3;
             }
             if (enraged || inPhase3)
             {
                 angularAimTime = 2;
-                chargeTime -= 5;
-                chargeSpeed *= 1.3f;
+                chargeTime -= 8;
+                chargeSpeed += 7.5f;
             }
             if (inPhase4)
             {
-                chargeTime -= 4;
-                chargeSpeed *= 1.2f;
+                chargeTime -= 10;
+                chargeSpeed += 9f;
             }
 
             if (BossRushEvent.BossRushActive)
             {
-                chargeTime -= 8;
-                chargeSpeed *= 1.5f;
+                chargeTime -= 6;
+                chargeSpeed *= 1.3f;
             }
 
             if (attackTimer < angularAimTime)
@@ -406,6 +386,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * predictivenessFactor) * chargeSpeed;
                 npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
                 npc.netUpdate = true;
+
+                // Release typhoons in phase 3.
+                if (inPhase3 && !npc.WithinRange(target.Center, 250f))
+                {
+                    Main.PlaySound(SoundID.Item45, npc.Center);
+
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 typhoonSpeed = -npc.velocity * 0.2f;
+                        Utilities.NewProjectileBetter(npc.Center, typhoonSpeed, ModContent.ProjectileType<ChargeTyphoon>(), 150, 0f);
+                    }
+                }
             }
 
             frameDrawType = (int)DukeFrameDrawingType.OpenMouthFinFlapping;
@@ -431,7 +423,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             // Disable contact damage while redirecting.
             npc.damage = 0;
 
-            int waitDelay = 30;
+            int waitDelay = 22;
             Vector2 hoverDestination = target.Center + new Vector2(Math.Sign(target.Center.X - npc.Center.X) * -500f, -350f) - npc.velocity;
             npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 32f, 2f);
 
@@ -724,8 +716,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             float waveSpeed = enraged ? 20f : 13.5f;
             if (inPhase3)
             {
-                lungeSpeed *= 1.4f;
-                waveSpeed *= 1.6f;
+                lungeSpeed *= 1.64f;
+                waveSpeed *= 1.8f;
             }
 
             if (BossRushEvent.BossRushActive)
@@ -748,6 +740,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
 
                 npc.velocity = npc.SafeDirectionTo(target.Center) * lungeSpeed;
+                npc.velocity.Y = Math.Abs(npc.velocity.Y);
+                npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
+
                 npc.netUpdate = true;
             }
 
@@ -788,11 +783,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             int chargeRedirectTime = 23;
             int chargeCount = 4;
             int upwardChargeCount = 4;
-            int upwardChargeTime = 54;
+            int upwardChargeTime = 40;
             int upwardChargeFadeinTime = 18;
             int typhoonBurstRate = enraged ? 24 : 35;
             int typhoonCount = enraged ? 11 : 5;
-            float upwardChargeSpeed = 29f;
+            float upwardChargeSpeed = 37f;
             float initialChargeSpeed = enraged ? 34f : 30f;
             float typhoonBurstSpeed = enraged ? 11f : 6.4f;
             ref float offsetDirection = ref npc.Infernum().ExtraAI[0];
@@ -825,6 +820,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 33f, 1.3f);
                 npc.Center = Vector2.Lerp(npc.Center, destination, 0.014f).MoveTowards(destination, 15f);
                 npc.rotation = GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true);
+
+                // Teleport to the destination at the end of the attack.
+                if (attackTimer == hoverTime - 1f)
+                {
+                    npc.Center = destination;
+                    npc.velocity = Vector2.Zero;
+                    npc.netUpdate = true;
+                }
             }
 
             // Summon tornadoes.
@@ -915,7 +918,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 }
             }
 
-            if (attackTimer >= hoverTime + chargeCount * chargeRedirectTime + (upwardChargeFadeinTime + upwardChargeTime) * upwardChargeCount + 15f)
+            if (attackTimer >= hoverTime + chargeCount * chargeRedirectTime + (upwardChargeFadeinTime + upwardChargeTime) * upwardChargeCount - 1f)
                 SelectNextAttack(npc);
         }
 

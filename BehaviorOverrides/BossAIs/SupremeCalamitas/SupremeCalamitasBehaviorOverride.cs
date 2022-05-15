@@ -4,6 +4,8 @@ using CalamityMod.NPCs;
 using CalamityMod.Tiles;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
+using System;
+using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.ID;
@@ -20,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             HorizontalDarkSoulRelease,
             CondemnationFanBurst,
             ExplosiveCharges,
-            SummonPulsatingHearts
+            DarkMagicCircleBarrage
         }
 
         public enum SCalFrameType
@@ -36,7 +38,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         }
 
         // TODO -- Manually handle drawcode so that the shield can be drawn as intended without horrible IL edits and reflection.
-
         private static readonly FieldInfo shieldOpacityField = typeof(SCalBoss).GetField("shieldOpacity", BindingFlags.NonPublic | BindingFlags.Instance);
 
         private static readonly FieldInfo shieldRotationField = typeof(SCalBoss).GetField("shieldRotation", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -217,9 +218,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     break;
                 case SCalAttackType.ExplosiveCharges:
                     DoBehavior_ExplosiveCharges(npc, target, ref frameType, ref frameChangeSpeed, ref attackTimer);
-                    break;
-                case SCalAttackType.SummonPulsatingHearts:
-                    DoBehavior_SummonPulsatingHearts(npc, target, handPosition, ref frameType, ref frameChangeSpeed, ref attackTimer);
                     break;
             }
 
@@ -465,40 +463,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
             if (attackTimer >= chargeDelay + chargeTime * chargeCount)
                 SelectNewAttack(npc);
-        }
-
-        public static void DoBehavior_SummonPulsatingHearts(NPC npc, Player target, Vector2 handPosition, ref float frameType, ref float frameChangeSpeed, ref float attackTimer)
-        {
-            int daggerSwingDelay = HeartSummoningDagger.AnimationTime;
-            ref float daggerIndex = ref npc.Infernum().ExtraAI[0];
-
-            // Use the hands out casting animation.
-            frameChangeSpeed = 0.27f;
-            frameType = (int)SCalFrameType.BlastCast;
-
-            // Define the projectile as a convenient reference type variable, for easy manipulation of its attributes.
-            Projectile condemnationRef = Main.projectile[(int)daggerIndex];
-            if (condemnationRef.type != ModContent.ProjectileType<CondemnationProj>())
-                condemnationRef = null;
-
-            // Create the dagger on the first frame.
-            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 1f)
-            {
-                daggerIndex = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<HeartSummoningDagger>(), 0, 0f);
-                npc.netUpdate = true;
-            }
-
-            // Look at the target.
-            npc.spriteDirection = (target.Center.X < npc.Center.X).ToDirectionInt();
-
-            // Slow down dramatically.
-            npc.velocity *= 0.9f;
-
-            if (attackTimer >= daggerSwingDelay + 90f)
-            {
-                Utilities.DeleteAllProjectiles(false, ModContent.ProjectileType<HeartSummoningDagger>());
-                SelectNewAttack(npc);
-            }
         }
 
         public static void SelectNewAttack(NPC npc)

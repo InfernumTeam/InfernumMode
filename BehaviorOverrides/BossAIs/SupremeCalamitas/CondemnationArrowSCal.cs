@@ -1,5 +1,6 @@
 using CalamityMod;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,7 +9,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 {
     public class CondemnationArrowSCal : ModProjectile
     {
-        public PrimitiveTrailCopy TrailDrawer = null;
+        public ref float Time => ref projectile.ai[0];
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Arrow");
@@ -36,12 +38,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
             projectile.velocity *= 1.025f;
+            Time++;
         }
 
         public override void Kill(int timeLeft)
         {
             Main.PlaySound(SoundID.Item74, projectile.Center);
             Utilities.CreateGenericDustExplosion(projectile.Center, 242, 10, 7f, 1.25f);
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            float telegraphInterpolant = Utils.InverseLerp(0f, 20f, Time, true);
+            float telegraphWidth = MathHelper.Lerp(0.3f, 3f, CalamityUtils.Convert01To010(telegraphInterpolant));
+
+            // Draw a telegraph line outward.
+            if (telegraphInterpolant < 1f)
+            {
+                Vector2 start = projectile.Center;
+                Vector2 end = start + projectile.velocity.SafeNormalize(Vector2.UnitY) * 5000f;
+                Main.spriteBatch.DrawLineBetter(start, end, Color.Red, telegraphWidth);
+            }
+            return false;
         }
     }
 }

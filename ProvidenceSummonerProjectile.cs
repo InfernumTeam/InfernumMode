@@ -3,6 +3,7 @@ using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
 using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.BehaviorOverrides.BossAIs.Yharon;
+using InfernumMode.Particles;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

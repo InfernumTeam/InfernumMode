@@ -18,7 +18,7 @@ using InfernumMode.Particles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 {
-	public class ThanatosHeadBehaviorOverride : NPCBehaviorOverride
+    public class ThanatosHeadBehaviorOverride : NPCBehaviorOverride
     {
         public enum ThanatosFrameType
         {
@@ -177,7 +177,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 npc.damage = 0;
                 npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 attackDelay++;
-                DoProjectileShootInterceptionMovement(npc, target, Utils.InverseLerp(270f, 180f, attackDelay, true) * 3f);
+                DoProjectileShootInterceptionMovement(npc, target, Utils.InverseLerp(270f, 100f, attackDelay, true) * 2.5f);
                 return false;
             }
 
@@ -676,8 +676,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             int slowdownTime = 100;
             int chargePreparationTime = 60;
             int redirectTime = 90;
-            int chargeTime = 75;
-            int attackShiftDelay = 200;
+            int chargeTime = 45;
+            int attackShiftDelay = 120;
             int lasersPerRotor = 5;
             int rotorReleaseRate = 7;
             int chargeCount = 2;
@@ -768,7 +768,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                     {
                         NPC segmentToFireFrom = segments[Main.rand.Next(0, segments.Count / 3)];
                         Vector2 rotorShootVelocity = segmentToFireFrom.SafeDirectionTo(target.Center).RotatedByRandom(1.6f) * rotorSpeed;
-                        int rotor = Utilities.NewProjectileBetter(segmentToFireFrom.Center, rotorShootVelocity, ModContent.ProjectileType<RefractionRotor>(), 540, 0f);
+                        int rotor = Utilities.NewProjectileBetter(segmentToFireFrom.Center, rotorShootVelocity, ModContent.ProjectileType<RefractionRotor>(), 0, 0f);
                         if (Main.projectile.IndexInRange(rotor))
                             Main.projectile[rotor].ai[0] = lasersPerRotor;
                     }
@@ -798,7 +798,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             npc.damage = 0;
 
             int initialRedirectTime = 360;
-            int lightTelegraphTime = 70;
+            int lightTelegraphTime = 105;
             int lightLaserFireDelay = 20;
             int lightLaserShootTime = LightOverloadRay.Lifetime;
             int redirectCount = 3;

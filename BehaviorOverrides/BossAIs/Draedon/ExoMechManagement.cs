@@ -27,7 +27,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int FinalMechIndexIndex = 12;
         public const int FinalPhaseTimerIndex = 16;
         public const int DeathAnimationTimerIndex = 19;
-        public const int DeathAnimationHasStartedIndex = 20;
+        public const int DeathAnimationHasStartedIndex = 22;
 
         public const int Thanatos_AttackDelayIndex = 13;
 

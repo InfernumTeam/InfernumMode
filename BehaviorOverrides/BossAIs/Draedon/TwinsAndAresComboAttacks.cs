@@ -145,7 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                             npc.velocity.Y = CalamityUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
                             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
-                            if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 120f))
+                            if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 270f))
                             {
                                 Main.PlaySound(InfernumMode.CalamityMod.GetSoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
@@ -475,7 +475,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int attackDelay = 120;
             int normalTwinsAttackTime = 360;
             int totalNormalShotCount = 8;
-            float normalShotShootSpeed = 10f;
+            float normalShotShootSpeed = 7.25f;
 
             if (CurrentTwinsPhase != 4)
             {
@@ -525,7 +525,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                         hoverOffsetAngle += MathHelper.Pi;
                     }
 
-                    Vector2 hoverDestination = target.Center + hoverOffsetAngle.ToRotationVector2() * new Vector2(700f, 430f);
+                    Vector2 hoverDestination = target.Center + hoverOffsetAngle.ToRotationVector2() * new Vector2(800f, 575f);
                     ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 40f, 95f);
 
                     Vector2 aimDestination = target.Center + target.velocity * 11.5f;

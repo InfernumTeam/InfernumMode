@@ -46,7 +46,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            float explosionInterpolant = Utils.InverseLerp(200f, 35f, projectile.timeLeft, true);
+            float explosionInterpolant = Utils.InverseLerp(200f, 35f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 45f, projectile.frameCounter, true);
             float circleFadeinInterpolant = Utils.InverseLerp(0f, 0.15f, explosionInterpolant, true);
             float pulseInterpolant = Utils.InverseLerp(0.75f, 0.85f, explosionInterpolant, true);
             float colorPulse = ((float)Math.Sin(Main.GlobalTime * 6.3f + projectile.identity) * 0.5f + 0.5f) * pulseInterpolant;

@@ -22,7 +22,7 @@ using InfernumMode.Particles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 {
-	public class AresBodyBehaviorOverride : NPCBehaviorOverride
+    public class AresBodyBehaviorOverride : NPCBehaviorOverride
     {
         public enum AresBodyFrameType
         {
@@ -746,9 +746,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             npc.ai[0] = (int)AresBodyAttackType.IdleHover;
             if (oldAttackType == AresBodyAttackType.IdleHover)
             {
+                /*
                 if (Main.rand.NextBool(3) || ExoMechManagement.CurrentAresPhase < 3)
                     npc.ai[0] = (int)AresBodyAttackType.HoverCharge;
-                else if (ExoMechManagement.CurrentAresPhase >= 3)
+                else */if (ExoMechManagement.CurrentAresPhase >= 3)
                 {
                     bool complementMechIsPresent = ExoMechManagement.ComplementMechIsPresent(npc);
                     NPC finalMech = ExoMechManagement.FindFinalMech();

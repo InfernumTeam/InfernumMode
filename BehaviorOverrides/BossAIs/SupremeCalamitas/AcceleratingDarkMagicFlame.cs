@@ -12,7 +12,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Dark Magic Flame");
-            Main.projFrames[projectile.type] = 4;
+            Main.projFrames[projectile.type] = 5;
             ProjectileID.Sets.TrailCacheLength[projectile.type] = 4;
             ProjectileID.Sets.TrailingMode[projectile.type] = 0;
         }
@@ -37,7 +37,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             // Accelerate quickly.
-            projectile.velocity *= 1.025f;
+            if (projectile.velocity.Length() < 16f)
+                projectile.velocity *= 1.019f;
 
             Time++;
         }

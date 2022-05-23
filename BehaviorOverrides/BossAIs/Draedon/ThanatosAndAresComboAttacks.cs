@@ -87,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             int telegraphTime = 90;
             int attackTime = 780;
             int spinTime = attackTime - attackDelay;
-            int totalLasers = 5;
+            int totalLasers = 7;
             ref float generalAngularOffset = ref npc.Infernum().ExtraAI[0];
 
             // Thanatos spins around the target with its head always open while releasing lasers inward.

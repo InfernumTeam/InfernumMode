@@ -26,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             npc.aiStyle = aiType = -1;
             npc.damage = 70;
             npc.width = npc.height = 36;
-            npc.lifeMax = 420;
+            npc.lifeMax = 200;
             npc.knockBackResist = 0f;
             npc.noGravity = true;
             npc.noTileCollide = true;
@@ -42,10 +42,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             else if (Time >= 45f)
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(Target.Center), MathHelper.ToRadians(2.4f));
 
-            if (Collision.SolidCollision(npc.position, npc.width, npc.height))
+            if (Collision.SolidCollision(npc.position, npc.width, npc.height) || npc.WithinRange(Target.Center, 40f))
             {
                 npc.active = false;
                 npc.netUpdate = true;
+            }
+
+            if (Collision.WetCollision(npc.position, npc.width, npc.height))
+            {
+                npc.life -= 4;
+                if (npc.life <= 0f)
+                    npc.active = false;
             }
 
             if (Time >= 180f)

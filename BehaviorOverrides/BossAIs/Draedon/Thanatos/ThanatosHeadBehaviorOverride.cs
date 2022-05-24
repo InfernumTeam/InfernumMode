@@ -1094,7 +1094,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             bool wasCharging = oldAttackType == ThanatosHeadAttackType.AggressiveCharge ||
                 oldAttackType == ThanatosHeadAttackType.MaximumOverdrive;
 
-            if (wasCharging)
+            if (wasCharging || Main.rand.NextBool())
             {
                 do
                 {

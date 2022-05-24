@@ -151,7 +151,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             npc.velocity = npc.SafeDirectionTo(target.Center) * floatSpeed;
 
             // Stick to the target if close to them.
-            if (npc.WithinRange(target.Center, 10f))
+            if (npc.WithinRange(target.Center, 100f))
             {
                 npc.velocity = Vector2.Zero;
 

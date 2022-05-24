@@ -41,11 +41,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int waveCount = 6;
+                int waveCount = 4;
                 float offsetAngle = Main.rand.NextBool().ToInt() * MathHelper.Pi / waveCount;
                 for (int i = 0; i < waveCount; i++)
                 {
-                    Vector2 shootVelocity = (MathHelper.TwoPi * i / waveCount + offsetAngle).ToRotationVector2() * 8f;
+                    Vector2 shootVelocity = (MathHelper.TwoPi * i / waveCount + offsetAngle).ToRotationVector2() * 9f;
                     Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<SmallWave>(), 180, 0f);
                 }
             }

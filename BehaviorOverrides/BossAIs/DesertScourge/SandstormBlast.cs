@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                     projectile.Kill();
             }
             else
-                projectile.velocity.Y = (float)Math.Sin(projectile.position.X * MathHelper.TwoPi / 999f) * 2f + 3f;
+                projectile.velocity.Y = (float)Math.Sin(projectile.position.X * MathHelper.TwoPi / 999f) + 1.5f;
 
             projectile.rotation = projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }

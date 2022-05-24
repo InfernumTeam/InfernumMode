@@ -39,9 +39,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         {
             projectile.width = (int)MathHelper.Lerp(projectile.width, 200f, 0.05f);
 
-            float height = BossRushEvent.BossRushActive ? 3200f : 1600f;
+            float height = BossRushEvent.BossRushActive ? 2700f : 1000f;
             if (projectile.ai[1] == 1f)
-                height *= 4f;
+                height *= 5f;
 
             TornadoHeight = MathHelper.Lerp(TornadoHeight, height, 0.05f);
             if (!CalamityPlayer.areThereAnyDamnBosses)
@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             float _ = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(),
                 targetHitbox.Size(),
-                projectile.Bottom,
+                projectile.Bottom - Vector2.UnitY * 150f,
                 projectile.Bottom - Vector2.UnitY * TornadoHeight * 0.8f,
                 (int)(projectile.width * 0.525),
                 ref _);

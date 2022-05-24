@@ -478,7 +478,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool dontFireYet, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
         {
             int totalShots = 15;
-            int shootRate = 50;
+            int shootRate = 45;
             int shotsPerBurst = 3;
             float shootSpread = 0.41f;
             float predictivenessFactor = 22f;
@@ -487,7 +487,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
-                shootRate -= 3;
+                shootRate -= 4;
 
             if (ExoMechManagement.CurrentTwinsPhase >= 5)
             {

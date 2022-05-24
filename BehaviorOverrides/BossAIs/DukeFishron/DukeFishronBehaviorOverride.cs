@@ -103,18 +103,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 
         public static DukeAttackType[] Subphase3Pattern =>
             DoCharge(3, true).
-            Fuse(new DukeAttackType[] { DukeAttackType.RazorbladeRazorstorm, }).
+            Fuse(DukeAttackType.RazorbladeRazorstorm, DukeAttackType.BubbleSpin).
             Fuse(DoCharge(5, true)).
-            Fuse(new DukeAttackType[] { DukeAttackType.SharkTornadoSummon, }).
+            Fuse(DukeAttackType.SharkTornadoSummon).
             Fuse(DoCharge(3, true)).
-            Fuse(new DukeAttackType[] { DukeAttackType.SharkTornadoSummon, }).
+            Fuse(DukeAttackType.SharkTornadoSummon, DukeAttackType.BubbleSpit).
             ToArray();
 
         public static DukeAttackType[] Subphase4Pattern =>
-            DoCharge(7, true).
-            Fuse(new DukeAttackType[] { DukeAttackType.TidalWave, }).
-            Fuse(DoCharge(7, true)).
-            Fuse(new DukeAttackType[] { DukeAttackType.RazorbladeRazorstorm, }).
+            DoCharge(9, true).
+            Fuse(DukeAttackType.TidalWave, DukeAttackType.BubbleSpin).
+            Fuse(DoCharge(9, true)).
+            Fuse(DukeAttackType.RazorbladeRazorstorm, DukeAttackType.BubbleSpin).
             ToArray();
 
         public static DukeAttackType[] DoCharge(int chargeCount, bool teleportAtStart = false)
@@ -138,9 +138,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             [Subphase4Pattern] = (npc) => npc.life / (float)npc.lifeMax < Phase4LifeRatio,
         };
 
-        public const float Phase2LifeRatio = 0.65f;
-        public const float Phase3LifeRatio = 0.35f;
-        public const float Phase4LifeRatio = 0.15f;
+        public const float Phase2LifeRatio = 0.7f;
+        public const float Phase3LifeRatio = 0.4f;
+        public const float Phase4LifeRatio = 0.2f;
         #endregion
 
         #region AI
@@ -254,9 +254,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (phaseTransitionPhase >= 1f)
                 eyeGlowmaskOpacity = 1f;
 
-            // Start the water background.
+            // Start the water background and make the player anxious in phase 3.
             if (inPhase3)
             {
+                target.Infernum().MakeAnxious(45);
                 npc.ai[2]++;
                 npc.ai[0] = 10f;
                 npc.alpha = Utils.Clamp(npc.alpha, 120, 255);
@@ -275,10 +276,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     DoBehavior_ChargeWait(npc, target, ref attackTimer, ref frameDrawType);
                     break;
                 case DukeAttackType.BubbleSpit:
-                    DoBehavior_BubbleSpit(npc, target, mouthPosition, ref attackTimer, ref frameDrawType, enraged);
+                    DoBehavior_BubbleSpit(npc, target, mouthPosition, ref attackTimer, ref frameDrawType, inPhase3, inPhase4, enraged);
                     break;
                 case DukeAttackType.BubbleSpin:
-                    DoBehavior_BubbleSpin(npc, target, mouthPosition, ref attackTimer, ref frameDrawType, enraged);
+                    DoBehavior_BubbleSpin(npc, target, mouthPosition, ref attackTimer, ref frameDrawType, inPhase3, inPhase4, enraged);
                     break;
                 case DukeAttackType.StationaryBubbleCharge:
                     DoBehavior_StationaryBubbleCharge(npc, target, mouthPosition, ref attackTimer, ref frameDrawType, enraged);
@@ -356,8 +357,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             }
             if (inPhase4)
             {
-                chargeTime -= 10;
-                chargeSpeed += 9f;
+                chargeTime -= 4;
+                chargeSpeed += 7.5f;
             }
 
             if (BossRushEvent.BossRushActive)
@@ -440,13 +441,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_BubbleSpit(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float frameDrawType, bool enraged)
+        public static void DoBehavior_BubbleSpit(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float frameDrawType, bool inPhase3, bool inPhase4, bool enraged)
         {
             int bubbleCount = 24;
             int bubbleShootRate = 3;
             float minBubbleSpeed = 8f;
             float maxBubbleSpeed = 11f;
             ref float hoverDirection = ref npc.Infernum().ExtraAI[0];
+
+            if (inPhase3)
+            {
+                minBubbleSpeed += 2f;
+                maxBubbleSpeed += 2f;
+                bubbleCount += 4;
+            }
+            if (inPhase4)
+            {
+                minBubbleSpeed += 2f;
+                maxBubbleSpeed += 2f;
+                bubbleCount += 6;
+            }
 
             if (enraged)
             {
@@ -475,7 +489,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             npc.rotation = npc.rotation.AngleLerp(GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true), 0.32f);
 
             // Belch bubbles.
-            if (attackTimer % bubbleShootRate == 0)
+            if (attackTimer % bubbleShootRate == 0f)
             {
                 Main.PlaySound(SoundID.NPCKilled, (int)npc.Center.X, (int)npc.Center.Y, 19, 1f, 0f);
 
@@ -490,13 +504,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 SelectNextAttack(npc);
         }
 
-        public static void DoBehavior_BubbleSpin(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float frameDrawType, bool enraged)
+        public static void DoBehavior_BubbleSpin(NPC npc, Player target, Vector2 mouthPosition, ref float attackTimer, ref float frameDrawType, bool inPhase3, bool inPhase4, bool enraged)
         {
             int bubbleReleaseRate = 5;
             int hoverRedirectTime = 120;
             int spinTime = 250;
-            float chargeSpeed = 29f;
+            float chargeSpeed = 21f;
             ref float hoverDirection = ref npc.Infernum().ExtraAI[0];
+
+            if (inPhase3)
+                chargeSpeed += 2.5f;
+
+            if (inPhase4)
+            {
+                bubbleReleaseRate--;
+                chargeSpeed += 4f;
+            }
 
             if (enraged)
             {
@@ -531,7 +554,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 float idealRotation = npc.AngleTo(target.Center).AngleLerp(GetAdjustedRotation(npc, target, 0f), slowdownFactor);
                 npc.rotation = npc.rotation.AngleLerp(GetAdjustedRotation(npc, target, idealRotation, true), 0.25f);
 
-                Vector2 hoverDestination = target.Center + new Vector2(hoverDirection * 720f, -400f);
+                Vector2 hoverDestination = target.Center + new Vector2(hoverDirection * 720f, -600f);
                 npc.Center = npc.Center.MoveTowards(hoverDestination, 4f);
                 npc.velocity = (npc.velocity * 24f + npc.SafeDirectionTo(hoverDestination) * (1f - slowdownFactor) * 30f) / 25f;
             }
@@ -549,7 +572,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 // Slow down before the attack ends.
                 if (attackTimer < hoverRedirectTime + spinTime - 30f)
                 {
-                    if (attackTimer % 60f > 30f)
+                    bool wouldUnfairlyHitPlayer = npc.WithinRange(target.Center, 300f) && npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.31f;
+                    if (attackTimer % 60f > 30f && !wouldUnfairlyHitPlayer)
                         npc.velocity = npc.velocity.RotatedBy(-MathHelper.TwoPi / 30f);
                 }
                 else
@@ -607,7 +631,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 {
                     attackSubstate = 1f;
                     npc.Center = destination;
-                    npc.velocity = Vector2.UnitX * (17f + target.velocity.Length()) * -hoverDirection;
+                    npc.velocity = Vector2.UnitX * (17f + target.velocity.Length() * 0.65f) * -hoverDirection;
+                    if (npc.velocity.AngleBetween(npc.SafeDirectionTo(target.Center)) < 0.3f)
+                        npc.velocity *= 0.6f;
+
                     npc.spriteDirection = (int)hoverDirection;
                     npc.rotation = 0f;
                     npc.netUpdate = true;
@@ -663,8 +690,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                 Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
                 List<int> xSpawnPositions = new List<int>()
                 {
-                    (int)(target.Center.X - (enraged ? 500f : 600f)) / 16,
-                    (int)(target.Center.X + (enraged ? 500f : 600f)) / 16
+                    (int)(target.Center.X - (enraged ? 600f : 800f)) / 16,
+                    (int)(target.Center.X + (enraged ? 600f : 800f)) / 16
                 };
 
                 // Summon tornadoes on the ground/water.
@@ -749,9 +776,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (attackTimer > redirectTime)
             {
                 GenerateParticles(npc);
-                if (Collision.SolidCollision(npc.position, npc.width, npc.width) ||
+                if ((Collision.SolidCollision(npc.position, npc.width, npc.width) ||
                     Collision.WetCollision(npc.position, npc.width, npc.width) ||
-                    attackTimer >= redirectTime + lungeMaxTime)
+                    attackTimer >= redirectTime + lungeMaxTime) && attackTimer >= redirectTime + 65f && !npc.WithinRange(target.Center, 375f))
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
@@ -781,24 +808,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
         {
             int hoverTime = 105;
             int chargeRedirectTime = 23;
-            int chargeCount = 4;
+            int chargeCount = 7;
             int upwardChargeCount = 4;
             int upwardChargeTime = 40;
             int upwardChargeFadeinTime = 18;
-            int typhoonBurstRate = enraged ? 24 : 35;
+            int typhoonBurstRate = enraged ? 13 : 22;
             int typhoonCount = enraged ? 11 : 5;
             float upwardChargeSpeed = 37f;
-            float initialChargeSpeed = enraged ? 34f : 30f;
+            float initialChargeSpeed = enraged ? 23f : 17f;
             float typhoonBurstSpeed = enraged ? 11f : 6.4f;
             ref float offsetDirection = ref npc.Infernum().ExtraAI[0];
 
             if (inPhase4)
             {
                 initialChargeSpeed += 2.5f;
-                typhoonBurstRate -= 5;
-                typhoonCount += 5;
+                typhoonBurstRate -= 2;
+                typhoonCount += 2;
             }
-            initialChargeSpeed *= 1.6f;
 
             if (BossRushEvent.BossRushActive)
                 initialChargeSpeed *= 1.2f;
@@ -816,7 +842,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     npc.netUpdate = true;
                 }
 
-                Vector2 destination = target.Center + new Vector2(offsetDirection * 200f, -960f);
+                Vector2 destination = target.Center - Vector2.UnitY * 1050f;
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(destination) * 33f, 1.3f);
                 npc.Center = Vector2.Lerp(npc.Center, destination, 0.014f).MoveTowards(destination, 15f);
                 npc.rotation = GetAdjustedRotation(npc, target, npc.AngleTo(target.Center), true);
@@ -839,7 +865,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
                     (int)(target.Center.X + (enraged ? 600f : 750f)) / 16
                 };
 
-                int y = Utils.Clamp((int)target.Center.Y / 16 + 45, 20, Main.maxTilesY - 20);
+                int y = Utils.Clamp((int)target.Center.Y / 16 + 95, 20, Main.maxTilesY - 20);
                 foreach (int x in xSpawnPositions)
                 {
                     Vector2 spawnPosition = new Point(x, y).ToWorldCoordinates();
@@ -853,7 +879,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (attackTimer == hoverTime)
             {
                 npc.spriteDirection = (npc.Center.X > target.Center.X).ToDirectionInt();
-                npc.velocity = Vector2.UnitX.RotatedBy(MathHelper.Pi * -0.087f) * initialChargeSpeed * -offsetDirection;
+                npc.velocity = Vector2.UnitY * initialChargeSpeed;
 
                 // Roar.
                 Main.PlaySound(SoundID.Zombie, (int)npc.Center.X, (int)npc.Center.Y, 20, 1f, 0f);
@@ -865,16 +891,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             // Do reflected charge.
             if (attackTimer > hoverTime && attackTimer < hoverTime + chargeCount * chargeRedirectTime)
             {
-                // Reflected charge.
-                if (attackTimer % chargeRedirectTime == chargeRedirectTime - 1f)
-                {
-                    npc.spriteDirection *= -1;
-                    npc.velocity = Vector2.Reflect(npc.velocity, Vector2.UnitX);
-                    npc.rotation = GetAdjustedRotation(npc, target, npc.velocity.ToRotation());
-                    npc.netUpdate = true;
-                }
-
-                if (attackTimer % typhoonBurstRate == typhoonBurstRate - 1f && !npc.WithinRange(target.Center, 300f))
+                if (attackTimer % typhoonBurstRate == typhoonBurstRate - 1f && !npc.WithinRange(target.Center, 200f))
                 {
                     Main.PlaySound(SoundID.Item84, npc.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)

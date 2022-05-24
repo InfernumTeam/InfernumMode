@@ -240,7 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
         {
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int sandParticleReleaseRate = (int)Math.Round(MathHelper.Lerp(22f, 16f, 1f - lifeRatio));
-            float sandParticleSpeed = 11f;
+            float sandParticleSpeed = 9.5f;
             float idealFlySpeed = MathHelper.Lerp(5f, 8f, 1f - lifeRatio) + npc.Distance(target.Center) * 0.012f;
             if (enraged)
             {
@@ -293,9 +293,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
             float lifeRatio = npc.life / (float)npc.lifeMax;
             int totalSlams = 2;
             float upwardFlySpeed = 16f;
-            float slamSpeed = 23.5f;
-            int sandBurstCount = (int)MathHelper.Lerp(20f, 35f, 1f - lifeRatio);
-            float sandBurstSpeed = MathHelper.Lerp(13.745f, 19f, 1f - lifeRatio);
+            float slamSpeed = 21f;
+            int sandBurstCount = (int)MathHelper.Lerp(20f, 32f, 1f - lifeRatio);
+            float sandBurstSpeed = MathHelper.Lerp(13f, 18f, 1f - lifeRatio);
             if (enraged)
             {
                 sandBurstCount += 10;
@@ -360,7 +360,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DesertScourge
                         // Create the tornadoes.
                         for (int i = 0; i < 5; i++)
                         {
-                            Vector2 tornadoVelocity = Vector2.UnitX * MathHelper.Lerp(7f, 23f, i / 4f);
+                            Vector2 tornadoVelocity = Vector2.UnitX * MathHelper.Lerp(7f, 20.5f, i / 4f);
                             Utilities.NewProjectileBetter(npc.Center, tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
                             Utilities.NewProjectileBetter(npc.Center, -tornadoVelocity, ModContent.ProjectileType<Sandnado>(), 105, 0f);
                         }

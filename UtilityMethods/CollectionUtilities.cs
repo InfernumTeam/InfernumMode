@@ -2,7 +2,7 @@ namespace InfernumMode
 {
     public static partial class Utilities
     {
-        public static T[] Fuse<T>(this T[] c1, T[] c2)
+        public static T[] Fuse<T>(this T[] c1, params T[] c2)
         {
             T[] result = new T[c1.Length + c2.Length];
             for (int i = 0; i < c1.Length; i++)

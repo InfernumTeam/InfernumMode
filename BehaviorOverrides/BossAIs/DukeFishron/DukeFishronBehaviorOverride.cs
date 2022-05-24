@@ -812,7 +812,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             int upwardChargeCount = 4;
             int upwardChargeTime = 40;
             int upwardChargeFadeinTime = 18;
-            int typhoonBurstRate = enraged ? 13 : 22;
+            int typhoonBurstRate = enraged ? 16 : 28;
             int typhoonCount = enraged ? 11 : 5;
             float upwardChargeSpeed = 37f;
             float initialChargeSpeed = enraged ? 23f : 17f;
@@ -822,7 +822,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (inPhase4)
             {
                 initialChargeSpeed += 2.5f;
-                typhoonBurstRate -= 2;
+                typhoonBurstRate -= 3;
                 typhoonCount += 2;
             }
 

@@ -342,12 +342,14 @@ namespace InfernumMode.GlobalInstances
 
             double realDamage = crit ? damage * 2 : damage;
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
+
+            // Make DoG enter the second phase once ready.
             if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
                  life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 damage = 0;
                 npc.dontTakeDamage = true;
-                npc.Infernum().ExtraAI[10] = 1f;
+                DoGPhase1HeadBehaviorOverride.CurrentPhase2TransitionState = DoGPhase1HeadBehaviorOverride.Phase2TransitionState.NeedsToSummonPortal;
                 return false;
             }
 

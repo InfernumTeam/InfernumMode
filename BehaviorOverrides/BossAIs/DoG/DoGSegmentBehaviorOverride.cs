@@ -108,7 +108,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 switch ((BodySegmentFadeType)(int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.BodySegmentFadeTypeAIIndex])
                 {
                     case BodySegmentFadeType.EnterPortal:
-                        int portalIndex = (int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.PortalProjectileIndexAIIndex];
+                        int portalIndex = (int)head.Infernum().ExtraAI[DoGPhase1HeadBehaviorOverride.Phase2PortalProjectileIndexAIIndex];
                         if (portalIndex >= 0f && npc.Hitbox.Intersects(Main.projectile[portalIndex].Hitbox))
                             npc.Opacity = MathHelper.Clamp(npc.Opacity - 0.275f, 0f, 1f);
 

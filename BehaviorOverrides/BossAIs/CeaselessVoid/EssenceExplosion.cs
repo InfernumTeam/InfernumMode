@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
+namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 {
     public class EssenceExplosion : ModProjectile
     {

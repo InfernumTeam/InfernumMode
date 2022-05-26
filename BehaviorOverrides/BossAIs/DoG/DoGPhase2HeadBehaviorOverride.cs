@@ -152,15 +152,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             CalamityGlobalNPC.DoGHead = npc.whoAmI;
 
             // Handle fade-in logic when the boss is summoned.
-            if (fadeinTimer < DoGRealityRendEntranceGate.Phase2AnimationTime)
+            if (fadeinTimer < DoGPhase2IntroPortalGate.Phase2AnimationTime)
             {
                 npc.TargetClosest();
                 target = Main.player[npc.target];
-                if (!Utilities.AnyProjectiles(ModContent.ProjectileType<DoGRealityRendEntranceGate>()))
+                if (!Utilities.AnyProjectiles(ModContent.ProjectileType<DoGPhase2IntroPortalGate>()))
                 {
                     npc.Center = target.Center - Vector2.UnitY * 600f;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
-                        portalIndex = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGRealityRendEntranceGate>(), 0, 0f);
+                        portalIndex = Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<DoGPhase2IntroPortalGate>(), 0, 0f);
                 }
 
                 npc.Opacity = 0f;
@@ -169,12 +169,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 // Stay far above the player, but get increasing close as the animation goes on.
                 // This is a trick to make the background fade from violet/cyan to black as the animation goes on.
                 // This probably is fucked in multiplayer but whatever lmao.
-                npc.Center = target.Center - Vector2.UnitY * MathHelper.Lerp(6000f, 3000f, fadeinTimer / DoGRealityRendEntranceGate.Phase2AnimationTime);
+                npc.Center = target.Center - Vector2.UnitY * MathHelper.Lerp(6000f, 3000f, fadeinTimer / DoGPhase2IntroPortalGate.Phase2AnimationTime);
                 fadeinTimer++;
                 passiveAttackDelay = 0f;
 
                 // Teleport to the position of the portal and charge at the target after the animation concludes.
-                if (fadeinTimer >= DoGRealityRendEntranceGate.Phase2AnimationTime)
+                if (fadeinTimer >= DoGPhase2IntroPortalGate.Phase2AnimationTime)
                 {
                     npc.Opacity = 1f;
                     npc.Center = Main.projectile[(int)portalIndex].Center;
@@ -289,10 +289,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         {
                             ProjectileID.CultistBossLightningOrbArc,
                             ModContent.ProjectileType<HomingDoGBurst>(),
-                            ModContent.ProjectileType<DoGBeamPortalN>(),
-                            ModContent.ProjectileType<DoGBeamN>(),
-                            ModContent.ProjectileType<EssenceCleave>(),
-                            ModContent.ProjectileType<EssenceExplosion>(),
+                            ModContent.ProjectileType<EssenceCleave>()
                         };
                         for (int i = 0; i < Main.maxProjectiles; i++)
                         {
@@ -360,33 +357,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             bool chomping = specialAttackState == 0f && DoChomp(npc, ref chompEffectsCountdown, ref jawRotation);
 
             // Despawn if no valid target exists.
-            if (postSpawnAnimationMoveDelay < PostP2AnimationMoveDelay)
+            if (target.dead || !target.active)
+                Despawn(npc);
+
+            // Don't do any movement yet if the move animation delay isn't ready yet.
+            else if (postSpawnAnimationMoveDelay < PostP2AnimationMoveDelay)
                 postSpawnAnimationMoveDelay++;
+
+            // Do passive movement along with sentinel attacks.
+            else if (doPassiveMovement)
+            {
+                DoPassiveFlyMovement(npc, ref jawRotation, ref chompEffectsCountdown);
+                if (passiveAttackDelay >= 300f)
+                {
+                    // Increment the sentinal attack timer if DoG is completely visible.
+                    if (totalSentinelAttacks >= 1 && npc.Opacity >= 1f)
+                        sentinelAttackTimer++;
+                    if (sentinelAttackTimer >= totalSentinelAttacks * 450f)
+                        sentinelAttackTimer = 0f;
+
+                    DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
+                }
+            }
+
+            // Do aggressive fly movement, snapping at the target ruthlessly.
             else
             {
-                if (target.dead || !target.active)
-                    Despawn(npc);
-
-                else if (doPassiveMovement)
-                {
-                    DoPassiveFlyMovement(npc, ref jawRotation, ref chompEffectsCountdown);
-                    if (passiveAttackDelay >= 300f)
-                    {
-                        // Increment the sentinal attack timer if DoG is completely visible.
-                        if (totalSentinelAttacks >= 1 && npc.Opacity >= 1f)
-                            sentinelAttackTimer++;
-                        if (sentinelAttackTimer >= totalSentinelAttacks * 450f)
-                            sentinelAttackTimer = 0f;
-
-                        DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
-                    }
-                }
-
-                else
-                {
-                    bool dontChompYet = (phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2)) - PassiveMovementTimeP2 < 90f;
-                    DoAggressiveFlyMovement(npc, target, dontChompYet, chomping, ref jawRotation, ref chompEffectsCountdown, ref time, ref flyAcceleration);
-                }
+                bool dontChompYet = (phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2)) - PassiveMovementTimeP2 < 90f;
+                DoAggressiveFlyMovement(npc, target, dontChompYet, chomping, ref jawRotation, ref chompEffectsCountdown, ref time, ref flyAcceleration);
             }
 
             // Define the rotation and sprite direction. This only applies for non-special attacks.
@@ -592,7 +590,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         public static bool DoChomp(NPC npc, ref float chompEffectsCountdown, ref float jawRotation)
         {
             bool chomping = chompEffectsCountdown > 0f;
+            int dustCount = 40;
             float idealChompAngle = MathHelper.ToRadians(-18f);
+            float dustScale = 2.6f;
+            if (!InPhase2)
+            {
+                dustCount = 25;
+                idealChompAngle *= 0.5f;
+                dustScale = 1.8f;
+            }
+
             if (chomping)
             {
                 chompEffectsCountdown--;
@@ -604,12 +611,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     jawRotation = jawRotation.AngleTowards(idealChompAngle, 0.12f);
                     if (Math.Abs(jawRotation - idealChompAngle) < 0.001f)
                     {
-                        for (int i = 0; i < 40; i++)
+                        for (int i = 0; i < dustCount; i++)
                         {
                             Dust electricity = Dust.NewDustPerfect(npc.Center - Vector2.UnitY.RotatedBy(npc.rotation) * 52f, 229);
-                            electricity.velocity = ((MathHelper.TwoPi / 40f * i).ToRotationVector2() * new Vector2(7f, 4f)).RotatedBy(npc.rotation) + npc.velocity * 1.5f;
+                            electricity.velocity = ((MathHelper.TwoPi * i / dustCount).ToRotationVector2() * new Vector2(7f, 4f)).RotatedBy(npc.rotation) + npc.velocity * 1.5f;
                             electricity.noGravity = true;
-                            electricity.scale = 2.6f;
+                            electricity.scale = dustScale;
                         }
                         jawRotation = idealChompAngle;
                     }
@@ -625,9 +632,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             // Move towards the target.
             Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 600f;
-            if (!npc.WithinRange(destination, 100f))
+            if (!npc.WithinRange(destination, 125f))
             {
-                float flySpeed = MathHelper.Lerp(29f, 38f, 1f - npc.life / (float)npc.lifeMax);
+                float flySpeed = MathHelper.Lerp(27f, 38f, 1f - npc.life / (float)npc.lifeMax);
                 Vector2 idealVelocity = npc.SafeDirectionTo(destination) * flySpeed;
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f).RotateTowards(idealVelocity.ToRotation(), 0.032f);
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
@@ -638,25 +645,40 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public static void DoAggressiveFlyMovement(NPC npc, Player target, bool dontChompYet, bool chomping, ref float jawRotation, ref float chompEffectsCountdown, ref float time, ref float flyAcceleration)
         {
-            npc.Center = npc.Center.MoveTowards(target.Center, 2.4f);
-
+            npc.Center = npc.Center.MoveTowards(target.Center, InPhase2 ? 1.8f : 2.4f);
+            bool targetHasDash = target.dash > 0 || target.Calamity().dashMod > 0;
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            float idealFlyAcceleration = MathHelper.Lerp(0.05f, 0.037f, lifeRatio);
+            float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.032f, lifeRatio);
             float idealFlySpeed = MathHelper.Lerp(20.5f, 15f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(32f);
-            float flySpeedFactor = 1f + lifeRatio * 0.5f;
+            float flySpeedFactor = 1f + lifeRatio * 0.45f; // TODO -- This is probably bugged? If the fight is good though, leave it be.
+            float snakeMovementDistanceThreshold = 650f;
+            if (InPhase2)
+            {
+                idealFlyAcceleration += 0.005f;
+                idealMouthOpeningAngle = MathHelper.ToRadians(34f);
+                flySpeedFactor += lifeRatio * 0.05f;
+                snakeMovementDistanceThreshold -= 125f;
+                if (BossRushEvent.BossRushActive)
+                    idealFlySpeed *= 1.4f;
+            }
 
-            if (BossRushEvent.BossRushActive)
-                idealFlySpeed *= 1.4f;
+            // Make things a little easier if the target doesn't have a dash.
+            if (!targetHasDash)
+            {
+                idealFlyAcceleration *= 0.75f;
+                flySpeedFactor *= 0.9f;
+            }
 
             Vector2 destination = target.Center;
 
+            // Swerve around in a snake-like movement if sufficiently far away from the target.
             float distanceFromDestination = npc.Distance(destination);
-            if (npc.Distance(destination) > 525f)
+            if (npc.Distance(destination) > snakeMovementDistanceThreshold)
             {
                 destination += (time % 60f / 60f * MathHelper.TwoPi).ToRotationVector2() * 145f;
                 distanceFromDestination = npc.Distance(destination);
-                idealFlyAcceleration *= 1.45f;
+                idealFlyAcceleration *= 1.8f;
                 flySpeedFactor = 1.55f;
             }
 

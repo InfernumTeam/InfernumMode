@@ -65,6 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Destination = Vector2.Lerp(Destination, idealDestination, 0.1f).MoveTowards(idealDestination, 5f);
             }
         }
+
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             float fade = Utils.InverseLerp(600f, 565f, projectile.timeLeft, true);

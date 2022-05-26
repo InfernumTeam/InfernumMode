@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-    public class DoGRealityRendEntranceGate : ModProjectile
+    public class DoGPhase2IntroPortalGate : ModProjectile
     {
         public ref float Time => ref projectile.ai[0];
 

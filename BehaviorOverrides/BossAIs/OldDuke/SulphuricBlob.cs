@@ -47,9 +47,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 6; i++)
             {
-                Vector2 shootVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 10f;
+                Vector2 shootVelocity = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 10f;
                 Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<HomingAcid>(), 275, 0f);
             }
         }

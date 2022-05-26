@@ -11,6 +11,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
     public class DoGRealityRendEntranceGate : ModProjectile
     {
         public ref float Time => ref projectile.ai[0];
+
+        public const int Phase2AnimationTime = 280;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Portal");
@@ -23,7 +26,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.alpha = 255;
-            projectile.timeLeft = 280;
+            projectile.timeLeft = Phase2AnimationTime;
             projectile.penetrate = -1;
         }
 
@@ -95,9 +98,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             spriteBatch.EnterShaderRegion();
 
-            float fade = Utils.InverseLerp(280f, 235f, projectile.timeLeft, true);
+            float fade = Utils.InverseLerp(Phase2AnimationTime, Phase2AnimationTime - 45f, projectile.timeLeft, true);
             if (projectile.timeLeft <= 45f)
                 fade = Utils.InverseLerp(0f, 45f, projectile.timeLeft, true);
+
             Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
             Vector2 drawPosition2 = projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
@@ -129,6 +133,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 var soundInstance = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DevourerSpawn"), projectile.Center);
                 if (soundInstance != null)
                     soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 1.6f, 0f, 1f);
+
+                soundInstance = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGLaugh"), Main.LocalPlayer.Center);
+                if (soundInstance != null)
+                    soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 2, 0f, 1f);
 
                 for (int i = 0; i < 3; i++)
                 {

@@ -6,6 +6,7 @@ using CalamityMod.NPCs.Providence;
 using CalamityMod.Particles;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
@@ -33,7 +34,7 @@ using static CalamityMod.CalamityMod;
 
 namespace InfernumMode
 {
-	public class InfernumMode : Mod
+    public class InfernumMode : Mod
     {
         internal static InfernumMode Instance = null;
         internal static Mod CalamityMod = null;
@@ -218,6 +219,12 @@ namespace InfernumMode
                     music = 0;
                 Main.musicFade[Main.curMusic] = 1f;
                 priority = MusicPriority.BossHigh;
+            }
+
+            if (DoGPhase2HeadBehaviorOverride.InPhase2)
+            {
+                music = (CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP2") ?? MusicID.LunarBoss;
+                priority = MusicPriority.BiomeHigh;
             }
 
             bool areExoMechsAround = NPC.AnyNPCs(ModContent.NPCType<AresBody>()) ||

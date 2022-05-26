@@ -343,7 +343,7 @@ namespace InfernumMode.GlobalInstances
             double realDamage = crit ? damage * 2 : damage;
             int life = npc.realLife >= 0 ? Main.npc[npc.realLife].life : npc.life;
             if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                 life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && npc.Infernum().ExtraAI[33] == 0f)
+                 life - realDamage <= npc.lifeMax * DoGPhase1HeadBehaviorOverride.Phase2LifeRatio && !DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 damage = 0;
                 npc.dontTakeDamage = true;
@@ -352,7 +352,7 @@ namespace InfernumMode.GlobalInstances
             }
 
             if ((npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>()) &&
-                 life - realDamage <= 1000 && npc.Infernum().ExtraAI[33] == 1f)
+                 life - realDamage <= 1000 && DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 damage = 0;
                 npc.dontTakeDamage = true;

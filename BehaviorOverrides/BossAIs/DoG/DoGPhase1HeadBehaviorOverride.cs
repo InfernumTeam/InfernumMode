@@ -82,6 +82,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return DoGPhase2HeadBehaviorOverride.Phase2AI(npc, ref phaseCycleTimer, ref passiveAttackDelay, ref portalIndex, ref segmentFadeType);
             }
 
+            // Set music.
+            npc.modNPC.music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP1") ?? MusicID.LunarBoss;
+
             // Do through the portal once ready to enter the second phase.
             if (npc.Infernum().ExtraAI[10] > 0f)
             {
@@ -277,12 +280,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             jawRotation = jawRotation.AngleTowards(0f, 0.08f);
 
             // Move towards the target.
-            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 430f;
+            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 600f;
             if (!npc.WithinRange(destination, 150f))
             {
                 Vector2 idealVelocity = npc.SafeDirectionTo(destination) * 27f;
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f).RotateTowards(idealVelocity.ToRotation(), 0.032f);
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
+                if (npc.velocity.Y > 0f)
+                    npc.velocity.Y -= 1f;
             }
         }
 

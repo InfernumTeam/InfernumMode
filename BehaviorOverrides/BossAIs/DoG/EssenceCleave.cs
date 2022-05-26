@@ -23,13 +23,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.tileCollide = false;
             projectile.alpha = 255;
             projectile.penetrate = -1;
-            projectile.timeLeft = 90;
-            projectile.MaxUpdates = 2;
+            projectile.timeLeft = 45;
+            projectile.MaxUpdates = 3;
         }
 
         public override void AI()
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.timeLeft == 40f)
+            if (Main.netMode != NetmodeID.MultiplayerClient && projectile.timeLeft == 22f)
             {
                 Vector2 sliceSpawnPosition = projectile.Center - projectile.ai[0].ToRotationVector2() * 3900f;
                 Utilities.NewProjectileBetter(sliceSpawnPosition, projectile.ai[0].ToRotationVector2() * 6f, ModContent.ProjectileType<EssenceSlice>(), 450, 0f);
@@ -38,7 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Utilities.NewProjectileBetter(sliceSpawnPosition, projectile.ai[0].ToRotationVector2() * -6f, ModContent.ProjectileType<EssenceSlice>(), 450, 0f);
             }
 
-            if (projectile.timeLeft < 40f)
+            if (projectile.timeLeft < 22f)
                 LineWidth -= 0.1f;
             else if (LineWidth < 5f)
                 LineWidth += 0.3f;
@@ -48,13 +48,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            spriteBatch.SetBlendState(BlendState.Additive);
-
             Vector2 offset = projectile.ai[0].ToRotationVector2() * 4000f;
-            spriteBatch.DrawLineBetter(projectile.Center - offset, projectile.Center + offset, Color.Purple, LineWidth);
-            spriteBatch.DrawLineBetter(projectile.Center - offset, projectile.Center + offset, Color.Magenta * 0.6f, LineWidth * 0.5f);
-
-            spriteBatch.ResetBlendState();
+            spriteBatch.DrawLineBetter(projectile.Center - offset, projectile.Center + offset, Color.DeepSkyBlue, LineWidth);
+            spriteBatch.DrawLineBetter(projectile.Center - offset, projectile.Center + offset, Color.Cyan * 0.6f, LineWidth * 0.5f);
             return true;
         }
     }

@@ -6,6 +6,7 @@ using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Signus;
 using CalamityMod.NPCs.Yharon;
+using InfernumMode.BehaviorOverrides.BossAIs.DoG;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;
@@ -54,9 +55,19 @@ namespace InfernumMode.GlobalInstances
             bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
             if (isDoG)
             {
-                NPC head = CalamityGlobalNPC.DoGHead >= 0 ? Main.npc[CalamityGlobalNPC.DoGHead] : null;
-                if (npc.Opacity < 0.1f || (head != null && head.Infernum().ExtraAI[2] >= 6f && head.Infernum().ExtraAI[33] >= 1f))
+                if (npc.Opacity <= 0.02f)
+                {
                     index = -1;
+                    return;
+                }
+
+                bool inPhase2 = DoGPhase2HeadBehaviorOverride.InPhase2;
+                if (npc.type == ModContent.NPCType<DevourerofGodsHead>())
+                    index = inPhase2 ? DevourerofGodsHead.phase2IconIndex : DevourerofGodsHead.phase1IconIndex;
+                else if (npc.type == ModContent.NPCType<DevourerofGodsBody>())
+                    index = inPhase2 ? DevourerofGodsBody.phase2IconIndex : -1;
+                else if (npc.type == ModContent.NPCType<DevourerofGodsTail>())
+                    index = inPhase2 ? DevourerofGodsTail.phase2IconIndex : DevourerofGodsTail.phase1IconIndex;
             }
 
             // Make Anahita completely invisible on the map when sufficiently faded out.
@@ -78,6 +89,17 @@ namespace InfernumMode.GlobalInstances
             if (npc.type == ModContent.NPCType<Cryogen>())
                 index = ModContent.GetModBossHeadSlot("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/CryogenMapIcon");
         }
+
+        public override void BossHeadRotation(NPC npc, ref float rotation)
+        {
+            bool isDoG = npc.type == ModContent.NPCType<DevourerofGodsHead>() || npc.type == ModContent.NPCType<DevourerofGodsBody>() || npc.type == ModContent.NPCType<DevourerofGodsTail>();
+            if (isDoG)
+            {
+                if (DoGPhase2HeadBehaviorOverride.InPhase2)
+                    rotation = npc.rotation;
+            }
+        }
+
         #endregion
 
         #region Manual Drawing

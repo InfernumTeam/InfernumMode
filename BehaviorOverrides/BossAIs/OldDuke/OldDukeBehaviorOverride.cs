@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.AcidBubbleFountain,
+            OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
-            OldDukeAttackState.AcidBubbleFountain,
+            OldDukeAttackState.ToothBallVomit,
         };
 
         public static readonly List<OldDukeAttackState> Phase2AttackPattern = new List<OldDukeAttackState>()
@@ -86,6 +86,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.Charge,
@@ -103,17 +104,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.AcidBelch,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.FastRegularCharge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.GoreAndAcidSpit,
         };
 
@@ -129,16 +133,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.GoreAndAcidSpit,
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.ToothBallVomit,
             OldDukeAttackState.TeleportPause,
@@ -146,10 +153,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.TeleportPause,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
             OldDukeAttackState.Charge,
+            OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.FastRegularCharge,
             OldDukeAttackState.SharkronSpinSummon,
         };
@@ -807,7 +816,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
                 {
                     for (int i = 0; i < goreCount; i++)
                     {
-                        Vector2 goreVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(19f, 27f);
+                        Vector2 goreVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(16f, 23f);
                         Utilities.NewProjectileBetter(mouthPosition, goreVelocity, ModContent.ProjectileType<OldDukeGore>(), 345, 0f);
                     }
                 }
@@ -815,7 +824,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer > 150f && attackTimer < 180f)
             {
-                Vector2 acidVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(14f, 19f);
+                Vector2 acidVelocity = idealRotation.ToRotationVector2().RotatedByRandom(0.43f) * -npc.spriteDirection * Main.rand.NextFloat(13f, 18f);
                 Utilities.NewProjectileBetter(mouthPosition, acidVelocity, ModContent.ProjectileType<HomingAcid>(), 325, 0f);
             }
 

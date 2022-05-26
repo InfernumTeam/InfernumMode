@@ -24,17 +24,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
             projectile.penetrate = -1;
-            projectile.timeLeft = 360;
+            projectile.timeLeft = 300;
             cooldownSlot = 1;
         }
 
         public override void AI()
         {
-            projectile.Opacity = Utils.InverseLerp(0f, 12f, Time, true);
+            projectile.Opacity = Utils.InverseLerp(0f, 12f, Time, true) * Utils.InverseLerp(0f, 20f, projectile.timeLeft, true);
             projectile.frameCounter++;
             projectile.frame = projectile.frameCounter / 5 % Main.projFrames[projectile.type];
-
-            projectile.rotation = projectile.velocity.ToRotation() - MathHelper.PiOver2;
 
             // Accelerate quickly.
             if (projectile.velocity.Length() < 16f)
@@ -56,7 +54,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            Utilities.DrawAfterimagesCentered(projectile, lightColor, ProjectileID.Sets.TrailingMode[projectile.type], 1, Main.projectileTexture[projectile.type], false);
+            Utilities.DrawAfterimagesCentered(projectile, Color.White, ProjectileID.Sets.TrailingMode[projectile.type], 1, Main.projectileTexture[projectile.type], false);
             return false;
         }
     }

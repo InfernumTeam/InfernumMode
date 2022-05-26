@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             DisplayName.SetDefault("Essence Slice");
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 24;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 12;
         }
 
         public override void SetDefaults()
@@ -95,9 +95,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float opacity = Utils.InverseLerp(1f, 0.6f, completionRatio, true);
 
             float colorLerpFactor = 0.6f;
-            Color startingColor = Color.Lerp(Color.Magenta, Color.Pink, startingInterpolant * colorLerpFactor);
+            Color startingColor = Color.Lerp(Color.Cyan, Color.DeepSkyBlue, startingInterpolant * colorLerpFactor);
 
-            return Color.Lerp(startingColor, Color.Purple, MathHelper.SmoothStep(0f, 1f, Utils.InverseLerp(0f, endFadeRatio, completionRatio, true))) * opacity;
+            return Color.Lerp(startingColor, Color.White, MathHelper.SmoothStep(0f, 0.4f, Utils.InverseLerp(0f, endFadeRatio, completionRatio, true))) * opacity;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -107,7 +107,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             GameShaders.Misc["Infernum:Fire"].UseSaturation(0.7f);
             GameShaders.Misc["Infernum:Fire"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"));
-            FireDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 34);
+            FireDrawer.Draw(projectile.oldPos, projectile.Size * 0.5f - Main.screenPosition, 23);
             return false;
         }
     }

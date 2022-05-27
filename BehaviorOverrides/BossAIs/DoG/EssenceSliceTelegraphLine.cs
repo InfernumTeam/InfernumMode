@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 {
-    public class EssenceCleave : ModProjectile
+    public class EssenceSliceTelegraphLine : ModProjectile
     {
         public float LineWidth = 0f;
         public ref float Time => ref projectile.ai[1];

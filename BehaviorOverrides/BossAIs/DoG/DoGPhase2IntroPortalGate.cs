@@ -136,7 +136,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 soundInstance = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGLaugh"), Main.LocalPlayer.Center);
                 if (soundInstance != null)
-                    soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 2, 0f, 1f);
+                    soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 3f, 0f, 1f);
 
                 for (int i = 0; i < 3; i++)
                 {

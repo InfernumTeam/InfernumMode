@@ -11,6 +11,7 @@ using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.Buffs;
 using InfernumMode.Dusts;
 using InfernumMode.MachineLearning;
+using InfernumMode.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -115,6 +116,12 @@ namespace InfernumMode
                 int perforatorHive = NPC.FindFirstNPC(perforatorHiveID);
                 NPC perforatorHiveNPC = perforatorHive >= 0 ? Main.npc[perforatorHive] : null;
                 player.ManageSpecialBiomeVisuals("InfernumMode:Perforators", perforatorHiveNPC != null && perforatorHiveNPC.localAI[1] > 0f);
+
+                bool useDoG = DoGSkyInfernum.CanSkyBeActive;
+                if (useDoG)
+                    SkyManager.Instance.Activate("InfernumMode:DoG", player.Center);
+                else
+                    SkyManager.Instance.Deactivate("InfernumMode:DoG");
             }
         }
         #endregion

@@ -76,6 +76,8 @@ namespace InfernumMode
             Filters.Scene["InfernumMode:OldDuke"] = new Filter(new OldDukeScreenShaderData("FilterMiniTower").UseColor(Color.Lerp(Color.Lime, Color.Black, 0.9f)).UseOpacity(0.6f), EffectPriority.VeryHigh);
             SkyManager.Instance["InfernumMode:OldDuke"] = new OldDukeSky();
 
+            SkyManager.Instance["InfernumMode:DoG"] = new DoGSkyInfernum();
+
             // Manually invoke the attribute constructors to get the marked methods cached.
             foreach (var type in typeof(InfernumMode).Assembly.GetTypes())
             {

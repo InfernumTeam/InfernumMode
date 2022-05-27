@@ -39,6 +39,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override void Kill(int timeLeft)
         {
+            if (projectile.localAI[1] != 0f)
+                return;
+
             Main.PlaySound(SoundID.Item74, projectile.Center);
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {

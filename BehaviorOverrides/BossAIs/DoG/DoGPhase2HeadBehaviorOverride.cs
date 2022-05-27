@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -49,49 +50,21 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        public static float GetAggressiveFade
+        public static float FadeToAntimatterForm
         {
             get
             {
                 if (CalamityGlobalNPC.DoGHead < 0)
                     return 0f;
 
-                NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
-
-                int passiveMoveTime = !InPhase2 ? DoGPhase1HeadBehaviorOverride.PassiveMovementTimeP1 : PassiveMovementTimeP2;
-                int aggressiveMoveTime = !InPhase2 ? DoGPhase1HeadBehaviorOverride.AggressiveMovementTimeP1 : AggressiveMovementTimeP2;
-                float phaseCycleTimer = npc.Infernum().ExtraAI[12] % (passiveMoveTime + aggressiveMoveTime);
-                float aggressiveFade = Utils.InverseLerp(passiveMoveTime - 120f, passiveMoveTime, phaseCycleTimer, true);
-                aggressiveFade *= Utils.InverseLerp(1f, 0.8f, aggressiveFade, true);
-                if (npc.life < npc.lifeMax * FinalPhaseLifeRatio)
-                    aggressiveFade = 0f;
-                if (npc.Infernum().ExtraAI[14] != 0f)
-                    return 0f;
-
-                return aggressiveFade;
+                return Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[39];
             }
-        }
-
-        public static float GetPassiveFade
-        {
-            get
+            set
             {
                 if (CalamityGlobalNPC.DoGHead < 0)
-                    return 0f;
+                    return;
 
-                NPC npc = Main.npc[CalamityGlobalNPC.DoGHead];
-
-                int passiveMoveTime = !InPhase2 ? DoGPhase1HeadBehaviorOverride.PassiveMovementTimeP1 : PassiveMovementTimeP2;
-                int aggressiveMoveTime = !InPhase2 ? DoGPhase1HeadBehaviorOverride.AggressiveMovementTimeP1 : AggressiveMovementTimeP2;
-                float phaseCycleTimer = npc.Infernum().ExtraAI[12] % (passiveMoveTime + aggressiveMoveTime);
-                float passiveFade = Utils.InverseLerp(passiveMoveTime + aggressiveMoveTime - 120f, passiveMoveTime + aggressiveMoveTime, phaseCycleTimer, true);
-                passiveFade *= Utils.InverseLerp(1f, 0.8f, passiveFade, true);
-                if (npc.life < npc.lifeMax * FinalPhaseLifeRatio)
-                    passiveFade = 0f;
-                if (npc.Infernum().ExtraAI[14] != 0f)
-                    return 0f;
-
-                return passiveFade;
+                Main.npc[CalamityGlobalNPC.DoGHead].Infernum().ExtraAI[39] = value;
             }
         }
 
@@ -109,11 +82,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const float CanUseSpecialAttacksLifeRatio = 0.7f;
 
+        public const float CanUseCeaselessVoidSentinelAttackLifeRatio = 0.6f;
+
+        public const float CanUseSignusSentinelAttackLifeRatio = 0.45f;
+
+        public const float RipperRemovalLifeRatio = 0.45f;
+
         public const float FinalPhaseLifeRatio = 0.2f;
 
-        public const float RipperRemovalLifeRatio = 0.35f;
-
         public static readonly Color PassiveFadeColor = Color.DeepSkyBlue;
+
         public static readonly Color AggressiveFadeColor = Color.Red;
 
         #region AI
@@ -122,7 +100,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Set music.
             npc.modNPC.music = (InfernumMode.CalamityMod as CalamityMod.CalamityMod).GetMusicFromMusicMod("DevourerOfGodsP2") ?? MusicID.LunarBoss;
 
-            ref float specialAttackState = ref npc.Infernum().ExtraAI[14];
+            ref float performingSpecialAttack = ref npc.Infernum().ExtraAI[14];
             ref float specialAttackTimer = ref npc.Infernum().ExtraAI[15];
             ref float nearDeathFlag = ref npc.Infernum().ExtraAI[16];
             ref float spawnedSegmentsFlag = ref npc.Infernum().ExtraAI[17];
@@ -172,6 +150,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.Center = target.Center - Vector2.UnitY * MathHelper.Lerp(6000f, 3000f, fadeinTimer / DoGPhase2IntroPortalGate.Phase2AnimationTime);
                 fadeinTimer++;
                 passiveAttackDelay = 0f;
+                phaseCycleTimer = 0f;
 
                 // Teleport to the position of the portal and charge at the target after the animation concludes.
                 if (fadeinTimer >= DoGPhase2IntroPortalGate.Phase2AnimationTime)
@@ -196,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Variables
             bool canPerformSpecialAttacks = lifeRatio < CanUseSpecialAttacksLifeRatio;
             bool nearDeath = lifeRatio < FinalPhaseLifeRatio;
-            bool doPassiveMovement = phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) < PassiveMovementTimeP2 && !nearDeath;
+            bool doPassiveMovement = phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) >= AggressiveMovementTimeP2 && !nearDeath;
 
             // Prevent the player from using rage and adrenaline past a point.
             if (lifeRatio < RipperRemovalLifeRatio)
@@ -231,7 +210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 // Handle special attack transition.
                 int specialAttackDelay = 1335;
                 int specialAttackTransitionPreparationTime = 135;
-                if (specialAttackState == 0f)
+                if (performingSpecialAttack == 0f)
                 {
                     // The charge gate attack happens much more frequently when DoG is close to death.
                     specialAttackTimer += nearDeath && specialAttackTimer < specialAttackDelay - specialAttackTransitionPreparationTime - 5f ? 2f : 1f;
@@ -253,7 +232,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     if (specialAttackTimer >= specialAttackDelay)
                     {
                         specialAttackTimer = 0f;
-                        specialAttackState = 1f;
+                        performingSpecialAttack = 1f;
                         portalIndex = -1f;
 
                         // Select a special attack type.
@@ -269,7 +248,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         {
                             var soundInstance = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGLaugh"), target.Center);
                             if (soundInstance != null)
-                                soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 2.2f, 0f, 1f);
+                                soundInstance.Volume = MathHelper.Clamp(soundInstance.Volume * 3f, 0f, 1f);
                             hasPerformedSpecialAttackBefore = 1f;
                         }
 
@@ -289,7 +268,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         {
                             ProjectileID.CultistBossLightningOrbArc,
                             ModContent.ProjectileType<HomingDoGBurst>(),
-                            ModContent.ProjectileType<EssenceCleave>()
+                            ModContent.ProjectileType<EssenceSliceTelegraphLine>()
                         };
                         for (int i = 0; i < Main.maxProjectiles; i++)
                         {
@@ -300,9 +279,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     }
                 }
 
-                if (specialAttackState == 1f)
+                if (performingSpecialAttack == 1f)
                 {
-                    bool doingSpecialAttacks = DoSpecialAttacks(npc, target, nearDeath, ref specialAttackState, ref specialAttackTimer, ref portalIndex, ref segmentFadeType);
+                    bool doingSpecialAttacks = DoSpecialAttacks(npc, target, nearDeath, ref performingSpecialAttack, ref specialAttackTimer, ref portalIndex, ref segmentFadeType);
                     if (doingSpecialAttacks)
                         phaseCycleTimer = 0f;
 
@@ -316,45 +295,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.Opacity = MathHelper.Clamp(npc.Opacity + 0.023f, 0f, 1f);
 
                 // Reset the special attack state, just in case.
-                if (specialAttackState != 0f)
-                    specialAttackState = 0f;
+                if (performingSpecialAttack != 0f)
+                    performingSpecialAttack = 0f;
             }
             portalIndex = -1f;
 
             // Reset the attack type selection once the special attacks are cleared.
-            if (specialAttackState == 0f)
+            if (performingSpecialAttack == 0f)
                 npc.Infernum().ExtraAI[2] = 0f;
 
-            // Anger message
-            if (nearDeath)
+            // Say some edgy things if close to death as an indicator that the final phase has been entered.
+            if (nearDeath && nearDeathFlag == 0f)
             {
-                if (nearDeathFlag == 0f)
-                {
-                    Utilities.DisplayText("A GOD DOES NOT FEAR DEATH!", Color.Cyan);
-                    nearDeathFlag = 1f;
-                }
+                Utilities.DisplayText("A GOD DOES NOT FEAR DEATH!", Color.Cyan);
+                nearDeathFlag = 1f;
             }
 
+            // Increment the universal attack timer.
             time++;
 
+            // Calculate the amount of sentinel attacks that can be used in the passive phase.
+            // This does not apply in the aggressive phase.
             int totalSentinelAttacks = 1;
-            if (lifeRatio < 0.6f)
+            if (lifeRatio < CanUseCeaselessVoidSentinelAttackLifeRatio)
                 totalSentinelAttacks++;
-            if (lifeRatio < 0.45f)
+            if (lifeRatio < CanUseSignusSentinelAttackLifeRatio)
                 totalSentinelAttacks++;
-
-            // Emit light.
-            Lighting.AddLight((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f), 0.2f, 0.05f, 0.2f);
-
-            if (npc.ai[3] > 0f)
-                npc.realLife = (int)npc.ai[3];
 
             // Despawn if no tail is present for some reason.
             if (!NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsTail>()))
                 npc.active = false;
 
             // Chomping after attempting to eat the player.
-            bool chomping = specialAttackState == 0f && DoChomp(npc, ref chompEffectsCountdown, ref jawRotation);
+            bool chomping = performingSpecialAttack == 0f && DoChomp(npc, ref chompEffectsCountdown, ref jawRotation);
 
             // Despawn if no valid target exists.
             if (target.dead || !target.active)
@@ -368,6 +341,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             else if (doPassiveMovement)
             {
                 DoPassiveFlyMovement(npc, ref jawRotation, ref chompEffectsCountdown);
+                if (phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) == AggressiveMovementTimeP2 + 1f)
+                    DoGSkyInfernum.CreateLightningBolt(Color.White, 16, true);
+
                 if (passiveAttackDelay >= 300f)
                 {
                     // Increment the sentinal attack timer if DoG is completely visible.
@@ -376,14 +352,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     if (sentinelAttackTimer >= totalSentinelAttacks * 450f)
                         sentinelAttackTimer = 0f;
 
-                    DoSentinelAttacks(npc, target, ref sentinelAttackTimer, ref signusAttackState);
+                    DoSentinelAttacks(npc, target, phaseCycleTimer, ref sentinelAttackTimer, ref signusAttackState);
                 }
             }
 
             // Do aggressive fly movement, snapping at the target ruthlessly.
             else
             {
-                bool dontChompYet = (phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2)) - PassiveMovementTimeP2 < 90f;
+                bool dontChompYet = phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) < 90f;
+                if (phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) == 2f)
+                    DoGSkyInfernum.CreateLightningBolt(new Color(1f, 0f, 0f, 0.2f), 16, true);
+
                 DoAggressiveFlyMovement(npc, target, dontChompYet, chomping, ref jawRotation, ref chompEffectsCountdown, ref time, ref flyAcceleration);
             }
 
@@ -414,14 +393,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        public static void DoSentinelAttacks(NPC npc, Player target, ref float sentinelAttackTimer, ref float signusAttackState)
+        public static void DoSentinelAttacks(NPC npc, Player target, float attackTimer, ref float sentinelAttackTimer, ref float signusAttackState)
         {
             // Storm Weaver Effect (Lightning Storm).
             int attackTime = 450;
             bool nearEndOfAttack = sentinelAttackTimer % attackTime >= attackTime - 105f;
             if (sentinelAttackTimer > 0f && sentinelAttackTimer <= attackTime && npc.Opacity >= 0.5f)
             {
-                if (sentinelAttackTimer % 120f == 0f && !nearEndOfAttack)
+                if (attackTimer % 120f == 0f && !nearEndOfAttack)
                 {
                     Main.PlaySound(SoundID.Item12, target.position);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -442,7 +421,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 if (npc.velocity.Length() > 14.5f)
                     npc.velocity *= 0.75f;
 
-                bool shouldFire = sentinelAttackTimer % 50f == 49f && !nearEndOfAttack;
+                bool shouldFire = attackTimer % 50f == 49f && !nearEndOfAttack;
                 if (Main.netMode != NetmodeID.MultiplayerClient && shouldFire && !npc.WithinRange(target.Center, 200f))
                 {
                     for (int i = 0; i < 12; i++)
@@ -464,14 +443,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Signus Effect (Essence Cleave).
             if (sentinelAttackTimer > attackTime * 2f && sentinelAttackTimer <= attackTime * 3f && npc.Opacity >= 0.5f)
             {
-                float wrappedAttackTimer = sentinelAttackTimer % attackTime;
+                float wrappedAttackTimer = attackTimer % attackTime;
                 if (wrappedAttackTimer % 45f == 0f)
                 {
                     int cleaveCount = 16;
                     float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                     for (int i = 0; i < cleaveCount; i++)
                     {
-                        int cleave = Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<EssenceCleave>(), 0, 0f);
+                        int cleave = Utilities.NewProjectileBetter(target.Center, Vector2.Zero, ModContent.ProjectileType<EssenceSliceTelegraphLine>(), 0, 0f);
                         if (Main.projectile.IndexInRange(cleave))
                             Main.projectile[cleave].ai[0] = MathHelper.TwoPi * i / cleaveCount + offsetAngle;
                     }
@@ -631,7 +610,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             jawRotation = jawRotation.AngleTowards(0f, 0.08f);
 
             // Move towards the target.
-            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 600f;
+            Vector2 destination = Main.player[npc.target].Center - Vector2.UnitY * 660f;
             if (!npc.WithinRange(destination, 125f))
             {
                 float flySpeed = MathHelper.Lerp(27f, 38f, 1f - npc.life / (float)npc.lifeMax);
@@ -639,7 +618,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 npc.velocity = npc.velocity.MoveTowards(idealVelocity, 2f).RotateTowards(idealVelocity.ToRotation(), 0.032f);
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * MathHelper.Lerp(npc.velocity.Length(), idealVelocity.Length(), 0.1f);
                 if (npc.velocity.Y > -1f)
-                    npc.velocity.Y -= 1.25f;
+                    npc.velocity.Y -= 1.75f;
             }
         }
 
@@ -663,31 +642,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     idealFlySpeed *= 1.4f;
             }
 
-            // Make things a little easier if the target doesn't have a dash.
-            if (!targetHasDash)
-            {
-                idealFlyAcceleration *= 0.75f;
-                flySpeedFactor *= 0.9f;
-            }
+            if (targetHasDash)
+                flyAcceleration *= 0.84f;
 
             Vector2 destination = target.Center;
 
             // Swerve around in a snake-like movement if sufficiently far away from the target.
-            float distanceFromDestination = npc.Distance(destination);
+            float distanceFromBaseDestination = npc.Distance(destination);
+            float distanceFromTarget = npc.Distance(target.Center);
             if (npc.Distance(destination) > snakeMovementDistanceThreshold)
             {
                 destination += (time % 60f / 60f * MathHelper.TwoPi).ToRotationVector2() * 145f;
-                distanceFromDestination = npc.Distance(destination);
+                distanceFromBaseDestination = npc.Distance(destination);
                 idealFlyAcceleration *= 1.8f;
                 flySpeedFactor = 1.55f;
             }
 
-            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.InverseLerp(400f, 540f, distanceFromDestination, true) * 0.41f;
+            float swimOffsetAngle = (float)Math.Sin(MathHelper.TwoPi * time / 160f) * Utils.InverseLerp(400f, 540f, distanceFromBaseDestination, true) * 0.41f;
 
             // Charge if the player is far away.
             // Don't do this at the start of the fight though. Doing so might lead to an unfair
             // charge.
-            if (distanceFromDestination > 1500f && time > 120f)
+            if (distanceFromBaseDestination > 1500f && time > 120f)
             {
                 idealFlyAcceleration = MathHelper.Min(6f, flyAcceleration + 1f);
                 idealFlySpeed *= 2f;
@@ -695,27 +671,34 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             flyAcceleration = MathHelper.Lerp(flyAcceleration, idealFlyAcceleration, 0.3f);
 
-            float directionToPlayerOrthogonality = Vector2.Dot(npc.velocity.SafeNormalize(Vector2.Zero), npc.SafeDirectionTo(destination));
+            // Degrees are used here for ease of readability in the calculations below.
+            // This used to rely on raw dot normalized dot products, but this has since been changed for the sake of clarity.
+            float targetDirectionAngleDiscrepancy = MathHelper.ToDegrees(npc.velocity.AngleBetween(npc.SafeDirectionTo(destination)));
 
             // Adjust the speed based on how the direction towards the target compares to the direction of the
             // current velocity. This check is unnecessary once close to the target, which would prompt a snap/charge.
             if (npc.Distance(destination) > 200f)
             {
                 float speed = npc.velocity.Length();
+
+                // Try to stay within a general speed.
                 if (speed < 18.5f)
                     speed += 0.08f;
-
                 if (speed > 26f)
                     speed -= 0.08f;
 
-                if (directionToPlayerOrthogonality < 0.85f && directionToPlayerOrthogonality > 0.5f)
+                // Speed up if close to aiming at the target, but not too close (within a margin of 32-60 degrees).
+                if (targetDirectionAngleDiscrepancy > 32f && targetDirectionAngleDiscrepancy < 60f)
                     speed += 0.24f;
 
-                if (directionToPlayerOrthogonality < 0.5f && directionToPlayerOrthogonality > -0.7f)
+                // Slow down if farther to aiming at the target, for the sake of allowing DoG to get back on track again (within a margin of 60-135 degrees).
+                if (targetDirectionAngleDiscrepancy > 60f && targetDirectionAngleDiscrepancy < 135f)
                     speed -= 0.1f;
 
+                // Clamp the speed.
                 speed = MathHelper.Clamp(speed, flySpeedFactor * 15f, flySpeedFactor * 35f);
 
+                // And handle movement.
                 npc.velocity = npc.velocity.RotateTowards(npc.AngleTo(destination) + swimOffsetAngle, flyAcceleration, true) * speed;
                 npc.velocity = npc.velocity.MoveTowards(npc.SafeDirectionTo(destination) * speed, flyAcceleration * 15f);
             }
@@ -723,13 +706,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Jaw opening when near player.
             if (!chomping)
             {
-                float distanceFromTarget = npc.Distance(target.Center);
-                if ((distanceFromTarget < 330f && directionToPlayerOrthogonality > 0.79f) || (distanceFromTarget < 550f && directionToPlayerOrthogonality > 0.87f))
+                if ((distanceFromTarget < 330f && targetDirectionAngleDiscrepancy < 38f) || (distanceFromTarget < 550f && targetDirectionAngleDiscrepancy < 30f))
                 {
                     jawRotation = jawRotation.AngleTowards(idealMouthOpeningAngle, 0.028f);
 
                     // Chomp at the player if they're close enough.
-                    if (distanceFromDestination < 112f && chompEffectsCountdown == 0f)
+                    if (distanceFromBaseDestination < 112f && chompEffectsCountdown == 0f)
                     {
                         Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.NPCHit, "Sounds/NPCHit/OtherworldlyHit"), npc.Center);
                         chompEffectsCountdown = 18f;
@@ -739,8 +721,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     jawRotation = jawRotation.AngleTowards(0f, 0.08f);
             }
 
-            // Lunge if near the player, and prepare to chomp.
-            if (distanceFromDestination < 360f && directionToPlayerOrthogonality > 0.45f && npc.velocity.Length() < idealFlySpeed * 2f && !dontChompYet)
+            // Lunge if near the player and aiming sufficiently close to them in preparation of a chomp.
+            if (distanceFromBaseDestination < 360f && targetDirectionAngleDiscrepancy < 64f && npc.velocity.Length() < idealFlySpeed * 2f && !dontChompYet)
             {
                 npc.velocity = npc.velocity.SafeNormalize(Vector2.UnitY) * npc.velocity.Length() * 1.75f;
                 jawRotation = jawRotation.AngleLerp(idealMouthOpeningAngle, 0.55f);
@@ -823,6 +805,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public static void DoSpecialAttack_ChargeGates(NPC npc, Player target, bool nearDeath, ref float attackTimer, ref float portalIndex, ref float segmentFadeType)
         {
+            // Transform into the antimatter form.
+            FadeToAntimatterForm = MathHelper.Clamp(FadeToAntimatterForm + 0.05f, 0f, 1f);
+
             int fireballCount = 8;
             int idealPortalTelegraphTime = 52;
             float wrappedAttackTimer = attackTimer % 135f;
@@ -944,7 +929,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        public static bool DoSpecialAttacks(NPC npc, Player target, bool nearDeath, ref float specialAttackState, ref float specialAttackTimer, ref float specialAttackPortalIndex, ref float segmentFadeType)
+        public static bool DoSpecialAttacks(NPC npc, Player target, bool nearDeath, ref float performingSpecialAttack, ref float specialAttackTimer, ref float specialAttackPortalIndex, ref float segmentFadeType)
         {
             SpecialAttackType specialAttackType;
 
@@ -971,7 +956,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         specialAttackPortalIndex = Projectile.NewProjectile(portalSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
-                        Main.projectile[(int)specialAttackPortalIndex].ai[1] = SpecialAttackPortalSnapDelay;
+                        Main.projectile[(int)specialAttackPortalIndex].ai[1] = (int)(SpecialAttackPortalSnapDelay * 1.25f);
                     }
 
                     // Delete lingering laser wall things.
@@ -990,34 +975,46 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DoGAttack"), target.Center);
 
                         npc.Center = Main.projectile[(int)specialAttackPortalIndex].Center;
+                        npc.velocity = npc.SafeDirectionTo(target.Center) * 45f;
                         for (int i = 0; i < Main.maxNPCs; i++)
                         {
                             if (Main.npc[i].active && (Main.npc[i].type == ModContent.NPCType<DevourerofGodsBody>() || Main.npc[i].type == ModContent.NPCType<DevourerofGodsTail>()))
                             {
-                                Main.npc[i].Center = npc.Center;
+                                Main.npc[i].Center = npc.Center - npc.velocity.SafeNormalize(Vector2.UnitY) * i * 0.5f;
                                 Main.npc[i].netUpdate = true;
                             }
                         }
                         Main.projectile[(int)specialAttackPortalIndex].Kill();
                     }
-                    npc.netUpdate = true;
 
-                    npc.velocity = npc.SafeDirectionTo(target.Center) * 45f;
+                    FadeToAntimatterForm = 0f;
                     npc.Opacity = 1f;
                     npc.dontTakeDamage = false;
-                    npc.Infernum().ExtraAI[24] = 0f;
+                    npc.netUpdate = true;
+
+                    if (!nearDeath)
+                        npc.Infernum().ExtraAI[24] = 0f;
                     specialAttackPortalIndex = -1f;
-                    specialAttackState = 0f;
+                    performingSpecialAttack = 0f;
                     specialAttackTimer = 0f;
                 }
 
-                // Make sure to return early to inform the AI .
-                // This is necessary to ensure that the portal index clearing step in the AI method does not happen, which would screw up the teleportion step above.
+                // Make sure to return early to inform the AI that it should not execute any code beyond the special attack section.
+                // This is necessary to ensure that the portal index clearing code in the AI method does not happen, which would screw up the teleportion step above.
                 if (specialAttackTimer >= SpecialAttackDuration + SpecialAttackPortalCreationDelay)
+                {
+                    FadeToAntimatterForm = MathHelper.Clamp(FadeToAntimatterForm - 0.05f, 0f, 1f);
                     return false;
+                }
 
                 if (specialAttackTimer < SpecialAttackDuration)
                 {
+                    if (npc.Opacity <= 0f && !npc.WithinRange(target.Center, 3200f))
+                    {
+                        npc.Center = target.Center + target.SafeDirectionTo(npc.Center) * 3100f;
+                        npc.velocity *= 0.7f;
+                    }
+
                     switch (specialAttackType)
                     {
                         case SpecialAttackType.LaserWalls:
@@ -1060,6 +1057,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             Texture2D headTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Head");
             Texture2D glowTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2HeadGlow");
+            Texture2D jawTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Jaw");
+            Texture2D headTextureAntimatter = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2HeadAntimatter");
+            Texture2D glowTextureAntimatter = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2HeadGlowAntimatter");
+            Texture2D jawTextureAntimatter = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2JawAntimatter");
+
             npc.frame = new Rectangle(0, 0, headTexture.Width, headTexture.Height);
             if (npc.Size != headTexture.Size())
                 npc.Size = headTexture.Size();
@@ -1068,8 +1070,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Vector2 headTextureOrigin = headTexture.Size() * 0.5f;
             drawPosition -= headTexture.Size() * npc.scale * 0.5f;
             drawPosition += headTextureOrigin * npc.scale + new Vector2(0f, 4f + npc.gfxOffY);
-
-            Texture2D jawTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Jaw");
             Vector2 jawOrigin = jawTexture.Size() * 0.5f;
 
             // Draw each jaw.
@@ -1084,31 +1084,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 Vector2 jawPosition = drawPosition;
                 jawPosition += Vector2.UnitX.RotatedBy(npc.rotation + jawRotation * i) * i * (jawBaseOffset + (float)Math.Sin(jawRotation) * 24f);
                 jawPosition -= Vector2.UnitY.RotatedBy(npc.rotation) * (58f + (float)Math.Sin(jawRotation) * 30f);
-                spriteBatch.Draw(jawTexture, jawPosition, null, npc.GetAlpha(lightColor), npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
+                spriteBatch.Draw(jawTexture, jawPosition, null, npc.GetAlpha(lightColor) * (1f - FadeToAntimatterForm), npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
+                spriteBatch.Draw(jawTextureAntimatter, jawPosition, null, npc.GetAlpha(lightColor) * FadeToAntimatterForm, npc.rotation + jawRotation * i, jawOrigin, npc.scale, jawSpriteEffect, 0f);
             }
 
-            // Draw head backimages as a telegraph if DoG is transitioning between his passive and aggressive phase.
-            float aggressiveFade = GetAggressiveFade;
-            float passiveFade = GetPassiveFade;
-            if (aggressiveFade > 0f || passiveFade > 0f)
-            {
-                Color afterimageColor = Color.Transparent;
-                if (aggressiveFade > 0f)
-                    afterimageColor = Color.Lerp(afterimageColor, AggressiveFadeColor, (float)Math.Sqrt(aggressiveFade));
-                if (passiveFade > 0f)
-                    afterimageColor = Color.Lerp(afterimageColor, PassiveFadeColor, (float)Math.Sqrt(passiveFade));
-                afterimageColor.A = 50;
-                float afterimageOffsetFactor = MathHelper.Max(aggressiveFade, passiveFade) * 24f;
-
-                for (int i = 0; i < 12; i++)
-                {
-                    Vector2 afterimageOffset = (MathHelper.TwoPi * i / 12f).ToRotationVector2() * afterimageOffsetFactor;
-                    spriteBatch.Draw(headTexture, drawPosition + afterimageOffset, npc.frame, npc.GetAlpha(afterimageColor) * 0.45f, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
-                }
-            }
-
-            spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
-            spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            spriteBatch.Draw(headTexture, drawPosition, npc.frame, npc.GetAlpha(lightColor) * (1f - FadeToAntimatterForm), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            spriteBatch.Draw(glowTexture, drawPosition, npc.frame, npc.GetAlpha(Color.White) * (1f - FadeToAntimatterForm), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            spriteBatch.Draw(headTextureAntimatter, drawPosition, npc.frame, npc.GetAlpha(lightColor) * FadeToAntimatterForm, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
+            spriteBatch.Draw(glowTextureAntimatter, drawPosition, npc.frame, npc.GetAlpha(Color.White) * FadeToAntimatterForm, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
             return false;
         }
         #endregion Drawing

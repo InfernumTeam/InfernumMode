@@ -32,6 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public override void AI()
         {
+            // Play a shoot sound.
             if (projectile.localAI[0] == 0f)
             {
                 projectile.localAI[0] = 1f;
@@ -42,6 +43,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.frame = projectile.frameCounter / 6 % Main.projFrames[projectile.type];
             projectile.Opacity = Utils.InverseLerp(300f, 285f, projectile.timeLeft, true) * Utils.InverseLerp(0f, 35f, projectile.timeLeft, true);
 
+            // Home towards the nearest target. The speed of the homing is maintained after direction change calculations are made.
             Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
             projectile.velocity = (projectile.velocity * 69f + projectile.SafeDirectionTo(target.Center) * 23f) / 70f;
             projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * 16f;

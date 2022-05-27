@@ -89,7 +89,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             }
 
             Entity target = Owner;
-            float attackFlySpeed = 25f;
+            float attackFlySpeed = 26.5f;
             float flyInertia = 32f;
 
             // Nullify the target value if they're a dead player.

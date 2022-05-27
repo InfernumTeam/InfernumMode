@@ -6,6 +6,7 @@ using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.BossIntroScreens;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -106,6 +107,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Main.player[npc.target].HasBuff(ModContent.BuffType<WhisperingDeath>()))
                 Main.player[npc.target].ClearBuff(ModContent.BuffType<WhisperingDeath>());
 
+            // Emit light.
+            Lighting.AddLight((int)(npc.Center.X / 16f), (int)(npc.Center.Y / 16f), 0.2f, 0.05f, 0.2f);
+
+            if (npc.ai[3] > 0f)
+                npc.realLife = (int)npc.ai[3];
+
             if (DoGPhase2HeadBehaviorOverride.InPhase2)
             {
                 npc.Calamity().CanHaveBossHealthBar = true;
@@ -130,22 +137,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             npc.dontTakeDamage = false;
             npc.Opacity = MathHelper.Lerp(npc.Opacity, 1f, 0.25f);
 
-            // Light
-            Lighting.AddLight((int)((npc.position.X + npc.width / 2) / 16f), (int)((npc.position.Y + npc.height / 2) / 16f), 0.2f, 0.05f, 0.2f);
-
-            // Worm variable
-            if (npc.ai[3] > 0f)
-                npc.realLife = (int)npc.ai[3];
-
             // Select a new target if an old one was lost.
             npc.TargetClosestIfTargetIsInvalid();
             Player target = Main.player[npc.target];
+
+            // Start above the target.
+            if (npc.Infernum().ExtraAI[22] == 0f)
+            {
+                npc.Center = target.Center - Vector2.UnitY * 2000f;
+                npc.Infernum().ExtraAI[22] = 1f;
+                npc.netUpdate = true;
+            }
 
             // Stay away from the target if the screen is being obstructed by the intro animation.
             if (IntroScreenManager.ScreenIsObstructed)
             {
                 npc.dontTakeDamage = true;
-                npc.Center = target.Center - Vector2.UnitY * 3000f;
+                npc.Center = target.Center - Vector2.UnitY * 2000f;
                 npc.netUpdate = true;
             }
 
@@ -191,8 +199,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 uncoilTimer++;
                 npc.velocity = Vector2.Lerp(npc.velocity, -Vector2.UnitY * 27f, 0.125f);
             }
-            else if (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) < PassiveMovementTimeP1)
+            else if (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) < AggressiveMovementTimeP1)
             {
+                bool dontChompYet = (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1)) < 90f;
+                if (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) == 1f)
+                    DoGSkyInfernum.CreateLightningBolt(new Color(1f, 0f, 0f, 0.2f), 16, true);
+
+                DoGPhase2HeadBehaviorOverride.DoAggressiveFlyMovement(npc, target, dontChompYet, chomping, ref jawRotation, ref chompTime, ref attackTimer, ref flyAcceleration);
+            }
+            else
+            {
+                if (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1) == AggressiveMovementTimeP1 + 1f)
+                    DoGSkyInfernum.CreateLightningBolt(Color.White, 16, true);
+
                 DoGPhase2HeadBehaviorOverride.DoPassiveFlyMovement(npc, ref jawRotation, ref chompTime);
 
                 // Idly release laserbeams.
@@ -209,11 +228,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         }
                     }
                 }
-            }
-            else
-            {
-                bool dontChompYet = (phaseCycleTimer % (PassiveMovementTimeP1 + AggressiveMovementTimeP1)) - PassiveMovementTimeP1 < 90f;
-                DoGPhase2HeadBehaviorOverride.DoAggressiveFlyMovement(npc, target, dontChompYet, chomping, ref jawRotation, ref chompTime, ref attackTimer, ref flyAcceleration);
             }
 
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;

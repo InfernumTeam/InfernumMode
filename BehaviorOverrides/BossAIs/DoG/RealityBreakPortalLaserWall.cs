@@ -27,20 +27,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             projectile.rotation += 0.325f;
 
             Time++;
+
+            // Release the laser burst a second after spawning.
             if (Time == 60f)
             {
                 Main.PlaySound(SoundID.Item12, projectile.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Player closest = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+                    Player target = Main.player[Player.FindClosest(projectile.Center, 1, 1)];
+                    float shootInterpolant = Utils.InverseLerp(600f, 1450f, projectile.Distance(target.Center), true);
 
-                    float shootInterpolant = Utils.InverseLerp(600f, 1450f, projectile.Distance(closest.Center), true);
-                    int shootCount = (int)MathHelper.Lerp(5f, 12f, shootInterpolant);
+                    int laserCount = (int)MathHelper.Lerp(5f, 12f, shootInterpolant);
                     float shootSpeed = MathHelper.Lerp(15f, 25f, shootInterpolant);
-                    for (int i = 0; i < shootCount; i++)
+                    for (int i = 0; i < laserCount; i++)
                     {
-                        Vector2 shootVelocity = projectile.SafeDirectionTo(closest.Center).RotatedBy(MathHelper.Lerp(-0.6f, 0.6f, i / (float)(shootCount - 1f))) * shootSpeed;
+                        Vector2 shootVelocity = projectile.SafeDirectionTo(target.Center).RotatedBy(MathHelper.Lerp(-0.6f, 0.6f, i / (float)(laserCount - 1f))) * shootSpeed;
                         Projectile.NewProjectile(projectile.Center, shootVelocity, InfernumMode.CalamityMod.ProjectileType("DoGDeath"), 85, 0f, projectile.owner);
                     }
                 }

@@ -3,6 +3,7 @@ using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.Projectiles.Boss;
+using InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid;
 using InfernumMode.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -68,7 +69,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             }
         }
 
-        public const int PostP2AnimationMoveDelay = 42;
+        public const int PostP2AnimationMoveDelay = 45;
 
         public const int SpecialAttackDuration = 675;
 
@@ -413,9 +414,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                         }
                     }
                 }
+
+
+                sentinelAttackTimer = attackTime;
             }
 
-            // Ceaseless Void Effect (Infernal Blasts).
+            // Ceaseless Void Effect (Mirror Blasts).
             if (sentinelAttackTimer > attackTime && sentinelAttackTimer <= attackTime * 2f && npc.Opacity >= 0.5f)
             {
                 if (npc.velocity.Length() > 14.5f)
@@ -424,16 +428,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 bool shouldFire = attackTimer % 50f == 49f && !nearEndOfAttack;
                 if (Main.netMode != NetmodeID.MultiplayerClient && shouldFire && !npc.WithinRange(target.Center, 200f))
                 {
-                    for (int i = 0; i < 12; i++)
+                    for (int i = 0; i < 6; i++)
                     {
-                        Vector2 flameShootVelocity = npc.velocity.RotatedBy(MathHelper.Lerp(-0.7f, 0.7f, i / 11f)) * Main.rand.NextFloat(1.3f, 1.65f);
-                        Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
-                    }
-
-                    for (int i = 0; i < 8; i++)
-                    {
-                        Vector2 flameShootVelocity = (MathHelper.TwoPi * i / 8f).ToRotationVector2() * 18f;
-                        Utilities.NewProjectileBetter(npc.Center, flameShootVelocity, ModContent.ProjectileType<HomingDoGBurst>(), 415, 0f);
+                        Vector2 matterSpawnOffset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(330f, 720f);
+                        Utilities.NewProjectileBetter(target.Center + matterSpawnOffset, Vector2.Zero, ModContent.ProjectileType<MysteriousMatter>(), 0, 0f);
                     }
                 }
                 if (sentinelAttackTimer == attackTime * 2f - 1f)
@@ -1009,9 +1007,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
                 if (specialAttackTimer < SpecialAttackDuration)
                 {
-                    if (npc.Opacity <= 0f && !npc.WithinRange(target.Center, 3200f))
+                    if (npc.Opacity <= 0f && !npc.WithinRange(target.Center, 2500f))
                     {
-                        npc.Center = target.Center + target.SafeDirectionTo(npc.Center) * 3100f;
+                        npc.Center = target.Center + target.SafeDirectionTo(npc.Center) * 2490f;
                         npc.velocity *= 0.7f;
                     }
 

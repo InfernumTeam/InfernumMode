@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -39,11 +40,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    int damage = CalamityGlobalNPC.DoGHead >= 0 ? 425 : 250;
                     for (int i = 0; i < 3; i++)
                     {
                         float offsetAngle = MathHelper.Lerp(-0.63f, 0.63f, i / 2f);
                         Vector2 shootVelocity = projectile.SafeDirectionTo(closestTarget.Center).RotatedByRandom(offsetAngle) * 4f;
-                        Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<CeaselessEnergy>(), 250, 0f);
+                        Utilities.NewProjectileBetter(projectile.Center, shootVelocity, ModContent.ProjectileType<CeaselessEnergy>(), damage, 0f);
                     }
                 }
             }

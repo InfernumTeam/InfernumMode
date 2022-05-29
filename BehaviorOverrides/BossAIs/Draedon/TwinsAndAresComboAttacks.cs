@@ -95,7 +95,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             // Inherit the attack timer from the initial mech.
             attackTimer = FindInitialMech()?.ai[1] ?? attackTimer;
 
-            // Have Artemis attempt to do horizontal sweep while releasing lasers in bursts. This only happens after Ares has released the laserbeams.
+            // Have Artemis attempt to do a horizontal sweep while releasing lasers in bursts. This only happens after Ares has released the laserbeams.
             if (npc.type == ModContent.NPCType<Artemis>())
             {
                 ref float attackSubstate = ref npc.Infernum().ExtraAI[0];

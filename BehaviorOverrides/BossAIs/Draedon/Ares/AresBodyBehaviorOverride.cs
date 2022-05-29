@@ -179,7 +179,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             }
 
             // Become invincible if the complement mech is at high enough health or if in the middle of a death animation.
-            npc.dontTakeDamage = ExoMechAIUtilities.PerformingDeathAnimation(npc);
+            npc.dontTakeDamage = performingDeathAnimation;
             if (complementMechIndex >= 0 && Main.npc[(int)complementMechIndex].active && Main.npc[(int)complementMechIndex].life > Main.npc[(int)complementMechIndex].lifeMax * ExoMechManagement.ComplementMechInvincibilityThreshold)
                 npc.dontTakeDamage = true;
 

@@ -205,6 +205,11 @@ namespace InfernumMode
             }
         }
 
+        internal static int NewProjectileBetter(Vector2 center, object projectileShootVelocity, int v1, int v2, float v3)
+        {
+            throw new NotImplementedException();
+        }
+
         public static void DisplayText(string text, Color? color = null)
         {
             if (Main.netMode == NetmodeID.SinglePlayer)

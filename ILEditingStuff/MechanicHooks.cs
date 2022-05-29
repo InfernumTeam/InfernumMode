@@ -1,10 +1,22 @@
+using CalamityMod;
+using CalamityMod.Items.Accessories;
+using CalamityMod.Items.Armor.Vanity;
+using CalamityMod.Items.LoreItems;
+using CalamityMod.Items.Materials;
+using CalamityMod.Items.Mounts;
+using CalamityMod.Items.Placeables.Furniture.Trophies;
+using CalamityMod.Items.Weapons.Melee;
+using CalamityMod.Items.Weapons.Ranged;
+using CalamityMod.Items.Weapons.Rogue;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.UI;
+using CalamityMod.World;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
-using InfernumMode.BehaviorOverrides.BossAIs.Golem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
@@ -48,6 +60,144 @@ namespace InfernumMode.ILEditingStuff
         public void Load() => ExoMechIsPresent += ChangeExoMechIsActiveDefinition;
 
         public void Unload() => ExoMechIsPresent -= ChangeExoMechIsActiveDefinition;
+    }
+
+    public class DrawDraedonSelectionUIWithAthena : IHookEdit
+    {
+        public static float AthenaIconScale
+        {
+            get;
+            set;
+        } = 1f;
+
+        internal static void DrawSelectionUI(ILContext context)
+        {
+            ILCursor cursor = new ILCursor(context);
+            cursor.EmitDelegate<Action>(DrawWrapper);
+            cursor.Emit(OpCodes.Ret);
+        }
+
+        public static void DrawWrapper()
+        {
+            Vector2 drawAreaVerticalOffset = Vector2.UnitY * 105f;
+            Vector2 baseDrawPosition = Main.LocalPlayer.Top + drawAreaVerticalOffset - Main.screenPosition;
+            Vector2 destroyerIconDrawOffset = new Vector2(-78f, -124f);
+            Vector2 primeIconDrawOffset = new Vector2(0f, -140f);
+            Vector2 twinsIconDrawOffset = new Vector2(78f, -124f);
+            Vector2 athenaIconDrawOffset = new Vector2(78f, -130f);
+
+            if (InfernumMode.CanUseCustomAIs)
+            {
+                destroyerIconDrawOffset = new Vector2(-78f, -130f);
+                primeIconDrawOffset = new Vector2(-26f, -130f);
+                twinsIconDrawOffset = new Vector2(26f, -130f);
+
+                HandleInteractionWithButton(baseDrawPosition + destroyerIconDrawOffset, (int)ExoMech.Destroyer);
+                HandleInteractionWithButton(baseDrawPosition + primeIconDrawOffset, (int)ExoMech.Prime);
+                HandleInteractionWithButton(baseDrawPosition + twinsIconDrawOffset, (int)ExoMech.Twins);
+                HandleInteractionWithButton(baseDrawPosition + athenaIconDrawOffset, 4);
+                return;
+            }
+
+            ExoMechSelectionUI.HandleInteractionWithButton(baseDrawPosition + destroyerIconDrawOffset, ExoMech.Destroyer);
+            ExoMechSelectionUI.HandleInteractionWithButton(baseDrawPosition + primeIconDrawOffset, ExoMech.Prime);
+            ExoMechSelectionUI.HandleInteractionWithButton(baseDrawPosition + twinsIconDrawOffset, ExoMech.Twins);
+        }
+
+        public static void HandleInteractionWithButton(Vector2 drawPosition, int exoMech)
+        {
+            float iconScale;
+            string description;
+            Texture2D iconMechTexture;
+
+            switch (exoMech)
+            {
+                case 1:
+                    iconScale = ExoMechSelectionUI.DestroyerIconScale;
+                    iconMechTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/UI/HeadIcon_THanos");
+                    description = "Thanatos, a serpentine terror with impervious armor and innumerable laser turrets.";
+                    break;
+                case 2:
+                    iconScale = ExoMechSelectionUI.PrimeIconScale;
+                    iconMechTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/UI/HeadIcon_Ares");
+                    description = "Ares, a heavyweight, diabolical monstrosity with four Exo superweapons.";
+                    break;
+                case 3:
+                    iconScale = ExoMechSelectionUI.TwinsIconScale;
+                    iconMechTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/UI/HeadIcon_ArtemisApollo");
+                    description = "Artemis and Apollo, a pair of extremely agile destroyers with pulse cannons.";
+                    break;
+                case 4:
+                default:
+                    iconScale = AthenaIconScale;
+                    iconMechTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/HeadIcon_Athena");
+                    description = "Athena, a giant supercomputer with multiple mounted pulse turrets.";
+                    drawPosition.Y += 2f;
+                    break;
+            }
+
+            // Check for mouse collision/clicks.
+            Rectangle clickArea = Utils.CenteredRectangle(drawPosition, iconMechTexture.Size() * iconScale * 0.9f);
+
+            // Check if the mouse is hovering over the contact button area.
+            bool hoveringOverIcon = ExoMechSelectionUI.MouseScreenArea.Intersects(clickArea);
+            if (hoveringOverIcon)
+            {
+                // If so, cause the button to inflate a little bit.
+                iconScale = MathHelper.Clamp(iconScale + 0.0375f, 1f, 1.35f);
+
+                // Make the selection known if a click is done.
+                if (Main.mouseLeft && Main.mouseLeftRelease)
+                {
+                    CalamityWorld.DraedonMechToSummon = (ExoMech)exoMech;
+
+                    if (Main.netMode != NetmodeID.SinglePlayer)
+                    {
+                        var netMessage = InfernumMode.CalamityMod.GetPacket();
+                        netMessage.Write((byte)CalamityModMessageType.ExoMechSelection);
+                        netMessage.Write((int)CalamityWorld.DraedonMechToSummon);
+                        netMessage.Send();
+                    }
+                }
+                Main.blockMouse = Main.LocalPlayer.mouseInterface = true;
+            }
+
+            // Otherwise, if not hovering, cause the button to deflate back to its normal size.
+            else
+                iconScale = MathHelper.Clamp(iconScale - 0.05f, 1f, 1.2f);
+
+            // Draw the icon with the new scale.
+            Main.spriteBatch.Draw(iconMechTexture, drawPosition, null, Color.White, 0f, iconMechTexture.Size() * 0.5f, iconScale, SpriteEffects.None, 0f);
+
+            // Draw the descrption if hovering over the icon.
+            if (hoveringOverIcon)
+            {
+                drawPosition.X -= Main.fontMouseText.MeasureString(description).X * 0.5f;
+                drawPosition.Y += 36f;
+                Utils.DrawBorderStringFourWay(Main.spriteBatch, Main.fontMouseText, description, drawPosition.X, drawPosition.Y, ExoMechSelectionUI.HoverTextColor, Color.Black, Vector2.Zero, 1f);
+            }
+
+            // And update to reflect the new scale.
+            switch (exoMech)
+            {
+                case 1:
+                    ExoMechSelectionUI.DestroyerIconScale = iconScale;
+                    break;
+                case 2:
+                    ExoMechSelectionUI.PrimeIconScale = iconScale;
+                    break;
+                case 3:
+                    ExoMechSelectionUI.TwinsIconScale = iconScale;
+                    break;
+                case 4:
+                    AthenaIconScale = iconScale;
+                    break;
+            }
+        }
+
+        public void Load() => ExoMechSelectionUIDraw += DrawSelectionUI;
+
+        public void Unload() => ExoMechSelectionUIDraw -= DrawSelectionUI;
     }
 
     public class DrawBlackEffectHook : IHookEdit

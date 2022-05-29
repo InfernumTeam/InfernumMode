@@ -115,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (ExplodeCountdown <= 0)
                 {
                     Main.PlaySound(SoundID.DD2_KoboldExplosion, npc.Center);
-                    ElectricExplosionRing explosion = new ElectricExplosionRing(npc.Center, Vector2.Zero, CalamityUtils.ExoPalette, 0.4f, 95, 0.8f);
+                    ElectricExplosionRing explosion = new ElectricExplosionRing(npc.Center, Vector2.Zero, CalamityUtils.ExoPalette, 1.4f, 95, 0.8f);
                     GeneralParticleHandler.SpawnParticle(explosion);
                     npc.active = false;
                 }

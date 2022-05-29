@@ -19,7 +19,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ThanatosAres_LaserCircle,
             ThanatosAres_ElectricCage,
 
-            TwinsAthena_ThermoplasmaDance
+            TwinsAthena_ThermoplasmaDance,
+            TwinsAthena_ThermoplasmaChargeupBursts
         }
 
         public static void InformAllMechsOfComboAttackChange(int newAttack)
@@ -89,13 +90,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 WeightedRandom<ExoMechComboAttackType> attackSelector = new WeightedRandom<ExoMechComboAttackType>(Main.rand);
 
                 attackSelector.Add(ExoMechComboAttackType.TwinsAthena_ThermoplasmaDance);
-                newAttack = attackSelector.Get();
+                attackSelector.Add(ExoMechComboAttackType.TwinsAthena_ThermoplasmaChargeupBursts);
 
-                /*
                 do
                     newAttack = attackSelector.Get();
                 while ((int)newAttack == initialMech.ai[0]);
-                */
 
                 // Inform all mechs of the change.
                 InformAllMechsOfComboAttackChange((int)newAttack);

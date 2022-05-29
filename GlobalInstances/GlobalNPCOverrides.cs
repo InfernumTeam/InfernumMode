@@ -12,7 +12,9 @@ using CalamityMod.NPCs.Crabulon;
 using CalamityMod.NPCs.DevourerofGods;
 using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
+using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
+using CalamityMod.NPCs.ExoMechs.Thanatos;
 using CalamityMod.NPCs.GreatSandShark;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.Ravager;
@@ -280,6 +282,23 @@ namespace InfernumMode.GlobalInstances
 
             if (npc.type == ModContent.NPCType<OldDukeNPC>())
                 CalamityMod.CalamityMod.StopRain();
+
+            int apolloID = ModContent.NPCType<Apollo>();
+            int thanatosID = ModContent.NPCType<ThanatosHead>();
+            int athenaID = ModContent.NPCType<AthenaNPC>();
+            int aresID = ModContent.NPCType<AresBody>();
+            int totalExoMechs = 0;
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (Main.npc[i].type != apolloID && Main.npc[i].type != thanatosID && Main.npc[i].type != athenaID && Main.npc[i].type != aresID)
+                    continue;
+                if (!Main.npc[i].active)
+                    continue;
+
+                totalExoMechs++;
+            }
+            if (InfernumMode.CanUseCustomAIs && totalExoMechs >= 2 && Utilities.IsExoMech(npc))
+                return false;
 
             return base.PreNPCLoot(npc);
         }

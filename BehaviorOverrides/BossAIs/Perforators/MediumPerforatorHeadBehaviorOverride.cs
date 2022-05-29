@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
         public override bool PreAI(NPC npc)
         {
-            int toothBallReleaseRate = 64;
+            int toothBallReleaseRate = 75;
             float toothBallShootSpeed = 9f;
             ref float attackTimer = ref npc.ai[0];
 
@@ -56,7 +56,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             else
             {
                 Vector2 velocityStep = npc.SafeDirectionTo(flyDestination) * new Vector2(xDamp, yDamp) * 0.7f;
-                npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 15f);
+                npc.velocity = (npc.velocity + velocityStep).ClampMagnitude(0f, 12.5f);
             }
             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 

@@ -138,7 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                 floatTime -= 40;
             }
 
-            float teleportOffset = MathHelper.Lerp(540f, 400f, 1f - lifeRatio);
+            float teleportOffset = MathHelper.Lerp(600f, 475f, 1f - lifeRatio);
             if (!DoTeleportFadeEffect(npc, attackTimer, target.Center + Main.rand.NextVector2CircularEdge(teleportOffset, teleportOffset), teleportFadeTime))
                 return;
 
@@ -257,7 +257,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
                     npc.direction = (target.Center.X < npc.Center.X).ToDirectionInt();
                     npc.netUpdate = true;
 
-                    for (int i = 0; i < 30; i++)
+                    for (int i = 0; i < 24; i++)
                     {
                         Vector2 spawnPosition = npc.Center - Vector2.UnitY.RotatedByRandom(0.42f) * 12f;
                         Vector2 bloodVelocity = Utilities.GetProjectilePhysicsFiringVelocity(spawnPosition, target.Center, BloodGeyser2.Gravity, Main.rand.NextFloat(12f, 14f), out _);
@@ -306,7 +306,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.BoC
             int tries = 0;
             do
             {
-                teleportDestination = target.Center + Main.rand.NextVector2CircularEdge(340f, 340f);
+                teleportDestination = target.Center + Main.rand.NextVector2CircularEdge(450f, 450f);
                 tries++;
 
                 if (tries > 500f)

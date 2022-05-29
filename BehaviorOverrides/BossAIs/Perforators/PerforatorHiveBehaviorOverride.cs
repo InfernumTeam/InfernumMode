@@ -816,7 +816,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
             int wormSummonTime = 150;
             int reelBackTime = 25;
             int burstIchorCount = 5;
-            int ichorBurstReleaseRate = 70;
+            int ichorBurstReleaseRate = 84;
             float maxHoverSpeed = 11f;
             bool doneReelingBack = attackTimer >= wormSummonTime + reelBackTime;
             ref float postWormSummonAttackTimer = ref npc.Infernum().ExtraAI[0];

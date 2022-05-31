@@ -247,7 +247,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 // Spawn the portal.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX) * 1600f;
+                    Vector2 spawnPosition = npc.Center + npc.velocity.SafeNormalize(Vector2.UnitX) * 2150f;
                     portalIndex = Projectile.NewProjectile(spawnPosition, Vector2.Zero, ModContent.ProjectileType<DoGChargeGate>(), 0, 0f);
 
                     Main.projectile[(int)portalIndex].localAI[0] = 1f;

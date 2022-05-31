@@ -35,6 +35,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public const int Ares_LineTelegraphInterpolantIndex = 17;
         public const int Ares_LineTelegraphRotationIndex = 18;
 
+        public const int Athena_EnragedIndex = 8;
+
         public const int Twins_ComplementMechEnrageTimerIndex = 15;
         public const int Twins_SideSwitchDelayIndex = 18;
 

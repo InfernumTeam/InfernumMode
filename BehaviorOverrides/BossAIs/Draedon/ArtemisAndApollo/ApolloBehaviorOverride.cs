@@ -1042,7 +1042,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     // Also determine which direction Artemis will spin in.
                     if (attackTimer == 1f)
                     {
-                        Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
+                        Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechImpendingDeathSound"), target.Center);
                         hoverOffsetDirection = Main.rand.Next(8) * MathHelper.TwoPi / 8f;
                         npc.netUpdate = true;
                     }

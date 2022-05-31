@@ -48,11 +48,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float spinSlowdownInterpolant = Utils.InverseLerp(redirectTime + spinTime, redirectTime + spinTime - spinSlowdownTime, attackTimer, true);
             ref float twinsSpinRotation = ref npc.Infernum().ExtraAI[0];
 
-            if (CurrentTwinsPhase != 4)
-            {
+            if (CurrentTwinsPhase >= 2)
                 twinsShootRate -= 8;
+            if (CurrentTwinsPhase != 4 && CurrentTwinsPhase >= 2)
+            {
+                twinsShootRate -= 20;
                 chargeTime += 6;
-                spinAngularVelocity *= 1.33f;
+                spinAngularVelocity *= 1.5f;
             }
 
             if (EnrageTimer > 0f)
@@ -197,6 +199,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             float wrappedAttackTimer = attackTimer % (redirectTime + attackTime);
             bool apolloIsAboutToCharge = wrappedAttackTimer >= redirectTime * 0.45f && wrappedAttackTimer < redirectTime;
             bool canShoot = wrappedAttackTimer >= redirectTime && wrappedAttackTimer < redirectTime + attackTime - 60f;
+
+            if (CurrentTwinsPhase >= 2)
+                artemisShootRate -= 8;
+            if (CurrentTwinsPhase != 4 && CurrentTwinsPhase >= 2)
+            {
+                artemisShootRate -= 15;
+                artemisShootSpeed += 2.5f;
+                apolloChargeSpeed += 7.5f;
+            }
+
+            // Inherit the attack timer from the initial mech.
+            attackTimer = FindInitialMech()?.ai[1] ?? attackTimer;
+
+            // Halt attacking if Artemis and Apollo are busy entering their second phase.
+            if (ExoTwinsAreEnteringSecondPhase)
+                attackTimer = 0f;
 
             // Have Artemis hover below the target and fire lasers.
             if (npc.type == ModContent.NPCType<Artemis>())

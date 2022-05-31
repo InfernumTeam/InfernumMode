@@ -149,17 +149,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
             else
                 npc.dontTakeDamage = true;
 
+            bool enraged = Athena.ModNPC<AthenaNPC>().Enraged;
             switch ((int)AttackState)
             {
                 // Rise upward.
                 case 0:
                     float horizontalOffset = MathHelper.Lerp(350f, 560f, npc.whoAmI % 7f / 7f);
-                    Vector2 flyDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * horizontalOffset, -240f);
-                    Vector2 idealVelocity = npc.SafeDirectionTo(flyDestination) * 30f;
-                    npc.velocity = (npc.velocity * 29f + idealVelocity) / 29f;
-                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, 1.5f);
+                    float flySpeed = 30f;
+                    if (ExoMechManagement.CurrentAthenaPhase >= 2)
+                        flySpeed += 5f;
+                    if (ExoMechManagement.CurrentAthenaPhase >= 3)
+                        flySpeed += 5f;
+                    if (ExoMechManagement.CurrentAthenaPhase >= 5)
+                        flySpeed += 5f;
+                    if (ExoMechManagement.CurrentAthenaPhase >= 6)
+                        flySpeed += 10f;
+                    if (enraged)
+                        flySpeed += 30f;
 
-                    if (npc.WithinRange(flyDestination, 40f) || IndividualAttackTimer > 150f)
+                    Vector2 flyDestination = Target.Center + new Vector2((Target.Center.X < npc.Center.X).ToDirectionInt() * horizontalOffset, -240f);
+                    Vector2 idealVelocity = npc.SafeDirectionTo(flyDestination) * flySpeed;
+                    npc.velocity = (npc.velocity * 29f + idealVelocity) / 29f;
+                    npc.velocity = npc.velocity.MoveTowards(idealVelocity, enraged ? 8f : 1.5f);
+
+                    if (npc.WithinRange(flyDestination, 80f) || IndividualAttackTimer > 150f)
                     {
                         AttackState = 1f;
                         npc.velocity *= 0.65f;
@@ -169,19 +182,30 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
 
                 // Slow down and look at the target.
                 case 1:
+                    float chargeSpeed = 40f;
+                    float decelerationFactor = 0.96f;
+                    float predictivenessFactor = 0f;
+                    if (Athena.ModNPC<AthenaNPC>().AttackState == AthenaNPC.AthenaAttackType.ElectricCharge)
+                        chargeSpeed *= 0.67f;
+                    if (enraged)
+                    {
+                        decelerationFactor = 0.9f;
+                        chargeSpeed *= 1.6f;
+                        predictivenessFactor = 13.5f;
+                    }
+
                     npc.spriteDirection = (Target.Center.X > npc.Center.X).ToDirectionInt();
-                    npc.velocity *= 0.96f;
+                    npc.velocity *= decelerationFactor;
                     npc.velocity = npc.velocity.MoveTowards(Vector2.Zero, 0.7f);
 
                     // Charge once sufficiently slowed down.
-                    float chargeSpeed = 40f;
                     if (npc.velocity.Length() < 1.25f)
                     {
                         Main.PlaySound(SoundID.DD2_WyvernDiveDown, npc.Center);
                         Main.PlaySound(SoundID.Zombie, npc.Center, 68);
                         AttackState = 2f;
                         IndividualAttackTimer = 0f;
-                        npc.velocity = npc.SafeDirectionTo(Target.Center) * chargeSpeed;
+                        npc.velocity = npc.SafeDirectionTo(Target.Center + Target.velocity * predictivenessFactor) * chargeSpeed;
                         npc.netUpdate = true;
                     }
                     break;

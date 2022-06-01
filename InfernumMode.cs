@@ -1,4 +1,5 @@
 using CalamityMod.Events;
+using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
@@ -7,6 +8,7 @@ using CalamityMod.Particles;
 using InfernumMode.Balancing;
 using InfernumMode.BehaviorOverrides.BossAIs.Cryogen;
 using InfernumMode.BehaviorOverrides.BossAIs.DoG;
+using InfernumMode.BehaviorOverrides.BossAIs.Draedon;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.BehaviorOverrides.BossAIs.MoonLord;
 using InfernumMode.BehaviorOverrides.BossAIs.Providence;
@@ -37,7 +39,9 @@ namespace InfernumMode
     public class InfernumMode : Mod
     {
         internal static InfernumMode Instance = null;
+
         internal static Mod CalamityMod = null;
+
         internal static bool CanUseCustomAIs => (!BossRushEvent.BossRushActive || BossRushApplies) && PoDWorld.InfernumMode;
 
         internal static bool BossRushApplies => true;
@@ -45,6 +49,8 @@ namespace InfernumMode
         internal static readonly Color HiveMindSkyColor = new Color(53, 42, 81);
 
         public static float BlackFade = 0f;
+
+        public static float DraedonThemeTimer = 0f;
 
         public static float ProvidenceArenaTimer
         {
@@ -236,7 +242,21 @@ namespace InfernumMode
 
             if (areExoMechsAround)
             {
-                music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/ExoMechBosses");
+                int draedon = NPC.FindFirstNPC(ModContent.NPCType<Draedon>());
+                if (draedon >= 0 && Main.npc[draedon].Infernum().ExtraAI[0] < DraedonBehaviorOverride.IntroSoundLength)
+                    music = 0;
+                else
+                    music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/ExoMechBosses");
+                priority = MusicPriority.BossHigh;
+            }
+
+            if (DraedonThemeTimer > 0f)
+            {
+                DraedonThemeTimer++;
+                if (DraedonThemeTimer >= DraedonBehaviorOverride.PostBattleMusicLength)
+                    DraedonThemeTimer = 0f;
+                else
+                    music = Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/Draedon");
                 priority = MusicPriority.BossHigh;
             }
         }

@@ -22,6 +22,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
+        public const int IntroSoundLength = 106;
+
+        public const int PostBattleMusicLength = 5120;
+
         public override bool PreAI(NPC npc)
         {
             // Set the whoAmI variable.
@@ -34,6 +38,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             ref float talkTimer = ref npc.ai[0];
             ref float hologramEffectTimer = ref npc.localAI[1];
             ref float killReappearDelay = ref npc.localAI[3];
+            ref float musicDelay = ref npc.Infernum().ExtraAI[0];
 
             // Decide an initial target and play a teleport sound on the first frame.
             Player playerToFollow = Main.player[npc.target];
@@ -167,8 +172,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     var sound = Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), playerToFollow.Center);
                     if (sound != null)
                         sound.Volume = MathHelper.Clamp(sound.Volume * 1.55f, 0f, 1f);
+                    sound = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechIntro"), playerToFollow.Center);
+                    if (sound != null)
+                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.5f, 0f, 1f);
                 }
             }
+
+            // Increment the music delay.
+            if (talkTimer >= ExoMechChooseDelay + 10f)
+                musicDelay++;
 
             // Dialogue lines depending on what phase the exo mechs are at.
             switch ((int)npc.localAI[0])
@@ -258,8 +270,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 npc.ModNPC<DraedonNPC>().DefeatTimer++;
             }
 
-            if (!ExoMechIsPresent && npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
-                npc.modNPC.music = InfernumMode.CalamityMod.GetSoundSlot(SoundType.Music, "Sounds/Music/DraedonAmbience");
+            if (!ExoMechIsPresent)
+            {
+                if (npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
+                {
+                    npc.modNPC.music = InfernumMode.CalamityMod.GetSoundSlot(SoundType.Music, "Sounds/Music/DraedonAmbience");
+                    InfernumMode.DraedonThemeTimer = 0f;
+                }
+                else
+                {
+                    npc.modNPC.music = InfernumMode.Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/Draedon");
+                    InfernumMode.DraedonThemeTimer = 1f;
+                }
+            }
 
             talkTimer++;
             return false;

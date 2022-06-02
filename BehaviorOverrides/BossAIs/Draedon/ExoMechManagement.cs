@@ -284,6 +284,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<ExolaserBomb>(),
                 ModContent.ProjectileType<RefractionRotor>(),
                 ModContent.ProjectileType<PulseBeamStart>(),
+                ModContent.ProjectileType<ThanatosComboLaser>(),
                 ModContent.ProjectileType<PulseLaser>(),
             };
             for (int i = 0; i < Main.maxProjectiles; i++)

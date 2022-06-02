@@ -209,7 +209,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
         public static bool DoBehavior_ThanatosAres_ElectricCage(NPC npc, Player target, ref float attackTimer, ref float frame)
         {
             int attackDelay = 150;
-            int aresShootRate = 70;
+            int aresShootRate = 90;
             int aresCircularBoltCount = 18;
             int aresShotBoltCount = 7;
             int thanatosShootRate = 85;
@@ -354,8 +354,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (attackTimer % aresShootRate >= aresShootRate - 35f)
                     {
-                        telegraphInterpolant = Utils.InverseLerp(aresShootRate - 35f, aresShootRate - 10f, attackTimer % aresShootRate, true);
-                        if (attackTimer % aresShootRate < aresShootRate - 10f)
+                        telegraphInterpolant = Utils.InverseLerp(aresShootRate - 50f, aresShootRate - 5f, attackTimer % aresShootRate, true);
+                        if (attackTimer % aresShootRate < aresShootRate - 5f)
                             telegraphRotation = (target.Center - coreCenter).ToRotation();
                     }
                 }

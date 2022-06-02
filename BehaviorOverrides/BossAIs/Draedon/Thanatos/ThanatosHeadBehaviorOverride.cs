@@ -1094,7 +1094,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             bool wasCharging = oldAttackType == ThanatosHeadAttackType.AggressiveCharge ||
                 oldAttackType == ThanatosHeadAttackType.MaximumOverdrive;
 
-            if (wasCharging || Main.rand.NextBool())
+            if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
+                npc.ai[0] = (int)newAttack;
+
+            else if (wasCharging || Main.rand.NextBool())
             {
                 do
                 {
@@ -1117,9 +1120,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                 if (ExoMechManagement.CurrentThanatosPhase >= 6 && Main.rand.NextFloat() < 0.67f)
                     npc.ai[0] = (int)ThanatosHeadAttackType.MaximumOverdrive;
             }
-
-            if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
-                npc.ai[0] = (int)newAttack;
 
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;

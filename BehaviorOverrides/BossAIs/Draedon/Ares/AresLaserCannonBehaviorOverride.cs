@@ -55,7 +55,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             if (ExoMechManagement.CurrentAresPhase >= 2)
             {
-                laserCount += 2;
                 totalLasersPerBurst = 12;
                 shootTime += 210;
                 laserShootSpeed *= 1.1f;
@@ -73,9 +72,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (ExoMechManagement.CurrentAresPhase == 4)
             {
                 shootTime += 45;
-                if (laserCount > 4)
-                    laserCount = 4;
-                laserCount--;
                 laserShootSpeed *= 0.8f;
             }
 

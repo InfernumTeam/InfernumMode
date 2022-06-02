@@ -678,28 +678,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public static void SelectNextAttack(NPC npc)
         {
             AresBodyAttackType oldAttackType = (AresBodyAttackType)(int)npc.ai[0];
-            npc.ai[0] = (int)AresBodyAttackType.IdleHover;
-            if (oldAttackType == AresBodyAttackType.IdleHover)
-            {
-                if (Main.rand.NextBool(3) || ExoMechManagement.CurrentAresPhase < 3)
-                    npc.ai[0] = (int)AresBodyAttackType.HoverCharge;
-                else if (ExoMechManagement.CurrentAresPhase >= 3)
-                {
-                    npc.ai[0] = (int)(Main.rand.NextBool() ? AresBodyAttackType.DirectionChangingSpinBursts : AresBodyAttackType.LaserSpinBursts);
-
-                    float photonRipperChance = ExoMechManagement.CurrentAresPhase >= 5 ? 0.7f : 0.45f;
-
-                    // Always choose the photon ripper slash attack if past the fifth phase and there aren't any photon rippers yet.
-                    if (ExoMechManagement.CurrentAresPhase >= 5f && !NPC.AnyNPCs(ModContent.NPCType<PhotonRipperNPC>()))
-                        photonRipperChance = 1f;
-
-                    if (Main.rand.NextFloat() < photonRipperChance)
-                        npc.ai[0] = (int)AresBodyAttackType.PhotonRipperSlashes;
-                }
-            }
 
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
                 npc.ai[0] = (int)newAttack;
+            else
+            {
+                npc.ai[0] = (int)AresBodyAttackType.IdleHover;
+                if (oldAttackType == AresBodyAttackType.IdleHover)
+                {
+                    if (Main.rand.NextBool(3) || ExoMechManagement.CurrentAresPhase < 3)
+                        npc.ai[0] = (int)AresBodyAttackType.HoverCharge;
+                    else if (ExoMechManagement.CurrentAresPhase >= 3)
+                    {
+                        npc.ai[0] = (int)(Main.rand.NextBool() ? AresBodyAttackType.DirectionChangingSpinBursts : AresBodyAttackType.LaserSpinBursts);
+
+                        float photonRipperChance = ExoMechManagement.CurrentAresPhase >= 5 ? 0.7f : 0.45f;
+
+                        // Always choose the photon ripper slash attack if past the fifth phase and there aren't any photon rippers yet.
+                        if (ExoMechManagement.CurrentAresPhase >= 5f && !NPC.AnyNPCs(ModContent.NPCType<PhotonRipperNPC>()))
+                            photonRipperChance = 1f;
+
+                        if (Main.rand.NextFloat() < photonRipperChance)
+                            npc.ai[0] = (int)AresBodyAttackType.PhotonRipperSlashes;
+                    }
+                }
+            }
 
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
@@ -764,9 +767,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (aresBody.Opacity <= 0f)
                 return true;
 
-            if (ExoMechManagement.CurrentAresPhase <= 2)
-                return false;
-
             // Rotate arm usability as follows (This only applies before phase 5):
             // Pulse Cannon and Laser Cannon,
             // Laser Cannon and Tesla Cannon,
@@ -781,7 +781,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             if (npc.type == ModContent.NPCType<PhotonRipperNPC>())
                 return false;
 
-            if (ExoMechManagement.CurrentAresPhase < 5)
+            if (ExoMechManagement.CurrentAresPhase < 5 && false)
             {
                 switch ((int)aresBody.Infernum().ExtraAI[5] % 4)
                 {

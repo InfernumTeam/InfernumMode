@@ -311,7 +311,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireStart"), npc.Center);
 
             if (phaseTransitionAnimationTime == chargeupSoundTime + 75f)
-                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/GatlingLaserFireEnd"), npc.Center);
+                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireEnd"), npc.Center);
         }
 
         public static void DoBehavior_DeathAnimation(NPC npc, Player target, ref float frame, ref float chargeInterpolant, ref float deathAnimationTimer)
@@ -409,7 +409,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     for (int i = 0; i < 2; i++)
                         GeneralParticleHandler.SpawnParticle(new PulseRing(tailEnd, Vector2.Zero, Color.Cyan, 0f, 8f, 40));
 
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/ScorchedEarthShot3"), npc.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ScorchedEarthShot3"), npc.Center);
                     npc.velocity = npc.SafeDirectionTo(target.Center) * 40f;
                     npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
                 }
@@ -424,7 +424,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 // Create a massive impact explosion and release sparks everywhere.
                 if (npc.type == ModContent.NPCType<Apollo>())
                 {
-                    var sound = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
+                    var sound = Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/WyrmElectricCharge"), npc.Center);
                     if (sound != null)
                         CalamityUtils.SafeVolumeChange(ref sound, 1.75f);
 
@@ -472,7 +472,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             // Play the transition sound at the start.
             if (phaseTransitionAnimationTime == 3f && npc.type == ModContent.NPCType<Apollo>())
-                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
+                Main.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechFinalPhaseChargeup"), target.Center);
         }
 
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool dontFireYet, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
@@ -491,8 +491,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
             if (ExoMechManagement.CurrentTwinsPhase >= 5)
             {
-                shootRate -= 8;
-                shootSpread *= 1.3f;
+                shootRate -= 3;
+                shootSpread *= 1.1f;
                 totalShots += 2;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
@@ -526,13 +526,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 npc.netUpdate = true;
             }
 
-            float projectileShootSpeed = MathHelper.Lerp(2.7f, 5.4f, Utils.InverseLerp(0f, 210f, generalAttackTimer, true));
+            float projectileShootSpeed = MathHelper.Lerp(3.1f, 6.21f, Utils.InverseLerp(0f, 210f, generalAttackTimer, true));
             Vector2 hoverDestination = target.Center;
             hoverDestination.X += hoverOffsetX;
             hoverDestination += Vector2.UnitY * hoverSide * 485f;
-
-            if (ExoMechManagement.CurrentTwinsPhase <= 2)
-                projectileShootSpeed *= 1.15f;
 
             // Determine rotation.
             npc.rotation = aimDirection.ToRotation() + MathHelper.PiOver2;
@@ -558,7 +555,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         if (npc.type == ModContent.NPCType<Apollo>())
                         {
                             if (i == 0)
-                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -574,7 +571,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         else
                         {
                             if (i == 0)
-                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
@@ -613,7 +610,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int artemisLaserReleaseRate = 20;
             int artemisLaserBurstCount = 9;
             int flamethrowerHoverTime = 95;
-            float flamethrowerFlySpeed = 40f;
+            float flamethrowerFlySpeed = 33f;
 
             if (ExoMechManagement.CurrentTwinsPhase >= 2)
                 artemisChargeSpeed += 4f;
@@ -738,7 +735,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
                             if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 300f))
                             {
-                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
+                                Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
                                 if (Main.netMode != NetmodeID.MultiplayerClient)
                                 {
@@ -831,7 +828,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     (!artemisShouldCharge && npc.type == ModContent.NPCType<Apollo>()))
                 {
                     chargeTimer = 1f;
-                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
+                    Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
                     npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * 8f) * chargeSpeed;
                     npc.netUpdate = true;
                 }
@@ -956,7 +953,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         if (Main.netMode != NetmodeID.Server)
                             ExoMechsSky.CreateLightningBolt(lightningBoltCount, true);
 
-                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
+                        Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/ELRFire"), npc.Center);
 
                         npc.velocity = npc.SafeDirectionTo(target.Center + target.velocity * chargePredictiveness) * chargeSpeed;
 
@@ -1120,10 +1117,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public static void DoBehavior_GatlingLaserAndPlasmaFlames(NPC npc, Player target, float hoverSide, ref float frame, ref float attackTimer)
         {
             int shootTime = 420;
-            Vector2 hoverDestination = target.Center + new Vector2(hoverSide * 750f, -100f);
+            int attackTransitionDelay = 150;
             ref float attackSubstate = ref npc.Infernum().ExtraAI[0];
             ref float hoverOffsetX = ref npc.Infernum().ExtraAI[1];
             ref float hoverOffsetY = ref npc.Infernum().ExtraAI[2];
+            ref float hoverSideFlip = ref npc.Infernum().ExtraAI[3];
+            ref float apolloShootCounter = ref npc.Infernum().ExtraAI[4];
+
+            if (hoverSideFlip == 0f)
+                hoverSideFlip = 1f;
+            Vector2 hoverDestination = target.Center + new Vector2(hoverSide * hoverSideFlip * 820f, -100f);
 
             switch ((int)attackSubstate)
             {
@@ -1158,8 +1161,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     // Fire a machine-gun of lasers.
                     if (npc.type == ModContent.NPCType<Artemis>())
                     {
-                        int laserShootRate = 14;
-                        float laserShootSpeed = 6f;
+                        int laserShootRate = 16;
+                        float laserShootSpeed = 5.5f;
                         float predictivenessFactor = 18.5f;
                         Vector2 aimDestination = target.Center + target.velocity * new Vector2(predictivenessFactor, predictivenessFactor * 2.6f);
                         Vector2 aimDirection = npc.SafeDirectionTo(aimDestination);
@@ -1168,22 +1171,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         if (ExoMechManagement.CurrentTwinsPhase == 4)
                             laserShootRate += 7;
                         if (ExoMechManagement.CurrentTwinsPhase >= 5)
-                            laserShootRate -= 3;
+                            laserShootRate -= 2;
                         if (ExoMechManagement.CurrentTwinsPhase >= 6)
-                            laserShootRate -= 4;
+                            laserShootRate -= 2;
 
                         // Do movement.
                         ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);
 
                         // Play a laser preparation sound.
                         if (attackTimer == 15f)
-                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/GatlingLaserFireStart"), target.Center);
+                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireStart"), target.Center);
 
                         // Play the laser fire loop.
-                        if (attackTimer >= 15f && attackTimer % 70f == 20f)
-                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/GatlingLaserFireLoop"), target.Center);
+                        if (attackTimer >= 15f && attackTimer % 70f == 20f && attackTimer < shootTime)
+                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/GatlingLaserFireLoop"), target.Center);
 
-                        bool shouldFire = attackTimer >= 15f && attackTimer % laserShootRate == laserShootRate - 1f;
+                        bool shouldFire = attackTimer >= 15f && attackTimer % laserShootRate == laserShootRate - 1f && npc.WithinRange(hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 90f) && attackTimer < shootTime;
                         if (shouldFire)
                             ExoMechsSky.CreateLightningBolt(4);
                         if (Main.netMode != NetmodeID.MultiplayerClient && shouldFire)
@@ -1220,15 +1223,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                         // Do movement.
                         ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);
 
-                        if (attackTimer >= 15f && attackTimer % plasmaShootRate == plasmaShootRate - 1f)
+                        if (attackTimer >= 15f && attackTimer % plasmaShootRate == plasmaShootRate - 1f && npc.WithinRange(hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 90f) && attackTimer < shootTime)
                         {
-                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
+                            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), npc.Center);
 
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                                 Utilities.NewProjectileBetter(npc.Center + aimDirection * 70f, aimDirection * plasmaShootSpeed, ModContent.ProjectileType<AresPlasmaFireballInfernum>(), 550, 0f);
+                            apolloShootCounter++;
+                            if (apolloShootCounter % 8f == 7f)
+                            {
+                                hoverSideFlip *= -1f;
+                                Main.npc[CalamityGlobalNPC.draedonExoMechTwinRed].Infernum().ExtraAI[3] = hoverSideFlip;
+                                npc.netUpdate = true;
+                            }
                         }
 
-                        if (attackTimer >= shootTime)
+                        if (attackTimer >= shootTime + attackTransitionDelay)
                             SelectNextAttack(npc);
                     }
                     break;

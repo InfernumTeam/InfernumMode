@@ -287,6 +287,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
         {
+            if (CalamityGlobalNPC.draedonExoMechPrime == -1)
+                return false;
+
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
             {
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(completionRatio => AresBodyBehaviorOverride.FlameTrailWidthFunctionBig(npc, completionRatio),

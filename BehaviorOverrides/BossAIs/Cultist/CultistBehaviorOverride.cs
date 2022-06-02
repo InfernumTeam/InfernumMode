@@ -28,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             HoldArmsOut,
             Laugh,
         }
+
         public enum CultistAIState
         {
             SpawnEffects,
@@ -747,7 +748,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             if (phase2)
                 attackLength += 205;
 
-            bool inDelay = attackTimer >= shootDelay + lightBurstCount * lightBurstShootRate &&
+            bool waitingBeforeFiring = attackTimer >= shootDelay + lightBurstCount * lightBurstShootRate &&
                 attackTimer < shootDelay + lightBurstCount * lightBurstShootRate + lightBurstAttackDelay;
             bool performingPhase2Attack = attackTimer >= shootDelay + lightBurstCount * lightBurstShootRate + lightBurstAttackDelay;
 
@@ -810,7 +811,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             }
 
             // Release a burst of light.
-            else if (attackTimer > 15f && !inDelay)
+            else if (attackTimer > 15f && !waitingBeforeFiring)
             {
                 Vector2 handPosition = npc.Center + new Vector2(npc.spriteDirection * 20f, 6f);
 

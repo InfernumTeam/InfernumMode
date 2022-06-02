@@ -20,7 +20,7 @@ using InfernumMode.Particles;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-	public class ApolloBehaviorOverride : NPCBehaviorOverride
+    public class ApolloBehaviorOverride : NPCBehaviorOverride
     {
         public enum TwinsAttackType
         {
@@ -477,7 +477,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
         public static void DoBehavior_BasicShots(NPC npc, Player target, bool dontFireYet, bool calmTheFuckDown, float hoverSide, ref float frame, ref float attackTimer)
         {
-            int totalShots = 15;
+            int totalShots = 11;
             int shootRate = 45;
             int shotsPerBurst = 3;
             float shootSpread = 0.41f;
@@ -493,12 +493,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             {
                 shootRate -= 8;
                 shootSpread *= 1.3f;
-                totalShots += 3;
+                totalShots += 2;
             }
             if (ExoMechManagement.CurrentTwinsPhase >= 6)
             {
                 shootRate -= 3;
-                totalShots += 3;
+                totalShots += 2;
             }
 
             if (calmTheFuckDown)

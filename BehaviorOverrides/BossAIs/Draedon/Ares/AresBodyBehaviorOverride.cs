@@ -405,7 +405,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public static void DoBehavior_IdleHover(NPC npc, Player target, ref float attackTimer)
         {
-            int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 1350 : 1200;
+            int attackTime = 1200;
+            if (ExoMechManagement.CurrentAresPhase >= 5)
+                attackTime = 1350;
+            if (ExoMechManagement.CurrentAresPhase >= 6)
+                attackTime = 540;
+
             Vector2 hoverDestination = target.Center - Vector2.UnitY * 450f;
             ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination, 24f, 75f);
 
@@ -491,8 +496,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
         public static void DoBehavior_PhotonRipperSlashes(NPC npc, Player target, ref float attackTimer, ref float frameType)
         {
             // Hover loosely above the target and let the photon rippers attack.
-            int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 1350 : 1200;
-            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 300f, -335f);
+            int attackTime = ExoMechManagement.CurrentAresPhase >= 5 ? 600 : 900;
+
+            Vector2 hoverDestination = target.Center + new Vector2((target.Center.X < npc.Center.X).ToDirectionInt() * 300f, -450f);
             if (!npc.WithinRange(hoverDestination, 75f))
                 npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 30f, 1f);
             else
@@ -534,6 +540,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Slow down.
             npc.velocity *= 0.935f;
+
+            // Stay away from the top of the world, to ensure that the target can deal with the laser spin.
+            if (npc.Top.Y <= 3600f)
+                npc.position.Y += 32f;
 
             // Determine an initial direction.
             if (laserDirectionSign == 0f)

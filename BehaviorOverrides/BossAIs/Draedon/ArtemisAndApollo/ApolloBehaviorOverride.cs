@@ -733,7 +733,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             npc.velocity.Y = CalamityUtils.Convert01To010(generalAttackTimer / artemisChargeTime) * 13.5f;
                             npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
 
-                            if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 300f))
+                            if (generalAttackTimer % artemisLaserReleaseRate == artemisLaserReleaseRate - 1f && !npc.WithinRange(target.Center, 475f))
                             {
                                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/LaserCannon"), npc.Center);
 
@@ -946,7 +946,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                     npc.ModNPC<Apollo>().ChargeComboFlash = MathHelper.Clamp(attackTimer / waitTime, 0f, 1f);
 
                     // Charge and release sparks.
-                    if (attackTimer >= waitTime && attackDelay >= 45f)
+                    if (attackTimer >= waitTime && attackDelay >= 64f)
                     {
                         // Create lightning bolts in the sky.
                         int lightningBoltCount = ExoMechManagement.CurrentTwinsPhase >= 6 ? 55 : 30;
@@ -1011,7 +1011,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 return;
             }
 
-            int shootDelay = 48;
+            int shootDelay = 64;
             float spinRadius = 640f;
             float spinArc = MathHelper.Pi * 0.84f;
 
@@ -1128,6 +1128,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 hoverSideFlip = 1f;
             Vector2 hoverDestination = target.Center + new Vector2(hoverSide * hoverSideFlip * 820f, -100f);
 
+            // Disable contact damage.
+            npc.damage = 0;
+
             switch ((int)attackSubstate)
             {
                 // Hover into position.
@@ -1176,7 +1179,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             laserShootRate -= 2;
 
                         // Do movement.
-                        ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);
+                        ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 25f, 84f);
 
                         // Play a laser preparation sound.
                         if (attackTimer == 15f)
@@ -1221,7 +1224,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                             plasmaShootRate -= 8;
 
                         // Do movement.
-                        ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 32f, 84f);
+                        ExoMechAIUtilities.DoSnapHoverMovement(npc, hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 25f, 84f);
 
                         if (attackTimer >= 15f && attackTimer % plasmaShootRate == plasmaShootRate - 1f && npc.WithinRange(hoverDestination + new Vector2(hoverOffsetX, hoverOffsetY), 90f) && attackTimer < shootTime)
                         {

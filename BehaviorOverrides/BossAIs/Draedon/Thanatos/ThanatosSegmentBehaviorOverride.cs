@@ -125,7 +125,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
                         }
 
                         if ((int)headAttackType == (int)ExoMechComboAttackContent.ExoMechComboAttackType.ThanatosAres_LaserCircle)
-                            generalShootSpeedFactor *= 0.5f;
+                            generalShootSpeedFactor *= ExoMechManagement.CurrentThanatosPhase != 4f ? 0.36f : 0.5f;
 
                         switch ((int)headAttackType)
                         {

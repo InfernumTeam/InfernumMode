@@ -1259,26 +1259,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             // Update learning stuff.
             ExoMechManagement.DoPostAttackSelections(npc);
 
-            npc.ai[0] = (int)TwinsAttackType.BasicShots;
-            if (oldAttackType == TwinsAttackType.BasicShots)
-            {
-                int tries = 0;
-                do
-                {
-                    npc.ai[0] = Main.rand.NextBool() ? (int)TwinsAttackType.FireCharge : (int)TwinsAttackType.SynchronizedCharges;
-                    if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(3))
-                        npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
-                    if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
-                        npc.ai[0] = (int)(Main.rand.NextBool() ? TwinsAttackType.SpecialAttack_LaserRayScarletBursts : TwinsAttackType.SpecialAttack_PlasmaCharges);
-                    tries++;
-
-                    if (tries >= 1000)
-                        break;
-                }
-                while (previousSpecialAttack == npc.ai[0]);
-                previousSpecialAttack = npc.ai[0];
-            }
-
             if (ExoMechComboAttackContent.ShouldSelectComboAttack(npc, out ExoMechComboAttackContent.ExoMechComboAttackType newAttack))
             {
                 npc.ai[0] = (int)newAttack;
@@ -1286,6 +1266,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 {
                     NPC artemis = Main.npc[NPC.FindFirstNPC(ModContent.NPCType<Artemis>())];
                     artemis.ai[0] = npc.ai[0];
+                }
+            }
+            else
+            {
+                npc.ai[0] = (int)TwinsAttackType.BasicShots;
+                if (oldAttackType == TwinsAttackType.BasicShots)
+                {
+                    int tries = 0;
+                    do
+                    {
+                        npc.ai[0] = Main.rand.NextBool() ? (int)TwinsAttackType.FireCharge : (int)TwinsAttackType.SynchronizedCharges;
+                        if (ExoMechManagement.CurrentTwinsPhase >= 3 && Main.rand.NextBool(3))
+                            npc.ai[0] = (int)TwinsAttackType.SpecialAttack_GatlingLaserAndPlasmaFlames;
+                        if (ExoMechManagement.CurrentTwinsPhase >= 2 && Main.rand.NextBool())
+                            npc.ai[0] = (int)(Main.rand.NextBool() ? TwinsAttackType.SpecialAttack_LaserRayScarletBursts : TwinsAttackType.SpecialAttack_PlasmaCharges);
+                        tries++;
+
+                        if (tries >= 1000)
+                            break;
+                    }
+                    while (previousSpecialAttack == npc.ai[0]);
+                    previousSpecialAttack = npc.ai[0];
                 }
             }
 

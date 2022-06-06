@@ -910,6 +910,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
                 // Teleport to the center of the arena.
                 npc.Center = npc.Infernum().arenaRectangle.Center.ToVector2();
+                npc.velocity = Vector2.Zero;
                 Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ThunderStrike"), npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -1095,13 +1096,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.Infernum().ExtraAI[i] = 0f;
 
             // Reset the berserk phase.
-            if (npc.ai[0] != (int)SCalAttackType.BecomeBerserk)
+            if (npc.ai[0] != (int)SCalAttackType.CondemnationFanBurst)
             {
-                npc.ai[0] = (int)SCalAttackType.BecomeBerserk;
+                npc.ai[0] = (int)SCalAttackType.CondemnationFanBurst;
                 npc.ai[3] = 0f;
             }
             else
-                npc.ai[0] = (int)SCalAttackType.LostSoulBarrage;
+                npc.ai[0] = (int)SCalAttackType.BrimstoneJewelBeam;
 
             npc.ai[1] = 0f;
             npc.netUpdate = true;

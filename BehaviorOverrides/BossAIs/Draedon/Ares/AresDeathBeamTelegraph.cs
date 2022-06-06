@@ -19,7 +19,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public Vector2 OldVelocity;
         public const float TelegraphFadeTime = 8f;
-        public const float TelegraphWidth = 4000f;
+        public const float TelegraphWidth = 2800f;
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Exo Overload Telegraph");
 

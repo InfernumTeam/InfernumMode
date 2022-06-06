@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 Vector2 end = start + projectile.velocity.SafeNormalize(Vector2.UnitY) * 5000f;
                 Main.spriteBatch.DrawLineBetter(start, end, Color.Red, telegraphWidth);
             }
-            return false;
+            return true;
         }
     }
 }

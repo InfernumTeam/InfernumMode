@@ -85,7 +85,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const float CanUseCeaselessVoidSentinelAttackLifeRatio = 0.6f;
 
-        public const float CanUseSignusSentinelAttackLifeRatio = 0.45f;
+        public const float CanUseSignusSentinelAttackLifeRatio = 0.5f;
 
         public const float RipperRemovalLifeRatio = 0.45f;
 
@@ -318,8 +318,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             // Calculate the amount of sentinel attacks that can be used in the passive phase.
             // This does not apply in the aggressive phase.
             int totalSentinelAttacks = 1;
-            if (lifeRatio < CanUseCeaselessVoidSentinelAttackLifeRatio)
-                totalSentinelAttacks++;
             if (lifeRatio < CanUseSignusSentinelAttackLifeRatio)
                 totalSentinelAttacks++;
 
@@ -419,30 +417,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 sentinelAttackTimer = attackTime;
             }
 
-            // Ceaseless Void Effect (Mirror Blasts).
-            if (sentinelAttackTimer > attackTime && sentinelAttackTimer <= attackTime * 2f && npc.Opacity >= 0.5f)
-            {
-                if (npc.velocity.Length() > 14.5f)
-                    npc.velocity *= 0.75f;
-
-                bool shouldFire = attackTimer % 50f == 49f && !nearEndOfAttack && sentinelAttackTimer >= attackTime + 60f;
-                if (Main.netMode != NetmodeID.MultiplayerClient && shouldFire && !npc.WithinRange(target.Center, 200f))
-                {
-                    for (int i = 0; i < 6; i++)
-                    {
-                        Vector2 matterSpawnOffset;
-                        do
-                            matterSpawnOffset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(480f, 800f);
-                        while (target.velocity.AngleBetween(matterSpawnOffset) < 0.84f);
-                        Utilities.NewProjectileBetter(target.Center + matterSpawnOffset, Vector2.Zero, ModContent.ProjectileType<MysteriousMatter>(), 0, 0f);
-                    }
-                }
-                if (sentinelAttackTimer == attackTime * 2f - 1f)
-                    signusAttackState = Main.rand.Next(2);
-            }
-
             // Signus Effect (Essence Cleave).
-            if (sentinelAttackTimer > attackTime * 2f && sentinelAttackTimer <= attackTime * 3f && npc.Opacity >= 0.5f)
+            if (sentinelAttackTimer > attackTime && sentinelAttackTimer <= attackTime * 2f && npc.Opacity >= 0.5f)
             {
                 float wrappedAttackTimer = attackTimer % attackTime;
                 if (wrappedAttackTimer % 45f == 0f)
@@ -631,7 +607,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float idealFlyAcceleration = MathHelper.Lerp(0.045f, 0.032f, lifeRatio);
             float idealFlySpeed = MathHelper.Lerp(20.5f, 15f, lifeRatio);
             float idealMouthOpeningAngle = MathHelper.ToRadians(32f);
-            float flySpeedFactor = 1.25f + lifeRatio * 0.45f; // TODO -- This is probably bugged? If the fight is good though, leave it be.
+            float flySpeedFactor = 1.4f + lifeRatio * 0.45f; // TODO -- This is probably bugged? If the fight is good though, leave it be.
             float snakeMovementDistanceThreshold = 650f;
             if (InPhase2)
             {

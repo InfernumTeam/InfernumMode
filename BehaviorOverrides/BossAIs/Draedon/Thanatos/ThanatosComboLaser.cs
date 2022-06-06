@@ -22,7 +22,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public Vector2 Velocity;
         public const float TelegraphTotalTime = 55f;
         public const float TelegraphFadeTime = 15f;
-        public const float TelegraphWidth = 1900f;
+        public const float TelegraphWidth = 1400f;
         public const float LaserVelocity = 10f;
 
         public override void SetStaticDefaults()

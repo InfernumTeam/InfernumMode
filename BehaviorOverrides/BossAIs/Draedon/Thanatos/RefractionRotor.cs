@@ -81,7 +81,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
                     // Determine telegraph line characteristics.
                     Vector2 start = projectile.Center;
-                    Vector2 end = start + telegraphDirection * 3500f;
+                    Vector2 end = start + telegraphDirection * 1800f;
                     float telegraphWidth = pulseInterpolant * Utils.InverseLerp(0f, 6f, projectile.timeLeft, true) * 8f;
                     float telegraphColorInterpolant = ((float)Math.Sin(projectile.identity + telegraphDirection.ToRotation()) * 0.5f + 0.5f) * 0.65f;
                     Color telegraphColor = Color.Lerp(Color.Red, Color.Wheat, telegraphColorInterpolant) * pulseInterpolant * 0.6f;
@@ -115,7 +115,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
         public override void Kill(int timeLeft)
         {
-            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(Terraria.ModLoader.SoundType.Item, "Sounds/Item/PlasmaBolt"), projectile.Center);
+            Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaBolt"), projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

@@ -1,6 +1,6 @@
 ﻿namespace InfernumMode.Commands
 {
-    /*
+	/*
     class AprilFools : ModCommand
     {
         public override CommandType Type => CommandType.Chat;

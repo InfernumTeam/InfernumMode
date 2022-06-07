@@ -12,143 +12,143 @@ using static InfernumMode.ILEditingStuff.HookManager;
 namespace InfernumMode.ILEditingStuff
 {
 	public class DrawInfernumModeIndicatorHook : IHookEdit
-    {
-        internal static void DrawInfernumModeUI()
-        {
-            // The mode indicator should only be displayed when the inventory is open, to prevent obstruction.
-            if (!Main.playerInventory)
-                return;
+	{
+		internal static void DrawInfernumModeUI()
+		{
+			// The mode indicator should only be displayed when the inventory is open, to prevent obstruction.
+			if (!Main.playerInventory)
+				return;
 
-            bool renderingText = false;
-            Rectangle mouseRectangle = Utils.CenteredRectangle(Main.MouseScreen, Vector2.One * 2f);
-            Texture2D iconTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumIcon");
+			bool renderingText = false;
+			Rectangle mouseRectangle = Utils.CenteredRectangle(Main.MouseScreen, Vector2.One * 2f);
+			Texture2D iconTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumIcon");
 
-            Rectangle areaFrame = iconTexture.Frame();
-            Vector2 drawCenter = new Vector2(Main.screenWidth - 400f, 72f) + areaFrame.Size() * 0.5f;
+			Rectangle areaFrame = iconTexture.Frame();
+			Vector2 drawCenter = new Vector2(Main.screenWidth - 400f, 72f) + areaFrame.Size() * 0.5f;
 
-            if (CalamityPlayer.areThereAnyDamnBosses)
-            {
-                Color drawColor = Color.Red * 0.4f;
-                drawColor.A = 0;
-                for (int i = 0; i < 12; i++)
-                {
-                    Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTime * 4f).ToRotationVector2() * 4f;
-                    Main.spriteBatch.Draw(iconTexture, drawCenter + drawOffset, areaFrame, drawColor, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
-                }
-            }
+			if (CalamityPlayer.areThereAnyDamnBosses)
+			{
+				Color drawColor = Color.Red * 0.4f;
+				drawColor.A = 0;
+				for (int i = 0; i < 12; i++)
+				{
+					Vector2 drawOffset = (MathHelper.TwoPi * i / 12f + Main.GlobalTime * 4f).ToRotationVector2() * 4f;
+					Main.spriteBatch.Draw(iconTexture, drawCenter + drawOffset, areaFrame, drawColor, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+				}
+			}
 
-            Main.spriteBatch.Draw(iconTexture, drawCenter, areaFrame, Color.White, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+			Main.spriteBatch.Draw(iconTexture, drawCenter, areaFrame, Color.White, 0f, areaFrame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
 
-            // Infernum active text.
-            if (mouseRectangle.Intersects(Utils.CenteredRectangle(drawCenter, new Vector2(30f))))
-            {
-                Main.instance.MouseText(CalamityUtils.ColorMessage("Infernum Mode is active.", Color.Red));
-                renderingText = true;
-            }
+			// Infernum active text.
+			if (mouseRectangle.Intersects(Utils.CenteredRectangle(drawCenter, new Vector2(30f))))
+			{
+				Main.instance.MouseText(CalamityUtils.ColorMessage("Infernum Mode is active.", Color.Red));
+				renderingText = true;
+			}
 
-            // Flush text data to the screen.
-            if (renderingText)
-                Main.instance.MouseTextHackZoom(string.Empty);
-        }
+			// Flush text data to the screen.
+			if (renderingText)
+				Main.instance.MouseTextHackZoom(string.Empty);
+		}
 
-        internal static void DrawInfernumIcon(ILContext il)
-        {
-            ILCursor cursor = new ILCursor(il);
+		internal static void DrawInfernumIcon(ILContext il)
+		{
+			ILCursor cursor = new ILCursor(il);
 
-            // Go to the last Ret and leave a marker to return to so that manual
-            // drawing can be done.
-            while (cursor.TryGotoNext(i => i.MatchRet())) { }
+			// Go to the last Ret and leave a marker to return to so that manual
+			// drawing can be done.
+			while (cursor.TryGotoNext(i => i.MatchRet())) { }
 
-            ILLabel endOfMethod = cursor.DefineLabel();
-            cursor.MarkLabel(endOfMethod);
+			ILLabel endOfMethod = cursor.DefineLabel();
+			cursor.MarkLabel(endOfMethod);
 
-            cursor.Index = 0;
-            cursor.EmitDelegate<Action>(() =>
-            {
-                if (PoDWorld.InfernumMode)
-                    DrawInfernumModeUI();
-            });
+			cursor.Index = 0;
+			cursor.EmitDelegate<Action>(() =>
+			{
+				if (PoDWorld.InfernumMode)
+					DrawInfernumModeUI();
+			});
 
-            cursor.Emit(OpCodes.Ldsfld, typeof(PoDWorld).GetField("InfernumMode"));
-            cursor.Emit(OpCodes.Brtrue, endOfMethod);
-        }
+			cursor.Emit(OpCodes.Ldsfld, typeof(PoDWorld).GetField("InfernumMode"));
+			cursor.Emit(OpCodes.Brtrue, endOfMethod);
+		}
 
-        public void Load() => ModeIndicatorUIDraw += DrawInfernumIcon;
+		public void Load() => ModeIndicatorUIDraw += DrawInfernumIcon;
 
-        public void Unload() => ModeIndicatorUIDraw -= DrawInfernumIcon;
-    }
+		public void Unload() => ModeIndicatorUIDraw -= DrawInfernumIcon;
+	}
 
-    public class PermitOldDukeRainHook : IHookEdit
-    {
-        internal static void PermitODRain(ILContext il)
-        {
-            ILCursor cursor = new ILCursor(il);
+	public class PermitOldDukeRainHook : IHookEdit
+	{
+		internal static void PermitODRain(ILContext il)
+		{
+			ILCursor cursor = new ILCursor(il);
 
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchStsfld<Main>("raining")))
-                return;
+			if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchStsfld<Main>("raining")))
+				return;
 
-            int start = cursor.Index - 1;
+			int start = cursor.Index - 1;
 
-            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCall<CalamityNetcode>("SyncWorld")))
-                return;
+			if (!cursor.TryGotoNext(MoveType.After, i => i.MatchCall<CalamityNetcode>("SyncWorld")))
+				return;
 
-            int end = cursor.Index;
-            cursor.Goto(start);
-            cursor.RemoveRange(end - start);
-            cursor.Emit(OpCodes.Nop);
-        }
+			int end = cursor.Index;
+			cursor.Goto(start);
+			cursor.RemoveRange(end - start);
+			cursor.Emit(OpCodes.Nop);
+		}
 
-        public void Load() => CalamityWorldPostUpdate += PermitODRain;
+		public void Load() => CalamityWorldPostUpdate += PermitODRain;
 
-        public void Unload() => CalamityWorldPostUpdate -= PermitODRain;
-    }
+		public void Unload() => CalamityWorldPostUpdate -= PermitODRain;
+	}
 
-    public class NerfShellfishStaffDebuffHook : IHookEdit
-    {
-        internal static void NerfShellfishStaff(ILContext il)
-        {
-            ILCursor cursor = new ILCursor(il);
+	public class NerfShellfishStaffDebuffHook : IHookEdit
+	{
+		internal static void NerfShellfishStaff(ILContext il)
+		{
+			ILCursor cursor = new ILCursor(il);
 
-            for (int j = 0; j < 2; j++)
-            {
-                if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(250)))
-                    return;
-            }
+			for (int j = 0; j < 2; j++)
+			{
+				if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(250)))
+					return;
+			}
 
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldc_I4, 150);
+			cursor.Remove();
+			cursor.Emit(OpCodes.Ldc_I4, 150);
 
-            if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(50)))
-                return;
+			if (!cursor.TryGotoNext(MoveType.Before, i => i.MatchLdcI4(50)))
+				return;
 
-            cursor.Remove();
-            cursor.Emit(OpCodes.Ldc_I4, 30);
-        }
+			cursor.Remove();
+			cursor.Emit(OpCodes.Ldc_I4, 30);
+		}
 
-        public void Load() => CalamityNPCLifeRegen += NerfShellfishStaff;
+		public void Load() => CalamityNPCLifeRegen += NerfShellfishStaff;
 
-        public void Unload() => CalamityNPCLifeRegen -= NerfShellfishStaff;
-    }
+		public void Unload() => CalamityNPCLifeRegen -= NerfShellfishStaff;
+	}
 
-    public class RemoveProjectileOnHitLagHook : IHookEdit
-    {
-        internal static void RemoveProjectileOnHitLag(ILContext il)
-        {
-            ILCursor cursor = new ILCursor(il);
-            cursor.GotoNext(MoveType.Before, c => c.MatchLdcI4(267));
-            cursor.GotoPrev(MoveType.After, c => c.MatchStloc(5));
-            cursor.Emit(OpCodes.Ldc_I4_1);
-            cursor.Emit(OpCodes.Stloc, 4);
-            cursor.Emit(OpCodes.Ldc_I4_1);
-            cursor.Emit(OpCodes.Stloc, 5);
-        }
+	public class RemoveProjectileOnHitLagHook : IHookEdit
+	{
+		internal static void RemoveProjectileOnHitLag(ILContext il)
+		{
+			ILCursor cursor = new ILCursor(il);
+			cursor.GotoNext(MoveType.Before, c => c.MatchLdcI4(267));
+			cursor.GotoPrev(MoveType.After, c => c.MatchStloc(5));
+			cursor.Emit(OpCodes.Ldc_I4_1);
+			cursor.Emit(OpCodes.Stloc, 4);
+			cursor.Emit(OpCodes.Ldc_I4_1);
+			cursor.Emit(OpCodes.Stloc, 5);
+		}
 
-        public void Load() => CalamityPlayerModifyHitByProjectile += RemoveProjectileOnHitLag;
+		public void Load() => CalamityPlayerModifyHitByProjectile += RemoveProjectileOnHitLag;
 
-        public void Unload() => CalamityPlayerModifyHitByProjectile -= RemoveProjectileOnHitLag;
-    }
+		public void Unload() => CalamityPlayerModifyHitByProjectile -= RemoveProjectileOnHitLag;
+	}
 
-    /*
+	/*
     public class UseDeathContactDamageHook : IHookEdit
     {
         internal static FieldInfo EnemyStatsField = typeof(NPCStats).GetNestedType("EnemyStats", Utilities.UniversalBindingFlags).GetField("ContactDamageValues", Utilities.UniversalBindingFlags);

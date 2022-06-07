@@ -2,10 +2,10 @@ using Terraria;
 
 namespace InfernumMode.Balancing
 {
-    public interface IBalancingRule
-    {
-        bool AppliesTo(NPC npc, NPCHitContext hitContext);
+	public interface IBalancingRule
+	{
+		bool AppliesTo(NPC npc, NPCHitContext hitContext);
 
-        void ApplyBalancingChange(NPC npc, ref int damage);
-    }
+		void ApplyBalancingChange(NPC npc, ref int damage);
+	}
 }

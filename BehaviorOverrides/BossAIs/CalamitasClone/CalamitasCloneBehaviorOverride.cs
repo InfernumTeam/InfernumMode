@@ -860,7 +860,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 			{
 				if (lifeRatio < Phase2LifeRatio)
 					possibleAttacks.Remove(CloneAttackType.HorizontalDartRelease);
-				possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneLightning, lifeRatio < Phase2LifeRatio);
+				//possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneLightning, lifeRatio < Phase2LifeRatio);
 				possibleAttacks.AddWithCondition(CloneAttackType.BrimstoneFireBurst, lifeRatio < Phase2LifeRatio);
 				possibleAttacks.AddWithCondition(CloneAttackType.DiagonalCharge, lifeRatio < Phase2LifeRatio);
 			}
@@ -884,7 +884,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 				if (lifeRatio < Phase4LifeRatio)
 				{
 					possibleAttacks.Add(CloneAttackType.BrimstoneMeteors);
-					possibleAttacks.Add(CloneAttackType.BrimstoneLightning);
+					//possibleAttacks.Add(CloneAttackType.BrimstoneLightning);
 				}
 			}
 

@@ -112,7 +112,10 @@ namespace InfernumMode
 			int floatingIslandIndex = tasks.FindIndex(g => g.Name == "Floating Islands");
 			if (floatingIslandIndex != -1)
 				tasks.Insert(floatingIslandIndex, new PassLegacy("Desert Digout Area", GenerateUndergroundDesertArea));
-			int finalIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Final Cleanup"));
+			int jungleTreesIndex = tasks.FindIndex(g => g.Name == "Jungle Trees");
+			if (jungleTreesIndex != -1)
+                tasks.Insert(floatingIslandIndex, new PassLegacy("Jungle Digout Area", GenerateUndergroundJungleArea));
+            int finalIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Final Cleanup"));
 			if (finalIndex != -1)
 			{
 				int currentFinalIndex = finalIndex;
@@ -136,6 +139,37 @@ namespace InfernumMode
 					new Actions.ClearTile(),
 					new Actions.PlaceWall(WallID.Sandstone)
 					));
+			}
+		}
+
+		public static void GenerateUndergroundJungleArea(GenerationProgress progress)
+		{
+			bool success = false;
+			while (!success)
+			{
+				int x;
+				if (WorldGen.dungeonX < Main.maxTilesX / 2)
+					x = WorldGen.genRand.Next((int)(Main.maxTilesX * 0.6), (int)(Main.maxTilesX * 0.85));
+				else
+					x = WorldGen.genRand.Next((int)(Main.maxTilesX * 0.15), (int)(Main.maxTilesX * 0.4));
+
+				int y = WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 840);
+
+				if (Main.tile[x, y].active() && Main.tile[x, y].type == TileID.JungleGrass &&
+					Main.tile[x, y].type != TileID.LihzahrdBrick && Main.tile[x, y].wall != WallID.LihzahrdBrick)
+				{
+					success = true;
+					for (int i = 0; i < 4; i++)
+					{
+						x += WorldGen.genRand.Next(-15, 15);
+						y += WorldGen.genRand.Next(-15, 15);
+						WorldUtils.Gen(new Point(x, y), new Shapes.Circle(70), Actions.Chain(
+							new Modifiers.Blotches(12),
+							new Actions.ClearTile(),
+							new Actions.PlaceWall(WallID.MudUnsafe)
+							));
+					}
+				}
 			}
 		}
 

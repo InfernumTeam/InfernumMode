@@ -94,28 +94,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 				{
 					npc.rotation = npc.velocity.X * 0.014f;
 
-					// Descend back into the ocean.
-					float moveDirection = 1f;
-					if (Math.Abs(npc.Center.X - Main.maxTilesX * 16f) > Math.Abs(npc.Center.X))
-						moveDirection = -1f;
-					npc.velocity.X = moveDirection * 6f;
-					npc.spriteDirection = (int)-moveDirection;
-					npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.2f, -3f, 16f);
-
-					if (npc.position.Y > (Main.worldSurface - 90f) * 16.0)
+					for (int x = 0; x < Main.maxNPCs; x++)
 					{
-						for (int x = 0; x < Main.maxNPCs; x++)
+						if (Main.npc[x].type == ModContent.NPCType<LeviathanNPC>())
 						{
-							if (Main.npc[x].type == ModContent.NPCType<LeviathanNPC>())
-							{
-								Main.npc[x].active = false;
-								Main.npc[x].netUpdate = true;
-							}
+							Main.npc[x].active = false;
+							Main.npc[x].netUpdate = true;
 						}
-						npc.active = false;
-						npc.netUpdate = true;
 					}
-
+					npc.active = false;
+					npc.netUpdate = true;
 					return false;
 				}
 			}

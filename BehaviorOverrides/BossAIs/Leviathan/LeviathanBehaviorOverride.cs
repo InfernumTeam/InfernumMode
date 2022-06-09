@@ -77,24 +77,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Leviathan
 				target = Main.player[npc.target];
 				if (!target.active || target.dead || !npc.WithinRange(target.Center, 5600f))
 				{
-					// Descend back into the ocean.
-					npc.velocity.X *= 0.97f;
-					npc.velocity.Y = MathHelper.Clamp(npc.velocity.Y + 0.2f, -3f, 16f);
-
-					if (npc.position.Y > Main.worldSurface * 16.0)
+					for (int x = 0; x < Main.maxNPCs; x++)
 					{
-						for (int x = 0; x < Main.maxNPCs; x++)
+						if (Main.npc[x].type == ModContent.NPCType<Siren>())
 						{
-							if (Main.npc[x].type == ModContent.NPCType<Siren>())
-							{
-								Main.npc[x].active = false;
-								Main.npc[x].netUpdate = true;
-							}
+							Main.npc[x].active = false;
+							Main.npc[x].netUpdate = true;
 						}
-						npc.active = false;
-						npc.netUpdate = true;
 					}
-
+					npc.active = false;
+					npc.netUpdate = true;
 					return false;
 				}
 			}

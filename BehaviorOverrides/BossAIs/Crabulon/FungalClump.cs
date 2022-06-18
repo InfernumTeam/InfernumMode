@@ -1,6 +1,7 @@
 using CalamityMod.Events;
 using CalamityMod.NPCs.Crabulon;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -51,8 +52,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 				hoverSpeed *= 2.15f;
 			HomeTowardsTarget(hoverSpeed);
 
-			if (Main.netMode != NetmodeID.MultiplayerClient && MainBossLifeRatio < 0.45f && Time % 90f == 89f)
+			if (Main.netMode != NetmodeID.MultiplayerClient && MainBossLifeRatio < CrabulonBehaviorOverride.Phase3LifeRatio && Time % 90f == 89f)
+			{
 				ReleaseSpores();
+				npc.netUpdate = true;
+			}
 
 			Time++;
 		}
@@ -87,6 +91,19 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 				Owner.life = Owner.lifeMax;
 		}
 
-		public override bool CheckActive() => false;
+		// Draw a blue glowmask for Crabulon's fungal clumps.
+        public override bool PreDraw(SpriteBatch spriteBatch, Color drawColor)
+        {
+			Texture2D texture = ModContent.GetTexture(Texture);
+			Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/FungalClump_Glowmask");
+			Vector2 drawPosition = npc.Center - Main.screenPosition;
+			Vector2 origin = npc.frame.Size() * 0.5f;
+			Color color = npc.GetAlpha(drawColor);
+			spriteBatch.Draw(texture, drawPosition, npc.frame, color, npc.rotation, origin, npc.scale, 0, 0f);
+			spriteBatch.Draw(glowmask, drawPosition, npc.frame, npc.GetAlpha(Color.White), npc.rotation, origin, npc.scale, 0, 0f);
+			return false;
+        }
+
+        public override bool CheckActive() => false;
 	}
 }

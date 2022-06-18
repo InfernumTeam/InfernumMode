@@ -133,7 +133,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 							case (int)ThanatosHeadAttackType.LaserBarrage:
 								int type = ModContent.ProjectileType<ThanatosLaser>();
 								float predictionFactor = 21f;
-								float shootSpeed = generalShootSpeedFactor * 10f;
+								float shootSpeed = generalShootSpeedFactor * 7f;
 
 								// Predictive laser.
 								Vector2 projectileDestination = target.Center + target.velocity * predictionFactor;

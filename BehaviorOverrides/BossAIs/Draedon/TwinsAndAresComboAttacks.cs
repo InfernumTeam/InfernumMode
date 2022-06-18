@@ -73,12 +73,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 			int artemisChargeTime = 64;
 			int artemisLaserReleaseRate = 34;
 			int artemisLaserBurstCount = 8;
-			float maxLaserTurnSpeed = MathHelper.TwoPi / 306f;
+			float maxLaserTurnSpeed = MathHelper.TwoPi / 276f;
 
 			if (CurrentTwinsPhase != 4)
 			{
 				apolloChargeSpeed += 5f;
-				artemisLaserReleaseRate -= 2;
+				artemisLaserReleaseRate -= 12;
 			}
 
 			if (EnrageTimer > 0f)
@@ -474,13 +474,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 		{
 			int attackDelay = 120;
 			int normalTwinsAttackTime = 360;
-			int totalNormalShotCount = 8;
+			int totalNormalShotCount = 11;
 			float normalShotShootSpeed = 7.25f;
 
 			if (CurrentTwinsPhase != 4)
 			{
 				normalShotShootSpeed += 3f;
-				totalNormalShotCount++;
+				totalNormalShotCount += 3;
 			}
 
 			if (EnrageTimer > 0f)

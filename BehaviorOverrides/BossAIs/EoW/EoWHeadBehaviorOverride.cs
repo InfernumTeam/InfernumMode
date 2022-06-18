@@ -21,7 +21,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 			VineCharge,
 			ShadowOrbSummon,
 			RainHover,
-			DarkHeartSlam
+			DownwardSlam
 		}
 
 		public override int NPCOverrideType => NPCID.EaterofWorldsHead;
@@ -91,8 +91,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 				case EoWAttackState.RainHover:
 					DoAttack_RainHover(npc, target, splitCounter, enraged, ref attackTimer);
 					break;
-				case EoWAttackState.DarkHeartSlam:
-					DoAttack_DarkHeartSlam(npc, target, splitCounter, enraged, ref attackTimer);
+				case EoWAttackState.DownwardSlam:
+					DoAttack_DownwardSlam(npc, target, splitCounter, enraged, ref attackTimer);
 					break;
 			}
 
@@ -300,7 +300,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 		}
 
 
-		public static void DoAttack_DarkHeartSlam(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
+		public static void DoAttack_DownwardSlam(NPC npc, Player target, float splitCounter, bool enraged, ref float attackTimer)
 		{
 			ref float wasPreviouslyInTiles = ref npc.Infernum().ExtraAI[11];
 
@@ -334,20 +334,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
 					if (Main.netMode != NetmodeID.MultiplayerClient)
 					{
-						Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 105, 0f);
-
-						// Release 5 dark hearts if none currently exist.
-						if (!NPC.AnyNPCs(ModContent.NPCType<DarkHeart>()))
-						{
-							for (int i = 0; i < 5; i++)
-							{
-								Vector2 initialSeekerVelocity = (MathHelper.TwoPi * i / 5f).ToRotationVector2() * 8f;
-								Vector2 spawnPosition = npc.Center + initialSeekerVelocity * 2f;
-								int seeker = NPC.NewNPC((int)spawnPosition.X, (int)spawnPosition.Y, NPCID.EaterofSouls, 1);
-								if (Main.npc.IndexInRange(seeker))
-									Main.npc[seeker].velocity = initialSeekerVelocity;
-							}
-						}
+						Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<StompShockwave>(), 125, 0f);
 						wasPreviouslyInTiles = 1f;
 					}
 
@@ -422,7 +409,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 			possibleAttacks.AddWithCondition(EoWAttackState.RainHover, splitCounter >= 1f);
 
 			for (int i = 0; i < 2; i++)
-				possibleAttacks.AddWithCondition(EoWAttackState.DarkHeartSlam, splitCounter >= 2f);
+				possibleAttacks.AddWithCondition(EoWAttackState.DownwardSlam, splitCounter >= 2f);
 			possibleAttacks.RemoveAll(p => p == oldAttackState);
 
 			npc.TargetClosest();

@@ -59,6 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 			Main.npc[shark].velocity = Vector2.UnitY * -projectile.ai[1];
 			Main.npc[shark].life = Main.npc[shark].lifeMax = BossRushEvent.BossRushActive ? 11000 : 400;
 
+			Main.npc[shark].noTileCollide = true;
 			Main.npc[shark].direction = projectile.direction;
 			Main.npc[shark].spriteDirection = 1;
 			Main.npc[shark].ai[0] = 1f;

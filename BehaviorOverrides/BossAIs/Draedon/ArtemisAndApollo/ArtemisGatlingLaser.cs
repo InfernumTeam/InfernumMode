@@ -89,9 +89,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 				InitialSpeed = projectile.velocity.Length();
 
 			// Fade in after telegraphs have faded.
-			float positionOffset = ExoMechManagement.CurrentTwinsPhase >= 2 ? 102f : 70f;
+			float positionOffset = ExoMechManagement.ExoTwinsAreInSecondPhase ? 102f : 70f;
 			if (projectile.localAI[0] != 0f)
-				positionOffset -= 40f;
+				positionOffset -= ExoMechManagement.ExoTwinsAreInSecondPhase ? 40f : 12f;
 			Vector2 overallOffset = (ThingToAttachTo.rotation - MathHelper.PiOver2).ToRotationVector2() * positionOffset;
 			if (projectile.localAI[0] != 0f)
 				overallOffset += ThingToAttachTo.rotation.ToRotationVector2() * projectile.localAI[0] * 42f;

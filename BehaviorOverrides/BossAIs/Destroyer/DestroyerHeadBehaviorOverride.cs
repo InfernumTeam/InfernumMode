@@ -141,9 +141,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 				case DestroyerAttackType.ProbeBombing:
 					DoAttack_ProbeBombing(npc, target, lifeRatio, ref attackTimer);
 					break;
-				case DestroyerAttackType.SuperchargedProbeBombing:
-					DoAttack_SuperchargedProbeBombing(npc, target, lifeRatio, ref attackTimer);
-					break;
 				case DestroyerAttackType.DiveBombing:
 					DoAttack_DiveBombing(npc, target, ref attackTimer);
 					break;
@@ -406,35 +403,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Destroyer
 			}
 
 			if (attackTimer >= 425f)
-				SelectNewAttack(npc);
-		}
-
-		public static void DoAttack_SuperchargedProbeBombing(NPC npc, Player target, float lifeRatio, ref float attackTimer)
-		{
-			Vector2 destination = target.Center + (attackTimer * MathHelper.TwoPi / 150f).ToRotationVector2() * MathHelper.Lerp(1580f, 2700f, Utils.InverseLerp(360f, 420f, attackTimer, true));
-			npc.velocity = npc.SafeDirectionTo(destination) * MathHelper.Min(MathHelper.Lerp(31f, 15f, Utils.InverseLerp(360f, 420f, attackTimer, true)), npc.Distance(destination));
-			npc.Center = npc.Center.MoveTowards(destination, target.velocity.Length() * 1.2f);
-			if (npc.WithinRange(destination, 30f))
-				npc.rotation = npc.velocity.ToRotation() + MathHelper.PiOver2;
-			else
-				npc.rotation = npc.rotation.AngleTowards((attackTimer + 7f) * MathHelper.TwoPi / 150f + MathHelper.PiOver2, 0.15f);
-
-			if (attackTimer == 90f)
-			{
-				Main.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaCasterFire"), target.Center);
-				if (Main.netMode != NetmodeID.MultiplayerClient)
-				{
-					int probeCount = (int)Math.Round(MathHelper.Lerp(3f, 6f, 1f - lifeRatio));
-					for (int i = 0; i < probeCount; i++)
-					{
-						int probe = NPC.NewNPC((int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<SuperchargedProbe>());
-						Main.npc[probe].velocity = npc.velocity.SafeNormalize(Vector2.UnitY).RotatedByRandom(0.45f) * Main.rand.NextFloat(9f, 16f);
-						Main.npc[probe].ai[3] = (i == 0f).ToInt();
-					}
-				}
-			}
-
-			if (attackTimer >= SuperchargedProbe.Lifetime + 90f)
 				SelectNewAttack(npc);
 		}
 

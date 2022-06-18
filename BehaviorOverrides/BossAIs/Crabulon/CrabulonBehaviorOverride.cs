@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 		#region AI
 
 		public const float Phase2LifeRatio = 0.85f;
-		public const float Phase3LifeRatio = 0.4f;
+		public const float Phase3LifeRatio = 0.45f;
 
 		public override bool PreAI(NPC npc)
 		{

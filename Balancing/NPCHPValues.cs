@@ -103,8 +103,8 @@ namespace InfernumMode.Balancing
 			[ModContent.NPCType<Yharon>()] = BossRushEvent.BossRushActive ? 3333330 : 2718280,
 			[ModContent.NPCType<ThanatosHead>()] = 1326160,
 			[ModContent.NPCType<AresBody>()] = 2160000,
-			[ModContent.NPCType<Artemis>()] = 2160000,
-			[ModContent.NPCType<Apollo>()] = 2160000,
+			[ModContent.NPCType<Artemis>()] = 2400000,
+			[ModContent.NPCType<Apollo>()] = 2400000,
 			[ModContent.NPCType<SupremeCalamitas>()] = BossRushEvent.BossRushActive ? 3456780 : -1,
 		};
 

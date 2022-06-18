@@ -520,7 +520,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 						}
 						DoBehavior_Slingshot(npc, target, inPhase2, inPhase3, ref AttackTimer, ref fistSlamDestinationX, ref fistSlamDestinationY, ref slingshotArmToCharge, ref slingshotRotation, ref attackCounter, ref AttackCooldown);
 						break;
-
 					case GolemAttackState.SpikeRush:
 						if (headIsFree)
 						{
@@ -1289,7 +1288,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
 		public static void DoBehavior_SpikeRush(NPC npc, ref float attackTimer, ref float attackCooldown)
 		{
 			int platformReleaseRate = 82;
-			int laserReleaseRate = 12;
+			int laserReleaseRate = 10;
 			int rushTime = 420;
 			float platformRiseSpeed = 7.5f;
 

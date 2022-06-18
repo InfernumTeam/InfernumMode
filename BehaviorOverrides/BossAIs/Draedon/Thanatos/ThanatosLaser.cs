@@ -206,7 +206,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 			if (TelegraphDelay > TelegraphTotalTime - TelegraphFadeTime)
 				yScale = MathHelper.Lerp(yScale, 0f, (TelegraphDelay - (TelegraphTotalTime - TelegraphFadeTime)) / 15f);
 
-			Vector2 scaleInner = new Vector2(TelegraphWidth / laserTelegraph.Width, yScale);
+			Vector2 scaleInner = new Vector2(TelegraphWidth / laserTelegraph.Width * 2f, yScale);
 			Vector2 origin = laserTelegraph.Size() * new Vector2(0f, 0.5f);
 			Vector2 scaleOuter = scaleInner * new Vector2(1f, 1.5f);
 

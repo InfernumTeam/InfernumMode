@@ -342,7 +342,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
 			int angularAimTime = 4;
 			int chargeTime = 43;
 			int decelerationTime = 6;
-			float chargeSpeed = 28f;
+			float chargeSpeed = 33f;
 			float chargeDeceleration = 0.6f;
 			if (inPhase2)
 			{

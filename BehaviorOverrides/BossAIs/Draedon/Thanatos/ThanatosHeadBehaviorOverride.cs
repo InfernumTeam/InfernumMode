@@ -384,6 +384,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 				SelectNextAttack(npc);
 		}
 
+		// TODO -- This attack is quite janky at the moment. Consider changing it before adding it back to the attack pool.
 		public static void DoBehavior_TopwardSlam(NPC npc, Player target, ref float attackTimer, ref float frameType)
 		{
 			// Decide frames.
@@ -912,6 +913,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 
 		public static void DoBehavior_MaximumOverdrive(NPC npc, Player target, ref float attackTimer, ref float frameType)
 		{
+			// Dash or die.
+			npc.damage = 900;
+
 			int attackTime = 720;
 			int cooloffTime = 360;
 			float chargeSpeedInterpolant = Utils.InverseLerp(0f, 45f, attackTimer, true) * Utils.InverseLerp(attackTime, attackTime - 45f, attackTimer, true);
@@ -1001,7 +1005,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 		public static void DoAggressiveChargeMovement(NPC npc, Player target, float attackTimer, float speedMultiplier = 1f)
 		{
 			float lifeRatio = npc.life / (float)npc.lifeMax;
-			float flyAcceleration = MathHelper.Lerp(0.042f, 0.03f, lifeRatio);
+			float flyAcceleration = MathHelper.Lerp(0.045f, 0.037f, lifeRatio);
 			float idealFlySpeed = MathHelper.Lerp(13f, 9.6f, lifeRatio);
 			float generalSpeedFactor = Utils.InverseLerp(0f, 35f, attackTimer, true) * 0.825f + 1f;
 
@@ -1101,10 +1105,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 			{
 				do
 				{
-					npc.ai[0] = (int)ThanatosHeadAttackType.TopwardSlam;
+					//npc.ai[0] = (int)ThanatosHeadAttackType.TopwardSlam;
 					if (Main.rand.NextBool())
 						npc.ai[0] = (int)ThanatosHeadAttackType.LaserBarrage;
-					if (Main.rand.NextBool() && ExoMechManagement.CurrentThanatosPhase >= 2)
+					if (Main.rand.NextBool())
 						npc.ai[0] = (int)ThanatosHeadAttackType.RefractionRotorRays;
 					if (Main.rand.NextBool(3) && ExoMechManagement.CurrentThanatosPhase >= 3)
 						npc.ai[0] = (int)ThanatosHeadAttackType.ExoBomb;
@@ -1117,7 +1121,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
 			else
 			{
 				npc.ai[0] = (int)ThanatosHeadAttackType.AggressiveCharge;
-				if (ExoMechManagement.CurrentThanatosPhase >= 6 && Main.rand.NextFloat() < 0.67f)
+				if (ExoMechManagement.CurrentThanatosPhase >= 6)
 					npc.ai[0] = (int)ThanatosHeadAttackType.MaximumOverdrive;
 			}
 

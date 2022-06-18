@@ -106,7 +106,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 			Vector2 distanceFromTarget = Main.player[target].Center - projectile.Center;
 
 			// Set AI to stop homing, start accelerating
-			float stopHomingDistance = 120f;
+			float stopHomingDistance = 160f;
 			if (distanceFromTarget.Length() < stopHomingDistance || projectile.ai[0] == 1f || projectile.timeLeft < 480)
 			{
 				projectile.ai[0] = 1f;
@@ -119,7 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 
 			// Home in on target
 			float oldSpeed = projectile.velocity.Length();
-			float inertia = 6f;
+			float inertia = 8f;
 			projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * oldSpeed;
 			projectile.velocity = (projectile.velocity * inertia + distanceFromTarget) / (inertia + 1f);
 			projectile.velocity = projectile.velocity.SafeNormalize(Vector2.UnitY) * oldSpeed;

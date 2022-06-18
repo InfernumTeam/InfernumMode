@@ -14,6 +14,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 		public ref float Time => ref projectile.ai[0];
 
 		public const int ShardBurstCount = 9;
+
 		public override void SetStaticDefaults() => DisplayName.SetDefault("Ice Mass");
 
 		public override void SetDefaults()

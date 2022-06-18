@@ -63,6 +63,11 @@ namespace InfernumMode.BossRush
 		{
 			Bosses = new List<Boss>()
 			{
+				new Boss(NPCID.MoonLordCore, spawnContext: type =>
+				{
+					NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
+				}, permittedNPCs: new int[] { NPCID.MoonLordLeechBlob, NPCID.MoonLordHand, NPCID.MoonLordHead, NPCID.MoonLordFreeEye }),
+
 				new Boss(ModContent.NPCType<DesertScourgeHead>(), spawnContext: type =>
 				{
 					NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, ModContent.NPCType<DesertScourgeHead>());
@@ -136,7 +141,7 @@ namespace InfernumMode.BossRush
 				}, usesSpecialSound: true, permittedNPCs: new int[] { ModContent.NPCType<FlamePillar>(), ModContent.NPCType<RockPillar>(), ModContent.NPCType<RavagerLegLeft>(), ModContent.NPCType<RavagerLegRight>(),
 					ModContent.NPCType<RavagerClawLeft>(), ModContent.NPCType<RavagerClawRight>() }),
 
-				new Boss(NPCID.TheDestroyer, TimeChangeContext.Night, specialSpawnCountdown: 300, permittedNPCs: new int[] { NPCID.TheDestroyerBody, NPCID.TheDestroyerTail, NPCID.Probe, ModContent.NPCType<SuperchargedProbe>() }),
+				new Boss(NPCID.TheDestroyer, TimeChangeContext.Night, specialSpawnCountdown: 300, permittedNPCs: new int[] { NPCID.TheDestroyerBody, NPCID.TheDestroyerTail, NPCID.Probe }),
 
 				new Boss(ModContent.NPCType<Polterghast>(), TimeChangeContext.Day, permittedNPCs: new int[]
 					{ ModContent.NPCType<PhantomFuckYou>(), ModContent.NPCType<PolterghastHook>(), ModContent.NPCType<PolterPhantom>(), ModContent.NPCType<EerieLimb>() }),
@@ -151,11 +156,6 @@ namespace InfernumMode.BossRush
 				new Boss(ModContent.NPCType<CeaselessVoid>(), permittedNPCs: ModContent.NPCType<DarkEnergy>()),
 
 				new Boss(ModContent.NPCType<Cryogen>()),
-
-				new Boss(NPCID.MoonLordCore, spawnContext: type =>
-				{
-					NPC.SpawnOnPlayer(ClosestPlayerToWorldCenter, type);
-				}, permittedNPCs: new int[] { NPCID.MoonLordLeechBlob, NPCID.MoonLordHand, NPCID.MoonLordHead, NPCID.MoonLordFreeEye }),
 
 				new Boss(NPCID.SkeletronPrime, TimeChangeContext.Night, permittedNPCs: new int[] { NPCID.PrimeCannon, NPCID.PrimeSaw, NPCID.PrimeVice, NPCID.PrimeLaser, NPCID.Probe }),
 

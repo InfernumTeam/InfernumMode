@@ -1,8 +1,8 @@
 namespace InfernumMode.Balancing
 {
-	public enum DamageSourceType
-	{
-		FriendlyProjectile,
-		TrueMeleeSwing,
-	}
+    public enum DamageSourceType
+    {
+        FriendlyProjectile,
+        TrueMeleeSwing,
+    }
 }

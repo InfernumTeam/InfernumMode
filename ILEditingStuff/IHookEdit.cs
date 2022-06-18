@@ -1,9 +1,9 @@
 namespace InfernumMode.ILEditingStuff
 {
-	public interface IHookEdit
-	{
-		void Load();
+    public interface IHookEdit
+    {
+        void Load();
 
-		void Unload();
-	}
+        void Unload();
+    }
 }

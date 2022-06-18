@@ -9,23 +9,23 @@ using TMLSoundType = Terraria.ModLoader.SoundType;
 
 namespace InfernumMode.BossIntroScreens
 {
-	public class AnahitaIntroScreen : BaseIntroScreen
-	{
-		public override TextColorData TextColor => new TextColorData(completionRatio =>
-		{
-			float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.Pi * 4f + completionRatio * MathHelper.Pi * 12f) * 0.5f + 0.5f;
-			Color lightWaterColor = new Color(187, 206, 245);
-			return Color.Lerp(Color.Cyan, lightWaterColor, colorFadeInterpolant);
-		});
+    public class AnahitaIntroScreen : BaseIntroScreen
+    {
+        public override TextColorData TextColor => new TextColorData(completionRatio =>
+        {
+            float colorFadeInterpolant = (float)Math.Sin(AnimationCompletion * MathHelper.Pi * 4f + completionRatio * MathHelper.Pi * 12f) * 0.5f + 0.5f;
+            Color lightWaterColor = new Color(187, 206, 245);
+            return Color.Lerp(Color.Cyan, lightWaterColor, colorFadeInterpolant);
+        });
 
-		public override bool TextShouldBeCentered => true;
+        public override bool TextShouldBeCentered => true;
 
-		public override bool ShouldCoverScreen => false;
+        public override bool ShouldCoverScreen => false;
 
-		public override string TextToDisplay => "Forgotten Deity\nAnahita";
+        public override string TextToDisplay => "Forgotten Deity\nAnahita";
 
-		public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Siren>());
+        public override bool ShouldBeActive() => NPC.AnyNPCs(ModContent.NPCType<Siren>());
 
-		public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/AbilitySounds/AngelicAllianceActivation");
-	}
+        public override LegacySoundStyle SoundToPlayWithTextCreation => InfernumMode.CalamityMod.GetLegacySoundSlot(TMLSoundType.Custom, "Sounds/Custom/AbilitySounds/AngelicAllianceActivation");
+    }
 }

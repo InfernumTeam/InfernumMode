@@ -1,4 +1,4 @@
-﻿using CalamityMod.Events;
+using CalamityMod.Events;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using InfernumMode.Dusts;

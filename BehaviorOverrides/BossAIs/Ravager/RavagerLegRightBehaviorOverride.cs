@@ -1,4 +1,4 @@
-﻿using CalamityMod.NPCs;
+using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using InfernumMode.OverridingSystem;
 using Microsoft.Xna.Framework;

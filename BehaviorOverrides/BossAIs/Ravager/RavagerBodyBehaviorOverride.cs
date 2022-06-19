@@ -9,6 +9,7 @@ using InfernumMode.Dusts;
 using InfernumMode.OverridingSystem;
 using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -26,22 +27,31 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             public bool HeadIsAttached;
 
+            public bool FreeHeadExists;
+
+            public float LifeRatio;
+
             public bool InPhase2 => !HandsAreAlive && !LegsAreAlive && !HeadIsAttached;
 
-            public RavagerPhaseInfo(bool hands, bool legs, bool head)
+            public RavagerPhaseInfo(bool hands, bool legs, bool head, bool freeHead, float lifeRatio)
             {
                 HandsAreAlive = hands;
                 LegsAreAlive = legs;
                 HeadIsAttached = head;
+                FreeHeadExists = freeHead;
+                LifeRatio = lifeRatio;
             }
         }
 
         public override int NPCOverrideType => ModContent.NPCType<RavagerBody>();
 
-        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
+        public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
         public const int AttackDelay = 135;
+        
         public const float BaseDR = 0.325f;
+
+        public const float ArenaBorderOffset = 1850f;
 
         #region Enumerations
         public enum RavagerAttackType
@@ -51,6 +61,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             BarrageOfBlood,
             SingleBurstsOfUpwardDarkFlames,
             DownwardFistSlam,
+            SlamAndCreateMovingFlamePillars,
+            WallSlams
         }
         #endregion
 
@@ -120,6 +132,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             ref float attackDelay = ref npc.Infernum().ExtraAI[5];
             ref float armsCanPunch = ref npc.Infernum().ExtraAI[6];
             ref float armsShouldSlamIntoGround = ref npc.Infernum().ExtraAI[7];
+            ref float horizontalArenaCenterX = ref npc.Infernum().ExtraAI[8];
 
             // Determine phase information.
             bool leftLegActive = false;
@@ -140,14 +153,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<RavagerLegLeft>())
                     leftLegActive = true;
             }
-            RavagerPhaseInfo phaseInfo = new RavagerPhaseInfo(leftClawActive && rightClawActive, leftLegActive && rightLegActive, headActive);
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
             bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
+            RavagerPhaseInfo phaseInfo = new RavagerPhaseInfo(leftClawActive && rightClawActive, leftLegActive && rightLegActive, headActive, NPC.AnyNPCs(ModContent.NPCType<RavagerHead2>()), lifeRatio);
 
             float gravity = 0.625f;
             if (phaseInfo.InPhase2)
-                gravity += 0.25f;
+                gravity += 0.2f;
 
             // Reset things.
             armsCanPunch = 0f;
@@ -163,6 +176,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 npc.noGravity = false;
                 npc.dontTakeDamage = true;
                 return false;
+            }
+
+            // Create the horizontal walls and reset the phase cycle once in the second phase.
+            if (horizontalArenaCenterX == 0f && phaseInfo.InPhase2)
+            {
+                horizontalArenaCenterX = target.Center.X;
+                npc.Infernum().ExtraAI[9] = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Restrict the target's position once the arena has been decided.
+            if (horizontalArenaCenterX != 0f)
+            {
+                float left = horizontalArenaCenterX - ArenaBorderOffset + 28f;
+                float right = horizontalArenaCenterX + ArenaBorderOffset - 28f;
+                target.Center = Vector2.Clamp(target.Center, new Vector2(left, -100f), new Vector2(right, Main.maxTilesY * 16f + 100f));
             }
 
             // Perform attacks.
@@ -182,6 +211,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 case RavagerAttackType.DownwardFistSlam:
                     DoBehavior_DownwardFistSlam(npc, target, phaseInfo, ref attackTimer, ref gravity, ref armsShouldSlamIntoGround);
                     break;
+                case RavagerAttackType.SlamAndCreateMovingFlamePillars:
+                    DoBehavior_SlamAndCreateMovingFlamePillars(npc, target, phaseInfo, ref attackTimer, ref gravity);
+                    break;
+                case RavagerAttackType.WallSlams:
+                    DoBehavior_WallSlams(npc, target, phaseInfo, ref attackTimer);
+                    break;
             }
             attackTimer++;
 
@@ -198,12 +233,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             int jumpCount = 3;
             int jumpDelay = 45;
             int emberBurstCount = 3;
-            float jumpIntensityFactor = 1.27f;
+            float jumpIntensityFactor = 1.25f;
 
             if (!phaseInfo.HandsAreAlive)
-                jumpIntensityFactor *= 1.15f;
+                jumpIntensityFactor *= 1.125f;
             if (!phaseInfo.LegsAreAlive)
-                jumpIntensityFactor *= 1.15f;
+                jumpIntensityFactor *= 1.125f;
 
             ref float jumpSubstate = ref npc.Infernum().ExtraAI[0];
             ref float jumpCounter = ref npc.Infernum().ExtraAI[1];
@@ -222,29 +257,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     npc.Center + new Vector2(-46f, -82f),
                     npc.Center + new Vector2(46f, -82f),
                 };
-                foreach (Vector2 flamePillarTop in flamePillarTops)
+
+                if (attackDelayTimer < telegraphTime * 0.67f)
                 {
-                    // Create rising blue cinders.
-                    Dust fire = Dust.NewDustPerfect(flamePillarTop, dustID);
-                    fire.velocity = -Vector2.UnitY.RotatedByRandom(0.21f) * Main.rand.NextFloat(5f, 8.5f);
-                    fire.scale = Main.rand.NextFloat(1f, 1.45f);
-                    fire.fadeIn = Main.rand.NextFloat(0.4f);
-                    fire.noGravity = true;
-
-                    if (Main.rand.NextBool(4))
-                        fire.fadeIn *= 2.4f;
-
-                    // Create converging particles.
-                    for (int i = 0; i < 2; i++)
+                    foreach (Vector2 flamePillarTop in flamePillarTops)
                     {
-                        if (!Main.rand.NextBool(8))
-                            continue;
+                        // Create rising blue cinders.
+                        Dust fire = Dust.NewDustPerfect(flamePillarTop, dustID);
+                        fire.velocity = -Vector2.UnitY.RotatedByRandom(0.21f) * Main.rand.NextFloat(5f, 8.5f);
+                        fire.scale = Main.rand.NextFloat(1f, 1.45f);
+                        fire.fadeIn = Main.rand.NextFloat(0.4f);
+                        fire.noGravity = true;
 
-                        float particleScale = Main.rand.NextFloat(0.84f, 1.04f);
-                        Vector2 particleSpawnPosition = flamePillarTop + Main.rand.NextVector2Unit() * Main.rand.NextFloat(120f, 145f);
-                        Vector2 particleVelocity = (flamePillarTop - particleSpawnPosition) * 0.035f;
-                        Color particleColor = Color.Lerp(Color.DarkBlue, Color.Cyan, Main.rand.NextFloat(0.25f, 0.75f));
-                        GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(particleSpawnPosition, particleVelocity, particleScale, particleColor, 40, 1f, 3.6f));
+                        if (Main.rand.NextBool(4))
+                            fire.fadeIn *= 2.4f;
+
+                        // Create converging particles.
+                        for (int i = 0; i < 2; i++)
+                        {
+                            if (!Main.rand.NextBool(8))
+                                continue;
+
+                            float particleScale = Main.rand.NextFloat(0.84f, 1.04f);
+                            Vector2 particleSpawnPosition = flamePillarTop + Main.rand.NextVector2Unit() * Main.rand.NextFloat(120f, 145f);
+                            Vector2 particleVelocity = (flamePillarTop - particleSpawnPosition) * 0.035f;
+                            Color particleColor = Color.Lerp(Color.DarkBlue, Color.Cyan, Main.rand.NextFloat(0.25f, 0.75f));
+                            GeneralParticleHandler.SpawnParticle(new SquishyLightParticle(particleSpawnPosition, particleVelocity, particleScale, particleColor, 40, 1f, 3.6f));
+                        }
                     }
                 }
                 npc.velocity.X *= 0.8f;
@@ -275,6 +314,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         npc.velocity.Y -= 3.2f;
                     if (target.position.Y + target.height < npc.Center.Y - 400f)
                         npc.velocity.Y -= 7.2f;
+                    if (target.position.Y + target.height < npc.Center.Y - 780f)
+                        npc.velocity.Y -= 8f;
                     if (!Collision.CanHit(npc.Center, 1, 1, target.Center, 1, 1))
                         npc.velocity.Y -= 3.84f;
 
@@ -312,7 +353,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     jumpSubstate = 0f;
                     jumpCounter++;
                     if (jumpCounter >= jumpCount)
-                        SelectNextAttack(npc);
+                        SelectNextAttack(npc, phaseInfo);
 
                     npc.netUpdate = true;
                 }
@@ -333,7 +374,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public static void DoBehavior_BurstsOfBlood(NPC npc, Player target, RavagerPhaseInfo phaseInfo, bool multiplePerShot, ref float attackTimer)
         {
             int shootDelay = 84;
-            int bloodShootRate = 10;
+            int bloodShootRate = 12;
             int bloodShootTime = 180;
             int totalInstancesPerShot = 1;
             int postAttackTransitionDelay = 75;
@@ -347,6 +388,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             
             if (!phaseInfo.LegsAreAlive || !phaseInfo.HandsAreAlive)
                 destinationOffsetVariance *= 0.67f;
+            
+            if (phaseInfo.InPhase2)
+            {
+                shootDelay -= 10;
+                bloodShootRate -= 2;
+            }
 
             if (multiplePerShot)
             {
@@ -359,7 +406,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             npc.velocity.X *= 0.85f;
 
             if (attackTimer >= shootDelay + bloodShootTime + postAttackTransitionDelay)
-                SelectNextAttack(npc);
+                SelectNextAttack(npc, phaseInfo);
 
             // Wait before shooting and at the end of the attack. The arms will attack during this period if they are present, however.
             if (attackTimer < shootDelay || attackTimer >= shootDelay + bloodShootTime)
@@ -404,7 +451,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             int hoverTime = 95;
             int sitOnGroundTime = 72;
 
-            if (phaseInfo.LegsAreAlive)
+            if (!phaseInfo.LegsAreAlive)
             {
                 hoverTime = 50;
                 sitOnGroundTime = 25;
@@ -416,6 +463,15 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             int slamCount = 3;
             float projectileAngularSpread = MathHelper.ToRadians(61f);
             float horizontalCrystalSpeed = 8.4f;
+
+            if (phaseInfo.InPhase2)
+            {
+                projectileShootCount += 5;
+                totalCrystalsPerProj += 2;
+                slamCount++;
+                horizontalCrystalSpeed *= 1.35f;
+            }
+
             ref float hasDoneGroundHitEffects = ref npc.Infernum().ExtraAI[0];
             ref float slamCounter = ref npc.Infernum().ExtraAI[1];
 
@@ -500,7 +556,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             {
                 slamCounter++;
                 if (slamCounter >= slamCount)
-                    SelectNextAttack(npc);
+                    SelectNextAttack(npc, phaseInfo);
                 else
                 {
                     hasDoneGroundHitEffects = 0f;
@@ -510,16 +566,165 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
         }
 
-        public static void SelectNextAttack(NPC npc)
+        public static void DoBehavior_SlamAndCreateMovingFlamePillars(NPC npc, Player target, RavagerPhaseInfo phaseInfo, ref float attackTimer, ref float gravity)
+        {
+            int hoverTime = 64;
+            int groundShootDelay = 38;
+            int sitOnGroundTime = groundShootDelay + 180;
+            int fireReleaseRate = 18;
+            int crystalReleaseRate = 60;
+            int slamSlowdownTime = (int)(hoverTime * 0.32f);
+            int totalCrystalsPerProj = 8;
+            float horizontalCrystalSpeed = MathHelper.Lerp(9.6f, 11f, 1f - phaseInfo.LifeRatio);
+            float horizontalStepPerPillar = MathHelper.Lerp(250f, 300f, 1f - phaseInfo.LifeRatio);
+            ref float hasDoneGroundHitEffects = ref npc.Infernum().ExtraAI[0];
+            ref float flamePillarHorizontalOffset = ref npc.Infernum().ExtraAI[1];
+
+            // Hover in place.
+            if (attackTimer < hoverTime && hasDoneGroundHitEffects == 0f)
+            {
+                Vector2 hoverDestination = target.Center - Vector2.UnitY * 540f;
+                Vector2 idealVelocity = npc.SafeDirectionTo(hoverDestination) * 30f;
+                if (npc.WithinRange(hoverDestination, 85f))
+                    idealVelocity = Vector2.Zero;
+
+                // Slow down prior slamming downward and make arms slam first.
+                if (attackTimer >= hoverTime - slamSlowdownTime)
+                {
+                    idealVelocity = Vector2.Zero;
+                    npc.velocity.X *= 0.8f;
+                }
+                else
+                    npc.noTileCollide = true;
+
+                // Disable cheap hits.
+                npc.damage = 0;
+
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, idealVelocity.X, 0.12f);
+                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, idealVelocity.Y, 0.24f);
+
+                // Disable gravity during the hover.
+                gravity = 0f;
+                return;
+            }
+
+            // Slam into the ground.
+            gravity *= 1.84f;
+
+            // Disable any tiny amounts of remaining horizontal movement.
+            npc.velocity.X = 0f;
+
+            // Make stomp sounds and particles when hitting the ground.
+            if (npc.velocity.Y == 0f && hasDoneGroundHitEffects == 0f)
+            {
+                CreateGroundImpactEffects(npc);
+                hasDoneGroundHitEffects = 1f;
+                attackTimer = 0f;
+                npc.netUpdate = true;
+            }
+
+            // Create flame projectiles and crystals once on the ground.
+            if (hasDoneGroundHitEffects == 1f && attackTimer >= groundShootDelay)
+            {
+                // Create flame pillars.
+                bool skipPillar = npc.WithinRange(target.Center, 500f) && flamePillarHorizontalOffset < 340f;
+                if (attackTimer % fireReleaseRate == fireReleaseRate - 1f)
+                {
+                    if (!skipPillar)
+                        Main.PlaySound(SoundID.Item74, target.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        flamePillarHorizontalOffset += horizontalStepPerPillar;
+                        for (int i = -1; i <= 1; i += 2)
+                        {
+                            Vector2 fireSpawnPosition = npc.Bottom + Vector2.UnitX * flamePillarHorizontalOffset * i;
+                            if (MathHelper.Distance(target.Center.Y, npc.Center.Y) > 500f)
+                                fireSpawnPosition.Y = target.Bottom.Y;
+
+                            fireSpawnPosition.Y += 36f;
+                            if (!skipPillar)
+                                Utilities.NewProjectileBetter(fireSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkFlamePillar>(), 220, 0f);
+                        }
+                        npc.netUpdate = true;
+                    }
+                }
+
+                // Create crystals.
+                if (attackTimer % crystalReleaseRate == crystalReleaseRate - 1f && Main.netMode != NetmodeID.MultiplayerClient && !skipPillar)
+                {
+                    for (int i = -1; i <= 1; i += 2)
+                    {
+                        Vector2 crystalVelocity = Vector2.UnitX * horizontalCrystalSpeed * i;
+                        int crystal = Utilities.NewProjectileBetter(npc.Bottom, crystalVelocity, ModContent.ProjectileType<GroundBloodCrystal>(), 200, 0f);
+                        if (Main.projectile.IndexInRange(crystal))
+                            Main.projectile[crystal].ai[0] = totalCrystalsPerProj;
+                    }
+                }
+            }
+
+            if (hasDoneGroundHitEffects == 1f && attackTimer >= sitOnGroundTime)
+                SelectNextAttack(npc, phaseInfo);
+        }
+
+        public static void DoBehavior_WallSlams(NPC npc, Player target, RavagerPhaseInfo phaseInfo, ref float attackTimer)
+        {
+            int shootDelay = 64;
+            int wallCreateRate = 60;
+            int wallCreateTime = 360;
+            int attackTransitionDelay = 70;
+            float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
+
+            // Be a bit more lenient with wall creation rates if the free head is present.
+            if (phaseInfo.FreeHeadExists)
+                wallCreateRate += 15;
+
+            // Wait before creating walls.
+            if (attackTimer < shootDelay)
+                return;
+
+            // Create rock pillars.
+            if (attackTimer < shootDelay + wallCreateTime && attackTimer % wallCreateRate == wallCreateRate - 1f)
+            {
+                for (int i = -1; i <= 1; i += 2)
+                {
+                    Vector2 pillarSpawnPosition = target.Center + Vector2.UnitX * i * spaceBetweenWalls;
+                    pillarSpawnPosition.Y -= 640f;
+                    Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), 200, 0f);
+                }
+            }
+
+            if (attackTimer >= shootDelay + wallCreateTime + attackTransitionDelay)
+                SelectNextAttack(npc, phaseInfo);
+        }
+
+        public static void SelectNextAttack(NPC npc, RavagerPhaseInfo phaseInfo)
         {
             RavagerAttackType[] pattern = new RavagerAttackType[]
             {
                 RavagerAttackType.DownwardFistSlam,
                 RavagerAttackType.RegularJumps,
                 RavagerAttackType.SingleBurstsOfBlood,
-                RavagerAttackType.RegularJumps
+                RavagerAttackType.RegularJumps,
+                RavagerAttackType.BarrageOfBlood
             };
-            npc.ai[0] = (int)pattern[(int)++npc.Infernum().ExtraAI[8] % pattern.Length];
+            if (phaseInfo.InPhase2)
+            {
+                pattern = new RavagerAttackType[]
+                {
+                    RavagerAttackType.DownwardFistSlam,
+                    RavagerAttackType.SlamAndCreateMovingFlamePillars,
+                    RavagerAttackType.RegularJumps,
+                    RavagerAttackType.SingleBurstsOfBlood,
+                    RavagerAttackType.DownwardFistSlam,
+                    RavagerAttackType.WallSlams,
+                    RavagerAttackType.SlamAndCreateMovingFlamePillars,
+                    RavagerAttackType.RegularJumps,
+                    RavagerAttackType.BarrageOfBlood,
+                    RavagerAttackType.WallSlams,
+                };
+            }
+
+            npc.ai[0] = (int)pattern[(int)++npc.Infernum().ExtraAI[9] % pattern.Length];
             npc.ai[1] = 0f;
             for (int i = 0; i < 5; i++)
                 npc.Infernum().ExtraAI[i] = 0f;
@@ -580,5 +785,33 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 npc.velocity.Y = maxFallSpeed;
         }
         #endregion AI
+
+        #region Drawing
+
+        public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
+        {
+            float horizontalArenaCenterX = npc.Infernum().ExtraAI[8];
+            Texture2D borderTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Ravager/RockBorder");
+
+            // Draw obstructive pillars if an arena center is defined.
+            if (horizontalArenaCenterX != 0f)
+            {
+                for (int i = -20; i < 20; i++)
+                {
+                    float verticalOffset = borderTexture.Height * i;
+
+                    for (int direction = -1; direction <= 1; direction += 2)
+                    {
+                        Vector2 drawPosition = new Vector2(horizontalArenaCenterX - ArenaBorderOffset * direction, Main.LocalPlayer.Center.Y + verticalOffset);
+                        drawPosition.Y -= drawPosition.Y % borderTexture.Height;
+                        drawPosition -= Main.screenPosition;
+                        spriteBatch.Draw(borderTexture, drawPosition, null, Color.White, 0f, borderTexture.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+                    }
+                }
+            }
+            return true;
+        }
+
+        #endregion Drawing
     }
 }

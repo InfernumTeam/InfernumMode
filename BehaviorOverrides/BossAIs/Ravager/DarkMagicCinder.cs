@@ -24,6 +24,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
             projectile.timeLeft = 360;
+            projectile.scale = 1.6f;
             projectile.penetrate = -1;
         }
 
@@ -31,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         {
             Lighting.AddLight(projectile.Center, Color.Blue.ToVector3() * 0.64f);
 
-            projectile.Opacity = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 360f) * 4f;
+            projectile.Opacity = (float)Math.Sin(MathHelper.Pi * projectile.timeLeft / 360f) * 5f;
             if (projectile.Opacity > 1f)
                 projectile.Opacity = 1f;
 
@@ -50,17 +51,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             if (Main.dedServ)
                 return;
 
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 6; i++)
             {
                 Dust dust = Dust.NewDustPerfect(projectile.Center, ModContent.DustType<RavagerMagicDust>());
-                dust.velocity = Main.rand.NextVector2Circular(8f, 8f);
+                dust.velocity = Main.rand.NextVector2Circular(5f, 5f);
                 dust.noGravity = true;
             }
         }
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) =>
-            projectile.RotatingHitboxCollision(targetHitbox.TopLeft(), targetHitbox.Size());
-
-        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<DarkFlames>(), 180);
+        public override void OnHitPlayer(Player target, int damage, bool crit) => target.AddBuff(ModContent.BuffType<DarkFlames>(), 120);
     }
 }

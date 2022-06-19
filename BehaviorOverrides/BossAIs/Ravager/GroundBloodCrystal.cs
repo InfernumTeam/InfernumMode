@@ -58,8 +58,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             float crystalInterpolant = index / (float)(TotalCrystals - 1f);
             float sine = (float)Math.Sin(Time / 9f + MathHelper.TwoPi * crystalInterpolant) * 0.5f + 0.5f;
             float verticalOffsetInterpolant = Utils.InverseLerp(0f, 0.3f, crystalInterpolant, true) * Utils.InverseLerp(1f, 0.7f, crystalInterpolant, true);
-            Vector2 crystalPosition = projectile.Center + Vector2.UnitX * index * Math.Sign(projectile.velocity.X) * 36f;
-            crystalPosition.Y -= sine * verticalOffsetInterpolant * 200f;
+            Vector2 crystalPosition = projectile.Center + Vector2.UnitX * index * Math.Sign(projectile.velocity.X) * 30f;
+            crystalPosition.Y -= sine * verticalOffsetInterpolant * 140f;
             return crystalPosition;
         }
 

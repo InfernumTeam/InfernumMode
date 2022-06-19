@@ -157,6 +157,9 @@ namespace InfernumMode
                 Ref<Effect> rayShader = new Ref<Effect>(GetEffect("Effects/PrismaticRayShader"));
                 GameShaders.Misc["Infernum:PrismaticRay"] = new MiscShaderData(rayShader, "TrailPass");
 
+                Ref<Effect> darkFlamePillarShader = new Ref<Effect>(GetEffect("Effects/DarkFlamePillarShader"));
+                GameShaders.Misc["Infernum:DarkFlamePillar"] = new MiscShaderData(darkFlamePillarShader, "TrailPass");
+                
                 Ref<Effect> hologramShader = new Ref<Effect>(GetEffect("Effects/HologramShader"));
                 GameShaders.Misc["Infernum:Hologram"] = new MiscShaderData(hologramShader, "HologramPass");
 

@@ -313,9 +313,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     if (target.position.Y + target.height < npc.Center.Y - 200f)
                         npc.velocity.Y -= 3.2f;
                     if (target.position.Y + target.height < npc.Center.Y - 400f)
-                        npc.velocity.Y -= 7.2f;
-                    if (target.position.Y + target.height < npc.Center.Y - 780f)
                         npc.velocity.Y -= 8f;
+                    if (target.position.Y + target.height < npc.Center.Y - 780f)
+                        npc.velocity.Y -= 15f;
                     if (!Collision.CanHit(npc.Center, 1, 1, target.Center, 1, 1))
                         npc.velocity.Y -= 3.84f;
 
@@ -361,9 +361,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 // Fall through tiles in the way.
                 if (!target.dead)
                 {
-                    if ((target.position.Y > npc.Bottom.Y && npc.velocity.Y > 0f) || (target.position.Y < npc.Bottom.Y && npc.velocity.Y < 0f))
+                    if ((target.position.Y > npc.Bottom.Y + 400f && npc.velocity.Y > 0f) || (target.position.Y < npc.Top.Y - 400f && npc.velocity.Y < 0f))
                         npc.noTileCollide = true;
-                    else if ((npc.velocity.Y > 0f && npc.Bottom.Y > target.Top.Y) || (Collision.CanHit(npc.position, npc.width, npc.height, target.Center, 1, 1) && !Collision.SolidCollision(npc.position, npc.width, npc.height)))
+                    else
                         npc.noTileCollide = false;
                 }
             }
@@ -459,7 +459,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             int slamSlowdownTime = (int)(hoverTime * 0.32f);
             int projectileShootCount = 30;
-            int totalCrystalsPerProj = 13;
             int slamCount = 3;
             float projectileAngularSpread = MathHelper.ToRadians(61f);
             float horizontalCrystalSpeed = 8.4f;
@@ -467,7 +466,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             if (phaseInfo.InPhase2)
             {
                 projectileShootCount += 5;
-                totalCrystalsPerProj += 2;
                 slamCount++;
                 horizontalCrystalSpeed *= 1.35f;
             }
@@ -491,7 +489,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     npc.velocity.X *= 0.8f;
                 }
                 else
+                {
+                    npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.02f);
                     npc.noTileCollide = true;
+                }
 
                 // Disable cheap hits.
                 npc.damage = 0;
@@ -534,15 +535,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             Main.projectile[blood].ai[1] = target.Center.Y;
                     }
 
-                    // Create crystals that move in both horizontal directions if no arms are present.
+                    // Create spikes that move in both horizontal directions if no arms are present.
                     if (!phaseInfo.HandsAreAlive)
                     {
                         for (int i = -1; i <= 1; i += 2)
                         {
-                            Vector2 crystalVelocity = Vector2.UnitX * horizontalCrystalSpeed * i;
-                            int crystal = Utilities.NewProjectileBetter(npc.Bottom, crystalVelocity, ModContent.ProjectileType<GroundBloodCrystal>(), 200, 0f);
-                            if (Main.projectile.IndexInRange(crystal))
-                                Main.projectile[crystal].ai[0] = totalCrystalsPerProj;
+                            Vector2 spikeVelocity = Vector2.UnitX * horizontalCrystalSpeed * i;
+                            Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), 0, 0f);
                         }
                     }
                 }
@@ -572,9 +571,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             int groundShootDelay = 38;
             int sitOnGroundTime = groundShootDelay + 180;
             int fireReleaseRate = 18;
-            int crystalReleaseRate = 60;
+            int spikeReleaseRate = 60;
             int slamSlowdownTime = (int)(hoverTime * 0.32f);
-            int totalCrystalsPerProj = 8;
             float horizontalCrystalSpeed = MathHelper.Lerp(9.6f, 11f, 1f - phaseInfo.LifeRatio);
             float horizontalStepPerPillar = MathHelper.Lerp(250f, 300f, 1f - phaseInfo.LifeRatio);
             ref float hasDoneGroundHitEffects = ref npc.Infernum().ExtraAI[0];
@@ -595,7 +593,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     npc.velocity.X *= 0.8f;
                 }
                 else
+                {
                     npc.noTileCollide = true;
+                    npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.02f);
+                }
 
                 // Disable cheap hits.
                 npc.damage = 0;
@@ -623,7 +624,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 npc.netUpdate = true;
             }
 
-            // Create flame projectiles and crystals once on the ground.
+            // Create flame projectiles and spikes once on the ground.
             if (hasDoneGroundHitEffects == 1f && attackTimer >= groundShootDelay)
             {
                 // Create flame pillars.
@@ -638,7 +639,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         for (int i = -1; i <= 1; i += 2)
                         {
                             Vector2 fireSpawnPosition = npc.Bottom + Vector2.UnitX * flamePillarHorizontalOffset * i;
-                            if (MathHelper.Distance(target.Center.Y, npc.Center.Y) > 500f)
+                            if (MathHelper.Distance(target.Center.Y, npc.Center.Y) > 800f)
                                 fireSpawnPosition.Y = target.Bottom.Y;
 
                             fireSpawnPosition.Y += 36f;
@@ -649,15 +650,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     }
                 }
 
-                // Create crystals.
-                if (attackTimer % crystalReleaseRate == crystalReleaseRate - 1f && Main.netMode != NetmodeID.MultiplayerClient && !skipPillar)
+                // Create spikes.
+                if (attackTimer % spikeReleaseRate == spikeReleaseRate - 1f && Main.netMode != NetmodeID.MultiplayerClient && !skipPillar)
                 {
                     for (int i = -1; i <= 1; i += 2)
                     {
-                        Vector2 crystalVelocity = Vector2.UnitX * horizontalCrystalSpeed * i;
-                        int crystal = Utilities.NewProjectileBetter(npc.Bottom, crystalVelocity, ModContent.ProjectileType<GroundBloodCrystal>(), 200, 0f);
-                        if (Main.projectile.IndexInRange(crystal))
-                            Main.projectile[crystal].ai[0] = totalCrystalsPerProj;
+                        Vector2 spikeVelocity = Vector2.UnitX * horizontalCrystalSpeed * i;
+                        Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), 0, 0f);
                     }
                 }
             }
@@ -669,14 +668,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public static void DoBehavior_WallSlams(NPC npc, Player target, RavagerPhaseInfo phaseInfo, ref float attackTimer)
         {
             int shootDelay = 64;
-            int wallCreateRate = 60;
+            int wallCreateRate = 48;
             int wallCreateTime = 360;
             int attackTransitionDelay = 70;
             float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
 
             // Be a bit more lenient with wall creation rates if the free head is present.
             if (phaseInfo.FreeHeadExists)
-                wallCreateRate += 15;
+                wallCreateRate += 10;
 
             // Wait before creating walls.
             if (attackTimer < shootDelay)

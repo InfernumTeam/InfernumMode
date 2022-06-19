@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override void SetDefaults()
         {
             projectile.width = 90;
-            projectile.height = 640;
+            projectile.height = 960;
             projectile.hostile = true;
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
@@ -63,10 +63,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            float width = projectile.width * 0.54f;
             Vector2 start = projectile.Top;
-            Vector2 end = start - Vector2.UnitY.RotatedBy(projectile.rotation) * Height * 0.84f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, width, ref _);
+            Vector2 end = start - Vector2.UnitY.RotatedBy(projectile.rotation) * Height * 0.72f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Width, ref _);
         }
 
         public override bool CanHitPlayer(Player target) => projectile.Opacity >= 0.9f;

@@ -85,9 +85,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
                 npc.netUpdate = true;
             }
 
-            if (below20)
-                target.Infernum().MakeAnxious(45);
-
             if (fadeoutCountdown > 0f)
                 fadeoutCountdown--;
 

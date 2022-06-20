@@ -254,10 +254,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (phaseTransitionPhase >= 1f)
                 eyeGlowmaskOpacity = 1f;
 
-            // Start the water background and make the player anxious in phase 3.
+            // Start the water background in phase 3.
             if (inPhase3)
             {
-                target.Infernum().MakeAnxious(45);
                 npc.ai[2]++;
                 npc.ai[0] = 10f;
                 npc.alpha = Utils.Clamp(npc.alpha, 120, 255);

@@ -86,8 +86,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
         public const float CanUseSignusSentinelAttackLifeRatio = 0.5f;
 
-        public const float RipperRemovalLifeRatio = 0.45f;
-
         public const float FinalPhaseLifeRatio = 0.2f;
 
         public static readonly Color PassiveFadeColor = Color.DeepSkyBlue;
@@ -176,10 +174,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             bool canPerformSpecialAttacks = lifeRatio < CanUseSpecialAttacksLifeRatio;
             bool nearDeath = lifeRatio < FinalPhaseLifeRatio;
             bool doPassiveMovement = phaseCycleTimer % (PassiveMovementTimeP2 + AggressiveMovementTimeP2) >= AggressiveMovementTimeP2 && !nearDeath;
-
-            // Prevent the player from using rage and adrenaline past a point.
-            if (lifeRatio < RipperRemovalLifeRatio)
-                target.Infernum().MakeAnxious(45);
 
             // Don't take damage when fading out.
             npc.dontTakeDamage = npc.Opacity < 0.5f;

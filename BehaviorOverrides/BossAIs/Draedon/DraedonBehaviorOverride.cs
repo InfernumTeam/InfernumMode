@@ -260,10 +260,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     break;
             }
 
-            // Disable rage and adrenaline past a point.
-            if (ExoMechManagement.CurrentThanatosPhase >= 3 || ExoMechManagement.CurrentAresPhase >= 3 || ExoMechManagement.CurrentTwinsPhase >= 3)
-                playerToFollow.Infernum().MakeAnxious(45);
-
             if (talkTimer > ExoMechChooseDelay + 10f && !ExoMechIsPresent)
             {
                 HandleDefeatStuff(npc, playerToFollow, ref npc.ModNPC<DraedonNPC>().DefeatTimer);

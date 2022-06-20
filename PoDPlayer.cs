@@ -267,22 +267,6 @@ namespace InfernumMode
         }
         #endregion Saving and Loading
         #region Misc Effects
-        public void MakeAnxious(int time)
-        {
-            int deleteIndex = Player.MaxBuffs - 1;
-            int[] buffsToSkip = new int[]
-            {
-                BuffID.ChaosState,
-                BuffID.PotionSickness,
-                BuffID.ManaSickness,
-                ModContent.BuffType<ManaBurn>()
-            };
-            while (buffsToSkip.Contains(player.buffType[deleteIndex]) && deleteIndex > 0)
-                deleteIndex--;
-
-            player.DelBuff(deleteIndex);
-            player.AddBuff(ModContent.BuffType<Anxiety>(), time);
-        }
         public override void PostUpdateMiscEffects()
         {
             if (player.mount.Active && player.mount.Type == Mount.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DesertScourgeHead")) && InfernumMode.CanUseCustomAIs)

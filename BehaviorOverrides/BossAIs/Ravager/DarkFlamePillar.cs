@@ -65,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             float _ = 0f;
             Vector2 start = projectile.Top;
             Vector2 end = start - Vector2.UnitY.RotatedBy(projectile.rotation) * Height * 0.72f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Width, ref _);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, Width * 0.82f, ref _);
         }
 
         public override bool CanHitPlayer(Player target) => projectile.Opacity >= 0.9f;
@@ -82,10 +82,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public Color ColorFunction(float completionRatio)
         {
-            Color darkFlameColor = new Color(128, 117, 255);
+            Color darkFlameColor = new Color(58, 107, 252);
             Color lightFlameColor = new Color(45, 207, 239);
-            float colorShiftInterpolant = (float)Math.Sin(-Main.GlobalTime * 6.7f + completionRatio * MathHelper.Pi * 3f) * 0.5f + 0.5f;
-            Color color = Color.Lerp(darkFlameColor, lightFlameColor, colorShiftInterpolant);
+            float colorShiftInterpolant = (float)Math.Sin(-Main.GlobalTime * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
+            Color color = Color.Lerp(darkFlameColor, lightFlameColor, (float)Math.Pow(colorShiftInterpolant, 1.64f));
             return color * projectile.Opacity;
         }
 

@@ -62,7 +62,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             SingleBurstsOfUpwardDarkFlames,
             DownwardFistSlam,
             SlamAndCreateMovingFlamePillars,
-            WallSlams
+            WallSlams,
+            DetachedHeadCinderRain
         }
         #endregion
 
@@ -216,6 +217,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     break;
                 case RavagerAttackType.WallSlams:
                     DoBehavior_WallSlams(npc, target, phaseInfo, ref attackTimer);
+                    break;
+                case RavagerAttackType.DetachedHeadCinderRain:
+                    DoBehavior_DetachedHeadCinderRain(npc, target, phaseInfo, ref attackTimer);
                     break;
             }
             attackTimer++;
@@ -696,6 +700,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 SelectNextAttack(npc, phaseInfo);
         }
 
+        public static void DoBehavior_DetachedHeadCinderRain(NPC npc, Player target, RavagerPhaseInfo phaseInfo, ref float attackTimer)
+        {
+            // The head itself does the attack.
+            // The body does pretty much nothing lmao
+            int wallCreateRate = 50;
+            float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
+            ref float wallCreationCounter = ref npc.Infernum().ExtraAI[0];
+
+            // Create rock pillars.
+            if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % wallCreateRate == wallCreateRate - 1f)
+            {
+                for (int i = -1; i <= 1; i += 2)
+                {
+                    Vector2 pillarSpawnPosition = target.Center + Vector2.UnitY * i * spaceBetweenWalls;
+                    pillarSpawnPosition.X -= 640f;
+                    if (wallCreationCounter % 2f == 0f)
+                    {
+                        pillarSpawnPosition = target.Center + Vector2.UnitX * i * spaceBetweenWalls;
+                        pillarSpawnPosition.Y -= 640f;
+                    }
+
+                    int pillar = Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), 200, 0f);
+                    if (Main.projectile.IndexInRange(pillar))
+                        Main.projectile[pillar].ai[1] = wallCreationCounter % 2f;
+                }
+                wallCreationCounter++;
+                npc.netUpdate = true;
+            }
+
+            if (attackTimer >= 420f)
+                SelectNextAttack(npc, phaseInfo);
+        }
+
         public static void SelectNextAttack(NPC npc, RavagerPhaseInfo phaseInfo)
         {
             RavagerAttackType[] pattern = new RavagerAttackType[]
@@ -711,7 +748,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 pattern = new RavagerAttackType[]
                 {
                     RavagerAttackType.DownwardFistSlam,
-                    RavagerAttackType.SlamAndCreateMovingFlamePillars,
+                    phaseInfo.FreeHeadExists ? RavagerAttackType.DetachedHeadCinderRain : RavagerAttackType.SlamAndCreateMovingFlamePillars,
                     RavagerAttackType.RegularJumps,
                     RavagerAttackType.SingleBurstsOfBlood,
                     RavagerAttackType.DownwardFistSlam,

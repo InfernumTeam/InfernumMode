@@ -58,16 +58,16 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x * 3 - uTime * 2.5), coords.y));
     float opacity = (0.5 + fadeMapColor.g) * bloomFadeout;
     
-    // Calculate electricity colors.
-    float electricityFade = tex2D(uImage2, float2(frac(coords.x * 4 - uTime * 2.5), coords.y)).r;
-    float4 electricityColor = InverseLerp(0.4, 0.5, electricityFade * bloomFadeout) * float4(uColor, 1);
+    // Calculate overlay colors.
+    float overlayFade = tex2D(uImage2, float2(frac(coords.x * 4 - uTime * 2.5), coords.y)).r;
+    float4 overlayColor = InverseLerp(0.4, 0.5, overlayFade * bloomFadeout) * float4(uColor, 1);
     
     // Fade out at the ends of the streak.
     if (coords.x < 0.018)
         opacity *= pow(coords.x / 0.018, 6);
     if (coords.x > 0.95)
         opacity *= pow(1 - (coords.x - 0.95) / 0.05, 6);
-    return color * opacity * 1.8 + electricityColor * opacity;
+    return color * opacity * 1.6 + overlayColor * opacity;
 }
 
 technique Technique1

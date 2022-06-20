@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Particles;
 using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -11,14 +12,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 {
     public class SlammingRockPillar : ModProjectile
     {
+        public bool Vertical => projectile.ai[1] == 1f;
+
         public ref float Time => ref projectile.ai[0];
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Rock Pillar");
 
         public override void SetDefaults()
         {
-            projectile.width = 60;
-            projectile.height = 300;
+            projectile.width = 300;
+            projectile.height = 60;
             projectile.hostile = true;
             projectile.tileCollide = false;
             projectile.ignoreWater = true;
@@ -37,15 +40,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             // Hover into position before slamming.
             if (Time < 45f)
             {
+                float hoverInterpolant = (1f - Time / 45f) * 0.1f;
                 Vector2 nextPosition = projectile.Center;
-                nextPosition.Y = MathHelper.Lerp(nextPosition.Y, closestPlayer.Center.Y, (1f - Time / 45f) * 0.1f);
+
+                if (Vertical)
+                    nextPosition.X = MathHelper.Lerp(nextPosition.X, closestPlayer.Center.X, hoverInterpolant);
+                else
+                    nextPosition.Y = MathHelper.Lerp(nextPosition.Y, closestPlayer.Center.Y, hoverInterpolant);
                 projectile.Center = nextPosition;
                 projectile.velocity = Vector2.Zero;
             }
 
             if (Time == 54f)
-                projectile.velocity = Vector2.UnitX * (closestPlayer.Center.X > projectile.Center.X).ToDirectionInt() * 8f;
-            projectile.velocity.X *= 1.018f;
+            {
+                if (Vertical)
+                    projectile.velocity = Vector2.UnitY * (closestPlayer.Center.Y > projectile.Center.Y).ToDirectionInt() * 8f;
+                else
+                    projectile.velocity = Vector2.UnitX * (closestPlayer.Center.X > projectile.Center.X).ToDirectionInt() * 8f;
+            }
+
+            if (Vertical)
+            {
+                projectile.velocity.Y *= 1.018f;
+                projectile.rotation = MathHelper.PiOver2;
+                projectile.width = 300;
+                projectile.height = 60;
+            }
+            else
+            {
+                projectile.velocity.X *= 1.018f;
+                projectile.rotation = 0f;
+                projectile.width = 60;
+                projectile.height = 300;
+            }
 
             // Smash into pieces and release a burst of fire if colliding with another pillar.
             if (Time >= 60f)
@@ -57,7 +84,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     if (!Main.projectile[i].active || Main.projectile[i].type != projectile.type || i == projectile.whoAmI)
                         continue;
 
-                    if (!Main.projectile[i].Hitbox.Intersects(projectile.Hitbox) || Main.projectile[i].ai[0] < 60f)
+                    bool colliding = Main.projectile[i].Colliding(Main.projectile[i].Hitbox, projectile.Hitbox) ||
+                        projectile.Colliding(projectile.Hitbox, Main.projectile[i].Hitbox);
+                    if (!colliding || Main.projectile[i].ai[0] < 60f)
                         continue;
 
                     collidingWithOtherPillar = true;
@@ -93,6 +122,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     projectile.Kill();
                 }
             }
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            Texture2D tex = ModContent.GetTexture(Texture);
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Main.spriteBatch.Draw(tex, drawPosition, null, projectile.GetAlpha(lightColor), projectile.rotation, tex.Size() * 0.5f, projectile.scale, 0, 0f);
+            return false;
         }
 
         public override bool CanDamage() => Time >= 54f;

@@ -285,7 +285,7 @@ namespace InfernumMode
         }
         public override void PostUpdateMiscEffects()
         {
-            if (player.mount.Active && player.mount.Type == Mount.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DesertScourgeHead")))
+            if (player.mount.Active && player.mount.Type == Mount.Slime && NPC.AnyNPCs(InfernumMode.CalamityMod.NPCType("DesertScourgeHead")) && InfernumMode.CanUseCustomAIs)
             {
                 player.mount.Dismount(player);
             }

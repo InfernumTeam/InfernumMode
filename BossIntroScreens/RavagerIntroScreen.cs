@@ -22,7 +22,7 @@ namespace InfernumMode.BossIntroScreens
             if (colorSpan > 1000f)
                 colorSpan = 1000f;
 
-            float colorInterpolant = Utils.InverseLerp(0f, 0.5f, colorSpan, true);
+            float colorInterpolant = Utils.InverseLerp(0f, 1.32f, colorSpan, true);
             return Color.Lerp(redFireColor, blueFireColor, colorInterpolant);
         });
 

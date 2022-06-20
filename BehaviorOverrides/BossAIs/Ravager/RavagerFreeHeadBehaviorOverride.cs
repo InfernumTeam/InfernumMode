@@ -1,3 +1,4 @@
+using CalamityMod;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.Ravager;
 using InfernumMode.Dusts;
@@ -27,6 +28,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             // Inherit attributes from the main body.
             NPC ravager = Main.npc[CalamityGlobalNPC.scavenger];
+            var currentAttack = (RavagerBodyBehaviorOverride.RavagerAttackType)ravager.ai[0];
             npc.target = ravager.target;
 
             Player target = Main.player[npc.target];
@@ -43,30 +45,56 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             npc.rotation = aimDirection.ToRotation() - MathHelper.PiOver2;
 
             // Create a dust telegraph prior to releasing cinders.
-            if (attackTimer % cinderShootRate > cinderShootRate - 40f)
+            if (currentAttack != RavagerBodyBehaviorOverride.RavagerAttackType.DetachedHeadCinderRain)
             {
-                for (int i = 0; i < 3; i++)
+                if (attackTimer % cinderShootRate > cinderShootRate - 40f)
                 {
-                    Dust fire = Dust.NewDustPerfect(cinderShootPosition + Main.rand.NextVector2Circular(25f, 25f), ModContent.DustType<RavagerMagicDust>());
-                    fire.velocity = (fire.position - cinderShootPosition).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(2f, 8f);
-                    fire.scale = 1.3f;
-                    fire.noGravity = true;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Dust fire = Dust.NewDustPerfect(cinderShootPosition + Main.rand.NextVector2Circular(25f, 25f), ModContent.DustType<RavagerMagicDust>());
+                        fire.velocity = (fire.position - cinderShootPosition).SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(2f, 8f);
+                        fire.scale = 1.3f;
+                        fire.noGravity = true;
+                    }
+                }
+
+                // Shoot the cinder.
+                if (attackTimer % cinderShootRate == cinderShootRate - 1f)
+                {
+                    Main.PlaySound(SoundID.Item72, cinderShootPosition);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Utilities.NewProjectileBetter(cinderShootPosition, aimDirection * 15f, ModContent.ProjectileType<DarkMagicCinder>(), 185, 0f);
+                        npc.netUpdate = true;
+                    }
+                }
+            }
+            else
+            {
+                cinderShootRate = 60;
+                hoverDestination = target.Center - Vector2.UnitY * 450f;
+
+                if (attackTimer % cinderShootRate == cinderShootRate - 1f)
+                {
+                    Main.PlaySound(SoundID.Item72, cinderShootPosition);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            Vector2 cinderShootVelocity = aimDirection.RotatedBy(MathHelper.Lerp(-0.49f, 0.49f, i / 2f)) * 14f;
+                            Utilities.NewProjectileBetter(cinderShootPosition, cinderShootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), 185, 0f);
+                        }
+                        npc.netUpdate = true;
+                    }
                 }
             }
 
             // Hover into position.
-            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, 0.7f);
-
-            // Shoot the cinder.
-            if (attackTimer % cinderShootRate == cinderShootRate - 1f)
-            {
-                Main.PlaySound(SoundID.Item72, cinderShootPosition);
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Utilities.NewProjectileBetter(cinderShootPosition, aimDirection * 15f, ModContent.ProjectileType<DarkMagicCinder>(), 185, 0f);
-                    npc.netUpdate = true;
-                }
-            }
+            float acceleration = 0.7f;
+            Item heldItem = target.ActiveItem();
+            if (heldItem.melee && (heldItem.shoot == ProjectileID.None || heldItem.Calamity().trueMelee))
+                acceleration = 0.2f;
+            npc.SimpleFlyMovement(npc.SafeDirectionTo(hoverDestination) * 20f, acceleration);
 
             attackTimer++;
             return false;

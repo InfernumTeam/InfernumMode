@@ -14,10 +14,11 @@ float2 uImageSize0;
 float2 uImageSize1;
 float uIntensity;
 float uVibrancy;
+float4 uShaderSpecificData;
 
 float4 CosineInterpolation(float value)
 {
-    return (1 - cos(3.141592 * value)) / 2;
+    return (1 - sin(3.141592 * value + 1.57)) / 2;
 }
 
 float4 ArmorCircle(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
@@ -25,7 +26,7 @@ float4 ArmorCircle(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COL
     float4 baseColor = tex2D(uImage0, coords);
     
     float2 armorCoords = coords / float2(3, 7);
-    armorCoords += float2(sin(uTime * 1.2 * uSaturation), cos(uTime * 0.8 * uSaturation));
+    armorCoords += float2(sin(uTime * 1.2 * uSaturation), sin(uTime * 0.8 * uSaturation + 1.57));
     armorCoords.y %= 1;
     armorCoords.x %= 1;
     

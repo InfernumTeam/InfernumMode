@@ -12,6 +12,7 @@ float uDirection;
 float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
+float4 uShaderSpecificData;
 
 float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
 {
@@ -23,7 +24,7 @@ float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0
     if (color1.g > uOpacity * 1.1)
         color.rgba = 0;
     else if (color1.g > uOpacity)
-        color = float4(0.1, lerp(0.16, 0.7, cos(coords.x * 2.7 + uTime * 1.5)), 1, 1) * 0.4;
+        color = float4(0.1, lerp(0.16, 0.7, sin(coords.x * 2.7 + uTime * 1.5)), 1, 1) * 0.4;
     return color;
 }
 

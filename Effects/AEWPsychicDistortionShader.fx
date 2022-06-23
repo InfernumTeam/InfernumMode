@@ -12,6 +12,7 @@ float uDirection;
 float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
+float4 uShaderSpecificData;
 
 float4 PixelShaderFunction(float4 position : SV_POSITION, float2 coords : TEXCOORD0) : COLOR0
 {
@@ -22,7 +23,7 @@ float4 PixelShaderFunction(float4 position : SV_POSITION, float2 coords : TEXCOO
     float2 centeredCoords = coords - 0.5;
     float swirlRotation = length(centeredCoords) * 16.2 - uTime * 6;
     float swirlSine = sin(swirlRotation);
-    float swirlCosine = cos(swirlRotation);
+    float swirlCosine = sin(swirlRotation + 1.57);
     float2x2 swirlRotationMatrix = float2x2(swirlCosine, -swirlSine, swirlSine, swirlCosine);
     float2 swirlCoordinates = mul(centeredCoords, swirlRotationMatrix) + 0.5;
     
@@ -38,6 +39,6 @@ technique Technique1
 {
     pass DistortionPass
     {
-        PixelShader = compile ps_2_0 PixelShaderFunction();
+        PixelShader = compile ps_3_0 PixelShaderFunction();
     }
 }

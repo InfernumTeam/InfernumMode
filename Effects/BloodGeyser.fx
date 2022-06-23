@@ -13,6 +13,7 @@ float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
 matrix uWorldViewProjection;
+float4 uShaderSpecificData;
 
 struct VertexShaderInput
 {
@@ -48,7 +49,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     float2 coords = input.TextureCoordinates;
     
     // Read the fade map as a streak.
-    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x + cos(uTime) * 0.01), frac(coords.y + uTime * 1.4 * uSaturation)));
+    float4 fadeMapColor = tex2D(uImage1, float2(frac(coords.x + sin(uTime + 1.57) * 0.01), frac(coords.y + uTime * 1.4 * uSaturation)));
     fadeMapColor.r *= pow(coords.x, 0.4);
     
     float opacity = lerp(0.4, 0.6, fadeMapColor.r) * color.a;

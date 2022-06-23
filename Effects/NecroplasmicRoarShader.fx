@@ -12,8 +12,9 @@ float uDirection;
 float3 uLightSource;
 float2 uImageSize0;
 float2 uImageSize1;
+float4 uShaderSpecificData;
 
-float inverseLerp(float x, float min, float max)
+float GetLerpValue(float x, float min, float max)
 {
     return saturate((x - min) / (max - min));
 }
@@ -30,9 +31,9 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     color *= lerp(0.8, 1.2, tex2D(uImage1, noiseCoords));
     float distanceRatio = distance(coords.xy, float2(0.5, 0.5)) * 1.414;
     
-    float opacity = color.a * pow((1 - (inverseLerp(distanceRatio, 0.015, 0.835))), 4);
-    opacity *= lerp(1, 1.9, inverseLerp(distanceRatio, 0.67, 0.6));
-    opacity *= lerp(1, 2.9, 1 - inverseLerp(distanceRatio, 0.1, 0) * inverseLerp(distanceRatio, 1, 0.9));
+    float opacity = color.a * pow((1 - (GetLerpValue(distanceRatio, 0.015, 0.835))), 4);
+    opacity *= lerp(1, 1.9, GetLerpValue(distanceRatio, 0.67, 0.6));
+    opacity *= lerp(1, 2.9, 1 - GetLerpValue(distanceRatio, 0.1, 0) * GetLerpValue(distanceRatio, 1, 0.9));
     opacity *= uOpacity;
     return color * opacity * 1.125;
 }

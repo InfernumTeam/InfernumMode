@@ -9,6 +9,7 @@ float uProgress;
 float2 uImageSize1;
 float2 uImageSize2;
 float uLetterCompletionRatio;
+float4 uShaderSpecificData;
 
 float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
@@ -18,11 +19,11 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
     if ((color.r + color.g + color.b) / 3 < 0.03 || color.a < 0.05)
         return color;
     
-    float3 blendColor = lerp(uColor, uSecondaryColor, cos(uTime * 4 + uLetterCompletionRatio * 4) * 0.5 + 0.5);
-    float blendFactor = (cos(uTime * 9 + coords.x * 18) * 0.5 + 0.5) * 0.5;
+    float3 blendColor = lerp(uColor, uSecondaryColor, sin(uTime * 4 + uLetterCompletionRatio * 4 + 1.57) * 0.5 + 0.5);
+    float blendFactor = (sin(uTime * 9 + coords.x * 18 + 1.57) * 0.5 + 0.5) * 0.5;
     
     // Allow the fade to pulse upward based on how far up the pixel is.
-    blendFactor += (cos(uTime * -13 - coords.y * 7.1)) * 0.5;
+    blendFactor += (sin(uTime * -13 - coords.y * 7.1 + 1.57)) * 0.5;
     float brightness = blendFactor * 0.5 + noiseColor.r * 0.5;
     
     // Cause the effects to taper off at the bottom of the sprite.

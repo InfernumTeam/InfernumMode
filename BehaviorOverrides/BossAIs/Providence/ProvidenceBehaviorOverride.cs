@@ -15,6 +15,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ProvidenceBoss = CalamityMod.NPCs.Providence.Providence;
 using Terraria.WorldBuilding;
+using InfernumMode.Sounds;
+using CalamityMod.Sounds;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 {
@@ -143,7 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             {
                 npc.Opacity = 1f;
                 if (deathEffectTimer == 1f && !Main.dedServ)
-                    SoundEngine.PlaySound(SoundID.DD2_DefeatScene.WithVolume(1.65f), target.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_DefeatScene with { Volume = 1.65f }, target.Center);
 
                 deathEffectTimer++;
 
@@ -187,14 +189,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                                 if (deathEffectTimer >= 320f)
                                 {
                                     shootType = ModContent.ProjectileType<YharonBoom>();
-                                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
                                 }
                                 else
                                 {
                                     shootType = ModContent.ProjectileType<ProvBoomDeath>();
                                     ReleaseSparkles(npc.Center, 6, 18f);
-                                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/FlareSound"), target.Center);
-                                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                                    SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
+                                    SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
                                 }
                             }
 
@@ -215,8 +217,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                         Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<ProvBoomDeath>(), 0, 0f);
 
                     ReleaseSparkles(npc.Center, sparkleCount, 18f);
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/FlareSound"), target.Center);
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.FlareSound, target.Center);
+                    SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
                 }
 
                 if (deathEffectTimer >= 370f)
@@ -345,14 +347,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 {
                     int platformX = (int)MathHelper.Lerp(npc.Infernum().arenaRectangle.Left + 60f, npc.Infernum().arenaRectangle.Right - 60f, i / 8f);
                     int platformY = npc.Infernum().arenaRectangle.Bottom - 16;
-                    CreatePlatform(new Vector2(platformX, platformY), Vector2.UnitY * -2.5f);
+                    CreatePlatform(npc, new Vector2(platformX, platformY), Vector2.UnitY * -2.5f);
                 }
             }
 
             // Make all spike traps release their spears.
             if (phase2AnimationTimer == 75f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/MeatySlash"));
+                SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound);
                 foreach (Projectile spear in Utilities.AllProjectilesByID(ModContent.ProjectileType<GroundCrystalSpike>()))
                 {
                     spear.ModProjectile<GroundCrystalSpike>().SpikesShouldExtendOutward = true;
@@ -361,7 +363,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
         }
 
-        public static void CreatePlatform(Vector2 spawnPosition, Vector2 velocity)
+        public static void CreatePlatform(NPC npc, Vector2 spawnPosition, Vector2 velocity)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
@@ -378,8 +380,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
         {
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == 10f)
             {
-                Projectile.NewProjectile(npc.Center - Vector2.UnitY * 80f, Vector2.Zero, ModContent.ProjectileType<HolyAura>(), 0, 0f, Main.myPlayer);
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyRay"), npc.Center);
+                Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center - Vector2.UnitY * 80f, Vector2.Zero, ModContent.ProjectileType<HolyAura>(), 0, 0f, Main.myPlayer);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound, npc.Center);
             }
 
             // Fade in.
@@ -423,7 +425,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<YharonBoom>(), 0, 0f);
 
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
             }
 
             if (attackTimer == AuraTime - 20f)
@@ -524,7 +526,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             {
                 float horizontalOffset = (attackTimer / platformSpawnRate * 0.15f) % 1f * arenaArea.Width;
                 Vector2 platformSpawnPosition = new(arenaArea.Left + horizontalOffset - 32f, arenaArea.Bottom + 16f);
-                CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 3f);
+                CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
             }
 
             // Release spikes.
@@ -604,7 +606,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Rectangle arenaArea = npc.Infernum().arenaRectangle;
                 Vector2 platformSpawnPosition = new(Main.rand.NextFloat(arenaArea.Left + 32f, arenaArea.Right - 32f), arenaArea.Bottom + 16f);
                 platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.725f);
-                CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 3f);
+                CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
             }
 
             // Release molten blobs.
@@ -616,7 +618,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                     return;
                 }
 
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     // Release the holy bomb.
@@ -689,7 +691,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Rectangle arenaArea = npc.Infernum().arenaRectangle;
                 Vector2 platformSpawnPosition = new(Main.rand.NextFloat(arenaArea.Left + 32f, arenaArea.Right - 32f), arenaArea.Bottom + 16f);
                 platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.5f);
-                CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 3f);
+                CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
             }
 
             // Make the crystals appear more quickly if using the sinusoidal variant.
@@ -826,7 +828,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Create cinders that fall downward and come from Providence's center.
             else if (attackTimer == cinderCreationDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (float x = arenaArea.Left; x < arenaArea.Right; x += offsetPerCinder)
@@ -846,7 +848,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             else if (attackTimer == cinderCreationDelay + 30f)
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
 
             else if (attackTimer >= cinderCreationDelay + attackSwitchDelay)
                 SelectNextAttack(npc);
@@ -889,7 +891,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Rectangle arenaArea = npc.Infernum().arenaRectangle;
                 Vector2 platformSpawnPosition = new(arenaArea.Left + 24f, Main.rand.NextFloat(arenaArea.Top + 64f, arenaArea.Bottom - 32f));
                 platformSpawnPosition.Y = MathHelper.Lerp(platformSpawnPosition.Y, target.Center.Y, 0.4f);
-                CreatePlatform(platformSpawnPosition, Vector2.UnitX * 4f);
+                CreatePlatform(npc, platformSpawnPosition, Vector2.UnitX * 4f);
             }
 
             Vector2 destination;
@@ -969,7 +971,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Create the blades.
             if (attackTimer == bladeReleaseDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/MeatySlash"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     float offsetAngle = Main.rand.NextBool() ? MathHelper.Pi / crystalCount : 0f;
@@ -1032,7 +1034,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // Release crystal blades.
                 if (attackTimer % bladeRelaseRate == bladeRelaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/MeatySlash"), target.Center);
+                    SoundEngine.PlaySound(CommonCalamitySounds.MeatySlashSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 bladeVelocity = npc.SafeDirectionTo(target.Center) * bladeSpeed;
@@ -1044,7 +1046,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             // Cast fire beams.
             if (attackTimer == laserShootDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyRay"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < laserCount; i++)
@@ -1057,7 +1059,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 }
 
                 // Create a platform below the player.
-                CreatePlatform(target.Bottom + Vector2.UnitY * 50f, Vector2.UnitY * -2f);
+                CreatePlatform(npc, target.Bottom + Vector2.UnitY * 50f, Vector2.UnitY * -2f);
             }
 
             if (attackTimer >= laserShootDelay + laserShootTime + 20f)
@@ -1083,7 +1085,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Rectangle arenaArea = npc.Infernum().arenaRectangle;
                 Vector2 platformSpawnPosition = new(Main.rand.NextFloat(arenaArea.Left + 32f, arenaArea.Right - 32f), arenaArea.Bottom + 16f);
                 platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.5f);
-                CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 3f);
+                CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
             }
 
             // Enter the cocoon state.
@@ -1131,7 +1133,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // Release bursts of crystals.
                 if (attackTimer % spearBurstReleaseRate == spearBurstReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float offsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
@@ -1146,7 +1148,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 // Release spears at the target directly.
                 if (attackTimer % spearReleaseRate == spearReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 spearVelocity = (target.Center - crystalCenter).SafeNormalize(Vector2.UnitY) * spearShootSpeed * 1.75f;
@@ -1190,7 +1192,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Rectangle arenaArea = npc.Infernum().arenaRectangle;
                 Vector2 platformSpawnPosition = new(Main.rand.NextFloat(arenaArea.Left + 32f, arenaArea.Right - 32f), arenaArea.Bottom + 16f);
                 platformSpawnPosition.X = MathHelper.Lerp(platformSpawnPosition.X, target.Center.X, 0.5f);
-                CreatePlatform(platformSpawnPosition, -Vector2.UnitY * 3f);
+                CreatePlatform(npc, platformSpawnPosition, -Vector2.UnitY * 3f);
             }
 
             // Release holy blasts.
@@ -1513,10 +1515,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 getTextureGlowString += "Night";
 
-                Texture2D generalTexture = ModContent.GetTexture(getTextureString);
-                Texture2D crystalTexture = ModContent.GetTexture(getTextureGlow2String);
-                Texture2D wingTexture = ModContent.GetTexture(getTextureGlowString);
-                Texture2D fatCrystalTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceCrystal");
+                Texture2D generalTexture = ModContent.Request<Texture2D>(getTextureString).Value;
+                Texture2D crystalTexture = ModContent.Request<Texture2D>(getTextureGlow2String).Value;
+                Texture2D wingTexture = ModContent.Request<Texture2D>(getTextureGlowString).Value;
+                Texture2D fatCrystalTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceCrystal").Value;
 
                 SpriteEffects spriteEffects = SpriteEffects.None;
                 if (npc.spriteDirection == 1)
@@ -1568,9 +1570,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
                 // Apply a super special shader.
                 MiscShaderData gradientShader = GameShaders.Misc["Infernum:GradientWingShader"];
-                gradientShader.UseImage("Images/Misc/noise");
+                gradientShader.UseImage1("Images/Misc/noise");
                 gradientShader.UseOpacity(rainbowOpacity);
-                gradientShader.SetShaderTexture(ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTexture"));
+                gradientShader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTexture"));
 
                 //gradientShader.Apply(null);
 
@@ -1580,7 +1582,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             }
 
             int totalProvidencesToDraw = (int)MathHelper.Lerp(1f, 30f, burnIntensity);
-            Texture2D baseTexture = ModContent.GetTexture("CalamityMod/NPCs/Providence/Providence");
+            Texture2D baseTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Providence/Providence").Value;
             Vector2 textureOrigin = npc.frame.Size() * 0.5f;
             for (int i = 0; i < totalProvidencesToDraw; i++)
             {

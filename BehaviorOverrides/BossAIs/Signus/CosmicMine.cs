@@ -2,6 +2,7 @@ using CalamityMod;
 using CalamityMod.Buffs.StatDebuffs;
 using CalamityMod.Events;
 using CalamityMod.NPCs;
+using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -59,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), Projectile.Center);
+            SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);
 
             for (int i = 0; i < 50; i++)
             {

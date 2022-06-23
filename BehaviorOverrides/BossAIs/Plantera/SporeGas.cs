@@ -88,10 +88,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
                 case 0:
                     break;
                 case 1:
-                    texture = ModContent.GetTexture("CalamityMod/Projectiles/Boss/SporeGasPlantera2");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Boss/SporeGasPlantera2").Value;
                     break;
                 case 2:
-                    texture = ModContent.GetTexture("CalamityMod/Projectiles/Boss/SporeGasPlantera3");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Boss/SporeGasPlantera3").Value;
                     break;
                 default:
                     break;

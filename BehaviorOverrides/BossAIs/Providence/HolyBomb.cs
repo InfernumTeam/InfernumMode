@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
             if (explosionInterpolant > 0f)
             {
-                Texture2D explosionTelegraphTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/HollowCircleSoftEdge");
+                Texture2D explosionTelegraphTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/HollowCircleSoftEdge").Value;
                 Vector2 scale = Vector2.One * ExplosionRadius / explosionTelegraphTexture.Size();
                 Color explosionTelegraphColor = Color.Lerp(Color.Yellow, Color.Red, colorPulse) * circleFadeinInterpolant;
 

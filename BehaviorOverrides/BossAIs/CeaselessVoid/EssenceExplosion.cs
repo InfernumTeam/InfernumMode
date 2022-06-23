@@ -33,7 +33,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
         public override bool PreDraw(ref Color lightColor)
         {
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Texture2D lightTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/PhotovisceratorLight");
+            Texture2D lightTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/PhotovisceratorLight").Value;
 
             for (int i = 0; i < 36; i++)
             {

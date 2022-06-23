@@ -131,8 +131,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
                 Utils.DrawLine(Main.spriteBatch, Projectile.Top + lineOffset, Projectile.Top - direction * (-MaxPillarHeight + 240f) + lineOffset, Color.LightGoldenrodYellow, Color.LightGoldenrodYellow, scale);
             }
 
-            Texture2D tipTexture = ModContent.GetTexture(Texture);
-            Texture2D pillarTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Providence/CrystalPillarBodyPiece");
+            Texture2D tipTexture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D pillarTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/CrystalPillarBodyPiece").Value;
 
             float tipBottom = 0f;
             Color drawColor = Projectile.GetAlpha(Color.White);

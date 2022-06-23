@@ -1,99 +1,18 @@
-using CalamityMod.NPCs;
-using CalamityMod.NPCs.ExoMechs;
 using CalamityMod.Tiles.FurnitureProfaned;
 using InfernumMode.Tiles;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.IO;
 using Terraria;
 using Terraria.GameContent.Generation;
 using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
-
-using ModInstance = InfernumMode.InfernumMode;
-using Terraria.WorldBuilding;
 using Terraria.IO;
+using Terraria.ModLoader;
+using Terraria.WorldBuilding;
 
-namespace InfernumMode
+namespace InfernumMode.Systems
 {
-    public class PoDWorld : ModSystem
+    public class WorldgenSystem : ModSystem
     {
-        public static int DraedonAttempts;
-        public static int DraedonSuccesses;
-        public static bool InfernumMode = false;
-
-        public static Rectangle ProvidenceArena
-        {
-            get;
-            set;
-        } = Rectangle.Empty;
-
-        public override void OnWorldLoad()
-        {
-            InfernumMode = false;
-        }
-
-        #region Save
-        public override void SaveWorldData(TagCompound tag)/* tModPorter Suggestion: Edit tag parameter instead of returning new TagCompound */
-        {
-            var downed = new List<string>();
-            if (InfernumMode)
-                downed.Add("fuckYouMode");
-
-            tag["downed"] = downed;
-            tag["ProvidenceArenaX"] = ProvidenceArena.X;
-            tag["ProvidenceArenaY"] = ProvidenceArena.Y;
-            tag["ProvidenceArenaWidth"] = ProvidenceArena.Width;
-            tag["ProvidenceArenaHeight"] = ProvidenceArena.Height;
-        }
-        #endregion
-
-        #region Load
-        public override void LoadWorldData(TagCompound tag)
-        {
-            var downed = tag.GetList<string>("downed");
-            InfernumMode = downed.Contains("fuckYouMode");
-            DraedonAttempts = tag.GetInt("DraedonAttempts");
-            DraedonSuccesses = tag.GetInt("DraedonSuccesses");
-            ProvidenceArena = new Rectangle(tag.GetInt("ProvidenceArenaX"), tag.GetInt("ProvidenceArenaY"), tag.GetInt("ProvidenceArenaWidth"), tag.GetInt("ProvidenceArenaHeight"));
-        }
-        #endregion
-
-        #region NetSend
-        public override void NetSend(BinaryWriter writer)
-        {
-            BitsByte flags = new();
-            flags[0] = InfernumMode;
-            writer.Write(flags);
-            writer.Write(DraedonAttempts);
-            writer.Write(DraedonSuccesses);
-        }
-        #endregion
-
-        #region NetReceive
-        public override void NetReceive(BinaryReader reader)
-        {
-            BitsByte flags = reader.ReadByte();
-            InfernumMode = flags[0];
-            DraedonAttempts = reader.ReadInt32();
-            DraedonSuccesses = reader.ReadInt32();
-        }
-        #endregion
-
-        #region Updating
-        public override void PostUpdateWorld()
-        {
-            // Disable natural GSS spawns.
-            if (ModInstance.CanUseCustomAIs)
-                CalamityMod.CalamityMod.sharkKillCount = 0;
-
-            if (!NPC.AnyNPCs(ModContent.NPCType<Draedon>()))
-                CalamityGlobalNPC.draedon = -1;
-        }
-        #endregion Updating
-
-        #region Worldgen
         public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
         {
             int floatingIslandIndex = tasks.FindIndex(g => g.Name == "Floating Islands");
@@ -103,18 +22,18 @@ namespace InfernumMode
             if (jungleTreesIndex != -1)
                 tasks.Insert(floatingIslandIndex, new PassLegacy("Jungle Digout Area", GenerateUndergroundJungleArea));
             int finalIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Final Cleanup"));
-            if (finalIndex != -1)
+            if (finalIndex != -1    )
             {
                 int currentFinalIndex = finalIndex;
-                tasks.Insert(++currentFinalIndex, new PassLegacy("Prov Arena", (progress, configuration) =>
+                tasks.Insert(++currentFinalIndex, new PassLegacy("Prov Arena", (progress, config) =>
                 {
                     progress.Message = "Constructing a temple for an ancient goddess";
-                    GenerateProfanedShrine(progress);
+                    GenerateProfanedShrine(progress, config);
                 }));
             }
         }
 
-        public static void GenerateUndergroundDesertArea(GenerationProgress progress, GameConfiguration configuration)
+        public static void GenerateUndergroundDesertArea(GenerationProgress progress, GameConfiguration config)
         {
             Vector2 cutoutAreaCenter = WorldGen.UndergroundDesertLocation.Center.ToVector2();
 
@@ -160,7 +79,7 @@ namespace InfernumMode
             }
         }
 
-        public static void GenerateProfanedShrine(GenerationProgress progress)
+        public static void GenerateProfanedShrine(GenerationProgress progress, GameConfiguration config)
         {
             int width = 250;
             int height = 125;
@@ -169,12 +88,12 @@ namespace InfernumMode
             ushort provSummonerID = (ushort)ModContent.TileType<ProvidenceSummoner>();
 
             int left = Main.maxTilesX - width - Main.offLimitBorderTiles;
-            int top = Main.maxTilesY - 180;
+            int top = Main.UnderworldLayer + 20;
             int bottom = top + height;
             int centerX = left + width / 2;
 
             // Define the arena area.
-            PoDWorld.ProvidenceArena = new Rectangle(left, top, width, height);
+            WorldSaveSystem.ProvidenceArena = new(left, top, width, height);
 
             // Clear out the entire area where the shrine will be made.
             for (int x = left; x < left + width; x++)
@@ -182,7 +101,7 @@ namespace InfernumMode
                 for (int y = top; y < bottom; y++)
                 {
                     Main.tile[x, y].LiquidAmount = 0;
-                    Main.tile[x, y].HasTile = false;
+                    Main.tile[x, y].Get<TileWallWireStateData>().HasTile = false;
                 }
             }
 
@@ -193,10 +112,10 @@ namespace InfernumMode
                 while (!Main.tile[x, y].HasTile)
                 {
                     Main.tile[x, y].LiquidAmount = 0;
-                    Main.tile[x, y].HasTile = true;
+                    Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
                     Main.tile[x, y].TileType = WorldGen.genRand.NextBool(5) ? runeID : slabID;
-                    Main.tile[x, y].Slope = 0;
-                    Main.tile[x, y].IsHalfBlock = false;
+                    Main.tile[x, y].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+                    Main.tile[x, y].Get<TileWallWireStateData>().IsHalfBlock = false;
 
                     y++;
 
@@ -208,10 +127,10 @@ namespace InfernumMode
                 while (!Main.tile[x, y].HasTile)
                 {
                     Main.tile[x, y].LiquidAmount = 0;
-                    Main.tile[x, y].HasTile = true;
+                    Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
                     Main.tile[x, y].TileType = WorldGen.genRand.NextBool(5) ? runeID : slabID;
-                    Main.tile[x, y].Slope = 0;
-                    Main.tile[x, y].IsHalfBlock = false;
+                    Main.tile[x, y].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+                    Main.tile[x, y].Get<TileWallWireStateData>().IsHalfBlock = false;
 
                     y--;
 
@@ -225,10 +144,10 @@ namespace InfernumMode
             {
                 int x = left + width - 1;
                 Main.tile[x, y].LiquidAmount = 0;
-                Main.tile[x, y].HasTile = true;
+                Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
                 Main.tile[x, y].TileType = WorldGen.genRand.NextBool(5) ? runeID : slabID;
-                Main.tile[x, y].Slope = 0;
-                Main.tile[x, y].IsHalfBlock = false;
+                Main.tile[x, y].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+                Main.tile[x, y].Get<TileWallWireStateData>().IsHalfBlock = false;
             }
 
             // Find the vertical point at which stairs should be placed.
@@ -249,9 +168,9 @@ namespace InfernumMode
                 {
                     Main.tile[x, y + bottom].LiquidAmount = 0;
                     Main.tile[x, y + bottom].TileType = WorldGen.genRand.NextBool(5) ? runeID : slabID;
-                    Main.tile[x, y + bottom].HasTile = true;
-                    Main.tile[x, y + bottom].Slope = 0;
-                    Main.tile[x, y + bottom].IsHalfBlock = false;
+                    Main.tile[x, y + bottom].Get<TileWallWireStateData>().HasTile = true;
+                    Main.tile[x, y + bottom].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+                    Main.tile[x, y + bottom].Get<TileWallWireStateData>().IsHalfBlock = false;
                     WorldGen.TileFrame(x, y + bottom);
                 }
             }
@@ -288,15 +207,14 @@ namespace InfernumMode
                     Main.tile[x, y].TileType = provSummonerID;
                     Main.tile[x, y].TileFrameX = frameX;
                     Main.tile[x, y].TileFrameY = frameY;
-                    Main.tile[x, y].HasTile = true;
-                    Main.tile[x, y].Slope = 0;
-                    Main.tile[x, y].IsHalfBlock = false;
+                    Main.tile[x, y].Get<TileWallWireStateData>().HasTile = true;
+                    Main.tile[x, y].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+                    Main.tile[x, y].Get<TileWallWireStateData>().IsHalfBlock = false;
 
                     frameY += 18;
                 }
                 frameX += 18;
             }
         }
-        #endregion Great Sand Shark Desert Area
     }
 }

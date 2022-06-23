@@ -94,8 +94,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
         // Draw a blue glowmask for Crabulon's fungal clumps.
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            Texture2D texture = ModContent.GetTexture(Texture);
-            Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/FungalClump_Glowmask");
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/FungalClump_Glowmask").Value;
             Vector2 drawPosition = NPC.Center - Main.screenPosition;
             Vector2 origin = NPC.frame.Size() * 0.5f;
             Color color = NPC.GetAlpha(drawColor);

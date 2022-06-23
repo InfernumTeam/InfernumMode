@@ -13,7 +13,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
 {
     public class HealerGuardianBehaviorOverride : NPCBehaviorOverride
     {
-        public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianBoss3>();
+        public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianHealer>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
@@ -50,14 +50,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             float wrappedAttackTimer = attackTimer % 360f;
 
             if (Main.netMode != NetmodeID.Server && wrappedAttackTimer == 100f)
-                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal.WithVolume(1.6f), target.Center);
+                SoundEngine.PlaySound(SoundID.DD2_DarkMageCastHeal with { Volume = 1.6f }, target.Center);
 
             if (wrappedAttackTimer == 145f)
             {
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot.WithVolume(1.6f), target.Center);
-                    SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact.WithVolume(1.6f), target.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_PhantomPhoenixShot with { Volume = 1.6f }, target.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact with { Volume = 1.6f }, target.Center);
                 }
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -80,8 +80,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             float wrappedAttackTimer = npc.Infernum().ExtraAI[0] % 360f;
             float gleamInterpolant = Utils.GetLerpValue(100f, 145f, wrappedAttackTimer, true) * Utils.GetLerpValue(165f, 145f, wrappedAttackTimer, true);
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D glowmask = ModContent.GetTexture("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow");
-            Texture2D glowmask2 = ModContent.GetTexture("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow2");
+            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow").Value;
+            Texture2D glowmask2 = ModContent.Request<Texture2D>("CalamityMod/NPCs/ProfanedGuardians/ProfanedGuardianBoss3Glow2").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 origin = npc.frame.Size() * 0.5f;
             SpriteEffects direction = npc.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
@@ -91,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             spriteBatch.Draw(glowmask2, drawPosition, npc.frame, npc.GetAlpha(Color.White), 0f, origin, npc.scale, direction, 0f);
             if (gleamInterpolant > 0f)
             {
-                Texture2D gleamTexture = ModContent.GetTexture("CalamityMod/Projectiles/StarProj");
+                Texture2D gleamTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
                 Vector2 gleamOrigin = gleamTexture.Size() * 0.5f;
                 Vector2 gleamDrawPosition = drawPosition + new Vector2(npc.spriteDirection * -32f, 12f);
                 Color gleamColor = Color.Lerp(Color.Transparent, new Color(0.95f, 0.95f, 0.25f, 0f), gleamInterpolant);

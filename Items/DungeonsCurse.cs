@@ -48,7 +48,7 @@ namespace InfernumMode.Items
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frameI, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = ModContent.GetTexture("InfernumMode/Items/DungeonsCurse_Animated");
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Items/DungeonsCurse_Animated").Value;
             Rectangle f = Item.GetCurrentFrame(ref frame, ref frameCounter, 8, 5);
             spriteBatch.Draw(texture, position, f, Color.White, 0f, f.Size() * new Vector2(0.16f, 0.25f), scale, SpriteEffects.None, 0);
             return false;
@@ -56,7 +56,7 @@ namespace InfernumMode.Items
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
         {
-            Texture2D texture = ModContent.GetTexture("InfernumMode/Items/DungeonsCurse_Animated");
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/Items/DungeonsCurse_Animated").Value;
             spriteBatch.Draw(texture, Item.position - Main.screenPosition, Item.GetCurrentFrame(ref frame, ref frameCounter, 8, 5), lightColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
             return false;
         }

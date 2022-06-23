@@ -1322,7 +1322,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
 
             // Draw borders.
             bool dying = npc.Infernum().ExtraAI[6] == 1f;
-            Texture2D borderTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cultist/Border");
+            Texture2D borderTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/Border").Value;
             float initialXPosition = npc.Infernum().ExtraAI[8];
             float left = initialXPosition - BorderWidth * 0.5f;
             float right = initialXPosition + BorderWidth * 0.5f;
@@ -1378,7 +1378,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             Rectangle frame = npc.frame;
             if (performingRitual)
             {
-                baseTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cultist/CultistLaughFrames");
+                baseTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/CultistLaughFrames").Value;
                 frame = baseTexture.Frame(1, 3, 0, (int)(npc.frameCounter / 14f % 1f * 3f));
             }
 

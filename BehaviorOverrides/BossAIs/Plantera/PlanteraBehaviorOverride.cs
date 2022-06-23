@@ -805,8 +805,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
-            Texture2D texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Plantera/PlanteraTexture");
-            Texture2D bulbTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Plantera/PlanteraBulbTexture");
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Plantera/PlanteraTexture").Value;
+            Texture2D bulbTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Plantera/PlanteraBulbTexture").Value;
             Color bulbColor = npc.GetAlpha(Color.Lerp(new Color(143, 215, 29), new Color(225, 104, 206), npc.localAI[1]).MultiplyRGB(lightColor));
             Color baseColor = npc.GetAlpha(lightColor);
             Vector2 drawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;

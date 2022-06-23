@@ -128,7 +128,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tex = ModContent.GetTexture(Texture);
+            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Main.spriteBatch.Draw(tex, drawPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, tex.Size() * 0.5f, Projectile.scale, 0, 0f);
             return false;

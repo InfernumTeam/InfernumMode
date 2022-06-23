@@ -266,7 +266,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ExoMechAIUtilities.DrawAresArmTelegraphEffect(spriteBatch, npc, Color.Red, texture, center, frame, origin);
             Main.spriteBatch.Draw(texture, center, frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Ares/AresLaserCannonGlow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Ares/AresLaserCannonGlow").Value;
 
             if (CalamityConfig.Instance.Afterimages)
             {

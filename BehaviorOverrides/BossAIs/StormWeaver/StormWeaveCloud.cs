@@ -87,7 +87,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.StormWeaver
             if (Variant <= 0f || Variant > 4f)
                 return false;
 
-            Texture2D texture = ModContent.GetTexture($"InfernumMode/BehaviorOverrides/BossAIs/StormWeaver/StormWeaveCloud{(int)Variant}");
+            Texture2D texture = ModContent.Request<Texture2D>($"InfernumMode/BehaviorOverrides/BossAIs/StormWeaver/StormWeaveCloud{(int)Variant}").Value;
             Vector2 origin = texture.Size() * 0.5f;
 
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;

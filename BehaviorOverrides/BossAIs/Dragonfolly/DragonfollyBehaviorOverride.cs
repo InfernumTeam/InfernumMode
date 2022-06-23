@@ -320,7 +320,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
                     // Release lightning clouds from time to time while charging.
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % 6f == 5f)
-                        Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
                 }
                 if (attackTimer >= 230f + chargeDelay)
                 {
@@ -441,26 +441,24 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                         featherVelocity.Y = -Math.Abs(featherVelocity.Y);
 
                         if (Main.netMode != NetmodeID.MultiplayerClient)
-                            Projectile.NewProjectile(npc.Center + Main.rand.NextVector2CircularEdge(50f, 50f), featherVelocity, ModContent.ProjectileType<FollyFeather>(), 0, 0f);
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center + Main.rand.NextVector2CircularEdge(50f, 50f), featherVelocity, ModContent.ProjectileType<FollyFeather>(), 0, 0f);
                     }
 
                     // If in phase 2 and doing a lightning attack, release an aura from the mouth that goes towards the player.
                     if (chargeType == DragonfollyAttackType.ThunderCharge && phase2)
                     {
-                        SoundEffectInstance sound = SoundEngine.PlaySound(SoundID.DD2_BetsyScream, npc.Center);
-                        if (sound != null)
-                            sound.Pitch = 0.25f;
+                        SoundEngine.PlaySound(SoundID.DD2_BetsyScream with { Pitch = 0.25f }, npc.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * (float)Math.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
                             if (phase3)
                             {
                                 Vector2 baseShootVelocity = npc.SafeDirectionTo(mouthPosition) * 7f;
-                                Projectile.NewProjectile(mouthPosition, baseShootVelocity.RotatedBy(-0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
-                                Projectile.NewProjectile(mouthPosition, baseShootVelocity.RotatedBy(0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
+                                Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, baseShootVelocity.RotatedBy(-0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
+                                Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, baseShootVelocity.RotatedBy(0.36f), ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                             }
                             else
-                                Projectile.NewProjectile(mouthPosition, Vector2.Zero, ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
+                                Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, Vector2.Zero, ModContent.ProjectileType<BirbThunderAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                         }
                     }
                 }
@@ -499,7 +497,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 // Release lightning clouds from time to time while charging if doing a lightning charge.
                 int cloudSpawnRate = (int)MathHelper.Lerp(12f, 6f, 1f - npc.life / (float)npc.lifeMax);
                 if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % cloudSpawnRate == cloudSpawnRate - 1f && chargeType == DragonfollyAttackType.ThunderCharge)
-                    Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<LightningCloud>(), 0, 0f);
 
                 if (hasDoneFakeoutFlag == 0f && chargeType == DragonfollyAttackType.FakeoutCharge)
                 {
@@ -650,7 +648,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 mouthPosition = npc.Center + Vector2.UnitX * npc.direction * (float)Math.Cos(npc.rotation) * (npc.width * 0.5f + 36f);
-                    Projectile.NewProjectile(mouthPosition, Vector2.Zero, ModContent.ProjectileType<BirbAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
+                    Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPosition, Vector2.Zero, ModContent.ProjectileType<BirbAuraFlare>(), 0, 0f, Main.myPlayer, 2f, npc.target + 1);
                 }
             }
 
@@ -826,7 +824,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                 {
                     frameType = (int)DragonfollyFrameDrawingType.Screm;
                     if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer == ScreamTime + 10f)
-                        Projectile.NewProjectile(npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
+                        Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero, ModContent.ProjectileType<TwinsEnergyExplosion>(), 0, 0f);
                 }
                 else
                 {
@@ -898,7 +896,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
                 if (attackTimer >= 120f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                    SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
                     SelectNextAttack(npc);
                 }
             }
@@ -946,11 +944,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
                     {
                         npc.frame.Y = frameHeight * 5;
                         if (scremTimer == ScreamSoundDelay)
-                        {
-                            SoundEffectInstance sound = SoundEngine.PlaySound(SoundID.DD2_BetsyScream, npc.Center);
-                            if (sound != null)
-                                sound.Pitch = 0.25f;
-                        }
+                            SoundEngine.PlaySound(SoundID.DD2_BetsyScream with { Pitch = 0.25f }, npc.Center);
                     }
                     break;
             }

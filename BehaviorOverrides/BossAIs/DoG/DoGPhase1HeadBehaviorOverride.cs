@@ -298,11 +298,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             float jawRotation = npc.Infernum().ExtraAI[7];
 
-            Texture2D headTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Head");
+            Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Head").Value;
             Vector2 drawPosition = npc.Center - Main.screenPosition;
             Vector2 headTextureOrigin = headTexture.Size() * 0.5f;
 
-            Texture2D jawTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Jaw");
+            Texture2D jawTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1Jaw").Value;
             Vector2 jawOrigin = jawTexture.Size() * 0.5f;
 
             for (int i = -1; i <= 1; i += 2)
@@ -323,7 +323,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             Rectangle headFrame = headTexture.Frame();
             spriteBatch.Draw(headTexture, drawPosition, headFrame, npc.GetAlpha(lightColor), npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
 
-            Texture2D glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1HeadGlow");
+            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP1HeadGlow").Value;
             spriteBatch.Draw(glowmaskTexture, drawPosition, headFrame, Color.White, npc.rotation, headTextureOrigin, npc.scale, spriteEffects, 0f);
             return false;
         }

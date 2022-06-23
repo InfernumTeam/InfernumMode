@@ -55,7 +55,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/AstrumAureus/AstralMissileGlowmask");
+            Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/AstrumAureus/AstralMissileGlowmask").Value;
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 1);
             Utilities.DrawAfterimagesCentered(Projectile, Color.White, ProjectileID.Sets.TrailingMode[Projectile.type], 1, glowmask);
             return false;

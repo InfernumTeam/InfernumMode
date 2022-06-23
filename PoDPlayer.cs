@@ -101,7 +101,7 @@ namespace InfernumMode
             ShadowflameInferno = false;
             DarkFlames = false;
 
-            if (PoDWorld.InfernumMode)
+            if (WorldSaveSystem.InfernumMode)
                 Player.respawnTimer = Utils.Clamp(Player.respawnTimer - 1, 0, 3600);
         }
         #endregion
@@ -198,11 +198,11 @@ namespace InfernumMode
             }
 
             // Ensure that Revengeance Mode is always active while Infernum is active.
-            if (PoDWorld.InfernumMode && !CalamityWorld.revenge)
+            if (WorldSaveSystem.InfernumMode && !CalamityWorld.revenge)
                 CalamityWorld.revenge = true;
 
             // Ensure that Malice Mode is never active while Infernum is active.
-            if (PoDWorld.InfernumMode && CalamityWorld.malice)
+            if (WorldSaveSystem.InfernumMode && CalamityWorld.malice)
             {
                 CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.MaliceText2", Color.Crimson);
                 CalamityWorld.malice = false;

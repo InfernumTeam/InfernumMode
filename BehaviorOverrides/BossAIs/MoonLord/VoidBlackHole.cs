@@ -95,7 +95,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D blackHoleTexture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
+            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             spriteBatch.EnterShaderRegion();

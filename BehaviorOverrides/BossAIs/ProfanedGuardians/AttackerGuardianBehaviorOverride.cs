@@ -1,8 +1,10 @@
 using CalamityMod.Events;
+using CalamityMod.Items.Armor.Silva;
 using CalamityMod.NPCs;
 using CalamityMod.NPCs.ProfanedGuardians;
 using CalamityMod.Projectiles.Boss;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -25,16 +27,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
         }
 
         public static int TotalRemaininGuardians =>
-            NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianBoss>()).ToInt() +
-            NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianBoss2>()).ToInt() +
-            NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianBoss3>()).ToInt();
+            NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianCommander>()).ToInt() +
+            NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianDefender>()).ToInt() +
+            NPC.AnyNPCs(ModContent.NPCType<ProfanedGuardianHealer>()).ToInt();
 
         public const float ImmortalUntilPhase2LifeRatio = 0.75f;
         public const float Subphase2LifeRatio = 0.6f;
         public const float Subphase3LifeRatio = 0.45f;
         public const float Subphase4LifeRatio = 0.25f;
 
-        public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianBoss>();
+        public override int NPCOverrideType => ModContent.NPCType<ProfanedGuardianCommander>();
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI;
 
@@ -45,8 +47,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Summon the defender and healer guardian.
             if (Main.netMode != NetmodeID.MultiplayerClient && npc.localAI[1] == 0f)
             {
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianBoss3>());
-                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianBoss2>());
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianDefender>());
+                NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.Center.X, (int)npc.Center.Y, ModContent.NPCType<ProfanedGuardianHealer>());
                 npc.localAI[1] = 1f;
             }
 
@@ -371,8 +373,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             if (attackTimer == teleportDelay)
             {
                 // Play the fire sound.
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SilvaDispel"), target.Center);
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                SoundEngine.PlaySound(SilvaHeadSummon.DispelSound, target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
 
                 // And create the fire dust visuals.
                 for (int i = 0; i < 75; i++)
@@ -410,7 +412,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.ProfanedGuardians
             // Charge and release spears.
             if (attackTimer == teleportDelay + reelbackTime)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {

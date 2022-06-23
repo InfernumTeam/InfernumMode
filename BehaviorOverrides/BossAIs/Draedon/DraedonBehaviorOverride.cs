@@ -4,9 +4,11 @@ using CalamityMod.NPCs.ExoMechs.Apollo;
 using CalamityMod.NPCs.ExoMechs.Ares;
 using CalamityMod.NPCs.ExoMechs.Artemis;
 using CalamityMod.NPCs.ExoMechs.Thanatos;
+using CalamityMod.Sounds;
 using CalamityMod.World;
 using InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -47,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 npc.TargetClosest(false);
                 playerToFollow = Main.player[npc.target];
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonTeleport"), playerToFollow.Center);
+                SoundEngine.PlaySound(TeleportSound, playerToFollow.Center);
             }
 
             // Pick someone else to pay attention to if the old target is gone.
@@ -170,12 +172,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                 if (Main.netMode != NetmodeID.Server)
                 {
-                    var sound = SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/FlareSound"), playerToFollow.Center);
-                    if (sound != null)
-                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.55f, 0f, 1f);
-                    sound = SoundEngine.PlaySound(InfernumMode.Instance.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ExoMechIntro"), playerToFollow.Center);
-                    if (sound != null)
-                        sound.Volume = MathHelper.Clamp(sound.Volume * 1.5f, 0f, 1f);
+                    SoundEngine.PlaySound(CommonCalamitySounds.FlareSound with { Volume = 1.55f }, playerToFollow.Center);
+                    SoundEngine.PlaySound(InfernumSoundRegistry.ExoMechIntroSound with { Volume = 1.5f }, playerToFollow.Center);
                 }
             }
 
@@ -212,7 +210,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine)
                     {
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonLaugh"), playerToFollow.Center);
+                        SoundEngine.PlaySound(LaughSound, playerToFollow.Center);
                         Utilities.DisplayText("Go on. Continue feeding information to my machines.", TextColorEdgy);
                     }
 
@@ -250,7 +248,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
 
                     if (talkTimer == ExoMechPhaseDialogueTime + DelayPerDialogLine * 2f)
                     {
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/DraedonLaugh"), playerToFollow.Center);
+                        SoundEngine.PlaySound(LaughSound, playerToFollow.Center);
                         if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
                             CalamityUtils.DisplayLocalizedText("Mods.CalamityMod.DraedonExoPhase6Text3", TextColor);
@@ -271,12 +269,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 if (npc.ModNPC<DraedonNPC>().DefeatTimer <= 0f)
                 {
-                    npc.ModNPC.Music = InfernumMode.CalamityMod.GetSoundSlot(SoundType.Music, "Sounds/Music/DraedonAmbience");
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.CalamityMod, "Sounds/Music/DraedonAmbience");
                     InfernumMode.DraedonThemeTimer = 0f;
                 }
                 else
                 {
-                    npc.ModNPC.Music = InfernumMode.Instance.GetSoundSlot(SoundType.Music, "Sounds/Music/Draedon");
+                    npc.ModNPC.Music = MusicLoader.GetMusicSlot(InfernumMode.Instance, "Sounds/Music/Draedon");
                     InfernumMode.DraedonThemeTimer = 1f;
                 }
             }

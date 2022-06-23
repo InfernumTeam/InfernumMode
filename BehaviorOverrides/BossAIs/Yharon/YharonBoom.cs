@@ -91,7 +91,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
 
             float pulseCompletionRatio = Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true);
             Vector2 scale = new(1.5f, 1f);
-            DrawData drawData = new(ModContent.GetTexture("Terraria/Misc/Perlin"),
+            DrawData drawData = new(ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value,
                 Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
                 new Color(new Vector4(1f - (float)Math.Sqrt(pulseCompletionRatio))) * 0.7f * Projectile.Opacity,

@@ -1039,11 +1039,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DukeFishron
             if (npc.Infernum().OptionalPrimitiveDrawer is null)
                 npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(WidthFunction, ColorFunction, null, true, GameShaders.Misc["Infernum:DukeTornado"]);
 
-            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/VoronoiShapes"));
+            GameShaders.Misc["Infernum:DukeTornado"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/VoronoiShapes")).Value;
 
             bool hasEyes = npc.Infernum().ExtraAI[9] == 1f || npc.Infernum().ExtraAI[11] > 0f;
-            Texture2D eyeTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronGlowmask");
-            Texture2D dukeTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronResprite");
+            Texture2D eyeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronGlowmask").Value;
+            Texture2D dukeTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DukeFishron/DukeFishronResprite").Value;
             Vector2 origin = npc.frame.Size() * 0.5f;
             void DrawOldDukeInstance(Color color, Vector2 drawPosition, int direction)
             {

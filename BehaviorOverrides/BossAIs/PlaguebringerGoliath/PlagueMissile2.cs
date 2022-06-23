@@ -50,7 +50,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glowmask = ModContent.GetTexture(Texture.Replace("2", string.Empty) + "Glowmask");
+            Texture2D glowmask = ModContent.Request<Texture2D>(Texture.Replace("2", string.Empty) + "Glowmask").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             // Draw afterimages.

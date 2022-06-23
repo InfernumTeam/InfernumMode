@@ -119,7 +119,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.WallOfFlesh
 
             GameShaders.Misc["Infernum:WoFGeyserTexture"].UseSaturation(-1f);
             GameShaders.Misc["Infernum:WoFGeyserTexture"].UseColor(Color.Lerp(Color.Orange, Color.Red, 0.5f));
-            GameShaders.Misc["Infernum:WoFGeyserTexture"].SetShaderTexture(ModContent.GetTexture("Terraria/Misc/Perlin"));
+            GameShaders.Misc["Infernum:WoFGeyserTexture"].SetShaderTexture(ModContent.Request<Texture2D>("Terraria/Misc/Perlin")).Value;
 
             List<Vector2> points = new();
             for (int i = 0; i <= 8; i++)

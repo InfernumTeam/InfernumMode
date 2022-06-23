@@ -57,7 +57,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             spriteBatch.EnterShaderRegion();
 
             float fade = Utils.GetLerpValue(0f, 45f, Time, true) * Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
-            Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
+            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
             Vector2 drawPosition2 = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);

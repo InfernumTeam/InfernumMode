@@ -83,10 +83,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
                 case 0:
                     break;
                 case 1:
-                    texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/SporeCloud2");
+                    texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/SporeCloud2").Value;
                     break;
                 case 2:
-                    texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/SporeCloud3");
+                    texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/SporeCloud3").Value;
                     break;
                 default:
                     break;

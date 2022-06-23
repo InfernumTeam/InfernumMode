@@ -934,23 +934,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
         {
             Main.projFrames[npc.type] = 12;
 
-            Texture2D subphase1Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen1");
-            Texture2D subphase1TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen1Glow");
+            Texture2D subphase1Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen1").Value;
+            Texture2D subphase1TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen1Glow").Value;
 
-            Texture2D subphase2Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen2");
-            Texture2D subphase2TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen2Glow");
+            Texture2D subphase2Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen2").Value;
+            Texture2D subphase2TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen2Glow").Value;
 
-            Texture2D subphase3Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen3");
-            Texture2D subphase3TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen3Glow");
+            Texture2D subphase3Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen3").Value;
+            Texture2D subphase3TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen3Glow").Value;
 
-            Texture2D subphase4Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen4");
-            Texture2D subphase4TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen4Glow");
+            Texture2D subphase4Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen4").Value;
+            Texture2D subphase4TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen4Glow").Value;
 
-            Texture2D subphase5Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen5");
-            Texture2D subphase5TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen5Glow");
+            Texture2D subphase5Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen5").Value;
+            Texture2D subphase5TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen5Glow").Value;
 
-            Texture2D subphase6Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen6");
-            Texture2D subphase6TextureGlow = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen6Glow");
+            Texture2D subphase6Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen6").Value;
+            Texture2D subphase6TextureGlow = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/Cryogen6Glow").Value;
 
             Texture2D drawTexture = subphase1Texture;
             Texture2D glowTexture = subphase1TextureGlow;

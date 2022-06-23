@@ -1,3 +1,4 @@
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -42,13 +43,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.DrawLineBetter(Projectile.Center - Vector2.UnitY * 4000f, Projectile.Center + Vector2.UnitY * 4000f, Color.Red, Projectile.scale * 4f);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center - Vector2.UnitY * 4000f, Projectile.Center + Vector2.UnitY * 4000f, Color.Red, Projectile.scale * 4f);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), Projectile.Center);
+            SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

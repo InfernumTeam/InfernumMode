@@ -70,31 +70,31 @@ namespace InfernumMode.BehaviorOverrides.MinibossAIs.Betsy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMolten");
-            Texture2D glowmask = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMoltenGlow");
+            Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMolten").Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMoltenGlow").Value;
             switch ((int)Projectile.ai[0])
             {
                 case 0:
                     break;
                 case 1:
-                    texture = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMolten2");
-                    glowmask = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMoltenGlow2");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMolten2").Value;
+                    glowmask = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMoltenGlow2").Value;
                     break;
                 case 2:
-                    texture = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMolten3");
-                    glowmask = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMoltenGlow3");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMolten3").Value;
+                    glowmask = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMoltenGlow3").Value;
                     break;
                 case 3:
-                    texture = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMolten4");
-                    glowmask = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMoltenGlow4");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMolten4").Value;
+                    glowmask = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMoltenGlow4").Value;
                     break;
                 case 4:
-                    texture = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMolten5");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMolten5").Value;
                     glowmask = null;
                     break;
                 case 5:
-                    texture = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMolten6");
-                    glowmask = ModContent.GetTexture("CalamityMod/Projectiles/Magic/AsteroidMoltenGlow6");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMolten6").Value;
+                    glowmask = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Magic/AsteroidMoltenGlow6").Value;
                     break;
                 default:
                     break;

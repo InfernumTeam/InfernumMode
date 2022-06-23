@@ -954,7 +954,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.OldDuke
 
             SpriteEffects spriteEffects = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
-            Texture2D eyeTexture = ModContent.GetTexture("CalamityMod/NPCs/OldDuke/OldDukeGlow");
+            Texture2D eyeTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/OldDuke/OldDukeGlow").Value;
             Vector2 origin = new(texture.Width / 2, texture.Height / Main.npcFrameCount[npc.type] / 2);
             Color color = lightColor;
             Color eyeColor = Color.Lerp(Color.White, Color.Yellow, 0.5f);

@@ -116,7 +116,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D mushroomTexture = ModContent.GetTexture(Texture);
+            Texture2D mushroomTexture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 aimDirection = Vector2.UnitY.RotatedBy(Projectile.rotation);
             if (Time < 60f)
             {
@@ -138,7 +138,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Crabulon
 
         public void DrawStalk(SpriteBatch spriteBatch, Vector2 scale, Vector2 aimDirection, Texture2D mushroomTexture, ref float tipBottom)
         {
-            Texture2D pillarTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/MushroomPillarPiece");
+            Texture2D pillarTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Crabulon/MushroomPillarPiece").Value;
 
             UnifiedRandom sproutRNG = new(Projectile.identity);
             for (int i = pillarTexture.Height; i < CurrentHeight + pillarTexture.Height; i += pillarTexture.Height)

@@ -20,7 +20,7 @@ namespace InfernumMode.BaseEntities
 
         public virtual float MinScale { get; } = 1.2f;
         public virtual float MaxScale { get; } = 5f;
-        public virtual Texture2D ExplosionNoiseTexture => ModContent.GetTexture("Terraria/Misc/Perlin");
+        public virtual Texture2D ExplosionNoiseTexture => ModContent.Request<Texture2D>("Terraria/Misc/Perlin").Value;
         public abstract int Lifetime { get; }
         public abstract float MaxRadius { get; }
         public abstract float RadiusExpandRateInterpolant { get; }

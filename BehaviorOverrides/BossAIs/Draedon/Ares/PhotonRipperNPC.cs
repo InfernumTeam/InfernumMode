@@ -315,10 +315,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
             // Locate Ares' body as an npc.
             NPC aresBody = Main.npc[CalamityGlobalNPC.draedonExoMechPrime];
-            Texture2D texture = ModContent.GetTexture(Texture);
-            Texture2D glowmaskTexture = ModContent.GetTexture("CalamityMod/Projectiles/Melee/PhotonRipperGlowmask");
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Melee/PhotonRipperGlowmask").Value;
             if (NPC.Infernum().ExtraAI[1] == 0f)
-                glowmaskTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/PhotonRipperGlowmask");
+                glowmaskTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/PhotonRipperGlowmask").Value;
 
             Rectangle glowmaskFrame = glowmaskTexture.Frame(1, 6, 0, (int)(Main.GlobalTimeWrappedHourly * 13f) % 6);
             Vector2 origin = glowmaskFrame.Size() * 0.5f;

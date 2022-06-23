@@ -46,8 +46,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Plantera
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tipTexture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D body1Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Plantera/NettlevineArenaSeparatorBody1");
-            Texture2D body2Texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Plantera/NettlevineArenaSeparatorBody2");
+            Texture2D body1Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Plantera/NettlevineArenaSeparatorBody1").Value;
+            Texture2D body2Texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Plantera/NettlevineArenaSeparatorBody2").Value;
             Vector2 bodyOrigin = body1Texture.Size() * new Vector2(0.5f, 1f);
             Vector2 tipOrigin = tipTexture.Size() * new Vector2(0.5f, 1f);
             Vector2 currentDrawPosition = StartingPosition;

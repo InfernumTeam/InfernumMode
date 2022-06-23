@@ -77,7 +77,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         {
             spriteBatch.SetBlendState(BlendState.Additive);
 
-            Texture2D texture = ModContent.GetTexture(Texture);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             for (int j = 0; j < 16f; j++)
             {
                 float angle = MathHelper.TwoPi / j * 16f;

@@ -21,7 +21,7 @@ namespace InfernumMode.ILEditingStuff
 
             bool renderingText = false;
             Rectangle mouseRectangle = Utils.CenteredRectangle(Main.MouseScreen, Vector2.One * 2f);
-            Texture2D iconTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/InfernumIcon");
+            Texture2D iconTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/InfernumIcon").Value;
 
             Rectangle areaFrame = iconTexture.Frame();
             Vector2 drawCenter = new Vector2(Main.screenWidth - 400f, 72f) + areaFrame.Size() * 0.5f;
@@ -65,7 +65,7 @@ namespace InfernumMode.ILEditingStuff
             cursor.Index = 0;
             cursor.EmitDelegate<Action>(() =>
             {
-                if (PoDWorld.InfernumMode)
+                if (WorldSaveSystem.InfernumMode)
                     DrawInfernumModeUI();
             });
 
@@ -176,7 +176,7 @@ namespace InfernumMode.ILEditingStuff
             int deathDamage = contactDamage[3] == -1 ? -1 : (int)Math.Round(contactDamage[3] / damageAdjustment);
 
             // If the assigned value would be -1, don't actually assign it. This allows for conditionally disabling the system.
-            int damageToUse = (CalamityWorld.death || PoDWorld.InfernumMode) ? deathDamage : CalamityWorld.revenge ? revengeanceDamage : Main.expertMode ? expertDamage : normalDamage;
+            int damageToUse = (CalamityWorld.death || WorldSaveSystem.InfernumMode) ? deathDamage : CalamityWorld.revenge ? revengeanceDamage : Main.expertMode ? expertDamage : normalDamage;
             if (CalamityWorld.malice && damageToUse != -1)
                 damageToUse = (int)Math.Round(damageToUse * CalamityGlobalNPC.MaliceModeDamageMultiplier);
             if (damageToUse != -1)

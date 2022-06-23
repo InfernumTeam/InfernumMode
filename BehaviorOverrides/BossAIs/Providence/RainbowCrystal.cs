@@ -159,13 +159,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
             MiscShaderData gradientShader = GameShaders.Misc["Infernum:GradientWingShader"];
             gradientShader.UseImage("Images/Misc/Noise");
             gradientShader.UseOpacity(1.2f);
-            gradientShader.SetShaderTexture(ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTexture"));
+            gradientShader.SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Providence/ProvidenceShaderTexture")).Value;
 
             gradientShader.Apply();
             gradientShader.Shader.Parameters["uTime"].SetValue(Main.GlobalTimeWrappedHourly + CrystalHue * MathHelper.TwoPi);
             gradientShader.Shader.CurrentTechnique.Passes[0].Apply();
 
-            Texture2D crystalTexture = ModContent.GetTexture(Texture);
+            Texture2D crystalTexture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 crystalOrigin = crystalTexture.Size() * 0.5f;
             Vector2 crystalDrawPosition = Projectile.Center - Main.screenPosition;
             spriteBatch.Draw(crystalTexture, crystalDrawPosition, null, Color.White, Projectile.rotation, crystalOrigin, Projectile.scale, SpriteEffects.None, 0f);

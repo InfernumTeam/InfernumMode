@@ -101,7 +101,7 @@ namespace InfernumMode.GlobalInstances
         #region Get Alpha
         public override Color? GetAlpha(NPC npc, Color drawColor)
         {
-            if (npc.type == ModContent.NPCType<CalamitasClone>() && PoDWorld.InfernumMode)
+            if (npc.type == ModContent.NPCType<CalamitasClone>() && WorldSaveSystem.InfernumMode)
             {
                 bool brotherAlive = false;
                 if (CalamityGlobalNPC.cataclysm != -1)
@@ -118,7 +118,7 @@ namespace InfernumMode.GlobalInstances
                         brotherAlive = true;
                     }
                 }
-                if (PoDWorld.InfernumMode && brotherAlive)
+                if (WorldSaveSystem.InfernumMode && brotherAlive)
                     return new Color(100, 0, 0, 127);
             }
             return base.GetAlpha(npc, drawColor);
@@ -608,7 +608,7 @@ namespace InfernumMode.GlobalInstances
 
         public override void OnHitPlayer(NPC npc, Player target, int damage, bool crit)
         {
-            if (!PoDWorld.InfernumMode)
+            if (!WorldSaveSystem.InfernumMode)
                 return;
 
             if (npc.type == ModContent.NPCType<Crabulon>())

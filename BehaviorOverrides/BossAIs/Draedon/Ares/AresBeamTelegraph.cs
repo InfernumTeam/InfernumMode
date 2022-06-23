@@ -59,7 +59,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D laserTelegraph = ModContent.GetTexture("CalamityMod/ExtraTextures/LaserWallTelegraphBeam");
+            Texture2D laserTelegraph = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam").Value;
 
             float verticalScale = Utils.GetLerpValue(0f, 10f, Time, true) * Utils.GetLerpValue(0f, 7f, Projectile.timeLeft, true) * 4f;
 

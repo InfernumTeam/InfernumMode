@@ -1842,7 +1842,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
             if (giantTwinkleSize > 0f)
             {
                 float twinkleScale = giantTwinkleSize * 4.75f;
-                Texture2D twinkleTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/LargeStar");
+                Texture2D twinkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
                 Vector2 drawPosition = npc.Center - Main.screenPosition;
                 float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 7.13f;
 

@@ -1278,7 +1278,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Perforators
 
             spriteBatch.Draw(texture, baseDrawPosition, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, direction, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/Perforator/PerforatorHiveGlow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Perforator/PerforatorHiveGlow").Value;
             Color glowmaskColor = Color.Lerp(Color.White, Color.Yellow, 0.5f);
 
             spriteBatch.Draw(texture, baseDrawPosition, npc.frame, glowmaskColor, npc.rotation, origin, npc.scale, direction, 0f);

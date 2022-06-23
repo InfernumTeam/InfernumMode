@@ -693,8 +693,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
 
                 if (npc.ai[0] == 4f)
                 {
-                    NPCTexture = ModContent.GetTexture("CalamityMod/NPCs/Signus/SignusAlt2");
-                    glowMaskTexture = ModContent.GetTexture("CalamityMod/NPCs/Signus/SignusAlt2Glow");
+                    NPCTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/SignusAlt2").Value;
+                    glowMaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/SignusAlt2Glow").Value;
                     afterimageCount = 10;
                     int frameY = 94 * (int)(npc.frameCounter / 12.0);
                     if (frameY >= 94 * 6)
@@ -703,14 +703,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Signus
                 }
                 else if (npc.ai[0] == 3f)
                 {
-                    NPCTexture = ModContent.GetTexture("CalamityMod/NPCs/Signus/SignusAlt");
-                    glowMaskTexture = ModContent.GetTexture("CalamityMod/NPCs/Signus/SignusAltGlow");
+                    NPCTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/SignusAlt").Value;
+                    glowMaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/SignusAltGlow").Value;
                     afterimageCount = 7;
                 }
                 else
                 {
                     NPCTexture = TextureAssets.Npc[npc.type].Value;
-                    glowMaskTexture = ModContent.GetTexture("CalamityMod/NPCs/Signus/SignusGlow");
+                    glowMaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/Signus/SignusGlow").Value;
                 }
 
                 Vector2 origin = new(NPCTexture.Width / 2, NPCTexture.Height / frameCount / 2);

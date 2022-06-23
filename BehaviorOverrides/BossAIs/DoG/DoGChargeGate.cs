@@ -97,7 +97,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Time >= Lifetime - 45f)
                 fade = Utils.GetLerpValue(Lifetime, Lifetime - 45f, Time, true);
 
-            Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
+            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 origin2 = noiseTexture.Size() * 0.5f;
             if (NoTelegraph)
@@ -114,7 +114,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
                 return false;
             }
 
-            Texture2D laserTelegraph = ModContent.GetTexture("CalamityMod/ExtraTextures/LaserWallTelegraphBeam");
+            Texture2D laserTelegraph = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam").Value;
             float yScale = 2f;
             if (TelegraphDelay < TelegraphFadeTime)
             {

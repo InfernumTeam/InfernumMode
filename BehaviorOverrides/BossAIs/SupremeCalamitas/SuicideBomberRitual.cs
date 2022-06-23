@@ -49,8 +49,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/SuicideBomberRitual");
-            Texture2D innerCircle = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/SuicideBomberRitualCircleInner");
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/SuicideBomberRitual").Value;
+            Texture2D innerCircle = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/SuicideBomberRitualCircleInner").Value;
             Color color = Projectile.GetAlpha(Color.Lerp(Color.Red, Color.Blue, Projectile.identity / 6f % 1f));
             Color color2 = Projectile.GetAlpha(Color.Lerp(Color.Red, Color.Blue, (Projectile.identity / 6f + 0.27f) % 1f));
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;

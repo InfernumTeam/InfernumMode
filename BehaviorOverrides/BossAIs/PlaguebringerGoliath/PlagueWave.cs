@@ -58,7 +58,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
 
             float pulseCompletionRatio = Utils.GetLerpValue(Lifetime, 0f, Projectile.timeLeft, true);
             Vector2 scale = new(1.5f, 1f);
-            DrawData drawData = new(ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/NecroplasmicRoar"),
+            DrawData drawData = new(ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/NecroplasmicRoar").Value,
                 Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
                 new Color(new Vector4(1f - (float)Math.Sqrt(pulseCompletionRatio))) * 0.7f * Projectile.Opacity,

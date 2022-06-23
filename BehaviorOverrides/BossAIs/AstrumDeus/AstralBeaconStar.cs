@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D sparkleTexture = ModContent.GetTexture(Texture);
+            Texture2D sparkleTexture = ModContent.Request<Texture2D>(Texture).Value;
 
             Color sparkleColor = CalamityUtils.MulticolorLerp(ColorSpectrumHue, new Color(237, 93, 83), new Color(255, 164, 94), new Color(109, 242, 196)) * Projectile.Opacity * 0.75f;
             sparkleColor.A = 0;

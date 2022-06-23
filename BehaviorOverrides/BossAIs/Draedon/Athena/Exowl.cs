@@ -291,7 +291,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-            Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/Exowl_Glowmask");
+            Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Athena/Exowl_Glowmask").Value;
             Vector2 origin = NPC.frame.Size() * 0.5f;
 
             void drawInstance(Vector2 drawPosition, bool drawThrusters, Color? colorOverride = null)
@@ -318,7 +318,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 if (drawThrusters)
                 {
                     // Prepare the flame trail shader with its map texture.
-                    GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+                    GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak")).Value;
 
                     // Draw a flame trail on the thrusters.
                     for (int direction = -1; direction <= 1; direction += 2)

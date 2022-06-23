@@ -54,8 +54,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CeaselessVoid
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D glowmask1 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergyGlow");
-            Texture2D glowmask2 = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergyGlow2");
+            Texture2D glowmask1 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergyGlow").Value;
+            Texture2D glowmask2 = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/CeaselessVoid/DarkEnergyGlow2").Value;
 
             lightColor.A = 0;
 

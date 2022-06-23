@@ -1,7 +1,7 @@
+using CalamityMod;
 using CalamityMod.Events;
-using CalamityMod.World;
+using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -35,13 +35,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.CalamitasClone
 
         public override bool PreDraw(ref Color lightColor)
         {
-            spriteBatch.DrawLineBetter(Projectile.Center - Vector2.UnitY * 4000f, Projectile.Center + Vector2.UnitY * 4000f, Color.Red, Projectile.scale * 4f);
+            Main.spriteBatch.DrawLineBetter(Projectile.Center - Vector2.UnitY * 4000f, Projectile.Center + Vector2.UnitY * 4000f, Color.Red, Projectile.scale * 4f);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), Projectile.Center);
+            SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

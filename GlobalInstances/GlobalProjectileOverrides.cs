@@ -61,7 +61,7 @@ namespace InfernumMode.GlobalInstances
                     projectile.localAI[0] = 0f;
                 }
                 DelegateMethods.v3_1 = new Vector3(0f, 0.4f, 0.3f);
-                Utils.PlotTileLine(projectile.Center, playerCenter, 8f, new Utils.PerLinePoint(DelegateMethods.CastLightOpen));
+                Utils.PlotTileLine(projectile.Center, playerCenter, 8f, DelegateMethods.CastLightOpen);
             }
             if (projectile.type == 652)
             {
@@ -99,7 +99,7 @@ namespace InfernumMode.GlobalInstances
                 Lighting.AddLight(playerCenter, zero);
                 Lighting.AddLight(projectile.Center, zero);
                 DelegateMethods.v3_1 = zero;
-                Utils.PlotTileLine(projectile.Center, playerCenter, 8f, new Utils.PerLinePoint(DelegateMethods.CastLightOpen));
+                Utils.PlotTileLine(projectile.Center, playerCenter, 8f, DelegateMethods.CastLightOpen);
             }
 
             Vector2 adjustedCenter = projectile.Center - new Vector2(5f);
@@ -162,10 +162,6 @@ namespace InfernumMode.GlobalInstances
                     int num79 = num76;
                     while (num79 < num77)
                     {
-                        if (Main.tile[num78, num79] == null)
-                        {
-                            Main.tile[num78, num79] = new Tile();
-                        }
                         Vector2 vector8;
                         vector8.X = (float)(num78 * 16);
                         vector8.Y = (float)(num79 * 16);
@@ -241,7 +237,6 @@ namespace InfernumMode.GlobalInstances
                                 }
                             }
                             WorldGen.KillTile(num78, num79, true, true, false);
-                            SoundEngine.PlaySound(0, num78 * 16, num79 * 16, 1, 1f, 0f);
                             projectile.velocity.X = 0f;
                             projectile.velocity.Y = 0f;
                             projectile.ai[0] = 2f;
@@ -361,10 +356,6 @@ namespace InfernumMode.GlobalInstances
                 {
                     for (int num92 = num89; num92 < num90; num92 = num3 + 1)
                     {
-                        if (Main.tile[num91, num92] == null)
-                        {
-                            Main.tile[num91, num92] = new Tile();
-                        }
                         Vector2 vector9;
                         vector9.X = (float)(num91 * 16);
                         vector9.Y = (float)(num92 * 16);
@@ -466,14 +457,14 @@ namespace InfernumMode.GlobalInstances
 
                     for (int j = 0; j < 2; j++)
                     {
-                        spriteBatch.Draw(texture, baseDrawPosition + new Vector2(posX[i], posY[i]), null, color, rotation, origin, new Vector2(size[i]) * scale, SpriteEffects.None, 0);
-                        spriteBatch.Draw(texture, baseDrawPosition + new Vector2(posX[i], posY[i]), null, color, rotation, origin, new Vector2(size[i]) * scale, SpriteEffects.FlipVertically, 0);
+                        Main.spriteBatch.Draw(texture, baseDrawPosition + new Vector2(posX[i], posY[i]), null, color, rotation, origin, new Vector2(size[i]) * scale, SpriteEffects.None, 0);
+                        Main.spriteBatch.Draw(texture, baseDrawPosition + new Vector2(posX[i], posY[i]), null, color, rotation, origin, new Vector2(size[i]) * scale, SpriteEffects.FlipVertically, 0);
                     }
                 }
 
                 return false;
             }
-            return base.PreDraw(projectile, spriteBatch, lightColor);
+            return base.PreDraw(projectile, ref lightColor);
         }
 
         public override bool PreKill(Projectile projectile, int timeLeft)
@@ -490,11 +481,11 @@ namespace InfernumMode.GlobalInstances
                     for (int i = 0; i < 2; i++)
                     {
                         offsetAngle = startAngle + deltaAngle * (i + i * i) / 2f + 32f * i;
-                        Projectile.NewProjectile(shootFromVector, offsetAngle.ToRotationVector2() * 5f, ModContent.ProjectileType<HolyFire2>(), projectile.damage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(shootFromVector, offsetAngle.ToRotationVector2() * -5f, ModContent.ProjectileType<HolyFire2>(), projectile.damage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(projectile.GetSource_Death(), shootFromVector, offsetAngle.ToRotationVector2() * 5f, ModContent.ProjectileType<HolyFire2>(), projectile.damage, 0f, Main.myPlayer);
+                        Projectile.NewProjectile(projectile.GetSource_Death(), shootFromVector, offsetAngle.ToRotationVector2() * -5f, ModContent.ProjectileType<HolyFire2>(), projectile.damage, 0f, Main.myPlayer);
                     }
                 }
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), projectile.Center);
+                SoundEngine.PlaySound(HolyBlast.ImpactSound, projectile.Center);
                 int dustType = (int)CalamityDusts.ProfanedFire;
 
                 for (int i = 0; i < 6; i++)

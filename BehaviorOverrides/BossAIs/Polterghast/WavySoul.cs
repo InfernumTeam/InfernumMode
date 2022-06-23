@@ -64,9 +64,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/SoulMediumCyan");
+            Texture2D texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/SoulMediumCyan").Value;
             if (Projectile.whoAmI % 2 == 0)
-                texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/SoulLargeCyan");
+                texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Polterghast/SoulLargeCyan").Value;
 
             Utilities.DrawAfterimagesCentered(Projectile, lightColor, ProjectileID.Sets.TrailingMode[Projectile.type], 2, texture);
             return false;

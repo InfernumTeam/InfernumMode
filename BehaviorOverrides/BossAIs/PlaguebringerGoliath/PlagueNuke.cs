@@ -145,7 +145,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.PlaguebringerGoliath
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-            Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNukeGlowmask");
+            Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/PlaguebringerGoliath/PlagueNukeGlowmask").Value;
             Vector2 origin = NPC.frame.Size() * 0.5f;
             Vector2 drawPosition = NPC.Center - Main.screenPosition;
             Color color = NPC.GetAlpha(drawColor);

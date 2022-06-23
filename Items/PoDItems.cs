@@ -72,7 +72,7 @@ namespace InfernumMode
         {
             if (item.type == ItemID.RodofDiscord && (NPC.AnyNPCs(ModContent.NPCType<DevourerofGodsHead>())))
             {
-                if (PoDWorld.InfernumMode)
+                if (WorldSaveSystem.InfernumMode)
                 {
                     DoGTeleportDenialText(player, item);
                     return false;

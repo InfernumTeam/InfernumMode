@@ -60,7 +60,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D glowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Thanatos/RefractionRotorGlowmask");
+            Texture2D glowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Thanatos/RefractionRotorGlowmask").Value;
             Vector2 origin = texture.Size() * 0.5f;
             float pulseInterpolant = Utils.GetLerpValue(60f, 45f, Projectile.timeLeft, true);
             Color pulseColor = Color.Lerp(Color.White, Color.Red, (float)Math.Sin(Projectile.identity + Main.GlobalTimeWrappedHourly * 9.1f));

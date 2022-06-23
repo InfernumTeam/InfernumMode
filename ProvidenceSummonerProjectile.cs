@@ -147,7 +147,7 @@ namespace InfernumMode
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = ModContent.GetTexture(Texture);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 
             for (int i = 0; i < 8; i++)
             {

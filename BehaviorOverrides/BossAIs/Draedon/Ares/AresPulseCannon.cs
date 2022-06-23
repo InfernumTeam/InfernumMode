@@ -301,7 +301,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Ares
             ExoMechAIUtilities.DrawAresArmTelegraphEffect(Main.spriteBatch, NPC, Color.Violet, texture, center, frame, origin);
             Main.spriteBatch.Draw(texture, center, frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/AresPulseCannonGlow");
+            texture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Draedon/Ares/AresPulseCannonGlow").Value;
 
             if (CalamityConfig.Instance.Afterimages)
             {

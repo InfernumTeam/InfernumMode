@@ -63,7 +63,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Yharon
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D sparkleTexture = ModContent.GetTexture(Texture);
+            Texture2D sparkleTexture = ModContent.Request<Texture2D>(Texture).Value;
 
             Color sparkleColor = CalamityUtils.MulticolorLerp(ColorSpectrumHue, Color.Orange, Color.Purple, Color.Pink, Color.Green) * Projectile.Opacity * 0.5f;
             sparkleColor.A = 0;

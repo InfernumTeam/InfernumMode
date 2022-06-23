@@ -219,11 +219,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 FlameTrailDrawer = new PrimitiveTrail(FlameTrailWidthFunction, FlameTrailColorFunction, null, GameShaders.Misc["CalamityMod:ImpFlameTrail"]);
 
             // Prepare the flame trail shader with its map texture.
-            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+            GameShaders.Misc["CalamityMod:ImpFlameTrail"].SetShaderTexture(ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/ScarletDevilStreak")).Value;
 
-            Texture2D texture = ModContent.GetTexture("CalamityMod/Projectiles/Typeless/SuicideBomberDemon");
-            Texture2D glowmask = ModContent.GetTexture("CalamityMod/Projectiles/Typeless/SuicideBomberDemonGlowmask");
-            Texture2D orbTexture = ModContent.GetTexture("CalamityMod/Projectiles/Typeless/SuicideBomberDemonOrb");
+            Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Typeless/SuicideBomberDemon").Value;
+            Texture2D glowmask = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Typeless/SuicideBomberDemonGlowmask").Value;
+            Texture2D orbTexture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/Typeless/SuicideBomberDemonOrb").Value;
             Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             SpriteEffects direction = Projectile.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

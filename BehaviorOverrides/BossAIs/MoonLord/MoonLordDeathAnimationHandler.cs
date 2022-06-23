@@ -64,7 +64,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             // Create bloom on the core.
             if (coreBloomPower > 0f)
             {
-                Texture2D bloomCircle = ModContent.GetTexture("CalamityMod/ExtraTextures/THanosAura");
+                Texture2D bloomCircle = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/THanosAura").Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
                 Vector2 bloomSize = new Vector2(200f) / bloomCircle.Size() * (float)Math.Pow(coreBloomPower, 2D);
                 bloomSize *= 1f + (rayExpandFactor - 1f) * 2f;
@@ -78,7 +78,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
             if (giantTwinkleSize > 0f)
             {
                 float twinkleScale = giantTwinkleSize * 10f;
-                Texture2D twinkleTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/LargeStar");
+                Texture2D twinkleTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/LargeStar").Value;
                 Vector2 drawPosition = Projectile.Center - Main.screenPosition;
                 float secondaryTwinkleRotation = Main.GlobalTimeWrappedHourly * 5.13f;
 

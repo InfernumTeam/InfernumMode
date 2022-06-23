@@ -1026,12 +1026,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             float jawRotation = npc.Infernum().ExtraAI[20];
 
-            Texture2D headTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Head");
-            Texture2D glowTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2HeadGlow");
-            Texture2D jawTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Jaw");
-            Texture2D headTextureAntimatter = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2HeadAntimatter");
-            Texture2D glowTextureAntimatter = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2HeadGlowAntimatter");
-            Texture2D jawTextureAntimatter = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2JawAntimatter");
+            Texture2D headTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Head").Value;
+            Texture2D glowTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2HeadGlow").Value;
+            Texture2D jawTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2Jaw").Value;
+            Texture2D headTextureAntimatter = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2HeadAntimatter").Value;
+            Texture2D glowTextureAntimatter = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2HeadGlowAntimatter").Value;
+            Texture2D jawTextureAntimatter = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/DoG/DoGP2JawAntimatter").Value;
 
             npc.frame = new Rectangle(0, 0, headTexture.Width, headTexture.Height);
             if (npc.Size != headTexture.Size())

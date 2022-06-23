@@ -1,6 +1,7 @@
 using CalamityMod;
 using CalamityMod.Buffs.DamageOverTime;
 using CalamityMod.Dusts;
+using CalamityMod.Projectiles.Boss;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -60,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), Projectile.Center);
+            SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);
 
             int dustType = Main.rand.NextBool(6) ? ModContent.DustType<AstralBlue>() : ModContent.DustType<AstralOrange>();
             for (int i = 0; i < 35; i++)

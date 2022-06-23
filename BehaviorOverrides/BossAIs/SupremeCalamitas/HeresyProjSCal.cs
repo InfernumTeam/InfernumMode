@@ -96,7 +96,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
         public override bool PreDraw(ref Color lightColor)
         {
             float glowOutwardness = MathHelper.SmoothStep(0f, 5.6f, Utils.GetLerpValue(30f, ChargeupTime, Time, true));
-            Texture2D bookTexture = ModContent.GetTexture(Texture);
+            Texture2D bookTexture = ModContent.Request<Texture2D>(Texture).Value;
             Rectangle frame = bookTexture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
             Vector2 drawPosition;
             Vector2 origin = frame.Size() * 0.5f;

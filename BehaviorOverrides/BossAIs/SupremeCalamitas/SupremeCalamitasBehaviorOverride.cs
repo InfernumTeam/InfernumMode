@@ -175,7 +175,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                         if ((i == left || i == right || j == top || j == bottom) && !Main.tile[i, j].HasTile)
                         {
                             Main.tile[i, j].TileType = (ushort)arenaTileType;
-                            Main.tile[i, j].HasTile = true;
+                            Main.tile[i, j].Get<TileWallWireStateData>().HasTile = true;
                             if (Main.netMode == NetmodeID.Server)
                                 NetMessage.SendTileSquare(-1, i, j, 1, TileChangeType.None);
                             else
@@ -405,10 +405,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 attackTimer % condemnationChargePuffRate == condemnationChargePuffRate - 1f)
             {
                 // Play a sound for additional notification that an arrow has been loaded.
-                var loadSound = SoundEngine.PlaySound(SoundID.Item108);
-                if (loadSound != null)
-                    loadSound.Volume *= 0.3f;
-
+                SoundEngine.PlaySound(SoundID.Item108 with { Volume = 0.3f });
                 Vector2 condemnationTip = condemnationRef.ModProjectile<CondemnationProj>().TipPosition;
                 for (int i = 0; i < 36; i++)
                 {
@@ -498,7 +495,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                     npc.velocity = npc.SafeDirectionTo(target.Center) * chargeSpeed;
                     ShieldRotation = npc.AngleTo(target.Center);
 
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/SCalDash"), npc.Center);
+                    SoundEngine.PlaySound(SCalBoss.DashSound, npc.Center);
 
                     // Release a bomb at the target.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -580,7 +577,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Release a burst of magic dust along with a brimstone hellblast skull once firing should happen.
             if (hasBegunFiring && attackTimer % hellblastShootRate == hellblastShootRate - 1f && attackTimer < shootDelay + shootTime)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneHellblastSound"), npc.Center);
+                SoundEngine.PlaySound(SCalBoss.HellblastSound, npc.Center);
 
                 for (int i = 0; i < 25; i++)
                 {
@@ -677,7 +674,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             // Release bursts of cinders.
             if (hasBegunFiring && attackTimer % shootRate == shootRate - 1f && attackTimer < chargeupTime + shootTime)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneHellblastSound"), npc.Center);
+                SoundEngine.PlaySound(SCalBoss.HellblastSound, npc.Center);
                 float cinderSpawnOffsetAngle = Main.rand.NextFloat(MathHelper.TwoPi);
                 for (int i = 0; i < cindersPerBurst; i++)
                 {
@@ -724,7 +721,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Create telegraph lines.
                 if (wrappedBombShootTimer <= bombShootDelay + telegraphTime && wrappedBombShootTimer % telegraphReleaseRate == telegraphReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneShoot"), target.Center);
+                    SoundEngine.PlaySound(SCalBoss.BrimstoneShotSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         float bombFireOffset = MathHelper.Lerp(-totalBombOffset, totalBombOffset, Utils.GetLerpValue(0f, telegraphTime, wrappedBombShootTimer - bombShootDelay)) * 0.5f;
@@ -768,7 +765,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 npc.Center = teleportPosition;
 
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SupremeCalamitasSpawn"), npc.Center);
+                SoundEngine.PlaySound(SCalBoss.SpawnSound, npc.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     int explosion = Utilities.NewProjectileBetter(npc.Center, Vector2.Zero, ModContent.ProjectileType<DemonicExplosion>(), 0, 0f);
@@ -830,7 +827,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 frameType = (int)SCalFrameType.OutwardHandCast;
             if (attackTimer % dartShootRate == dartShootRate - 1f && !doneAttacking && !npc.WithinRange(target.Center, 320f))
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneShoot"), target.Center);
+                SoundEngine.PlaySound(SCalBoss.BrimstoneShotSound, target.Center);
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     for (int i = 0; i < dartCount; i++)
@@ -948,8 +945,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (jewelRef != null && attackTimer == jewelChargeupTime)
             {
                 SoundEngine.PlaySound(InfernumSoundRegistry.CalThunderStrikeSound, npc.Center);
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), npc.Center);
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyRay"), npc.Center);
+                SoundEngine.PlaySound(HolyBlast.ImpactSound, npc.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyRaySound, npc.Center);
 
                 Vector2 aimDirection = (jewelRef.rotation + MathHelper.PiOver2).ToRotationVector2();
                 if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -973,7 +970,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 // Release darts.
                 if (attackTimer % dartReleaseRate == dartReleaseRate - 1f)
                 {
-                    SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/SCalSounds/BrimstoneShoot"), target.Center);
+                    SoundEngine.PlaySound(SCalBoss.BrimstoneShotSound, target.Center);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Vector2 dartVelocity = npc.SafeDirectionTo(target.Center) * dartShootSpeed;
@@ -1128,8 +1125,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 spriteEffects = SpriteEffects.FlipHorizontally;
 
             float berserkPhaseInterpolant = npc.ai[3];
-            Texture2D energyChargeupEffect = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/PowerEffect");
-            Texture2D texture2D15 = DownedBossSystem.downedSCal && !BossRushEvent.BossRushActive ? TextureAssets.Npc[npc.type].Value : ModContent.GetTexture("CalamityMod/NPCs/SupremeCalamitas/SupremeCalamitasHooded");
+            Texture2D energyChargeupEffect = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/SupremeCalamitas/PowerEffect").Value;
+            Texture2D texture2D15 = DownedBossSystem.downedSCal && !BossRushEvent.BossRushActive ? TextureAssets.Npc[npc.type].Value : ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeCalamitasHooded").Value;
 
             // Draw a chargeup effect behind SCal if berserk.
             if (berserkPhaseInterpolant > 0f)
@@ -1188,7 +1185,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             if (berserkPhaseInterpolant > 0f)
             {
                 float eyePulse = Main.GlobalTimeWrappedHourly * 0.84f % 1f;
-                Texture2D eyeGleam = ModContent.GetTexture("InfernumMode/ExtraTextures/Gleam");
+                Texture2D eyeGleam = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Gleam").Value;
                 Vector2 eyePosition = npc.Center + new Vector2(npc.spriteDirection * -4f, -14f);
                 Vector2 horizontalGleamScaleSmall = new Vector2(berserkPhaseInterpolant * 3f, 1f) * 0.36f;
                 Vector2 verticalGleamScaleSmall = new Vector2(1f, berserkPhaseInterpolant * 2f) * 0.36f;
@@ -1244,8 +1241,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
             intensity *= 0.75f;
             opacity *= 0.75f;
 
-            Texture2D forcefieldTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/CalamitasShield");
-            GameShaders.Misc["CalamityMod:SupremeShield"].UseImage("Images/Misc/Perlin");
+            Texture2D forcefieldTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/CalamitasShield").Value;
+            GameShaders.Misc["CalamityMod:SupremeShield"].UseImage1("Images/Misc/Perlin");
 
             Color forcefieldColor = Color.DarkViolet;
             Color secondaryForcefieldColor = Color.Red * 1.4f;
@@ -1285,8 +1282,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
                 jawRotationOffset += MathHelper.Lerp(0.04f, -0.82f, (float)Math.Sin(Main.GlobalTimeWrappedHourly * 17.2f) * 0.5f + 0.5f);
 
             Color shieldColor = Color.White * ShieldOpacity;
-            Texture2D shieldSkullTexture = ModContent.GetTexture("CalamityMod/NPCs/SupremeCalamitas/SupremeShieldTop");
-            Texture2D shieldJawTexture = ModContent.GetTexture("CalamityMod/NPCs/SupremeCalamitas/SupremeShieldBottom");
+            Texture2D shieldSkullTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeShieldTop").Value;
+            Texture2D shieldJawTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/SupremeCalamitas/SupremeShieldBottom").Value;
             Vector2 drawPosition = npc.Center + ShieldRotation.ToRotationVector2() * 24f - Main.screenPosition;
             Vector2 jawDrawPosition = drawPosition;
             SpriteEffects direction = Math.Cos(ShieldRotation) > 0 ? SpriteEffects.None : SpriteEffects.FlipVertically;

@@ -832,8 +832,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Polterghast
             bool enraged = npc.ai[3] == 1f;
             Vector2 baseDrawPosition = npc.Center - Main.screenPosition + Vector2.UnitY * npc.gfxOffY;
             Texture2D polterTexture = TextureAssets.Npc[npc.type].Value;
-            Texture2D polterGlowmaskEctoplasm = ModContent.GetTexture("CalamityMod/NPCs/Polterghast/PolterghastGlow");
-            Texture2D polterGlowmaskHeart = ModContent.GetTexture("CalamityMod/NPCs/Polterghast/PolterghastGlow2");
+            Texture2D polterGlowmaskEctoplasm = ModContent.Request<Texture2D>("CalamityMod/NPCs/Polterghast/PolterghastGlow").Value;
+            Texture2D polterGlowmaskHeart = ModContent.Request<Texture2D>("CalamityMod/NPCs/Polterghast/PolterghastGlow2").Value;
 
             void drawInstance(Vector2 position, Color color)
             {

@@ -368,13 +368,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.KingSlime
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-            Texture2D outlineTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/NinjaOutline");
+            Texture2D outlineTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/NinjaOutline").Value;
             Vector2 outlineDrawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY * 6f;
             SpriteEffects direction = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             if (KatanaUseTimer > 0f)
             {
-                Texture2D katanaTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/Katana");
+                Texture2D katanaTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/KingSlime/Katana").Value;
                 Vector2 drawPosition = NPC.Center - Main.screenPosition - Vector2.UnitY.RotatedBy(NPC.rotation) * 5f;
                 drawPosition -= NPC.rotation.ToRotationVector2() * NPC.spriteDirection * 22f;
                 float rotation = MathHelper.PiOver4 + NPC.rotation;

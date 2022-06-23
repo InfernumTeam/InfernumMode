@@ -32,7 +32,7 @@ namespace InfernumMode.Particles
 
         public override void CustomDraw(SpriteBatch spriteBatch)
         {
-            Texture2D texture = ModContent.GetTexture(Texture);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 scale = new Vector2(0.24f, 1f) * Scale;
             Vector2 drawPosition = Position - Main.screenPosition;
             spriteBatch.Draw(texture, drawPosition, null, Color * Opacity, Rotation, texture.Size() * 0.5f, scale, 0, 0f);

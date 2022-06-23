@@ -15,9 +15,9 @@ namespace InfernumMode
             switch (methodName)
             {
                 case "GetInfernumActive":
-                    return PoDWorld.InfernumMode;
+                    return WorldSaveSystem.InfernumMode;
                 case "SetInfernumActive":
-                    PoDWorld.InfernumMode = (bool)args[1];
+                    WorldSaveSystem.InfernumMode = (bool)args[1];
                     break;
             }
             return null;

@@ -76,7 +76,7 @@ namespace InfernumMode
             start -= Main.screenPosition;
             end -= Main.screenPosition;
 
-            Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/Line");
+            Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/Line").Value;
             float rotation = (end - start).ToRotation();
             Vector2 scale = new(Vector2.Distance(start, end) / line.Width, width);
 

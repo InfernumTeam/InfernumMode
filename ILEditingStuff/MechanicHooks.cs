@@ -105,23 +105,23 @@ namespace InfernumMode.ILEditingStuff
             {
                 case 1:
                     iconScale = ExoMechSelectionUI.DestroyerIconScale;
-                    iconMechTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/UI/HeadIcon_THanos");
+                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_THanos").Value;
                     description = "Thanatos, a serpentine terror with impervious armor and innumerable laser turrets.";
                     break;
                 case 2:
                     iconScale = ExoMechSelectionUI.PrimeIconScale;
-                    iconMechTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/UI/HeadIcon_Ares");
+                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_Ares").Value;
                     description = "Ares, a heavyweight, diabolical monstrosity with four Exo superweapons.";
                     break;
                 case 3:
                     iconScale = ExoMechSelectionUI.TwinsIconScale;
-                    iconMechTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/UI/HeadIcon_ArtemisApollo");
+                    iconMechTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/UI/HeadIcon_ArtemisApollo").Value;
                     description = "Artemis and Apollo, a pair of extremely agile destroyers with pulse cannons.";
                     break;
                 case 4:
                 default:
                     iconScale = AthenaIconScale;
-                    iconMechTexture = ModContent.GetTexture("InfernumMode/ExtraTextures/HeadIcon_Athena");
+                    iconMechTexture = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/HeadIcon_Athena").Value;
                     description = "Athena, a giant supercomputer with multiple mounted pulse turrets.";
                     drawPosition.Y += 2f;
                     break;
@@ -298,7 +298,7 @@ namespace InfernumMode.ILEditingStuff
             c.Index++;
             c.EmitDelegate<Action>(() =>
             {
-                if (NPC.AnyNPCs(NPCID.MoonLordCore) && PoDWorld.InfernumMode)
+                if (NPC.AnyNPCs(NPCID.MoonLordCore) && WorldSaveSystem.InfernumMode)
                     Main.LocalPlayer.noBuilding = true;
             });
         }
@@ -312,7 +312,7 @@ namespace InfernumMode.ILEditingStuff
     {
         internal static int GiveDD2MinibossesPointPriority(On.Terraria.GameContent.Events.DD2Event.orig_GetMonsterPointsWorth orig, int slainMonsterID)
         {
-            if (OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID) && minibossID != NPCID.DD2Betsy && PoDWorld.InfernumMode)
+            if (OldOnesArmyMinibossChanges.GetMinibossToSummon(out int minibossID) && minibossID != NPCID.DD2Betsy && WorldSaveSystem.InfernumMode)
                 return slainMonsterID == minibossID ? 99999 : 0;
 
             return orig(slainMonsterID);
@@ -347,7 +347,7 @@ namespace InfernumMode.ILEditingStuff
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Shader.Parameters["uZoomMatrix"].SetValue(zoomMatrix);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseColor(Color.Gray);
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].UseSecondaryColor(Color.Turquoise);
-                GameShaders.Misc["Infernum:MoonLordBGDistortion"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"));
+                GameShaders.Misc["Infernum:MoonLordBGDistortion"].SetShaderTexture(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap")).Value;
                 GameShaders.Misc["Infernum:MoonLordBGDistortion"].Apply();
                 Vector2 hell = new(Main.screenWidth * (Main.GameViewMatrix.Zoom.X - 1f), Main.screenHeight * (Main.GameViewMatrix.Zoom.Y - 1f));
                 Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, hell * -0.5f, null, Color.White, 0f, Vector2.Zero, scale, 0, 0f);

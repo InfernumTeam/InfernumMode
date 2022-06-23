@@ -59,7 +59,7 @@ namespace InfernumMode
             SoundEngine.PlaySound(SoundID.DD2_EtherianPortalDryadTouch, Main.LocalPlayer.Center);
             SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, Main.LocalPlayer.Center);
 
-            bool infernumWasAlreadyActive = PoDWorld.InfernumMode;
+            bool infernumWasAlreadyActive = WorldSaveSystem.InfernumMode;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 for (int doom = 0; doom < 200; doom++)
@@ -75,7 +75,7 @@ namespace InfernumMode
                 }
 
                 Utilities.DisplayText(infernumWasAlreadyActive ? "Very well, then." : "Good luck.", Color.Crimson);
-                PoDWorld.InfernumMode = !infernumWasAlreadyActive;
+                WorldSaveSystem.InfernumMode = !infernumWasAlreadyActive;
                 CalamityNetcode.SyncWorld();
             }
 

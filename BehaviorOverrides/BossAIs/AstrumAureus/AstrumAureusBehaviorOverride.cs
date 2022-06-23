@@ -4,9 +4,11 @@ using CalamityMod.Events;
 using CalamityMod.Items.Tools;
 using CalamityMod.NPCs.AstrumAureus;
 using CalamityMod.Projectiles.Boss;
+using CalamityMod.Sounds;
 using InfernumMode.BehaviorOverrides.BossAIs.Ravager;
 using InfernumMode.GlobalInstances;
 using InfernumMode.OverridingSystem;
+using InfernumMode.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -346,7 +348,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
 
                             // Play a sound as an indicator if doing a meteor slam.
                             if (meteorSlam)
-                                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastShoot"), target.Center);
+                                SoundEngine.PlaySound(InfernumSoundRegistry.ProvidenceHolyBlastShootSound, target.Center);
 
                             npc.noTileCollide = true;
 
@@ -367,7 +369,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
                     if (npc.velocity.Y == 0f && attackTimer > 30f)
                     {
                         // Play a stomp sound.
-                        SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/LegStomp"), npc.Center);
+                        SoundEngine.PlaySound(AureusBoss.StompSound, npc.Center);
 
                         // Reset the jump intensity.
                         jumpIntensity = 0f;
@@ -529,7 +531,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             rocketShootTimer++;
             if (rocketShootTimer >= rocketReleaseRate && attackTimer > 75f && attackTimer < 240f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaBlast"), npc.Center);
+                SoundEngine.PlaySound(CommonCalamitySounds.PlasmaBlastSound, npc.Center);
 
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -578,7 +580,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Enrage if the player moves too far away.
             if (!npc.WithinRange(target.Center, 1250f) && enrageCountdown <= 0f && attackTimer > laserShootDelay)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/PlagueSounds/PBGNukeWarning"), target.Center);
+                SoundEngine.PlaySound(InfernumSoundRegistry.PBGMechanicalWarning, target.Center);
                 enrageCountdown = 360f;
                 npc.netUpdate = true;
             }
@@ -703,7 +705,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             // Make an explosion prior to the comets being released.
             if (attackTimer == 120f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), target.Center);
+                SoundEngine.PlaySound(HolyBlast.ImpactSound, target.Center);
                 Utilities.CreateGenericDustExplosion(npc.Center, ModContent.DustType<AstralOrange>(), 60, 11f, 1.8f);
             }
 
@@ -1013,22 +1015,22 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumAureus
             switch (frameType)
             {
                 case AureusFrameType.Idle:
-                    glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusGlow");
+                    glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusGlow").Value;
                     break;
                 case AureusFrameType.SitAndRecharge:
-                    texture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusRecharge");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusRecharge").Value;
                     break;
                 case AureusFrameType.Walk:
-                    texture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusWalk");
-                    glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusWalkGlow");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusWalk").Value;
+                    glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusWalkGlow").Value;
                     break;
                 case AureusFrameType.Jump:
-                    texture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusJump");
-                    glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusJumpGlow");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusJump").Value;
+                    glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusJumpGlow").Value;
                     break;
                 case AureusFrameType.Stomp:
-                    texture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusStomp");
-                    glowmaskTexture = ModContent.GetTexture("CalamityMod/NPCs/AstrumAureus/AstrumAureusStompGlow");
+                    texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusStomp").Value;
+                    glowmaskTexture = ModContent.Request<Texture2D>("CalamityMod/NPCs/AstrumAureus/AstrumAureusStompGlow").Value;
                     break;
             }
 

@@ -66,7 +66,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             float leftCleaveAngularOffset = MathHelper.Pi * -0.18f;
             float rightCleaveAngularOffset = MathHelper.Pi * 0.18f;
 
-            Texture2D texture = ModContent.GetTexture("CalamityMod/Projectiles/StarProj");
+            Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/Projectiles/StarProj").Value;
             Vector2 leftStart = Projectile.Center - Vector2.UnitY.RotatedBy(leftCleaveAngularOffset) * 2700f;
             Vector2 leftEnd = Projectile.Center + Vector2.UnitY.RotatedBy(leftCleaveAngularOffset) * 2700f;
 
@@ -103,7 +103,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
             if (Projectile.timeLeft <= 45f)
                 fade = Utils.GetLerpValue(0f, 45f, Projectile.timeLeft, true);
 
-            Texture2D noiseTexture = ModContent.GetTexture("CalamityMod/ExtraTextures/VoronoiShapes");
+            Texture2D noiseTexture = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/VoronoiShapes").Value;
             Vector2 drawPosition2 = Projectile.Center - Main.screenPosition;
             Vector2 origin = noiseTexture.Size() * 0.5f;
             GameShaders.Misc["CalamityMod:DoGPortal"].UseOpacity(fade);

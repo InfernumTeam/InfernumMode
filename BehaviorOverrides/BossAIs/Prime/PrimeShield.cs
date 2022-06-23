@@ -62,7 +62,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Prime
             spriteBatch.EnterShaderRegion();
 
             Vector2 scale = new(1.5f, 1f);
-            DrawData drawData = new(ModContent.GetTexture("InfernumMode/ExtraTextures/CultistRayMap"),
+            DrawData drawData = new(ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/CultistRayMap").Value,
                 Projectile.Center - Main.screenPosition + Projectile.Size * scale * 0.5f,
                 new Rectangle(0, 0, Projectile.width, Projectile.height),
                 new Color(new Vector4(1f)) * 0.7f * Projectile.Opacity,

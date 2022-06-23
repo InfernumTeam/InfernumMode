@@ -16,9 +16,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Golem
         public override float Lifetime => 120;
         public override Color LaserOverlayColor => Color.White;
         public override Color LightCastColor => Color.White;
-        public override Texture2D LaserBeginTexture => ModContent.GetTexture("InfernumMode/ExtraTextures/GolemHeadBeamBegin");
-        public override Texture2D LaserMiddleTexture => ModContent.GetTexture("InfernumMode/ExtraTextures/GolemHeadBeamMid");
-        public override Texture2D LaserEndTexture => ModContent.GetTexture("InfernumMode/ExtraTextures/GolemHeadBeamEnd");
+        public override Texture2D LaserBeginTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/GolemHeadBeamBegin").Value;
+        public override Texture2D LaserMiddleTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/GolemHeadBeamMid").Value;
+        public override Texture2D LaserEndTexture => ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/GolemHeadBeamEnd").Value;
         public override float MaxLaserLength => 2400f;
         public override float MaxScale => 1f;
         public override string Texture => "InfernumMode/ExtraTextures/GolemHeadBeamBegin";

@@ -80,8 +80,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cultist
             spriteBatch.SetBlendState(BlendState.Additive);
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Texture2D outerRingTexture = TextureAssets.Projectile[Projectile.type].Value;
-            Texture2D innerRingTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cultist/RitualInnerRing");
-            Texture2D auraTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cultist/LightBurst");
+            Texture2D innerRingTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/RitualInnerRing").Value;
+            Texture2D auraTexture = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cultist/LightBurst").Value;
             float pulse = Main.GlobalTimeWrappedHourly * 0.67f % 1f;
             float auraScale = Projectile.scale * MathHelper.SmoothStep(0.85f, 1.2f, 1f - pulse);
             Color auraColor = Color.White * 0.25f;

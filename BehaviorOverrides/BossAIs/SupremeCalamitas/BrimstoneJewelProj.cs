@@ -61,7 +61,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SupremeCalamitas
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = ModContent.GetTexture(Texture);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 origin = texture.Size() * 0.5f;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
             Vector2 start = drawPosition + Main.screenPosition;

@@ -274,7 +274,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, npc.frame, origin);
             Main.spriteBatch.Draw(texture, center, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody1Glow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody1Glow").Value;
             Main.spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             npc.ModNPC<ThanatosBody1>().SmokeDrawer.DrawSet(npc.Center);
             return false;
@@ -312,7 +312,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, npc.frame, origin);
             Main.spriteBatch.Draw(texture, center, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody2Glow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosBody2Glow").Value;
             Main.spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             npc.ModNPC<ThanatosBody2>().SmokeDrawer.DrawSet(npc.Center);
             return false;
@@ -350,7 +350,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Thanatos
             ExoMechAIUtilities.DrawFinalPhaseGlow(spriteBatch, npc, texture, center, npc.frame, origin);
             Main.spriteBatch.Draw(texture, center, npc.frame, npc.GetAlpha(lightColor), npc.rotation, origin, npc.scale, spriteEffects, 0f);
 
-            texture = ModContent.GetTexture("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosTailGlow");
+            texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/ExoMechs/Thanatos/ThanatosTailGlow").Value;
             Main.spriteBatch.Draw(texture, center, npc.frame, Color.White * npc.Opacity, npc.rotation, origin, npc.scale, spriteEffects, 0f);
             return false;
         }

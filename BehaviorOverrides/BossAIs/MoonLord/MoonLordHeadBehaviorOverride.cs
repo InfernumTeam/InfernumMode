@@ -272,7 +272,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
             Texture2D headTexture = TextureAssets.Npc[npc.type].Value;
-            Texture2D headGlowmask = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/MoonLordHeadGlowmask");
+            Texture2D headGlowmask = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/MoonLord/MoonLordHeadGlowmask").Value;
             Vector2 headOrigin = new(191f, 130f);
             Texture2D eyeScleraTexture = Main.extraTexture[18];
             Texture2D pupilTexture = Main.extraTexture[19];
@@ -321,7 +321,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.MoonLord
                 {
                     spriteBatch.SetBlendState(BlendState.Additive);
 
-                    Texture2D line = ModContent.GetTexture("InfernumMode/ExtraTextures/BloomLineSmall");
+                    Texture2D line = ModContent.Request<Texture2D>("InfernumMode/ExtraTextures/BloomLineSmall").Value;
 
                     float angularOffset = npc.Infernum().ExtraAI[1];
                     Color outlineColor = Color.Lerp(Color.Turquoise, Color.White, lineTelegraphInterpolant);

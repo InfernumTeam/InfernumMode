@@ -71,8 +71,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = Main.dayTime ? ModContent.GetTexture(Texture) : ModContent.GetTexture("CalamityMod/Projectiles/Boss/MoltenBlastNight");
-            int height = ModContent.GetTexture(Texture).Height / Main.projFrames[Projectile.type];
+            Texture2D texture = Main.dayTime ? ModContent.Request<Texture2D>(Texture) : ModContent.GetTexture("CalamityMod/Projectiles/Boss/MoltenBlastNight").Value;
+            int height = ModContent.Request<Texture2D>(Texture).Value.Height / Main.projFrames[Projectile.type];
             int top = height * Projectile.frame;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition + Vector2.UnitY * Projectile.gfxOffY;
             Rectangle frame = new(0, top, texture.Width, height);

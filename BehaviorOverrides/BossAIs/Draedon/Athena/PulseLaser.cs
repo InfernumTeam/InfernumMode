@@ -192,7 +192,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.Athena
                 return false;
             }
 
-            Texture2D laserTelegraph = ModContent.GetTexture("CalamityMod/ExtraTextures/LaserWallTelegraphBeam");
+            Texture2D laserTelegraph = ModContent.Request<Texture2D>("CalamityMod/ExtraTextures/LaserWallTelegraphBeam").Value;
 
             float yScale = 2f;
             if (TelegraphDelay < TelegraphFadeTime)

@@ -1,3 +1,5 @@
+using CalamityMod.Items.Weapons.DraedonsArsenal;
+using CalamityMod.Projectiles.Boss;
 using InfernumMode.BehaviorOverrides.BossAIs.Twins;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -30,7 +32,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         {
             if (Projectile.localAI[0] == 0f)
             {
-                SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Item, "Sounds/Item/PlasmaGrenadeExplosion"), Projectile.Center);
+                SoundEngine.PlaySound(PlasmaGrenade.ExplosionSound, Projectile.Center);
                 Projectile.localAI[0] = 1f;
             }
             for (int i = 0; i < 16; i++)
@@ -49,13 +51,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Dragonfolly
         {
             Color lineColor = Color.Red;
             float lineWidth = MathHelper.Lerp(0.25f, 3f, Utils.GetLerpValue(0f, 22f, Projectile.timeLeft, true) * Utils.GetLerpValue(0f, 22f, Time, true));
-            Utils.DrawLine(spriteBatch, Projectile.Center - Vector2.UnitY * 1900f, Projectile.Center + Vector2.UnitY * 1900f, lineColor, lineColor, lineWidth);
+            Utils.DrawLine(Main.spriteBatch, Projectile.Center - Vector2.UnitY * 1900f, Projectile.Center + Vector2.UnitY * 1900f, lineColor, lineColor, lineWidth);
             return false;
         }
 
         public override void Kill(int timeLeft)
         {
-            SoundEngine.PlaySound(InfernumMode.CalamityMod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/ProvidenceHolyBlastImpact"), Projectile.Center);
+            SoundEngine.PlaySound(HolyBlast.ImpactSound, Projectile.Center);
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 

@@ -101,7 +101,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tipTexture = ModContent.GetTexture(Texture);
+            Texture2D tipTexture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 aimDirection = Vector2.UnitY.RotatedBy(Projectile.rotation);
             if (Time < 60f)
             {
@@ -123,7 +123,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Cryogen
 
         public void DrawPillar(SpriteBatch spriteBatch, Vector2 scale, Vector2 aimDirection, ref float tipBottom)
         {
-            Texture2D pillarBodyPiece = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/IcePillarPiece");
+            Texture2D pillarBodyPiece = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/Cryogen/IcePillarPiece").Value;
 
             for (int i = pillarBodyPiece.Height; i < CurrentHeight + pillarBodyPiece.Height; i += pillarBodyPiece.Height)
             {

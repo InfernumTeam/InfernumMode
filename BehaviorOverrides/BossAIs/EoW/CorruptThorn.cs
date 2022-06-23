@@ -109,7 +109,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tipTexture = ModContent.GetTexture(Texture);
+            Texture2D tipTexture = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 aimDirection = Vector2.UnitY.RotatedBy(Projectile.rotation);
             if (Time < 60f)
             {
@@ -131,7 +131,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.EoW
 
         public void DrawVine(SpriteBatch spriteBatch, Vector2 scale, Vector2 aimDirection, Texture2D tipTexture, ref float tipBottom)
         {
-            Texture2D thornBodyPiece = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/EoW/CorruptThornPiece");
+            Texture2D thornBodyPiece = ModContent.Request<Texture2D>("InfernumMode/BehaviorOverrides/BossAIs/EoW/CorruptThornPiece").Value;
 
             UnifiedRandom sideThornRNG = new(Projectile.identity);
             for (int i = thornBodyPiece.Height; i < CurrentHeight + thornBodyPiece.Height; i += thornBodyPiece.Height)

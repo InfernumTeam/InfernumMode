@@ -49,7 +49,7 @@ namespace InfernumMode.Particles
             if (Scale < 2f)
                 scaleFadeout *= Utils.GetLerpValue(1f, 0.7f, LifetimeCompletion, true);
 
-            Texture2D texture = ModContent.GetTexture(Texture);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
             for (int i = 0; i < ringCount; i++)
             {
                 float scale = MathHelper.Lerp(1f, innerRingScaleFactor, i / (float)(ringCount - 1f)) * scaleFadeout * Scale;

@@ -793,7 +793,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.HiveMind
         {
             NPCID.Sets.TrailingMode[npc.type] = 1;
             NPCID.Sets.TrailCacheLength[npc.type] = 8;
-            Texture2D texture = ModContent.GetTexture("CalamityMod/NPCs/HiveMind/HiveMindP2");
+            Texture2D texture = ModContent.Request<Texture2D>("CalamityMod/NPCs/HiveMind/HiveMindP2").Value;
             int frame = (int)(Main.GlobalTimeWrappedHourly * 10f) % 16;
             Rectangle frameRectangle = texture.Frame(2, 8, frame / 8, frame % 8);
 

@@ -34,7 +34,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Providence
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = ModContent.GetTexture(Texture);
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
 
             float arenaFallCompletion = MathHelper.Clamp(InfernumMode.ProvidenceArenaTimer / 120f, 0f, 1f);
             Vector2 top = PoDWorld.ProvidenceArena.TopLeft() * 16f + new Vector2(8f, 32f);

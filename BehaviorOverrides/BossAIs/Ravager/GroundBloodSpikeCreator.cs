@@ -40,7 +40,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 {
                     float direction = Math.Sign(projectile.velocity.X);
                     Vector2 velocity = -Vector2.UnitY.RotatedBy(direction * 0.7f + Main.rand.NextFloatDirection() * MathHelper.Pi / 10f);
-                    Utilities.NewProjectileBetter(projectile.Center - Vector2.UnitY * 60f, velocity, ModContent.ProjectileType<GroundBloodSpike>(), 180, 0f);
+                    Projectile.NewProjectile(projectile.Center - Vector2.UnitY * 60f, velocity, ModContent.ProjectileType<GroundBloodSpike>(), projectile.damage, 0f);
                 }
             }
         }

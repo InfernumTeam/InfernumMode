@@ -65,6 +65,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AstrumDeus
 
             Player target = Main.player[npc.target];
 
+            // Allow Calamity's code to drop loot as usual.
+            npc.Calamity().newAI[0] = 3f;
+
             float lifeRatio = npc.life / (float)npc.lifeMax;
             float beaconAngerFactor = Utils.InverseLerp(3600f, 5600f, MathHelper.Distance(beacons.First().Center.X, target.Center.X), true);
             ref float attackType = ref npc.ai[0];

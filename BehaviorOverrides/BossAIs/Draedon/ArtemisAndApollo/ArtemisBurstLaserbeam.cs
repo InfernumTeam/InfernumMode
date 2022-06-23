@@ -4,15 +4,17 @@ using CalamityMod.Projectiles.BaseProjectiles;
 using CalamityMod.Skies;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
 {
-    public class ArtemisSpinLaser : BaseLaserbeamProjectile
+    public class ArtemisBurstLaserbeam : BaseLaserbeamProjectile
     {
         public int OwnerIndex
         {
@@ -20,7 +22,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             set => projectile.ai[0] = value;
         }
 
-        public const int LaserLifetime = 90;
+        public PrimitiveTrail LaserDrawer = null;
+
+        public const int LaserLifetime = 48;
         public override float MaxScale => 1f;
         public override float MaxLaserLength => 3600f;
         public override float Lifetime => LaserLifetime;
@@ -31,25 +35,17 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         public override Texture2D LaserEndTexture => ModContent.GetTexture("CalamityMod/ExtraTextures/Lasers/AresLaserBeamEnd");
         public override string Texture => "CalamityMod/Projectiles/Boss/AresLaserBeamStart";
 
-        // Dude
-        // Dude
-        // Dude
-        // You are going to Ohio
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Ohio Beam");
-            Main.projFrames[projectile.type] = 5;
-        }
+        public override void SetStaticDefaults() => DisplayName.SetDefault("Exothermal Deathray");
 
         public override void SetDefaults()
         {
-            projectile.width = 30;
-            projectile.height = 30;
+            projectile.width = 38;
+            projectile.height = 38;
             projectile.hostile = true;
             projectile.alpha = 255;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
-            projectile.timeLeft = 600;
+            projectile.timeLeft = LaserLifetime;
             projectile.Calamity().canBreakPlayerDefense = true;
             cooldownSlot = 1;
         }
@@ -70,8 +66,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
         {
             if (Main.npc[OwnerIndex].active && Main.npc[OwnerIndex].type == ModContent.NPCType<Artemis>())
             {
+                float fireOffset = ExoMechManagement.ExoTwinsAreInSecondPhase ? 102f : 68f;
                 Vector2 fireFrom = Main.npc[OwnerIndex].Center + Vector2.UnitY * Main.npc[OwnerIndex].gfxOffY;
-                fireFrom += projectile.velocity.SafeNormalize(Vector2.UnitY) * 78f;
+                fireFrom += projectile.velocity.SafeNormalize(Vector2.UnitY) * (fireOffset - projectile.height);
                 projectile.Center = fireFrom;
             }
 
@@ -82,7 +79,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
                 return;
             }
 
-            bool notUsingReleventAttack = Main.npc[OwnerIndex].ai[0] != (int)ApolloBehaviorOverride.TwinsAttackType.LaserRayScarletBursts;
+            bool notUsingReleventAttack = Main.npc[OwnerIndex].ai[0] != (int)ApolloBehaviorOverride.TwinsAttackType.SingleLaserBlasts;
             if (Main.npc[OwnerIndex].Opacity <= 0f || notUsingReleventAttack)
             {
                 projectile.Kill();
@@ -93,8 +90,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             int lightningBoltCreateRate = ExoMechManagement.CurrentTwinsPhase >= 6 ? 3 : 6;
             if (Main.netMode != NetmodeID.Server && Time % lightningBoltCreateRate == lightningBoltCreateRate - 1f)
                 ExoMechsSky.CreateLightningBolt(6);
-
-            Time = Main.npc[OwnerIndex].ai[1];
         }
 
         public override float DetermineLaserLength()
@@ -111,18 +106,23 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             return newLaserLength;
         }
 
-        public override void UpdateLaserMotion()
-        {
-            projectile.rotation = Main.npc[OwnerIndex].rotation;
-            projectile.velocity = (projectile.rotation - MathHelper.PiOver2).ToRotationVector2();
-        }
+        public override void UpdateLaserMotion() { }
 
         public override void PostAI()
         {
-            // Determine frames.
-            projectile.frameCounter++;
-            if (projectile.frameCounter % 5f == 0f)
-                projectile.frame = (projectile.frame + 1) % Main.projFrames[projectile.type];
+            // Determine scale.
+            Time = Lifetime - projectile.timeLeft;
+            projectile.scale = CalamityUtils.Convert01To010(Time / Lifetime) * MaxScale * 3f;
+            if (projectile.scale > MaxScale)
+                projectile.scale = MaxScale;
+        }
+
+        public float LaserWidthFunction(float _) => projectile.scale * projectile.width;
+
+        public static Color LaserColorFunction(float completionRatio)
+        {
+            float colorInterpolant = (float)Math.Sin(Main.GlobalTime * -3.2f + completionRatio * 23f) * 0.5f + 0.5f;
+            return Color.Lerp(Color.Orange, Color.Red, colorInterpolant * 0.67f);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -131,60 +131,20 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon.ArtemisAndApollo
             if (projectile.velocity == Vector2.Zero)
                 return false;
 
-            Color beamColor = LaserOverlayColor;
-            Rectangle startFrameArea = LaserBeginTexture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
-            Rectangle middleFrameArea = LaserMiddleTexture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
-            Rectangle endFrameArea = LaserEndTexture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
+            if (LaserDrawer is null)
+                LaserDrawer = new PrimitiveTrail(LaserWidthFunction, LaserColorFunction, null, GameShaders.Misc["Infernum:ArtemisLaser"]);
 
-            // Start texture drawing.
-            Main.spriteBatch.Draw(LaserBeginTexture,
-                             projectile.Center - Main.screenPosition,
-                             startFrameArea,
-                             beamColor,
-                             projectile.rotation,
-                             LaserBeginTexture.Size() / 2f,
-                             projectile.scale,
-                             SpriteEffects.FlipVertically,
-                             0f);
+            Vector2 laserEnd = projectile.Center + projectile.velocity.SafeNormalize(Vector2.UnitY) * LaserLength;
+            Vector2[] baseDrawPoints = new Vector2[8];
+            for (int i = 0; i < baseDrawPoints.Length; i++)
+                baseDrawPoints[i] = Vector2.Lerp(projectile.Center, laserEnd, i / (float)(baseDrawPoints.Length - 1f));
 
-            // Prepare things for body drawing.
-            float laserBodyLength = LaserLength + middleFrameArea.Height;
-            Vector2 centerOnLaser = projectile.Center + projectile.velocity * projectile.scale * 5f;
+            // Select textures to pass to the shader, along with the electricity color.
+            GameShaders.Misc["Infernum:ArtemisLaser"].UseColor(Color.Cyan);
+            GameShaders.Misc["Infernum:ArtemisLaser"].SetShaderTexture(ModContent.GetTexture("CalamityMod/ExtraTextures/ScarletDevilStreak"));
+            Main.instance.GraphicsDevice.Textures[2] = ModContent.GetTexture("Terraria/Misc/Perlin");
 
-            // Body drawing.
-            if (laserBodyLength > 0f && middleFrameArea.Height >= 1f)
-            {
-                float laserOffset = middleFrameArea.Height * projectile.scale;
-                float incrementalBodyLength = 0f;
-                while (incrementalBodyLength + 1f < laserBodyLength)
-                {
-                    Main.spriteBatch.Draw(LaserMiddleTexture,
-                                     centerOnLaser - Main.screenPosition,
-                                     middleFrameArea,
-                                     beamColor,
-                                     projectile.rotation,
-                                     LaserMiddleTexture.Size() * 0.5f,
-                                     projectile.scale,
-                                     SpriteEffects.None,
-                                     0f);
-                    incrementalBodyLength += laserOffset;
-                    centerOnLaser += projectile.velocity * laserOffset;
-                    middleFrameArea.Y += LaserMiddleTexture.Height / Main.projFrames[projectile.type];
-                    if (middleFrameArea.Y + middleFrameArea.Height > LaserMiddleTexture.Height)
-                        middleFrameArea.Y = 0;
-                }
-            }
-
-            Vector2 laserEndCenter = centerOnLaser - Main.screenPosition;
-            Main.spriteBatch.Draw(LaserEndTexture,
-                             laserEndCenter,
-                             endFrameArea,
-                             beamColor,
-                             projectile.rotation,
-                             LaserEndTexture.Size() * 0.5f,
-                             projectile.scale,
-                             SpriteEffects.FlipVertically,
-                             0f);
+            LaserDrawer.Draw(baseDrawPoints, -Main.screenPosition, 64);
             return false;
         }
 

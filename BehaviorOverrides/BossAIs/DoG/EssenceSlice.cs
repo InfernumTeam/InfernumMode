@@ -17,7 +17,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
         {
             DisplayName.SetDefault("Essence Slice");
             ProjectileID.Sets.TrailingMode[projectile.type] = 2;
-            ProjectileID.Sets.TrailCacheLength[projectile.type] = 12;
+            ProjectileID.Sets.TrailCacheLength[projectile.type] = 9;
         }
 
         public override void SetDefaults()
@@ -41,8 +41,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.DoG
 
             projectile.rotation = projectile.velocity.ToRotation();
 
-            if (projectile.velocity.Length() < 50f)
-                projectile.velocity *= 1.045f;
+            if (projectile.velocity.Length() < 64f)
+                projectile.velocity *= 1.049f;
 
             Lighting.AddLight(projectile.Center, Color.Red.ToVector3() * 1.4f);
 

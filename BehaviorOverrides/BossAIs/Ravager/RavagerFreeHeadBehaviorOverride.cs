@@ -30,6 +30,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             NPC ravager = Main.npc[CalamityGlobalNPC.scavenger];
             var currentAttack = (RavagerBodyBehaviorOverride.RavagerAttackType)ravager.ai[0];
             npc.target = ravager.target;
+            npc.damage = 0;
 
             Player target = Main.player[npc.target];
             ref float attackTimer = ref npc.ai[1];
@@ -43,11 +44,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Vector2 aimDirection = npc.SafeDirectionTo(target.Center, -Vector2.UnitY);
             Vector2 cinderShootPosition = npc.Center + aimDirection * 36f;
             npc.rotation = aimDirection.ToRotation() - MathHelper.PiOver2;
+            bool dontFire = currentAttack == RavagerBodyBehaviorOverride.RavagerAttackType.DownwardFistSlam ||
+                currentAttack == RavagerBodyBehaviorOverride.RavagerAttackType.SlamAndCreateMovingFlamePillars;
 
             // Create a dust telegraph prior to releasing cinders.
             if (currentAttack != RavagerBodyBehaviorOverride.RavagerAttackType.DetachedHeadCinderRain)
             {
-                if (attackTimer % cinderShootRate > cinderShootRate - 40f)
+                if (attackTimer % cinderShootRate > cinderShootRate - 40f && !dontFire)
                 {
                     for (int i = 0; i < 3; i++)
                     {
@@ -62,7 +65,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 if (attackTimer % cinderShootRate == cinderShootRate - 1f)
                 {
                     Main.PlaySound(SoundID.Item72, cinderShootPosition);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (Main.netMode != NetmodeID.MultiplayerClient && !dontFire)
                     {
                         Utilities.NewProjectileBetter(cinderShootPosition, aimDirection * 15f, ModContent.ProjectileType<DarkMagicCinder>(), 185, 0f);
                         npc.netUpdate = true;

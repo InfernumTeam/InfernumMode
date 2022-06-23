@@ -31,13 +31,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         {
             if (projectile.ai[1] == 0f)
             {
-                projectile.ai[1] = Main.rand.NextFloat(1.3f, 2f);
+                projectile.ai[1] = Main.rand.NextFloat(1.1f, 1.6f);
                 projectile.netUpdate = true;
             }
 
             int fadeInTime = 6;
             int fadeoutTime = 10;
-            int lifetime = 34;
+            int lifetime = 26;
             int maxValue = 5;
             if (projectile.localAI[0] == 0f)
             {
@@ -82,14 +82,14 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             Texture2D tex = ModContent.GetTexture(Texture);
             Vector2 drawPosition = projectile.Center - Main.screenPosition;
             Rectangle frame = tex.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
-            Main.spriteBatch.Draw(tex, drawPosition, frame, projectile.GetAlpha(lightColor), projectile.rotation, frame.Size() * 0.5f, projectile.scale, 0, 0f);
+            Main.spriteBatch.Draw(tex, drawPosition, frame, projectile.GetAlpha(Color.White), projectile.rotation, frame.Size() * 0.5f, projectile.scale, 0, 0f);
             return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float _ = 0f;
-            Vector2 end = projectile.Center + projectile.velocity.SafeNormalize(-Vector2.UnitY) * projectile.scale * 200f;
+            Vector2 end = projectile.Center + projectile.velocity.SafeNormalize(-Vector2.UnitY) * projectile.scale * 100f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), projectile.Center, end, projectile.scale * 22f, ref _);
         }
 

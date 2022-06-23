@@ -11,7 +11,9 @@ using InfernumMode.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -32,6 +34,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             public float LifeRatio;
 
             public bool InPhase2 => !HandsAreAlive && !LegsAreAlive && !HeadIsAttached;
+
+            public bool ShouldBeBuffed => CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
 
             public RavagerPhaseInfo(bool hands, bool legs, bool head, bool freeHead, float lifeRatio)
             {
@@ -101,6 +105,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             CalamityGlobalNPC.scavenger = npc.whoAmI;
 
             // Fade in.
+            ref float flameJetInterpolant = ref npc.localAI[1];
             npc.alpha = Utils.Clamp(npc.alpha - 10, 0, 255);
 
             // Reset things every frame.
@@ -110,9 +115,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             npc.noTileCollide = false;
             if (!target.active || target.dead || !npc.WithinRange(target.Center, 7200f))
             {
+                flameJetInterpolant = MathHelper.Clamp(flameJetInterpolant + 0.1f, 0f, 1f);
+
                 npc.noTileCollide = true;
                 npc.velocity = Vector2.Lerp(npc.velocity, Vector2.UnitY * -30f, 0.2f);
-                if (!npc.WithinRange(target.Center, 1000f) || Main.rand.NextBool(45))
+                if (!npc.WithinRange(target.Center, 1000f) || Main.rand.NextBool(90))
                 {
                     npc.life = 0;
                     npc.active = false;
@@ -156,7 +163,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
 
             float lifeRatio = npc.life / (float)npc.lifeMax;
-            bool shouldBeBuffed = CalamityWorld.downedProvidence && !BossRushEvent.BossRushActive;
             RavagerPhaseInfo phaseInfo = new RavagerPhaseInfo(leftClawActive && rightClawActive, leftLegActive && rightLegActive, headActive, NPC.AnyNPCs(ModContent.NPCType<RavagerHead2>()), lifeRatio);
 
             float gravity = 0.625f;
@@ -165,6 +171,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             // Reset things.
             armsCanPunch = 0f;
+            flameJetInterpolant = 0f;
             armsShouldSlamIntoGround = 0f;
             npc.dontTakeDamage = !phaseInfo.InPhase2;
             npc.gfxOffY = -12;
@@ -210,10 +217,10 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     DoBehavior_BurstsOfBlood(npc, target, phaseInfo, true, ref attackTimer);
                     break;
                 case RavagerAttackType.DownwardFistSlam:
-                    DoBehavior_DownwardFistSlam(npc, target, phaseInfo, ref attackTimer, ref gravity, ref armsShouldSlamIntoGround);
+                    DoBehavior_DownwardFistSlam(npc, target, phaseInfo, ref flameJetInterpolant, ref attackTimer, ref gravity, ref armsShouldSlamIntoGround);
                     break;
                 case RavagerAttackType.SlamAndCreateMovingFlamePillars:
-                    DoBehavior_SlamAndCreateMovingFlamePillars(npc, target, phaseInfo, ref attackTimer, ref gravity);
+                    DoBehavior_SlamAndCreateMovingFlamePillars(npc, target, phaseInfo, ref flameJetInterpolant, ref attackTimer, ref gravity);
                     break;
                 case RavagerAttackType.WallSlams:
                     DoBehavior_WallSlams(npc, target, phaseInfo, ref attackTimer);
@@ -233,7 +240,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public static void DoBehavior_RegularJumps(NPC npc, Player target, RavagerPhaseInfo phaseInfo, ref float attackTimer, ref float gravity)
         {
-            int telegraphTime = 96;
+            int telegraphTime = 130;
             int jumpCount = 3;
             int jumpDelay = 45;
             int emberBurstCount = 3;
@@ -243,6 +250,11 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 jumpIntensityFactor *= 1.125f;
             if (!phaseInfo.LegsAreAlive)
                 jumpIntensityFactor *= 1.125f;
+            if (phaseInfo.ShouldBeBuffed)
+            {
+                emberBurstCount += 2;
+                jumpIntensityFactor *= 1.25f;
+            }
 
             ref float jumpSubstate = ref npc.Infernum().ExtraAI[0];
             ref float jumpCounter = ref npc.Infernum().ExtraAI[1];
@@ -327,13 +339,13 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     if (MathHelper.Distance(npc.Center.X, target.Center.X) < 425f || MathHelper.Distance(npc.Center.Y, target.Center.Y) < 240f)
                         npc.velocity.Y -= 9.5f;
 
-                    // Release fireballs at the target.
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    // Release fireballs at the target if they're far enough away.
+                    if (Main.netMode != NetmodeID.MultiplayerClient && !npc.WithinRange(target.Center, 540f))
                     {
                         for (int i = 0; i < emberBurstCount; i++)
                         {
                             float offsetAngle = MathHelper.Lerp(-0.51f, 0.51f, i / (float)(emberBurstCount - 1f));
-                            Vector2 emberShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 9f;
+                            Vector2 emberShootVelocity = npc.SafeDirectionTo(target.Center).RotatedBy(offsetAngle) * 6f;
                             Utilities.NewProjectileBetter(npc.Center + emberShootVelocity * 9f, emberShootVelocity, ModContent.ProjectileType<DarkMagicFireball>(), 180, 0f);
                         }
                     }
@@ -382,6 +394,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             int bloodShootTime = 180;
             int totalInstancesPerShot = 1;
             int postAttackTransitionDelay = 75;
+            int bloodDamage = 180;
             float destinationOffsetVariance = 200f;
 
             if (!phaseInfo.HandsAreAlive)
@@ -397,6 +410,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             {
                 shootDelay -= 10;
                 bloodShootRate -= 2;
+            }
+            
+            if (phaseInfo.ShouldBeBuffed)
+            {
+                bloodShootRate -= 2;
+                bloodDamage += 135;
             }
 
             if (multiplePerShot)
@@ -442,7 +461,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         if (multiplePerShot)
                             bloodShootVelocity += Main.rand.NextVector2Circular(2f, 2f);
 
-                        int blood = Utilities.NewProjectileBetter(shootPosition, bloodShootVelocity, ModContent.ProjectileType<UnholyBloodGlob>(), 185, 0f);
+                        int blood = Utilities.NewProjectileBetter(shootPosition, bloodShootVelocity, ModContent.ProjectileType<UnholyBloodGlob>(), bloodDamage, 0f);
                         if (Main.projectile.IndexInRange(blood))
                             Main.projectile[blood].ai[1] = target.Center.Y;
                     }
@@ -450,7 +469,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
         }
 
-        public static void DoBehavior_DownwardFistSlam(NPC npc, Player target, RavagerPhaseInfo phaseInfo, ref float attackTimer, ref float gravity, ref float armsShouldSlamIntoGround)
+        public static void DoBehavior_DownwardFistSlam(NPC npc, Player target, RavagerPhaseInfo phaseInfo, ref float flameJetInterpolant, ref float attackTimer, ref float gravity, ref float armsShouldSlamIntoGround)
         {
             int hoverTime = 95;
             int sitOnGroundTime = 72;
@@ -462,16 +481,26 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
 
             int slamSlowdownTime = (int)(hoverTime * 0.32f);
-            int projectileShootCount = 30;
+            int projectileShootCount = 27;
             int slamCount = 3;
+            int bloodDamage = 180;
+            int spikeDamage = 185;
             float projectileAngularSpread = MathHelper.ToRadians(61f);
-            float horizontalCrystalSpeed = 8.4f;
+            float horizontalSpikeSpeed = 8.4f;
 
             if (phaseInfo.InPhase2)
             {
                 projectileShootCount += 5;
                 slamCount++;
-                horizontalCrystalSpeed *= 1.35f;
+                horizontalSpikeSpeed *= 1.3f;
+            }
+
+            if (phaseInfo.ShouldBeBuffed)
+            {
+                projectileShootCount += 4;
+                horizontalSpikeSpeed *= 1.3f;
+                bloodDamage += 135;
+                spikeDamage += 135;
             }
 
             ref float hasDoneGroundHitEffects = ref npc.Infernum().ExtraAI[0];
@@ -497,6 +526,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     npc.Center = Vector2.Lerp(npc.Center, hoverDestination, 0.02f);
                     npc.noTileCollide = true;
                 }
+
+                // Create flame jets.
+                flameJetInterpolant = Utils.InverseLerp(0f, 8f, attackTimer, true) * Utils.InverseLerp(hoverTime, hoverTime - 12f, attackTimer, true);
 
                 // Disable cheap hits.
                 npc.damage = 0;
@@ -534,7 +566,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                             continue;
 
                         Vector2 bloodShootVelocity = -Vector2.UnitY.RotatedBy(offsetAngle) * Main.rand.NextFloat(19f, 21f) + Main.rand.NextVector2Circular(1.6f, 1.6f);
-                        int blood = Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 40f, bloodShootVelocity, ModContent.ProjectileType<UnholyBloodGlob>(), 185, 0f);
+                        int blood = Utilities.NewProjectileBetter(npc.Center - Vector2.UnitY * 40f, bloodShootVelocity, ModContent.ProjectileType<UnholyBloodGlob>(), bloodDamage, 0f);
                         if (Main.projectile.IndexInRange(blood))
                             Main.projectile[blood].ai[1] = target.Center.Y;
                     }
@@ -544,8 +576,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     {
                         for (int i = -1; i <= 1; i += 2)
                         {
-                            Vector2 spikeVelocity = Vector2.UnitX * horizontalCrystalSpeed * i;
-                            Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), 0, 0f);
+                            Vector2 spikeVelocity = Vector2.UnitX * horizontalSpikeSpeed * i;
+                            Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), spikeDamage, 0f);
                         }
                     }
                 }
@@ -569,18 +601,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             }
         }
 
-        public static void DoBehavior_SlamAndCreateMovingFlamePillars(NPC npc, Player target, RavagerPhaseInfo phaseInfo, ref float attackTimer, ref float gravity)
+        public static void DoBehavior_SlamAndCreateMovingFlamePillars(NPC npc, Player target, RavagerPhaseInfo phaseInfo, ref float flameJetInterpolant, ref float attackTimer, ref float gravity)
         {
             int hoverTime = 64;
             int groundShootDelay = 38;
             int sitOnGroundTime = groundShootDelay + 180;
-            int fireReleaseRate = 18;
-            int spikeReleaseRate = 60;
+            int fireReleaseRate = 20;
+            int spikeReleaseRate = 64;
             int slamSlowdownTime = (int)(hoverTime * 0.32f);
-            float horizontalCrystalSpeed = MathHelper.Lerp(9.6f, 11f, 1f - phaseInfo.LifeRatio);
+            int flamePillarDamage = 210;
+            int spikeDamage = 185;
+            float horizontalSpikeSpeed = MathHelper.Lerp(7.6f, 10f, 1f - phaseInfo.LifeRatio);
             float horizontalStepPerPillar = MathHelper.Lerp(250f, 300f, 1f - phaseInfo.LifeRatio);
             ref float hasDoneGroundHitEffects = ref npc.Infernum().ExtraAI[0];
             ref float flamePillarHorizontalOffset = ref npc.Infernum().ExtraAI[1];
+
+            if (phaseInfo.ShouldBeBuffed)
+            {
+                fireReleaseRate -= 4;
+                spikeReleaseRate -= 12;
+                flamePillarDamage += 135;
+                spikeDamage += 135;
+            }
 
             // Hover in place.
             if (attackTimer < hoverTime && hasDoneGroundHitEffects == 0f)
@@ -604,6 +646,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
                 // Disable cheap hits.
                 npc.damage = 0;
+
+                // Create flame jets.
+                flameJetInterpolant = Utils.InverseLerp(0f, 8f, attackTimer, true) * Utils.InverseLerp(hoverTime, hoverTime - 12f, attackTimer, true);
 
                 npc.velocity.X = MathHelper.Lerp(npc.velocity.X, idealVelocity.X, 0.12f);
                 npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, idealVelocity.Y, 0.24f);
@@ -648,7 +693,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
                             fireSpawnPosition.Y += 36f;
                             if (!skipPillar)
-                                Utilities.NewProjectileBetter(fireSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkFlamePillar>(), 220, 0f);
+                                Utilities.NewProjectileBetter(fireSpawnPosition, Vector2.Zero, ModContent.ProjectileType<DarkFlamePillar>(), flamePillarDamage, 0f);
                         }
                         npc.netUpdate = true;
                     }
@@ -659,8 +704,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 {
                     for (int i = -1; i <= 1; i += 2)
                     {
-                        Vector2 spikeVelocity = Vector2.UnitX * horizontalCrystalSpeed * i;
-                        Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), 0, 0f);
+                        Vector2 spikeVelocity = Vector2.UnitX * horizontalSpikeSpeed * i;
+                        Utilities.NewProjectileBetter(npc.Bottom, spikeVelocity, ModContent.ProjectileType<GroundBloodSpikeCreator>(), spikeDamage, 0f);
                     }
                 }
             }
@@ -675,11 +720,18 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
             int wallCreateRate = 48;
             int wallCreateTime = 360;
             int attackTransitionDelay = 70;
+            int wallDamage = 200;
             float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
 
             // Be a bit more lenient with wall creation rates if the free head is present.
             if (phaseInfo.FreeHeadExists)
                 wallCreateRate += 10;
+            
+            if (phaseInfo.ShouldBeBuffed)
+            {
+                wallCreateRate -= 5;
+                wallDamage += 135;
+            }
 
             // Wait before creating walls.
             if (attackTimer < shootDelay)
@@ -692,7 +744,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                 {
                     Vector2 pillarSpawnPosition = target.Center + Vector2.UnitX * i * spaceBetweenWalls;
                     pillarSpawnPosition.Y -= 640f;
-                    Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), 200, 0f);
+                    Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), wallDamage, 0f);
                 }
             }
 
@@ -704,9 +756,16 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
         {
             // The head itself does the attack.
             // The body does pretty much nothing lmao
-            int wallCreateRate = 50;
+            int wallCreateRate = 60;
+            int wallDamage = 200;
             float spaceBetweenWalls = MathHelper.Lerp(500f, 425f, 1f - phaseInfo.LifeRatio);
             ref float wallCreationCounter = ref npc.Infernum().ExtraAI[0];
+
+            if (phaseInfo.ShouldBeBuffed)
+            {
+                wallCreateRate -= 10;
+                wallDamage += 135;
+            }
 
             // Create rock pillars.
             if (Main.netMode != NetmodeID.MultiplayerClient && attackTimer % wallCreateRate == wallCreateRate - 1f)
@@ -721,7 +780,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                         pillarSpawnPosition.Y -= 640f;
                     }
 
-                    int pillar = Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), 200, 0f);
+                    int pillar = Utilities.NewProjectileBetter(pillarSpawnPosition, Vector2.Zero, ModContent.ProjectileType<SlammingRockPillar>(), wallDamage, 0f);
                     if (Main.projectile.IndexInRange(pillar))
                         Main.projectile[pillar].ai[1] = wallCreationCounter % 2f;
                 }
@@ -826,8 +885,39 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Color lightColor)
         {
+            float widthFunction(float completionRatio) => MathHelper.SmoothStep(160f, 10f, completionRatio);
+            Color colorFunction(float completionRatio)
+            {
+                Color darkFlameColor = new Color(58, 107, 252);
+                Color lightFlameColor = new Color(45, 207, 239);
+                float colorShiftInterpolant = (float)Math.Sin(-Main.GlobalTime * 6.7f + completionRatio * MathHelper.TwoPi) * 0.5f + 0.5f;
+                Color color = Color.Lerp(darkFlameColor, lightFlameColor, (float)Math.Pow(colorShiftInterpolant, 1.64f));
+                return color * npc.Opacity;
+            }
+
             float horizontalArenaCenterX = npc.Infernum().ExtraAI[8];
             Texture2D borderTexture = ModContent.GetTexture("InfernumMode/BehaviorOverrides/BossAIs/Ravager/RockBorder");
+
+            // Draw flame jets when hovering.
+            if (npc.Infernum().OptionalPrimitiveDrawer is null)
+                npc.Infernum().OptionalPrimitiveDrawer = new PrimitiveTrailCopy(widthFunction, colorFunction, null, true, GameShaders.Misc["Infernum:DarkFlamePillar"]);
+
+            // Create a telegraph line upward that fades away away the pillar fades in.
+            Vector2 start = npc.Bottom - Vector2.UnitY * 60f;
+            Vector2 end = start + Vector2.UnitY * npc.localAI[1] * 420f;
+            var oldBlendState = Main.instance.GraphicsDevice.BlendState;
+            Main.instance.GraphicsDevice.BlendState = BlendState.Additive;
+            GameShaders.Misc["Infernum:DarkFlamePillar"].UseSaturation(1.4f);
+            GameShaders.Misc["Infernum:DarkFlamePillar"].SetShaderTexture(ModContent.GetTexture("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2"));
+            Main.instance.GraphicsDevice.Textures[2] = ModContent.GetTexture("InfernumMode/ExtraTextures/PrismaticLaserbeamStreak2");
+
+            List<Vector2> points = new List<Vector2>();
+            for (int i = 0; i <= 8; i++)
+                points.Add(Vector2.Lerp(start, end, i / 8f));
+
+            if (npc.localAI[1] >= 0.01f)
+                npc.Infernum().OptionalPrimitiveDrawer.Draw(points, -Main.screenPosition, 166);
+            Main.instance.GraphicsDevice.BlendState = oldBlendState;
 
             // Draw obstructive pillars if an arena center is defined.
             if (horizontalArenaCenterX != 0f)

@@ -356,7 +356,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                     int tries = 0;
                     do
                     {
-                        hoverDestination = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(500f, 1200f);
+                        hoverDestination = target.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(500f, 900f);
                         tries++;
 
                         if (tries >= 1000)

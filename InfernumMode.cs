@@ -99,10 +99,6 @@ namespace InfernumMode
             {
                 CryogenBehaviorOverride.SetupCustomBossIcon();
 
-                Ref<Effect> portalShader = new Ref<Effect>(GetEffect("Effects/DoGPortalShader"));
-                Filters.Scene["Infernum:DoGPortal"] = new Filter(new ScreenShaderData(portalShader, "ScreenPass"), EffectPriority.High);
-                Filters.Scene["Infernum:DoGPortal"].Load();
-
                 Ref<Effect> aewPsychicEnergyShader = new Ref<Effect>(GetEffect("Effects/AEWPsychicDistortionShader"));
                 GameShaders.Misc["Infernum:AEWPsychicEnergy"] = new MiscShaderData(aewPsychicEnergyShader, "DistortionPass");
 
@@ -159,7 +155,10 @@ namespace InfernumMode
 
                 Ref<Effect> darkFlamePillarShader = new Ref<Effect>(GetEffect("Effects/DarkFlamePillarShader"));
                 GameShaders.Misc["Infernum:DarkFlamePillar"] = new MiscShaderData(darkFlamePillarShader, "TrailPass");
-                
+
+                Ref<Effect> artemisLaserShader = new Ref<Effect>(GetEffect("Effects/ArtemisLaserShader"));
+                GameShaders.Misc["Infernum:ArtemisLaser"] = new MiscShaderData(artemisLaserShader, "TrailPass");
+
                 Ref<Effect> hologramShader = new Ref<Effect>(GetEffect("Effects/HologramShader"));
                 GameShaders.Misc["Infernum:Hologram"] = new MiscShaderData(hologramShader, "HologramPass");
 

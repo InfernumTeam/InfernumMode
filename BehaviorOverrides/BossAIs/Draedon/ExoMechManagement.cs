@@ -274,8 +274,6 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<ElectricGas>(),
                 ModContent.ProjectileType<TeslaSpark>(),
                 ModContent.ProjectileType<AresTeslaOrb>(),
-                ModContent.ProjectileType<ApolloChargeFlameExplosion>(),
-                ModContent.ProjectileType<ArtemisChargeFlameExplosion>(),
                 ModContent.ProjectileType<ExofireSpark>(),
                 ModContent.ProjectileType<PlasmaSpark>(),
                 ModContent.ProjectileType<AresRocket>(),
@@ -285,6 +283,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 ModContent.ProjectileType<RefractionRotor>(),
                 ModContent.ProjectileType<PulseBeamStart>(),
                 ModContent.ProjectileType<ThanatosComboLaser>(),
+                ModContent.ProjectileType<ApolloRocketInfernum>(),
+                ModContent.ProjectileType<LightOverloadRay>(),
                 ModContent.ProjectileType<PulseLaser>(),
             };
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -462,9 +462,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
                 var attack = (TwinsAttackType)(int)npc.ai[0];
 
                 int attackToReinforce = -1;
-                if (attack == TwinsAttackType.SpecialAttack_LaserRayScarletBursts)
+                if (attack == TwinsAttackType.LaserRayScarletBursts)
                     attackToReinforce = 0;
-                if (attack == TwinsAttackType.SpecialAttack_PlasmaCharges)
+                if (attack == TwinsAttackType.PlasmaCharges)
                     attackToReinforce = 1;
 
                 if (attackToReinforce != -1)
@@ -494,9 +494,9 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Draedon
             {
                 var attack = (TwinsAttackType)(int)Main.npc[apollo].ai[0];
                 int attackToReinforce = -1;
-                if (attack == TwinsAttackType.SpecialAttack_LaserRayScarletBursts)
+                if (attack == TwinsAttackType.LaserRayScarletBursts)
                     attackToReinforce = 0;
-                if (attack == TwinsAttackType.SpecialAttack_PlasmaCharges)
+                if (attack == TwinsAttackType.PlasmaCharges)
                     attackToReinforce = 1;
 
                 if (attackToReinforce != -1)

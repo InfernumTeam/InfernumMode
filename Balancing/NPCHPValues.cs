@@ -14,6 +14,7 @@ using CalamityMod.NPCs.Leviathan;
 using CalamityMod.NPCs.Perforator;
 using CalamityMod.NPCs.PlaguebringerGoliath;
 using CalamityMod.NPCs.ProfanedGuardians;
+using CalamityMod.NPCs.Ravager;
 using CalamityMod.NPCs.SlimeGod;
 using CalamityMod.NPCs.StormWeaver;
 using CalamityMod.NPCs.SunkenSea;
@@ -86,6 +87,7 @@ namespace InfernumMode.Balancing
             [NPCID.DD2Betsy] = 66500,
             [ModContent.NPCType<PlaguebringerGoliath>()] = BossRushEvent.BossRushActive ? 666666 : 136031,
             [NPCID.DukeFishron] = BossRushEvent.BossRushActive ? -1 : 100250,
+            [ModContent.NPCType<RavagerHead>()] = BossRushEvent.BossRushActive ? -1 : 18000,
             [NPCID.CultistBoss] = BossRushEvent.BossRushActive ? 727272 : 138370,
             [NPCID.AncientCultistSquidhead] = BossRushEvent.BossRushActive ? -1 : 4800,
             [NPCID.CultistDragonHead] = BossRushEvent.BossRushActive ? -1 : 47500,

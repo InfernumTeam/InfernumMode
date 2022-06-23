@@ -101,11 +101,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         int cinderCount = 4;
+                        int cinderDamage = (int)(projectile.damage * 0.8f);
                         float offsetAngle = Main.rand.NextBool().ToInt() * MathHelper.Pi / cinderCount;
                         for (int i = 0; i < cinderCount; i++)
                         {
                             Vector2 cinderShootVelocity = (MathHelper.TwoPi * i / cinderCount + offsetAngle).ToRotationVector2() * 9f;
-                            Utilities.NewProjectileBetter(projectile.Center, cinderShootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), 180, 0f);
+                            Projectile.NewProjectile(projectile.Center, cinderShootVelocity, ModContent.ProjectileType<DarkMagicCinder>(), cinderDamage, 0f);
                         }
                     }
 

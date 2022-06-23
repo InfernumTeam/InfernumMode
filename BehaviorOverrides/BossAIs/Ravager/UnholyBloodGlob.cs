@@ -22,8 +22,8 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override void SetDefaults()
         {
-            projectile.width = 52;
-            projectile.height = 56;
+            projectile.width = 42;
+            projectile.height = 46;
             projectile.hostile = true;
             projectile.ignoreWater = true;
             projectile.tileCollide = false;
@@ -49,7 +49,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
             // Deal no damage and increment the variable used to kill the projectile.
             projectile.localAI[1]++;
-            if (projectile.localAI[1] > 540f)
+            if (projectile.localAI[1] > 360f)
             {
                 projectile.localAI[0] += 10f;
                 projectile.damage = 0;
@@ -131,19 +131,28 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.Ravager
 
         public override bool OnTileCollide(Vector2 oldVelocity) => false;
 
-        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CalamityUtils.CircularHitboxCollision(projectile.Center, 26f, targetHitbox);
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => CalamityUtils.CircularHitboxCollision(projectile.Center, 16f, targetHitbox);
 
         public override bool CanHitPlayer(Player target) => projectile.localAI[1] <= 900f && projectile.localAI[1] > 45f;
 
         public override Color? GetAlpha(Color lightColor)
         {
             Color c = Color.Red * projectile.Opacity;
-            c.A = 64;
             return c;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
+            Texture2D texture = Main.projectileTexture[projectile.type];
+            Vector2 drawPosition = projectile.Center - Main.screenPosition;
+            Rectangle frame = texture.Frame(1, Main.projFrames[projectile.type], 0, projectile.frame);
+            Vector2 origin = frame.Size() * 0.5f;
+
+            for (int i = 0; i < 6; i++)
+            {
+                Vector2 drawOffset = (MathHelper.TwoPi * i / 6f).ToRotationVector2() * 4f;
+                spriteBatch.Draw(texture, drawPosition + drawOffset, frame, new Color(1f, 1f, 1f, 0f) * projectile.Opacity * 0.65f, projectile.rotation, origin, projectile.scale, SpriteEffects.None, 0f);
+            }
             CalamityUtils.DrawAfterimagesCentered(projectile, ProjectileID.Sets.TrailingMode[projectile.type], lightColor);
             return false;
         }

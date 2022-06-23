@@ -1,4 +1,5 @@
 using CalamityMod;
+using CalamityMod.CalPlayer;
 using InfernumMode.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -61,20 +62,8 @@ namespace InfernumMode
             SoundEngine.PlaySound(SoundID.DD2_DarkMageHealImpact, Main.LocalPlayer.Center);
 
             bool infernumWasAlreadyActive = WorldSaveSystem.InfernumMode;
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient && !CalamityPlayer.areThereAnyDamnBosses)
             {
-                for (int doom = 0; doom < 200; doom++)
-                {
-                    if (Main.npc[doom].active && (Main.npc[doom].boss || Main.npc[doom].type == NPCID.EaterofWorldsHead || Main.npc[doom].type == NPCID.EaterofWorldsTail || Main.npc[doom].type == Mod.Find<ModNPC>("SlimeGodRun").Type ||
-                        Main.npc[doom].type == Mod.Find<ModNPC>("SlimeGodRunSplit").Type || Main.npc[doom].type == Mod.Find<ModNPC>("SlimeGod").Type || Main.npc[doom].type == Mod.Find<ModNPC>("SlimeGodSplit").Type))
-                    {
-                        Owner.KillMe(PlayerDeathReason.ByOther(12), 10000.0, 0, false);
-
-                        Main.npc[doom].active = false;
-                        Main.npc[doom].netUpdate = true;
-                    }
-                }
-
                 Utilities.DisplayText(infernumWasAlreadyActive ? "Very well, then." : "Good luck.", Color.Crimson);
                 WorldSaveSystem.InfernumMode = !infernumWasAlreadyActive;
                 CalamityNetcode.SyncWorld();

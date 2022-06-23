@@ -25,7 +25,7 @@ namespace InfernumMode
 
         public const int Lifetime = 375;
 
-        public override string Texture => "CalamityMod/Items/SummonItems/ProfanedCoreUnlimited";
+        public override string Texture => "CalamityMod/Items/SummonItems/ProfanedCore";
 
         public override void SetDefaults()
         {

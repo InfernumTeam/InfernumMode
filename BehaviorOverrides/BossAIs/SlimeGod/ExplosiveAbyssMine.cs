@@ -10,7 +10,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.SlimeGod
 {
     public class ExplosiveAbyssMine : ModProjectile
     {
-        public override string Texture => "CalamityMod/Projectiles/Boss/AbyssBallVolley";
+        public override string Texture => "CalamityMod/Projectiles/Boss/UnstableEbonianGlob";
 
         public override void SetStaticDefaults() => DisplayName.SetDefault("Abyss Mine");
 

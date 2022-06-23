@@ -370,7 +370,7 @@ namespace InfernumMode.GlobalInstances
             }
 
             // Register damage from the tail to the shield when it's vulnerable.
-            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type)
+            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type)
             {
                 Main.npc[npc.realLife].Infernum().ExtraAI[0] += (float)(damage * (crit ? 2D : 1f));
                 Main.npc[npc.realLife].netUpdate = true;

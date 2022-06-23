@@ -48,7 +48,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
         public const int ShieldHP = 102000;
         public const float Phase2LifeRatio = 0.8f;
 
-        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmHeadHuge").Type;
+        public override int NPCOverrideType => InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmHead").Type;
 
         public override NPCOverrideContext ContentToOverride => NPCOverrideContext.NPCAI | NPCOverrideContext.NPCPreDraw;
 
@@ -106,12 +106,12 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                     if (i is >= 0 and < 40)
                     {
                         if (i % 2 == 0)
-                            lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyHuge").Type, npc.whoAmI + 1);
+                            lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmBody").Type, npc.whoAmI + 1);
                         else
-                            lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmBodyAltHuge").Type, npc.whoAmI + 1);
+                            lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmBodyAlt").Type, npc.whoAmI + 1);
                     }
                     else
-                        lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type, npc.whoAmI + 1);
+                        lol = NPC.NewNPC(npc.GetSource_FromAI(), (int)npc.position.X + (npc.width / 2), (int)npc.position.Y + (npc.height / 2), InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type, npc.whoAmI + 1);
 
                     Main.npc[lol].realLife = npc.whoAmI;
                     Main.npc[lol].ai[2] = npc.whoAmI;
@@ -492,7 +492,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
             int pissedOffChargeDelay = 20;
             int shieldExplosionDelay = 54;
             int pissedOffChargeTime = 50;
-            NPC tail = Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type)];
+            NPC tail = Main.npc[NPC.FindFirstNPC(InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type)];
 
             float pissedOffChargeSpeed = MathHelper.Lerp(54f, 66f, 1f - lifeRatio);
             ref float totalShieldDamage = ref npc.Infernum().ExtraAI[0];
@@ -795,7 +795,7 @@ namespace InfernumMode.BehaviorOverrides.BossAIs.AdultEidolonWyrm
                 Main.spriteBatch.Draw(texture, drawPosition, npc.frame, color * opacity, npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
 
             // Create the shield for the tail in the Impact Tail attack.
-            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("EidolonWyrmTailHuge").Type)
+            if (npc.type == InfernumMode.CalamityMod.Find<ModNPC>("AdultEidolonWyrmTail").Type)
             {
                 NPC head = Main.npc[npc.realLife];
                 if (head.ai[0] == (int)AEWAttackType.ImpactTail && head.Infernum().ExtraAI[1] == 0f)

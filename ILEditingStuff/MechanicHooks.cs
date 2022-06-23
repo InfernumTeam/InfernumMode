@@ -330,7 +330,11 @@ namespace InfernumMode.ILEditingStuff
         {
             int moonLordIndex = NPC.FindFirstNPC(NPCID.MoonLordCore);
             bool useShader = InfernumMode.CanUseCustomAIs && moonLordIndex >= 0 && moonLordIndex < Main.maxNPCs && !Main.gameMenu;
-            orig(self);
+            try
+            {
+                orig(self);
+            }
+            catch { }
 
             if (useShader)
             {
